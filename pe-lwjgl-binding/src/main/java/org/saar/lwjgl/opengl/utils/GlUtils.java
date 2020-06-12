@@ -1,12 +1,11 @@
 package org.saar.lwjgl.opengl.utils;
 
-import maths.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 
 public final class GlUtils {
 
-    private static boolean[] clipPlanes = new boolean[6];
+    private final static boolean[] clipPlanes = new boolean[6];
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
     private static boolean cullingFaces = false;
@@ -173,19 +172,21 @@ public final class GlUtils {
      * @param r red value
      * @param g green value
      * @param b blue value
-     * @param a alpha value
      */
-    public static void setClearColour(float r, float g, float b, float a) {
-        GL11.glClearColor(r, g, b, a);
+    public static void setClearColour(float r, float g, float b) {
+        setClearColour(r, g, b, 1);
     }
 
     /**
      * Set the clear colour of the screen, the background of the window
      *
-     * @param colour a vector3f contains the rgb of the clear colour
+     * @param r red value
+     * @param g green value
+     * @param b blue value
+     * @param a alpha value
      */
-    public static void setClearColour(Vector3f colour) {
-        GL11.glClearColor(colour.x, colour.y, colour.z, 1);
+    public static void setClearColour(float r, float g, float b, float a) {
+        GL11.glClearColor(r, g, b, a);
     }
 
     /**
