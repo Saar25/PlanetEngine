@@ -1,6 +1,5 @@
 package org.saar.lwjgl.opengl.textures;
 
-import engine.fileLoaders.PNGDecoder;
 import org.saar.file.PNGDecoder;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
