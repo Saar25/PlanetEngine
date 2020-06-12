@@ -1,17 +1,17 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
-import maths.joml.Matrix4f;
-import maths.joml.Vector2f;
-import maths.joml.Vector3f;
-import maths.joml.Vector4f;
-import maths.utils.Matrix4;
-import maths.utils.Vector2;
-import maths.utils.Vector3;
-import maths.utils.Vector4;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
+import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.saar.maths.utils.Matrix4;
+import org.saar.maths.utils.Vector2;
+import org.saar.maths.utils.Vector3;
+import org.saar.maths.utils.Vector4;
 
 public class Uniform<T> {
 
@@ -32,7 +32,7 @@ public class Uniform<T> {
 
     public static <T> Uniform<T> create(ShadersProgram<?> shadersProgram, String uniformName,
                                         UniformLoader<T> loader, ValueSetter<T> setter, T value) {
-        int location = getLocation(shadersProgram, uniformName);
+        final int location = getLocation(shadersProgram, uniformName);
         return new Uniform<>(location, loader, setter, value);
     }
 
@@ -61,8 +61,8 @@ public class Uniform<T> {
      * @return the created uniform
      */
     public static Uniform<Matrix4f> createMat4(ShadersProgram<?> shadersProgram, String uniformName) {
-        ValueSetter<Matrix4f> setter = (a, b) -> a.set(b);
-        UniformLoader<Matrix4f> loader = (l, v) -> {
+        final ValueSetter<Matrix4f> setter = Matrix4f::set;
+        final UniformLoader<Matrix4f> loader = (l, v) -> {
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 GL20.glUniformMatrix4fv(l, false, v.get(stack.mallocFloat(16)));
             }
@@ -78,8 +78,8 @@ public class Uniform<T> {
      * @return the created uniform
      */
     public static Uniform<Vector4f> createVec4(ShadersProgram<?> shadersProgram, String uniformName) {
-        ValueSetter<Vector4f> setter = (a, b) -> a.set(b);
-        UniformLoader<Vector4f> loader = (l, v) -> GL20.glUniform4f(l, v.x, v.y, v.z, v.w);
+        final ValueSetter<Vector4f> setter = Vector4f::set;
+        final UniformLoader<Vector4f> loader = (l, v) -> GL20.glUniform4f(l, v.x, v.y, v.z, v.w);
         return Uniform.create(shadersProgram, uniformName, loader, setter, Vector4.create());
     }
 
@@ -91,8 +91,8 @@ public class Uniform<T> {
      * @return the created uniform
      */
     public static Uniform<Vector3f> createVec3(ShadersProgram<?> shadersProgram, String uniformName) {
-        ValueSetter<Vector3f> setter = (a, b) -> a.set(b);
-        UniformLoader<Vector3f> loader = (l, v) -> GL20.glUniform3f(l, v.x, v.y, v.z);
+        final ValueSetter<Vector3f> setter = Vector3f::set;
+        final UniformLoader<Vector3f> loader = (l, v) -> GL20.glUniform3f(l, v.x, v.y, v.z);
         return Uniform.create(shadersProgram, uniformName, loader, setter, Vector3.create());
     }
 
@@ -104,8 +104,8 @@ public class Uniform<T> {
      * @return the created uniform
      */
     public static Uniform<Vector2f> createVec2(ShadersProgram<?> shadersProgram, String uniformName) {
-        ValueSetter<Vector2f> setter = (a, b) -> a.set(b);
-        UniformLoader<Vector2f> loader = (l, v) -> GL20.glUniform2f(l, v.x, v.y);
+        final ValueSetter<Vector2f> setter = Vector2f::set;
+        final UniformLoader<Vector2f> loader = (l, v) -> GL20.glUniform2f(l, v.x, v.y);
         return Uniform.create(shadersProgram, uniformName, loader, setter, Vector2.create());
     }
 
@@ -143,7 +143,7 @@ public class Uniform<T> {
      * @return the created uniform
      */
     public static Uniform<Boolean> createBool(ShadersProgram<?> shadersProgram, String uniformName) {
-        UniformLoader<Boolean> loader = (l, v) -> GL20.glUniform1i(l, v ? 1 : 0);
+        final UniformLoader<Boolean> loader = (l, v) -> GL20.glUniform1i(l, v ? 1 : 0);
         return Uniform.create(shadersProgram, uniformName, loader, false);
     }
 
