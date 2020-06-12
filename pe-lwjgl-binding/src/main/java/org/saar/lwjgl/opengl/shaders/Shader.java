@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.shaders;
 
 import org.lwjgl.opengl.GL20;
+import org.saar.file.TextFileLoader;
 
 public class Shader {
 
