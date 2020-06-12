@@ -1,9 +1,9 @@
 package org.saar.utils;
 
-import maths.utils.Quaternion;
-import maths.utils.Vector3;
-import maths.joml.Quaternionf;
-import maths.joml.Vector3f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.saar.maths.utils.Quaternion;
+import org.saar.maths.utils.Vector3;
 
 public class Smooth<T> implements Reference<T> {
 
