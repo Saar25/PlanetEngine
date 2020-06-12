@@ -1,12 +1,12 @@
 package org.saar.lwjgl.opengl.textures;
 
-import maths.joml.Vector4f;
-import maths.utils.Vector4;
+import org.joml.Vector4f;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
+import org.saar.maths.utils.Vector4;
 
 public class TextureConfigs {
 
