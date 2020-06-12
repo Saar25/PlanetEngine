@@ -24,6 +24,7 @@
 
     <modules>
         <module>pe-lwjgl-binding</module>
+        <module>pe-math</module>
     </modules>
 
 
