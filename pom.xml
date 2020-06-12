@@ -37,6 +37,7 @@
     <modules>
         <module>pe-lwjgl-binding</module>
         <module>pe-math</module>
+        <module>pe-util</module>
     </modules>
 
 
