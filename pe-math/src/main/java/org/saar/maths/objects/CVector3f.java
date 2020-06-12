@@ -1,6 +1,6 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.*;
+import org.joml.*;
 import org.saar.maths.utils.Vector3;
 
 import java.nio.ByteBuffer;
@@ -375,5 +375,55 @@ public class CVector3f implements Vector3fc {
     @Override
     public String toString() {
         return value.toString();
+    }
+
+    @Override
+    public Vector3f mulProject(Matrix4fc matrix4fc, float v, Vector3f vector3f) {
+        return null;
+    }
+
+    @Override
+    public float angleSigned(Vector3fc vector3fc, Vector3fc vector3fc1) {
+        return 0;
+    }
+
+    @Override
+    public float angleSigned(float v, float v1, float v2, float v3, float v4, float v5) {
+        return 0;
+    }
+
+    @Override
+    public Vector3f get(Vector3f vector3f) {
+        return null;
+    }
+
+    @Override
+    public Vector3d get(Vector3d vector3d) {
+        return null;
+    }
+
+    @Override
+    public Vector3f floor(Vector3f vector3f) {
+        return null;
+    }
+
+    @Override
+    public Vector3f ceil(Vector3f vector3f) {
+        return null;
+    }
+
+    @Override
+    public Vector3f round(Vector3f vector3f) {
+        return null;
+    }
+
+    @Override
+    public boolean isFinite() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(float v, float v1, float v2) {
+        return false;
     }
 }

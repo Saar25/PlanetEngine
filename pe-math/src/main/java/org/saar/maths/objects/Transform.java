@@ -1,7 +1,7 @@
 package org.saar.maths.objects;
 
+import org.joml.*;
 import org.saar.maths.Angle;
-import org.saar.maths.joml.*;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;

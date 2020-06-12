@@ -1,7 +1,7 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Matrix3f;
-import org.saar.maths.joml.Vector2fc;
+import org.joml.Matrix3f;
+import org.joml.Vector2fc;
 
 public final class Matrix3 {
 

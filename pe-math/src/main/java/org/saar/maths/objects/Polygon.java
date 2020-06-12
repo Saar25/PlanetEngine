@@ -1,6 +1,6 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.Vector2f;
+import org.joml.Vector2f;
 import org.saar.maths.utils.Vector2;
 
 import java.util.ArrayList;

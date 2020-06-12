@@ -1,6 +1,6 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Vector3fc;
 import org.saar.maths.utils.Vector3;
 
 public class Plane {

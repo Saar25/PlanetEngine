@@ -1,6 +1,6 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Vector2f;
+import org.joml.Vector2f;
 
 public final class Vector2 {
 

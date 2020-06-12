@@ -61,6 +61,13 @@
             <version>${lwjgl.version}</version>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
+
+        <!-- Project dependencies -->
+        <dependency>
+            <groupId>org.saar</groupId>
+            <artifactId>pe-math</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

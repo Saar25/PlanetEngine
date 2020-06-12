@@ -1,7 +1,7 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.Vector2fc;
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Vector2fc;
+import org.joml.Vector3fc;
 import org.saar.maths.utils.Maths;
 import org.saar.maths.utils.Vector3;
 

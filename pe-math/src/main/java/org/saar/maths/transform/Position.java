@@ -1,6 +1,6 @@
 package org.saar.maths.transform;
 
-import org.saar.maths.joml.Vector3f;
+import org.joml.Vector3f;
 import org.saar.maths.utils.Vector3;
 
 public class Position {

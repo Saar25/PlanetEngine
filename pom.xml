@@ -22,6 +22,18 @@
         </plugins>
     </build>
 
+    <properties>
+        <joml.version>1.9.20</joml.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>${joml.version}</version>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>pe-lwjgl-binding</module>
         <module>pe-math</module>

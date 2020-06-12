@@ -1,8 +1,8 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Quaternionf;
-import org.saar.maths.joml.Quaternionfc;
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
+import org.joml.Vector3fc;
 
 public class Quaternion {
 

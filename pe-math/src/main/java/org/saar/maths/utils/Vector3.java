@@ -1,25 +1,24 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Vector2fc;
-import org.saar.maths.joml.Vector3f;
-import org.saar.maths.joml.Vector3fc;
-import org.saar.maths.joml.Vector4fc;
-import org.saar.maths.objects.CVector3f;
+import org.joml.Vector2fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 
 public final class Vector3 {
 
     public static final ObjectPool<Vector3f> pool = new ObjectPool<>(Vector3::create);
 
-    public static final Vector3fc UP = Vector3.constOf(0, 1, 0);
-    public static final Vector3fc RIGHT = Vector3.constOf(1, 0, 0);
-    public static final Vector3fc FORWARD = Vector3.constOf(0, 0, 1);
+    public static final Vector3fc UP = Vector3.of(0, 1, 0);
+    public static final Vector3fc RIGHT = Vector3.of(1, 0, 0);
+    public static final Vector3fc FORWARD = Vector3.of(0, 0, 1);
 
-    public static final Vector3fc DOWN = Vector3.constOf(0, -1, 0);
-    public static final Vector3fc LEFT = Vector3.constOf(-1, 0, 0);
-    public static final Vector3fc BACKWARD = Vector3.constOf(0, 0, -1);
+    public static final Vector3fc DOWN = Vector3.of(0, -1, 0);
+    public static final Vector3fc LEFT = Vector3.of(-1, 0, 0);
+    public static final Vector3fc BACKWARD = Vector3.of(0, 0, -1);
 
-    public static final Vector3fc ONE = Vector3.constOf(1, 1, 1);
-    public static final Vector3fc ZERO = Vector3.constOf(0, 0, 0);
+    public static final Vector3fc ONE = Vector3.of(1, 1, 1);
+    public static final Vector3fc ZERO = Vector3.of(0, 0, 0);
 
     private Vector3() {
 
@@ -87,17 +86,17 @@ public final class Vector3 {
         return Vector3.of(v.x(), v.y(), z);
     }
 
-    /**
-     * Creates a new unmodifiable vector initialized with the given values
-     *
-     * @param x the x component
-     * @param y the y component
-     * @param z the z component
-     * @return a new CVector3f
-     */
-    public static CVector3f constOf(float x, float y, float z) {
-        return new CVector3f(x, y, z);
-    }
+//    /**
+//     * Creates a new unmodifiable vector initialized with the given values
+//     *
+//     * @param x the x component
+//     * @param y the y component
+//     * @param z the z component
+//     * @return a new CVector3f
+//     */
+//    public static CVector3f of(float x, float y, float z) {
+//        return new CVector3f(x, y, z);
+//    }
 
     public static Vector3f upward() {
         return Vector3.of(UP.x(), UP.y(), UP.z());

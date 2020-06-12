@@ -1,9 +1,9 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Vector2fc;
-import org.saar.maths.joml.Vector3fc;
-import org.saar.maths.joml.Vector4f;
-import org.saar.maths.joml.Vector4fc;
+import org.joml.Vector2fc;
+import org.joml.Vector3fc;
+import org.joml.Vector4f;
+import org.joml.Vector4fc;
 
 public final class Vector4 {
 

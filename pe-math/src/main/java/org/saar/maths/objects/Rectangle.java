@@ -1,6 +1,6 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.Vector2fc;
+import org.joml.Vector2fc;
 import org.saar.maths.utils.Maths;
 
 public class Rectangle {
@@ -57,6 +57,6 @@ public class Rectangle {
 
     @Override
     public String toString() {
-        return String.format("[Rectangle: x=%f, y=%f, w=%f, h=%f]",x, y, w, h);
+        return String.format("[Rectangle: x=%f, y=%f, w=%f, h=%f]", x, y, w, h);
     }
 }

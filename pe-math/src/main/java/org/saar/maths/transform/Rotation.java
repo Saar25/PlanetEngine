@@ -1,7 +1,7 @@
 package org.saar.maths.transform;
 
-import org.saar.maths.joml.Quaternionf;
-import org.saar.maths.joml.Vector3f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.saar.maths.utils.Quaternion;
 
 public class Rotation {

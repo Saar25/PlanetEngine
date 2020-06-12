@@ -1,9 +1,9 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.Matrix4f;
-import org.saar.maths.joml.Quaternionf;
-import org.saar.maths.joml.Vector3f;
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;

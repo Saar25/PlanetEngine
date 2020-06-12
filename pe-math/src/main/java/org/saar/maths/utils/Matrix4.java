@@ -1,9 +1,9 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Matrix4f;
-import org.saar.maths.joml.Matrix4fc;
-import org.saar.maths.joml.Quaternionfc;
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Quaternionfc;
+import org.joml.Vector3fc;
 
 public final class Matrix4 {
 

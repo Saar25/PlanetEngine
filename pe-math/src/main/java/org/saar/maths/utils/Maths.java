@@ -1,8 +1,8 @@
 package org.saar.maths.utils;
 
-import org.saar.maths.joml.Vector2fc;
-import org.saar.maths.joml.Vector3f;
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Vector2fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public final class Maths {
 

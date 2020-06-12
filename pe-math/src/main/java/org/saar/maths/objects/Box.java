@@ -1,6 +1,6 @@
 package org.saar.maths.objects;
 
-import org.saar.maths.joml.Vector3fc;
+import org.joml.Vector3fc;
 import org.saar.maths.utils.Maths;
 import org.saar.maths.utils.Vector3;
 
@@ -70,7 +70,7 @@ public class Box {
     }
 
     public boolean intersects(Vector3fc position, Vector3fc point) {
-        return  Maths.isBetween(point.x(), position.x() - getMin().x(), position.x() + getMax().x()) &&
+        return Maths.isBetween(point.x(), position.x() - getMin().x(), position.x() + getMax().x()) &&
                 Maths.isBetween(point.y(), position.y() - getMin().y(), position.y() + getMax().y()) &&
                 Maths.isBetween(point.z(), position.z() - getMin().z(), position.z() + getMax().z());
     }
