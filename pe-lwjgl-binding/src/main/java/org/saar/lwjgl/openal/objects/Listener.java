@@ -1,6 +1,6 @@
 package org.saar.lwjgl.openal.objects;
 
-import maths.joml.Vector3fc;
+import org.joml.Vector3fc;
 import org.lwjgl.openal.AL11;
 
 public class Listener {

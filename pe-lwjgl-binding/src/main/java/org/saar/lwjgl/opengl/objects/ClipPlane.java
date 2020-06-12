@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.objects;
 
-import maths.joml.Vector4f;
+import org.joml.Vector4f;
 
 public class ClipPlane {
 
