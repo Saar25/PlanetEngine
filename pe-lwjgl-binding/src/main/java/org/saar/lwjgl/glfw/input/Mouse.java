@@ -1,14 +1,13 @@
 package org.saar.lwjgl.glfw.input;
 
-import engine.util.ModifiableList;
-import glfw.input.event.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryUtil;
 import org.saar.lwjgl.glfw.input.event.ClickEvent;
 import org.saar.lwjgl.glfw.input.event.EventListener;
 import org.saar.lwjgl.glfw.input.event.MoveEvent;
 import org.saar.lwjgl.glfw.input.event.ScrollEvent;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryUtil;
+import org.saar.utils.ModifiableList;
 
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;

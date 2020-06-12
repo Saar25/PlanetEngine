@@ -1,10 +1,10 @@
 package org.saar.lwjgl.glfw.input;
 
-import engine.util.ModifiableList;
+import org.lwjgl.glfw.GLFW;
 import org.saar.lwjgl.glfw.input.event.EventListener;
 import org.saar.lwjgl.glfw.input.event.KeyPressEvent;
 import org.saar.lwjgl.glfw.input.event.KeyReleaseEvent;
-import org.lwjgl.glfw.GLFW;
+import org.saar.utils.ModifiableList;
 
 import java.util.LinkedList;
 import java.util.List;
