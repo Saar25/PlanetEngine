@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
-import maths.utils.Vector4;
+import org.joml.Vector4f;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import maths.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
+import org.saar.maths.utils.Vector4;
 
 public class UniformVec4 extends Uniform<Vector4f> {
 
