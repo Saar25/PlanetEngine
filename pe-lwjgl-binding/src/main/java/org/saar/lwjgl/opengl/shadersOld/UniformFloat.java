@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
-import opengl.shaders.ShadersProgram;
-import opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.lwjgl.opengl.GL20;
 
 public class UniformFloat extends Uniform<Float> {

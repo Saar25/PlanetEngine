@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import opengl.fbos.attachment.Attachment;
-import opengl.textures.parameters.MagFilterParameter;
-import opengl.utils.GlBuffer;
-import opengl.utils.GlUtils;
-import opengl.utils.MemoryUtils;
+import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;

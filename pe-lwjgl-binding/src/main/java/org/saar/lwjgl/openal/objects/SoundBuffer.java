@@ -1,6 +1,6 @@
 package org.saar.lwjgl.openal.objects;
 
-import openal.constants.BufferFormat;
+import org.saar.lwjgl.openal.constants.BufferFormat;
 import org.lwjgl.openal.AL10;
 
 import java.nio.ByteBuffer;

@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.objects;
 
-import opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.constants.VboUsage;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

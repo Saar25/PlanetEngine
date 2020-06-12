@@ -2,8 +2,8 @@ package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.saar.lwjgl.opengl.shaders.RenderState;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
-import opengl.textures.MultiTexture;
-import opengl.textures.Texture;
+import org.saar.lwjgl.opengl.textures.MultiTexture;
+import org.saar.lwjgl.opengl.textures.Texture;
 import org.lwjgl.opengl.GL20;
 
 public abstract class UniformMultiTextureProperty<T> implements UniformProperty<T> {

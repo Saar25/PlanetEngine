@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.objects;
 
-import opengl.constants.DataType;
-import opengl.constants.VboAccess;
-import opengl.constants.VboTarget;
-import opengl.constants.VboUsage;
-import opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.VboAccess;
+import org.saar.lwjgl.opengl.constants.VboTarget;
+import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.ByteBuffer;

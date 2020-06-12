@@ -1,8 +1,8 @@
 package org.saar.lwjgl.opengl.objects;
 
-import opengl.constants.VboAccess;
-import opengl.constants.VboTarget;
-import opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.constants.VboAccess;
+import org.saar.lwjgl.opengl.constants.VboTarget;
+import org.saar.lwjgl.opengl.constants.VboUsage;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

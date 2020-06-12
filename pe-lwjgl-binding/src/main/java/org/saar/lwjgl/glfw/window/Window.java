@@ -1,8 +1,8 @@
 package org.saar.lwjgl.glfw.window;
 
-import glfw.input.Keyboard;
-import glfw.input.Mouse;
-import opengl.utils.MemoryUtils;
+import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.Mouse;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;

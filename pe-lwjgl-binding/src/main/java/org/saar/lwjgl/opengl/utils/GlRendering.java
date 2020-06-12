@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.utils;
 
-import opengl.constants.DataType;
-import opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL31;
 

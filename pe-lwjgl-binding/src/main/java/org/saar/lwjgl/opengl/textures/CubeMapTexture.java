@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.textures;
 
-import opengl.constants.DataType;
-import opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 
 public class CubeMapTexture implements ITexture {
 

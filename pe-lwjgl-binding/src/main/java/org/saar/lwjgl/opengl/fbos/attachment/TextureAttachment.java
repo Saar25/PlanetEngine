@@ -1,13 +1,13 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
-import opengl.constants.DataType;
-import opengl.constants.FormatType;
-import opengl.fbos.Fbo;
-import opengl.textures.Texture;
-import opengl.textures.TextureConfigs;
-import opengl.textures.TextureTarget;
-import opengl.textures.parameters.MagFilterParameter;
-import opengl.textures.parameters.MinFilterParameter;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.textures.TextureConfigs;
+import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 
 import java.nio.ByteBuffer;
 

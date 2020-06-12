@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import opengl.utils.MemoryUtils;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;

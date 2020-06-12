@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.lwjgl.opengl.GL30;
 
 public class RenderBuffer {

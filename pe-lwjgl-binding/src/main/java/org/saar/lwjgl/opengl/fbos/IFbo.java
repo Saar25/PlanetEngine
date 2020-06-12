@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import opengl.textures.parameters.MagFilterParameter;
-import opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 public interface IFbo {
 

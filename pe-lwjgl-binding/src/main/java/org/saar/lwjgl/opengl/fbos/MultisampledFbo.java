@@ -1,9 +1,9 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import opengl.fbos.attachment.Attachment;
-import opengl.fbos.attachment.MultisampledAttachment;
-import opengl.textures.parameters.MagFilterParameter;
-import opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbos.attachment.MultisampledAttachment;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 import java.util.List;
 

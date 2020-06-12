@@ -8,8 +8,8 @@ import maths.utils.Matrix4;
 import maths.utils.Vector2;
 import maths.utils.Vector3;
 import maths.utils.Vector4;
-import opengl.shaders.ShadersProgram;
-import opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 

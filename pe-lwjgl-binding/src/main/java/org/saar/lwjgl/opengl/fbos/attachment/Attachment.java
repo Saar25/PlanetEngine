@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
-import opengl.fbos.Fbo;
-import opengl.textures.Texture;
+import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.textures.Texture;
 
 public interface Attachment {
 

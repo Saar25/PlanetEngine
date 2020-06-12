@@ -1,9 +1,9 @@
 package org.saar.lwjgl.opengl.textures;
 
-import opengl.constants.DataType;
-import opengl.constants.FormatType;
-import opengl.utils.GlConfigs;
-import opengl.utils.MemoryUtils;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;

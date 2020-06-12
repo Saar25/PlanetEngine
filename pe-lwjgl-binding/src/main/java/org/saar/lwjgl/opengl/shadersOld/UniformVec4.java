@@ -1,8 +1,8 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
 import maths.utils.Vector4;
-import opengl.shaders.ShadersProgram;
-import opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 import maths.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 

@@ -1,8 +1,8 @@
 package org.saar.lwjgl.opengl.textures;
 
-import opengl.textures.parameters.MagFilterParameter;
-import opengl.textures.parameters.MinFilterParameter;
-import opengl.textures.parameters.WrapParameter;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
 
 public class CubeMapTextureBuilder {
 

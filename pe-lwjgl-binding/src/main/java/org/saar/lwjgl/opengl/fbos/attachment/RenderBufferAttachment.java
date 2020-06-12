@@ -1,9 +1,9 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
-import opengl.constants.FormatType;
-import opengl.fbos.Fbo;
-import opengl.fbos.RenderBuffer;
-import opengl.textures.Texture;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.fbos.RenderBuffer;
+import org.saar.lwjgl.opengl.textures.Texture;
 
 public class RenderBufferAttachment extends AbstractAttachment implements Attachment {
 

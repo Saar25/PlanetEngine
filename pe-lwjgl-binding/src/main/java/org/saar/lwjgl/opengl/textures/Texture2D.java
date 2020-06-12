@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.textures;
 
-import opengl.textures.parameters.MagFilterParameter;
-import opengl.textures.parameters.MinFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

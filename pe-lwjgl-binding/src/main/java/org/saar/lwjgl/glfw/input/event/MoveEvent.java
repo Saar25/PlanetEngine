@@ -1,6 +1,6 @@
 package org.saar.lwjgl.glfw.input.event;
 
-import glfw.input.Mouse;
+import org.saar.lwjgl.glfw.input.Mouse;
 
 public class MoveEvent extends MouseEvent {
 
