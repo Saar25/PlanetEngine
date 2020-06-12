@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.textures;
 
-import org.saar.file.PNGDecoder;
+import org.saar.utils.file.PNGDecoder;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;

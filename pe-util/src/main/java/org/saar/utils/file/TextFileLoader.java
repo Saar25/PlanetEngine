@@ -1,4 +1,4 @@
-package org.saar.file;
+package org.saar.utils.file;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
