@@ -3,7 +3,11 @@ package org.saar.lwjgl.opengl.shaders;
 public class RenderState<T> {
 
     private final T instance;
-    private final Camera camera;
+
+    public RenderState(T instance) {
+        this.instance = instance;
+    }
+    /*private final Camera camera;
 
     public RenderState(Camera camera, T instance) {
         this.instance = instance;
@@ -17,7 +21,7 @@ public class RenderState<T> {
 
     public Camera getCamera() {
         return camera;
-    }
+    }*/
 
     public T getInstance() {
         return instance;
