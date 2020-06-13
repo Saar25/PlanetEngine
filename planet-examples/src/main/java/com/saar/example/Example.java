@@ -23,7 +23,7 @@ public class Example {
         vbo.allocateFloat(6);
         vbo.storeData(0, new float[]{
                 -0.5f, -0.5f,
-                +0.0f, +1.0f,
+                +0.0f, +0.5f,
                 +0.5f, -0.5f});
         vao.loadDataBuffer(vbo, Attribute.of(0, 2, DataType.FLOAT, false));
 
