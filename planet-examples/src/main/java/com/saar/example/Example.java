@@ -23,20 +23,23 @@ public class Example {
         vbo.allocateFloat(6);
         vbo.storeData(0, new float[]{
                 -0.5f, -0.5f,
-                +0.0f, +0.5f,
+                +0.0f, +1.0f,
                 +0.5f, -0.5f});
         vao.loadDataBuffer(vbo, Attribute.of(0, 2, DataType.FLOAT, false));
 
         final ShadersProgram<Vao> shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
+        shadersProgram.bindAttribute(0, "in_position");
+
+        shadersProgram.bind();
+
+        vao.bind();
+        vao.enableAttributes();
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
-            shadersProgram.bind();
-            vao.bind();
-            vao.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             window.update(true);
