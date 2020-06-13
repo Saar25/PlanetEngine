@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.shaders;
 
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 import org.lwjgl.opengl.GL20;
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +31,7 @@ public class ShadersProgram<T> {
             shader.detach(id);
             shader.delete();
         }
+        unbind();
     }
 
     public static <T> ShadersProgram<T> create(Shader vertexShader, Shader fragmentShader) throws Exception {
