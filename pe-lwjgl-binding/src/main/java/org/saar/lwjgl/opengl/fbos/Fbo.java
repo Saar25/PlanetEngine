@@ -152,7 +152,7 @@ public class Fbo implements IFbo {
 
     private Attachment getReadAttachment() {
         if (getAttachments().size() == 0) {
-            throw new IllegalStateException("cannot read from fbo, " + this + " has no attachments");
+            throw new IllegalStateException("Cannot read from fbo, " + this + " has no attachments");
         } else if (this.readAttachment == null) {
             this.readAttachment = getAttachments().get(0);
         }
