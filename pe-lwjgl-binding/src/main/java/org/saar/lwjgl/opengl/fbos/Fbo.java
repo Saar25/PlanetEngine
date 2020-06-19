@@ -1,14 +1,14 @@
 package org.saar.lwjgl.opengl.fbos;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryUtil;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -152,7 +152,7 @@ public class Fbo implements IFbo {
 
     private Attachment getReadAttachment() {
         if (getAttachments().size() == 0) {
-            throw new IllegalStateException("Cannot read from Fbo " + this);
+            throw new IllegalStateException("Cannot read from fbo, " + this + " has no attachments");
         } else if (this.readAttachment == null) {
             this.readAttachment = getAttachments().get(0);
         }
