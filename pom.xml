@@ -41,6 +41,7 @@
         <module>pe-math</module>
         <module>pe-util</module>
         <module>planet-examples</module>
+        <module>pe-core</module>
     </modules>
 
 
