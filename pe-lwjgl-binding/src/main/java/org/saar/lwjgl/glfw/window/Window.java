@@ -7,18 +7,15 @@ import org.lwjgl.opengl.GL;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.input.Mouse;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
-
-import java.nio.IntBuffer;
 
 public class Window {
 
     private static Window current = null;
 
-    private final IntBuffer xPos = MemoryUtils.allocInt(1);
-    private final IntBuffer yPos = MemoryUtils.allocInt(1);
+    private final int[] xBuffer = new int[1];
+    private final int[] yBuffer = new int[1];
 
-    private final String title;
+    private String title;
     private long id;
     private int width;
     private int height;
@@ -68,11 +65,11 @@ public class Window {
 
         // Create the window
         id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
-        if (id == 0) {
+        if (this.id == 0) {
             throw new RuntimeException("Failed to init the GLFW window");
         }
 
-        GLFW.glfwSetFramebufferSizeCallback(id, (window, width, height) -> {
+        GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
             this.width = width;
             this.height = height;
             this.resized = true;
@@ -92,8 +89,8 @@ public class Window {
 
         GL.createCapabilities();
 
-        this.mouse = new Mouse(id);
-        this.keyboard = new Keyboard(id);
+        this.mouse = new Mouse(this.id);
+        this.keyboard = new Keyboard(this.id);
     }
 
     private void setHint(WindowHint hint, int value) {
@@ -105,7 +102,7 @@ public class Window {
     }
 
     private void makeContextCurrent() {
-        GLFW.glfwMakeContextCurrent(id);
+        GLFW.glfwMakeContextCurrent(this.id);
     }
 
     /**
@@ -117,7 +114,7 @@ public class Window {
         if (vidMode != null) {
             final int w = (vidMode.width() - getWidth()) / 2;
             final int h = (vidMode.height() - getHeight()) / 2;
-            setWindowPosition(w, h);
+            this.setPosition(w, h);
         }
     }
 
@@ -135,14 +132,14 @@ public class Window {
      * Sets the window invisible
      */
     private void show() {
-        GLFW.glfwShowWindow(id);
+        GLFW.glfwShowWindow(this.id);
     }
 
     /**
      * Sets the window visible
      */
     private void hide() {
-        GLFW.glfwHideWindow(id);
+        GLFW.glfwHideWindow(this.id);
     }
 
     /**
@@ -151,7 +148,7 @@ public class Window {
      * @param x the x position of the window
      * @param y the y position of the window
      */
-    public void setWindowPosition(int x, int y) {
+    public void setPosition(int x, int y) {
         GLFW.glfwSetWindowPos(this.id, x, y);
     }
 
@@ -161,7 +158,7 @@ public class Window {
      * @param width  the width of the window
      * @param height the height of the window
      */
-    public void windowShouldClose(int width, int height) {
+    public void setSize(int width, int height) {
         GLFW.glfwSetWindowSize(this.id, width, height);
     }
 
@@ -171,7 +168,7 @@ public class Window {
      * @return true if window has been close else false
      */
     public boolean windowShouldClose() {
-        return GLFW.glfwWindowShouldClose(id);
+        return GLFW.glfwWindowShouldClose(this.id);
     }
 
     /**
@@ -180,7 +177,7 @@ public class Window {
      * @return true if window has been close else false
      */
     public boolean isOpen() {
-        return !GLFW.glfwWindowShouldClose(id);
+        return !GLFW.glfwWindowShouldClose(this.id);
     }
 
     /**
@@ -189,14 +186,14 @@ public class Window {
      * @param shouldClose true if wants the window to close else false
      */
     public void setWindowShouldClose(boolean shouldClose) {
-        GLFW.glfwSetWindowShouldClose(id, shouldClose);
+        GLFW.glfwSetWindowShouldClose(this.id, shouldClose);
     }
 
     /**
      * Swap the buffers of the window
      */
     public void swapBuffers() {
-        GLFW.glfwSwapBuffers(id);
+        GLFW.glfwSwapBuffers(this.id);
     }
 
     /**
@@ -214,27 +211,23 @@ public class Window {
     }
 
     /**
-     * Return the window's width
+     * Return the window's x position
      *
-     * @return the window's width
+     * @return the window's x position
      */
     public int getX() {
-        GLFW.glfwGetWindowPos(id, xPos, yPos);
-        final int x = xPos.get();
-        xPos.flip();
-        return x;
+        GLFW.glfwGetWindowPos(this.id, xBuffer, yBuffer);
+        return this.xBuffer[0];
     }
 
     /**
-     * Return the window's height
+     * Return the window's y position
      *
-     * @return the window's height
+     * @return the window's y position
      */
     public int getY() {
-        GLFW.glfwGetWindowPos(id, xPos, yPos);
-        final int y = yPos.get();
-        yPos.flip();
-        return y;
+        GLFW.glfwGetWindowPos(this.id, xBuffer, yBuffer);
+        return this.yBuffer[0];
     }
 
     /**
