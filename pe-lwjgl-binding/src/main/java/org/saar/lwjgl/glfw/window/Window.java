@@ -11,8 +11,6 @@ import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.IntBuffer;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 public class Window {
 
     private static Window current = null;
@@ -55,48 +53,38 @@ public class Window {
         GLFWErrorCallback.createPrint(System.err).set();
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if (!glfwInit()) {
+        if (!GLFW.glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        glfwDefaultWindowHints(); // optional, the current window hints are already the default
-        setHint(WindowHint.VISIBLE, false); // the window will stay hidden after creation
-        setHint(WindowHint.RESIZABLE, true); // the window will be resizable
+        GLFW.glfwDefaultWindowHints();
+        setHint(WindowHint.VISIBLE, false);
+        setHint(WindowHint.RESIZABLE, true);
         setHint(WindowHint.CONTEXT_VERSION_MAJOR, 3);
         setHint(WindowHint.CONTEXT_VERSION_MINOR, 2);
-        setHint(WindowHint.OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        setHint(WindowHint.OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         setHint(WindowHint.OPENGL_FORWARD_COMPAT, true);
         //setHint(WindowHint.MAXIMIZED, true);
 
         // Create the window
-        id = glfwCreateWindow(width, height, title, 0, 0);
+        id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
         if (id == 0) {
             throw new RuntimeException("Failed to init the GLFW window");
         }
 
-        // Setup resize callback
-        glfwSetFramebufferSizeCallback(id, (window, width, height) -> {
+        GLFW.glfwSetFramebufferSizeCallback(id, (window, width, height) -> {
             this.width = width;
             this.height = height;
             this.resized = true;
         });
 
-        // Get the resolution of the primary monitor
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        // Center our window
-        if (vidMode != null) {
-            glfwSetWindowPos(id,
-                    (vidMode.width() - width) / 2,
-                    (vidMode.height() - height) / 2
-            );
-        }
+        center();
 
-        // Make the OpenGL context current
         makeContextCurrent();
 
         if (isvSync()) {
             // Enable v-sync
-            glfwSwapInterval(1);
+            GLFW.glfwSwapInterval(1);
         }
 
         // Make the window visible
@@ -120,38 +108,61 @@ public class Window {
         GLFW.glfwMakeContextCurrent(id);
     }
 
-    private void setVisible(boolean visable) {
-        if (visable) {
-            show();
-        } else {
-            hide();
+    /**
+     * Center the window in the middle of the screen
+     */
+    public void center() {
+        final long monitor = GLFW.glfwGetPrimaryMonitor();
+        final GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+        if (vidMode != null) {
+            final int w = (vidMode.width() - getWidth()) / 2;
+            final int h = (vidMode.height() - getHeight()) / 2;
+            setWindowPosition(w, h);
         }
     }
 
+    /**
+     * Sets the window visibility
+     *
+     * @param visible true if the window should be visible, false otherwise
+     */
+    public void setVisible(boolean visible) {
+        if (visible) show();
+        else hide();
+    }
+
+    /**
+     * Sets the window invisible
+     */
     private void show() {
         GLFW.glfwShowWindow(id);
     }
 
+    /**
+     * Sets the window visible
+     */
     private void hide() {
         GLFW.glfwHideWindow(id);
     }
 
     /**
-     * Creates the mouse that corresponds to this window
+     * Sets the position of the window
      *
-     * @return the mouse
+     * @param x the x position of the window
+     * @param y the y position of the window
      */
-    public Mouse getMouse() {
-        return mouse;
+    public void setWindowPosition(int x, int y) {
+        GLFW.glfwSetWindowPos(this.id, x, y);
     }
 
     /**
-     * Returns the keyboard that corresponds to this window
+     * Sets the size of the window
      *
-     * @return the keyboard
+     * @param width  the width of the window
+     * @param height the height of the window
      */
-    public Keyboard getKeyboard() {
-        return keyboard;
+    public void windowShouldClose(int width, int height) {
+        GLFW.glfwSetWindowSize(this.id, width, height);
     }
 
     /**
@@ -160,7 +171,7 @@ public class Window {
      * @return true if window has been close else false
      */
     public boolean windowShouldClose() {
-        return glfwWindowShouldClose(id);
+        return GLFW.glfwWindowShouldClose(id);
     }
 
     /**
@@ -169,16 +180,37 @@ public class Window {
      * @return true if window has been close else false
      */
     public boolean isOpen() {
-        return !glfwWindowShouldClose(id);
+        return !GLFW.glfwWindowShouldClose(id);
     }
 
     /**
-     * Returns the window's title
+     * Sets the window should close flag. Used for closing up the program
      *
-     * @return the window's title
+     * @param shouldClose true if wants the window to close else false
      */
-    public String getTitle() {
-        return title;
+    public void setWindowShouldClose(boolean shouldClose) {
+        GLFW.glfwSetWindowShouldClose(id, shouldClose);
+    }
+
+    /**
+     * Swap the buffers of the window
+     */
+    public void swapBuffers() {
+        GLFW.glfwSwapBuffers(id);
+    }
+
+    /**
+     * Poll glfw events
+     */
+    public void pollEvents() {
+        GLFW.glfwPollEvents();
+    }
+
+    /**
+     * wait for glfw events
+     */
+    public void waitEvents() {
+        GLFW.glfwWaitEvents();
     }
 
     /**
@@ -187,8 +219,8 @@ public class Window {
      * @return the window's width
      */
     public int getX() {
-        glfwGetWindowPos(id, xPos, yPos);
-        int x = xPos.get();
+        GLFW.glfwGetWindowPos(id, xPos, yPos);
+        final int x = xPos.get();
         xPos.flip();
         return x;
     }
@@ -199,10 +231,37 @@ public class Window {
      * @return the window's height
      */
     public int getY() {
-        glfwGetWindowPos(id, xPos, yPos);
-        int y = yPos.get();
+        GLFW.glfwGetWindowPos(id, xPos, yPos);
+        final int y = yPos.get();
         yPos.flip();
         return y;
+    }
+
+    /**
+     * Creates the mouse that corresponds to this window
+     *
+     * @return the mouse
+     */
+    public Mouse getMouse() {
+        return this.mouse;
+    }
+
+    /**
+     * Returns the keyboard that corresponds to this window
+     *
+     * @return the keyboard
+     */
+    public Keyboard getKeyboard() {
+        return this.keyboard;
+    }
+
+    /**
+     * Returns the window's title
+     *
+     * @return the window's title
+     */
+    public String getTitle() {
+        return this.title;
     }
 
     /**
@@ -211,7 +270,7 @@ public class Window {
      * @return the window's width
      */
     public int getWidth() {
-        return width;
+        return this.width;
     }
 
     /**
@@ -220,7 +279,7 @@ public class Window {
      * @return the window's height
      */
     public int getHeight() {
-        return height;
+        return this.height;
     }
 
     /**
@@ -229,7 +288,7 @@ public class Window {
      * @return true if window is vSync else false
      */
     public boolean isvSync() {
-        return vSync;
+        return this.vSync;
     }
 
     /**
@@ -238,16 +297,7 @@ public class Window {
      * @return true if window has been resized else false
      */
     public boolean isResized() {
-        return resized;
-    }
-
-    /**
-     * Sets the window should close flag. Used for closing up the program
-     *
-     * @param shouldClose true if wants the window to close else false
-     */
-    public void setWindowShouldClose(boolean shouldClose) {
-        glfwSetWindowShouldClose(id, shouldClose);
+        return this.resized;
     }
 
     /**
@@ -260,17 +310,5 @@ public class Window {
         resized = false;
         Window.current = this;
         GlUtils.setViewport(0, 0, getWidth(), getHeight());
-    }
-
-    public void swapBuffers() {
-        GLFW.glfwSwapBuffers(id);
-    }
-
-    public void pollEvents() {
-        GLFW.glfwPollEvents();
-    }
-
-    public void waitEvents() {
-        GLFW.glfwWaitEvents();
     }
 }
