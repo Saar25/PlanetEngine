@@ -9,12 +9,15 @@ import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.RenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class IndexedModelExample {
 
@@ -45,7 +48,7 @@ public class IndexedModelExample {
                 +1.0f, +0.0f, +0.5f,
         };
         final Model model = new ElementsModel(RenderMode.TRIANGLES,
-                new IndexModelData(0, 1, 2, 0, 2, 3),
+                new IndexModelData(0, 1, 2, 2, 3, 0),
                 new FloatModelData(positions, new ModelDataInfo(2, true)),
                 new FloatModelData(colours, new ModelDataInfo(3, true)));
 
@@ -57,10 +60,7 @@ public class IndexedModelExample {
 
         shadersProgram.bind();
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
-                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
-        fbo.addAttachment(attachment);
+        MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
@@ -71,7 +71,21 @@ public class IndexedModelExample {
 
             window.update(true);
             window.pollEvents();
+            if (window.isResized()) {
+                final IFbo temp = fbo;
+                fbo = createFbo(window.getWidth(), window.getHeight());
+                temp.delete();
+            }
+            GlUtils.clear(GlBuffer.COLOUR);
         }
+    }
+
+    private static MultisampledFbo createFbo(int width, int height) {
+        final MultisampledFbo fbo = new MultisampledFbo(width, height);
+        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
+                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
+        fbo.addAttachment(attachment);
+        return fbo;
     }
 
 }
