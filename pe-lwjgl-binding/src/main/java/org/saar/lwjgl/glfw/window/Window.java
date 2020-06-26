@@ -1,12 +1,13 @@
 package org.saar.lwjgl.glfw.window;
 
-import org.saar.lwjgl.glfw.input.Keyboard;
-import org.saar.lwjgl.glfw.input.Mouse;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.Mouse;
+import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.IntBuffer;
 
@@ -258,6 +259,7 @@ public class Window {
         }
         resized = false;
         Window.current = this;
+        GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 
     public void swapBuffers() {
