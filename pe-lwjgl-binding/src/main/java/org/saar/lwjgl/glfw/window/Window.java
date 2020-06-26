@@ -35,6 +35,26 @@ public class Window {
         Window.current = this;
     }
 
+    public static WindowBuilder builder() {
+        final WindowBuilder windowBuilder = new WindowBuilder();
+        windowBuilder.setVisible(false);
+        windowBuilder.setResizeable(true);
+        windowBuilder.setContextVersion(3, 2);
+        windowBuilder.setOpenGLProfile(GLFW.GLFW_OPENGL_CORE_PROFILE);
+        windowBuilder.setOpenGLForwardCompatibility(true);
+        return windowBuilder;
+    }
+
+    public static Window create(String title, int width, int height, boolean vSync, WindowHintGroup hints) {
+        GLFW.glfwDefaultWindowHints();
+        hints.getHints().forEach(Window::setHint);
+        return new Window(title, width, height, vSync);
+    }
+
+    public static Window create(String title, int width, int height, boolean vSync) {
+        return Window.create(title, width, height, vSync, new WindowHintGroup());
+    }
+
     /**
      * Returns the current focused window
      *
@@ -55,13 +75,10 @@ public class Window {
         }
 
         GLFW.glfwDefaultWindowHints();
-        setHint(WindowHint.VISIBLE, false);
-        setHint(WindowHint.RESIZABLE, true);
         setHint(WindowHint.CONTEXT_VERSION_MAJOR, 3);
         setHint(WindowHint.CONTEXT_VERSION_MINOR, 2);
         setHint(WindowHint.OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         setHint(WindowHint.OPENGL_FORWARD_COMPAT, true);
-        //setHint(WindowHint.MAXIMIZED, true);
 
         // Create the window
         id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
@@ -93,11 +110,11 @@ public class Window {
         this.keyboard = new Keyboard(this.id);
     }
 
-    private void setHint(WindowHint hint, int value) {
+    private static void setHint(WindowHint hint, int value) {
         GLFW.glfwWindowHint(hint.get(), value);
     }
 
-    private void setHint(WindowHint hint, boolean value) {
+    private static void setHint(WindowHint hint, boolean value) {
         GLFW.glfwWindowHint(hint.get(), value ? 1 : 0);
     }
 
@@ -140,6 +157,13 @@ public class Window {
      */
     private void hide() {
         GLFW.glfwHideWindow(this.id);
+    }
+
+    /**
+     * Sets the window visible
+     */
+    private void setTitle(String title) {
+        GLFW.glfwSetWindowTitle(this.id, title);
     }
 
     /**
