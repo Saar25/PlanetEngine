@@ -55,8 +55,7 @@ public class IndexedModelExample {
         final ShadersProgram<Object> shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttribute(0, "in_position");
-        shadersProgram.bindAttribute(1, "in_colour");
+        shadersProgram.bindAttributes("in_position", "in_colour");
 
         shadersProgram.bind();
 
