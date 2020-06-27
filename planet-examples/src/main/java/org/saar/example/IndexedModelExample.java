@@ -34,7 +34,7 @@ public class IndexedModelExample {
                 +0.5f, +0.5f,
                 +0.5f, -0.5f,
         };*/
-        final float x = .5f;
+        final float x = 1.0f;
         final float[] positions = {
                 -x, -x,
                 -x, +x,
@@ -47,8 +47,8 @@ public class IndexedModelExample {
                 +1.0f, +1.0f, +0.5f,
                 +1.0f, +0.0f, +0.5f,
         };
-        final Model model = new ElementsModel(RenderMode.TRIANGLES,
-                new IndexModelData(0, 1, 2, 2, 3, 0),
+        final Model model = new ElementsModel(RenderMode.TRIANGLE_FAN,
+                new IndexModelData(0, 1, 2, 3),
                 new FloatModelData(positions, new ModelDataInfo(2, true)),
                 new FloatModelData(colours, new ModelDataInfo(3, true)));
 
