@@ -15,6 +15,7 @@ public class ShadersProgram<T> {
     private final List<UniformProperty<T>> perRenderUniforms = new LinkedList<>();
     private final List<UniformProperty<T>> perInstanceUniforms = new LinkedList<>();
 
+    private int attributeCount = 0;
     private boolean deleted = false;
 
     private ShadersProgram(int id, Shader... shaders) throws Exception {
@@ -49,14 +50,24 @@ public class ShadersProgram<T> {
         GL20.glBindAttribLocation(id, location, name);
     }
 
+    public void bindAttribute(String name) {
+        GL20.glBindAttribLocation(id, attributeCount++, name);
+    }
+
+    public void bindAttributes(String... names) {
+        for (String name : names) {
+            bindAttribute(name);
+        }
+    }
+
     public void addPerRenderUniform(UniformProperty<T> uniform) {
-        this.bind();
+        this.bind0();
         uniform.initialize(this);
         perRenderUniforms.add(uniform);
     }
 
     public void addPerInstanceUniform(UniformProperty<T> uniform) {
-        this.bind();
+        this.bind0();
         uniform.initialize(this);
         perInstanceUniforms.add(uniform);
     }
@@ -80,8 +91,8 @@ public class ShadersProgram<T> {
 
     public void bind() {
         if (boundProgram != id) {
-            GL20.glUseProgram(id);
             boundProgram = id;
+            bind0();
         }
     }
 
