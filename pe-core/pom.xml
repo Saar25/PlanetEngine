@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>examples</artifactId>
+    <artifactId>pe-core</artifactId>
 
     <dependencies>
         <dependency>
@@ -17,22 +17,7 @@
             <artifactId>pe-lwjgl-binding</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.saar</groupId>
-            <artifactId>pe-util</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.saar</groupId>
-            <artifactId>pe-math</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.saar</groupId>
-            <artifactId>pe-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
+
 
 </project>
