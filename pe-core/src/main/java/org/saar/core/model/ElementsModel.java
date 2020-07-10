@@ -1,6 +1,7 @@
 package org.saar.core.model;
 
 import org.saar.core.model.data.IndexModelData;
+import org.saar.core.model.data.ModelData;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.Attribute;

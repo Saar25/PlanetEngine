@@ -1,6 +1,5 @@
 package org.saar.core.model.data;
 
-import org.saar.core.model.ModelData;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
