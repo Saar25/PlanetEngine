@@ -13,6 +13,12 @@ public class ElementsModel implements Model {
     private final int indices;
     private final RenderMode renderMode;
 
+    public ElementsModel(Vao vao, int indices, RenderMode renderMode) {
+        this.vao = vao;
+        this.indices = indices;
+        this.renderMode = renderMode;
+    }
+
     public ElementsModel(RenderMode renderMode, IndexModelData indexData, ModelData... modelDataInfo) {
         this.vao = Vao.create();
         this.renderMode = renderMode;

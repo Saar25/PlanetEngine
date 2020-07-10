@@ -11,6 +11,12 @@ public class ArraysModel implements Model {
     private final int vertices;
     private final RenderMode renderMode;
 
+    public ArraysModel(Vao vao, int vertices, RenderMode renderMode) {
+        this.vao = vao;
+        this.vertices = vertices;
+        this.renderMode = renderMode;
+    }
+
     public ArraysModel(RenderMode renderMode, int vertices, ModelData... modelDataInfo) {
         this.vao = Vao.create();
         this.vertices = vertices;
