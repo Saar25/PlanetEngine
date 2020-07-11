@@ -1,8 +1,6 @@
 package org.saar.core.model;
 
-import org.saar.core.model.data.ModelData;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.Vao;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 
@@ -16,22 +14,6 @@ public class ArraysModel implements Model {
         this.vao = vao;
         this.vertices = vertices;
         this.renderMode = renderMode;
-    }
-
-    public ArraysModel(RenderMode renderMode, int vertices, ModelData... modelDataInfo) {
-        this.vao = Vao.create();
-        this.vertices = vertices;
-        this.renderMode = renderMode;
-        this.load(modelDataInfo);
-    }
-
-    private void load(ModelData... modelDataInfo) {
-        int indexOffset = 0;
-        for (ModelData modelData : modelDataInfo) {
-            final Attribute[] attributes = modelData.attributes(indexOffset);
-            this.vao.loadDataBuffer(modelData.vbo(), attributes);
-            indexOffset += attributes.length;
-        }
     }
 
     @Override
