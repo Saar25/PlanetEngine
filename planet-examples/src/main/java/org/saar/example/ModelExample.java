@@ -1,11 +1,14 @@
 package org.saar.example;
 
-import org.saar.core.model.ArraysModel;
 import org.saar.core.model.Model;
-import org.saar.core.model.data.FloatModelData;
-import org.saar.core.model.data.ModelDataInfo;
+import org.saar.core.model.Models;
+import org.saar.core.model.vertex.SimpleVertex;
+import org.saar.core.model.vertex.VertexBufferAttribute;
+import org.saar.core.model.vertex.VerticesBuffer;
+import org.saar.core.model.vertex.VerticesBufferSingleVbo;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
@@ -24,13 +27,15 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        /*final float[] data = {
+        /*
+        final float[] data = {
                 -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
                 +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
                 +0.5f, -0.5f, +1.0f, +0.0f, +0.5f
         };
         final Model model = new ArraysModel(RenderMode.TRIANGLES, 3,
-                new FloatModelData(data, new ModelDataInfo(2, true), new ModelDataInfo(3, true)));*/
+                new FloatModelData(data, new ModelDataInfo(2, true), new ModelDataInfo(3, true)));
+
         final float[] positions = {
                 -0.5f, -0.5f,
                 +0.0f, +0.5f,
@@ -44,6 +49,15 @@ public class ModelExample {
         final Model model = new ArraysModel(RenderMode.TRIANGLES, 3,
                 new FloatModelData(positions, new ModelDataInfo(2, true)),
                 new FloatModelData(colours, new ModelDataInfo(3, true)));
+         */
+
+        final VerticesBuffer verticesBuffer = new VerticesBufferSingleVbo(
+                new VertexBufferAttribute(2, true, DataType.FLOAT),
+                new VertexBufferAttribute(3, true, DataType.FLOAT));
+        final Model model = Models.arraysModel(RenderMode.TRIANGLES, verticesBuffer,
+                new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
+                new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
+                new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
 
         final ShadersProgram<Object> shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
