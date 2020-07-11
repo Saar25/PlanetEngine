@@ -10,7 +10,7 @@ import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Transform implements Transformable {
+public final class Transform {
 
     private final Matrix4f transformation = Matrix4.create();
 
@@ -35,7 +35,6 @@ public final class Transform implements Transformable {
         localTransform.getScale().set(transform.localTransform.getScale());
     }
 
-    @Override
     public Transform getTransform() {
         return this;
     }
