@@ -1,5 +1,6 @@
 package org.saar.core.model;
 
+import org.saar.core.model.vertex.ModelIndices;
 import org.saar.core.model.vertex.ModelVertices;
 import org.saar.core.model.vertex.Vertex;
 import org.saar.lwjgl.opengl.constants.RenderMode;
@@ -19,9 +20,9 @@ public final class Models {
     }
 
     public static Model elementsModel(RenderMode renderMode, ModelVertices buffer,
-                                      int[] indices, Vertex... vertices) {
-        Arrays.stream(indices).forEach(buffer::writeIndex);
+                                      ModelIndices indices, Vertex... vertices) {
+        Arrays.stream(indices.get()).forEach(buffer::writeIndex);
         Arrays.stream(vertices).forEach(vertex -> vertex.write(buffer));
-        return new ElementsModel(buffer.vao(), indices.length, renderMode);
+        return new ElementsModel(buffer.vao(), indices.get().length, renderMode);
     }
 }
