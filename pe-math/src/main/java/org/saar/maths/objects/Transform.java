@@ -48,6 +48,14 @@ public final class Transform {
         getRotation().set(rotation);
     }
 
+    public Scale getScale() {
+        return this.scale;
+    }
+
+    public void setScale(Scale scale) {
+        getScale().set(scale);
+    }
+
     public void setRotation(Angle x, Angle y, Angle z) {
         final Quaternionf q = Quaternion.create().rotateXYZ(
                 x.getRadians(), y.getRadians(), z.getRadians());
@@ -90,10 +98,6 @@ public final class Transform {
 
     public Vector3f getDirection() {
         return Vector3.forward().rotate(getRotation().getValue());
-    }
-
-    public Scale getScale() {
-        return this.scale;
     }
 
     @Override

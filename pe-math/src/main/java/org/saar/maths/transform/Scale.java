@@ -32,6 +32,10 @@ public class Scale {
         return this.value;
     }
 
+    public void set(Scale scale) {
+        this.value.set(scale.getValue());
+    }
+
     @Override
     public String toString() {
         return "Scale{" + getValue() + '}';
