@@ -12,13 +12,12 @@ import java.util.List;
 
 public class VerticesBufferSingleVbo implements VerticesBuffer {
 
-    private final int[] indices;
     private final List<Integer> data = new ArrayList<>();
+    private final List<Integer> indices = new ArrayList<>();
     private final List<VertexBufferAttribute> vertexAttributes = new ArrayList<>();
 
-    public VerticesBufferSingleVbo(int[] indices, VertexBufferAttribute... vertexAttributes) {
+    public VerticesBufferSingleVbo(VertexBufferAttribute... vertexAttributes) {
         Collections.addAll(this.vertexAttributes, vertexAttributes);
-        this.indices = indices;
     }
 
     @Override
@@ -32,6 +31,11 @@ public class VerticesBufferSingleVbo implements VerticesBuffer {
     }
 
     @Override
+    public void writeIndex(int index) {
+        this.indices.add(index);
+    }
+
+    @Override
     public Vao vao() {
         final Vao vao = Vao.create();
         vao.loadIndexBuffer(indexBuffer());
@@ -41,8 +45,8 @@ public class VerticesBufferSingleVbo implements VerticesBuffer {
 
     private IndexBuffer indexBuffer() {
         final IndexBuffer indexBuffer = new IndexBuffer(VboUsage.STATIC_DRAW);
-        indexBuffer.allocateInt(this.indices.length);
-        indexBuffer.storeData(0, this.indices);
+        indexBuffer.allocateInt(this.indices.size());
+        indexBuffer.storeData(0, indexArray());
         return indexBuffer;
     }
 
@@ -64,9 +68,17 @@ public class VerticesBufferSingleVbo implements VerticesBuffer {
     }
 
     private int[] dataArray() {
-        final int[] array = new int[this.data.size()];
-        for (int i = 0; i < this.data.size(); i++) {
-            array[i] = this.data.get(i);
+        return toArray(this.data);
+    }
+
+    private int[] indexArray() {
+        return toArray(this.indices);
+    }
+
+    private int[] toArray(List<Integer> intList) {
+        final int[] array = new int[intList.size()];
+        for (int i = 0; i < intList.size(); i++) {
+            array[i] = intList.get(i);
         }
         return array;
     }

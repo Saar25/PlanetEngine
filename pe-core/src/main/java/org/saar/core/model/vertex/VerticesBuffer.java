@@ -8,6 +8,8 @@ public interface VerticesBuffer {
 
     void write(float value);
 
+    void writeIndex(int index);
+
     Vao vao();
 
 }
