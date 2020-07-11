@@ -41,31 +41,6 @@ public class IndexedModelExample {
                 new SimpleVertex(+x, +x, +1.0f, +1.0f, +0.5f),
                 new SimpleVertex(+x, -x, +1.0f, +0.0f, +0.5f));
 
-        /*final float[] positions = {
-                -0.5f, -0.5f,
-                -0.5f, +0.5f,
-                +0.5f, +0.5f,
-                +0.5f, -0.5f,
-        };
-        final float x = 1.0f;
-        final float[] positions = {
-                -x, -x,
-                -x, +x,
-                +x, +x,
-                +x, -x,
-        };
-        final float[] colours = {
-                +0.0f, +0.0f, +0.5f,
-                +0.0f, +1.0f, +0.5f,
-                +1.0f, +1.0f, +0.5f,
-                +1.0f, +0.0f, +0.5f,
-        };
-        final Model model = new ElementsModel(RenderMode.TRIANGLE_STRIP,
-                new IndexModelData(0, 1, 3, 2),
-                new FloatModelData(positions, new ModelDataInfo(2, true)),
-                new FloatModelData(colours, new ModelDataInfo(3, true)));
-         */
-
         final ShadersProgram<Object> shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
