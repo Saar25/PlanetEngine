@@ -27,30 +27,6 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        /*
-        final float[] data = {
-                -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
-                +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
-                +0.5f, -0.5f, +1.0f, +0.0f, +0.5f
-        };
-        final Model model = new ArraysModel(RenderMode.TRIANGLES, 3,
-                new FloatModelData(data, new ModelDataInfo(2, true), new ModelDataInfo(3, true)));
-
-        final float[] positions = {
-                -0.5f, -0.5f,
-                +0.0f, +0.5f,
-                +0.5f, -0.5f,
-        };
-        final float[] colours = {
-                +0.0f, +0.0f, +0.5f,
-                +0.5f, +1.0f, +0.5f,
-                +1.0f, +0.0f, +0.5f,
-        };
-        final Model model = new ArraysModel(RenderMode.TRIANGLES, 3,
-                new FloatModelData(positions, new ModelDataInfo(2, true)),
-                new FloatModelData(colours, new ModelDataInfo(3, true)));
-         */
-
         final VerticesBuffer verticesBuffer = new VerticesBufferSingleVbo(
                 new VertexBufferAttribute(2, true, DataType.FLOAT),
                 new VertexBufferAttribute(3, true, DataType.FLOAT));
