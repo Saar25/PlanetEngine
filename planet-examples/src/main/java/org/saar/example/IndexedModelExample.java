@@ -27,11 +27,11 @@ public class IndexedModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
+        final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
         final ModelVertices modelVertices = new ModelVerticesSingleVbo(
                 new VertexBufferAttribute(2, true, DataType.FLOAT),
                 new VertexBufferAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelVertices,
-                new ModelIndices(0, 1, 3, 2),
+        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelVertices, indices,
                 new SimpleVertex(-1.0f, -1.0f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
