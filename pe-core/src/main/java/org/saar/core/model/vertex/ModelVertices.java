@@ -2,7 +2,7 @@ package org.saar.core.model.vertex;
 
 import org.saar.lwjgl.opengl.objects.Vao;
 
-public interface VerticesBuffer {
+public interface ModelVertices {
 
     void write(int value);
 

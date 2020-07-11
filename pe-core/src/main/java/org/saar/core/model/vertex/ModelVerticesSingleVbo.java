@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class VerticesBufferSingleVbo implements VerticesBuffer {
+public class ModelVerticesSingleVbo implements ModelVertices {
 
     private final List<Integer> data = new ArrayList<>();
     private final List<Integer> indices = new ArrayList<>();
     private final List<VertexBufferAttribute> vertexAttributes = new ArrayList<>();
 
-    public VerticesBufferSingleVbo(VertexBufferAttribute... vertexAttributes) {
+    public ModelVerticesSingleVbo(VertexBufferAttribute... vertexAttributes) {
         Collections.addAll(this.vertexAttributes, vertexAttributes);
     }
 

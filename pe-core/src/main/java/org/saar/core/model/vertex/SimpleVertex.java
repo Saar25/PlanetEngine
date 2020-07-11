@@ -21,12 +21,12 @@ public class SimpleVertex implements Vertex {
     }
 
     @Override
-    public void write(VerticesBuffer verticesBuffer) {
+    public void write(ModelVertices modelVertices) {
         for (float value : this.floatData) {
-            verticesBuffer.write(value);
+            modelVertices.write(value);
         }
         for (int value : this.intData) {
-            verticesBuffer.write(value);
+            modelVertices.write(value);
         }
     }
 }

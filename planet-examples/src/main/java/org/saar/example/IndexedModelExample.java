@@ -2,10 +2,10 @@ package org.saar.example;
 
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
+import org.saar.core.model.vertex.ModelVertices;
+import org.saar.core.model.vertex.ModelVerticesSingleVbo;
 import org.saar.core.model.vertex.SimpleVertex;
 import org.saar.core.model.vertex.VertexBufferAttribute;
-import org.saar.core.model.vertex.VerticesBuffer;
-import org.saar.core.model.vertex.VerticesBufferSingleVbo;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -32,10 +32,10 @@ public class IndexedModelExample {
 
         final float x = 1.0f;
         final int[] indices = {0, 1, 3, 2};
-        final VerticesBuffer verticesBuffer = new VerticesBufferSingleVbo(
+        final ModelVertices modelVertices = new ModelVerticesSingleVbo(
                 new VertexBufferAttribute(2, true, DataType.FLOAT),
                 new VertexBufferAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, verticesBuffer, indices,
+        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelVertices, indices,
                 new SimpleVertex(-x, -x, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(-x, +x, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+x, +x, +1.0f, +1.0f, +0.5f),

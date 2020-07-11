@@ -2,10 +2,10 @@ package org.saar.example;
 
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
+import org.saar.core.model.vertex.ModelVertices;
+import org.saar.core.model.vertex.ModelVerticesSingleVbo;
 import org.saar.core.model.vertex.SimpleVertex;
 import org.saar.core.model.vertex.VertexBufferAttribute;
-import org.saar.core.model.vertex.VerticesBuffer;
-import org.saar.core.model.vertex.VerticesBufferSingleVbo;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -27,10 +27,10 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final VerticesBuffer verticesBuffer = new VerticesBufferSingleVbo(
+        final ModelVertices modelVertices = new ModelVerticesSingleVbo(
                 new VertexBufferAttribute(2, true, DataType.FLOAT),
                 new VertexBufferAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.arraysModel(RenderMode.TRIANGLES, verticesBuffer,
+        final Model model = Models.arraysModel(RenderMode.TRIANGLES, modelVertices,
                 new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
                 new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
