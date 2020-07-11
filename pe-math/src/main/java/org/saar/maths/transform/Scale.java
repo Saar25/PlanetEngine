@@ -1,27 +1,39 @@
 package org.saar.maths.transform;
 
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+import org.saar.maths.utils.Vector3;
+
 public class Scale {
 
-    private float value;
+    private final Vector3f value;
 
-    private Scale(float value) {
+    private Scale(Vector3f value) {
         this.value = value;
     }
 
-    public static Scale of(float value) {
-        return new Scale(value);
+    public static Scale of(float x, float y, float z) {
+        return new Scale(Vector3.of(x, y, z));
     }
 
     public static Scale create() {
-        return new Scale(1);
+        return new Scale(Vector3.of(1));
     }
 
-    public Scale scale(float scale) {
-        this.value *= scale;
-        return this;
+    public void scaleBy(float scale) {
+        this.value.mul(scale);
     }
 
-    public float getValue() {
-        return value;
+    public void scaleBy(Vector3f scale) {
+        this.value.mul(scale);
+    }
+
+    public Vector3fc getValue() {
+        return this.value;
+    }
+
+    @Override
+    public String toString() {
+        return "Scale{" + getValue() + '}';
     }
 }
