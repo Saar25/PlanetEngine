@@ -2,13 +2,13 @@ package org.saar.core.model.vertex;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 
-public class VertexBufferAttribute {
+public class ModelVerticesAttribute {
 
     private final int componentCount;
     private final boolean normalized;
     private final DataType dataType;
 
-    public VertexBufferAttribute(int componentCount, boolean normalized, DataType dataType) {
+    public ModelVerticesAttribute(int componentCount, boolean normalized, DataType dataType) {
         this.componentCount = componentCount;
         this.normalized = normalized;
         this.dataType = dataType;

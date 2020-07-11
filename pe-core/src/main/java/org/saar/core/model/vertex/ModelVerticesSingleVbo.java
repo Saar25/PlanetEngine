@@ -14,9 +14,9 @@ public class ModelVerticesSingleVbo implements ModelVertices {
 
     private final List<Integer> data = new ArrayList<>();
     private final List<Integer> indices = new ArrayList<>();
-    private final List<VertexBufferAttribute> vertexAttributes = new ArrayList<>();
+    private final List<ModelVerticesAttribute> vertexAttributes = new ArrayList<>();
 
-    public ModelVerticesSingleVbo(VertexBufferAttribute... vertexAttributes) {
+    public ModelVerticesSingleVbo(ModelVerticesAttribute... vertexAttributes) {
         Collections.addAll(this.vertexAttributes, vertexAttributes);
     }
 
@@ -60,7 +60,7 @@ public class ModelVerticesSingleVbo implements ModelVertices {
     private Attribute[] attributes() {
         final Attribute[] attributes = new Attribute[this.vertexAttributes.size()];
         for (int i = 0; i < this.vertexAttributes.size(); i++) {
-            final VertexBufferAttribute current = this.vertexAttributes.get(i);
+            final ModelVerticesAttribute current = this.vertexAttributes.get(i);
             attributes[i] = Attribute.of(i, current.getComponentCount(),
                     current.getDataType(), current.isNormalized());
         }
