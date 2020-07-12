@@ -35,7 +35,7 @@ public class ModelExample {
                 new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
                 new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
 
-        final ShadersProgram<Object> shadersProgram = ShadersProgram.create(
+        final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttributes("in_position", "in_colour");
