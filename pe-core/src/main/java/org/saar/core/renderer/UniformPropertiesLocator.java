@@ -1,7 +1,8 @@
-package org.saar.lwjgl.opengl.shaders;
+package org.saar.core.renderer;
 
-import org.saar.lwjgl.opengl.shaders.annotations.InstanceUniformProperty;
-import org.saar.lwjgl.opengl.shaders.annotations.StageUniformProperty;
+import org.saar.core.renderer.annotations.InstanceUniformProperty;
+import org.saar.core.renderer.annotations.StageUniformProperty;
+import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
 import java.lang.annotation.Annotation;
