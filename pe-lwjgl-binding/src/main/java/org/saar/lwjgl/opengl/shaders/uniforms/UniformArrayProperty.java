@@ -23,7 +23,7 @@ public class UniformArrayProperty<T> implements UniformProperty<T> {
     }
 
     @Override
-    public void initialize(ShadersProgram<T> shadersProgram) {
+    public void initialize(ShadersProgram shadersProgram) {
         for (UniformProperty<T> uniform : uniforms) {
             uniform.initialize(shadersProgram);
         }

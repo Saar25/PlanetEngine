@@ -7,7 +7,7 @@ public interface UniformProperty<T> {
 
     void load(RenderState<T> state);
 
-    void initialize(ShadersProgram<T> shadersProgram);
+    void initialize(ShadersProgram shadersProgram);
 
     default boolean valueAvailable() {
         return true;

@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public final class UniformPropertiesLocator {
 
-    private final ShadersProgram<?> shadersProgram;
+    private final ShadersProgram shadersProgram;
 
-    public UniformPropertiesLocator(ShadersProgram<?> shadersProgram) {
+    public UniformPropertiesLocator(ShadersProgram shadersProgram) {
         this.shadersProgram = shadersProgram;
     }
 
