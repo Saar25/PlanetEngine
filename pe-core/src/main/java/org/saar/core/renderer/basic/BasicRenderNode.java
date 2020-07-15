@@ -1,12 +1,7 @@
 package org.saar.core.renderer.basic;
 
-import org.saar.core.model.Model;
-import org.saar.core.node.RenderNode;
+import org.saar.core.node.Node;
 
-public class BasicRenderNode extends RenderNode {
+public class BasicRenderNode extends Node {
 
-    @Override
-    public Model getModel() {
-        return null;
-    }
 }
