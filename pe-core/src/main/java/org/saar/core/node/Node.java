@@ -1,14 +1,9 @@
 package org.saar.core.node;
 
-public class Node {
+public interface Node {
 
-    protected Node parent;
+    Node getParent();
 
-    public Node getParent() {
-        return parent;
-    }
+    void setParent(Node parent);
 
-    protected void setParent(Node parent) {
-        this.parent = parent;
-    }
 }
