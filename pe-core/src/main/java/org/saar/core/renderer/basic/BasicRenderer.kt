@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformVec2Property
 import org.saar.maths.utils.Vector2
 
-class BasicRendererContext(shadersProgram: ShadersProgram) : AbstractRenderer(shadersProgram) {
+class BasicRenderer(shadersProgram: ShadersProgram) : AbstractRenderer(shadersProgram) {
 
     @InstanceUniformProperty
     private val windowSize: UniformProperty<Any> = object : UniformVec2Property<Any>("windowSize") {
