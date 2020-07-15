@@ -2,7 +2,6 @@ package org.saar.core.renderer;
 
 import org.saar.core.renderer.annotations.InstanceUniformProperty;
 import org.saar.core.renderer.annotations.StageUniformProperty;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
 import java.lang.annotation.Annotation;
@@ -14,31 +13,27 @@ import java.util.stream.Collectors;
 
 public final class UniformPropertiesLocator {
 
-    private final ShadersProgram shadersProgram;
+    private final Object object;
 
-    public UniformPropertiesLocator(ShadersProgram shadersProgram) {
-        this.shadersProgram = shadersProgram;
+    public UniformPropertiesLocator(Object object) {
+        this.object = object;
     }
 
     public List<UniformProperty<?>> getInstanceUniformProperties() {
-        final List<Field> annotatedFields = getAnnotatedFields(
-                getAllFields(), InstanceUniformProperty.class);
-        return mapToUniformProperties(annotatedFields);
+        return getUniformProperties(InstanceUniformProperty.class);
     }
 
     public List<UniformProperty<?>> getStageUniformProperties() {
-        final List<Field> annotatedFields = getAnnotatedFields(
-                getAllFields(), StageUniformProperty.class);
-        return mapToUniformProperties(annotatedFields);
+        return getUniformProperties(StageUniformProperty.class);
     }
 
-    public List<UniformProperty<?>> getUniformProperties() {
-        return mapToUniformProperties(getAllFields());
+    private List<UniformProperty<?>> getUniformProperties(Class<? extends Annotation> annotation) {
+        return mapToUniformProperties(getAnnotatedFields(getAllFields(), annotation));
     }
 
     private List<Field> getAllFields() {
         final ArrayList<Field> fields = new ArrayList<>();
-        final Class<?> iClass = this.shadersProgram.getClass();
+        final Class<?> iClass = this.object.getClass();
         Collections.addAll(fields, iClass.getDeclaredFields());
         return fields;
     }
@@ -53,7 +48,7 @@ public final class UniformPropertiesLocator {
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                final Object uniform = field.get(this.shadersProgram);
+                final Object uniform = field.get(this.object);
                 uniforms.add((UniformProperty<?>) uniform);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
