@@ -3,16 +3,16 @@ package org.saar.core.node;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GroupNode extends AbstractNode implements Node {
+public class GroupNode<T extends Node> extends AbstractNode implements Node {
 
-    private final Set<Node> children = new HashSet<>();
+    private final Set<T> children = new HashSet<>();
 
-    public void addChild(Node child) {
+    public void addChild(T child) {
         getChildren().add(child);
         child.setParent(this);
     }
 
-    public Set<Node> getChildren() {
+    public Set<T> getChildren() {
         return this.children;
     }
 }
