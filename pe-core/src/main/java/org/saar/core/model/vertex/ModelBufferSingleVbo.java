@@ -1,7 +1,6 @@
 package org.saar.core.model.vertex;
 
 import org.saar.lwjgl.opengl.constants.VboUsage;
-import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
 import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
@@ -10,14 +9,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ModelVerticesSingleVbo implements ModelVertices {
+public class ModelBufferSingleVbo implements ModelBuffer {
 
     private final List<Integer> data = new ArrayList<>();
     private final List<Integer> indices = new ArrayList<>();
-    private final List<ModelVerticesAttribute> vertexAttributes = new ArrayList<>();
+    private final List<ModelAttribute> vertexModelAttributes = new ArrayList<>();
 
-    public ModelVerticesSingleVbo(ModelVerticesAttribute... vertexAttributes) {
-        Collections.addAll(this.vertexAttributes, vertexAttributes);
+    public ModelBufferSingleVbo(ModelAttribute... vertexModelAttributes) {
+        Collections.addAll(this.vertexModelAttributes, vertexModelAttributes);
     }
 
     @Override
@@ -57,11 +56,11 @@ public class ModelVerticesSingleVbo implements ModelVertices {
         return dataBuffer;
     }
 
-    private Attribute[] attributes() {
-        final Attribute[] attributes = new Attribute[this.vertexAttributes.size()];
-        for (int i = 0; i < this.vertexAttributes.size(); i++) {
-            final ModelVerticesAttribute current = this.vertexAttributes.get(i);
-            attributes[i] = Attribute.of(i, current.getComponentCount(),
+    private org.saar.lwjgl.opengl.objects.Attribute[] attributes() {
+        final org.saar.lwjgl.opengl.objects.Attribute[] attributes = new org.saar.lwjgl.opengl.objects.Attribute[this.vertexModelAttributes.size()];
+        for (int i = 0; i < this.vertexModelAttributes.size(); i++) {
+            final ModelAttribute current = this.vertexModelAttributes.get(i);
+            attributes[i] = org.saar.lwjgl.opengl.objects.Attribute.of(i, current.getComponentCount(),
                     current.getDataType(), current.isNormalized());
         }
         return attributes;

@@ -28,14 +28,15 @@ public class IndexedModelExample {
         window.init();
 
         final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
-        final ModelVertices modelVertices = new ModelVerticesSingleVbo(
-                new ModelVerticesAttribute(2, true, DataType.FLOAT),
-                new ModelVerticesAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelVertices, indices,
+        final ModelVertices vertices = new ModelVertices(
                 new SimpleVertex(-1.0f, -1.0f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, -1.0f, +1.0f, +0.0f, +0.5f));
+        final ModelBuffer modelBuffer = new ModelBufferSingleVbo(
+                new ModelAttribute(2, true, DataType.FLOAT),
+                new ModelAttribute(3, true, DataType.FLOAT));
+        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelBuffer, indices, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

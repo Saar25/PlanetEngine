@@ -1,15 +1,23 @@
 package org.saar.core.model.vertex;
 
-import org.saar.lwjgl.opengl.objects.Vao;
+import java.util.Arrays;
+import java.util.List;
 
-public interface ModelVertices {
+public class ModelVertices {
 
-    void write(int value);
+    private final List<ModelVertex> vertices;
 
-    void write(float value);
+    public ModelVertices(ModelVertex... vertices) {
+        this.vertices = Arrays.asList(vertices);
+    }
 
-    void writeIndex(int index);
+    public void write(ModelBuffer buffer) {
+        for (ModelVertex vertex : this.vertices) {
+            vertex.write(buffer);
+        }
+    }
 
-    Vao vao();
-
+    public int count() {
+        return this.vertices.size();
+    }
 }

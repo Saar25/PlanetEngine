@@ -1,6 +1,6 @@
 package org.saar.core.model.vertex;
 
-public class SimpleVertex implements Vertex {
+public class SimpleVertex implements ModelVertex {
 
     private final float[] floatData;
     private final int[] intData;
@@ -21,12 +21,12 @@ public class SimpleVertex implements Vertex {
     }
 
     @Override
-    public void write(ModelVertices modelVertices) {
+    public void write(ModelBuffer modelBuffer) {
         for (float value : this.floatData) {
-            modelVertices.write(value);
+            modelBuffer.write(value);
         }
         for (int value : this.intData) {
-            modelVertices.write(value);
+            modelBuffer.write(value);
         }
     }
 }

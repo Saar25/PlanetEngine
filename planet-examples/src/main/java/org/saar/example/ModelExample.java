@@ -2,10 +2,7 @@ package org.saar.example;
 
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
-import org.saar.core.model.vertex.ModelVertices;
-import org.saar.core.model.vertex.ModelVerticesAttribute;
-import org.saar.core.model.vertex.ModelVerticesSingleVbo;
-import org.saar.core.model.vertex.SimpleVertex;
+import org.saar.core.model.vertex.*;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -27,13 +24,14 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final ModelVertices modelVertices = new ModelVerticesSingleVbo(
-                new ModelVerticesAttribute(2, true, DataType.FLOAT),
-                new ModelVerticesAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.arraysModel(RenderMode.TRIANGLES, modelVertices,
+        final ModelVertices vertices = new ModelVertices(
                 new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
                 new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
+        final ModelBuffer buffer = new ModelBufferSingleVbo(
+                new ModelAttribute(2, true, DataType.FLOAT),
+                new ModelAttribute(3, true, DataType.FLOAT));
+        final Model model = Models.arraysModel(RenderMode.TRIANGLES, buffer, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
