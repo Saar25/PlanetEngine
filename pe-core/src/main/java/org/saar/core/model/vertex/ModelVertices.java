@@ -3,16 +3,17 @@ package org.saar.core.model.vertex;
 import java.util.Arrays;
 import java.util.List;
 
-public class ModelVertices {
+public class ModelVertices<T extends ModelVertex> {
 
-    private final List<ModelVertex> vertices;
+    private final List<T> vertices;
 
-    public ModelVertices(ModelVertex... vertices) {
+    @SafeVarargs
+    public ModelVertices(T... vertices) {
         this.vertices = Arrays.asList(vertices);
     }
 
     public void write(ModelBuffer buffer) {
-        for (ModelVertex vertex : this.vertices) {
+        for (T vertex : this.vertices) {
             vertex.write(buffer);
         }
     }

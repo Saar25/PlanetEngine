@@ -12,13 +12,13 @@ public final class Models {
                 + getClass().getSimpleName());
     }
 
-    public static Model arraysModel(RenderMode renderMode, ModelBuffer buffer, ModelVertices vertices) {
+    public static Model arraysModel(RenderMode renderMode, ModelBuffer buffer, ModelVertices<?> vertices) {
         vertices.write(buffer);
         return new ArraysModel(buffer.vao(), vertices.count(), renderMode);
     }
 
     public static Model elementsModel(RenderMode renderMode, ModelBuffer buffer,
-                                      ModelIndices indices, ModelVertices vertices) {
+                                      ModelIndices indices, ModelVertices<?> vertices) {
         indices.write(buffer);
         vertices.write(buffer);
         return new ElementsModel(buffer.vao(), indices.count(), renderMode);

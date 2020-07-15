@@ -2,8 +2,10 @@ package org.saar.core.renderer.basic;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
+import org.saar.core.model.vertex.ModelBuffer;
+import org.saar.core.model.vertex.ModelVertex;
 
-public class BasicVertex implements IBasicVertex {
+public class BasicVertex implements ModelVertex {
 
     private final Vector2fc position;
     private final Vector3fc colour;
@@ -14,12 +16,11 @@ public class BasicVertex implements IBasicVertex {
     }
 
     @Override
-    public Vector2fc getPosition2f() {
-        return this.position;
-    }
-
-    @Override
-    public Vector3fc getColour3f() {
-        return this.colour;
+    public void write(ModelBuffer buffer) {
+        buffer.write(this.position.x());
+        buffer.write(this.position.y());
+        buffer.write(this.colour.x());
+        buffer.write(this.colour.y());
+        buffer.write(this.colour.z());
     }
 }
