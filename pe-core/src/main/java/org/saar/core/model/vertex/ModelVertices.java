@@ -18,6 +18,10 @@ public class ModelVertices<T extends ModelVertex> {
         }
     }
 
+    public List<T> getVertices() {
+        return vertices;
+    }
+
     public int count() {
         return this.vertices.size();
     }

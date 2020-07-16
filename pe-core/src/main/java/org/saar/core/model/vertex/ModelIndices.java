@@ -1,11 +1,16 @@
 package org.saar.core.model.vertex;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ModelIndices {
 
-    private final int[] indices;
+    private final List<Integer> indices = new ArrayList<>();
 
     public ModelIndices(int... indices) {
-        this.indices = indices;
+        for (int index : indices) {
+            this.indices.add(index);
+        }
     }
 
     public void write(ModelBuffer buffer) {
@@ -14,7 +19,11 @@ public class ModelIndices {
         }
     }
 
+    public List<Integer> getIndices() {
+        return this.indices;
+    }
+
     public int count() {
-        return this.indices.length;
+        return this.indices.size();
     }
 }
