@@ -18,6 +18,8 @@ import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.maths.utils.Vector2;
+import org.saar.maths.utils.Vector3;
 
 public class RendererExample {
 
@@ -31,14 +33,11 @@ public class RendererExample {
         final BasicRenderer renderer = new BasicRenderer(null);
 
         final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
-        final ModelVertices<SimpleVertex> vertices = new ModelVertices<>(
-                new SimpleVertex(-1.0f, -1.0f, +0.0f, +0.0f, +0.5f),
-                new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
-                new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
-                new SimpleVertex(+1.0f, -1.0f, +1.0f, +0.0f, +0.5f));
-        final ModelBuffer modelBuffer = new ModelBufferSingleVbo(
-                new ModelAttribute(2, true, DataType.FLOAT),
-                new ModelAttribute(3, true, DataType.FLOAT));
+        final ModelVertices<MyVertex> vertices = new ModelVertices<>(
+                new MyVertex(Vector2.of(-1.0f, -1.0f), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                new MyVertex(Vector2.of(-1.0f, +1.0f), Vector3.of(+0.0f, +1.0f, +0.5f)),
+                new MyVertex(Vector2.of(+1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +0.5f)),
+                new MyVertex(Vector2.of(+1.0f, -1.0f), Vector3.of(+1.0f, +0.0f, +0.5f)));
         final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelBuffer, indices, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
