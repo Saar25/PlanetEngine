@@ -1,4 +1,4 @@
-package org.saar.example;
+package org.saar.example.renderer;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
