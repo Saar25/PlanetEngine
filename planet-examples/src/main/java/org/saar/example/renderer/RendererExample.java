@@ -1,4 +1,4 @@
-package org.saar.example;
+package org.saar.example.renderer;
 
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
@@ -8,14 +8,17 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.RenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
-public class ModelExample {
+public class RendererExample {
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
@@ -24,14 +27,16 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
+        final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
         final ModelVertices<SimpleVertex> vertices = new ModelVertices<>(
-                new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
-                new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
-                new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
-        final ModelBuffer buffer = new ModelBufferSingleVbo(
+                new SimpleVertex(-1.0f, -1.0f, +0.0f, +0.0f, +0.5f),
+                new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
+                new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
+                new SimpleVertex(+1.0f, -1.0f, +1.0f, +0.0f, +0.5f));
+        final ModelBuffer modelBuffer = new ModelBufferSingleVbo(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.arraysModel(RenderMode.TRIANGLES, buffer, vertices);
+        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelBuffer, indices, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -40,10 +45,7 @@ public class ModelExample {
 
         shadersProgram.bind();
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
-                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
-        fbo.addAttachment(attachment);
+        MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
@@ -54,7 +56,21 @@ public class ModelExample {
 
             window.update(true);
             window.pollEvents();
+            if (window.isResized()) {
+                final IFbo temp = fbo;
+                fbo = createFbo(window.getWidth(), window.getHeight());
+                temp.delete();
+            }
+            GlUtils.clear(GlBuffer.COLOUR);
         }
+    }
+
+    private static MultisampledFbo createFbo(int width, int height) {
+        final MultisampledFbo fbo = new MultisampledFbo(width, height);
+        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
+                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
+        fbo.addAttachment(attachment);
+        return fbo;
     }
 
 }

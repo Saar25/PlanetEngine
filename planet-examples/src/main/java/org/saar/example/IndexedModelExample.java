@@ -28,7 +28,7 @@ public class IndexedModelExample {
         window.init();
 
         final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
-        final ModelVertices vertices = new ModelVertices(
+        final ModelVertices<SimpleVertex> vertices = new ModelVertices<>(
                 new SimpleVertex(-1.0f, -1.0f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
