@@ -1,4 +1,4 @@
-package org.saar.example.renderer;
+package org.saar.example;
 
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
