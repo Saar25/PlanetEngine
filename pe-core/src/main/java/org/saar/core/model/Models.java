@@ -1,7 +1,8 @@
 package org.saar.core.model;
 
-import org.saar.core.model.vertex.ModelBuffer;
+import org.saar.core.model.vertex.ModelBufferWriter;
 import org.saar.core.model.vertex.ModelIndices;
+import org.saar.core.model.vertex.ModelVertex;
 import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 
@@ -12,15 +13,17 @@ public final class Models {
                 + getClass().getSimpleName());
     }
 
-    public static Model arraysModel(RenderMode renderMode, ModelBuffer buffer, ModelVertices<?> vertices) {
-        vertices.write(buffer);
-        return new ArraysModel(buffer.vao(), vertices.count(), renderMode);
+    public static <T extends ModelVertex> Model arraysModel(
+            RenderMode renderMode, ModelBufferWriter<T> writer, ModelVertices<T> vertices) {
+        writer.write(vertices);
+        return new ArraysModel(writer.toBuffer().vao(), vertices.count(), renderMode);
     }
 
-    public static Model elementsModel(RenderMode renderMode, ModelBuffer buffer,
-                                      ModelIndices indices, ModelVertices<?> vertices) {
-        indices.write(buffer);
-        vertices.write(buffer);
-        return new ElementsModel(buffer.vao(), indices.count(), renderMode);
+    public static <T extends ModelVertex> Model elementsModel(
+            RenderMode renderMode, ModelBufferWriter<T> writer,
+            ModelIndices indices, ModelVertices<T> vertices) {
+        writer.write(vertices);
+        writer.write(indices);
+        return new ElementsModel(writer.toBuffer().vao(), indices.count(), renderMode);
     }
 }

@@ -31,7 +31,8 @@ public class ModelExample {
         final ModelBuffer buffer = new ModelBufferSingleVbo(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.arraysModel(RenderMode.TRIANGLES, buffer, vertices);
+        final Model model = Models.arraysModel(RenderMode.TRIANGLES,
+                new SimpleBufferWriter(buffer), vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

@@ -10,7 +10,7 @@ public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> im
             new ModelAttribute(3, true, DataType.FLOAT));
 
     @Override
-    protected void write(BasicVertex vertex) {
+    protected void writeVertex(BasicVertex vertex) {
         this.buffer.write(vertex.getPosition2f().x());
         this.buffer.write(vertex.getPosition2f().y());
         this.buffer.write(vertex.getColour3f().x());
@@ -19,7 +19,7 @@ public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> im
     }
 
     @Override
-    protected void write(int index) {
+    protected void writeIndex(int index) {
         this.buffer.writeIndex(index);
     }
 

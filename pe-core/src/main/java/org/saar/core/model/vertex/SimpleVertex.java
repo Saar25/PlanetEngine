@@ -20,6 +20,14 @@ public class SimpleVertex implements ModelVertex {
         this.intData = intData;
     }
 
+    public float[] getFloatData() {
+        return floatData;
+    }
+
+    public int[] getIntData() {
+        return intData;
+    }
+
     @Override
     public void write(ModelBuffer modelBuffer) {
         for (float value : this.floatData) {

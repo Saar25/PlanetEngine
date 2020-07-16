@@ -4,15 +4,15 @@ public abstract class AbstractModelBufferWriter<T extends ModelVertex> implement
 
     @Override
     public void write(ModelVertices<T> vertices) {
-        vertices.getVertices().forEach(this::write);
+        vertices.getVertices().forEach(this::writeVertex);
     }
 
     @Override
     public void write(ModelIndices indices) {
-        indices.getIndices().forEach(this::write);
+        indices.getIndices().forEach(this::writeIndex);
     }
 
-    protected abstract void write(T vertex);
+    protected abstract void writeVertex(T vertex);
 
-    protected abstract void write(int index);
+    protected abstract void writeIndex(int index);
 }
