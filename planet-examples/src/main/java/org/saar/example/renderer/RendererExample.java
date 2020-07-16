@@ -1,12 +1,9 @@
 package org.saar.example.renderer;
 
-import org.joml.Vector2fc;
-import org.joml.Vector3fc;
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
 import org.saar.core.model.vertex.*;
 import org.saar.core.renderer.basic.BasicRenderer;
-import org.saar.core.renderer.basic.BasicVertex;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -26,27 +23,6 @@ public class RendererExample {
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
-
-    private static class MyVertex implements BasicVertex {
-
-        private final Vector2fc position;
-        private final Vector3fc colour;
-
-        public MyVertex(Vector2fc position, Vector3fc colour) {
-            this.position = position;
-            this.colour = colour;
-        }
-
-        @Override
-        public Vector2fc getPosition2f() {
-            return this.position;
-        }
-
-        @Override
-        public Vector3fc getColour3f() {
-            return this.colour;
-        }
-    }
 
     public static void main(String[] args) throws Exception {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
