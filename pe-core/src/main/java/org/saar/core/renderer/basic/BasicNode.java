@@ -6,13 +6,13 @@ import org.saar.core.node.Node;
 
 public class BasicNode extends AbstractNode implements Node {
 
-    private final ModelVertices<BasicModelVertex> vertices;
+    private final ModelVertices<BasicVertex> vertices;
 
-    public BasicNode(ModelVertices<BasicModelVertex> vertices) {
+    public BasicNode(ModelVertices<BasicVertex> vertices) {
         this.vertices = vertices;
     }
 
-    public ModelVertices<BasicModelVertex> getVertices() {
+    public ModelVertices<BasicVertex> getVertices() {
         return this.vertices;
     }
 }

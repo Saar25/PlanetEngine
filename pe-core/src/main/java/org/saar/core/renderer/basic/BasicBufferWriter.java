@@ -3,7 +3,7 @@ package org.saar.core.renderer.basic;
 import org.saar.core.model.vertex.*;
 import org.saar.lwjgl.opengl.constants.DataType;
 
-public class BasicModelBufferWriter extends AbstractModelBufferWriter<BasicVertex> implements ModelBufferWriter<BasicVertex> {
+public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> implements ModelBufferWriter<BasicVertex> {
 
     private final ModelBuffer buffer = new ModelBufferSingleVbo(
             new ModelAttribute(2, true, DataType.FLOAT),
