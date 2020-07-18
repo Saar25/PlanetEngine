@@ -1,5 +1,6 @@
 package org.saar.example.renderer;
 
+import org.joml.Vector2f;
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.core.model.vertex.ModelVertices;
 import org.saar.core.renderer.basic.BasicRenderNode;
@@ -29,20 +30,13 @@ public class RendererExample {
         final float a = 0.7f, b = 0.3f;
         final ModelIndices indices = new ModelIndices(0, 1, 2, 0, 2, 3);
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(
-                new MyVertex(Vector2.of(-a, -a), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                new MyVertex(Vector2.of(-a, -a + .1f), Vector3.of(+0.0f, +0.0f, +0.5f)),
                 new MyVertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
                 new MyVertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
                 new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f)));
         final MyNode node = new MyNode(vertices, indices);
 
-        final ModelVertices<MyVertex> vertices2 = new ModelVertices<>(
-                new MyVertex(Vector2.of(-b, -b), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                new MyVertex(Vector2.of(-b, +b), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+b, +b), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+b, -b), Vector3.of(+1.0f, +0.0f, +0.5f)));
-        final MyNode node2 = new MyNode(vertices2, indices);
-
-        final BasicRenderNode renderNode = new BasicRenderNode(node, node2);
+        final BasicRenderNode renderNode = new BasicRenderNode(node);
         final BasicRenderer renderer = new BasicRenderer(renderNode);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
@@ -51,7 +45,11 @@ public class RendererExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
+            GlUtils.clear(GlBuffer.COLOUR);
 
+            ((Vector2f) node.getVertices().getVertices().get(0).getPosition2f()).x+=.001f;
+            ((Vector2f) node.getVertices().getVertices().get(0).getPosition2f()).y+=.001f;
+            renderNode.update();
             renderer.render();
 
             fbo.blitToScreen();
@@ -63,7 +61,6 @@ public class RendererExample {
                 fbo = createFbo(window.getWidth(), window.getHeight());
                 temp.delete();
             }
-            GlUtils.clear(GlBuffer.COLOUR);
         }
 
         renderer.delete();
