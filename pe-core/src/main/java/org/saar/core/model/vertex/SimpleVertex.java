@@ -27,14 +27,4 @@ public class SimpleVertex implements ModelVertex {
     public int[] getIntData() {
         return intData;
     }
-
-    @Override
-    public void write(ModelBuffer modelBuffer) {
-        for (float value : this.floatData) {
-            modelBuffer.write(value);
-        }
-        for (int value : this.intData) {
-            modelBuffer.write(value);
-        }
-    }
 }

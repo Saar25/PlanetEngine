@@ -12,12 +12,6 @@ public class ModelVertices<T extends ModelVertex> {
         this.vertices = Arrays.asList(vertices);
     }
 
-    public void write(ModelBuffer buffer) {
-        for (T vertex : this.vertices) {
-            vertex.write(buffer);
-        }
-    }
-
     public List<T> getVertices() {
         return vertices;
     }

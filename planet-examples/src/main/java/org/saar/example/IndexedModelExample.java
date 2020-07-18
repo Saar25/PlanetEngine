@@ -33,10 +33,11 @@ public class IndexedModelExample {
                 new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, -1.0f, +1.0f, +0.0f, +0.5f));
-        final ModelBuffer modelBuffer = new ModelBufferSingleVbo(
+        final ModelBuffer buffer = new ModelBufferSingleVbo(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelBuffer, indices, vertices);
+        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP,
+                new SimpleBufferWriter(buffer), indices, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
