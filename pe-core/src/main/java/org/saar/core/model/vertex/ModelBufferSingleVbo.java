@@ -1,6 +1,7 @@
 package org.saar.core.model.vertex;
 
 import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
 import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
@@ -56,11 +57,11 @@ public class ModelBufferSingleVbo implements ModelBuffer {
         return dataBuffer;
     }
 
-    private org.saar.lwjgl.opengl.objects.Attribute[] attributes() {
-        final org.saar.lwjgl.opengl.objects.Attribute[] attributes = new org.saar.lwjgl.opengl.objects.Attribute[this.vertexModelAttributes.size()];
+    private Attribute[] attributes() {
+        final Attribute[] attributes = new Attribute[this.vertexModelAttributes.size()];
         for (int i = 0; i < this.vertexModelAttributes.size(); i++) {
             final ModelAttribute current = this.vertexModelAttributes.get(i);
-            attributes[i] = org.saar.lwjgl.opengl.objects.Attribute.of(i, current.getComponentCount(),
+            attributes[i] = Attribute.of(i, current.getComponentCount(),
                     current.getDataType(), current.isNormalized());
         }
         return attributes;
