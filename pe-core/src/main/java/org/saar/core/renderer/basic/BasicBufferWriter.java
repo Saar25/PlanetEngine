@@ -1,10 +1,12 @@
 package org.saar.core.renderer.basic;
 
 import org.saar.core.model.data.DataWriter;
-import org.saar.core.model.vertex.*;
+import org.saar.core.model.data.NodeWriter;
+import org.saar.core.model.vertex.ModelAttribute;
+import org.saar.core.model.vertex.ModelAttributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 
-public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> implements ModelBufferWriter<BasicVertex> {
+public class BasicBufferWriter implements NodeWriter<BasicNode> {
 
     private final ModelAttributes attributes = new ModelAttributes(
             new ModelAttribute(2, true, DataType.FLOAT),
@@ -16,7 +18,6 @@ public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> im
         this.writer = writer;
     }
 
-    @Override
     protected void writeVertex(BasicVertex vertex) {
         this.writer.write(vertex.getPosition2f().x());
         this.writer.write(vertex.getPosition2f().y());
@@ -26,18 +27,9 @@ public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> im
     }
 
     @Override
-    protected void writeIndex(int index) {
-        this.buffer.writeIndex(index);
-    }
-
-    @Override
-    public ModelBuffer toBuffer() {
-        return this.buffer;
-    }
-
     public void write(BasicNode node) {
         for (BasicVertex vertex : node.getVertices().getVertices()) {
-
+            writeVertex(vertex);
         }
     }
 }
