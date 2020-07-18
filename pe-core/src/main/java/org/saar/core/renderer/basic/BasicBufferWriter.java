@@ -12,24 +12,33 @@ public class BasicBufferWriter implements NodeWriter<BasicNode> {
             new ModelAttribute(2, true, DataType.FLOAT),
             new ModelAttribute(3, true, DataType.FLOAT));
 
-    private final DataWriter writer;
+    private final DataWriter dataWriter;
+    private final DataWriter indexWriter;
 
-    public BasicBufferWriter(DataWriter writer) {
-        this.writer = writer;
+    public BasicBufferWriter(DataWriter dataWriter, DataWriter indexWriter) {
+        this.dataWriter = dataWriter;
+        this.indexWriter = indexWriter;
     }
 
-    protected void writeVertex(BasicVertex vertex) {
-        this.writer.write(vertex.getPosition2f().x());
-        this.writer.write(vertex.getPosition2f().y());
-        this.writer.write(vertex.getColour3f().x());
-        this.writer.write(vertex.getColour3f().y());
-        this.writer.write(vertex.getColour3f().z());
+    private void writeVertex(BasicVertex vertex) {
+        this.dataWriter.write(vertex.getPosition2f().x());
+        this.dataWriter.write(vertex.getPosition2f().y());
+        this.dataWriter.write(vertex.getColour3f().x());
+        this.dataWriter.write(vertex.getColour3f().y());
+        this.dataWriter.write(vertex.getColour3f().z());
+    }
+
+    private void writeIndex(int index) {
+        this.indexWriter.write(index);
     }
 
     @Override
     public void write(BasicNode node) {
-        for (BasicVertex vertex : node.getVertices().getVertices()) {
-            writeVertex(vertex);
-        }
+        node.getVertices().getVertices().forEach(this::writeVertex);
+        node.getIndices().getIndices().forEach(this::writeIndex);
+    }
+
+    public ModelAttributes getAttributes() {
+        return this.attributes;
     }
 }
