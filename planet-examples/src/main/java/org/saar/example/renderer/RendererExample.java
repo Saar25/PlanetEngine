@@ -1,21 +1,17 @@
 package org.saar.example.renderer;
 
-import org.saar.core.model.Model;
-import org.saar.core.model.Models;
-import org.saar.core.model.vertex.*;
+import org.saar.core.model.vertex.ModelIndices;
+import org.saar.core.model.vertex.ModelVertices;
+import org.saar.core.renderer.basic.BasicRenderNode;
 import org.saar.core.renderer.basic.BasicRenderer;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.RenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
@@ -30,22 +26,24 @@ public class RendererExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final BasicRenderer renderer = new BasicRenderer(null);
-
-        final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
+        final float a = 0.7f, b = 0.3f;
+        final ModelIndices indices = new ModelIndices(0, 1, 2, 0, 2, 3);
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(
-                new MyVertex(Vector2.of(-1.0f, -1.0f), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                new MyVertex(Vector2.of(-1.0f, +1.0f), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+1.0f, -1.0f), Vector3.of(+1.0f, +0.0f, +0.5f)));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, modelBuffer, indices, vertices);
+                new MyVertex(Vector2.of(-a, -a), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                new MyVertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
+                new MyVertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
+                new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f)));
+        final MyNode node = new MyNode(vertices, indices);
 
-        final ShadersProgram shadersProgram = ShadersProgram.create(
-                Shader.createVertex("/vertex.glsl"),
-                Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttributes("in_position", "in_colour");
+        final ModelVertices<MyVertex> vertices2 = new ModelVertices<>(
+                new MyVertex(Vector2.of(-b, -b), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                new MyVertex(Vector2.of(-b, +b), Vector3.of(+0.0f, +1.0f, +0.5f)),
+                new MyVertex(Vector2.of(+b, +b), Vector3.of(+1.0f, +1.0f, +0.5f)),
+                new MyVertex(Vector2.of(+b, -b), Vector3.of(+1.0f, +0.0f, +0.5f)));
+        final MyNode node2 = new MyNode(vertices2, indices);
 
-        shadersProgram.bind();
+        final BasicRenderNode renderNode = new BasicRenderNode(node, node2);
+        final BasicRenderer renderer = new BasicRenderer(renderNode);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
@@ -53,7 +51,9 @@ public class RendererExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
-            model.draw();
+
+            renderer.render();
+
             fbo.blitToScreen();
 
             window.update(true);
@@ -65,6 +65,8 @@ public class RendererExample {
             }
             GlUtils.clear(GlBuffer.COLOUR);
         }
+
+        renderer.delete();
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

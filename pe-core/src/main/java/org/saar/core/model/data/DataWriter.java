@@ -11,11 +11,11 @@ public class DataWriter {
     private final List<Integer> data = new ArrayList<>();
 
     public void write(int value) {
-        this.data.add(value);
+        getData().add(value);
     }
 
     public void write(float value) {
-        this.data.add(Float.floatToIntBits(value));
+        getData().add(Float.floatToIntBits(value));
     }
 
     public void writeTo(IndexBuffer buffer) {
@@ -30,10 +30,14 @@ public class DataWriter {
         buffer.storeData(0, data);
     }
 
+    public List<Integer> getData() {
+        return this.data;
+    }
+
     private int[] dataArray() {
-        final int[] data = new int[this.data.size()];
-        for (int i = 0; i < this.data.size(); i++) {
-            data[i] = this.data.get(i);
+        final int[] data = new int[getData().size()];
+        for (int i = 0; i < getData().size(); i++) {
+            data[i] = getData().get(i);
         }
         return data;
     }

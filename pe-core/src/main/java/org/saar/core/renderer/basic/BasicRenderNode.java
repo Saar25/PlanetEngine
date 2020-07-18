@@ -42,14 +42,13 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
         final DataWriter dataWriter = new DataWriter();
         final DataWriter indexWriter = new DataWriter();
         final BasicNodeWriter writer = new BasicNodeWriter(dataWriter, indexWriter);
-        for (BasicNode node : this.nodes) {
-            writer.write(node);
-        }
+
+        writer.write(this.nodes);
 
         dataWriter.writeTo(this.dataBuffer);
         indexWriter.writeTo(this.indexBuffer);
 
-        this.model = new ElementsModel(this.vao, 4, RenderMode.TRIANGLES);
+        this.model = new ElementsModel(this.vao, indexWriter.getData().size(), RenderMode.TRIANGLES);
     }
 
     @Override

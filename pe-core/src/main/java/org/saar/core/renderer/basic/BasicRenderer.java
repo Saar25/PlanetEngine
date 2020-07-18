@@ -6,8 +6,8 @@ import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
 public class BasicRenderer implements Renderer {
 
-    private static final String vertex = "shaders/basic/vertex.glsl";
-    private static final String fragment = "shaders/basic/fragment.glsl";
+    private static final String vertex = "/shaders/basic/vertex.glsl";
+    private static final String fragment = "/shaders/basic/fragment.glsl";
 
     private final BasicRenderNode renderNode;
     private final ShadersProgram shadersProgram;
