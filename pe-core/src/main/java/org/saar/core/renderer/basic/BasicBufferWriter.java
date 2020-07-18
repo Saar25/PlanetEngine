@@ -5,9 +5,15 @@ import org.saar.lwjgl.opengl.constants.DataType;
 
 public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> implements ModelBufferWriter<BasicVertex> {
 
-    private final ModelBuffer buffer = new ModelBufferSingleVbo(
+    private final ModelAttributes attributes = new ModelAttributes(
             new ModelAttribute(2, true, DataType.FLOAT),
             new ModelAttribute(3, true, DataType.FLOAT));
+
+    private final ModelBuffer buffer;
+
+    public BasicBufferWriter(ModelBuffer buffer) {
+        this.buffer = buffer;
+    }
 
     @Override
     protected void writeVertex(BasicVertex vertex) {
@@ -26,5 +32,11 @@ public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> im
     @Override
     public ModelBuffer toBuffer() {
         return this.buffer;
+    }
+
+    public void write(BasicNode node) {
+        for (BasicVertex vertex : node.getVertices().getVertices()) {
+
+        }
     }
 }

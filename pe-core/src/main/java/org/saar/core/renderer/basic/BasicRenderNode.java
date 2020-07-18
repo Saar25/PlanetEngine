@@ -21,11 +21,12 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
     private final Vao vao = Vao.create();
 
     private final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
-    private final DataBuffer instanceBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
     private final IndexBuffer indexBuffer = new IndexBuffer(VboUsage.STATIC_DRAW);
 
     public BasicRenderNode(BasicNode... nodes) {
         this.nodes = Arrays.asList(nodes);
+
+
     }
 
     public void update() {
