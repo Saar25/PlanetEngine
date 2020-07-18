@@ -1,17 +1,14 @@
 package org.saar.core.model.vertex;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ModelAttributes {
 
-    private final List<ModelAttribute> attributes;
+    private final ModelAttribute[] attributes;
 
     public ModelAttributes(ModelAttribute... attributes) {
-        this.attributes = Arrays.asList(attributes);
+        this.attributes = attributes;
     }
 
-    public List<ModelAttribute> getAttributes() {
+    public ModelAttribute[] getAttributes() {
         return this.attributes;
     }
 
