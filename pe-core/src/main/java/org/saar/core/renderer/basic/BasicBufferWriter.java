@@ -1,5 +1,6 @@
 package org.saar.core.renderer.basic;
 
+import org.saar.core.model.data.DataWriter;
 import org.saar.core.model.vertex.*;
 import org.saar.lwjgl.opengl.constants.DataType;
 
@@ -9,19 +10,19 @@ public class BasicBufferWriter extends AbstractModelBufferWriter<BasicVertex> im
             new ModelAttribute(2, true, DataType.FLOAT),
             new ModelAttribute(3, true, DataType.FLOAT));
 
-    private final ModelBuffer buffer;
+    private final DataWriter writer;
 
-    public BasicBufferWriter(ModelBuffer buffer) {
-        this.buffer = buffer;
+    public BasicBufferWriter(DataWriter writer) {
+        this.writer = writer;
     }
 
     @Override
     protected void writeVertex(BasicVertex vertex) {
-        this.buffer.write(vertex.getPosition2f().x());
-        this.buffer.write(vertex.getPosition2f().y());
-        this.buffer.write(vertex.getColour3f().x());
-        this.buffer.write(vertex.getColour3f().y());
-        this.buffer.write(vertex.getColour3f().z());
+        this.writer.write(vertex.getPosition2f().x());
+        this.writer.write(vertex.getPosition2f().y());
+        this.writer.write(vertex.getColour3f().x());
+        this.writer.write(vertex.getColour3f().y());
+        this.writer.write(vertex.getColour3f().z());
     }
 
     @Override

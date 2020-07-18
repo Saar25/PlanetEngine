@@ -1,4 +1,4 @@
-package org.saar.core.model.buffer;
+package org.saar.core.model.data;
 
 import java.util.ArrayList;
 import java.util.List;
