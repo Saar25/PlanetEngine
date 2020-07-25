@@ -5,9 +5,10 @@ import org.saar.lwjgl.opengl.constants.VboTarget;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class IndexBuffer implements IVbo {
+public class IndexBuffer implements IVbo, WriteableVbo {
 
     public static final IndexBuffer NULL = new IndexBuffer(Vbo.NULL_INDEX);
 
@@ -43,6 +44,21 @@ public class IndexBuffer implements IVbo {
 
     public void storeData(long pointer, IntBuffer data) {
         getVbo().storeData(pointer, data);
+    }
+
+    @Override
+    public void allocateFloat(long size) {
+        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
+    }
+
+    @Override
+    public void storeData(long offset, float[] data) {
+        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
+    }
+
+    @Override
+    public void storeData(long offset, FloatBuffer data) {
+        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
     }
 
     public ByteBuffer map(VboAccess access) {
