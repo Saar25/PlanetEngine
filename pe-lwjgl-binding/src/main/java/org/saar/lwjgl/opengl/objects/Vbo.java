@@ -43,7 +43,7 @@ public class Vbo implements IVbo, WriteableVbo {
 
     @Override
     public void allocateByte(long size) {
-        bind();
+        this.bind0();
         GL15.glBufferData(target, size, usage);
         this.size = size;
     }
@@ -64,7 +64,7 @@ public class Vbo implements IVbo, WriteableVbo {
 
     @Override
     public void storeData(long offset, int[] data) {
-        bind();
+        this.bind0();
         final int bytes = DataType.INT.getBytes();
         ensureSize(offset, data.length * bytes);
         GL15.glBufferSubData(target, offset, data);
@@ -72,7 +72,7 @@ public class Vbo implements IVbo, WriteableVbo {
 
     @Override
     public void storeData(long offset, float[] data) {
-        bind();
+        this.bind0();
         final int bytes = DataType.FLOAT.getBytes();
         ensureSize(offset, data.length * bytes);
         GL15.glBufferSubData(target, offset, data);
@@ -80,14 +80,14 @@ public class Vbo implements IVbo, WriteableVbo {
 
     @Override
     public void storeData(long offset, ByteBuffer data) {
-        bind();
+        this.bind0();
         ensureSize(offset, data.limit());
         GL15.glBufferSubData(target, offset, data);
     }
 
     @Override
     public void storeData(long offset, IntBuffer data) {
-        bind();
+        this.bind0();
         final int bytes = DataType.INT.getBytes();
         ensureSize(offset, data.limit() * bytes);
         GL15.glBufferSubData(target, offset, data);
@@ -95,7 +95,7 @@ public class Vbo implements IVbo, WriteableVbo {
 
     @Override
     public void storeData(long offset, FloatBuffer data) {
-        bind();
+        this.bind0();
         final int bytes = DataType.FLOAT.getBytes();
         ensureSize(offset, data.limit() * bytes);
         GL15.glBufferSubData(target, offset, data);
@@ -113,12 +113,12 @@ public class Vbo implements IVbo, WriteableVbo {
      */
 
     public ByteBuffer map(VboAccess access) {
-        bind();
+        this.bind0();
         return GL15.glMapBuffer(target, access.get());
     }
 
     public void unmap() {
-        bind();
+        this.bind0();
         GL15.glUnmapBuffer(target);
     }
 
@@ -131,19 +131,22 @@ public class Vbo implements IVbo, WriteableVbo {
         return this.size;
     }
 
+    private void bind0() {
+        GL15.glBindBuffer(target, this.id);
+        Vbo.boundVbo = this.id;
+    }
+
     @Override
     public void bind() {
         if (GlConfigs.CACHE_STATE || boundVbo != id) {
-            GL15.glBindBuffer(target, id);
-            boundVbo = id;
+            this.bind0();
         }
     }
 
     @Override
     public void bindToVao(Vao vao) {
         vao.bind();
-        GL15.glBindBuffer(target, id);
-        boundVbo = id;
+        this.bind0();
     }
 
     @Override

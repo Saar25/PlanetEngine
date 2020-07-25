@@ -22,7 +22,7 @@ public class IndexBuffer implements IVbo {
     }
 
     private Vbo getVbo() {
-        return vbo;
+        return this.vbo;
     }
 
     public void allocateInt(long size) {
