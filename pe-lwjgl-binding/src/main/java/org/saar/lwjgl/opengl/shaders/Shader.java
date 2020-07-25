@@ -94,7 +94,8 @@ public class Shader {
         GL20.glCompileShader(id);
         if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == 0) {
             final String infoLog = GL20.glGetShaderInfoLog(id, 1024);
-            throw new ShaderCompileException("Shader type: " + type + ", Error compiling Shader code:\n" + infoLog);
+            throw new ShaderCompileException("Shader type: " + type +
+                    ", Error compiling Shader code:\n" + infoLog);
         }
     }
 
