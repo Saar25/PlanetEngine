@@ -5,6 +5,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.VboAccess;
 import org.saar.lwjgl.opengl.constants.VboTarget;
 import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.objects.exceptions.VboTooSmallException;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 import java.nio.ByteBuffer;
@@ -110,7 +111,8 @@ public class Vbo implements IVbo, WriteableVbo {
 
     private void ensureSize(long offset, long size) {
         if (offset + size > this.size) {
-            // throw exception
+            throw new VboTooSmallException("Vbo storage too small, vbo size: "
+                    + getSize() + ", offset: " + offset + ", input size: " + size);
         }
     }
 
