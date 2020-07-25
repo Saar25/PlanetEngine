@@ -1,11 +1,11 @@
 package org.saar.example;
 
-import org.saar.core.model.ArraysModel;
 import org.saar.core.model.Model;
-import org.saar.core.model.data.FloatModelData;
-import org.saar.core.model.data.ModelDataInfo;
+import org.saar.core.model.Models;
+import org.saar.core.model.vertex.*;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
@@ -24,32 +24,20 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        /*final float[] data = {
-                -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
-                +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
-                +0.5f, -0.5f, +1.0f, +0.0f, +0.5f
-        };
-        final Model model = new ArraysModel(RenderMode.TRIANGLES, 3,
-                new FloatModelData(data, new ModelDataInfo(2, true), new ModelDataInfo(3, true)));*/
-        final float[] positions = {
-                -0.5f, -0.5f,
-                +0.0f, +0.5f,
-                +0.5f, -0.5f,
-        };
-        final float[] colours = {
-                +0.0f, +0.0f, +0.5f,
-                +0.5f, +1.0f, +0.5f,
-                +1.0f, +0.0f, +0.5f,
-        };
-        final Model model = new ArraysModel(RenderMode.TRIANGLES, 3,
-                new FloatModelData(positions, new ModelDataInfo(2, true)),
-                new FloatModelData(colours, new ModelDataInfo(3, true)));
+        final ModelVertices<SimpleVertex> vertices = new ModelVertices<>(
+                new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
+                new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
+                new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
+        final ModelBuffer buffer = new ModelBufferSingleVbo(
+                new ModelAttribute(2, true, DataType.FLOAT),
+                new ModelAttribute(3, true, DataType.FLOAT));
+        final Model model = Models.arraysModel(RenderMode.TRIANGLES,
+                new SimpleBufferWriter(buffer), vertices);
 
-        final ShadersProgram<Object> shadersProgram = ShadersProgram.create(
+        final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttribute(0, "in_position");
-        shadersProgram.bindAttribute(1, "in_colour");
+        shadersProgram.bindAttributes("in_position", "in_colour");
 
         shadersProgram.bind();
 

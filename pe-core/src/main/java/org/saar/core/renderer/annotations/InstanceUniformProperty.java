@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders.annotations;
+package org.saar.core.renderer.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UniformVariable {
+public @interface InstanceUniformProperty {
 
 }

@@ -12,7 +12,7 @@ public abstract class AbstractUniformProperty<T> implements UniformProperty<T> {
     }
 
     @Override
-    public final void initialize(ShadersProgram<T> shadersProgram) {
+    public final void initialize(ShadersProgram shadersProgram) {
         if ((location = shadersProgram.getUniformLocation(name)) == -1) {
             System.err.println("Cannot locate uniform " + name);
         }

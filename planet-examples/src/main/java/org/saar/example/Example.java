@@ -27,7 +27,7 @@ public class Example {
                 +0.5f, -0.5f});
         vao.loadDataBuffer(vbo, Attribute.of(0, 2, DataType.FLOAT, false));
 
-        final ShadersProgram<Vao> shadersProgram = ShadersProgram.create(
+        final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttribute(0, "in_position");

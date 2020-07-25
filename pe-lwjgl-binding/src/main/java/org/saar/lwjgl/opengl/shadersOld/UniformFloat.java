@@ -1,8 +1,8 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
+import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.lwjgl.opengl.GL20;
 
 public class UniformFloat extends Uniform<Float> {
 
@@ -12,7 +12,7 @@ public class UniformFloat extends Uniform<Float> {
         super(location, null, null, 0f);
     }
 
-    public static UniformFloat create(ShadersProgram<?> shadersProgram, String uniformName) {
+    public static UniformFloat create(ShadersProgram shadersProgram, String uniformName) {
         int location = getLocation(shadersProgram, uniformName);
         return new UniformFloat(location);
     }
