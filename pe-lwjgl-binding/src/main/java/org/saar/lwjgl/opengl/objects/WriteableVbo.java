@@ -12,15 +12,15 @@ public interface WriteableVbo extends IVbo {
 
     void allocateFloat(long size);
 
-    void storeInt(long offset, int[] data);
+    void storeData(long offset, int[] data);
 
-    void storeFloat(long offset, float[] data);
+    void storeData(long offset, float[] data);
 
-    void storeByte(long offset, ByteBuffer data);
+    void storeData(long offset, ByteBuffer data);
 
-    void storeInt(long offset, IntBuffer data);
+    void storeData(long offset, IntBuffer data);
 
-    void storeFloat(long offset, FloatBuffer data);
+    void storeData(long offset, FloatBuffer data);
 
 
 }

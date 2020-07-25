@@ -70,37 +70,41 @@ public class Vbo implements IVbo, WriteableVbo {
     }
 
     @Override
-    public void storeInt(long offset, int[] data) {
+    public void storeData(long offset, int[] data) {
         bind();
-        ensureSize(offset, data.length);
+        final int bytes = DataType.INT.getBytes();
+        ensureSize(offset, data.length * bytes);
         GL15.glBufferSubData(target, offset, data);
     }
 
     @Override
-    public void storeFloat(long offset, float[] data) {
+    public void storeData(long offset, float[] data) {
         bind();
-        ensureSize(offset, data.length);
+        final int bytes = DataType.FLOAT.getBytes();
+        ensureSize(offset, data.length * bytes);
         GL15.glBufferSubData(target, offset, data);
     }
 
     @Override
-    public void storeByte(long offset, ByteBuffer data) {
+    public void storeData(long offset, ByteBuffer data) {
         bind();
         ensureSize(offset, data.limit());
         GL15.glBufferSubData(target, offset, data);
     }
 
     @Override
-    public void storeInt(long offset, IntBuffer data) {
+    public void storeData(long offset, IntBuffer data) {
         bind();
-        ensureSize(offset, data.limit());
+        final int bytes = DataType.INT.getBytes();
+        ensureSize(offset, data.limit() * bytes);
         GL15.glBufferSubData(target, offset, data);
     }
 
     @Override
-    public void storeFloat(long offset, FloatBuffer data) {
+    public void storeData(long offset, FloatBuffer data) {
         bind();
-        ensureSize(offset, data.limit());
+        final int bytes = DataType.FLOAT.getBytes();
+        ensureSize(offset, data.limit() * bytes);
         GL15.glBufferSubData(target, offset, data);
     }
 

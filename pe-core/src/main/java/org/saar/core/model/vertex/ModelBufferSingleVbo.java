@@ -52,7 +52,7 @@ public class ModelBufferSingleVbo implements ModelBuffer {
 
     private DataBuffer dataBuffer() {
         final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
-        dataBuffer.allocateData(4 * this.data.size());
+        dataBuffer.allocateByte(4 * this.data.size());
         dataBuffer.storeData(0, dataArray());
         return dataBuffer;
     }

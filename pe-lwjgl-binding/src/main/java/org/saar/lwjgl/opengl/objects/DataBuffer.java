@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class DataBuffer implements IVbo {
+public class DataBuffer implements IVbo, WriteableVbo {
 
     public static final DataBuffer NULL = new DataBuffer(Vbo.NULL_ARRAY);
 
@@ -23,39 +23,47 @@ public class DataBuffer implements IVbo {
     }
 
     private Vbo getVbo() {
-        return vbo;
+        return this.vbo;
     }
 
+    @Override
     public void allocateFloat(long size) {
         getVbo().allocateFloat(size);
     }
 
+    @Override
     public void allocateInt(long size) {
         getVbo().allocateInt(size);
     }
 
-    public void allocateData(long size) {
+    @Override
+    public void allocateByte(long size) {
         getVbo().allocateByte(size);
     }
 
-    public void storeData(int pointer, FloatBuffer data) {
-        getVbo().storeData(pointer, data);
+    @Override
+    public void storeData(long offset, int[] data) {
+        getVbo().storeData(offset, data);
     }
 
-    public void storeData(int pointer, float[] data) {
-        getVbo().storeData(pointer, data);
+    @Override
+    public void storeData(long offset, float[] data) {
+        getVbo().storeData(offset, data);
     }
 
-    public void storeData(int pointer, IntBuffer data) {
-        getVbo().storeData(pointer, data);
+    @Override
+    public void storeData(long offset, ByteBuffer data) {
+        getVbo().storeData(offset, data);
     }
 
-    public void storeData(int pointer, int[] data) {
-        getVbo().storeData(pointer, data);
+    @Override
+    public void storeData(long offset, IntBuffer data) {
+        getVbo().storeData(offset, data);
     }
 
-    public void storeData(int pointer, ByteBuffer data) {
-        getVbo().storeData(pointer, data);
+    @Override
+    public void storeData(long offset, FloatBuffer data) {
+        getVbo().storeData(offset, data);
     }
 
     public ByteBuffer map(VboAccess access) {
