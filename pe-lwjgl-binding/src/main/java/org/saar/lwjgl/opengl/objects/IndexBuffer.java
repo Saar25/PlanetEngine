@@ -29,19 +29,19 @@ public class IndexBuffer implements IVbo {
         getVbo().allocateInt(size);
     }
 
-    public void storeData(int pointer, IntBuffer data) {
-        getVbo().storeData(pointer, data);
-    }
-
-    public void storeData(int pointer, int[] data) {
-        getVbo().storeData(pointer, data);
-    }
-
     public void allocateByte(long size) {
         getVbo().allocateByte(size);
     }
 
-    public void storeData(int pointer, ByteBuffer data) {
+    public void storeData(long pointer, int[] data) {
+        getVbo().storeData(pointer, data);
+    }
+
+    public void storeData(long pointer, ByteBuffer data) {
+        getVbo().storeData(pointer, data);
+    }
+
+    public void storeData(long pointer, IntBuffer data) {
         getVbo().storeData(pointer, data);
     }
 
