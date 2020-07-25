@@ -35,7 +35,7 @@ public class DataBuffer implements IVbo {
     }
 
     public void allocateData(long size) {
-        getVbo().allocateData(size);
+        getVbo().allocateByte(size);
     }
 
     public void storeData(int pointer, FloatBuffer data) {

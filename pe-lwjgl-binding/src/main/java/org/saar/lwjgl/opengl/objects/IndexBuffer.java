@@ -38,7 +38,7 @@ public class IndexBuffer implements IVbo {
     }
 
     public void allocateByte(long size) {
-        getVbo().allocateData(size);
+        getVbo().allocateByte(size);
     }
 
     public void storeData(int pointer, ByteBuffer data) {
