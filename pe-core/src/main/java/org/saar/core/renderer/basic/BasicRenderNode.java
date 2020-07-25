@@ -1,9 +1,11 @@
 package org.saar.core.renderer.basic;
 
+import org.saar.core.model.ElementsModel;
 import org.saar.core.model.Model;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
@@ -39,9 +41,19 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
         final BasicNodeWriter writer = new BasicNodeWriter();
         writer.write(this.nodes);
 
+        final int[] data = writer.getDataWriter().getDataArray();
+        if (this.dataBuffer.getSize() <= data.length) {
+            this.dataBuffer.allocateInt(data.length);
+        }
+        this.dataBuffer.storeData(0, data);
 
+        final int[] indices = writer.getIndexWriter().getDataArray();
+        if (this.indexBuffer.getSize() <= indices.length) {
+            this.indexBuffer.allocateInt(indices.length);
+        }
+        this.indexBuffer.storeData(0, indices);
 
-        this.model = writer.toModel();
+        this.model = new ElementsModel(this.vao, indices.length, RenderMode.TRIANGLES);
     }
 
     @Override
