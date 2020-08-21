@@ -17,7 +17,10 @@ public class Camera implements ICamera {
 
     @Override
     public Matrix4fc getViewMatrix() {
-        return this.viewMatrix;
+        return Matrix4.ofView(
+                getTransform().getPosition().getValue(),
+                getTransform().getRotation().getValue(),
+                this.viewMatrix);
     }
 
     @Override

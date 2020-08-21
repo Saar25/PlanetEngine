@@ -86,7 +86,7 @@ public class Renderer3DExample {
         final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 100);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(20, 0, 0));
+        camera.getTransform().setPosition(Position.of(20, 20, 20));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final RenderNode3D renderNode = new RenderNode3D(node);
@@ -99,8 +99,6 @@ public class Renderer3DExample {
 
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOUR);
-
-            camera.getTransform().getPosition().add(Position.of(0, .01f, 0));
 
             renderNode.update();
             renderer.render();
