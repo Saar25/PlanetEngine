@@ -7,10 +7,7 @@ import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
-import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.DataBuffer;
-import org.saar.lwjgl.opengl.objects.IndexBuffer;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,10 +17,13 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
     private static final Attribute[] attributes = new Attribute[]{
             Attribute.of(0, 3, DataType.FLOAT, true),
             Attribute.of(1, 3, DataType.FLOAT, true),
-            /*Attribute.of(3, 4, DataType.FLOAT, true),
-            Attribute.of(4, 4, DataType.FLOAT, true),
-            Attribute.of(5, 4, DataType.FLOAT, true),
-            Attribute.of(6, 4, DataType.FLOAT, true), Transformation matrix */
+    };
+
+    private static final Attribute[] instanceAttributes = new Attribute[]{
+            Attribute.ofInstance(3, 4, DataType.FLOAT, true),
+            Attribute.ofInstance(4, 4, DataType.FLOAT, true),
+            Attribute.ofInstance(5, 4, DataType.FLOAT, true),
+            Attribute.ofInstance(6, 4, DataType.FLOAT, true),
     };
 
     private final List<Node3D> nodes;
@@ -31,6 +31,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
     private final Vao vao = Vao.create();
 
     private final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
+    private final DataBuffer instanceBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
     private final IndexBuffer indexBuffer = new IndexBuffer(VboUsage.STATIC_DRAW);
 
     private Model model;
@@ -39,6 +40,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         this.nodes = Arrays.asList(nodes);
         this.vao.loadIndexBuffer(this.indexBuffer);
         this.vao.loadDataBuffer(this.dataBuffer, RenderNode3D.attributes);
+        this.vao.loadDataBuffer(this.instanceBuffer, RenderNode3D.instanceAttributes);
         update();
     }
 
@@ -47,18 +49,22 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         writer.write(this.nodes);
 
         final int[] data = writer.getDataWriter().getDataArray();
-        if (this.dataBuffer.getSize() <= data.length) {
-            this.dataBuffer.allocateInt(data.length);
-        }
-        this.dataBuffer.storeData(0, data);
+        RenderNode3D.write(this.dataBuffer, data);
+
+        final int[] instancesData = writer.getInstanceWriter().getDataArray();
+        RenderNode3D.write(this.instanceBuffer, instancesData);
 
         final int[] indices = writer.getIndexWriter().getDataArray();
-        if (this.indexBuffer.getSize() <= indices.length) {
-            this.indexBuffer.allocateInt(indices.length);
-        }
-        this.indexBuffer.storeData(0, indices);
+        RenderNode3D.write(this.indexBuffer, indices);
 
         this.model = new ElementsModel(this.vao, indices.length, RenderMode.TRIANGLES);
+    }
+
+    private static void write(WriteableVbo vbo, int[] data) {
+        if (vbo.getSize() <= data.length) {
+            vbo.allocateInt(data.length);
+        }
+        vbo.storeData(0, data);
     }
 
     @Override

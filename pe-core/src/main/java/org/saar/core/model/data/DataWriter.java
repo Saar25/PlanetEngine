@@ -31,6 +31,13 @@ public class DataWriter {
         this.write(value.w());
     }
 
+    public void write(Matrix4fc value) {
+        final float[] array = value.get(new float[16]);
+        for (float v : array) {
+            this.write(v);
+        }
+    }
+
     public void write(int value) {
         this.getData().add(value);
     }

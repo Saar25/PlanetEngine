@@ -7,6 +7,7 @@ import java.util.List;
 public class NodeWriter3D {
 
     private final DataWriter dataWriter = new DataWriter();
+    private final DataWriter instanceWriter = new DataWriter();
     private final DataWriter indexWriter = new DataWriter();
 
     private int vertices = 0;
@@ -23,6 +24,7 @@ public class NodeWriter3D {
     }
 
     public void write(Node3D node) {
+        this.instanceWriter.write(node.getTransform().getTransformationMatrix());
         node.getVertices().getVertices().forEach(this::writeVertex);
         node.getIndices().getIndices().forEach(this::writeIndex);
         this.indexOffset = this.vertices;
@@ -34,6 +36,10 @@ public class NodeWriter3D {
 
     public DataWriter getDataWriter() {
         return this.dataWriter;
+    }
+
+    public DataWriter getInstanceWriter() {
+        return this.instanceWriter;
     }
 
     public DataWriter getIndexWriter() {
