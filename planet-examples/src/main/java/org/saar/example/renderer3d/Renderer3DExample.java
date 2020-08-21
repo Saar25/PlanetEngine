@@ -35,7 +35,7 @@ public class Renderer3DExample {
         for (int i = 0; i < a.length; i++) a[i] = i;
         final ModelIndices indices = new ModelIndices(a);
 
-        final ModelVertices<MyVertex> vertices = new ModelVertices<>(
+        final MyVertex[] array = {
                 new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
                 new MyVertex(Vector3.of(-1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
                 new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
@@ -71,13 +71,22 @@ public class Renderer3DExample {
                 new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
                 new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
                 new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)));
+                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f))};
+
+        final ModelIndices indices2 = new ModelIndices(0, 1, 2);
+        final MyVertex[] array2 = {
+                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
+                new MyVertex(Vector3.of(+1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
+                new MyVertex(Vector3.of(+1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
+        };
+
+        final ModelVertices<MyVertex> vertices = new ModelVertices<>(array);
         final MyNode node = new MyNode(vertices, indices, new Transform());
 
         final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 100);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(10, 10, 10));
+        camera.getTransform().setPosition(Position.of(20, 0, 0));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final RenderNode3D renderNode = new RenderNode3D(node);
@@ -90,6 +99,8 @@ public class Renderer3DExample {
 
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOUR);
+
+            camera.getTransform().getPosition().add(Position.of(0, .01f, 0));
 
             renderNode.update();
             renderer.render();

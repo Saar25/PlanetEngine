@@ -14,7 +14,7 @@ public class InstancedElementsModel implements Model {
     private final DataType indicesType;
     private final int instances;
 
-    public InstancedElementsModel(Vao vao, RenderMode renderMode, int indices,
+    public InstancedElementsModel(Vao vao, int indices, RenderMode renderMode,
                                   DataType indicesType, int instances) {
         this.vao = vao;
         this.renderMode = renderMode;
