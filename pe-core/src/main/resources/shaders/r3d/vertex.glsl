@@ -14,6 +14,6 @@ out vec3 v_colour;
 void main(void) {
     v_colour = in_colour;
 
-    const vec4 world = in_transformation * vec4(in_position, 1.0);
+    vec4 world = in_transformation * vec4(in_position, 1.0);
     gl_Position = viewProjectionMatrix * world;
 }
