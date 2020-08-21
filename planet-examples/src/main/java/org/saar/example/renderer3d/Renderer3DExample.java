@@ -27,55 +27,35 @@ public class Renderer3DExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    public static void main(String[] args) throws Exception {
+    private static MyVertex[] flatData = new MyVertex[]{ // xyz position, xyz normal,
+            new MyVertex(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
+            new MyVertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0).add(1, 1, 1).div(2)), // 1
+            new MyVertex(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0).add(1, 1, 1).div(2)), // 2
+            new MyVertex(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0).add(1, 1, 1).div(2)), // 3
+            new MyVertex(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0).add(1, 1, 1).div(2)), // 4
+            new MyVertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 5
+            new MyVertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 6
+            new MyVertex(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1).add(1, 1, 1).div(2)), // 7
+    };
+
+    private static final int[] indices = {
+            0, 1, 2, 0, 2, 3, // back   , PV: 0
+            4, 5, 1, 4, 1, 0, // left   , PV: 4
+            7, 6, 5, 7, 5, 4, // front  , PV: 7
+            2, 6, 7, 2, 7, 3, // right  , PV: 2
+            1, 5, 6, 1, 6, 2, // top    , PV: 1
+            3, 7, 4, 3, 4, 0, // bottom , PV: 3
+    };
+
+    public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final int[] a = new int[36];
-        for (int i = 0; i < a.length; i++) a[i] = i;
-        final ModelIndices indices = new ModelIndices(a);
-
-        final MyVertex[] array = {
-                new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f))};
         final Transform transform = new Transform();
         transform.setPosition(Position.of(1, 2, 8.5f));
 
-        final ModelVertices<MyVertex> vertices = new ModelVertices<>(array);
+        final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
+        final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
         final MyNode node = new MyNode(vertices, indices, transform);
         final MyNode node2 = new MyNode(vertices, indices, transform);
 

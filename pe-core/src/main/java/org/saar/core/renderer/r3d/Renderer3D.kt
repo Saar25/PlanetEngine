@@ -36,7 +36,8 @@ class Renderer3D(private val camera: ICamera, private val renderNode3D: RenderNo
     init {
         shadersProgram.bindAttributes("in_position", "in_colour", "in_transformation")
         GlUtils.enableAlphaBlending()
-        GlUtils.disableCulling()
+        GlUtils.enableDepthTest()
+        GlUtils.enableCulling()
         init()
     }
 
