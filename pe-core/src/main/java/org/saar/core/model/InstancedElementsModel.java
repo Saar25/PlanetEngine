@@ -28,7 +28,7 @@ public class InstancedElementsModel implements Model {
         this.vao.bind();
         this.vao.enableAttributes();
         GlRendering.drawElementsInstanced(renderMode,
-                instances, indicesType, 0, indices);
+                indices, indicesType, 0, instances);
     }
 
     @Override
