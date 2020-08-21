@@ -28,11 +28,11 @@ public class InstancedElementsModel implements Model {
         this.vao.bind();
         this.vao.enableAttributes();
         GlRendering.drawElementsInstanced(renderMode,
-                indices, indicesType, 0, instances);
+                instances, indicesType, 0, indices);
     }
 
     @Override
     public void delete() {
-
+        this.vao.delete(true);
     }
 }
