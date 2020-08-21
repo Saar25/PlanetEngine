@@ -72,21 +72,17 @@ public class Renderer3DExample {
                 new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
                 new MyVertex(Vector3.of(-1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
                 new MyVertex(Vector3.of(+1.0f, -1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f))};
-
-        final ModelIndices indices2 = new ModelIndices(0, 1, 2);
-        final MyVertex[] array2 = {
-                new MyVertex(Vector3.of(+1.0f, +1.0f, +1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, -1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-                new MyVertex(Vector3.of(+1.0f, +1.0f, -1.0f), Vector3.of(+1.0f, +1.0f, +1.0f)),
-        };
+        final Transform transform = new Transform();
+        transform.setPosition(Position.of(1, 2, 8.5f));
 
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(array);
-        final MyNode node = new MyNode(vertices, indices, new Transform());
+        final MyNode node = new MyNode(vertices, indices, transform);
+        final MyNode node2 = new MyNode(vertices, indices, transform);
 
         final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 100);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(20, 20, 20));
+        camera.getTransform().setPosition(Position.of(0, 0, 15));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final RenderNode3D renderNode = new RenderNode3D(node);
@@ -99,6 +95,9 @@ public class Renderer3DExample {
 
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOUR);
+
+            camera.getTransform().getPosition().add(Position.of(.01f, .01f, -.01f));
+            camera.getTransform().lookAt(transform.getPosition());
 
             renderNode.update();
             renderer.render();

@@ -1,5 +1,6 @@
 package org.saar.core.renderer;
 
+import org.saar.core.model.Model;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
@@ -18,11 +19,10 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     protected final void init() {
-        final UniformPropertiesLocator locator = new UniformPropertiesLocator(this);
-        for (UniformProperty<?> uniform : locator.getInstanceUniformProperties()) {
+        for (UniformProperty<?> uniform : Renderers.findInstanceUniformProperties(this)) {
             addInstanceUniformProperty(uniform);
         }
-        for (UniformProperty<?> uniform : locator.getStageUniformProperties()) {
+        for (UniformProperty<?> uniform : Renderers.findStageUniformProperties(this)) {
             addStageUniformProperty(uniform);
         }
     }
@@ -39,16 +39,40 @@ public abstract class AbstractRenderer implements Renderer {
         this.InstanceUniformProperties.add(uniform);
     }
 
-//    protected final void updatePerRenderUniforms(RenderState<?> state) {
-//        for (UniformProperty<?> uniform : stageUniformProperties) {
-//            uniform.load(state);
-//        }
-//    }
-//
-//    protected final void updatePerInstanceUniforms(RenderState<?> state) {
-//        for (UniformProperty<?> uniform : InstanceUniformProperties) {
-//            uniform.load(state);
-//        }
-//    }
+    @Override
+    public final void render() {
+        shadersProgram.bind();
+
+        this.onRender();
+        this.model().draw();
+
+        shadersProgram.unbind();
+    }
+
+    @Override
+    public final void delete() {
+        this.onDelete();
+        this.shadersProgram.delete();
+    }
+
+    protected abstract Model model();
+
+    protected void onRender() {
+    }
+
+    protected void onDelete() {
+    }
+
+/*    protected final void updatePerRenderUniforms(RenderState<?> state) {
+        for (UniformProperty<?> uniform : stageUniformProperties) {
+            uniform.load(state);
+        }
+    }
+
+    protected final void updatePerInstanceUniforms(RenderState<?> state) {
+        for (UniformProperty<?> uniform : InstanceUniformProperties) {
+            uniform.load(state);
+        }
+    }*/
 
 }

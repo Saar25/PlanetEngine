@@ -1,6 +1,6 @@
 package org.saar.core.renderer.r3d;
 
-import org.saar.core.model.ElementsModel;
+import org.saar.core.model.InstancedElementsModel;
 import org.saar.core.model.Model;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
@@ -20,10 +20,10 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
     };
 
     private static final Attribute[] instanceAttributes = new Attribute[]{
-            Attribute.ofInstance(3, 4, DataType.FLOAT, true),
-            Attribute.ofInstance(4, 4, DataType.FLOAT, true),
-            Attribute.ofInstance(5, 4, DataType.FLOAT, true),
-            Attribute.ofInstance(6, 4, DataType.FLOAT, true),
+            Attribute.ofInstance(2, 4, DataType.FLOAT, false),
+            Attribute.ofInstance(3, 4, DataType.FLOAT, false),
+            Attribute.ofInstance(4, 4, DataType.FLOAT, false),
+            Attribute.ofInstance(5, 4, DataType.FLOAT, false),
     };
 
     private final List<Node3D> nodes;
@@ -57,7 +57,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         final int[] indices = writer.getIndexWriter().getDataArray();
         RenderNode3D.write(this.indexBuffer, indices);
 
-        this.model = new ElementsModel(this.vao, indices.length, RenderMode.TRIANGLES);
+        this.model = new InstancedElementsModel(this.vao, indices.length, RenderMode.TRIANGLES, DataType.U_INT, 1);
     }
 
     private static void write(WriteableVbo vbo, int[] data) {
