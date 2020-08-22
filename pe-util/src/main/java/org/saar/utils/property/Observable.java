@@ -11,18 +11,6 @@ package org.saar.utils.property;
 public interface Observable<T> {
 
     /**
-     * Returns the value
-     *
-     * @return the value
-     */
-    T getValue();
-
-    /**
-     * Sets the value
-     */
-    void setValue(T value);
-
-    /**
      * Add a listener to the value property, the listener will be
      * invoked every time the value changes
      *
@@ -36,4 +24,5 @@ public interface Observable<T> {
      * @param listener the listener
      */
     void removeListener(ChangeListener<T> listener);
+
 }
