@@ -63,7 +63,7 @@ public final class Transform {
     }
 
     public void addRotation(Angle x, Angle y, Angle z) {
-        final Quaternionf quaternion = Quaternion.create()
+        final Quaternionf quaternion = Quaternion.of(getRotation().getValue())
                 .rotateX(x.getRadians())
                 .rotateLocalY(y.getRadians())
                 .rotateZ(z.getRadians());

@@ -26,7 +26,8 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
             Attribute.ofInstance(5, 4, DataType.FLOAT, false),
     };
 
-    private final List<Node3D> nodes;
+    private final ModelNode3D modelNode;
+    private final List<InstanceNode3D> nodes;
 
     private final Vao vao = Vao.create();
 
@@ -36,17 +37,28 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
 
     private Model model;
 
-    public RenderNode3D(Node3D... nodes) {
+    public RenderNode3D(Node3D node) {
+        this(node, node);
+    }
+
+    public RenderNode3D(ModelNode3D modelNode, InstanceNode3D... nodes) {
+        this.modelNode = modelNode;
         this.nodes = Arrays.asList(nodes);
+        init();
+    }
+
+    private void init() {
         this.vao.loadIndexBuffer(this.indexBuffer);
-        this.vao.loadDataBuffer(this.dataBuffer, RenderNode3D.attributes);
-        this.vao.loadDataBuffer(this.instanceBuffer, RenderNode3D.instanceAttributes);
-        update();
+        this.vao.loadDataBuffer(this.dataBuffer,
+                RenderNode3D.attributes);
+        this.vao.loadDataBuffer(this.instanceBuffer,
+                RenderNode3D.instanceAttributes);
+        this.update();
     }
 
     public void update() {
         final NodeWriter3D writer = new NodeWriter3D();
-        writer.write(this.nodes);
+        writer.write(this.modelNode, this.nodes);
 
         final int[] data = writer.getDataWriter().getDataArray();
         RenderNode3D.write(this.dataBuffer, data);
@@ -57,7 +69,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         final int[] indices = writer.getIndexWriter().getDataArray();
         RenderNode3D.write(this.indexBuffer, indices);
 
-        this.model = new InstancedElementsModel(this.vao, indices.length, RenderMode.TRIANGLES, DataType.U_INT, 1);
+        this.model = new InstancedElementsModel(this.vao, indices.length, RenderMode.TRIANGLES, DataType.U_INT, nodes.size());
     }
 
     private static void write(WriteableVbo vbo, int[] data) {

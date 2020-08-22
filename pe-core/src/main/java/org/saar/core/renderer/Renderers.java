@@ -6,7 +6,7 @@ import java.util.List;
 
 public final class Renderers {
 
-    public Renderers() {
+    private Renderers() {
         throw new AssertionError("Cannot create instance of class " + getClass().getSimpleName());
     }
 

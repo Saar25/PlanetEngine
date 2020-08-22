@@ -18,6 +18,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.maths.Angle;
 import org.saar.maths.objects.Transform;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
@@ -48,37 +49,35 @@ public class Renderer3DExample {
     };
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
+        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
-        final Transform transform = new Transform();
-        transform.setPosition(Position.of(1, 2, 8.5f));
 
         final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
-        final MyNode node = new MyNode(vertices, indices, transform);
-        final MyNode node2 = new MyNode(vertices, indices, transform);
+
+        final MyNode node = new MyNode(vertices, indices, new Transform());
+        node.getTransform().setPosition(Position.of(.5f, 0, 8.5f));
+        final MyNode node2 = new MyNode(vertices, indices, new Transform());
 
         final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 100);
         final ICamera camera = new Camera(projection);
 
         camera.getTransform().setPosition(Position.of(0, 0, 15));
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        camera.getTransform().lookAt(node.getTransform().getPosition());
 
-        final RenderNode3D renderNode = new RenderNode3D(node);
+        final RenderNode3D renderNode = new RenderNode3D(node, node, node2);
         final Renderer3D renderer = new Renderer3D(camera, renderNode);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
         final Keyboard keyboard = window.getKeyboard();
+        long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-
             fbo.bind();
-            GlUtils.clear(GlBuffer.COLOUR);
+            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
-            camera.getTransform().getPosition().add(Position.of(.01f, .01f, -.01f));
-            camera.getTransform().lookAt(transform.getPosition());
-
+            node.getTransform().addRotation(Angle.degrees(.1f), Angle.degrees(.1f), Angle.degrees(.1f));
             renderNode.update();
             renderer.render();
 
@@ -91,6 +90,10 @@ public class Renderer3DExample {
                 fbo = createFbo(window.getWidth(), window.getHeight());
                 temp.delete();
             }
+
+            System.out.print( "\rFps: " +
+                    1000f / (-current + (current = System.currentTimeMillis()))
+            );
         }
 
         renderer.delete();
@@ -98,9 +101,10 @@ public class Renderer3DExample {
 
     private static MultisampledFbo createFbo(int width, int height) {
         final MultisampledFbo fbo = new MultisampledFbo(width, height);
-        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
-                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
-        fbo.addAttachment(attachment);
+        fbo.addAttachment(new RenderBufferAttachmentMS(AttachmentType.COLOUR,
+                0, RenderBuffer.create(), FormatType.BGRA, 16));
+        fbo.addAttachment(new RenderBufferAttachmentMS(AttachmentType.DEPTH,
+                0, RenderBuffer.create(), FormatType.DEPTH_COMPONENT, 16));
         return fbo;
     }
 
