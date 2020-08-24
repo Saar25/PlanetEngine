@@ -22,14 +22,21 @@ public class BasicNodeWriter {
         getIndexWriter().write(this.indexOffset + index);
     }
 
-    public void write(BasicNode node) {
-        node.getVertices().getVertices().forEach(this::writeVertex);
-        node.getIndices().getIndices().forEach(this::writeIndex);
+    private void writeInstance(BasicNode instance) {
+
+    }
+
+    public void write(BasicMesh mesh, BasicNode node) {
+        this.writeInstance(node);
+        mesh.getVertices().getVertices().forEach(this::writeVertex);
+        mesh.getIndices().getIndices().forEach(this::writeIndex);
         this.indexOffset = this.vertices;
     }
 
-    public void write(List<BasicNode> nodes) {
-        nodes.forEach(this::write);
+    public void write(BasicMesh mesh, List<BasicNode> nodes) {
+        for (BasicNode node : nodes) {
+            this.write(mesh, node);
+        }
     }
 
     public DataWriter getDataWriter() {

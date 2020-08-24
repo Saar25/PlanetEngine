@@ -7,10 +7,7 @@ import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
-import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.DataBuffer;
-import org.saar.lwjgl.opengl.objects.IndexBuffer;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +18,7 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
             Attribute.of(0, 2, DataType.FLOAT, true),
             Attribute.of(1, 3, DataType.FLOAT, true)};
 
+    private final BasicMesh mesh;
     private final List<BasicNode> nodes;
 
     private final Vao vao = Vao.create();
@@ -30,30 +28,38 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
 
     private Model model;
 
-    public BasicRenderNode(BasicNode... nodes) {
+    public BasicRenderNode(BasicMesh mesh, BasicNode... nodes) {
+        this.mesh = mesh;
         this.nodes = Arrays.asList(nodes);
+        init();
+    }
+
+    private void init() {
         this.vao.loadIndexBuffer(this.indexBuffer);
-        this.vao.loadDataBuffer(this.dataBuffer, BasicRenderNode.attributes);
-        update();
+        this.vao.loadDataBuffer(this.dataBuffer,
+                BasicRenderNode.attributes);
+        this.update();
+        this.nodes.clear();
     }
 
     public void update() {
         final BasicNodeWriter writer = new BasicNodeWriter();
-        writer.write(this.nodes);
+        writer.write(this.mesh, this.nodes);
 
         final int[] data = writer.getDataWriter().getDataArray();
-        if (this.dataBuffer.getSize() <= data.length) {
-            this.dataBuffer.allocateInt(data.length);
-        }
-        this.dataBuffer.storeData(0, data);
+        BasicRenderNode.write(this.dataBuffer, data);
 
         final int[] indices = writer.getIndexWriter().getDataArray();
-        if (this.indexBuffer.getSize() <= indices.length) {
-            this.indexBuffer.allocateInt(indices.length);
-        }
-        this.indexBuffer.storeData(0, indices);
+        BasicRenderNode.write(this.indexBuffer, indices);
 
         this.model = new ElementsModel(this.vao, RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+    }
+
+    private static void write(WriteableVbo vbo, int[] data) {
+        if (vbo.getSize() <= data.length) {
+            vbo.allocateInt(data.length);
+        }
+        vbo.storeData(0, data);
     }
 
     @Override
