@@ -4,6 +4,7 @@ import org.saar.core.model.vertex.ModelBufferWriter;
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.core.model.vertex.ModelVertex;
 import org.saar.core.model.vertex.ModelVertices;
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 
 public final class Models {
@@ -16,7 +17,7 @@ public final class Models {
     public static <T extends ModelVertex> Model arraysModel(
             RenderMode renderMode, ModelBufferWriter<T> writer, ModelVertices<T> vertices) {
         writer.write(vertices);
-        return new ArraysModel(writer.toBuffer().vao(), vertices.count(), renderMode);
+        return new ArraysModel(writer.toBuffer().vao(), renderMode, vertices.count());
     }
 
     public static <T extends ModelVertex> Model elementsModel(
@@ -24,6 +25,6 @@ public final class Models {
             ModelIndices indices, ModelVertices<T> vertices) {
         writer.write(vertices);
         writer.write(indices);
-        return new ElementsModel(writer.toBuffer().vao(), indices.count(), renderMode);
+        return new ElementsModel(writer.toBuffer().vao(), renderMode, indices.count(), DataType.U_INT);
     }
 }

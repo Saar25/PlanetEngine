@@ -28,6 +28,9 @@ public class ModelExample {
                 new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
                 new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
+        final ModelAttributes attributes = new ModelAttributes(
+                new ModelAttribute(2, true, DataType.FLOAT),
+                new ModelAttribute(3, true, DataType.FLOAT));
         final ModelBuffer buffer = new ModelBufferSingleVbo(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));

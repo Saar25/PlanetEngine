@@ -7,13 +7,14 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 public class ArraysModel implements Model {
 
     private final Vao vao;
-    private final int vertices;
-    private final RenderMode renderMode;
 
-    public ArraysModel(Vao vao, int vertices, RenderMode renderMode) {
+    private final RenderMode renderMode;
+    private final int vertices;
+
+    public ArraysModel(Vao vao, RenderMode renderMode, int vertices) {
         this.vao = vao;
-        this.vertices = vertices;
         this.renderMode = renderMode;
+        this.vertices = vertices;
     }
 
     @Override

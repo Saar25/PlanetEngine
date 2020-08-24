@@ -12,4 +12,8 @@ public class ModelAttributes {
         return this.attributes;
     }
 
+    public int count() {
+        return getAttributes().length;
+    }
+
 }

@@ -53,7 +53,7 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
         }
         this.indexBuffer.storeData(0, indices);
 
-        this.model = new ElementsModel(this.vao, indices.length, RenderMode.TRIANGLES);
+        this.model = new ElementsModel(this.vao, RenderMode.TRIANGLES, indices.length, DataType.U_INT);
     }
 
     @Override

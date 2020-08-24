@@ -72,7 +72,8 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         final int[] indices = writer.getIndexWriter().getDataArray();
         RenderNode3D.write(this.indexBuffer, indices);
 
-        this.model = new InstancedElementsModel(this.vao, indices.length, RenderMode.TRIANGLES, DataType.U_INT, nodes.size());
+        this.model = new InstancedElementsModel(this.vao, RenderMode.TRIANGLES,
+                indices.length, DataType.U_INT, nodes.size());
     }
 
     private static void write(WriteableVbo vbo, int[] data) {

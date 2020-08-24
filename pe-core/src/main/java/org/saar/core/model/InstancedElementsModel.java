@@ -11,15 +11,15 @@ public class InstancedElementsModel implements Model {
 
     private final RenderMode renderMode;
     private final int indices;
-    private final DataType indicesType;
+    private final DataType indexType;
     private final int instances;
 
-    public InstancedElementsModel(Vao vao, int indices, RenderMode renderMode,
-                                  DataType indicesType, int instances) {
+    public InstancedElementsModel(Vao vao, RenderMode renderMode, int indices,
+                                  DataType indexType, int instances) {
         this.vao = vao;
         this.renderMode = renderMode;
         this.indices = indices;
-        this.indicesType = indicesType;
+        this.indexType = indexType;
         this.instances = instances;
     }
 
@@ -28,7 +28,7 @@ public class InstancedElementsModel implements Model {
         this.vao.bind();
         this.vao.enableAttributes();
         GlRendering.drawElementsInstanced(renderMode,
-                indices, indicesType, 0, instances);
+                indices, indexType, 0, instances);
     }
 
     @Override

@@ -7,15 +7,16 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 public class InstancedArraysModel implements Model {
 
     private final Vao vao;
+
+    private final RenderMode renderMode;
     private final int vertices;
     private final int instances;
-    private final RenderMode renderMode;
 
-    public InstancedArraysModel(Vao vao, int vertices, int instances, RenderMode renderMode) {
+    public InstancedArraysModel(Vao vao, int vertices, RenderMode renderMode, int instances) {
         this.vao = vao;
         this.vertices = vertices;
-        this.instances = instances;
         this.renderMode = renderMode;
+        this.instances = instances;
     }
 
     @Override

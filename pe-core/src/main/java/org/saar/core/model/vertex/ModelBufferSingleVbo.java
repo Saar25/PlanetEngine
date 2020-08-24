@@ -7,17 +7,17 @@ import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ModelBufferSingleVbo implements ModelBuffer {
 
     private final List<Integer> data = new ArrayList<>();
     private final List<Integer> indices = new ArrayList<>();
-    private final List<ModelAttribute> vertexModelAttributes = new ArrayList<>();
+
+    private final ModelAttributes vertexModelAttributes;
 
     public ModelBufferSingleVbo(ModelAttribute... vertexModelAttributes) {
-        Collections.addAll(this.vertexModelAttributes, vertexModelAttributes);
+        this.vertexModelAttributes = new ModelAttributes(vertexModelAttributes);
     }
 
     @Override
@@ -58,9 +58,9 @@ public class ModelBufferSingleVbo implements ModelBuffer {
     }
 
     private Attribute[] attributes() {
-        final Attribute[] attributes = new Attribute[this.vertexModelAttributes.size()];
-        for (int i = 0; i < this.vertexModelAttributes.size(); i++) {
-            final ModelAttribute current = this.vertexModelAttributes.get(i);
+        final Attribute[] attributes = new Attribute[this.vertexModelAttributes.count()];
+        for (int i = 0; i < this.vertexModelAttributes.count(); i++) {
+            final ModelAttribute current = this.vertexModelAttributes.getAttributes()[i];
             attributes[i] = Attribute.of(i, current.getComponentCount(),
                     current.getDataType(), current.isNormalized());
         }
