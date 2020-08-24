@@ -13,21 +13,23 @@ public class Position {
     }
 
     public static Position of(float x, float y, float z) {
-        final Vector3f value = Vector3.of(x, y, z);
-        return new Position(value);
+        return new Position(Vector3.of(x, y, z));
+    }
+
+    public static Position of(Vector3fc position) {
+        return new Position(Vector3.of(position));
     }
 
     public static Position create() {
-        final Vector3f position = Vector3.create();
-        return new Position(position);
+        return new Position(Vector3.create());
     }
 
-    public void add(Position position) {
-        this.value.add(position.getValue());
+    public void add(Vector3fc direction) {
+        this.value.add(direction);
     }
 
-    public void sub(Position position) {
-        this.value.sub(position.getValue());
+    public void sub(Vector3fc direction) {
+        this.value.sub(direction);
     }
 
     public void set(Position position) {

@@ -1,5 +1,7 @@
 package org.saar.example.renderer3d;
 
+import org.joml.Vector3fc;
+import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -55,10 +57,10 @@ public class Renderer3DExample {
         window.init();
 
 
-        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 2000);
+        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 3000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 2000, 0));
+        camera.getTransform().setPosition(Position.of(0, 3000, 0));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
@@ -72,6 +74,7 @@ public class Renderer3DExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
 //            renderNode.update();
+            move(camera, keyboard);
             renderer.render();
 
             fbo.blitToScreen();
@@ -92,6 +95,29 @@ public class Renderer3DExample {
         renderer.delete();
     }
 
+    private static void move(ICamera camera, Keyboard keyboard) {
+        Vector3fc toMove = Vector3.ZERO;
+        if (keyboard.isKeyPressed('W')) {
+            toMove = Vector3.of(0, 0, -1);
+        }
+        if (keyboard.isKeyPressed('A')) {
+            toMove = Vector3.of(-1, 0, 0);
+        }
+        if (keyboard.isKeyPressed('S')) {
+            toMove = Vector3.of(0, 0, 1);
+        }
+        if (keyboard.isKeyPressed('D')) {
+            toMove = Vector3.of(1, 0, 0);
+        }
+        if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+            toMove = Vector3.of(0, -10, 0);
+        }
+        if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+            toMove = Vector3.of(0, 10, 0);
+        }
+        camera.getTransform().getPosition().add(toMove);
+    }
+
     private static RenderNode3D renderNode3D() {
         final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
@@ -107,7 +133,7 @@ public class Renderer3DExample {
             final float x = (i / sqrt) - (max / sqrt / 2);
             final float z = (i % sqrt) - sqrt / 2;
             final float y = (x * x + z * z) * 0.005f;
-            newNode.getTransform().setPosition(Position.of(x, y, z));
+            newNode.getTransform().setPosition(Position.of(x * 1.1f, y, z * 1.1f));
             nodes.add(newNode);
         }
         return new RenderNode3D(model, nodes);
