@@ -26,7 +26,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
             Attribute.ofInstance(5, 4, DataType.FLOAT, false),
     };
 
-    private final ModelNode3D modelNode;
+    private final Mesh3D modelNode;
     private final List<? extends Node3D> nodes;
 
     private final Vao vao = Vao.create();
@@ -37,13 +37,13 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
 
     private Model model;
 
-    public RenderNode3D(ModelNode3D modelNode, Node3D... nodes) {
+    public RenderNode3D(Mesh3D modelNode, Node3D... nodes) {
         this.modelNode = modelNode;
         this.nodes = Arrays.asList(nodes);
         init();
     }
 
-    public RenderNode3D(ModelNode3D modelNode, List<? extends Node3D> nodes) {
+    public RenderNode3D(Mesh3D modelNode, List<? extends Node3D> nodes) {
         this.modelNode = modelNode;
         this.nodes = nodes;
         init();

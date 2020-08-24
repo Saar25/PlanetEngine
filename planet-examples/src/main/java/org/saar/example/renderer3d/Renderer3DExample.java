@@ -121,7 +121,7 @@ public class Renderer3DExample {
         final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
 
-        final MyModelNode model = new MyModelNode(vertices, indices);
+        final MyMesh model = new MyMesh(vertices, indices);
         final List<MyNode> nodes = new ArrayList<>();
         final int max = 1000000;
         final float sqrt = (float) Math.sqrt(max);

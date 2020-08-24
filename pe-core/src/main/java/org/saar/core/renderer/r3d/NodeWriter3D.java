@@ -29,7 +29,7 @@ public class NodeWriter3D {
         this.instanceWriter.write(transform.getTransformationMatrix());
     }
 
-    public void write(ModelNode3D model, List<? extends Node3D> nodes) {
+    public void write(Mesh3D model, List<? extends Node3D> nodes) {
         model.getVertices().getVertices().forEach(this::writeVertex);
         model.getIndices().getIndices().forEach(this::writeIndex);
         nodes.forEach(this::writeInstance);
