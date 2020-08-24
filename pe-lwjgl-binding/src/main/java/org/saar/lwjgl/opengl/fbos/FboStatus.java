@@ -8,7 +8,7 @@ public final class FboStatus {
 
     private static final String MESSAGE = "Framebuffer creation failed";
 
-    public void checkStatus(int status) throws FrameBufferException {
+    public void ensureStatus(int status) throws FrameBufferException {
         // GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER)
         switch (status) {
             case GL30.GL_FRAMEBUFFER_UNDEFINED:
