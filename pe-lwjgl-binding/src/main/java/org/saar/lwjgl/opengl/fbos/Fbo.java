@@ -7,6 +7,7 @@ import org.lwjgl.system.MemoryUtil;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
@@ -19,7 +20,7 @@ public class Fbo implements IFbo {
     public static final Fbo NULL = new Fbo(0, 0, 0);
     public static final int DEPTH_ATTACHMENT = -1;
 
-    //private static int boundFbo = 0;
+    private static int boundFbo = 0;
 
     private final int id;
     private final int width;
@@ -193,7 +194,7 @@ public class Fbo implements IFbo {
 
     @Override
     public void bind(FboTarget target) {
-        GL30.glBindFramebuffer(target.get(), id);
+        this.bind0(target);
         switch (target) {
             case DRAW_FRAMEBUFFER:
                 drawAttachments();
@@ -217,13 +218,16 @@ public class Fbo implements IFbo {
         GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 
+    private void bind0(FboTarget target) {
+        GL30.glBindFramebuffer(target.get(), id);
+    }
+
     @Override
     public void unbind(FboTarget target) {
-        GL30.glBindFramebuffer(target.get(), 0);
-        /*if (!GlConfigs.CACHE_STATE || boundFbo != 0) {
+        if (!GlConfigs.CACHE_STATE || boundFbo != 0) {
             GL30.glBindFramebuffer(target.get(), 0);
             Fbo.boundFbo = 0;
-        }*/
+        }
     }
 
     @Override

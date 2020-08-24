@@ -6,6 +6,6 @@ public final class GlConfigs {
 
     }
 
-    public static final boolean CACHE_STATE = true;
+    public static final boolean CACHE_STATE = false;
 
 }
