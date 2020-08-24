@@ -27,7 +27,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
     };
 
     private final ModelNode3D modelNode;
-    private final List<? extends InstanceNode3D> nodes;
+    private final List<? extends Node3D> nodes;
 
     private final Vao vao = Vao.create();
 
@@ -37,17 +37,13 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
 
     private Model model;
 
-    public RenderNode3D(Node3D node) {
-        this(node, node);
-    }
-
-    public RenderNode3D(ModelNode3D modelNode, InstanceNode3D... nodes) {
+    public RenderNode3D(ModelNode3D modelNode, Node3D... nodes) {
         this.modelNode = modelNode;
         this.nodes = Arrays.asList(nodes);
         init();
     }
 
-    public RenderNode3D(ModelNode3D modelNode, List<? extends InstanceNode3D> nodes) {
+    public RenderNode3D(ModelNode3D modelNode, List<? extends Node3D> nodes) {
         this.modelNode = modelNode;
         this.nodes = nodes;
         init();

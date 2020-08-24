@@ -1,5 +1,10 @@
 package org.saar.core.renderer.r3d;
 
-public interface Node3D extends ModelNode3D, InstanceNode3D {
+import org.saar.core.node.Node;
+import org.saar.maths.objects.Transform;
+
+public interface Node3D extends Node {
+
+    Transform getTransform();
 
 }

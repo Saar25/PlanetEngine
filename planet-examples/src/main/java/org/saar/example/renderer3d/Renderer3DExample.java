@@ -24,7 +24,6 @@ import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Renderer3DExample {
@@ -123,13 +122,11 @@ public class Renderer3DExample {
         final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
 
         final MyModelNode model = new MyModelNode(vertices, indices);
-        final MyInstanceNode node = new MyInstanceNode();
-        node.getTransform().setPosition(Position.of(.5f, 3, 1.5f));
-        final List<MyInstanceNode> nodes = new ArrayList<>(Collections.singleton(node));
+        final List<MyNode> nodes = new ArrayList<>();
         final int max = 1000000;
         final float sqrt = (float) Math.sqrt(max);
         for (int i = 0; i < max; i++) {
-            final MyInstanceNode newNode = new MyInstanceNode();
+            final MyNode newNode = new MyNode();
             final float x = (i / sqrt) - (max / sqrt / 2);
             final float z = (i % sqrt) - sqrt / 2;
             final float y = (x * x + z * z) * 0.005f;
