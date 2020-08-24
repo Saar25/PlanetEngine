@@ -27,7 +27,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
     };
 
     private final ModelNode3D modelNode;
-    private final List<InstanceNode3D> nodes;
+    private final List<? extends InstanceNode3D> nodes;
 
     private final Vao vao = Vao.create();
 
@@ -47,6 +47,12 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         init();
     }
 
+    public RenderNode3D(ModelNode3D modelNode, List<? extends InstanceNode3D> nodes) {
+        this.modelNode = modelNode;
+        this.nodes = nodes;
+        init();
+    }
+
     private void init() {
         this.vao.loadIndexBuffer(this.indexBuffer);
         this.vao.loadDataBuffer(this.dataBuffer,
@@ -54,6 +60,7 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
         this.vao.loadDataBuffer(this.instanceBuffer,
                 RenderNode3D.instanceAttributes);
         this.update();
+        this.nodes.clear();
     }
 
     public void update() {

@@ -18,17 +18,19 @@ import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-import org.saar.maths.Angle;
-import org.saar.maths.objects.Transform;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Renderer3DExample {
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static MyVertex[] flatData = new MyVertex[]{ // xyz position, xyz normal,
+    private static final MyVertex[] flatData = new MyVertex[]{ // xyz position, xyz normal,
             new MyVertex(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
             new MyVertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0).add(1, 1, 1).div(2)), // 1
             new MyVertex(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0).add(1, 1, 1).div(2)), // 2
@@ -53,21 +55,13 @@ public class Renderer3DExample {
         window.init();
 
 
-        final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
-        final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
-
-        final MyNode node = new MyNode(vertices, indices, new Transform());
-        node.getTransform().setPosition(Position.of(.5f, 0, 8.5f));
-        final MyNode node2 = new MyNode(vertices, indices, new Transform());
-
-        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 100);
+        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 2000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, 15));
-        camera.getTransform().lookAt(node.getTransform().getPosition());
+        camera.getTransform().setPosition(Position.of(0, 2000, 0));
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final RenderNode3D renderNode = new RenderNode3D(node, node, node2);
-        final Renderer3D renderer = new Renderer3D(camera, renderNode);
+        final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
@@ -77,8 +71,7 @@ public class Renderer3DExample {
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
-            node.getTransform().addRotation(Angle.degrees(.1f), Angle.degrees(.1f), Angle.degrees(.1f));
-            renderNode.update();
+//            renderNode.update();
             renderer.render();
 
             fbo.blitToScreen();
@@ -91,12 +84,33 @@ public class Renderer3DExample {
                 temp.delete();
             }
 
-            System.out.print( "\rFps: " +
+            System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))
             );
         }
 
         renderer.delete();
+    }
+
+    private static RenderNode3D renderNode3D() {
+        final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
+        final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
+
+        final MyModelNode model = new MyModelNode(vertices, indices);
+        final MyInstanceNode node = new MyInstanceNode();
+        node.getTransform().setPosition(Position.of(.5f, 3, 1.5f));
+        final List<MyInstanceNode> nodes = new ArrayList<>(Collections.singleton(node));
+        final int max = 1000000;
+        final float sqrt = (float) Math.sqrt(max);
+        for (int i = 0; i < max; i++) {
+            final MyInstanceNode newNode = new MyInstanceNode();
+            final float x = (i / sqrt) - (max / sqrt / 2);
+            final float z = (i % sqrt) - sqrt / 2;
+            final float y = (x * x + z * z) * 0.005f;
+            newNode.getTransform().setPosition(Position.of(x, y, z));
+            nodes.add(newNode);
+        }
+        return new RenderNode3D(model, nodes);
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

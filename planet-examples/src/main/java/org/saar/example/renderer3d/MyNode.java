@@ -8,28 +8,26 @@ import org.saar.maths.objects.Transform;
 
 public class MyNode extends AbstractNode implements Node3D {
 
-    private final ModelVertices<MyVertex> vertices;
-    private final ModelIndices indices;
-    private final Transform transform;
+    private final MyModelNode model;
+    private final MyInstanceNode instance;
 
-    public MyNode(ModelVertices<MyVertex> vertices, ModelIndices indices, Transform transform) {
-        this.vertices = vertices;
-        this.indices = indices;
-        this.transform = transform;
-    }
-
-    @Override
-    public ModelVertices<MyVertex> getVertices() {
-        return this.vertices;
-    }
-
-    @Override
-    public ModelIndices getIndices() {
-        return this.indices;
+    public MyNode(MyModelNode model, MyInstanceNode instance) {
+        this.model = model;
+        this.instance = instance;
     }
 
     @Override
     public Transform getTransform() {
-        return this.transform;
+        return this.instance.getTransform();
+    }
+
+    @Override
+    public ModelVertices<MyVertex> getVertices() {
+        return this.model.getVertices();
+    }
+
+    @Override
+    public ModelIndices getIndices() {
+        return this.model.getIndices();
     }
 }
