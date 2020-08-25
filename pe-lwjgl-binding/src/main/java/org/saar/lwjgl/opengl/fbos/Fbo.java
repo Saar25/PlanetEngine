@@ -3,34 +3,30 @@ package org.saar.lwjgl.opengl.fbos;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryUtil;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbos.exceptions.FboAttachmentMissingException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
-import java.nio.IntBuffer;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Fbo implements IFbo {
 
     public static final Fbo NULL = new Fbo(0, 0, 0);
-    public static final int DEPTH_ATTACHMENT = -1;
 
     private static int boundFbo = 0;
 
     private final int id;
+
     private final int width;
     private final int height;
 
-    private final List<Attachment> attachments = new ArrayList<>();
-    private Attachment depthAttachment;
-
+    private List<Attachment> drawAttachments = Collections.emptyList();
     private Attachment readAttachment;
-    private List<Attachment> drawAttachments;
 
     private Fbo(int id, int width, int height) {
         this.id = id;
@@ -44,52 +40,13 @@ public class Fbo implements IFbo {
     }
 
     /**
-     * Returns the depth attachment of the fbo
-     *
-     * @return the depth attachment
-     */
-    public Attachment getDepthAttachment() {
-        return depthAttachment;
-    }
-
-    /**
-     * Returns the colour attachments of the fbo
-     *
-     * @return the colour attachments
-     */
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    /**
      * Adds an attachment to the fbo
      *
      * @param attachment the attachment to add
      */
     public void addAttachment(Attachment attachment) {
         bind();
-        switch (attachment.getAttachmentType()) {
-            case COLOUR: addColourAttachment(attachment);
-                break;
-            case DEPTH: setDepthAttachment(attachment);
-                break;
-            default:
-                throw new IllegalArgumentException("Cannot add to an fbo attachment of type"
-                        + attachment.getAttachmentType());
-        }
-    }
-
-    private void addColourAttachment(Attachment attachment) {
         attachment.init(this);
-        getAttachments().add(attachment);
-    }
-
-    private void setDepthAttachment(Attachment attachment) {
-        if (getDepthAttachment() != null) {
-            getDepthAttachment().delete();
-        }
-        this.depthAttachment = attachment;
-        this.depthAttachment.init(this);
     }
 
     /**
@@ -107,12 +64,16 @@ public class Fbo implements IFbo {
         blitFbo(ScreenFbo.getInstance());
     }
 
+    public void blitFbo(IFbo fbo) {
+        blitFbo(fbo, MagFilterParameter.NEAREST, GlBuffer.COLOUR, GlBuffer.DEPTH);
+    }
+
     @Override
     public void blitFbo(IFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
         bind(FboTarget.READ_FRAMEBUFFER);
         fbo.bind(FboTarget.DRAW_FRAMEBUFFER);
-        GL30.glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, fbo.getWidth(),
-                fbo.getHeight(), GlBuffer.getValue(buffers), filter.get());
+        blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0,
+                fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }
 
     private void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2,
@@ -125,39 +86,24 @@ public class Fbo implements IFbo {
      *
      * @param attachment the read attachment
      */
-    public void setReadAttachment(int attachment) {
-        if (attachment == DEPTH_ATTACHMENT) {
-            this.readAttachment = getDepthAttachment();
-        } else {
-            this.readAttachment = getAttachments().get(attachment);
-        }
+    public void setReadAttachment(Attachment attachment) {
+        this.readAttachment = attachment;
     }
 
     /**
      * Sets the draw attachments of the fbo
-     * by default all of the attachments are draw attachments
      *
      * @param attachments the draw attachments
      */
-    public void setDrawAttachments(int... attachments) {
-        final List<Attachment> list = new ArrayList<>();
-        for (int attachment : attachments) {
-            if (attachment == DEPTH_ATTACHMENT) {
-                list.add(getDepthAttachment());
-            } else {
-                list.add(getAttachments().get(attachment));
-            }
-        }
-        this.drawAttachments = list;
+    public void setDrawAttachments(Attachment... attachments) {
+        this.drawAttachments = Arrays.asList(attachments);
     }
 
     private Attachment getReadAttachment() {
-        if (getAttachments().size() == 0) {
-            throw new IllegalStateException("Cannot read from fbo, " + this + " has no attachments");
-        } else if (this.readAttachment == null) {
-            this.readAttachment = getAttachments().get(0);
+        if (this.readAttachment != null) {
+            return this.readAttachment;
         }
-        return this.readAttachment;
+        throw new FboAttachmentMissingException("Read attachment is not set");
     }
 
     private void readAttachment() {
@@ -165,36 +111,45 @@ public class Fbo implements IFbo {
     }
 
     private List<Attachment> getDrawAttachments() {
-        return drawAttachments == null ? getAttachments() : drawAttachments;
+        return this.drawAttachments;
     }
 
     private void drawAttachments() {
-        if (getDrawAttachments().size() == 1) {
-            GL11.glDrawBuffer(getDrawAttachments().get(0).getAttachmentPoint());
-        } else if (getDrawAttachments().size() > 1) {
-            final IntBuffer buffer = MemoryUtils.allocInt(getDrawAttachments().size());
-            for (Attachment attachment : getDrawAttachments()) {
-                buffer.put(attachment.getAttachmentPoint());
-            }
-            buffer.flip();
-            GL20.glDrawBuffers(buffer);
-            MemoryUtil.memFree(buffer);
+        final int[] buffer = new int[getDrawAttachments().size()];
+        for (int i = 0; i < getDrawAttachments().size(); i++) {
+            final Attachment attachment = getDrawAttachments().get(i);
+            buffer[i] = attachment.getAttachmentPoint();
         }
+        setDrawBuffers(buffer);
+    }
+
+    private void setDrawBuffers(int... buffers) {
+        if (buffers.length == 1) {
+            GL11.glDrawBuffer(buffers[0]);
+        } else {
+            GL20.glDrawBuffers(buffers);
+        }
+    }
+
+    private void setViewport() {
+        GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 
     @Override
     public int getWidth() {
-        return width;
+        return this.width;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return this.height;
     }
 
     @Override
     public void bind(FboTarget target) {
-        this.bind0(target);
+        if (!GlConfigs.CACHE_STATE || boundFbo != id) {
+            this.bind0(target);
+        }
         switch (target) {
             case DRAW_FRAMEBUFFER:
                 drawAttachments();
@@ -208,35 +163,30 @@ public class Fbo implements IFbo {
                 break;
             default:
         }
-        /*if (!GlConfigs.CACHE_STATE || boundFbo != id) {
-            GL30.glBindFramebuffer(target.get(), id);
-            Fbo.boundFbo = id;
-        }*/
     }
 
-    private void setViewport() {
-        GlUtils.setViewport(0, 0, getWidth(), getHeight());
-    }
-
-    private void bind0(FboTarget target) {
-        GL30.glBindFramebuffer(target.get(), id);
+    @Override
+    public void bind() {
+        this.bind(FboTarget.FRAMEBUFFER);
     }
 
     @Override
     public void unbind(FboTarget target) {
-        if (!GlConfigs.CACHE_STATE || boundFbo != 0) {
-            GL30.glBindFramebuffer(target.get(), 0);
-            Fbo.boundFbo = 0;
-        }
+        Fbo.NULL.bind(target);
+    }
+
+    @Override
+    public void unbind() {
+        this.unbind(FboTarget.FRAMEBUFFER);
     }
 
     @Override
     public void delete() {
         GL30.glDeleteFramebuffers(id);
+    }
 
-        getAttachments().forEach(Attachment::delete);
-        if (getDepthAttachment() != null) {
-            getDepthAttachment().delete();
-        }
+    private void bind0(FboTarget target) {
+        GL30.glBindFramebuffer(target.get(), id);
+        Fbo.boundFbo = id;
     }
 }

@@ -8,9 +8,7 @@ public interface IFbo {
     /**
      * Blit the fbo to the given fbo
      */
-    default void blitFbo(IFbo fbo) {
-        blitFbo(fbo, MagFilterParameter.NEAREST, GlBuffer.COLOUR, GlBuffer.DEPTH);
-    }
+    void blitFbo(IFbo fbo);
 
     void blitFbo(IFbo fbo, MagFilterParameter filter, GlBuffer... buffers);
 
@@ -31,9 +29,7 @@ public interface IFbo {
     /**
      * Bind the fbo
      */
-    default void bind() {
-        bind(FboTarget.FRAMEBUFFER);
-    }
+    void bind();
 
     /**
      * Bind the fbo to the given target
@@ -45,9 +41,7 @@ public interface IFbo {
     /**
      * Unbind the fbo
      */
-    default void unbind() {
-        unbind(FboTarget.FRAMEBUFFER);
-    }
+    void unbind();
 
     /**
      * Unbind the fbo from the given target
