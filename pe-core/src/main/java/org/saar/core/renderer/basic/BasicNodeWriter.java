@@ -1,6 +1,6 @@
 package org.saar.core.renderer.basic;
 
-import org.saar.core.model.data.DataWriter;
+import org.saar.core.model.DataWriter;
 
 import java.util.List;
 

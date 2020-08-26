@@ -1,6 +1,6 @@
 package org.saar.core.renderer.r3d;
 
-import org.saar.core.model.data.DataWriter;
+import org.saar.core.model.DataWriter;
 import org.saar.maths.objects.Transform;
 
 import java.util.List;

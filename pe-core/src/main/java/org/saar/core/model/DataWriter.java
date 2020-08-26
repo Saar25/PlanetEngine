@@ -1,4 +1,4 @@
-package org.saar.core.model.data;
+package org.saar.core.model;
 
 import org.joml.*;
 

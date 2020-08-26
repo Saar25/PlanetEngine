@@ -1,6 +1,5 @@
 package org.saar.example.renderer;
 
-import org.joml.Vector2f;
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.core.model.vertex.ModelVertices;
 import org.saar.core.renderer.basic.BasicRenderNode;
@@ -49,9 +48,9 @@ public class RendererExample {
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOUR);
 
-            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).x += .001f;
-            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).y += .001f;
-            renderNode.update();
+//            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).x += .001f;
+//            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).y += .001f;
+//            renderNode.update();
             renderer.render();
 
             fbo.blitToScreen();
