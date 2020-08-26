@@ -1,6 +1,8 @@
 package org.saar.core.model.vertex;
 
-public class SimpleVertex implements ModelVertex {
+import org.saar.core.model.Vertex;
+
+public class SimpleVertex implements Vertex {
 
     private final float[] floatData;
     private final int[] intData;

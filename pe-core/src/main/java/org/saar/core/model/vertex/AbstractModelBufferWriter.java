@@ -1,6 +1,8 @@
 package org.saar.core.model.vertex;
 
-public abstract class AbstractModelBufferWriter<T extends ModelVertex> implements ModelBufferWriter<T> {
+import org.saar.core.model.Vertex;
+
+public abstract class AbstractModelBufferWriter<T extends Vertex> implements ModelBufferWriter<T> {
 
     @Override
     public void write(ModelVertices<T> vertices) {

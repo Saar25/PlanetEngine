@@ -1,6 +1,8 @@
 package org.saar.core.model.vertex;
 
-public interface ModelBufferWriter<T extends ModelVertex> {
+import org.saar.core.model.Vertex;
+
+public interface ModelBufferWriter<T extends Vertex> {
 
     void write(ModelVertices<T> vertices);
 

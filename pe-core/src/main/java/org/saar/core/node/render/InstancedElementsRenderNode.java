@@ -1,8 +1,8 @@
 package org.saar.core.node.render;
 
 import org.saar.core.model.Model;
+import org.saar.core.model.Vertex;
 import org.saar.core.model.vertex.ModelBufferWriter;
-import org.saar.core.model.vertex.ModelVertex;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.objects.DataBuffer;
 import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
 
-public class InstancedElementsRenderNode<T extends ModelVertex> extends AbstractNode implements RenderNode {
+public class InstancedElementsRenderNode<T extends Vertex> extends AbstractNode implements RenderNode {
 
     private final ModelBufferWriter<T> writer;
 

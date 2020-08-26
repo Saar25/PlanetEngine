@@ -1,9 +1,9 @@
 package org.saar.core.renderer.r3d;
 
 import org.joml.Vector3fc;
-import org.saar.core.model.vertex.ModelVertex;
+import org.saar.core.model.Vertex;
 
-public interface Vertex3D extends ModelVertex {
+public interface Vertex3D extends Vertex {
 
     Vector3fc getPosition3f();
 

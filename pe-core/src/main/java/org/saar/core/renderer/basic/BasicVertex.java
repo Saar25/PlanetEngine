@@ -2,9 +2,9 @@ package org.saar.core.renderer.basic;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
-import org.saar.core.model.vertex.ModelVertex;
+import org.saar.core.model.Vertex;
 
-public interface BasicVertex extends ModelVertex {
+public interface BasicVertex extends Vertex {
 
     Vector2fc getPosition2f();
 
