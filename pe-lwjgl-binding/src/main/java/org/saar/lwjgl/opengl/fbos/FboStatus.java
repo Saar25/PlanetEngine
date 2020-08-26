@@ -8,9 +8,15 @@ public final class FboStatus {
 
     private static final String MESSAGE = "Framebuffer creation failed";
 
-    public void ensureStatus(int status) throws FrameBufferException {
-        // GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER)
+    private FboStatus() {
+        throw new AssertionError("Cannot create instance of class "
+                + getClass().getSimpleName());
+    }
+
+    public static void ensureStatus(int status) throws FrameBufferException {
         switch (status) {
+            case GL30.GL_FRAMEBUFFER_COMPLETE:
+                break;
             case GL30.GL_FRAMEBUFFER_UNDEFINED:
                 throw new FboUndefinedException(MESSAGE);
             case GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:

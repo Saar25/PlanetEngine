@@ -4,7 +4,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.exceptions.FboAttachmentMissingException;
+import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
@@ -87,6 +89,10 @@ public class Fbo implements IFbo {
      * @param attachment the read attachment
      */
     public void setReadAttachment(Attachment attachment) {
+        if (attachment.getAttachmentType() != AttachmentType.COLOUR) {
+            throw new IllegalArgumentException("Attachment of type " +
+                    attachment.getAttachmentType() + " cannot be a read attachment");
+        }
         this.readAttachment = attachment;
     }
 
@@ -183,6 +189,13 @@ public class Fbo implements IFbo {
     @Override
     public void delete() {
         GL30.glDeleteFramebuffers(id);
+    }
+
+    @Override
+    public void ensureStatus() throws FrameBufferException {
+        bind();
+        final int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        FboStatus.ensureStatus(status);
     }
 
     private void bind0(FboTarget target) {

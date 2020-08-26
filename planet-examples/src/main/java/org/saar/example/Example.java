@@ -20,12 +20,15 @@ public class Example {
 
         final Vao vao = Vao.create();
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
-        vbo.allocateFloat(6);
+        vbo.allocateFloat(18);
         vbo.storeData(0, new float[]{
-                -0.5f, -0.5f,
-                +0.0f, +0.5f,
-                +0.5f, -0.5f});
-        vao.loadDataBuffer(vbo, Attribute.of(0, 2, DataType.FLOAT, false));
+                -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+                +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+                +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
+        vao.loadDataBuffer(vbo,
+                Attribute.of(0, 2, DataType.FLOAT, false),
+                Attribute.of(1, 3, DataType.FLOAT, false),
+                Attribute.of(2, 1, DataType.FLOAT, false));
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

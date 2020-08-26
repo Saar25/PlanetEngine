@@ -1,9 +1,12 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import org.saar.lwjgl.opengl.constants.FormatType;
 import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class RenderBuffer {
+
+    private static final RenderBuffer NULL = new RenderBuffer(0);
 
     private static int boundRenderBuffer = 0;
 
@@ -12,7 +15,6 @@ public class RenderBuffer {
 
     private RenderBuffer(int id) {
         this.id = id;
-        this.bind();
     }
 
     public static RenderBuffer create() {
@@ -21,29 +23,29 @@ public class RenderBuffer {
     }
 
     public void loadStorage(int width, int height, FormatType iFormat) {
+        bind();
         GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, iFormat.get(), width, height);
     }
 
     public void loadStorageMultisample(int width, int height, FormatType iFormat, int samples) {
+        bind();
         GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, samples, iFormat.get(), width, height);
     }
 
     public void attachToFbo(int attachment) {
+        bind();
         GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, attachment, GL30.GL_RENDERBUFFER, id);
     }
 
     public void bind() {
-        if (boundRenderBuffer != id) {
-            boundRenderBuffer = id;
+        if (RenderBuffer.boundRenderBuffer != id || !GlConfigs.CACHE_STATE) {
+            RenderBuffer.boundRenderBuffer = id;
             GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
         }
     }
 
     public void unbind() {
-        if (boundRenderBuffer != 0) {
-            boundRenderBuffer = 0;
-            GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
-        }
+        RenderBuffer.NULL.bind();
     }
 
     public void delete() {

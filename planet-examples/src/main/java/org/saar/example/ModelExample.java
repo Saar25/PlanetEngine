@@ -9,8 +9,6 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.RenderBuffer;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
@@ -45,9 +43,10 @@ public class ModelExample {
         shadersProgram.bind();
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
-                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
+        final RenderBufferAttachmentMS attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
         fbo.addAttachment(attachment);
+        fbo.setReadAttachment(attachment);
+        fbo.setDrawAttachments(attachment);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
@@ -59,6 +58,10 @@ public class ModelExample {
             window.update(true);
             window.pollEvents();
         }
+
+        fbo.delete();
+        model.delete();
+        attachment.delete();
     }
 
 }

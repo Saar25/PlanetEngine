@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
+import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -109,4 +110,8 @@ public class ScreenFbo implements IFbo {
         // Cannot delete screen fbo
     }
 
+    @Override
+    public void ensureStatus() throws FrameBufferException {
+        getFbo().ensureStatus();
+    }
 }

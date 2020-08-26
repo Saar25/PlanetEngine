@@ -1,6 +1,6 @@
 package org.saar.example.renderer3d;
 
-import org.joml.Vector3fc;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
@@ -13,10 +13,7 @@ import org.saar.core.renderer.r3d.Renderer3D;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.RenderBuffer;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -51,15 +48,20 @@ public class Renderer3DExample {
             3, 7, 4, 3, 4, 0, // bottom , PV: 3
     };
 
+    private static RenderBufferAttachmentMS colorAttachment;
+    private static RenderBufferAttachmentMS depthAttachment;
+
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
+        colorAttachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        depthAttachment = RenderBufferAttachmentMS.ofDepth(FormatType.DEPTH_COMPONENT24, 16);
 
-        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 3000);
+        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 500);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 3000, 0));
+        camera.getTransform().setPosition(Position.of(0, 300, 0));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
@@ -81,9 +83,8 @@ public class Renderer3DExample {
             window.update(true);
             window.pollEvents();
             if (window.isResized()) {
-                final IFbo temp = fbo;
+                fbo.delete();
                 fbo = createFbo(window.getWidth(), window.getHeight());
-                temp.delete();
             }
 
             System.out.print("\rFps: " +
@@ -92,27 +93,30 @@ public class Renderer3DExample {
         }
 
         renderer.delete();
+        fbo.delete();
+        colorAttachment.delete();
+        depthAttachment.delete();
     }
 
     private static void move(ICamera camera, Keyboard keyboard) {
-        Vector3fc toMove = Vector3.ZERO;
+        final Vector3f toMove = Vector3.zero();
         if (keyboard.isKeyPressed('W')) {
-            toMove = Vector3.of(0, 0, -1);
+            toMove.add(Vector3.of(0, 0, -1));
         }
         if (keyboard.isKeyPressed('A')) {
-            toMove = Vector3.of(-1, 0, 0);
+            toMove.add(Vector3.of(-1, 0, 0));
         }
         if (keyboard.isKeyPressed('S')) {
-            toMove = Vector3.of(0, 0, 1);
+            toMove.add(Vector3.of(0, 0, 1));
         }
         if (keyboard.isKeyPressed('D')) {
-            toMove = Vector3.of(1, 0, 0);
+            toMove.add(Vector3.of(1, 0, 0));
         }
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            toMove = Vector3.of(0, -10, 0);
+            toMove.add(Vector3.of(0, -10, 0));
         }
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            toMove = Vector3.of(0, 10, 0);
+            toMove.add(Vector3.of(0, 10, 0));
         }
         camera.getTransform().getPosition().add(toMove);
     }
@@ -123,7 +127,7 @@ public class Renderer3DExample {
 
         final MyMesh model = new MyMesh(vertices, indices);
         final List<MyNode> nodes = new ArrayList<>();
-        final int max = 1000000;
+        final int max = 100000;
         final float sqrt = (float) Math.sqrt(max);
         for (int i = 0; i < max; i++) {
             final MyNode newNode = new MyNode();
@@ -138,10 +142,11 @@ public class Renderer3DExample {
 
     private static MultisampledFbo createFbo(int width, int height) {
         final MultisampledFbo fbo = new MultisampledFbo(width, height);
-        fbo.addAttachment(new RenderBufferAttachmentMS(AttachmentType.COLOUR,
-                0, RenderBuffer.create(), FormatType.BGRA, 16));
-        fbo.addAttachment(new RenderBufferAttachmentMS(AttachmentType.DEPTH,
-                0, RenderBuffer.create(), FormatType.DEPTH_COMPONENT, 16));
+        fbo.addAttachment(depthAttachment);
+        fbo.addAttachment(colorAttachment);
+        fbo.setReadAttachment(colorAttachment);
+        fbo.setDrawAttachments(colorAttachment);
+        fbo.ensureStatus();
         return fbo;
     }
 

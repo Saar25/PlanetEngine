@@ -9,6 +9,7 @@ import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
 
     public BasicRenderNode(BasicMesh mesh, BasicNode... nodes) {
         this.mesh = mesh;
-        this.nodes = Arrays.asList(nodes);
+        this.nodes = new ArrayList<>(Arrays.asList(nodes));
         init();
     }
 
