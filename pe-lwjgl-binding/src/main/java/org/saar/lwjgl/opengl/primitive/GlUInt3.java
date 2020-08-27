@@ -2,31 +2,31 @@ package org.saar.lwjgl.opengl.primitive;
 
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
 
-public class GlInt3 implements GlPrimitive {
+public class GlUInt3 implements GlPrimitive {
 
-    private static final DataType DATA_TYPE = DataType.INT;
+    private static final DataType DATA_TYPE = DataType.U_INT;
 
     private final Vector3ic value;
 
-    public GlInt3(Vector3ic value) {
+    public GlUInt3(Vector3ic value) {
         this.value = value;
     }
 
-    public static GlInt3 of(int x, int y, int z) {
-        return new GlInt3(new Vector3i(x, y, z));
+    public static GlUInt3 of(int x, int y, int z) {
+        return new GlUInt3(new Vector3i(x, y, z));
     }
 
-    public static GlInt3 of(Vector3ic value) {
-        return new GlInt3(value);
+    public static GlUInt3 of(Vector3ic value) {
+        return new GlUInt3(value);
     }
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform3i(location, value.x(), value.y(), value.z());
+        GL30.glUniform3ui(location, value.x(), value.y(), value.z());
     }
 
     @Override

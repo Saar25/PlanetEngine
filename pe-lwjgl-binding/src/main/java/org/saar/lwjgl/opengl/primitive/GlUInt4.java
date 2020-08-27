@@ -1,37 +1,37 @@
 package org.saar.lwjgl.opengl.primitive;
 
-import org.joml.Vector3i;
-import org.joml.Vector3ic;
-import org.lwjgl.opengl.GL20;
+import org.joml.Vector4i;
+import org.joml.Vector4ic;
+import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
 
-public class GlInt3 implements GlPrimitive {
+public class GlUInt4 implements GlPrimitive {
 
-    private static final DataType DATA_TYPE = DataType.INT;
+    private static final DataType DATA_TYPE = DataType.U_INT;
 
-    private final Vector3ic value;
+    private final Vector4ic value;
 
-    public GlInt3(Vector3ic value) {
+    public GlUInt4(Vector4ic value) {
         this.value = value;
     }
 
-    public static GlInt3 of(int x, int y, int z) {
-        return new GlInt3(new Vector3i(x, y, z));
+    public static GlUInt4 of(int x, int y, int z, int w) {
+        return new GlUInt4(new Vector4i(x, y, z, w));
     }
 
-    public static GlInt3 of(Vector3ic value) {
-        return new GlInt3(value);
+    public static GlUInt4 of(Vector4ic value) {
+        return new GlUInt4(value);
     }
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform3i(location, value.x(), value.y(), value.z());
+        GL30.glUniform4ui(location, value.x(), value.y(), value.z(), value.w());
     }
 
     @Override
     public Attribute[] attribute(int index, boolean normalized) {
-        return new Attribute[]{Attribute.of(index, 3, DATA_TYPE, normalized)};
+        return new Attribute[]{Attribute.of(index, 4, DATA_TYPE, normalized)};
     }
 
     @Override
@@ -39,6 +39,7 @@ public class GlInt3 implements GlPrimitive {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
         buffer[index + 2] = value.z();
+        buffer[index + 3] = value.w();
     }
 
     @Override
@@ -46,5 +47,6 @@ public class GlInt3 implements GlPrimitive {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
         buffer[index + 2] = value.z();
+        buffer[index + 3] = value.w();
     }
 }

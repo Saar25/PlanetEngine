@@ -1,26 +1,26 @@
 package org.saar.lwjgl.opengl.primitive;
 
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
 
-public class GlInt implements GlPrimitive {
+public class GlUInt implements GlPrimitive {
 
-    private static final DataType DATA_TYPE = DataType.INT;
+    private static final DataType DATA_TYPE = DataType.U_INT;
 
     private final int value;
 
-    private GlInt(int value) {
+    private GlUInt(int value) {
         this.value = value;
     }
 
-    public static GlInt of(int value) {
-        return new GlInt(value);
+    public static GlUInt of(int value) {
+        return new GlUInt(value);
     }
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform1i(location, getValue());
+        GL30.glUniform1ui(location, getValue());
     }
 
     @Override

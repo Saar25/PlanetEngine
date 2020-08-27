@@ -8,37 +8,20 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 
 public class GlInt4 implements GlPrimitive {
 
+    private static final DataType DATA_TYPE = DataType.INT;
+
     private final Vector4ic value;
 
-    private final DataType dataType;
-
-    public GlInt4(Vector4ic value, DataType dataType) {
+    public GlInt4(Vector4ic value) {
         this.value = value;
-        this.dataType = dataType;
-    }
-
-    public static GlInt4 signed(int x, int y, int z, int w) {
-        return new GlInt4(new Vector4i(x, y, z, w), DataType.INT);
-    }
-
-    public static GlInt4 signed(Vector4ic value) {
-        return new GlInt4(new Vector4i(value), DataType.INT);
-    }
-
-    public static GlInt4 unsigned(int x, int y, int z, int w) {
-        return new GlInt4(new Vector4i(x, y, z, w), DataType.U_INT);
-    }
-
-    public static GlInt4 unsigned(Vector4ic value) {
-        return new GlInt4(new Vector4i(value), DataType.U_INT);
     }
 
     public static GlInt4 of(int x, int y, int z, int w) {
-        return GlInt4.signed(x, y, z, w);
+        return new GlInt4(new Vector4i(x, y, z, w));
     }
 
     public static GlInt4 of(Vector4ic value) {
-        return GlInt4.signed(value);
+        return new GlInt4(value);
     }
 
     @Override
@@ -48,7 +31,7 @@ public class GlInt4 implements GlPrimitive {
 
     @Override
     public Attribute[] attribute(int index, boolean normalized) {
-        return new Attribute[]{Attribute.of(index, 4, dataType, normalized)};
+        return new Attribute[]{Attribute.of(index, 4, DATA_TYPE, normalized)};
     }
 
     @Override
