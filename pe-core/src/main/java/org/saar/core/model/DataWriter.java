@@ -38,6 +38,12 @@ public class DataWriter {
         }
     }
 
+    public void write(float... values) {
+        for (float value : values) {
+            this.write(value);
+        }
+    }
+
     public void write(int value) {
         this.getData().add(value);
     }
@@ -58,6 +64,12 @@ public class DataWriter {
         this.write(value.y());
         this.write(value.z());
         this.write(value.w());
+    }
+
+    public void write(int... values) {
+        for (int value : values) {
+            this.write(value);
+        }
     }
 
     public List<Integer> getData() {
