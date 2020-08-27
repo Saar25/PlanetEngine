@@ -1,13 +1,10 @@
 package org.saar.core.common.primitive;
 
-import org.saar.core.model.*;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.core.model.Model;
+import org.saar.core.model.loader.ModelLoader;
+import org.saar.core.model.loader.NodeWriter;
+import org.saar.core.model.loader.VertexWriter;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.DataBuffer;
-import org.saar.lwjgl.opengl.objects.IndexBuffer;
-import org.saar.lwjgl.opengl.objects.Vao;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 
 import java.util.ArrayList;
@@ -54,102 +51,51 @@ public class PrimitiveModelLoader {
         return new Attribute[0];
     }
 
-    private int getComponentsPerVertex() {
-        if (this.mesh.getVertices().getVertices().size() > 0) {
-            return getComponentsCount(this.mesh.getVertices().getVertices().get(0).getValues());
+    private static int bytes(Attribute... attributes) {
+        int bytes = 0;
+        for (Attribute attribute : attributes) {
+            bytes += attribute.getBytesPerVertex();
         }
-        return 0;
-    }
-
-    private int getComponentsPerNode() {
-        if (this.nodes.size() > 0) {
-            return getComponentsCount(this.nodes.get(0).getValues());
-        }
-        return 0;
-    }
-
-    private int getComponentsCount(GlPrimitive... primitives) {
-        int componentCount = 0;
-        for (GlPrimitive primitive : primitives) {
-            componentCount += primitive.getComponentCount();
-        }
-        return componentCount;
-    }
-
-    private int[] writeVertices() {
-        int index = 0;
-        final int vertexSize = getComponentsPerVertex();
-        final int[] buffer = new int[vertexSize * this.mesh.getVertices().count()];
-
-        for (PrimitiveVertex vertex : this.mesh.getVertices().getVertices()) {
-            write(index, buffer, vertex.getValues());
-            index += vertexSize;
-        }
-        return buffer;
-    }
-
-    private int[] writeNodes() {
-        int index = 0;
-        final int vertexSize = getComponentsPerNode();
-        final int[] buffer = new int[vertexSize * this.nodes.size()];
-
-        for (PrimitiveNode node : this.nodes) {
-            write(index, buffer, node.getValues());
-            index += vertexSize;
-        }
-        return buffer;
-    }
-
-    private void write(int index, int[] buffer, GlPrimitive... primitives) {
-        for (GlPrimitive property : primitives) {
-            property.write(index, buffer);
-            index += property.getComponentCount();
-        }
+        return bytes;
     }
 
     public Model createModel() {
-        final Vao vao = Vao.create();
 
-        boolean hasIndices = false;
-        boolean hasInstances = false;
-        int attributesIndex = 0;
+        final Attribute[] vertexAttributes = vertexAttributes(0);
+        final Attribute[] nodeAttributes = nodeAttributes(vertexAttributes.length);
 
-        final int[] indexData = mesh.getIndices().getIndicesArray();
-        if (indexData.length > 0) {
-            final IndexBuffer indexBuffer = new IndexBuffer(VboUsage.STATIC_DRAW);
-            indexBuffer.allocateInt(indexData.length);
-            indexBuffer.storeData(0, indexData);
-            vao.loadIndexBuffer(indexBuffer);
-            hasIndices = true;
-        }
+        final NodeWriter<PrimitiveNode> nodeWriter = new NodeWriter<PrimitiveNode>() {
+            @Override public GlPrimitive[] instanceValues(PrimitiveNode node) { return node.getValues(); }
 
-        final int[] vertexData = writeVertices();
-        if (vertexData.length > 0) {
-            final DataBuffer vertexBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
-            vertexBuffer.allocateInt(vertexData.length);
-            vertexBuffer.storeData(0, vertexData);
-            final Attribute[] attributes = vertexAttributes(attributesIndex);
-            vao.loadDataBuffer(vertexBuffer, attributes);
-            attributesIndex += attributes.length;
-        }
+            @Override public Attribute[] instanceAttributes() { return nodeAttributes; }
 
-        final int[] nodeData = writeNodes();
-        if (nodeData.length > 0) {
-            final DataBuffer nodeBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
-            nodeBuffer.allocateInt(nodeData.length);
-            nodeBuffer.storeData(0, nodeData);
-            vao.loadDataBuffer(nodeBuffer, nodeAttributes(attributesIndex));
-            hasInstances = true;
-        }
+            @Override public int instanceBytes() { return PrimitiveModelLoader.bytes(nodeAttributes); }
+        };
 
+        final VertexWriter<PrimitiveVertex> vertexWriter = new VertexWriter<PrimitiveVertex>() {
+            @Override public GlPrimitive[] vertexValues(PrimitiveVertex vertex) { return vertex.getValues(); }
+
+            @Override public Attribute[] vertexAttributes() { return vertexAttributes; }
+
+            @Override public int vertexBytes() { return PrimitiveModelLoader.bytes(vertexAttributes); }
+        };
+
+        final ModelLoader<PrimitiveNode, PrimitiveVertex> modelLoader = new ModelLoader<>(nodeWriter, vertexWriter);
+
+        boolean hasIndices = mesh.getIndices().getIndicesArray().length > 0;
+        boolean hasInstances = nodes.size() > 0;
+
+        final PrimitiveVertex[] vertices = mesh.getVertices().getVertices().toArray(new PrimitiveVertex[0]);
+        final int[] indices = mesh.getIndices().getIndices().stream().mapToInt(a -> a).toArray();
+        final PrimitiveNode[] nodeArray = nodes.toArray(new PrimitiveNode[0]);
         if (hasInstances) {
             return hasIndices
-                    ? new InstancedElementsModel(vao, RenderMode.TRIANGLES, indexData.length, DataType.U_INT, nodes.size())
-                    : new InstancedArraysModel(vao, RenderMode.TRIANGLES, this.mesh.getVertices().count(), nodes.size());
+                    ? modelLoader.loadInstancedElements(vertices, indices, nodeArray)
+                    : modelLoader.loadInstancedArrays(vertices, nodeArray);
         } else {
             return hasIndices
-                    ? new ElementsModel(vao, RenderMode.TRIANGLES, indexData.length, DataType.INT)
-                    : new ArraysModel(vao, RenderMode.TRIANGLES, this.mesh.getVertices().count());
+                    ? modelLoader.loadElements(vertices, indices)
+                    : modelLoader.loadArrays(vertices);
         }
     }
 }
