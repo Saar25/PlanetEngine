@@ -43,7 +43,7 @@ public class GlInt3 implements GlPrimitive {
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform2f(location, value.x(), value.y());
+        GL20.glUniform3i(location, value.x(), value.y(), value.z());
     }
 
     @Override
@@ -55,11 +55,13 @@ public class GlInt3 implements GlPrimitive {
     public void write(int index, int[] buffer) {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
+        buffer[index + 2] = value.z();
     }
 
     @Override
     public void write(int index, float[] buffer) {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
+        buffer[index + 2] = value.z();
     }
 }

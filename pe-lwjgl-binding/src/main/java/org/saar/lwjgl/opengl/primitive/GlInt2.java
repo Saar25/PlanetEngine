@@ -43,7 +43,7 @@ public class GlInt2 implements GlPrimitive {
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform2f(location, value.x(), value.y());
+        GL20.glUniform2i(location, value.x(), value.y());
     }
 
     @Override
