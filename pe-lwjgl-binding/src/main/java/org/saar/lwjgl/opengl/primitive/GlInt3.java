@@ -5,6 +5,7 @@ import org.joml.Vector3ic;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public class GlInt3 implements GlPrimitive {
 
@@ -27,7 +28,7 @@ public class GlInt3 implements GlPrimitive {
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform3i(location, value.x(), value.y(), value.z());
+        GL20.glUniform3i(location, getValue().x(), getValue().y(), getValue().z());
     }
 
     @Override
@@ -36,17 +37,10 @@ public class GlInt3 implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
-        buffer[index + 2] = value.z();
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
-        buffer[index + 2] = value.z();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue().x());
+        buffer.write(getValue().y());
+        buffer.write(getValue().z());
     }
 
     @Override
@@ -57,5 +51,9 @@ public class GlInt3 implements GlPrimitive {
     @Override
     public int getComponentCount() {
         return COMPONENT_COUNT;
+    }
+
+    public Vector3ic getValue() {
+        return this.value;
     }
 }

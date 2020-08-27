@@ -5,6 +5,7 @@ import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public class GlUInt4 implements GlPrimitive {
 
@@ -27,7 +28,7 @@ public class GlUInt4 implements GlPrimitive {
 
     @Override
     public void loadUniform(int location) {
-        GL30.glUniform4ui(location, value.x(), value.y(), value.z(), value.w());
+        GL30.glUniform4ui(location, getValue().x(), getValue().y(), getValue().z(), getValue().w());
     }
 
     @Override
@@ -36,19 +37,11 @@ public class GlUInt4 implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
-        buffer[index + 2] = value.z();
-        buffer[index + 3] = value.w();
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
-        buffer[index + 2] = value.z();
-        buffer[index + 3] = value.w();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue().x());
+        buffer.write(getValue().y());
+        buffer.write(getValue().z());
+        buffer.write(getValue().w());
     }
 
     @Override
@@ -59,5 +52,9 @@ public class GlUInt4 implements GlPrimitive {
     @Override
     public int getComponentCount() {
         return COMPONENT_COUNT;
+    }
+
+    public Vector4ic getValue() {
+        return this.value;
     }
 }

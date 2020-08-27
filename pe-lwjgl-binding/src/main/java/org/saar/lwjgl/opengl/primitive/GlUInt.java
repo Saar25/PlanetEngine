@@ -3,6 +3,7 @@ package org.saar.lwjgl.opengl.primitive;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public class GlUInt implements GlPrimitive {
 
@@ -30,13 +31,8 @@ public class GlUInt implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = getValue();
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = getValue();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue());
     }
 
     @Override

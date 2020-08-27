@@ -4,6 +4,7 @@ import org.joml.Vector2fc;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.maths.utils.Vector2;
 
 public class GlFloat2 implements GlPrimitive {
@@ -27,7 +28,7 @@ public class GlFloat2 implements GlPrimitive {
 
     @Override
     public void loadUniform(int location) {
-        GL20.glUniform2f(location, value.x(), value.y());
+        GL20.glUniform2f(location, getValue().x(), getValue().y());
     }
 
     @Override
@@ -36,15 +37,9 @@ public class GlFloat2 implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = Float.floatToIntBits(value.x());
-        buffer[index + 1] = Float.floatToIntBits(value.y());
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue().x());
+        buffer.write(getValue().y());
     }
 
     @Override
@@ -55,5 +50,9 @@ public class GlFloat2 implements GlPrimitive {
     @Override
     public int getComponentCount() {
         return COMPONENT_COUNT;
+    }
+
+    public Vector2fc getValue() {
+        return this.value;
     }
 }

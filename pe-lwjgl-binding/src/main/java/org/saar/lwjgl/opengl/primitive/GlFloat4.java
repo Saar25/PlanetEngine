@@ -4,6 +4,7 @@ import org.joml.Vector4fc;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.maths.utils.Vector4;
 
 public class GlFloat4 implements GlPrimitive {
@@ -32,23 +33,15 @@ public class GlFloat4 implements GlPrimitive {
 
     @Override
     public Attribute[] attribute(int index, boolean normalized) {
-        return new Attribute[]{Attribute.of(index, 3, DATA_TYPE, normalized)};
+        return new Attribute[]{Attribute.of(index, 4, DATA_TYPE, normalized)};
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = Float.floatToIntBits(getValue().x());
-        buffer[index + 1] = Float.floatToIntBits(getValue().y());
-        buffer[index + 2] = Float.floatToIntBits(getValue().z());
-        buffer[index + 3] = Float.floatToIntBits(getValue().w());
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = getValue().x();
-        buffer[index + 1] = getValue().y();
-        buffer[index + 2] = getValue().z();
-        buffer[index + 3] = getValue().w();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue().x());
+        buffer.write(getValue().y());
+        buffer.write(getValue().z());
+        buffer.write(getValue().w());
     }
 
     @Override

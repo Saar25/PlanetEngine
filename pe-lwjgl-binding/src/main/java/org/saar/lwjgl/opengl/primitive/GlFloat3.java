@@ -4,6 +4,7 @@ import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.maths.utils.Vector3;
 
 public class GlFloat3 implements GlPrimitive {
@@ -36,17 +37,10 @@ public class GlFloat3 implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = Float.floatToIntBits(getValue().x());
-        buffer[index + 1] = Float.floatToIntBits(getValue().y());
-        buffer[index + 2] = Float.floatToIntBits(getValue().z());
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = getValue().x();
-        buffer[index + 1] = getValue().y();
-        buffer[index + 2] = getValue().z();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue().x());
+        buffer.write(getValue().y());
+        buffer.write(getValue().z());
     }
 
     @Override

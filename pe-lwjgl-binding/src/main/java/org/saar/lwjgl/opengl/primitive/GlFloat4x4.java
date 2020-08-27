@@ -4,6 +4,7 @@ import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.maths.utils.Matrix4;
 
 public class GlFloat4x4 implements GlPrimitive {
@@ -40,15 +41,10 @@ public class GlFloat4x4 implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        for (int i = 0; i < getBuffer().length; i++) {
-            buffer[index + i] = Float.floatToIntBits(getBuffer()[i]);
+    public void write(BufferWriter buffer) {
+        for (float value : getBuffer()) {
+            buffer.write(value);
         }
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        System.arraycopy(getBuffer(), 0, buffer, index, getBuffer().length);
     }
 
     @Override

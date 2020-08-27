@@ -5,6 +5,7 @@ import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public class GlUInt2 implements GlPrimitive {
 
@@ -27,7 +28,7 @@ public class GlUInt2 implements GlPrimitive {
 
     @Override
     public void loadUniform(int location) {
-        GL30.glUniform2ui(location, value.x(), value.y());
+        GL30.glUniform2ui(location, getValue().x(), getValue().y());
     }
 
     @Override
@@ -36,15 +37,9 @@ public class GlUInt2 implements GlPrimitive {
     }
 
     @Override
-    public void write(int index, int[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
-    }
-
-    @Override
-    public void write(int index, float[] buffer) {
-        buffer[index] = value.x();
-        buffer[index + 1] = value.y();
+    public void write(BufferWriter buffer) {
+        buffer.write(getValue().x());
+        buffer.write(getValue().y());
     }
 
     @Override
@@ -55,5 +50,9 @@ public class GlUInt2 implements GlPrimitive {
     @Override
     public int getComponentCount() {
         return COMPONENT_COUNT;
+    }
+
+    public Vector2ic getValue() {
+        return this.value;
     }
 }

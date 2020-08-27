@@ -2,6 +2,7 @@ package org.saar.lwjgl.opengl.primitive;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public interface GlPrimitive {
 
@@ -9,9 +10,7 @@ public interface GlPrimitive {
 
     Attribute[] attribute(int index, boolean normalized);
 
-    void write(int index, int[] buffer);
-
-    void write(int index, float[] buffer);
+    void write(BufferWriter buffer);
 
     DataType getDataType();
 
