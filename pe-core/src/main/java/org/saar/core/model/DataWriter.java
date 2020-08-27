@@ -72,6 +72,10 @@ public class DataWriter {
         }
     }
 
+    public void write(List<Integer> values) {
+        getData().addAll(values);
+    }
+
     public List<Integer> getData() {
         return this.data;
     }
