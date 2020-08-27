@@ -2,9 +2,9 @@ package org.saar.example.renderer;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
-import org.saar.core.renderer.basic.BasicVertex;
+import org.saar.core.renderer.r2d.Vertex2D;
 
-public class MyVertex implements BasicVertex {
+public class MyVertex implements Vertex2D {
 
     private final Vector2fc position;
     private final Vector3fc colour;

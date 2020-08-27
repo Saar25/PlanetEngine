@@ -1,4 +1,4 @@
-package org.saar.core.renderer.basic;
+package org.saar.core.renderer.r2d;
 
 import org.saar.core.model.ElementsModel;
 import org.saar.core.model.Model;
@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BasicRenderNode extends AbstractNode implements RenderNode {
+public class RenderNode2D extends AbstractNode implements RenderNode {
 
     private static final Attribute[] attributes = new Attribute[]{
             Attribute.of(0, 2, DataType.FLOAT, true),
             Attribute.of(1, 3, DataType.FLOAT, true)};
 
-    private final BasicMesh mesh;
-    private final List<BasicNode> nodes;
+    private final Mesh2D mesh;
+    private final List<Node2D> nodes;
 
     private final Vao vao = Vao.create();
 
@@ -29,7 +29,7 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
 
     private Model model;
 
-    public BasicRenderNode(BasicMesh mesh, BasicNode... nodes) {
+    public RenderNode2D(Mesh2D mesh, Node2D... nodes) {
         this.mesh = mesh;
         this.nodes = new ArrayList<>(Arrays.asList(nodes));
         init();
@@ -38,20 +38,20 @@ public class BasicRenderNode extends AbstractNode implements RenderNode {
     private void init() {
         this.vao.loadIndexBuffer(this.indexBuffer);
         this.vao.loadDataBuffer(this.dataBuffer,
-                BasicRenderNode.attributes);
+                RenderNode2D.attributes);
         this.update();
         this.nodes.clear();
     }
 
     public void update() {
-        final BasicNodeWriter writer = new BasicNodeWriter();
+        final NodeWriter2D writer = new NodeWriter2D();
         writer.write(this.mesh, this.nodes);
 
         final int[] data = writer.getDataWriter().getDataArray();
-        BasicRenderNode.write(this.dataBuffer, data);
+        RenderNode2D.write(this.dataBuffer, data);
 
         final int[] indices = writer.getIndexWriter().getDataArray();
-        BasicRenderNode.write(this.indexBuffer, indices);
+        RenderNode2D.write(this.indexBuffer, indices);
 
         this.model = new ElementsModel(this.vao, RenderMode.TRIANGLES, indices.length, DataType.U_INT);
     }

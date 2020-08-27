@@ -2,8 +2,8 @@ package org.saar.example.renderer;
 
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.core.model.vertex.ModelVertices;
-import org.saar.core.renderer.basic.BasicRenderNode;
-import org.saar.core.renderer.basic.BasicRenderer;
+import org.saar.core.renderer.r2d.RenderNode2D;
+import org.saar.core.renderer.r2d.Renderer2D;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
@@ -37,8 +37,8 @@ public class RendererExample {
         final MyMesh mesh = new MyMesh(vertices, indices);
         final MyNode node = new MyNode();
 
-        final BasicRenderNode renderNode = new BasicRenderNode(mesh, node);
-        final BasicRenderer renderer = new BasicRenderer(renderNode);
+        final RenderNode2D renderNode = new RenderNode2D(mesh, node);
+        final Renderer2D renderer = new Renderer2D(renderNode);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 

@@ -2,9 +2,9 @@ package org.saar.example.renderer;
 
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.core.model.vertex.ModelVertices;
-import org.saar.core.renderer.basic.BasicMesh;
+import org.saar.core.renderer.r2d.Mesh2D;
 
-public class MyMesh implements BasicMesh {
+public class MyMesh implements Mesh2D {
 
     private final ModelVertices<MyVertex> vertices;
     private final ModelIndices indices;

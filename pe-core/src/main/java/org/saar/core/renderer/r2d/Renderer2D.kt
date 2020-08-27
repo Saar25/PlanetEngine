@@ -1,16 +1,16 @@
-package org.saar.core.renderer.basic
+package org.saar.core.renderer.r2d
 
 import org.saar.core.renderer.Renderer
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-class BasicRenderer(private val renderNode: BasicRenderNode) : Renderer {
+class Renderer2D(private val renderNode: RenderNode2D) : Renderer {
 
     companion object {
         private val vertex: Shader = Shader.createVertex(
-                "/shaders/basic/vertex.glsl")
+                "/shaders/r2d/vertex.glsl")
         private val fragment: Shader = Shader.createFragment(
-                "/shaders/basic/fragment.glsl")
+                "/shaders/r2d/fragment.glsl")
         private val shadersProgram: ShadersProgram =
                 ShadersProgram.create(vertex, fragment)
     }
