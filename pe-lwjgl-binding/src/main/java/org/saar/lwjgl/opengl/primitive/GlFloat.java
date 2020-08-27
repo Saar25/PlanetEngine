@@ -7,6 +7,7 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 public class GlFloat implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
+    private static final int COMPONENT_COUNT = 1;
 
     private final float value;
 
@@ -36,6 +37,16 @@ public class GlFloat implements GlPrimitive {
     @Override
     public void write(int index, float[] buffer) {
         buffer[index] = getValue();
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DATA_TYPE;
+    }
+
+    @Override
+    public int getComponentCount() {
+        return COMPONENT_COUNT;
     }
 
     public float getValue() {

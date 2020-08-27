@@ -9,6 +9,7 @@ import org.saar.maths.utils.Vector3;
 public class GlFloat3 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
+    private static final int COMPONENT_COUNT = 3;
 
     private final Vector3fc value;
 
@@ -46,6 +47,16 @@ public class GlFloat3 implements GlPrimitive {
         buffer[index] = getValue().x();
         buffer[index + 1] = getValue().y();
         buffer[index + 2] = getValue().z();
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DATA_TYPE;
+    }
+
+    @Override
+    public int getComponentCount() {
+        return COMPONENT_COUNT;
     }
 
     public Vector3fc getValue() {

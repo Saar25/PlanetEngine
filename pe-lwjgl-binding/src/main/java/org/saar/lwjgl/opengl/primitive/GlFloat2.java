@@ -9,6 +9,7 @@ import org.saar.maths.utils.Vector2;
 public class GlFloat2 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
+    private static final int COMPONENT_COUNT = 2;
 
     private final Vector2fc value;
 
@@ -44,5 +45,15 @@ public class GlFloat2 implements GlPrimitive {
     public void write(int index, float[] buffer) {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DATA_TYPE;
+    }
+
+    @Override
+    public int getComponentCount() {
+        return COMPONENT_COUNT;
     }
 }

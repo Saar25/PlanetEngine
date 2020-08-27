@@ -9,6 +9,7 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 public class GlInt3 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.INT;
+    private static final int COMPONENT_COUNT = 3;
 
     private final Vector3ic value;
 
@@ -46,5 +47,15 @@ public class GlInt3 implements GlPrimitive {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
         buffer[index + 2] = value.z();
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DATA_TYPE;
+    }
+
+    @Override
+    public int getComponentCount() {
+        return COMPONENT_COUNT;
     }
 }

@@ -9,6 +9,7 @@ import org.saar.maths.utils.Matrix4;
 public class GlFloat4x4 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
+    private static final int COMPONENT_COUNT = 16;
 
     private final Matrix4fc value;
     private final float[] buffer;
@@ -48,6 +49,16 @@ public class GlFloat4x4 implements GlPrimitive {
     @Override
     public void write(int index, float[] buffer) {
         System.arraycopy(getBuffer(), 0, buffer, index, getBuffer().length);
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DATA_TYPE;
+    }
+
+    @Override
+    public int getComponentCount() {
+        return COMPONENT_COUNT;
     }
 
     private float[] getBuffer() {

@@ -1,5 +1,6 @@
 package org.saar.lwjgl.opengl.primitive;
 
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
 
 public interface GlPrimitive {
@@ -11,4 +12,8 @@ public interface GlPrimitive {
     void write(int index, int[] buffer);
 
     void write(int index, float[] buffer);
+
+    DataType getDataType();
+
+    int getComponentCount();
 }

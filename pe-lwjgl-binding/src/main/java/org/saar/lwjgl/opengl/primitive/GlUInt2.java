@@ -9,6 +9,7 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 public class GlUInt2 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.U_INT;
+    private static final int COMPONENT_COUNT = 2;
 
     private final Vector2ic value;
 
@@ -44,5 +45,15 @@ public class GlUInt2 implements GlPrimitive {
     public void write(int index, float[] buffer) {
         buffer[index] = value.x();
         buffer[index + 1] = value.y();
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DATA_TYPE;
+    }
+
+    @Override
+    public int getComponentCount() {
+        return COMPONENT_COUNT;
     }
 }
