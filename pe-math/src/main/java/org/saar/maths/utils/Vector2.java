@@ -1,6 +1,7 @@
 package org.saar.maths.utils;
 
 import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 public final class Vector2 {
 
@@ -14,8 +15,8 @@ public final class Vector2 {
         return new Vector2f();
     }
 
-    public static Vector2f of(Vector2f v) {
-        return new Vector2f(v.x, v.y);
+    public static Vector2f of(Vector2fc v) {
+        return new Vector2f(v.x(), v.y());
     }
 
     public static Vector2f of(float x, float y) {
