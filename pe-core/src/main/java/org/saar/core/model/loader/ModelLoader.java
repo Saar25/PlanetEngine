@@ -8,7 +8,6 @@ import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
 import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
-import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
@@ -42,12 +41,8 @@ public class ModelLoader<N extends Node, V extends Vertex> {
         final int bufferSize = vertexWriter.vertexBytes() * vertices.length;
         final ByteBuffer buffer = MemoryUtils.allocByte(bufferSize);
         final BufferWriter bufferWriter = new BufferWriter(buffer);
-
         for (V vertex : vertices) {
-            final GlPrimitive[] primitives = vertexWriter.vertexValues(vertex);
-            for (GlPrimitive primitive : primitives) {
-                primitive.write(bufferWriter);
-            }
+            vertexWriter.writeVertex(vertex, bufferWriter);
         }
         return toDataBuffer(buffer);
     }
@@ -57,10 +52,7 @@ public class ModelLoader<N extends Node, V extends Vertex> {
         final ByteBuffer buffer = MemoryUtils.allocByte(bufferSize);
         final BufferWriter bufferWriter = new BufferWriter(buffer);
         for (N node : nodes) {
-            final GlPrimitive[] primitives = nodeWriter.instanceValues(node);
-            for (GlPrimitive primitive : primitives) {
-                primitive.write(bufferWriter);
-            }
+            nodeWriter.writeInstance(node, bufferWriter);
         }
         return toDataBuffer(buffer);
     }

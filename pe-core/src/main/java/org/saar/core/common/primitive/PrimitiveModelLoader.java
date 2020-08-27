@@ -6,6 +6,7 @@ import org.saar.core.model.loader.NodeWriter;
 import org.saar.core.model.loader.VertexWriter;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +66,12 @@ public class PrimitiveModelLoader {
         final Attribute[] nodeAttributes = nodeAttributes(vertexAttributes.length);
 
         final NodeWriter<PrimitiveNode> nodeWriter = new NodeWriter<PrimitiveNode>() {
-            @Override public GlPrimitive[] instanceValues(PrimitiveNode node) { return node.getValues(); }
+            @Override
+            public void writeInstance(PrimitiveNode instance, BufferWriter writer) {
+                for (GlPrimitive value : instance.getValues()) {
+                    value.write(writer);
+                }
+            }
 
             @Override public Attribute[] instanceAttributes() { return nodeAttributes; }
 
@@ -73,7 +79,12 @@ public class PrimitiveModelLoader {
         };
 
         final VertexWriter<PrimitiveVertex> vertexWriter = new VertexWriter<PrimitiveVertex>() {
-            @Override public GlPrimitive[] vertexValues(PrimitiveVertex vertex) { return vertex.getValues(); }
+            @Override
+            public void writeVertex(PrimitiveVertex vertex, BufferWriter writer) {
+                for (GlPrimitive value : vertex.getValues()) {
+                    value.write(writer);
+                }
+            }
 
             @Override public Attribute[] vertexAttributes() { return vertexAttributes; }
 
