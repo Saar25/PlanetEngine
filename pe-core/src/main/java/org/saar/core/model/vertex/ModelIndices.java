@@ -6,8 +6,10 @@ import java.util.List;
 public class ModelIndices {
 
     private final List<Integer> indices = new ArrayList<>();
+    private final int[] indicesArray;
 
     public ModelIndices(int... indices) {
+        this.indicesArray = indices;
         for (int index : indices) {
             this.indices.add(index);
         }
@@ -21,6 +23,10 @@ public class ModelIndices {
 
     public List<Integer> getIndices() {
         return this.indices;
+    }
+
+    public int[] getIndicesArray() {
+        return this.indicesArray;
     }
 
     public int count() {
