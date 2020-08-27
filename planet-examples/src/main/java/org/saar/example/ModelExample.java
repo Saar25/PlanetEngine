@@ -1,8 +1,11 @@
 package org.saar.example;
 
+import org.saar.core.common.simple.SimpleBufferWriter;
+import org.saar.core.common.simple.SimpleVertex;
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
-import org.saar.core.model.vertex.*;
+import org.saar.core.model.vertex.ModelAttribute;
+import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -26,14 +29,10 @@ public class ModelExample {
                 new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
                 new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));
-        final ModelAttributes attributes = new ModelAttributes(
+        final SimpleBufferWriter writer = new SimpleBufferWriter(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final ModelBuffer buffer = new ModelBufferSingleVbo(
-                new ModelAttribute(2, true, DataType.FLOAT),
-                new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.arraysModel(RenderMode.TRIANGLES,
-                new SimpleBufferWriter(buffer), vertices);
+        final Model model = Models.arraysModel(RenderMode.TRIANGLE_STRIP, writer, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

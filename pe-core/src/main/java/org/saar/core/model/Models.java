@@ -16,7 +16,7 @@ public final class Models {
     public static <T extends Vertex> Model arraysModel(
             RenderMode renderMode, ModelBufferWriter<T> writer, ModelVertices<T> vertices) {
         writer.write(vertices);
-        return new ArraysModel(writer.toBuffer().vao(), renderMode, vertices.count());
+        return new ArraysModel(writer.toVao(), renderMode, vertices.count());
     }
 
     public static <T extends Vertex> Model elementsModel(
@@ -24,6 +24,6 @@ public final class Models {
             ModelIndices indices, ModelVertices<T> vertices) {
         writer.write(vertices);
         writer.write(indices);
-        return new ElementsModel(writer.toBuffer().vao(), renderMode, indices.count(), DataType.U_INT);
+        return new ElementsModel(writer.toVao(), renderMode, indices.count(), DataType.U_INT);
     }
 }

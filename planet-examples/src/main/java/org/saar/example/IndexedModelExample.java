@@ -1,8 +1,12 @@
 package org.saar.example;
 
+import org.saar.core.common.simple.SimpleBufferWriter;
+import org.saar.core.common.simple.SimpleVertex;
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
-import org.saar.core.model.vertex.*;
+import org.saar.core.model.vertex.ModelAttribute;
+import org.saar.core.model.vertex.ModelIndices;
+import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -34,11 +38,10 @@ public class IndexedModelExample {
                 new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, -1.0f, +1.0f, +0.0f, +0.5f));
-        final ModelBuffer buffer = new ModelBufferSingleVbo(
+        final SimpleBufferWriter writer = new SimpleBufferWriter(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP,
-                new SimpleBufferWriter(buffer), indices, vertices);
+        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, writer, indices, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
