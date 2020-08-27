@@ -11,14 +11,14 @@ public final class Vbos {
                 + getClass().getSimpleName());
     }
 
-    public DataBuffer createDataBuffer(VboUsage usage, ByteBuffer buffer) {
+    public static DataBuffer createDataBuffer(VboUsage usage, ByteBuffer buffer) {
         final DataBuffer vbo = new DataBuffer(usage);
         vbo.allocateByte(buffer.limit());
         vbo.storeData(0, buffer);
         return vbo;
     }
 
-    public IndexBuffer createIndexVbo(VboUsage usage, ByteBuffer buffer) {
+    public static IndexBuffer createIndexVbo(VboUsage usage, ByteBuffer buffer) {
         final IndexBuffer vbo = new IndexBuffer(usage);
         vbo.allocateByte(buffer.limit());
         vbo.storeData(0, buffer);
