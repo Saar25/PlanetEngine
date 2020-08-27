@@ -12,7 +12,7 @@ public class InstancedArraysModel implements Model {
     private final int vertices;
     private final int instances;
 
-    public InstancedArraysModel(Vao vao, int vertices, RenderMode renderMode, int instances) {
+    public InstancedArraysModel(Vao vao, RenderMode renderMode, int vertices, int instances) {
         this.vao = vao;
         this.vertices = vertices;
         this.renderMode = renderMode;

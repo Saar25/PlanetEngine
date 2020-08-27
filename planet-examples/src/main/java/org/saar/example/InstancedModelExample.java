@@ -44,7 +44,7 @@ public class InstancedModelExample {
         instanceBuffer.storeData(0, instanceData);
         vao.loadDataBuffer(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
 
-        final Model model = new InstancedArraysModel(vao, 3, RenderMode.TRIANGLES, 3);
+        final Model model = new InstancedArraysModel(vao, RenderMode.TRIANGLES, 3, 3);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
