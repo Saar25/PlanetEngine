@@ -1,6 +1,6 @@
 package org.saar.core.common.simple;
 
-import org.saar.core.model.DataWriter;
+import org.lwjgl.system.MemoryUtil;
 import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.core.model.vertex.ModelBufferWriter;
 import org.saar.core.model.vertex.ModelIndices;
@@ -9,13 +9,18 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
 import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
 
-    private final DataWriter dataWriter = new DataWriter();
-    private final DataWriter indexWriter = new DataWriter();
+    private ByteBuffer data;
+    private BufferWriter dataWriter;
+    private ByteBuffer indexData;
+    private BufferWriter indexWriter;
 
     private final Attribute[] attributes;
 
@@ -31,11 +36,15 @@ public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
 
     @Override
     public void write(List<SimpleVertex> vertices) {
+        data = MemoryUtils.allocByte(vertices.size() * vertices.get(0).getData().length * 4);
+        dataWriter = new BufferWriter(data);
         vertices.forEach(this::writeVertex);
     }
 
     @Override
     public void write(ModelIndices indices) {
+        indexData = MemoryUtils.allocByte(indices.count() * 4);
+        indexWriter = new BufferWriter(indexData);
         indices.getIndices().forEach(this::writeIndex);
     }
 
@@ -52,21 +61,24 @@ public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
     public Vao toVao() {
         final Vao vao = Vao.create();
 
-        final int[] vertexData = this.dataWriter.getDataArray();
-        if (vertexData.length > 0) {
+        if (data.position() > 0) {
+            data.flip();
             final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
-            dataBuffer.allocateInt(vertexData.length);
-            dataBuffer.storeData(0, vertexData);
+            dataBuffer.allocateInt(data.limit());
+            dataBuffer.storeData(0, data);
             vao.loadVbo(dataBuffer, this.attributes);
         }
 
-        final int[] indexData = this.indexWriter.getDataArray();
-        if (indexData.length > 0) {
+        if (indexData.position() > 0) {
+            indexData.flip();
             final IndexBuffer indexBuffer = new IndexBuffer(VboUsage.STATIC_DRAW);
-            indexBuffer.allocateInt(indexData.length);
+            indexBuffer.allocateInt(indexData.limit());
             indexBuffer.storeData(0, indexData);
             vao.loadVbo(indexBuffer);
         }
+
+        MemoryUtil.memFree(data);
+        MemoryUtil.memFree(indexData);
 
         return vao;
     }
