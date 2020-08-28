@@ -26,8 +26,8 @@ public class GlInt implements GlPrimitive {
     }
 
     @Override
-    public Attribute[] attribute(int index, boolean normalized) {
-        return new Attribute[]{Attribute.of(index, 1, DATA_TYPE, normalized)};
+    public Attribute[] attribute(int index, boolean normalized, int instances) {
+        return new Attribute[]{Attribute.ofInstances(index, 1, DATA_TYPE, normalized, instances)};
     }
 
     @Override

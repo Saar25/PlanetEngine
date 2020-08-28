@@ -31,12 +31,12 @@ public class GlFloat4x4 implements GlPrimitive {
     }
 
     @Override
-    public Attribute[] attribute(int index, boolean normalized) {
+    public Attribute[] attribute(int index, boolean normalized, int instances) {
         return new Attribute[]{
-                Attribute.of(index, 4, DATA_TYPE, normalized),
-                Attribute.of(index + 1, 4, DATA_TYPE, normalized),
-                Attribute.of(index + 2, 4, DATA_TYPE, normalized),
-                Attribute.of(index + 3, 4, DATA_TYPE, normalized)
+                Attribute.ofInstances(index, 4, DATA_TYPE, normalized, instances),
+                Attribute.ofInstances(index + 1, 4, DATA_TYPE, normalized, instances),
+                Attribute.ofInstances(index + 2, 4, DATA_TYPE, normalized, instances),
+                Attribute.ofInstances(index + 3, 4, DATA_TYPE, normalized, instances)
         };
     }
 

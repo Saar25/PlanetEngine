@@ -32,8 +32,8 @@ public class GlFloat2 implements GlPrimitive {
     }
 
     @Override
-    public Attribute[] attribute(int index, boolean normalized) {
-        return new Attribute[]{Attribute.of(index, 2, DATA_TYPE, normalized)};
+    public Attribute[] attribute(int index, boolean normalized, int instances) {
+        return new Attribute[]{Attribute.ofInstances(index, 2, DATA_TYPE, normalized, instances)};
     }
 
     @Override

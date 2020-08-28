@@ -8,7 +8,7 @@ public interface GlPrimitive {
 
     void loadUniform(int location);
 
-    Attribute[] attribute(int index, boolean normalized);
+    Attribute[] attribute(int index, boolean normalized, int instances);
 
     void write(BufferWriter buffer);
 
