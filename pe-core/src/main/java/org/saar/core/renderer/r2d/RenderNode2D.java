@@ -36,8 +36,8 @@ public class RenderNode2D extends AbstractNode implements RenderNode {
     }
 
     private void init() {
-        this.vao.loadIndexBuffer(this.indexBuffer);
-        this.vao.loadDataBuffer(this.dataBuffer,
+        this.vao.loadVbo(this.indexBuffer);
+        this.vao.loadVbo(this.dataBuffer,
                 RenderNode2D.attributes);
         this.update();
         this.nodes.clear();

@@ -26,6 +26,6 @@ public class ArraysModel implements Model {
 
     @Override
     public void delete() {
-        this.vao.delete(true);
+        this.vao.delete();
     }
 }

@@ -57,7 +57,7 @@ public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
             final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
             dataBuffer.allocateInt(vertexData.length);
             dataBuffer.storeData(0, vertexData);
-            vao.loadDataBuffer(dataBuffer, this.attributes);
+            vao.loadVbo(dataBuffer, this.attributes);
         }
 
         final int[] indexData = this.indexWriter.getDataArray();
@@ -65,7 +65,7 @@ public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
             final IndexBuffer indexBuffer = new IndexBuffer(VboUsage.STATIC_DRAW);
             indexBuffer.allocateInt(indexData.length);
             indexBuffer.storeData(0, indexData);
-            vao.loadIndexBuffer(indexBuffer, true);
+            vao.loadVbo(indexBuffer);
         }
 
         return vao;

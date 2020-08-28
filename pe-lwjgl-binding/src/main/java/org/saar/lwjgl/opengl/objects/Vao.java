@@ -15,145 +15,48 @@ public class Vao {
 
     private final int id;
 
-    private IVbo indexBuffer;
-    private final List<IVbo> dataBuffers;
-    private final List<Attribute> attributes;
+    private final List<IVbo> buffers = new ArrayList<>();
+    private final List<Attribute> attributes = new ArrayList<>();
 
     private boolean deleted = false;
 
     private Vao(int id) {
         this.id = id;
-        this.dataBuffers = new ArrayList<>();
-        this.attributes = new ArrayList<>();
-        this.bind();
     }
 
     public static Vao create() {
-        int id = GL30.glGenVertexArrays();
+        final int id = GL30.glGenVertexArrays();
         return new Vao(id);
-    }
-
-    /**
-     * Binds a vao if no vao is bound, useful for rendering meshes that do not use vaos
-     */
-    public static void bindIfNone() {
-        if (boundVao == 0) {
-            FIRST.bind();
-        }
-    }
-
-    /**
-     * Returns whether the vao is bound
-     *
-     * @return true if bound false otherwise
-     */
-    public boolean isBound() {
-        return boundVao == id;
     }
 
     /**
      * Enables the vao attributes
      */
     public void enableAttributes() {
-        attributes.forEach(Attribute::enable);
+        for (Attribute attribute : this.attributes) {
+            attribute.enable();
+        }
     }
 
     /**
      * Disables the vao attributes
      */
     public void disableAttributes() {
-        attributes.forEach(Attribute::disable);
+        for (Attribute attribute : this.attributes) {
+            attribute.disable();
+        }
     }
 
     /**
-     * Returns whether this vao has indices buffer
+     * Loads a vbo and linking the given attributes to it
      *
-     * @return true if has indices, else false
+     * @param vbo        the vbo to load
+     * @param attributes the attributes
      */
-    public boolean hasIndices() {
-        return indexBuffer != null;
-    }
-
-    /**
-     * Loads an existed vbo and linking the given attributes to this vbo
-     *
-     * @param vbo        vbo that holds the data needed
-     * @param attributes the attributes of this vbo
-     */
-    public void loadDataBuffer(IVbo vbo, Attribute... attributes) {
+    public void loadVbo(IVbo vbo, Attribute... attributes) {
         vbo.bindToVao(this);
         linkAttributes(attributes);
-        dataBuffers.add(vbo);
-    }
-
-    /**
-     * Loads an existing index buffer and link him to this vao
-     *
-     * @param indexBuffer the index buffer
-     */
-    public void loadIndexBuffer(IVbo indexBuffer) {
-        loadIndexBuffer(indexBuffer, true);
-    }
-
-    /**
-     * Loads an existing index buffer and link him to this vao
-     *
-     * @param indexBuffer the index buffer
-     * @param deleteOld   true if old index buffer should be deleted
-     */
-    public void loadIndexBuffer(IVbo indexBuffer, boolean deleteOld) {
-        if (this.indexBuffer != null && deleteOld) {
-            this.indexBuffer.delete();
-        }
-        this.indexBuffer = indexBuffer;
-        this.indexBuffer.bindToVao(this);
-    }
-
-    /**
-     * Returns the amount of indices in this vao
-     *
-     * @return the amount of indices
-     */
-    public int getIndexCount() {
-        return hasIndices() ? (int) indexBuffer.getSize() : 0;
-    }
-
-    /**
-     * Binds the vao
-     */
-    public void bind() {
-        if (GlConfigs.CACHE_STATE || !isBound()) {
-            GL30.glBindVertexArray(id);
-            boundVao = id;
-        }
-    }
-
-    /**
-     * Unbind the vao
-     */
-    public void unbind() {
-        if (GlConfigs.CACHE_STATE || isBound()) {
-            GL30.glBindVertexArray(0);
-            boundVao = 0;
-        }
-    }
-
-    /**
-     * Delete this vao and his related vbos if needed
-     *
-     * @param deleteVbos true if need to delete the related vbo, false otherwise
-     */
-    public void delete(boolean deleteVbos) {
-        if (deleteVbos) {
-            if (indexBuffer != null) {
-                indexBuffer.delete();
-            }
-            dataBuffers.forEach(IVbo::delete);
-        }
-        if (GlConfigs.CACHE_STATE || !deleted) {
-            GL30.glDeleteVertexArrays(id);
-            deleted = true;
-        }
+        this.buffers.add(vbo);
     }
 
     /**
@@ -169,6 +72,43 @@ public class Vao {
             attribute.link(stride, offset);
             offset += attribute.getBytesPerVertex();
             this.attributes.add(attribute);
+        }
+    }
+
+    /**
+     * Returns whether the vao is bound
+     *
+     * @return true if bound false otherwise
+     */
+    private boolean isBound() {
+        return Vao.boundVao == this.id;
+    }
+
+    /**
+     * Binds the vao
+     */
+    public void bind() {
+        if (GlConfigs.CACHE_STATE || !isBound()) {
+            GL30.glBindVertexArray(this.id);
+            Vao.boundVao = this.id;
+        }
+    }
+
+    /**
+     * Unbind the vao
+     */
+    public void unbind() {
+        Vao.NULL.bind();
+    }
+
+    /**
+     * Delete this vao and its related buffers
+     */
+    public void delete() {
+        this.buffers.forEach(IVbo::delete);
+        if (GlConfigs.CACHE_STATE || !this.deleted) {
+            GL30.glDeleteVertexArrays(this.id);
+            this.deleted = true;
         }
     }
 }

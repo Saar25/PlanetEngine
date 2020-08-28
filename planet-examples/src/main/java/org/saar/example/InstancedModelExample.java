@@ -34,7 +34,7 @@ public class InstancedModelExample {
                 +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
         dataBuffer.allocateFloat(data.length);
         dataBuffer.storeData(0, data);
-        vao.loadDataBuffer(dataBuffer,
+        vao.loadVbo(dataBuffer,
                 Attribute.of(0, 2, DataType.FLOAT, true),
                 Attribute.of(1, 3, DataType.FLOAT, true));
 
@@ -42,7 +42,7 @@ public class InstancedModelExample {
         final float[] instanceData = {0.5f, .1f, .2f};
         instanceBuffer.allocateFloat(instanceData.length);
         instanceBuffer.storeData(0, instanceData);
-        vao.loadDataBuffer(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
+        vao.loadVbo(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
 
         final Model model = new InstancedArraysModel(vao, RenderMode.TRIANGLES, 3, 3);
 
@@ -71,7 +71,7 @@ public class InstancedModelExample {
         }
 
         fbo.delete();
-        vao.delete(true);
+        vao.delete();
         attachment.delete();
     }
 

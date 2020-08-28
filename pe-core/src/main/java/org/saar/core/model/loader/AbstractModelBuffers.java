@@ -24,14 +24,14 @@ public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> imp
     protected final ModelBuffer loadDataBuffer(DataBuffer vbo, int vertices, Attribute... attributes) {
         final int bytes = Attribute.sumBytes(attributes) * vertices;
         final ModelBuffer modelBuffer = createModelBuffer(vbo, bytes);
-        this.vao.loadDataBuffer(vbo, modelBuffer.getAttributes());
+        this.vao.loadVbo(vbo, modelBuffer.getAttributes());
         this.buffers.add(modelBuffer);
         return modelBuffer;
     }
 
     protected final ModelBuffer loadIndexBuffer(IndexBuffer vbo, int indices) {
         final ModelBuffer modelBuffer = createModelBuffer(vbo, indices * 4);
-        this.vao.loadDataBuffer(vbo);
+        this.vao.loadVbo(vbo);
         this.buffers.add(modelBuffer);
         return modelBuffer;
     }

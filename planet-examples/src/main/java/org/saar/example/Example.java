@@ -25,7 +25,7 @@ public class Example {
                 -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
-        vao.loadDataBuffer(vbo,
+        vao.loadVbo(vbo,
                 Attribute.of(0, 2, DataType.FLOAT, false),
                 Attribute.of(1, 3, DataType.FLOAT, false),
                 Attribute.of(2, 1, DataType.FLOAT, false));
