@@ -1,7 +1,6 @@
 package org.saar.example.renderer;
 
 import org.saar.core.model.vertex.ModelIndices;
-import org.saar.core.model.vertex.ModelVertices;
 import org.saar.core.renderer.r2d.RenderNode2D;
 import org.saar.core.renderer.r2d.Renderer2D;
 import org.saar.lwjgl.glfw.input.Keyboard;
@@ -13,6 +12,9 @@ import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class RendererExample {
 
@@ -29,7 +31,7 @@ public class RendererExample {
 
         final float a = 0.7f, b = 0.3f;
         final ModelIndices indices = new ModelIndices(0, 1, 2, 0, 2, 3);
-        final ModelVertices<MyVertex> vertices = new ModelVertices<>(
+        final List<MyVertex> vertices = Arrays.asList(
                 new MyVertex(Vector2.of(-a, -a + .1f), Vector3.of(+0.0f, +0.0f, +0.5f)),
                 new MyVertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
                 new MyVertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),

@@ -28,7 +28,7 @@ public class NodeWriter2D {
 
     public void write(Mesh2D mesh, Node2D node) {
         this.writeInstance(node);
-        mesh.getVertices().getVertices().forEach(this::writeVertex);
+        mesh.getVertices().forEach(this::writeVertex);
         mesh.getIndices().getIndices().forEach(this::writeIndex);
         this.indexOffset = this.vertices;
     }

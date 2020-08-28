@@ -4,12 +4,13 @@ import org.saar.core.model.DataWriter;
 import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.core.model.vertex.ModelBufferWriter;
 import org.saar.core.model.vertex.ModelIndices;
-import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
 import org.saar.lwjgl.opengl.objects.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.Vao;
+
+import java.util.List;
 
 public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
 
@@ -29,8 +30,8 @@ public class SimpleBufferWriter implements ModelBufferWriter<SimpleVertex> {
 
 
     @Override
-    public void write(ModelVertices<SimpleVertex> vertices) {
-        vertices.getVertices().forEach(this::writeVertex);
+    public void write(List<SimpleVertex> vertices) {
+        vertices.forEach(this::writeVertex);
     }
 
     @Override

@@ -5,7 +5,6 @@ import org.saar.core.common.simple.SimpleVertex;
 import org.saar.core.model.Model;
 import org.saar.core.model.Models;
 import org.saar.core.model.vertex.ModelAttribute;
-import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -16,6 +15,9 @@ import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ModelExample {
 
     private static final int WIDTH = 700;
@@ -25,7 +27,7 @@ public class ModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final ModelVertices<SimpleVertex> vertices = new ModelVertices<>(
+        final List<SimpleVertex> vertices = Arrays.asList(
                 new SimpleVertex(-0.5f, -0.5f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(+0.0f, +0.5f, +0.5f, +1.0f, +0.5f),
                 new SimpleVertex(+0.5f, -0.5f, +1.0f, +0.0f, +0.5f));

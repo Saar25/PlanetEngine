@@ -6,7 +6,6 @@ import org.saar.core.model.Model;
 import org.saar.core.model.Models;
 import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.core.model.vertex.ModelIndices;
-import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -18,6 +17,9 @@ import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class IndexedModelExample {
 
@@ -33,7 +35,7 @@ public class IndexedModelExample {
         attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
 
         final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
-        final ModelVertices<SimpleVertex> vertices = new ModelVertices<>(
+        final List<SimpleVertex> vertices = Arrays.asList(
                 new SimpleVertex(-1.0f, -1.0f, +0.0f, +0.0f, +0.5f),
                 new SimpleVertex(-1.0f, +1.0f, +0.0f, +1.0f, +0.5f),
                 new SimpleVertex(+1.0f, +1.0f, +1.0f, +1.0f, +0.5f),

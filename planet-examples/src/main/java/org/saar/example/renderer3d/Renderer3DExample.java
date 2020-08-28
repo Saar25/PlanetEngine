@@ -6,8 +6,6 @@ import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.model.vertex.ModelIndices;
-import org.saar.core.model.vertex.ModelVertices;
 import org.saar.core.renderer.r3d.RenderNode3D;
 import org.saar.core.renderer.r3d.Renderer3D;
 import org.saar.lwjgl.glfw.input.Keyboard;
@@ -19,9 +17,6 @@ import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Renderer3DExample {
 
@@ -122,12 +117,9 @@ public class Renderer3DExample {
     }
 
     private static RenderNode3D renderNode3D() {
-        final ModelIndices indices = new ModelIndices(Renderer3DExample.indices);
-        final ModelVertices<MyVertex> vertices = new ModelVertices<>(flatData);
-
-        final MyMesh model = new MyMesh(vertices, indices);
-        final List<MyNode> nodes = new ArrayList<>();
         final int max = 100000;
+
+        final MyNode[] nodes = new MyNode[max];
         final float sqrt = (float) Math.sqrt(max);
         for (int i = 0; i < max; i++) {
             final MyNode newNode = new MyNode();
@@ -135,9 +127,9 @@ public class Renderer3DExample {
             final float z = (i % sqrt) - sqrt / 2;
             final float y = (x * x + z * z) * 0.005f;
             newNode.getTransform().setPosition(Position.of(x * 1.1f, y, z * 1.1f));
-            nodes.add(newNode);
+            nodes[i] = newNode;
         }
-        return new RenderNode3D(model, nodes);
+        return new RenderNode3D(flatData, indices, nodes);
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> implements ModelWriter<N, V> {
+public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> implements ModelBuffers, ModelWriter<N, V> {
 
     protected final Vao vao = Vao.create();
     private final List<ModelBuffer> buffers = new ArrayList<>();

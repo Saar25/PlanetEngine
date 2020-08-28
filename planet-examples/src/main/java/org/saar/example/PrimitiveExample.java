@@ -5,7 +5,6 @@ import org.saar.core.common.primitive.PrimitiveModelLoader;
 import org.saar.core.common.primitive.PrimitiveNode;
 import org.saar.core.common.primitive.PrimitiveVertex;
 import org.saar.core.model.Model;
-import org.saar.core.model.vertex.ModelVertices;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
@@ -16,6 +15,9 @@ import org.saar.lwjgl.opengl.primitive.GlFloat2;
 import org.saar.lwjgl.opengl.primitive.GlFloat3;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PrimitiveExample {
 
@@ -31,7 +33,7 @@ public class PrimitiveExample {
                 new PrimitiveNode(GlFloat.of(+0.1f)),
                 new PrimitiveNode(GlFloat.of(+0.2f))
         };
-        final ModelVertices<PrimitiveVertex> vertices = new ModelVertices<>(
+        final List<PrimitiveVertex> vertices = Arrays.asList(
                 new PrimitiveVertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
                 new PrimitiveVertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
                 new PrimitiveVertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
