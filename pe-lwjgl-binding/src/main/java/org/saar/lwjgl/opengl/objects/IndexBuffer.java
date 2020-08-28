@@ -80,11 +80,6 @@ public class IndexBuffer implements IVbo, WriteableVbo {
     }
 
     @Override
-    public void bindToVao(Vao vao) {
-        getVbo().bindToVao(vao);
-    }
-
-    @Override
     public void unbind() {
         getVbo().unbind();
     }

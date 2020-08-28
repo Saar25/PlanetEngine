@@ -54,7 +54,8 @@ public class Vao {
      * @param attributes the attributes
      */
     public void loadVbo(IVbo vbo, Attribute... attributes) {
-        vbo.bindToVao(this);
+        this.bind();
+        vbo.bind();
         linkAttributes(attributes);
         this.buffers.add(vbo);
     }

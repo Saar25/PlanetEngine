@@ -144,12 +144,6 @@ public class Vbo implements IVbo, WriteableVbo {
     }
 
     @Override
-    public void bindToVao(Vao vao) {
-        vao.bind();
-        this.bind0();
-    }
-
-    @Override
     public void unbind() {
         if (GlConfigs.CACHE_STATE || boundVbo != 0) {
             GL15.glBindBuffer(target, 0);
