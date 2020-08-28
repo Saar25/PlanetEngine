@@ -22,12 +22,12 @@ public abstract class ModelBuffersSingleVbo<N extends Node, V extends Vertex> ex
     private final Model model;
 
     public ModelBuffersSingleVbo(int vertices, int indices, int instances, Attribute[] vertexAttributes, Attribute[] instanceAttributes) {
-        this.instanceBuffer = instances > 0 ? loadDataBuffer(
-                new DataBuffer(VboUsage.STATIC_DRAW), instances, instanceAttributes) : null;
-        this.vertexBuffer = vertices > 0 ? loadDataBuffer(
-                new DataBuffer(VboUsage.STATIC_DRAW), vertices, vertexAttributes) : null;
-        this.indexBuffer = indices > 0 ? loadIndexBuffer(
-                new IndexBuffer(VboUsage.STATIC_DRAW), indices) : null;
+        this.instanceBuffer = instances == 0 ? null : loadDataBuffer(
+                new DataBuffer(VboUsage.STATIC_DRAW), instances, instanceAttributes);
+        this.vertexBuffer = vertices == 0 ? null : loadDataBuffer(
+                new DataBuffer(VboUsage.STATIC_DRAW), vertices, vertexAttributes);
+        this.indexBuffer = indices == 0 ? null : loadIndexBuffer(
+                new IndexBuffer(VboUsage.STATIC_DRAW), indices);
 
         this.model = createModel(vertices, indices, instances);
     }
