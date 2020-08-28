@@ -3,7 +3,6 @@ package org.saar.core.model.loader;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.WriteableVbo;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
 
@@ -19,19 +18,6 @@ public class ModelBuffer {
         this.buffer = buffer;
         this.writer = writer;
         this.attributes = attributes;
-    }
-
-    public static ModelBuffer allocate(WriteableVbo vbo, int count, Attribute... attributes) {
-        final int bytes = Attribute.sumBytes(attributes);
-        final ByteBuffer buffer = MemoryUtils.allocByte(bytes * count);
-        final BufferWriter writer = new BufferWriter(buffer);
-        return new ModelBuffer(vbo, buffer, writer, attributes);
-    }
-
-    public static ModelBuffer allocateIndex(WriteableVbo vbo, int count) {
-        final ByteBuffer buffer = MemoryUtils.allocByte(count * 4);
-        final BufferWriter writer = new BufferWriter(buffer);
-        return new ModelBuffer(vbo, buffer, writer);
     }
 
     public WriteableVbo getVbo() {
