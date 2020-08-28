@@ -1,6 +1,5 @@
 package org.saar.example;
 
-import org.saar.core.common.primitive.PrimitiveMesh;
 import org.saar.core.common.primitive.PrimitiveModelLoader;
 import org.saar.core.common.primitive.PrimitiveNode;
 import org.saar.core.common.primitive.PrimitiveVertex;
@@ -16,9 +15,6 @@ import org.saar.lwjgl.opengl.primitive.GlFloat3;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class PrimitiveExample {
 
     private static final int WIDTH = 700;
@@ -28,19 +24,18 @@ public class PrimitiveExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
+        final PrimitiveVertex[] vertices = {
+                new PrimitiveVertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
+                new PrimitiveVertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
+                new PrimitiveVertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
+        };
         final PrimitiveNode[] nodes = new PrimitiveNode[]{
                 new PrimitiveNode(GlFloat.of(+0.5f)),
                 new PrimitiveNode(GlFloat.of(+0.1f)),
                 new PrimitiveNode(GlFloat.of(+0.2f))
         };
-        final List<PrimitiveVertex> vertices = Arrays.asList(
-                new PrimitiveVertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
-                new PrimitiveVertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
-                new PrimitiveVertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
-        );
-        final PrimitiveMesh mesh = new PrimitiveMesh(vertices);
 
-        final Model model = new PrimitiveModelLoader(mesh, nodes).createModel();
+        final Model model = new PrimitiveModelLoader(vertices, nodes).createModel();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

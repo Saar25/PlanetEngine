@@ -28,17 +28,4 @@ public class PrimitiveModelBuffers extends ModelBuffersSingleVbo<PrimitiveNode, 
     public void writeIndex(int index) {
         indexWriter().write(index);
     }
-
-    public void load(PrimitiveVertex[] vertices, int[] indices, PrimitiveNode[] instances) {
-        if (instances.length > 0) {
-            this.writeInstances(instances);
-        }
-        if (vertices.length > 0) {
-            this.writeVertices(vertices);
-        }
-        if (indices.length > 0) {
-            this.writeIndices(indices);
-        }
-        this.updateBuffers();
-    }
 }

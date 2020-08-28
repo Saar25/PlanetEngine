@@ -43,9 +43,15 @@ public abstract class ModelBuffersSingleVbo<N extends Node, V extends Vertex> ex
     }
 
     public void load(V[] vertices, int[] indices, N[] instances) {
-        this.writeInstances(instances);
-        this.writeVertices(vertices);
-        this.writeIndices(indices);
+        if (instances != null && instances.length != 0) {
+            this.writeInstances(instances);
+        }
+        if (vertices != null && vertices.length != 0) {
+            this.writeVertices(vertices);
+        }
+        if (indices != null && indices.length != 0) {
+            this.writeIndices(indices);
+        }
         this.updateBuffers();
     }
 
