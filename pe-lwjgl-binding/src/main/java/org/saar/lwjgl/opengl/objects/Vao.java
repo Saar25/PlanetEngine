@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.objects;
 
-import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,25 +164,11 @@ public class Vao {
      */
     private void linkAttributes(Attribute... attributes) {
         int offset = 0;
-        int stride = getBytesPerVertex(attributes);
+        int stride = Attribute.sumBytes(attributes);
         for (Attribute attribute : attributes) {
             attribute.link(stride, offset);
             offset += attribute.getBytesPerVertex();
             this.attributes.add(attribute);
         }
-    }
-
-    /**
-     * Return the amount of bytes allocated for each vertex
-     *
-     * @param attributes the attributes related to the vbo
-     * @return amount of bytes per vertex
-     */
-    private int getBytesPerVertex(Attribute... attributes) {
-        int sizeInBytes = 0;
-        for (Attribute attribute : attributes) {
-            sizeInBytes += attribute.getBytesPerVertex();
-        }
-        return sizeInBytes;
     }
 }

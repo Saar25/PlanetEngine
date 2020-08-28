@@ -1,9 +1,9 @@
 package org.saar.lwjgl.opengl.objects;
 
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL33;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class Attribute {
 
@@ -43,16 +43,12 @@ public class Attribute {
         return new Attribute(attributeIndex, componentCount, dataType, normalized, instances);
     }
 
-    public static Attribute ofPositions() {
-        return new Attribute(0, 3, DataType.FLOAT, false);
-    }
-
-    public static Attribute ofTexCoords() {
-        return new Attribute(1, 2, DataType.FLOAT, false);
-    }
-
-    public static Attribute ofNormals() {
-        return new Attribute(2, 3, DataType.FLOAT, false);
+    public static int sumBytes(Attribute... attributes) {
+        int sum = 0;
+        for (Attribute attribute : attributes) {
+            sum += attribute.getBytesPerVertex();
+        }
+        return sum;
     }
 
     public static void enable(int index) {
