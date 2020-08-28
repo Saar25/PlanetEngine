@@ -55,12 +55,12 @@ public class PrimitiveModelLoader {
 
         final PrimitiveVertex[] vertices = mesh.getVertices().toArray(new PrimitiveVertex[0]);
         final int[] indices = mesh.getIndices().getIndices().stream().mapToInt(a -> a).toArray();
-        final PrimitiveNode[] nodeArray = nodes.toArray(new PrimitiveNode[0]);
+        final PrimitiveNode[] instances = nodes.toArray(new PrimitiveNode[0]);
 
         final PrimitiveModelBuffers buffers = new PrimitiveModelBuffers(vertices.length,
-                indices.length, nodeArray.length, vertexAttributes, nodeAttributes);
+                indices.length, instances.length, vertexAttributes, nodeAttributes);
 
-        buffers.load(vertices, indices, nodeArray);
+        buffers.load(vertices, indices, instances);
 
         return buffers.getModel();
 
