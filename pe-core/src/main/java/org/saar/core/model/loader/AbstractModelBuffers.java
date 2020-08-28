@@ -3,8 +3,6 @@ package org.saar.core.model.loader;
 import org.saar.core.model.Vertex;
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.*;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -15,24 +13,18 @@ public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> imp
     protected final Vao vao = Vao.create();
     private final List<ModelBuffer> buffers = new ArrayList<>();
 
-    private ModelBuffer createModelBuffer(WriteableVbo vbo, int bytes) {
-        final ByteBuffer buffer = MemoryUtils.allocByte(bytes);
-        final BufferWriter writer = new BufferWriter(buffer);
-        return new ModelBuffer(vbo, buffer, writer);
-    }
-
-    protected final ModelBuffer loadDataBuffer(DataBuffer vbo, int vertices, Attribute... attributes) {
-        final int bytes = Attribute.sumBytes(attributes) * vertices;
-        final ModelBuffer modelBuffer = createModelBuffer(vbo, bytes);
-        this.vao.loadVbo(vbo, modelBuffer.getAttributes());
+    protected final ModelBuffer loadDataBuffer(DataBuffer vbo, int count, Attribute... attributes) {
+        final int bytes = Attribute.sumBytes(attributes) * count;
+        final ModelBuffer modelBuffer = ModelBuffer.allocate(vbo, bytes);
+        this.vao.loadVbo(vbo, attributes);
         this.buffers.add(modelBuffer);
         return modelBuffer;
     }
 
     protected final ModelBuffer loadIndexBuffer(IndexBuffer vbo, int indices) {
-        final ModelBuffer modelBuffer = createModelBuffer(vbo, indices * 4);
-        this.vao.loadVbo(vbo);
+        final ModelBuffer modelBuffer = ModelBuffer.allocate(vbo, indices * 4);
         this.buffers.add(modelBuffer);
+        this.vao.loadVbo(vbo);
         return modelBuffer;
     }
 

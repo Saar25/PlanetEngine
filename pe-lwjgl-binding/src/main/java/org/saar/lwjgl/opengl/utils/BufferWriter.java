@@ -41,30 +41,37 @@ public class BufferWriter {
     }
 
     public void write(Vector2fc value) {
-        value.get(this.buffer).position(this.buffer.position() + 2);
+        final int position = this.buffer.position() + 4 * 2;
+        value.get(this.buffer).position(position);
     }
 
     public void write(Vector3fc value) {
-        value.get(this.buffer).position(this.buffer.position() + 3);
+        final int position = this.buffer.position() + 4 * 3;
+        value.get(this.buffer).position(position);
     }
 
     public void write(Vector4fc value) {
-        value.get(this.buffer).position(this.buffer.position() + 4);
+        final int position = this.buffer.position() + 4 * 4;
+        value.get(this.buffer).position(position);
     }
 
     public void write(Matrix4fc value) {
-        value.get(this.buffer).position(this.buffer.position() + 16);
+        final int position = this.buffer.position() + 4 * 16;
+        value.get(this.buffer).position(position);
     }
 
     public void write(Vector2ic value) {
-        value.get(this.buffer).position(this.buffer.position() + 2);
+        final int position = this.buffer.position() + 4 * 2;
+        value.get(this.buffer).position(position);
     }
 
     public void write(Vector3ic value) {
-        value.get(this.buffer).position(this.buffer.position() + 3);
+        final int position = this.buffer.position() + 4 * 3;
+        value.get(this.buffer).position(position);
     }
 
     public void write(Vector4ic value) {
-        value.get(this.buffer).position(this.buffer.position() + 4);
+        final int position = this.buffer.position() + 4 * 4;
+        value.get(this.buffer).position(position);
     }
 }
