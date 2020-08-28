@@ -15,12 +15,6 @@ public class ModelIndices {
         }
     }
 
-    public void write(ModelBuffer buffer) {
-        for (int index : this.indices) {
-            buffer.writeIndex(index);
-        }
-    }
-
     public List<Integer> getIndices() {
         return this.indices;
     }
