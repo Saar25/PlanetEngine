@@ -28,6 +28,12 @@ public class ModelBuffer {
         return new ModelBuffer(vbo, buffer, writer, attributes);
     }
 
+    public static ModelBuffer allocateIndex(WriteableVbo vbo, int count) {
+        final ByteBuffer buffer = MemoryUtils.allocByte(count * 4);
+        final BufferWriter writer = new BufferWriter(buffer);
+        return new ModelBuffer(vbo, buffer, writer);
+    }
+
     public WriteableVbo getVbo() {
         return this.vbo;
     }
