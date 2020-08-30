@@ -4,7 +4,6 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
-import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.renderer.r3d.RenderNode3D;
 import org.saar.core.renderer.r3d.Renderer3D;
@@ -15,7 +14,10 @@ import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
+import org.saar.maths.transform.Rotation;
+import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
 
 public class Renderer3DExample {
@@ -53,34 +55,30 @@ public class Renderer3DExample {
         colorAttachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
         depthAttachment = RenderBufferAttachmentMS.ofDepth(FormatType.DEPTH_COMPONENT24, 16);
 
-        final Projection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 500);
+        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1200);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 300, 0));
+        camera.getTransform().setPosition(Position.of(0, 0, -300));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
 
-        MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
-
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
-        while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-            fbo.bind();
+        while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
 //            renderNode.update();
             move(camera, keyboard);
             renderer.render();
 
-            fbo.blitToScreen();
-
-            window.update(true);
             window.pollEvents();
             if (window.isResized()) {
-                fbo.delete();
-                fbo = createFbo(window.getWidth(), window.getHeight());
+                projection.setWidth(window.getWidth());
+                projection.setHeight(window.getHeight());
             }
+
+            window.update(true);
 
             System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))
@@ -88,45 +86,66 @@ public class Renderer3DExample {
         }
 
         renderer.delete();
-        fbo.delete();
         colorAttachment.delete();
         depthAttachment.delete();
     }
 
     private static void move(ICamera camera, Keyboard keyboard) {
         final Vector3f toMove = Vector3.zero();
+        final Vector3f toRotate = Vector3.zero();
         if (keyboard.isKeyPressed('W')) {
-            toMove.add(Vector3.of(0, 0, -1));
+            toMove.add(0, 0, 1);
         }
         if (keyboard.isKeyPressed('A')) {
-            toMove.add(Vector3.of(-1, 0, 0));
+            toMove.add(1, 0, 0);
         }
         if (keyboard.isKeyPressed('S')) {
-            toMove.add(Vector3.of(0, 0, 1));
+            toMove.add(0, 0, -1);
         }
         if (keyboard.isKeyPressed('D')) {
-            toMove.add(Vector3.of(1, 0, 0));
+            toMove.add(-1, 0, 0);
+        }
+        if (keyboard.isKeyPressed('Q')) {
+            toRotate.add(0, .5f, 0);
+        }
+        if (keyboard.isKeyPressed('E')) {
+            toRotate.add(0, -.5f, 0);
         }
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            toMove.add(Vector3.of(0, -10, 0));
+            toMove.add(0, -1, 0);
         }
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            toMove.add(Vector3.of(0, 10, 0));
+            toMove.add(0, 1, 0);
         }
-        camera.getTransform().getPosition().add(toMove);
+        camera.getTransform().getPosition().add(toMove.rotate(camera.getTransform().getRotation().getValue()).mul(-1));
+        camera.getTransform().addRotation(Angle.degrees(toRotate.x), Angle.degrees(toRotate.y), Angle.degrees(toRotate.z));
     }
 
     private static RenderNode3D renderNode3D() {
-        final int max = 100000;
+        final int max = 1000000;
+        final int size = 1000;
 
         final MyNode[] nodes = new MyNode[max];
-        final float sqrt = (float) Math.sqrt(max);
         for (int i = 0; i < max; i++) {
             final MyNode newNode = new MyNode();
-            final float x = (i / sqrt) - (max / sqrt / 2);
+            /*final float x = (i / sqrt) - (max / sqrt / 2);
             final float z = (i % sqrt) - sqrt / 2;
-            final float y = (x * x + z * z) * 0.005f;
-            newNode.getTransform().setPosition(Position.of(x * 1.1f, y, z * 1.1f));
+            final float y = (x * x + z * z) * 0.005f;*/
+
+            final float x = (float) (Math.random() * size - size / 2);
+            final float y = (float) (Math.random() * size - size / 2);
+            final float z = (float) (Math.random() * size - size / 2);
+
+            /*final float a = (float) (Math.random() * Math.PI);
+            final float b = (float) (Math.random() * Math.PI * 2);
+            final float r = (float) Math.random();
+
+            final float x = (float) (Math.sin(a) * Math.cos(b) * size);
+            final float y = (float) (Math.cos(a) * Math.sin(b) * size);
+            final float z = (float) (Math.sin(a) * r * size);*/
+            newNode.getTransform().setPosition(Position.of(x, y, z));
+            newNode.getTransform().setRotation(Rotation.fromQuaternion(Quaternion.of((float) Math.random(),
+                    (float) Math.random(), (float) Math.random(), (float) Math.random()).normalize()));
             nodes[i] = newNode;
         }
         return new RenderNode3D(flatData, indices, nodes);

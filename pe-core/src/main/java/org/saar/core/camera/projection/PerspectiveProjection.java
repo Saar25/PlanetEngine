@@ -7,25 +7,65 @@ import org.saar.maths.utils.Matrix4;
 
 public class PerspectiveProjection implements Projection {
 
-    private final float fov;
-    private final float width;
-    private final float height;
-    private final float zNear;
-    private final float zFar;
+    private float fov;
+    private float width;
+    private float height;
+    private float near;
+    private float far;
 
     private final Matrix4f matrix = Matrix4.create();
 
-    public PerspectiveProjection(float fov, float width, float height, float zNear, float zFar) {
+    public PerspectiveProjection(float fov, float width, float height, float near, float far) {
         this.fov = fov;
         this.width = width;
         this.height = height;
-        this.zNear = zNear;
-        this.zFar = zFar;
+        this.near = near;
+        this.far = far;
+    }
+
+    public float getFov() {
+        return this.fov;
+    }
+
+    public void setFov(float fov) {
+        this.fov = fov;
+    }
+
+    public float getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public float getNear() {
+        return this.near;
+    }
+
+    public void setNear(float near) {
+        this.near = near;
+    }
+
+    public float getFar() {
+        return this.far;
+    }
+
+    public void setFar(float far) {
+        this.far = far;
     }
 
     @Override
     public Matrix4fc getMatrix() {
         return Matrix4.ofProjection(this.fov, this.width,
-                this.height, this.zNear, this.zFar, this.matrix);
+                this.height, this.near, this.far, this.matrix);
     }
 }
