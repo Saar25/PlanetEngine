@@ -29,7 +29,6 @@ public interface IVbo extends ReadOnlyVbo {
      */
     ByteBuffer map(VboAccess access);
 
-
     /**
      * Unmap the vbo
      */
