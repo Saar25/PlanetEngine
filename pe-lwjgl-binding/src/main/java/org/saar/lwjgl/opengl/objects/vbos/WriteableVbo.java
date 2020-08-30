@@ -1,12 +1,9 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public interface WriteableVbo extends IVbo {
-
-    void allocateByte(long size);
 
     void allocateInt(long size);
 
@@ -15,8 +12,6 @@ public interface WriteableVbo extends IVbo {
     void storeData(long offset, int[] data);
 
     void storeData(long offset, float[] data);
-
-    void storeData(long offset, ByteBuffer data);
 
     void storeData(long offset, IntBuffer data);
 

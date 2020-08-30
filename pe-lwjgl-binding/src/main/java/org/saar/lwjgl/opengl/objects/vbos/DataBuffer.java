@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class DataBuffer implements IVbo, WriteableVbo {
+public class DataBuffer implements WriteableVbo {
 
     public static final DataBuffer NULL = new DataBuffer(Vbo.NULL_ARRAY);
 
@@ -52,8 +52,8 @@ public class DataBuffer implements IVbo, WriteableVbo {
     }
 
     @Override
-    public void storeData(long offset, ByteBuffer data) {
-        getVbo().storeData(offset, data);
+    public void storeData(long offset, ByteBuffer buffer) {
+        getVbo().storeData(offset, buffer);
     }
 
     @Override
@@ -66,10 +66,12 @@ public class DataBuffer implements IVbo, WriteableVbo {
         getVbo().storeData(offset, data);
     }
 
+    @Override
     public ByteBuffer map(VboAccess access) {
         return getVbo().map(access);
     }
 
+    @Override
     public void unmap() {
         getVbo().unmap();
     }

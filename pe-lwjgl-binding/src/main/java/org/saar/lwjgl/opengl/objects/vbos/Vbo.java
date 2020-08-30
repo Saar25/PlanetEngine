@@ -79,10 +79,10 @@ public class Vbo implements IVbo, WriteableVbo {
     }
 
     @Override
-    public void storeData(long offset, ByteBuffer data) {
+    public void storeData(long offset, ByteBuffer buffer) {
         this.bind0();
-        ensureSize(offset, data.limit());
-        GL15.glBufferSubData(target, offset, data);
+        ensureSize(offset, buffer.limit());
+        GL15.glBufferSubData(target, offset, buffer);
     }
 
     @Override

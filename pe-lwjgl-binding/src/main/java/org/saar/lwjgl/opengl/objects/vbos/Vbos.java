@@ -25,7 +25,7 @@ public final class Vbos {
         return vbo;
     }
 
-    public static void allocateAndStore(WriteableVbo vbo, ByteBuffer buffer) {
+    public static void allocateAndStore(IVbo vbo, ByteBuffer buffer) {
         vbo.allocateByte(buffer.flip().limit());
         vbo.storeData(0, buffer);
     }

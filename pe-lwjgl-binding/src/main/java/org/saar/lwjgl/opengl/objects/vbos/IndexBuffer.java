@@ -5,10 +5,9 @@ import org.saar.lwjgl.opengl.constants.VboTarget;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class IndexBuffer implements IVbo, WriteableVbo {
+public class IndexBuffer implements IVbo {
 
     public static final IndexBuffer NULL = new IndexBuffer(Vbo.NULL_INDEX);
 
@@ -30,41 +29,30 @@ public class IndexBuffer implements IVbo, WriteableVbo {
         getVbo().allocateInt(size);
     }
 
+    public void storeData(long offset, int[] data) {
+        getVbo().storeData(offset, data);
+    }
+
+    public void storeData(long offset, IntBuffer data) {
+        getVbo().storeData(offset, data);
+    }
+
+    @Override
     public void allocateByte(long size) {
         getVbo().allocateByte(size);
     }
 
-    public void storeData(long pointer, int[] data) {
-        getVbo().storeData(pointer, data);
-    }
-
-    public void storeData(long pointer, ByteBuffer data) {
-        getVbo().storeData(pointer, data);
-    }
-
-    public void storeData(long pointer, IntBuffer data) {
-        getVbo().storeData(pointer, data);
+    @Override
+    public void storeData(long offset, ByteBuffer buffer) {
+        getVbo().storeData(offset, buffer);
     }
 
     @Override
-    public void allocateFloat(long size) {
-        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
-    }
-
-    @Override
-    public void storeData(long offset, float[] data) {
-        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
-    }
-
-    @Override
-    public void storeData(long offset, FloatBuffer data) {
-        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
-    }
-
     public ByteBuffer map(VboAccess access) {
         return getVbo().map(access);
     }
 
+    @Override
     public void unmap() {
         getVbo().unmap();
     }

@@ -1,23 +1,39 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
-public interface IVbo {
+import org.saar.lwjgl.opengl.constants.VboAccess;
+
+import java.nio.ByteBuffer;
+
+public interface IVbo extends ReadOnlyVbo {
 
     /**
-     * Return the size of the vbo in bytes
+     * Allocate memory for the vbo
      *
-     * @return the size of the vbo int bytes
+     * @param size the bytes to allocate
      */
-    long getSize();
+    void allocateByte(long size);
 
     /**
-     * Bind the vbo
+     * Store memory in the vbo
+     *
+     * @param offset the offset of the vbo
+     * @param buffer the buffer to store in the vbo
      */
-    void bind();
+    void storeData(long offset, ByteBuffer buffer);
 
     /**
-     * Unbind the vbo
+     * Map the vbo
+     *
+     * @param access the access type
+     * @return the buffer to map
      */
-    void unbind();
+    ByteBuffer map(VboAccess access);
+
+
+    /**
+     * Unmap the vbo
+     */
+    void unmap();
 
     /**
      * Delete the vbo
