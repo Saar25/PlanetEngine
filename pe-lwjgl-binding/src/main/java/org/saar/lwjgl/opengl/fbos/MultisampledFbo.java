@@ -2,10 +2,9 @@ package org.saar.lwjgl.opengl.fbos;
 
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.MultisampledAttachment;
+import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
-
-import java.util.List;
 
 public class MultisampledFbo implements IFbo {
 
@@ -15,11 +14,15 @@ public class MultisampledFbo implements IFbo {
         this.fbo = Fbo.create(width, height);
     }
 
-    public void setReadAttachment(int colourAttachment) {
-        getFbo().setReadAttachment(colourAttachment);
+    private Fbo getFbo() {
+        return fbo;
     }
 
-    public void setDrawAttachments(int... attachments) {
+    public void setReadAttachment(Attachment attachment) {
+        getFbo().setReadAttachment(attachment);
+    }
+
+    public void setDrawAttachments(Attachment... attachments) {
         getFbo().setDrawAttachments(attachments);
     }
 
@@ -27,20 +30,12 @@ public class MultisampledFbo implements IFbo {
         getFbo().addAttachment(attachment);
     }
 
-    public List<Attachment> getAttachments() {
-        return getFbo().getAttachments();
-    }
-
-    public Attachment getDepthAttachment() {
-        return getFbo().getDepthAttachment();
-    }
-
-    private Fbo getFbo() {
-        return fbo;
-    }
-
     public void blitToScreen() {
         getFbo().blitToScreen();
+    }
+
+    public void blitFbo(IFbo fbo) {
+        getFbo().blitFbo(fbo);
     }
 
     @Override
@@ -59,6 +54,12 @@ public class MultisampledFbo implements IFbo {
     }
 
     @Override
+    public void bind() {
+        getFbo().bind();
+    }
+
+
+    @Override
     public void bind(FboTarget target) {
         getFbo().bind(target);
     }
@@ -69,7 +70,17 @@ public class MultisampledFbo implements IFbo {
     }
 
     @Override
+    public void unbind() {
+        getFbo().unbind();
+    }
+
+    @Override
     public void delete() {
         getFbo().delete();
+    }
+
+    @Override
+    public void ensureStatus() throws FrameBufferException {
+        getFbo().ensureStatus();
     }
 }

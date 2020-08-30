@@ -1,20 +1,14 @@
 package org.saar.lwjgl.opengl.shaders;
 
 import org.lwjgl.opengl.GL20;
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class ShadersProgram<T> {
+public class ShadersProgram {
 
     private static int boundProgram = 0;
 
     private final int id;
 
-    private final List<UniformProperty<T>> perRenderUniforms = new LinkedList<>();
-    private final List<UniformProperty<T>> perInstanceUniforms = new LinkedList<>();
-
+    private int attributeCount = 0;
     private boolean deleted = false;
 
     private ShadersProgram(int id, Shader... shaders) throws Exception {
@@ -34,12 +28,12 @@ public class ShadersProgram<T> {
         unbind();
     }
 
-    public static <T> ShadersProgram<T> create(Shader vertexShader, Shader fragmentShader) throws Exception {
+    public static ShadersProgram create(Shader vertexShader, Shader fragmentShader) throws Exception {
         final int id = GL20.glCreateProgram();
-        return new ShadersProgram<>(id, vertexShader, fragmentShader);
+        return new ShadersProgram(id, vertexShader, fragmentShader);
     }
 
-    public static <T> ShadersProgram<T> create(String vertexFile, String fragmentFile) throws Exception {
+    public static ShadersProgram create(String vertexFile, String fragmentFile) throws Exception {
         final Shader vertexShader = Shader.createVertex(vertexFile);
         final Shader fragmentShader = Shader.createFragment(fragmentFile);
         return ShadersProgram.create(vertexShader, fragmentShader);
@@ -49,27 +43,13 @@ public class ShadersProgram<T> {
         GL20.glBindAttribLocation(id, location, name);
     }
 
-    public void addPerRenderUniform(UniformProperty<T> uniform) {
-        this.bind();
-        uniform.initialize(this);
-        perRenderUniforms.add(uniform);
+    public void bindAttribute(String name) {
+        GL20.glBindAttribLocation(id, attributeCount++, name);
     }
 
-    public void addPerInstanceUniform(UniformProperty<T> uniform) {
-        this.bind();
-        uniform.initialize(this);
-        perInstanceUniforms.add(uniform);
-    }
-
-    public void updatePerRenderUniforms(RenderState<T> state) {
-        for (UniformProperty<T> uniform : perRenderUniforms) {
-            uniform.load(state);
-        }
-    }
-
-    public void updatePerInstanceUniforms(RenderState<T> state) {
-        for (UniformProperty<T> uniform : perInstanceUniforms) {
-            uniform.load(state);
+    public void bindAttributes(String... names) {
+        for (String name : names) {
+            bindAttribute(name);
         }
     }
 
@@ -80,8 +60,8 @@ public class ShadersProgram<T> {
 
     public void bind() {
         if (boundProgram != id) {
-            GL20.glUseProgram(id);
             boundProgram = id;
+            bind0();
         }
     }
 

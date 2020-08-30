@@ -5,9 +5,10 @@ import org.saar.lwjgl.opengl.constants.VboTarget;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class IndexBuffer implements IVbo {
+public class IndexBuffer implements IVbo, WriteableVbo {
 
     public static final IndexBuffer NULL = new IndexBuffer(Vbo.NULL_INDEX);
 
@@ -22,27 +23,42 @@ public class IndexBuffer implements IVbo {
     }
 
     private Vbo getVbo() {
-        return vbo;
+        return this.vbo;
     }
 
     public void allocateInt(long size) {
         getVbo().allocateInt(size);
     }
 
-    public void storeData(int pointer, IntBuffer data) {
-        getVbo().storeData(pointer, data);
-    }
-
-    public void storeData(int pointer, int[] data) {
-        getVbo().storeData(pointer, data);
-    }
-
     public void allocateByte(long size) {
-        getVbo().allocateData(size);
+        getVbo().allocateByte(size);
     }
 
-    public void storeData(int pointer, ByteBuffer data) {
+    public void storeData(long pointer, int[] data) {
         getVbo().storeData(pointer, data);
+    }
+
+    public void storeData(long pointer, ByteBuffer data) {
+        getVbo().storeData(pointer, data);
+    }
+
+    public void storeData(long pointer, IntBuffer data) {
+        getVbo().storeData(pointer, data);
+    }
+
+    @Override
+    public void allocateFloat(long size) {
+        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
+    }
+
+    @Override
+    public void storeData(long offset, float[] data) {
+        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
+    }
+
+    @Override
+    public void storeData(long offset, FloatBuffer data) {
+        throw new UnsupportedOperationException("Cannot allocate float to index buffer");
     }
 
     public ByteBuffer map(VboAccess access) {
@@ -61,11 +77,6 @@ public class IndexBuffer implements IVbo {
     @Override
     public void bind() {
         getVbo().bind();
-    }
-
-    @Override
-    public void bindToVao(Vao vao) {
-        getVbo().bindToVao(vao);
     }
 
     @Override

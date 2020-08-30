@@ -15,13 +15,6 @@ public interface IVbo {
     void bind();
 
     /**
-     * Bind the vbo the the vao
-     *
-     * @param vao the vao
-     */
-    void bindToVao(Vao vao);
-
-    /**
      * Unbind the vbo
      */
     void unbind();

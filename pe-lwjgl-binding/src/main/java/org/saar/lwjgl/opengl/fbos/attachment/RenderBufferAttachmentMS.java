@@ -11,7 +11,8 @@ public class RenderBufferAttachmentMS extends AbstractAttachment implements Mult
     private final FormatType iFormat;
     private final int samples;
 
-    public RenderBufferAttachmentMS(AttachmentType type, int attachmentIndex, RenderBuffer renderBuffer, FormatType iFormat, int samples) {
+    public RenderBufferAttachmentMS(AttachmentType type, int attachmentIndex,
+                                    RenderBuffer renderBuffer, FormatType iFormat, int samples) {
         super(type, attachmentIndex);
         this.renderBuffer = renderBuffer;
         this.iFormat = iFormat;
@@ -23,10 +24,10 @@ public class RenderBufferAttachmentMS extends AbstractAttachment implements Mult
      *
      * @return the created depth attachment
      */
-    public static RenderBufferAttachmentMS ofColour(int index, int samples) {
+    public static RenderBufferAttachmentMS ofColour(int index, FormatType format, int samples) {
         final RenderBuffer renderBuffer = RenderBuffer.create();
         return new RenderBufferAttachmentMS(AttachmentType.COLOUR,
-                index, renderBuffer, FormatType.RGBA8, samples);
+                index, renderBuffer, format, samples);
     }
 
     /**
@@ -34,14 +35,14 @@ public class RenderBufferAttachmentMS extends AbstractAttachment implements Mult
      *
      * @return the created depth attachment
      */
-    public static RenderBufferAttachmentMS ofDepth(int samples) {
+    public static RenderBufferAttachmentMS ofDepth(FormatType format, int samples) {
         final RenderBuffer renderBuffer = RenderBuffer.create();
         return new RenderBufferAttachmentMS(AttachmentType.DEPTH, 0,
-                renderBuffer, FormatType.DEPTH_COMPONENT, samples);
+                renderBuffer, format, samples);
     }
 
     public RenderBuffer getRenderBuffer() {
-        return renderBuffer;
+        return this.renderBuffer;
     }
 
     @Override

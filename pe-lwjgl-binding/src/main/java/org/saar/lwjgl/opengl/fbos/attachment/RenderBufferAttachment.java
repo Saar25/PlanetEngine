@@ -21,9 +21,10 @@ public class RenderBufferAttachment extends AbstractAttachment implements Attach
      *
      * @return the created depth attachment
      */
-    public static RenderBufferAttachment ofColour(int index) {
+    public static RenderBufferAttachment ofColour(int index, FormatType format) {
         final RenderBuffer renderBuffer = RenderBuffer.create();
-        return new RenderBufferAttachment(AttachmentType.COLOUR, index, renderBuffer, FormatType.RGBA);
+        return new RenderBufferAttachment(AttachmentType.COLOUR,
+                index, renderBuffer, format);
     }
 
     /**
@@ -31,9 +32,10 @@ public class RenderBufferAttachment extends AbstractAttachment implements Attach
      *
      * @return the created depth attachment
      */
-    public static RenderBufferAttachment ofDepth() {
+    public static RenderBufferAttachment ofDepth(FormatType format) {
         final RenderBuffer renderBuffer = RenderBuffer.create();
-        return new RenderBufferAttachment(AttachmentType.DEPTH, 0, renderBuffer, FormatType.DEPTH_COMPONENT);
+        return new RenderBufferAttachment(AttachmentType.DEPTH,
+                0, renderBuffer, format);
     }
 
     public RenderBuffer getRenderBuffer() {

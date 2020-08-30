@@ -7,8 +7,6 @@ import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.RenderBuffer;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.DataBuffer;
@@ -28,14 +26,17 @@ public class MultisamplingExample {
 
         final Vao vao = Vao.create();
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
-        vbo.allocateFloat(6);
+        vbo.allocateFloat(18);
         vbo.storeData(0, new float[]{
-                -0.5f, -0.5f,
-                +0.0f, +0.5f,
-                +0.5f, -0.5f});
-        vao.loadDataBuffer(vbo, Attribute.of(0, 2, DataType.FLOAT, false));
+                -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+                +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+                +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
+        vao.loadVbo(vbo,
+                Attribute.of(0, 2, DataType.FLOAT, false),
+                Attribute.of(1, 3, DataType.FLOAT, false),
+                Attribute.of(2, 1, DataType.FLOAT, false));
 
-        final ShadersProgram<Vao> shadersProgram = ShadersProgram.create(
+        final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttribute(0, "in_position");
@@ -46,9 +47,10 @@ public class MultisamplingExample {
         vao.enableAttributes();
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final RenderBufferAttachmentMS attachment = new RenderBufferAttachmentMS(
-                AttachmentType.COLOUR, 0, RenderBuffer.create(), FormatType.BGRA, 16);
+        final RenderBufferAttachmentMS attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
         fbo.addAttachment(attachment);
+        fbo.setReadAttachment(attachment);
+        fbo.setDrawAttachments(attachment);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
@@ -60,6 +62,10 @@ public class MultisamplingExample {
             window.update(true);
             window.pollEvents();
         }
+
+        fbo.delete();
+        vao.delete();
+        attachment.delete();
     }
 
 }

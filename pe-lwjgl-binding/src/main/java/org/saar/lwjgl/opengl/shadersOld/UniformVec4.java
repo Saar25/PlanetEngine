@@ -1,9 +1,9 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.lwjgl.opengl.GL20;
 import org.saar.maths.utils.Vector4;
 
 public class UniformVec4 extends Uniform<Vector4f> {
@@ -12,7 +12,7 @@ public class UniformVec4 extends Uniform<Vector4f> {
         super(location, null, null, Vector4.create());
     }
 
-    public static UniformVec4 create(ShadersProgram<?> shadersProgram, String uniformName) throws Exception {
+    public static UniformVec4 create(ShadersProgram shadersProgram, String uniformName) {
         int location = getLocation(shadersProgram, uniformName);
         return new UniformVec4(location);
     }

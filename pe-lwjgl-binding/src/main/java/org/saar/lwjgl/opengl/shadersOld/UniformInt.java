@@ -1,8 +1,8 @@
 package org.saar.lwjgl.opengl.shadersOld;
 
+import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.lwjgl.opengl.GL20;
 
 public class UniformInt extends Uniform<Integer> {
 
@@ -12,7 +12,7 @@ public class UniformInt extends Uniform<Integer> {
         super(location, null, null, 0);
     }
 
-    public static UniformInt create(ShadersProgram<?> shadersProgram, String uniformName) {
+    public static UniformInt create(ShadersProgram shadersProgram, String uniformName) {
         int location = getLocation(shadersProgram, uniformName);
         return new UniformInt(location);
     }

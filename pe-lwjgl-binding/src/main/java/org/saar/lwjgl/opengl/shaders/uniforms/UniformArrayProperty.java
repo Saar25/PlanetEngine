@@ -9,21 +9,13 @@ import java.util.List;
 public class UniformArrayProperty<T> implements UniformProperty<T> {
 
     private final String name;
-    private final SizeSupplier sizeSupplier;
-    private final List<UniformProperty<T>> uniforms;
+    private final int length;
 
-    public UniformArrayProperty(String name, int length, SizeSupplier sizeSupplier, UniformSupplier<T> supplier) {
-        this.name = name;
-        this.sizeSupplier = sizeSupplier;
-        this.uniforms = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            uniforms.add(supplier.createUniform(name + "[" + i + "]", i));
-        }
-    }
+    private final List<UniformProperty<T>> uniforms;
 
     public UniformArrayProperty(String name, int length, UniformSupplier<T> supplier) {
         this.name = name;
-        this.sizeSupplier = () -> length;
+        this.length = length;
         this.uniforms = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             uniforms.add(supplier.createUniform(name + "[" + i + "]", i));
@@ -31,7 +23,7 @@ public class UniformArrayProperty<T> implements UniformProperty<T> {
     }
 
     @Override
-    public void initialize(ShadersProgram<T> shadersProgram) {
+    public void initialize(ShadersProgram shadersProgram) {
         for (UniformProperty<T> uniform : uniforms) {
             uniform.initialize(shadersProgram);
         }
@@ -40,8 +32,7 @@ public class UniformArrayProperty<T> implements UniformProperty<T> {
     @Override
     public void load(RenderState<T> state) {
         if (valueAvailable()) {
-            int size = sizeSupplier.get();
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < length; i++) {
                 uniforms.get(i).load(state);
             }
         }
@@ -53,9 +44,5 @@ public class UniformArrayProperty<T> implements UniformProperty<T> {
 
     public interface UniformSupplier<T> {
         UniformProperty<T> createUniform(String name, int index);
-    }
-
-    public interface SizeSupplier {
-        int get();
     }
 }

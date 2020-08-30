@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
+import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.shaders.RenderState;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.textures.MultiTexture;
 import org.saar.lwjgl.opengl.textures.Texture;
-import org.lwjgl.opengl.GL20;
 
 public abstract class UniformMultiTextureProperty<T> implements UniformProperty<T> {
 
@@ -33,7 +33,7 @@ public abstract class UniformMultiTextureProperty<T> implements UniformProperty<
     }
 
     @Override
-    public void initialize(ShadersProgram<T> shadersProgram) {
+    public void initialize(ShadersProgram shadersProgram) {
         GL20.glUniform1i(shadersProgram.getUniformLocation(blendMap), unit);
         GL20.glUniform1i(shadersProgram.getUniformLocation(dTexture), unit + 1);
         GL20.glUniform1i(shadersProgram.getUniformLocation(rTexture), unit + 2);

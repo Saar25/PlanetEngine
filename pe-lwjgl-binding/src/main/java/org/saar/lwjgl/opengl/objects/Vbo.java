@@ -1,21 +1,18 @@
 package org.saar.lwjgl.opengl.objects;
 
+import org.lwjgl.opengl.GL15;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.VboAccess;
 import org.saar.lwjgl.opengl.constants.VboTarget;
 import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.objects.exceptions.VboTooSmallException;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.lwjgl.opengl.GL15;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class Vbo implements IVbo {
-
-    private static final Logger LOGGER = Logger.getLogger(Vbo.class.getName());
+public class Vbo implements IVbo, WriteableVbo {
 
     public static final Vbo NULL_ARRAY = new Vbo(0, VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
     public static final Vbo NULL_INDEX = new Vbo(0, VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW);
@@ -33,9 +30,6 @@ public class Vbo implements IVbo {
         this.id = id;
         this.target = target.get();
         this.usage = usage.get();
-        //this.bind();
-
-        LOGGER.log(Level.FINE, "Vbo " + id + " created");
     }
 
     public static Vbo create(VboTarget target, VboUsage usage) {
@@ -43,120 +37,75 @@ public class Vbo implements IVbo {
         return new Vbo(id, target, usage);
     }
 
-    private void printReallocation(String type, int newSize) {
-        LOGGER.log(Level.WARNING, "Vbo : " + id + ", reallocates " + type + " buffer again, " +
-                "new limit: " + newSize + ", last limit: " + size);
-    }
-
     /*
-     *  Vbo allocations
+     *  Vbo allocate data
      */
 
-    public void allocateFloat(long size) {
-        allocateData(size * DataType.FLOAT.getBytes());
+    @Override
+    public void allocateByte(long size) {
+        this.bind0();
+        GL15.glBufferData(target, size, usage);
+        this.size = size;
     }
 
+    @Override
     public void allocateInt(long size) {
-        allocateData(size * DataType.INT.getBytes());
+        allocateByte(size * DataType.INT.getBytes());
     }
 
-    public void allocateData(long sizeInBytes) {
-        bind();
-        GL15.glBufferData(target, sizeInBytes, usage);
-        size = sizeInBytes;
-    }
-
-    /*
-     *  Vbo allocations and storing data
-     */
-
-    public void allocateFloat(FloatBuffer floatBuffer) {
-        bind();
-        GL15.glBufferData(target, floatBuffer, usage);
-        size = floatBuffer.limit() * DataType.FLOAT.getBytes();
-    }
-
-    public void allocateFloat(float[] floatArray) {
-        bind();
-        GL15.glBufferData(target, floatArray, usage);
-        size = floatArray.length * DataType.FLOAT.getBytes();
-    }
-
-    public void allocateInt(IntBuffer intBuffer) {
-        bind();
-        GL15.glBufferData(target, intBuffer, usage);
-        size = intBuffer.limit() * DataType.INT.getBytes();
-    }
-
-    public void allocateInt(int[] intArray) {
-        bind();
-        GL15.glBufferData(target, intArray, usage);
-        size = intArray.length * DataType.INT.getBytes();
-    }
-
-    public void allocateData(ByteBuffer byteBuffer) {
-        bind();
-        GL15.glBufferData(target, byteBuffer, usage);
-        size = byteBuffer.limit();
+    @Override
+    public void allocateFloat(long size) {
+        allocateByte(size * DataType.FLOAT.getBytes());
     }
 
     /*
-     *  Vbo storing data
+     *  Vbo store data
      */
 
-    public void storeData(int pointer, FloatBuffer floatBuffer) {
-        bind();
-        int size = floatBuffer.limit() * DataType.FLOAT.getBytes();
-        if (pointer + size > this.size) {
-            printReallocation("float", size);
-            allocateData(size);
-            this.size = size;
-        }
-        GL15.glBufferSubData(target, pointer, floatBuffer);
+    @Override
+    public void storeData(long offset, int[] data) {
+        this.bind0();
+        final int bytes = DataType.INT.getBytes();
+        ensureSize(offset, data.length * bytes);
+        GL15.glBufferSubData(target, offset, data);
     }
 
-    public void storeData(int pointer, float[] floatArray) {
-        bind();
-        int size = floatArray.length * DataType.FLOAT.getBytes();
-        if (pointer + size > this.size) {
-            printReallocation("float", size);
-            allocateData(size);
-            this.size = size;
-        }
-        GL15.glBufferSubData(target, pointer, floatArray);
+    @Override
+    public void storeData(long offset, float[] data) {
+        this.bind0();
+        final int bytes = DataType.FLOAT.getBytes();
+        ensureSize(offset, data.length * bytes);
+        GL15.glBufferSubData(target, offset, data);
     }
 
-    public void storeData(int pointer, IntBuffer intBuffer) {
-        bind();
-        int size = intBuffer.limit() * DataType.INT.getBytes();
-        if (pointer + size > this.size) {
-            printReallocation("int", size);
-            allocateData(size);
-            this.size = size;
-        }
-        GL15.glBufferSubData(target, pointer, intBuffer);
+    @Override
+    public void storeData(long offset, ByteBuffer data) {
+        this.bind0();
+        ensureSize(offset, data.limit());
+        GL15.glBufferSubData(target, offset, data);
     }
 
-    public void storeData(int pointer, int[] intArray) {
-        bind();
-        int size = intArray.length * DataType.INT.getBytes();
-        if (pointer + size > this.size) {
-            printReallocation("int", size);
-            allocateData(size);
-            this.size = size;
-        }
-        GL15.glBufferSubData(target, pointer, intArray);
+    @Override
+    public void storeData(long offset, IntBuffer data) {
+        this.bind0();
+        final int bytes = DataType.INT.getBytes();
+        ensureSize(offset, data.limit() * bytes);
+        GL15.glBufferSubData(target, offset, data);
     }
 
-    public void storeData(int pointer, ByteBuffer byteBuffer) {
-        bind();
-        int size = byteBuffer.limit();
-        if (pointer + size > this.size) {
-            printReallocation("byte", size);
-            allocateData(size);
-            this.size = size;
+    @Override
+    public void storeData(long offset, FloatBuffer data) {
+        this.bind0();
+        final int bytes = DataType.FLOAT.getBytes();
+        ensureSize(offset, data.limit() * bytes);
+        GL15.glBufferSubData(target, offset, data);
+    }
+
+    private void ensureSize(long offset, long size) {
+        if (offset + size > getSize()) {
+            throw new VboTooSmallException("Vbo storage too small, vbo size: "
+                    + getSize() + ", offset: " + offset + ", input size: " + size);
         }
-        GL15.glBufferSubData(target, pointer, byteBuffer);
     }
 
     /*
@@ -164,12 +113,12 @@ public class Vbo implements IVbo {
      */
 
     public ByteBuffer map(VboAccess access) {
-        bind();
+        this.bind0();
         return GL15.glMapBuffer(target, access.get());
     }
 
     public void unmap() {
-        bind();
+        this.bind0();
         GL15.glUnmapBuffer(target);
     }
 
@@ -179,22 +128,19 @@ public class Vbo implements IVbo {
 
     @Override
     public long getSize() {
-        return size;
+        return this.size;
+    }
+
+    private void bind0() {
+        GL15.glBindBuffer(target, this.id);
+        Vbo.boundVbo = this.id;
     }
 
     @Override
     public void bind() {
         if (GlConfigs.CACHE_STATE || boundVbo != id) {
-            GL15.glBindBuffer(target, id);
-            boundVbo = id;
+            this.bind0();
         }
-    }
-
-    @Override
-    public void bindToVao(Vao vao) {
-        vao.bind();
-        GL15.glBindBuffer(target, id);
-        boundVbo = id;
     }
 
     @Override
