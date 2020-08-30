@@ -8,10 +8,10 @@ import org.saar.lwjgl.opengl.utils.GlConfigs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vao implements IVao {
+public class Vao implements WriteableVao {
 
-    private static final Vao NULL = new Vao(0);
-    private static final Vao FIRST = Vao.create();
+    private static final ReadOnlyVao NULL = new Vao(0);
+    private static final ReadOnlyVao FIRST = Vao.create();
 
     private final int id;
 
@@ -44,11 +44,11 @@ public class Vao implements IVao {
     }
 
     @Override
-    public void loadVbo(IVbo vbo, Attribute... attributes) {
+    public void loadVbo(IVbo buffer, Attribute... attributes) {
         this.bind();
-        vbo.bind();
+        buffer.bind();
         linkAttributes(attributes);
-        this.buffers.add(vbo);
+        this.buffers.add(buffer);
     }
 
     /**
