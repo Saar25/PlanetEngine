@@ -5,9 +5,9 @@ import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.Vbos;
-import org.saar.lwjgl.opengl.objects.vbos.WriteableVbo;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> imp
     protected final void updateBuffers() {
         for (final ModelBuffer modelBuffer : this.buffers) {
             final ByteBuffer buffer = modelBuffer.getBuffer();
-            final WriteableVbo vbo = modelBuffer.getVbo();
+            final IVbo vbo = modelBuffer.getVbo();
             Vbos.allocateAndStore(vbo, buffer);
         }
     }
