@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.objects;
 
 import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects;
+package org.saar.lwjgl.opengl.objects.vbos;
 
 import org.saar.lwjgl.opengl.constants.VboAccess;
 import org.saar.lwjgl.opengl.constants.VboTarget;

@@ -2,7 +2,12 @@ package org.saar.core.model.loader;
 
 import org.saar.core.model.Vertex;
 import org.saar.core.node.Node;
-import org.saar.lwjgl.opengl.objects.*;
+import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.Vbos;
+import org.saar.lwjgl.opengl.objects.vbos.WriteableVbo;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

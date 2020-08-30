@@ -1,6 +1,6 @@
 package org.saar.core.model.loader;
 
-import org.saar.lwjgl.opengl.objects.WriteableVbo;
+import org.saar.lwjgl.opengl.objects.vbos.WriteableVbo;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 

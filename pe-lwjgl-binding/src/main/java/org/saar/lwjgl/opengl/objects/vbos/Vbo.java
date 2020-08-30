@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects;
+package org.saar.lwjgl.opengl.objects.vbos;
 
 import org.lwjgl.opengl.GL15;
 import org.saar.lwjgl.opengl.constants.DataType;

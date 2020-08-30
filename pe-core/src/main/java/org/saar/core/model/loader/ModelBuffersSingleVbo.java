@@ -8,8 +8,8 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.DataBuffer;
-import org.saar.lwjgl.opengl.objects.IndexBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public abstract class ModelBuffersSingleVbo<N extends Node, V extends Vertex> extends AbstractModelBuffers<N, V> {

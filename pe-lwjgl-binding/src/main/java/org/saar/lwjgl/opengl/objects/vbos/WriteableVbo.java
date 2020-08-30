@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects;
+package org.saar.lwjgl.opengl.objects.vbos;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
