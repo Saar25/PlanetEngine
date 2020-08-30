@@ -51,56 +51,57 @@ public class Attribute {
         return sum;
     }
 
-    public static void enable(int index) {
+    private static void enable(int index) {
         GL20.glEnableVertexAttribArray(index);
     }
 
-    public static void disable(int index) {
+    private static void disable(int index) {
         GL20.glDisableVertexAttribArray(index);
     }
 
     public void enable() {
-        if (GlConfigs.CACHE_STATE || !enabled) {
-            GL20.glEnableVertexAttribArray(attributeIndex);
-            enabled = true;
+        if (GlConfigs.CACHE_STATE || !this.enabled) {
+            Attribute.enable(this.attributeIndex);
+            this.enabled = true;
         }
     }
 
     public void disable() {
-        if (GlConfigs.CACHE_STATE || enabled) {
-            GL20.glDisableVertexAttribArray(attributeIndex);
-            enabled = false;
+        if (GlConfigs.CACHE_STATE || this.enabled) {
+            Attribute.disable(this.attributeIndex);
+            this.enabled = false;
         }
     }
 
     public void link(int stride, int offset) {
-        GL20.glVertexAttribPointer(attributeIndex, componentCount, componentsType, normalized, stride, offset);
-        if (instances > 0) {
-            GL33.glVertexAttribDivisor(attributeIndex, instances);
+        GL20.glVertexAttribPointer(this.attributeIndex, this.componentCount,
+                this.componentsType, this.normalized, stride, offset);
+        if (this.instances > 0) {
+            GL33.glVertexAttribDivisor(this.attributeIndex, this.instances);
         }
     }
 
     public int getAttributeIndex() {
-        return attributeIndex;
+        return this.attributeIndex;
     }
 
     public int getComponentCount() {
-        return componentCount;
+        return this.componentCount;
     }
 
     public int getComponentsType() {
-        return componentsType;
+        return this.componentsType;
     }
 
     public boolean isNormalized() {
-        return normalized;
+        return this.normalized;
     }
 
     public int getBytesPerVertex() {
-        return bytesPerVertex;
+        return this.bytesPerVertex;
     }
 
     public int getInstances() {
-        return instances;
+        return this.instances;
     }
 }
