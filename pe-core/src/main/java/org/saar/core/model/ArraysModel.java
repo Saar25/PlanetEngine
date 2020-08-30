@@ -1,7 +1,7 @@
 package org.saar.core.model;
 
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class ArraysModel implements Model {

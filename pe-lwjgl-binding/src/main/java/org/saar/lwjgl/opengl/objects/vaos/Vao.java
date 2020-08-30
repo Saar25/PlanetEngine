@@ -1,18 +1,17 @@
-package org.saar.lwjgl.opengl.objects;
+package org.saar.lwjgl.opengl.objects.vaos;
 
 import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vao {
+public class Vao implements IVao {
 
     private static final Vao NULL = new Vao(0);
     private static final Vao FIRST = Vao.create();
-
-    private static int boundVao = 0;
 
     private final int id;
 
@@ -30,30 +29,21 @@ public class Vao {
         return new Vao(id);
     }
 
-    /**
-     * Enables the vao attributes
-     */
+    @Override
     public void enableAttributes() {
         for (Attribute attribute : this.attributes) {
             attribute.enable();
         }
     }
 
-    /**
-     * Disables the vao attributes
-     */
+    @Override
     public void disableAttributes() {
         for (Attribute attribute : this.attributes) {
             attribute.disable();
         }
     }
 
-    /**
-     * Loads a vbo and linking the given attributes to it
-     *
-     * @param vbo        the vbo to load
-     * @param attributes the attributes
-     */
+    @Override
     public void loadVbo(IVbo vbo, Attribute... attributes) {
         this.bind();
         vbo.bind();
@@ -77,35 +67,20 @@ public class Vao {
         }
     }
 
-    /**
-     * Returns whether the vao is bound
-     *
-     * @return true if bound false otherwise
-     */
-    private boolean isBound() {
-        return Vao.boundVao == this.id;
-    }
-
-    /**
-     * Binds the vao
-     */
+    @Override
     public void bind() {
-        if (GlConfigs.CACHE_STATE || !isBound()) {
+        if (GlConfigs.CACHE_STATE || !BoundVao.isBound(this.id)) {
             GL30.glBindVertexArray(this.id);
-            Vao.boundVao = this.id;
+            BoundVao.set(this.id);
         }
     }
 
-    /**
-     * Unbind the vao
-     */
+    @Override
     public void unbind() {
         Vao.NULL.bind();
     }
 
-    /**
-     * Delete this vao and its related buffers
-     */
+    @Override
     public void delete() {
         this.buffers.forEach(IVbo::delete);
         if (GlConfigs.CACHE_STATE || !this.deleted) {

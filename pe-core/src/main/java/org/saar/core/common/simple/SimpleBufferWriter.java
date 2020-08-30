@@ -6,7 +6,7 @@ import org.saar.core.model.vertex.ModelBufferWriter;
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 import org.saar.lwjgl.opengl.utils.BufferWriter;

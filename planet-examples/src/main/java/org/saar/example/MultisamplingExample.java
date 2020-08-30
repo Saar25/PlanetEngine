@@ -9,7 +9,7 @@ import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;

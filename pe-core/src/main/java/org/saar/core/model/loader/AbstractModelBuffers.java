@@ -3,7 +3,7 @@ package org.saar.core.model.loader;
 import org.saar.core.model.Vertex;
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
