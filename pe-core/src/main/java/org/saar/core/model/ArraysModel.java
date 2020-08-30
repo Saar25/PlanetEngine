@@ -1,17 +1,17 @@
 package org.saar.core.model;
 
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.IVao;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class ArraysModel implements Model {
 
-    private final Vao vao;
+    private final IVao vao;
 
     private final RenderMode renderMode;
     private final int vertices;
 
-    public ArraysModel(Vao vao, RenderMode renderMode, int vertices) {
+    public ArraysModel(IVao vao, RenderMode renderMode, int vertices) {
         this.vao = vao;
         this.renderMode = renderMode;
         this.vertices = vertices;

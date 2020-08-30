@@ -1,18 +1,18 @@
 package org.saar.core.model;
 
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.IVao;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class InstancedArraysModel implements Model {
 
-    private final Vao vao;
+    private final IVao vao;
 
     private final RenderMode renderMode;
     private final int vertices;
     private final int instances;
 
-    public InstancedArraysModel(Vao vao, RenderMode renderMode, int vertices, int instances) {
+    public InstancedArraysModel(IVao vao, RenderMode renderMode, int vertices, int instances) {
         this.vao = vao;
         this.vertices = vertices;
         this.renderMode = renderMode;

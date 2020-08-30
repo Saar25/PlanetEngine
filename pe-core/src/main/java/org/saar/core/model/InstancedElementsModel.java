@@ -2,19 +2,19 @@ package org.saar.core.model;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.IVao;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class InstancedElementsModel implements Model {
 
-    private final Vao vao;
+    private final IVao vao;
 
     private final RenderMode renderMode;
     private final int indices;
     private final DataType indexType;
     private final int instances;
 
-    public InstancedElementsModel(Vao vao, RenderMode renderMode, int indices,
+    public InstancedElementsModel(IVao vao, RenderMode renderMode, int indices,
                                   DataType indexType, int instances) {
         this.vao = vao;
         this.renderMode = renderMode;
