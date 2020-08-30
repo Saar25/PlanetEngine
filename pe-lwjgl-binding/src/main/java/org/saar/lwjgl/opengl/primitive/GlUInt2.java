@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
-public class GlUInt2 implements GlPrimitive {
+public class GlUInt2 extends GlPrimitiveBase implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.U_INT;
     private static final int COMPONENT_COUNT = 2;
