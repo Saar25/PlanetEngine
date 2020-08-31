@@ -2,7 +2,6 @@ package org.saar.core.renderer.r3d
 
 import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
-import org.saar.core.model.Model
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.annotations.StageUniformProperty
@@ -41,11 +40,12 @@ class Renderer3D(private val camera: ICamera, private val renderNode3D: RenderNo
         init()
     }
 
-    override fun model(): Model {
-        return renderNode3D.model
-    }
-
     override fun onRender() {
         viewProjectionUniform.load(null)
+        renderNode3D.render()
+    }
+
+    override fun onDelete() {
+        renderNode3D.delete()
     }
 }

@@ -1,6 +1,5 @@
 package org.saar.core.renderer.r3d;
 
-import org.saar.core.model.Model;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 
@@ -14,7 +13,12 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
     }
 
     @Override
-    public Model getModel() {
-        return this.buffers.getModel();
+    public void render() {
+        this.buffers.getModel().draw();
+    }
+
+    @Override
+    public void delete() {
+        this.buffers.getModel().delete();
     }
 }

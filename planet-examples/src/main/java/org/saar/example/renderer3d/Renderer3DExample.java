@@ -122,7 +122,7 @@ public class Renderer3DExample {
     }
 
     private static RenderNode3D renderNode3D() {
-        final int max = 1000000;
+        final int max = 2000000;
         final int size = 1000;
 
         final MyNode[] nodes = new MyNode[max];

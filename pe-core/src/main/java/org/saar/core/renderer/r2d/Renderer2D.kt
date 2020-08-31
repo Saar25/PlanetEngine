@@ -1,10 +1,10 @@
 package org.saar.core.renderer.r2d
 
-import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.AbstractRenderer
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-class Renderer2D(private val renderNode: RenderNode2D) : Renderer {
+class Renderer2D(private val renderNode: RenderNode2D) : AbstractRenderer(shadersProgram) {
 
     companion object {
         private val vertex: Shader = Shader.createVertex(
@@ -19,13 +19,7 @@ class Renderer2D(private val renderNode: RenderNode2D) : Renderer {
         shadersProgram.bindAttributes("in_position", "in_colour")
     }
 
-    override fun render() {
-        shadersProgram.bind()
-        renderNode.model.draw()
-        shadersProgram.unbind()
-    }
-
-    override fun delete() {
-        shadersProgram.delete()
+    override fun onRender() {
+        renderNode.render()
     }
 }

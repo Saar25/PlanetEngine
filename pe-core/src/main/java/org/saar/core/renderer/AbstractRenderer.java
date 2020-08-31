@@ -1,6 +1,5 @@
 package org.saar.core.renderer;
 
-import org.saar.core.model.Model;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
@@ -44,7 +43,6 @@ public abstract class AbstractRenderer implements Renderer {
         shadersProgram.bind();
 
         this.onRender();
-        this.model().draw();
 
         shadersProgram.unbind();
     }
@@ -54,8 +52,6 @@ public abstract class AbstractRenderer implements Renderer {
         this.onDelete();
         this.shadersProgram.delete();
     }
-
-    protected abstract Model model();
 
     protected void onRender() {
     }

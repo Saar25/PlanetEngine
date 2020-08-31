@@ -61,7 +61,7 @@ public class RendererExample {
 
         renderer.delete();
         fbo.delete();
-        renderNode.getModel().delete();
+        renderNode.delete();
         attachment.delete();
     }
 
