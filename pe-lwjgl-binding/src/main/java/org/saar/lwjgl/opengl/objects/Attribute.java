@@ -3,7 +3,6 @@ package org.saar.lwjgl.opengl.objects;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL33;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class Attribute {
 
@@ -60,17 +59,19 @@ public class Attribute {
     }
 
     public void enable() {
-        if (GlConfigs.CACHE_STATE || !this.enabled) {
+        Attribute.enable(this.attributeIndex);
+        /*if (GlConfigs.CACHE_STATE || !this.enabled) {
             Attribute.enable(this.attributeIndex);
             this.enabled = true;
-        }
+        }*/
     }
 
     public void disable() {
-        if (GlConfigs.CACHE_STATE || this.enabled) {
+        Attribute.disable(this.attributeIndex);
+        /*if (GlConfigs.CACHE_STATE || this.enabled) {
             Attribute.disable(this.attributeIndex);
             this.enabled = false;
-        }
+        }*/
     }
 
     public void link(int stride, int offset) {

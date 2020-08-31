@@ -25,9 +25,9 @@ public class Renderer3DExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static final int CUBES = 1_0;
-    private static final int AREA = 10;
-    private static final int BATCHES = 5;
+    private static final int CUBES = 1_000_000;
+    private static final int AREA = 1000;
+    private static final int BATCHES = 10;
 
     private static final MyVertex[] flatData = new MyVertex[]{ // xyz position, xyz normal,
             new MyVertex(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
@@ -59,10 +59,10 @@ public class Renderer3DExample {
         colorAttachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
         depthAttachment = RenderBufferAttachmentMS.ofDepth(FormatType.DEPTH_COMPONENT24, 16);
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1200);
+        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, -30));
+        camera.getTransform().setPosition(Position.of(0, 0, -1000));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
@@ -132,7 +132,7 @@ public class Renderer3DExample {
         for (int i = 0; i < BATCHES; i++) {
             for (int j = 0; j < cubesPerBatch; j++) {
                 final MyNode newNode = new MyNode();
-                final float x = (float) (Math.random() * AREA - AREA / 2) + 100 * i;
+                final float x = (float) (Math.random() * AREA - AREA / 2);
                 final float y = (float) (Math.random() * AREA - AREA / 2);
                 final float z = (float) (Math.random() * AREA - AREA / 2);
                 newNode.getTransform().setPosition(Position.of(x, y, z));
