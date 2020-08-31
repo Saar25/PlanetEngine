@@ -25,6 +25,10 @@ public class Renderer3DExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
+    private static final int CUBES = 1_0;
+    private static final int AREA = 10;
+    private static final int BATCHES = 5;
+
     private static final MyVertex[] flatData = new MyVertex[]{ // xyz position, xyz normal,
             new MyVertex(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
             new MyVertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0).add(1, 1, 1).div(2)), // 1
@@ -58,7 +62,7 @@ public class Renderer3DExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1200);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, -300));
+        camera.getTransform().setPosition(Position.of(0, 0, -30));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
@@ -121,34 +125,24 @@ public class Renderer3DExample {
         camera.getTransform().addRotation(Angle.degrees(toRotate.x), Angle.degrees(toRotate.y), Angle.degrees(toRotate.z));
     }
 
-    private static RenderNode3D renderNode3D() {
-        final int max = 2000000;
-        final int size = 1000;
-
-        final MyNode[] nodes = new MyNode[max];
-        for (int i = 0; i < max; i++) {
-            final MyNode newNode = new MyNode();
-            /*final float x = (i / sqrt) - (max / sqrt / 2);
-            final float z = (i % sqrt) - sqrt / 2;
-            final float y = (x * x + z * z) * 0.005f;*/
-
-            final float x = (float) (Math.random() * size - size / 2);
-            final float y = (float) (Math.random() * size - size / 2);
-            final float z = (float) (Math.random() * size - size / 2);
-
-            /*final float a = (float) (Math.random() * Math.PI);
-            final float b = (float) (Math.random() * Math.PI * 2);
-            final float r = (float) Math.random();
-
-            final float x = (float) (Math.sin(a) * Math.cos(b) * size);
-            final float y = (float) (Math.cos(a) * Math.sin(b) * size);
-            final float z = (float) (Math.sin(a) * r * size);*/
-            newNode.getTransform().setPosition(Position.of(x, y, z));
-            newNode.getTransform().setRotation(Rotation.fromQuaternion(Quaternion.of((float) Math.random(),
-                    (float) Math.random(), (float) Math.random(), (float) Math.random()).normalize()));
-            nodes[i] = newNode;
+    private static RenderNode3D[] renderNode3D() {
+        final int cubesPerBatch = CUBES / BATCHES;
+        final RenderNode3D[] batches = new RenderNode3D[BATCHES];
+        final MyNode[] nodes = new MyNode[cubesPerBatch];
+        for (int i = 0; i < BATCHES; i++) {
+            for (int j = 0; j < cubesPerBatch; j++) {
+                final MyNode newNode = new MyNode();
+                final float x = (float) (Math.random() * AREA - AREA / 2) + 100 * i;
+                final float y = (float) (Math.random() * AREA - AREA / 2);
+                final float z = (float) (Math.random() * AREA - AREA / 2);
+                newNode.getTransform().setPosition(Position.of(x, y, z));
+                newNode.getTransform().setRotation(Rotation.fromQuaternion(Quaternion.of((float) Math.random(),
+                        (float) Math.random(), (float) Math.random(), (float) Math.random()).normalize()));
+                nodes[j] = newNode;
+            }
+            batches[i] = new RenderNode3D(flatData, indices, nodes);
         }
-        return new RenderNode3D(flatData, indices, nodes);
+        return batches;
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

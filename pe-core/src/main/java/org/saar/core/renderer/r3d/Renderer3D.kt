@@ -12,7 +12,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class Renderer3D(private val camera: ICamera, private val renderNode3D: RenderNode3D) : AbstractRenderer(shadersProgram), Renderer {
+class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<RenderNode3D>) : AbstractRenderer(shadersProgram), Renderer {
 
     @StageUniformProperty
     private val viewProjectionUniform = object : UniformMat4Property<Any>("viewProjectionMatrix") {
@@ -42,10 +42,14 @@ class Renderer3D(private val camera: ICamera, private val renderNode3D: RenderNo
 
     override fun onRender() {
         viewProjectionUniform.load(null)
-        renderNode3D.render()
+        for (renderNode3D in this.renderNodes3D) {
+            renderNode3D.render()
+        }
     }
 
     override fun onDelete() {
-        renderNode3D.delete()
+        for (renderNode3D in this.renderNodes3D) {
+            renderNode3D.delete()
+        }
     }
 }
