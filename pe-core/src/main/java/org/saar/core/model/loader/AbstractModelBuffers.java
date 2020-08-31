@@ -1,5 +1,6 @@
 package org.saar.core.model.loader;
 
+import org.lwjgl.system.MemoryUtil;
 import org.saar.core.model.Vertex;
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.Attribute;
@@ -38,6 +39,12 @@ public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> imp
             final ByteBuffer buffer = modelBuffer.getBuffer();
             final IVbo vbo = modelBuffer.getVbo();
             Vbos.allocateAndStore(vbo, buffer);
+        }
+    }
+
+    protected final void deleteBuffers() {
+        for (final ModelBuffer modelBuffer : this.buffers) {
+            MemoryUtil.memFree(modelBuffer.getBuffer());
         }
     }
 

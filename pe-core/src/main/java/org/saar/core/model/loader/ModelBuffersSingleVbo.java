@@ -53,6 +53,7 @@ public abstract class ModelBuffersSingleVbo<N extends Node, V extends Vertex> ex
             this.writeIndices(indices);
         }
         this.updateBuffers();
+        this.deleteBuffers();
     }
 
     @Override

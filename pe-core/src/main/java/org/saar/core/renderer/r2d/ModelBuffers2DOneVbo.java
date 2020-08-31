@@ -44,6 +44,7 @@ public class ModelBuffers2DOneVbo extends AbstractModelBuffers<Node2D, Vertex2D>
         writeVertices(vertices);
         writeIndices(indices);
         updateBuffers();
+        deleteBuffers();
     }
 
     @Override
