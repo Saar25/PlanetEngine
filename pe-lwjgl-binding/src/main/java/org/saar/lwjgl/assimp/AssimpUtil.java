@@ -16,12 +16,12 @@ import java.util.List;
 
 public class AssimpUtil {
 
-    public static AssimpMesh load(String resourcePath) throws Exception {
+    public static AssimpData load(String resourcePath) throws Exception {
         return AssimpUtil.load(resourcePath, Assimp.aiProcess_JoinIdenticalVertices |
                 Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals);
     }
 
-    public static AssimpMesh load(String resourcePath, int flags) throws Exception {
+    public static AssimpData load(String resourcePath, int flags) throws Exception {
         final AIScene aiScene = AssimpUtil.loadScene(resourcePath, flags);
         if (aiScene == null) {
             throw new Exception(Assimp.aiGetErrorString());
@@ -30,7 +30,7 @@ public class AssimpUtil {
         final PointerBuffer aiMeshes = aiScene.mMeshes();
         final long address = aiMeshes.get(0);
         final AIMesh aiMesh = AIMesh.create(address);
-        final AssimpMesh mesh = AssimpUtil.processMesh(aiMesh);
+        final AssimpData mesh = AssimpUtil.processMesh(aiMesh);
 
         Assimp.aiReleaseImport(aiScene);
 
@@ -45,8 +45,8 @@ public class AssimpUtil {
         return aiScene;
     }
 
-    private static AssimpMesh processMesh(AIMesh aiMesh) {
-        final AssimpMesh mesh = AssimpMesh.create();
+    private static AssimpData processMesh(AIMesh aiMesh) {
+        final AssimpData mesh = new AssimpData();
 
         final AIVector3D.Buffer verticesBuffer = aiMesh.mVertices();
         final List<GlFloat3> vertices = processPositions(verticesBuffer);
