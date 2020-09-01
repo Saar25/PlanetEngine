@@ -9,7 +9,7 @@ public final class GlPrimitives {
                 + getClass().getSimpleName());
     }
 
-    public void write(BufferWriter writer, GlPrimitive... primitives) {
+    public static void write(BufferWriter writer, GlPrimitive... primitives) {
         for (GlPrimitive primitive : primitives) {
             primitive.write(writer);
         }
