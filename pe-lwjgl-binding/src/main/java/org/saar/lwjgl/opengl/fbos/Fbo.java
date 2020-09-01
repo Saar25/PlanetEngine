@@ -20,8 +20,6 @@ public class Fbo implements IFbo {
 
     public static final Fbo NULL = new Fbo(0, 0, 0);
 
-    private static int boundFbo = 0;
-
     private final int id;
 
     private final int width;
@@ -178,7 +176,7 @@ public class Fbo implements IFbo {
     }
 
     public void bind(FboTarget target) {
-        if (!GlConfigs.CACHE_STATE || boundFbo != id) {
+        if (!GlConfigs.CACHE_STATE || BoundFbo.isBound(target, this.id)) {
             bind0(target);
         }
         setViewport();
@@ -189,7 +187,7 @@ public class Fbo implements IFbo {
     }
 
     private void bind0(FboTarget target) {
-        GL30.glBindFramebuffer(target.get(), id);
-        Fbo.boundFbo = id;
+        GL30.glBindFramebuffer(target.get(), this.id);
+        BoundFbo.set(target, this.id);
     }
 }
