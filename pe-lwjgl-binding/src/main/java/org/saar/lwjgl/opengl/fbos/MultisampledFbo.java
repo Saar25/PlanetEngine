@@ -34,12 +34,13 @@ public class MultisampledFbo implements IFbo {
         getFbo().blitToScreen();
     }
 
-    public void blitFbo(IFbo fbo) {
+    @Override
+    public void blitFbo(DrawableFbo fbo) {
         getFbo().blitFbo(fbo);
     }
 
     @Override
-    public void blitFbo(IFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
+    public void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
         getFbo().blitFbo(fbo, filter, buffers);
     }
 
@@ -54,19 +55,18 @@ public class MultisampledFbo implements IFbo {
     }
 
     @Override
+    public void bindAsDraw() {
+        getFbo().bindAsDraw();
+    }
+
+    @Override
+    public void bindAsRead() {
+        getFbo().bindAsRead();
+    }
+
+    @Override
     public void bind() {
         getFbo().bind();
-    }
-
-
-    @Override
-    public void bind(FboTarget target) {
-        getFbo().bind(target);
-    }
-
-    @Override
-    public void unbind(FboTarget target) {
-        getFbo().unbind(target);
     }
 
     @Override

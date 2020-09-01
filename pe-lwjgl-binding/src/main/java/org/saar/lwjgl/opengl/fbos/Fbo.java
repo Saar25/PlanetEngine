@@ -51,29 +51,19 @@ public class Fbo implements IFbo {
         attachment.init(this);
     }
 
-    /**
-     * Returns whether the fbo has the same dimensions as given
-     *
-     * @param width  the width
-     * @param height the height
-     * @return true if has the same size false otherwise
-     */
-    public boolean isSized(int width, int height) {
-        return getWidth() == width && getHeight() == height;
-    }
-
     public void blitToScreen() {
         blitFbo(ScreenFbo.getInstance());
     }
 
-    public void blitFbo(IFbo fbo) {
+    @Override
+    public void blitFbo(DrawableFbo fbo) {
         blitFbo(fbo, MagFilterParameter.NEAREST, GlBuffer.COLOUR, GlBuffer.DEPTH);
     }
 
     @Override
-    public void blitFbo(IFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
-        bind(FboTarget.READ_FRAMEBUFFER);
-        fbo.bind(FboTarget.DRAW_FRAMEBUFFER);
+    public void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
+        bindAsRead();
+        fbo.bindAsDraw();
         blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0,
                 fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }
@@ -132,7 +122,7 @@ public class Fbo implements IFbo {
     private void setDrawBuffers(int... buffers) {
         if (buffers.length == 1) {
             GL11.glDrawBuffer(buffers[0]);
-        } else {
+        } else if (buffers.length > 1) {
             GL20.glDrawBuffers(buffers);
         }
     }
@@ -152,38 +142,27 @@ public class Fbo implements IFbo {
     }
 
     @Override
-    public void bind(FboTarget target) {
-        if (!GlConfigs.CACHE_STATE || boundFbo != id) {
-            this.bind0(target);
-        }
-        switch (target) {
-            case DRAW_FRAMEBUFFER:
-                drawAttachments();
-                setViewport();
-                break;
-            case FRAMEBUFFER:
-                setViewport();
-                break;
-            case READ_FRAMEBUFFER:
-                readAttachment();
-                break;
-            default:
-        }
+    public void bindAsRead() {
+        bind(FboTarget.READ_FRAMEBUFFER);
+        readAttachment();
+    }
+
+    @Override
+    public void bindAsDraw() {
+        bind(FboTarget.DRAW_FRAMEBUFFER);
+        drawAttachments();
+        setViewport();
     }
 
     @Override
     public void bind() {
-        this.bind(FboTarget.FRAMEBUFFER);
-    }
-
-    @Override
-    public void unbind(FboTarget target) {
-        Fbo.NULL.bind(target);
+        bind(FboTarget.FRAMEBUFFER);
+        setViewport();
     }
 
     @Override
     public void unbind() {
-        this.unbind(FboTarget.FRAMEBUFFER);
+        unbind(FboTarget.FRAMEBUFFER);
     }
 
     @Override
@@ -196,6 +175,17 @@ public class Fbo implements IFbo {
         bind();
         final int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         FboStatus.ensureStatus(status);
+    }
+
+    public void bind(FboTarget target) {
+        if (!GlConfigs.CACHE_STATE || boundFbo != id) {
+            bind0(target);
+        }
+        setViewport();
+    }
+
+    public void unbind(FboTarget target) {
+        Fbo.NULL.bind(target);
     }
 
     private void bind0(FboTarget target) {
