@@ -40,7 +40,7 @@ public class ObjRendererExample {
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             node = new MyNode(texture);
 
-            renderNode = ObjRenderNode.load("/assets/cottage/cottage_obj.obj", node);
+            renderNode = ObjRenderNode.load("/assets/cube/cube.obj", node);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
