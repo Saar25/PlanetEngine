@@ -42,9 +42,9 @@ class ObjRenderer(private val camera: ICamera, private val renderNodes: Array<Ob
         private val matrix = Matrix4.create()
 
         private val vertex: Shader = Shader.createVertex(
-                "/shaders/model/vertex.glsl")
+                "/shaders/obj/vertex.glsl")
         private val fragment: Shader = Shader.createFragment(
-                "/shaders/model/fragment.glsl")
+                "/shaders/obj/fragment.glsl")
         private val shadersProgram: ShadersProgram =
                 ShadersProgram.create(vertex, fragment)
     }
