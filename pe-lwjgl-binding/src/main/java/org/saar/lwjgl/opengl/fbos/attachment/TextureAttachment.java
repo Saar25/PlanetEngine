@@ -12,8 +12,6 @@ import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting;
 import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
 import org.saar.lwjgl.opengl.textures.settings.TextureMipMapSetting;
 
-import java.nio.ByteBuffer;
-
 public class TextureAttachment extends AbstractAttachment implements Attachment {
 
     private final Texture texture;
@@ -62,7 +60,7 @@ public class TextureAttachment extends AbstractAttachment implements Attachment 
     @Override
     public void init(ReadOnlyFbo fbo) {
         getTexture().allocate(TextureTarget.TEXTURE_2D, 0, this.iFormat, fbo.getWidth(),
-                fbo.getHeight(), 0, this.format, DataType.U_BYTE, (ByteBuffer) null);
+                fbo.getHeight(), 0, this.format, DataType.U_BYTE, null);
         getTexture().attachToFbo(getAttachmentPoint(), 0);
     }
 

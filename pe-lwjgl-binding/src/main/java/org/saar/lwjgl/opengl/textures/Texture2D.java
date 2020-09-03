@@ -82,7 +82,7 @@ public class Texture2D implements ReadOnlyTexture {
      */
     private void allocate(FormatType internalFormat, FormatType format, DataType dataType) {
         this.texture.allocate(target, 0, internalFormat, getWidth(),
-                getHeight(), 0, format, dataType, (ByteBuffer) null);
+                getHeight(), 0, format, dataType, null);
         applySettings();
     }
 
