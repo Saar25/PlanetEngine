@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
 
@@ -51,7 +51,7 @@ public class RenderBufferAttachmentMS extends AbstractAttachment implements Mult
     }
 
     @Override
-    public void init(Fbo fbo) {
+    public void init(ReadOnlyFbo fbo) {
         getRenderBuffer().loadStorageMultisample(fbo.getWidth(), fbo.getHeight(), iFormat, samples);
         getRenderBuffer().attachToFbo(getAttachmentPoint());
     }

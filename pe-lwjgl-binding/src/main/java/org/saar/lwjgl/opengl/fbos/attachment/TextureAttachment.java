@@ -2,7 +2,7 @@ package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
@@ -60,7 +60,7 @@ public class TextureAttachment extends AbstractAttachment implements Attachment 
     }
 
     @Override
-    public void init(Fbo fbo) {
+    public void init(ReadOnlyFbo fbo) {
         getTexture().allocate(TextureTarget.TEXTURE_2D, 0, this.iFormat, fbo.getWidth(),
                 fbo.getHeight(), 0, this.format, DataType.U_BYTE, (ByteBuffer) null);
         getTexture().attachToFbo(getAttachmentPoint(), 0);

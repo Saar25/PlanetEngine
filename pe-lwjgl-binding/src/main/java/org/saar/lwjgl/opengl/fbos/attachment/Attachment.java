@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
-import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.textures.Texture;
 
 public interface Attachment {
@@ -11,7 +11,7 @@ public interface Attachment {
 
     Texture getTexture();
 
-    void init(Fbo fbo);
+    void init(ReadOnlyFbo fbo);
 
     void delete();
 
