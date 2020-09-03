@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.fbos;
+package org.saar.lwjgl.opengl.objects.rbos;
 
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.FormatType;

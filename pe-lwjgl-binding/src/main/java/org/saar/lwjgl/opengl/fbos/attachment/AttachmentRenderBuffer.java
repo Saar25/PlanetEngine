@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.fbos.RenderBuffer;
+import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 
 public class AttachmentRenderBuffer implements AttachmentBuffer {
 

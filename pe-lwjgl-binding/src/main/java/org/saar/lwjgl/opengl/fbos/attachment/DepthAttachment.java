@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
-import org.saar.lwjgl.opengl.fbos.RenderBuffer;
+import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 
