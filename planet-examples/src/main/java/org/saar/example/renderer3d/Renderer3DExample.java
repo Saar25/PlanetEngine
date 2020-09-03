@@ -11,7 +11,10 @@ import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentRenderBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
@@ -49,15 +52,15 @@ public class Renderer3DExample {
             3, 7, 4, 3, 4, 0, // bottom , PV: 3
     };
 
-    private static RenderBufferAttachmentMS colorAttachment;
-    private static RenderBufferAttachmentMS depthAttachment;
+    private static AttachmentMS colorAttachment;
+    private static AttachmentMS depthAttachment;
 
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
-        colorAttachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
-        depthAttachment = RenderBufferAttachmentMS.ofDepth(FormatType.DEPTH_COMPONENT24, 16);
+        colorAttachment = new ColourAttachmentMS(0, AttachmentRenderBuffer.create(FormatType.BGRA), 16);
+        depthAttachment = new DepthAttachmentMS(AttachmentRenderBuffer.create(FormatType.DEPTH_COMPONENT24), 16);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
         final ICamera camera = new Camera(projection);
