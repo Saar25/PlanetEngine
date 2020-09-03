@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.textures.settings.TextureSetting;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
@@ -23,14 +24,11 @@ public class Texture implements ITexture {
     private final int id;
     private final int target;
 
-    private final TextureFunctions functions;
-
     private boolean deleted = false;
 
     private Texture(int id, TextureTarget target) {
         this.id = id;
         this.target = target.get();
-        this.functions = new TextureFunctions(this, target);
         this.bind();
     }
 
@@ -66,13 +64,11 @@ public class Texture implements ITexture {
         Texture.NONE.bind(unit);
     }
 
-    /**
-     * Returns the functions of the texture
-     *
-     * @return the functions
-     */
-    public TextureFunctions getFunctions() {
-        return this.functions;
+    public void setSettings(TextureTarget target, TextureSetting... settings) {
+        bind();
+        for (TextureSetting setting : settings) {
+            setting.apply(target);
+        }
     }
 
     @Override

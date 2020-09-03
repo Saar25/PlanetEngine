@@ -4,7 +4,7 @@ import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-public abstract class TextureAnisotropicFilterSetting extends TextureFloatParameterSetting implements TextureSetting {
+public class TextureAnisotropicFilterSetting extends TextureFloatParameterSetting implements TextureSetting {
 
     private static final int pName = EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
     private static float maxAnisotropyFilter;

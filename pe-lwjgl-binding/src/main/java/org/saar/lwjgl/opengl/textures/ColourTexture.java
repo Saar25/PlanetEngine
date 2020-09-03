@@ -1,6 +1,8 @@
 package org.saar.lwjgl.opengl.textures;
 
 import org.lwjgl.system.MemoryUtil;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
@@ -25,7 +27,7 @@ public class ColourTexture implements ReadOnlyTexture {
         final Texture2D texture = new Texture2D(1, 1);
         final ByteBuffer buffer = MemoryUtils.allocByte(4);
         buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) a).flip();
-        texture.load(buffer);
+        texture.load(buffer, FormatType.RGBA, DataType.U_BYTE);
         MemoryUtil.memFree(buffer);
         return new ColourTexture(texture, r, g, b, a);
     }

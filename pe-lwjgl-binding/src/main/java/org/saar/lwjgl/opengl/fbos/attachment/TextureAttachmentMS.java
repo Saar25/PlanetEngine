@@ -6,6 +6,10 @@ import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
+import org.saar.lwjgl.opengl.textures.settings.TextureAnisotropicFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureMipMapSetting;
 
 public class TextureAttachmentMS extends AbstractAttachment implements MultisampledAttachment {
 
@@ -19,10 +23,11 @@ public class TextureAttachmentMS extends AbstractAttachment implements Multisamp
         this.iFormat = iFormat;
         this.samples = samples;
 
-        getTexture().getFunctions()
-                .generateMipmap().anisotropicFilter(4f)
-                .magFilter(MagFilterParameter.LINEAR)
-                .minFilter(MinFilterParameter.NEAREST);
+        getTexture().setSettings(TextureTarget.TEXTURE_2D,
+                new TextureMipMapSetting(),
+                new TextureAnisotropicFilterSetting(4f),
+                new TextureMagFilterSetting(MagFilterParameter.LINEAR),
+                new TextureMinFilterSetting(MinFilterParameter.NEAREST));
     }
 
     /**

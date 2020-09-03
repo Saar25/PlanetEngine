@@ -2,8 +2,11 @@ package org.saar.lwjgl.opengl.textures;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.textures.settings.TextureSetting;
 
 public class CubeMapTexture implements ReadOnlyTexture {
+
+    private static final TextureTarget target = TextureTarget.TEXTURE_CUBE_MAP;
 
     private final Texture texture;
 
@@ -19,7 +22,7 @@ public class CubeMapTexture implements ReadOnlyTexture {
 
     public static CubeMapTexture of(TextureInfo px, TextureInfo py, TextureInfo pz,
                                     TextureInfo nx, TextureInfo ny, TextureInfo nz) {
-        final Texture texture = Texture.create(TextureTarget.TEXTURE_CUBE_MAP);
+        final Texture texture = Texture.create(target);
         allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_POSITIVE_X, px);
         allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_NEGATIVE_X, nx);
         allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_POSITIVE_Y, py);
@@ -40,23 +43,31 @@ public class CubeMapTexture implements ReadOnlyTexture {
         return new CubeMapTextureBuilder();
     }
 
+    public void setSettings(TextureSetting... settings) {
+        this.texture.setSettings(CubeMapTexture.target, settings);
+    }
+
+    private Texture getTexture() {
+        return this.texture;
+    }
+
     @Override
     public void bind(int unit) {
-        texture.bind(unit);
+        getTexture().bind(unit);
     }
 
     @Override
     public void bind() {
-        texture.bind();
+        getTexture().bind();
     }
 
     @Override
     public void unbind() {
-        texture.unbind();
+        getTexture().unbind();
     }
 
     @Override
     public void delete() {
-        texture.delete();
+        getTexture().delete();
     }
 }
