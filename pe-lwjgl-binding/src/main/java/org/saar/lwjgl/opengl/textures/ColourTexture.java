@@ -23,10 +23,10 @@ public class ColourTexture implements ITexture {
 
     public static ColourTexture of(int r, int g, int b, int a) {
         final Texture2D texture = new Texture2D(1, 1);
-        final ByteBuffer data = MemoryUtils.allocByte(4);
-        data.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
-        texture.load(data);
-        MemoryUtil.memFree(data);
+        final ByteBuffer buffer = MemoryUtils.allocByte(4);
+        buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) a).flip();
+        texture.load(buffer);
+        MemoryUtil.memFree(buffer);
         return new ColourTexture(texture, r, g, b, a);
     }
 
