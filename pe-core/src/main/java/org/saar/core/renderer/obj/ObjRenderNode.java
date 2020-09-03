@@ -5,7 +5,7 @@ import org.joml.Vector3fc;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.assimp.AssimpData;
-import org.saar.lwjgl.assimp.ObjLoader;
+import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.opengl.textures.ITexture;
 import org.saar.maths.objects.Transform;
 
@@ -21,7 +21,7 @@ public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
     }
 
     public static ObjRenderNode load(String objFile, ObjNode node) throws Exception {
-        final AssimpData mesh = ObjLoader.load(objFile);
+        final AssimpData mesh = AssimpUtil.load(objFile);
         return new ObjRenderNode(toVertices(mesh), toIndices(mesh), node);
     }
 

@@ -50,7 +50,7 @@ class ObjRenderer(private val camera: ICamera, private val renderNodes: Array<Ob
     }
 
     init {
-        shadersProgram.bindAttributes("in_position", "in_uvCoord", "in_normal", "in_transformation")
+        shadersProgram.bindAttributes("in_position", "in_uvCoord", "in_normal")
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.enableCulling()
