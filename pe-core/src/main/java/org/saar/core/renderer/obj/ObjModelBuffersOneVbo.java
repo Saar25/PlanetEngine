@@ -13,8 +13,7 @@ import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 public class ObjModelBuffersOneVbo extends AbstractModelBuffers<ObjNode, ObjVertexPrototype> implements ObjModelBuffers {
 
     private static final Attribute[] vertexAttributes = {
-            positionAttribute, uvCoordAttribute, normalAttribute, transformAttributes[0],
-            transformAttributes[1], transformAttributes[2], transformAttributes[3]
+            positionAttribute, uvCoordAttribute, normalAttribute
     };
 
     private final ElementsModel model;
