@@ -12,7 +12,7 @@ public class ColourAttachmentMS implements IColourAttachment, AttachmentMS {
     private final AttachmentBuffer buffer;
     private final int samples;
 
-    private ColourAttachmentMS(int index, AttachmentBuffer buffer, int samples) {
+    public ColourAttachmentMS(int index, AttachmentBuffer buffer, int samples) {
         this.index = index;
         this.buffer = buffer;
         this.samples = samples;
@@ -44,12 +44,7 @@ public class ColourAttachmentMS implements IColourAttachment, AttachmentMS {
 
     @Override
     public int getAttachmentPoint() {
-        return getAttachmentType().get() + this.index;
-    }
-
-    @Override
-    public AttachmentType getAttachmentType() {
-        return AttachmentType.COLOUR;
+        return AttachmentType.COLOUR.get() + this.index;
     }
 
     @Override

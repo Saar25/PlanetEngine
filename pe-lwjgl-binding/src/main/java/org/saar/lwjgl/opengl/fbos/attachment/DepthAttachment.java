@@ -10,7 +10,7 @@ public class DepthAttachment implements IDepthAttachment, Attachment {
 
     private final AttachmentBuffer buffer;
 
-    private DepthAttachment(AttachmentBuffer buffer) {
+    public DepthAttachment(AttachmentBuffer buffer) {
         this.buffer = buffer;
     }
 
@@ -40,12 +40,7 @@ public class DepthAttachment implements IDepthAttachment, Attachment {
 
     @Override
     public int getAttachmentPoint() {
-        return getAttachmentType().get();
-    }
-
-    @Override
-    public AttachmentType getAttachmentType() {
-        return AttachmentType.COLOUR;
+        return AttachmentType.DEPTH.get();
     }
 
     @Override

@@ -11,7 +11,7 @@ public class ColourAttachment implements IColourAttachment, Attachment {
     private final int index;
     private final AttachmentBuffer buffer;
 
-    private ColourAttachment(int index, AttachmentBuffer buffer) {
+    public ColourAttachment(int index, AttachmentBuffer buffer) {
         this.index = index;
         this.buffer = buffer;
     }
@@ -42,12 +42,7 @@ public class ColourAttachment implements IColourAttachment, Attachment {
 
     @Override
     public int getAttachmentPoint() {
-        return getAttachmentType().get() + this.index;
-    }
-
-    @Override
-    public AttachmentType getAttachmentType() {
-        return AttachmentType.COLOUR;
+        return AttachmentType.COLOUR.get() + this.index;
     }
 
     @Override

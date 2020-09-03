@@ -6,8 +6,6 @@ public interface Attachment {
 
     int getAttachmentPoint();
 
-    AttachmentType getAttachmentType();
-
     void init(ReadOnlyFbo fbo);
 
     void delete();

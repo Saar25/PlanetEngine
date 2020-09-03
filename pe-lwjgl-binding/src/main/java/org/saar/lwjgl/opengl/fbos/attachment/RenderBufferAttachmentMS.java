@@ -49,12 +49,7 @@ public class RenderBufferAttachmentMS implements AttachmentMS {
 
     @Override
     public int getAttachmentPoint() {
-        return getAttachmentType().get() + attachmentIndex;
-    }
-
-    @Override
-    public AttachmentType getAttachmentType() {
-        return type;
+        return type.get() + attachmentIndex;
     }
 
     @Override

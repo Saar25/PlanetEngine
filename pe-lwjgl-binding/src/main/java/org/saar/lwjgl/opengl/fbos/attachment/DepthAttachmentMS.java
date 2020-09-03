@@ -11,7 +11,7 @@ public class DepthAttachmentMS implements IDepthAttachment, AttachmentMS {
     private final AttachmentBuffer buffer;
     private final int samples;
 
-    private DepthAttachmentMS(AttachmentBuffer buffer, int samples) {
+    public DepthAttachmentMS(AttachmentBuffer buffer, int samples) {
         this.buffer = buffer;
         this.samples = samples;
     }
@@ -42,12 +42,7 @@ public class DepthAttachmentMS implements IDepthAttachment, AttachmentMS {
 
     @Override
     public int getAttachmentPoint() {
-        return getAttachmentType().get();
-    }
-
-    @Override
-    public AttachmentType getAttachmentType() {
-        return AttachmentType.COLOUR;
+        return AttachmentType.DEPTH.get();
     }
 
     @Override
