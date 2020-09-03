@@ -10,5 +10,5 @@ uniform sampler2D texture;
 layout (location = 0) out vec4 f_colour;
 
 void main(void) {
-    f_colour = vec4(v_uvCoord, 0, 1);
+    f_colour = texture(texture, v_uvCoord);
 }
