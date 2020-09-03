@@ -17,6 +17,16 @@ public class AttachmentRenderBuffer implements AttachmentBuffer {
         this.iFormat = iFormat;
     }
 
+    public static AttachmentRenderBuffer create() {
+        final RenderBuffer renderBuffer = RenderBuffer.create();
+        return new AttachmentRenderBuffer(renderBuffer);
+    }
+
+    public static AttachmentRenderBuffer create(FormatType iFormat) {
+        final RenderBuffer renderBuffer = RenderBuffer.create();
+        return new AttachmentRenderBuffer(renderBuffer, iFormat);
+    }
+
     private RenderBuffer getRenderBuffer() {
         return this.renderBuffer;
     }

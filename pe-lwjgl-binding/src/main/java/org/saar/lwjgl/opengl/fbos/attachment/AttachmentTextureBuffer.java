@@ -29,6 +29,16 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
         this.dataType = dataType;
     }
 
+    public static AttachmentTextureBuffer create() {
+        final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
+        return new AttachmentTextureBuffer(texture);
+    }
+
+    public static AttachmentTextureBuffer create(FormatType iFormat, FormatType format, DataType dataType) {
+        final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
+        return new AttachmentTextureBuffer(texture, iFormat, format, dataType);
+    }
+
     private void setTextureSettings() {
         getTexture().setSettings(TextureTarget.TEXTURE_2D,
                 new TextureMipMapSetting(),
