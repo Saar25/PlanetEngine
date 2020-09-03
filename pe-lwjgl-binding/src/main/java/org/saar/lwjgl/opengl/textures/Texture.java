@@ -34,10 +34,6 @@ public class Texture implements ITexture {
         this.bind();
     }
 
-    public static TextureBuilder builder() {
-        return new TextureBuilder();
-    }
-
     public static Texture create(TextureTarget target) {
         final int id = GL11.glGenTextures();
         return new Texture(id, target);
