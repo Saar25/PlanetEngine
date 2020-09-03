@@ -3,11 +3,11 @@ package org.saar.example;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
@@ -47,7 +47,7 @@ public class MultisamplingExample {
         vao.enableAttributes();
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final RenderBufferAttachmentMS attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        final AttachmentMS attachment = ColourAttachmentMS.withRenderBuffer(0, 16);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);

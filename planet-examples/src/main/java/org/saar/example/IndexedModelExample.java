@@ -9,11 +9,10 @@ import org.saar.core.model.vertex.ModelIndices;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
-import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -33,7 +32,7 @@ public class IndexedModelExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        attachment = ColourAttachmentMS.withRenderBuffer(0, 16);
 
         final ModelIndices indices = new ModelIndices(0, 1, 3, 2);
         final List<SimpleVertex> vertices = Arrays.asList(
@@ -81,6 +80,7 @@ public class IndexedModelExample {
         fbo.setDrawAttachments(attachment);
         fbo.setReadAttachment(attachment);
         fbo.addAttachment(attachment);
+        fbo.ensureStatus();
         return fbo;
     }
 
