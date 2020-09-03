@@ -8,27 +8,21 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.textures.settings.TextureSetting;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 public class Texture implements ITexture {
-
-    private static int activeTexture = 0;
-    private static int[] boundTextures = new int[32];
 
     public static final Texture NONE = new Texture(0, TextureTarget.TEXTURE_2D);
 
     private final int id;
-    private final int target;
+    private final TextureTarget target;
 
     private boolean deleted = false;
 
     private Texture(int id, TextureTarget target) {
         this.id = id;
-        this.target = target.get();
+        this.target = target;
         this.bind();
     }
 
@@ -84,22 +78,8 @@ public class Texture implements ITexture {
                 height, border, format.get(), type.get(), data);
     }
 
-    public void allocate(TextureTarget target, int level, FormatType internalFormat, int width,
-                         int height, int border, FormatType format, DataType type, IntBuffer data) {
-        bind();
-        GL11.glTexImage2D(target.get(), level, internalFormat.get(), width,
-                height, border, format.get(), type.get(), data);
-    }
-
-    public void allocate(TextureTarget target, int level, FormatType internalFormat, int width,
-                         int height, int border, FormatType format, DataType type, FloatBuffer data) {
-        bind();
-        GL11.glTexImage2D(target.get(), level, internalFormat.get(), width,
-                height, border, format.get(), type.get(), data);
-    }
-
     public void allocateMultisample(int samples, FormatType iFormat, int width, int height) {
-        GL32.glTexImage2DMultisample(target, samples, iFormat.get(), width, height, true);
+        GL32.glTexImage2DMultisample(target.get(), samples, iFormat.get(), width, height, true);
     }
 
     @Override
@@ -118,65 +98,51 @@ public class Texture implements ITexture {
                 height, format.get(), type.get(), data);
     }
 
-    public void load(TextureTarget target, int level, int xOffset, int yOffset, int width,
-                     int height, FormatType format, DataType type, IntBuffer data) {
-        bind();
-        GL11.glTexSubImage2D(target.get(), level, xOffset, yOffset, width,
-                height, format.get(), type.get(), data);
-    }
-
     public int getWidth() {
-        bind0();
-        return GL11.glGetTexLevelParameteri(this.target, 0, GL11.GL_TEXTURE_WIDTH);
+        bind();
+        return GL11.glGetTexLevelParameteri(this.target.get(), 0, GL11.GL_TEXTURE_WIDTH);
     }
 
     public int getHeight() {
-        bind0();
-        return GL11.glGetTexLevelParameteri(this.target, 0, GL11.GL_TEXTURE_HEIGHT);
+        bind();
+        return GL11.glGetTexLevelParameteri(this.target.get(), 0, GL11.GL_TEXTURE_HEIGHT);
     }
 
     public void getPixelsBuffer(FormatType format, DataType dataType, ByteBuffer buffer) {
-        GL11.glGetTexImage(this.target, 0, format.get(), dataType.get(), buffer);
-    }
-
-    public ByteBuffer getPixelsBuffer(FormatType format, DataType dataType) {
-        final int size = 4 * getWidth() * getHeight();
-        final ByteBuffer buffer = MemoryUtils.allocByte(size);
-        getPixelsBuffer(format, dataType, buffer);
-        return buffer;
+        GL11.glGetTexImage(this.target.get(), 0, format.get(), dataType.get(), buffer);
     }
 
     @Override
     public void bind(int unit) {
-        if (!GlConfigs.CACHE_STATE || activeTexture != unit) {
-            activeTexture = unit;
-            GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
-        }
+        active(unit);
         bind();
+    }
+
+    public void active(int unit) {
+        if (!GlConfigs.CACHE_STATE || ActiveTexture.isActive(unit)) {
+            GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
+            ActiveTexture.set(unit);
+        }
     }
 
     @Override
     public void bind() {
-        if (!GlConfigs.CACHE_STATE || boundTextures[activeTexture] != id) {
-            bind0();
+        if (!GlConfigs.CACHE_STATE || BoundTexture.isBound(this.target, this.id)) {
+            GL11.glBindTexture(this.target.get(), this.id);
+            BoundTexture.set(this.target, this.id);
         }
-    }
-
-    private void bind0() {
-        boundTextures[activeTexture] = id;
-        GL11.glBindTexture(target, id);
     }
 
     @Override
     public void unbind() {
-        NONE.bind();
+        Texture.NONE.bind();
     }
 
     @Override
     public void delete() {
-        if (!deleted) {
+        if (!GlConfigs.CACHE_STATE || !this.deleted) {
             GL11.glDeleteTextures(id);
-            deleted = true;
+            this.deleted = true;
         }
     }
 }
