@@ -33,6 +33,11 @@ public class ScreenFbo implements IFbo {
     }
 
     @Override
+    public void resize(int width, int height) {
+        getFbo().resize(width, height);
+    }
+
+    @Override
     public int getWidth() {
         return Window.current().getWidth();
     }

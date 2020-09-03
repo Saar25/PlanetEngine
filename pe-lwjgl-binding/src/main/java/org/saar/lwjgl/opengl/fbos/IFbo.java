@@ -14,6 +14,15 @@ public interface IFbo extends ReadOnlyFbo, ReadableFbo, DrawableFbo {
     void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers);
 
     /**
+     * Sets the size of the fbo
+     * WARNING: you must resize the attachments too
+     *
+     * @param width  the width
+     * @param height the height
+     */
+    void resize(int width, int height);
+
+    /**
      * Delete the fbo
      */
     void delete();

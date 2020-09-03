@@ -45,6 +45,11 @@ public class MultisampledFbo implements IFbo {
     }
 
     @Override
+    public void resize(int width, int height) {
+        getFbo().resize(width, height);
+    }
+
+    @Override
     public int getWidth() {
         return getFbo().getWidth();
     }

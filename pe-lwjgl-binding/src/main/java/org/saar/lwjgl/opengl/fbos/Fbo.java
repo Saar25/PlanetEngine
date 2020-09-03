@@ -22,8 +22,8 @@ public class Fbo implements IFbo {
 
     private final int id;
 
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
 
     private List<Attachment> drawAttachments = Collections.emptyList();
     private Attachment readAttachment;
@@ -127,6 +127,12 @@ public class Fbo implements IFbo {
 
     private void setViewport() {
         GlUtils.setViewport(0, 0, getWidth(), getHeight());
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
     @Override
