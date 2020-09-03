@@ -1,15 +1,20 @@
-package attachment;
+package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.RenderBuffer;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentBuffer;
 
 public class AttachmentRenderBuffer implements AttachmentBuffer {
 
     private final RenderBuffer renderBuffer;
+    private final FormatType iFormat;
 
     public AttachmentRenderBuffer(RenderBuffer renderBuffer) {
+        this(renderBuffer, FormatType.RGBA8);
+    }
+
+    public AttachmentRenderBuffer(RenderBuffer renderBuffer, FormatType iFormat) {
         this.renderBuffer = renderBuffer;
+        this.iFormat = iFormat;
     }
 
     private RenderBuffer getRenderBuffer() {
@@ -23,7 +28,7 @@ public class AttachmentRenderBuffer implements AttachmentBuffer {
 
     @Override
     public void allocateMultisample(int width, int height, int samples) {
-        getRenderBuffer().loadStorageMultisample(width, height, FormatType.RGBA8, samples);
+        getRenderBuffer().loadStorageMultisample(width, height, this.iFormat, samples);
     }
 
     @Override

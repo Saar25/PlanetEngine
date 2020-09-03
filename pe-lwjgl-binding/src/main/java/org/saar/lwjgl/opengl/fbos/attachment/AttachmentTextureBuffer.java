@@ -18,17 +18,8 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
     private final FormatType format;
     private final DataType dataType;
 
-    public AttachmentTextureBuffer() {
-        this(Texture.create(TextureTarget.TEXTURE_2D),
-                FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE);
-    }
-
     public AttachmentTextureBuffer(Texture texture) {
         this(texture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE);
-    }
-
-    public AttachmentTextureBuffer(FormatType iFormat, FormatType format, DataType dataType) {
-        this(Texture.create(TextureTarget.TEXTURE_2D), iFormat, format, dataType);
     }
 
     public AttachmentTextureBuffer(Texture texture, FormatType iFormat, FormatType format, DataType dataType) {
