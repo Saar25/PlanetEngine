@@ -11,7 +11,6 @@ import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachmentMS;
@@ -27,8 +26,8 @@ public class ObjRendererExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static AttachmentMS colorAttachment;
-    private static AttachmentMS depthAttachment;
+    private static ColourAttachmentMS colorAttachment;
+    private static DepthAttachmentMS depthAttachment;
 
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);

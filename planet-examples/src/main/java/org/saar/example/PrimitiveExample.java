@@ -7,7 +7,6 @@ import org.saar.core.model.Model;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.primitive.GlFloat;
 import org.saar.lwjgl.opengl.primitive.GlFloat2;
@@ -45,7 +44,7 @@ public class PrimitiveExample {
         shadersProgram.bind();
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final AttachmentMS attachment = ColourAttachmentMS.withRenderBuffer(0, 16);
+        final ColourAttachmentMS attachment = ColourAttachmentMS.withRenderBuffer(0, 16);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);

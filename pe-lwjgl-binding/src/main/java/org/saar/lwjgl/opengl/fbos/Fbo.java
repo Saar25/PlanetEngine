@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbos.attachment.IColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FboAttachmentMissingException;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
@@ -25,7 +26,7 @@ public class Fbo implements IFbo {
     private int height;
 
     private List<Attachment> drawAttachments = Collections.emptyList();
-    private Attachment readAttachment;
+    private IColourAttachment readAttachment;
 
     private Fbo(int id, int width, int height) {
         this.id = id;
@@ -75,7 +76,7 @@ public class Fbo implements IFbo {
      *
      * @param attachment the read attachment
      */
-    public void setReadAttachment(Attachment attachment) {
+    public void setReadAttachment(IColourAttachment attachment) {
         this.readAttachment = attachment;
     }
 
