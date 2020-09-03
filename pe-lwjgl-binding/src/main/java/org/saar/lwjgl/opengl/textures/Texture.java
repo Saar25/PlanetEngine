@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 
 public class Texture implements ITexture {
 
-    public static final Texture NONE = new Texture(0, TextureTarget.TEXTURE_2D);
+    public static final Texture NULL = new Texture(0, TextureTarget.TEXTURE_2D);
 
     private final int id;
     private final TextureTarget target;
@@ -55,7 +55,7 @@ public class Texture implements ITexture {
      * @param unit the unit to unbind
      */
     public static void unbind(int unit) {
-        Texture.NONE.bind(unit);
+        Texture.NULL.bind(unit);
     }
 
     public void setSettings(TextureTarget target, TextureSetting... settings) {
@@ -135,7 +135,7 @@ public class Texture implements ITexture {
 
     @Override
     public void unbind() {
-        Texture.NONE.bind();
+        Texture.NULL.bind();
     }
 
     @Override

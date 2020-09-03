@@ -44,7 +44,7 @@ public class RenderBufferAttachment extends AbstractAttachment implements Attach
 
     @Override
     public Texture getTexture() {
-        return Texture.NONE;
+        return Texture.NULL;
     }
 
     @Override

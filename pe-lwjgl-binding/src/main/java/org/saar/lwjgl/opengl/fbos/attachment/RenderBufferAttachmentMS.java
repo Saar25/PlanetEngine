@@ -47,7 +47,7 @@ public class RenderBufferAttachmentMS extends AbstractAttachment implements Mult
 
     @Override
     public Texture getTexture() {
-        return Texture.NONE;
+        return Texture.NULL;
     }
 
     @Override
