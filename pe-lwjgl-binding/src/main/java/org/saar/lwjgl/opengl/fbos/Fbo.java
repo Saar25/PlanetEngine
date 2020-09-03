@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.exceptions.FboAttachmentMissingException;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
@@ -77,10 +76,6 @@ public class Fbo implements IFbo {
      * @param attachment the read attachment
      */
     public void setReadAttachment(Attachment attachment) {
-        if (attachment.getAttachmentType() != AttachmentType.COLOUR) {
-            throw new IllegalArgumentException("Attachment of type " +
-                    attachment.getAttachmentType() + " cannot be a read attachment");
-        }
         this.readAttachment = attachment;
     }
 

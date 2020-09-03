@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.fbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 
-public class ColourAttachmentMS implements IColourAttachment, Attachment {
+public class ColourAttachmentMS implements IColourAttachment, AttachmentMS {
 
     private final int index;
     private final AttachmentBuffer buffer;

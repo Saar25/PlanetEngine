@@ -12,6 +12,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
 import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
@@ -26,7 +27,7 @@ public class IndexedModelExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static RenderBufferAttachmentMS attachment;
+    private static AttachmentMS attachment;
 
     public static void main(String[] args) throws Exception {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);

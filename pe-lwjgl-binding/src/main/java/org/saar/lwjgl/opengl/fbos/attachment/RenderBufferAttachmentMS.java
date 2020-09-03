@@ -3,17 +3,19 @@ package org.saar.lwjgl.opengl.fbos.attachment;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.RenderBuffer;
-import org.saar.lwjgl.opengl.textures.Texture;
 
-public class RenderBufferAttachmentMS extends AbstractAttachment implements MultisampledAttachment {
+public class RenderBufferAttachmentMS implements AttachmentMS {
 
+    private final AttachmentType type;
+    private final int attachmentIndex;
     private final RenderBuffer renderBuffer;
     private final FormatType iFormat;
     private final int samples;
 
     public RenderBufferAttachmentMS(AttachmentType type, int attachmentIndex,
                                     RenderBuffer renderBuffer, FormatType iFormat, int samples) {
-        super(type, attachmentIndex);
+        this.type = type;
+        this.attachmentIndex = attachmentIndex;
         this.renderBuffer = renderBuffer;
         this.iFormat = iFormat;
         this.samples = samples;
@@ -46,8 +48,13 @@ public class RenderBufferAttachmentMS extends AbstractAttachment implements Mult
     }
 
     @Override
-    public Texture getTexture() {
-        return Texture.NULL;
+    public int getAttachmentPoint() {
+        return getAttachmentType().get() + attachmentIndex;
+    }
+
+    @Override
+    public AttachmentType getAttachmentType() {
+        return type;
     }
 
     @Override

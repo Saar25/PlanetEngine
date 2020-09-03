@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos;
 
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.MultisampledAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -26,7 +26,7 @@ public class MultisampledFbo implements IFbo {
         getFbo().setDrawAttachments(attachments);
     }
 
-    public void addAttachment(MultisampledAttachment attachment) {
+    public void addAttachment(AttachmentMS attachment) {
         getFbo().addAttachment(attachment);
     }
 

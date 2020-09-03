@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.fbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 
-public class DepthAttachmentMS implements IDepthAttachment, Attachment {
+public class DepthAttachmentMS implements IDepthAttachment, AttachmentMS {
 
     private final AttachmentBuffer buffer;
     private final int samples;
