@@ -1,38 +1,53 @@
 package org.saar.lwjgl.opengl.textures;
 
+import org.lwjgl.system.MemoryUtil;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
+
+import java.nio.ByteBuffer;
 
 public class ColourTexture implements ITexture {
 
-    private final Texture2D texture;
+    private final ITexture texture;
     private final int r;
     private final int g;
     private final int b;
+    private final int a;
 
-    public ColourTexture(int r, int g, int b) {
-        this.texture = new Texture2D(1, 1);
-        final byte[] bytes = new byte[]{(byte) r, (byte) g, (byte) b};
-        getTexture().load(MemoryUtils.loadToByteBuffer(bytes));
-
+    public ColourTexture(ITexture texture, int r, int g, int b, int a) {
+        this.texture = texture;
         this.r = r;
         this.g = g;
         this.b = b;
+        this.a = a;
+    }
+
+    public static ColourTexture of(int r, int g, int b, int a) {
+        final Texture2D texture = new Texture2D(1, 1);
+        final ByteBuffer data = MemoryUtils.allocByte(4);
+        data.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+        texture.load(data);
+        MemoryUtil.memFree(data);
+        return new ColourTexture(texture, r, g, b, a);
     }
 
     public int getRed() {
-        return r;
+        return this.r;
     }
 
     public int getGreen() {
-        return g;
+        return this.g;
     }
 
     public int getBlue() {
-        return b;
+        return this.b;
     }
 
-    private Texture2D getTexture() {
-        return texture;
+    public int getAlpha() {
+        return this.a;
+    }
+
+    private ITexture getTexture() {
+        return this.texture;
     }
 
     @Override
