@@ -1,5 +1,7 @@
 package org.saar.example.obj;
 
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
@@ -13,25 +15,29 @@ import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
+import org.saar.maths.utils.Vector3;
 
 public class ObjRendererExample {
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static RenderBufferAttachmentMS attachment;
+    private static RenderBufferAttachmentMS colorAttachment;
+    private static RenderBufferAttachmentMS depthAttachment;
 
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        colorAttachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        depthAttachment = RenderBufferAttachmentMS.ofDepth(FormatType.DEPTH_COMPONENT16, 16);
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
+        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, -1000));
+        camera.getTransform().setPosition(Position.of(0, 0, 200));
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         MyNode node;
@@ -45,16 +51,27 @@ public class ObjRendererExample {
             e.printStackTrace();
             System.exit(1);
         }
+        /*final ObjVertex[] vertices = {
+                new ObjVertex(Vector3.of(-10, -10, 0), Vector2.of(1, 0), Vector3.of(0, 0, 0)),
+                new ObjVertex(Vector3.of(-10, +10, 0), Vector2.of(0, 1), Vector3.of(0, 0, 0)),
+                new ObjVertex(Vector3.of(+10, +20, 0), Vector2.of(1, 1), Vector3.of(0, 0, 0))
+        };
+        final int[] indices = {0, 2, 1};
+        final ObjNode instance = new MyNode(ColourTexture.of(255, 0, 0, 255));
+
+        final ObjRenderNode renderNode = new ObjRenderNode(vertices, indices, instance);*/
+
         final ObjRenderer renderer = new ObjRenderer(camera, new ObjRenderNode[]{renderNode});
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
         final Keyboard keyboard = window.getKeyboard();
-        while (window.isOpen() && !keyboard.isKeyPressed('E')) {
+        while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             fbo.bind();
 
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
+            move(camera, keyboard);
             renderer.render();
 
             fbo.blitToScreen();
@@ -69,14 +86,46 @@ public class ObjRendererExample {
 
         renderer.delete();
         fbo.delete();
-        attachment.delete();
+        colorAttachment.delete();
+    }
+
+    private static void move(ICamera camera, Keyboard keyboard) {
+        final Vector3f toMove = Vector3.zero();
+        final Vector3f toRotate = Vector3.zero();
+        if (keyboard.isKeyPressed('W')) {
+            toMove.add(0, 0, 1);
+        }
+        if (keyboard.isKeyPressed('A')) {
+            toMove.add(1, 0, 0);
+        }
+        if (keyboard.isKeyPressed('S')) {
+            toMove.add(0, 0, -1);
+        }
+        if (keyboard.isKeyPressed('D')) {
+            toMove.add(-1, 0, 0);
+        }
+        if (keyboard.isKeyPressed('Q')) {
+            toRotate.add(0, .5f, 0);
+        }
+        if (keyboard.isKeyPressed('E')) {
+            toRotate.add(0, -.5f, 0);
+        }
+        if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+            toMove.add(0, -1, 0);
+        }
+        if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+            toMove.add(0, 1, 0);
+        }
+        camera.getTransform().getPosition().add(toMove.rotate(camera.getTransform().getRotation().getValue()).mul(-1));
+        camera.getTransform().addRotation(Angle.degrees(toRotate.x), Angle.degrees(toRotate.y), Angle.degrees(toRotate.z));
     }
 
     private static MultisampledFbo createFbo(int width, int height) {
         final MultisampledFbo fbo = new MultisampledFbo(width, height);
-        fbo.setDrawAttachments(attachment);
-        fbo.setReadAttachment(attachment);
-        fbo.addAttachment(attachment);
+        fbo.setDrawAttachments(colorAttachment);
+        fbo.setReadAttachment(colorAttachment);
+        fbo.addAttachment(colorAttachment);
+        fbo.addAttachment(depthAttachment);
         fbo.ensureStatus();
         return fbo;
     }

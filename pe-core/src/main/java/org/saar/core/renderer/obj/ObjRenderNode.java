@@ -34,7 +34,7 @@ public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
     }
 
     private static ObjVertex[] toVertices(AssimpData mesh) {
-        final int vertexCount = mesh.getPositions().length / 3;
+        final int vertexCount = mesh.getPositions().length;
         final ObjVertex[] vertices = new ObjVertex[vertexCount];
         for (int i = 0; i < vertexCount; i++) {
             final Vector3fc position = mesh.getPositions()[i].getValue();
