@@ -1,19 +1,19 @@
 package org.saar.lwjgl.opengl.textures;
 
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class Texture implements ITexture {
+public class Texture implements ReadOnlyTexture {
 
     private static int activeTexture = 0;
     private static int[] boundTextures = new int[32];
@@ -55,7 +55,7 @@ public class Texture implements ITexture {
      * @param texture the texture to bind
      * @param unit    the unit to bind to
      */
-    public static void bind(ITexture texture, int unit) {
+    public static void bind(ReadOnlyTexture texture, int unit) {
         if (texture != null) {
             texture.bind(unit);
         }

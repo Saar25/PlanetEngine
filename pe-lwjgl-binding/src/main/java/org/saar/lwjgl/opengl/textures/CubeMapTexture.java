@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.textures;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 
-public class CubeMapTexture implements ITexture {
+public class CubeMapTexture implements ReadOnlyTexture {
 
     private final Texture texture;
 

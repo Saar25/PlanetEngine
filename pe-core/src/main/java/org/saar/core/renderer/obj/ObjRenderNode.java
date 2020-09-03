@@ -6,7 +6,7 @@ import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.assimp.AssimpData;
 import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.opengl.textures.ITexture;
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.objects.Transform;
 
 public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
@@ -51,7 +51,7 @@ public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
     }
 
     @Override
-    public ITexture getTexture() {
+    public ReadOnlyTexture getTexture() {
         return this.instance.getTexture();
     }
 

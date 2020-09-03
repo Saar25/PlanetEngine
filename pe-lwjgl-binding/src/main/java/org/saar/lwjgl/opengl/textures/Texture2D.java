@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public class Texture2D implements ITexture {
+public class Texture2D implements ReadOnlyTexture {
 
     private static final TextureTarget target = TextureTarget.TEXTURE_2D;
 
@@ -44,7 +44,7 @@ public class Texture2D implements ITexture {
     }
 
     public static Texture2D of(String fileName) throws Exception {
-        ITexture cached = TextureCache.getTexture(fileName);
+        ReadOnlyTexture cached = TextureCache.getTexture(fileName);
         if (cached instanceof Texture2D) {
             return (Texture2D) cached;
         }

@@ -5,15 +5,15 @@ import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
 
-public class ColourTexture implements ITexture {
+public class ColourTexture implements ReadOnlyTexture {
 
-    private final ITexture texture;
+    private final ReadOnlyTexture texture;
     private final int r;
     private final int g;
     private final int b;
     private final int a;
 
-    public ColourTexture(ITexture texture, int r, int g, int b, int a) {
+    public ColourTexture(ReadOnlyTexture texture, int r, int g, int b, int a) {
         this.texture = texture;
         this.r = r;
         this.g = g;
@@ -46,7 +46,7 @@ public class ColourTexture implements ITexture {
         return this.a;
     }
 
-    private ITexture getTexture() {
+    private ReadOnlyTexture getTexture() {
         return this.texture;
     }
 

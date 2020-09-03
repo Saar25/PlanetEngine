@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.textures;
 
-public interface ITexture {
+public interface ReadOnlyTexture {
 
     /**
      * Binds the texture to a specific texture unit

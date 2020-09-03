@@ -2,15 +2,15 @@ package org.saar.lwjgl.opengl.textures;
 
 import java.util.function.Consumer;
 
-public class MultiTexture implements ITexture {
+public class MultiTexture implements ReadOnlyTexture {
 
-    private final ITexture blendMap; // Blend Map Texture
-    private final ITexture dTexture; // Default   Texture
-    private final ITexture rTexture; // Red       Texture
-    private final ITexture gTexture; // Green     Texture
-    private final ITexture bTexture; // Blue      Texture
+    private final ReadOnlyTexture blendMap; // Blend Map Texture
+    private final ReadOnlyTexture dTexture; // Default   Texture
+    private final ReadOnlyTexture rTexture; // Red       Texture
+    private final ReadOnlyTexture gTexture; // Green     Texture
+    private final ReadOnlyTexture bTexture; // Blue      Texture
 
-    public MultiTexture(ITexture blendMap, ITexture dTexture, ITexture rTexture, ITexture gTexture, ITexture bTexture) {
+    public MultiTexture(ReadOnlyTexture blendMap, ReadOnlyTexture dTexture, ReadOnlyTexture rTexture, ReadOnlyTexture gTexture, ReadOnlyTexture bTexture) {
         this.blendMap = blendMap;
         this.dTexture = dTexture;
         this.rTexture = rTexture;
@@ -34,15 +34,15 @@ public class MultiTexture implements ITexture {
 
     @Override
     public void unbind() {
-        this.forEach(ITexture::unbind);
+        this.forEach(ReadOnlyTexture::unbind);
     }
 
     @Override
     public void delete() {
-        this.forEach(ITexture::delete);
+        this.forEach(ReadOnlyTexture::delete);
     }
 
-    private void forEach(Consumer<ITexture> consumer) {
+    private void forEach(Consumer<ReadOnlyTexture> consumer) {
         consumer.accept(blendMap);
         consumer.accept(dTexture);
         consumer.accept(rTexture);

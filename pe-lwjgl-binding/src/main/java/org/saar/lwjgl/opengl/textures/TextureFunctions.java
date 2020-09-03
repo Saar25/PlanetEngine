@@ -19,10 +19,10 @@ import java.nio.ByteBuffer;
  */
 public final class TextureFunctions {
 
-    private final ITexture texture;
+    private final ReadOnlyTexture texture;
     private final int target;
 
-    public TextureFunctions(ITexture texture, TextureTarget target) {
+    public TextureFunctions(ReadOnlyTexture texture, TextureTarget target) {
         this.texture = texture;
         this.target = target.get();
     }
@@ -52,7 +52,7 @@ public final class TextureFunctions {
         borderColour(configs.borderColour);
     }
 
-    private ITexture getTexture() {
+    private ReadOnlyTexture getTexture() {
         return texture;
     }
 

@@ -11,7 +11,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
-import org.saar.lwjgl.opengl.textures.ITexture
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
@@ -26,7 +26,7 @@ class ObjRenderer(private val camera: ICamera, private val renderNodes: Array<Ob
 
     @InstanceUniformProperty
     private val textureUniform = object : UniformTextureProperty<ObjNode>("texture", 0) {
-        override fun getUniformValue(state: RenderState<ObjNode>): ITexture {
+        override fun getUniformValue(state: RenderState<ObjNode>): ReadOnlyTexture {
             return state.instance.texture
         }
     }
