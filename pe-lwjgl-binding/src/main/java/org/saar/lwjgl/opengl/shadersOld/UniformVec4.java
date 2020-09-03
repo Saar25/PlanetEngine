@@ -23,7 +23,7 @@ public class UniformVec4 extends Uniform<Vector4f> {
     }
 
     public void load(float x, float y, float z, float w) {
-        if (GlConfigs.CACHE_STATE || !equals(x, y, z, w)) {
+        if (!GlConfigs.CACHE_STATE || !equals(x, y, z, w)) {
             GL20.glUniform4f(location, x, y, z, w);
             value.set(x, y, z, w);
         }

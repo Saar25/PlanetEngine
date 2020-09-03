@@ -38,7 +38,7 @@ public class RenderBuffer {
     }
 
     public void bind() {
-        if (RenderBuffer.boundRenderBuffer != id || !GlConfigs.CACHE_STATE) {
+        if (!GlConfigs.CACHE_STATE || RenderBuffer.boundRenderBuffer != id) {
             RenderBuffer.boundRenderBuffer = id;
             GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
         }

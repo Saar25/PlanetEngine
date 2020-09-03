@@ -121,7 +121,7 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void bind() {
-        if (GlConfigs.CACHE_STATE || !BoundVbo.isBound(this.target, this.id)) {
+        if (!GlConfigs.CACHE_STATE || !BoundVbo.isBound(this.target, this.id)) {
             GL15.glBindBuffer(this.target.get(), this.id);
             BoundVbo.set(this.target, this.id);
         }
@@ -129,7 +129,7 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void unbind() {
-        if (GlConfigs.CACHE_STATE || !BoundVbo.isBound(this.target, 0)) {
+        if (!GlConfigs.CACHE_STATE || !BoundVbo.isBound(this.target, 0)) {
             GL15.glBindBuffer(this.target.get(), 0);
             BoundVbo.set(this.target, 0);
         }
@@ -137,7 +137,7 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void delete() {
-        if (GlConfigs.CACHE_STATE || !this.deleted) {
+        if (!GlConfigs.CACHE_STATE || !this.deleted) {
             GL15.glDeleteBuffers(this.id);
             this.deleted = true;
         }

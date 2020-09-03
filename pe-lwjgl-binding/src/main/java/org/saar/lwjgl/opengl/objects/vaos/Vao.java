@@ -69,7 +69,7 @@ public class Vao implements WriteableVao {
 
     @Override
     public void bind() {
-        if (GlConfigs.CACHE_STATE || !BoundVao.isBound(this.id)) {
+        if (!GlConfigs.CACHE_STATE || !BoundVao.isBound(this.id)) {
             GL30.glBindVertexArray(this.id);
             BoundVao.set(this.id);
         }
@@ -83,7 +83,7 @@ public class Vao implements WriteableVao {
     @Override
     public void delete() {
         this.buffers.forEach(IVbo::delete);
-        if (GlConfigs.CACHE_STATE || !this.deleted) {
+        if (!GlConfigs.CACHE_STATE || !this.deleted) {
             GL30.glDeleteVertexArrays(this.id);
             this.deleted = true;
         }

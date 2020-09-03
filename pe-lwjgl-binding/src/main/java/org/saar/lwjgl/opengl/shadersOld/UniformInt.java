@@ -23,7 +23,7 @@ public class UniformInt extends Uniform<Integer> {
     }
 
     public void load(int newValue) {
-        if (GlConfigs.CACHE_STATE || this.value != newValue) {
+        if (!GlConfigs.CACHE_STATE || this.value != newValue) {
             GL20.glUniform1i(location, newValue);
             this.value = newValue;
         }

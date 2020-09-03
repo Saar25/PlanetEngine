@@ -153,7 +153,7 @@ public class Uniform<T> {
      * @param newValue the new value for the uniform
      */
     public void load(T newValue) {
-        if (GlConfigs.CACHE_STATE || value == null || setter == null || !value.equals(newValue)) {
+        if (!GlConfigs.CACHE_STATE || value == null || setter == null || !value.equals(newValue)) {
             if (setter != null) {
                 value = setter.set(value, newValue);
             }

@@ -23,7 +23,7 @@ public class UniformFloat extends Uniform<Float> {
     }
 
     public void load(float newValue) {
-        if (GlConfigs.CACHE_STATE || this.value != newValue) {
+        if (!GlConfigs.CACHE_STATE || this.value != newValue) {
             GL20.glUniform1f(location, newValue);
             this.value = newValue;
         }
