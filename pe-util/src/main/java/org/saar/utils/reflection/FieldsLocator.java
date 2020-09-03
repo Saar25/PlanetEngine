@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class FieldsLocator {
 
@@ -12,6 +13,14 @@ public class FieldsLocator {
 
     public FieldsLocator(Object object) {
         this.object = object;
+    }
+
+    public <A extends Annotation> List<Field> filterByAnnotation(
+            List<Field> fields, Class<A> annotation, Predicate<A> predicate) {
+        final List<Field> filtered = new ArrayList<>(fields);
+        fields.removeIf(field -> field.isAnnotationPresent(annotation) &&
+                predicate.test(field.getAnnotation(annotation)));
+        return filtered;
     }
 
     public <T> List<T> getValues(Class<T> cast, List<Field> fields) {
