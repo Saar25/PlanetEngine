@@ -46,20 +46,11 @@ public class ObjRendererExample {
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             node = new MyNode(texture);
 
-            renderNode = ObjRenderNode.load("/assets/cube/cube.obj", node);
+            renderNode = ObjRenderNode.load("/assets/cottage/cottage_obj.obj", node);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
-        /*final ObjVertex[] vertices = {
-                new ObjVertex(Vector3.of(-10, -10, 0), Vector2.of(1, 0), Vector3.of(0, 0, 0)),
-                new ObjVertex(Vector3.of(-10, +10, 0), Vector2.of(0, 1), Vector3.of(0, 0, 0)),
-                new ObjVertex(Vector3.of(+10, +20, 0), Vector2.of(1, 1), Vector3.of(0, 0, 0))
-        };
-        final int[] indices = {0, 2, 1};
-        final ObjNode instance = new MyNode(ColourTexture.of(255, 0, 0, 255));
-
-        final ObjRenderNode renderNode = new ObjRenderNode(vertices, indices, instance);*/
 
         final ObjRenderer renderer = new ObjRenderer(camera, new ObjRenderNode[]{renderNode});
 
