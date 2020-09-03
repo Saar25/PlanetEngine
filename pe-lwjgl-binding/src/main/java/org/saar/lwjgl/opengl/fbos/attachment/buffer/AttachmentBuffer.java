@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.fbos.attachment;
+package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 
 public interface AttachmentBuffer {
 

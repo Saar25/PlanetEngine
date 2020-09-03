@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;

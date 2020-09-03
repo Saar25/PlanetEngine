@@ -2,7 +2,7 @@ package org.saar.lwjgl.opengl.fbos;
 
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
-import org.saar.lwjgl.opengl.fbos.attachment.IColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;

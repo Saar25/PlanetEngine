@@ -5,7 +5,7 @@ import org.saar.core.renderer.r2d.Renderer2D;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;

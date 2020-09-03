@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.IColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FboAttachmentMissingException;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;

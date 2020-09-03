@@ -11,7 +11,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;

@@ -7,7 +7,7 @@ import org.saar.core.model.Model;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.primitive.GlFloat;
 import org.saar.lwjgl.opengl.primitive.GlFloat2;
 import org.saar.lwjgl.opengl.primitive.GlFloat3;

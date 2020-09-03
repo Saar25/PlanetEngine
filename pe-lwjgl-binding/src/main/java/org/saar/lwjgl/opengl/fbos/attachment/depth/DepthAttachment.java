@@ -1,6 +1,11 @@
-package org.saar.lwjgl.opengl.fbos.attachment;
+package org.saar.lwjgl.opengl.fbos.attachment.depth;
 
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
+import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;

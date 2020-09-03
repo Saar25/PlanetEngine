@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.fbos.attachment;
+package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
