@@ -14,10 +14,31 @@ import org.saar.lwjgl.opengl.textures.settings.TextureMipMapSetting;
 public class AttachmentTextureBuffer implements AttachmentBuffer {
 
     private final Texture texture;
+    private final FormatType iFormat;
+    private final FormatType format;
+    private final DataType dataType;
+
+    public AttachmentTextureBuffer() {
+        this(Texture.create(TextureTarget.TEXTURE_2D),
+                FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE);
+    }
 
     public AttachmentTextureBuffer(Texture texture) {
-        this.texture = texture;
+        this(texture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE);
+    }
 
+    public AttachmentTextureBuffer(FormatType iFormat, FormatType format, DataType dataType) {
+        this(Texture.create(TextureTarget.TEXTURE_2D), iFormat, format, dataType);
+    }
+
+    public AttachmentTextureBuffer(Texture texture, FormatType iFormat, FormatType format, DataType dataType) {
+        this.texture = texture;
+        this.iFormat = iFormat;
+        this.format = format;
+        this.dataType = dataType;
+    }
+
+    private void setTextureSettings() {
         getTexture().setSettings(TextureTarget.TEXTURE_2D,
                 new TextureMipMapSetting(),
                 new TextureAnisotropicFilterSetting(4f),
@@ -31,13 +52,15 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
 
     @Override
     public void allocate(int width, int height) {
-        getTexture().allocate(TextureTarget.TEXTURE_2D, 0, FormatType.RGBA8,
-                width, height, 0, FormatType.RGBA, DataType.U_BYTE, null);
+        getTexture().allocate(TextureTarget.TEXTURE_2D, 0, this.iFormat,
+                width, height, 0, this.format, this.dataType, null);
+        setTextureSettings();
     }
 
     @Override
     public void allocateMultisample(int width, int height, int samples) {
-        getTexture().allocateMultisample(samples, FormatType.RGBA8, width, height);
+        getTexture().allocateMultisample(samples, this.iFormat, width, height);
+        setTextureSettings();
     }
 
     @Override
