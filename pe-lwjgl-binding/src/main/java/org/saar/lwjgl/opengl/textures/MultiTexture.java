@@ -10,7 +10,8 @@ public class MultiTexture implements ReadOnlyTexture {
     private final ReadOnlyTexture gTexture; // Green     Texture
     private final ReadOnlyTexture bTexture; // Blue      Texture
 
-    public MultiTexture(ReadOnlyTexture blendMap, ReadOnlyTexture dTexture, ReadOnlyTexture rTexture, ReadOnlyTexture gTexture, ReadOnlyTexture bTexture) {
+    public MultiTexture(ReadOnlyTexture blendMap, ReadOnlyTexture dTexture, ReadOnlyTexture rTexture,
+                        ReadOnlyTexture gTexture, ReadOnlyTexture bTexture) {
         this.blendMap = blendMap;
         this.dTexture = dTexture;
         this.rTexture = rTexture;
@@ -20,11 +21,11 @@ public class MultiTexture implements ReadOnlyTexture {
 
     @Override
     public void bind(int unit) {
-        blendMap.bind(unit);
-        dTexture.bind(unit + 1);
-        rTexture.bind(unit + 2);
-        gTexture.bind(unit + 3);
-        bTexture.bind(unit + 4);
+        this.blendMap.bind(unit);
+        this.dTexture.bind(unit + 1);
+        this.rTexture.bind(unit + 2);
+        this.gTexture.bind(unit + 3);
+        this.bTexture.bind(unit + 4);
     }
 
     @Override
@@ -43,10 +44,10 @@ public class MultiTexture implements ReadOnlyTexture {
     }
 
     private void forEach(Consumer<ReadOnlyTexture> consumer) {
-        consumer.accept(blendMap);
-        consumer.accept(dTexture);
-        consumer.accept(rTexture);
-        consumer.accept(gTexture);
-        consumer.accept(bTexture);
+        consumer.accept(this.blendMap);
+        consumer.accept(this.dTexture);
+        consumer.accept(this.rTexture);
+        consumer.accept(this.gTexture);
+        consumer.accept(this.bTexture);
     }
 }

@@ -98,12 +98,8 @@ public class Texture2D implements ReadOnlyTexture {
      * @param data the texture data
      */
     public void load(IntBuffer data) {
-        /*if (configs.dataType.getBytes() != 4) {
-            throw new IllegalArgumentException("Texture with data type of " +
-                    configs.dataType + " cannot load int buffer");
-        }*/
-        this.texture.load(target, 0, 0, 0, width, height,
-                configs.format, configs.dataType, data);
+        this.texture.load(Texture2D.target, 0, 0, 0, getWidth(),
+                getHeight(), configs.format, configs.dataType, data);
         this.functions.apply(configs);
     }
 
@@ -117,17 +113,13 @@ public class Texture2D implements ReadOnlyTexture {
         this.load(TextureLoader.load(textureFile).getData());
     }
 
-    public ByteBuffer getPixels() {
-        return texture.getPixelsBuffer();
-    }
-
     /**
      * Returns the width of the texture
      *
      * @return the width of the texture
      */
     public int getWidth() {
-        return width;
+        return this.width;
     }
 
     /**
@@ -136,7 +128,7 @@ public class Texture2D implements ReadOnlyTexture {
      * @return the height of the texture
      */
     public int getHeight() {
-        return height;
+        return this.height;
     }
 
     @Override

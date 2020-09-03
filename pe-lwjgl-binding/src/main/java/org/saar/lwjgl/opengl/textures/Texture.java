@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class Texture implements ReadOnlyTexture {
+public class Texture implements ITexture {
 
     private static int activeTexture = 0;
     private static int[] boundTextures = new int[32];
@@ -34,10 +34,6 @@ public class Texture implements ReadOnlyTexture {
         this.bind();
     }
 
-    public static Texture create() {
-        return Texture.create(TextureTarget.TEXTURE_2D);
-    }
-
     public static TextureBuilder builder() {
         return new TextureBuilder();
     }
@@ -45,6 +41,10 @@ public class Texture implements ReadOnlyTexture {
     public static Texture create(TextureTarget target) {
         final int id = GL11.glGenTextures();
         return new Texture(id, target);
+    }
+
+    public static Texture create() {
+        return Texture.create(TextureTarget.TEXTURE_2D);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Texture implements ReadOnlyTexture {
      * @param unit the unit to unbind
      */
     public static void unbind(int unit) {
-        NONE.bind(unit);
+        Texture.NONE.bind(unit);
     }
 
     /**
@@ -76,19 +76,15 @@ public class Texture implements ReadOnlyTexture {
      * @return the functions
      */
     public TextureFunctions getFunctions() {
-        return functions;
+        return this.functions;
     }
 
-    /**
-     * Attaches the texture to the current bound fbo
-     *
-     * @param attachment the attachment of the texture
-     * @param level      the mip map level of texture to attach
-     */
+    @Override
     public void attachToFbo(int attachment, int level) {
         GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, attachment, id, level);
     }
 
+    @Override
     public void allocate(TextureTarget target, int level, FormatType internalFormat, int width,
                          int height, int border, FormatType format, DataType type, ByteBuffer data) {
         bind();
@@ -111,10 +107,18 @@ public class Texture implements ReadOnlyTexture {
     }
 
     public void allocateMultisample(int samples, FormatType iFormat, int width, int height) {
-        bind();
         GL32.glTexImage2DMultisample(target, samples, iFormat.get(), width, height, true);
     }
 
+    @Override
+    public void allocateMultisample(TextureTarget target, int samples, FormatType iFormat,
+                                    int width, int height, boolean fixedSampleLocations) {
+        bind();
+        GL32.glTexImage2DMultisample(target.get(), samples,
+                iFormat.get(), width, height, fixedSampleLocations);
+    }
+
+    @Override
     public void load(TextureTarget target, int level, int xOffset, int yOffset, int width,
                      int height, FormatType format, DataType type, ByteBuffer data) {
         bind();
@@ -131,23 +135,28 @@ public class Texture implements ReadOnlyTexture {
 
     public int getWidth() {
         bind0();
-        return GL11.glGetTexLevelParameteri(target, 0, GL11.GL_TEXTURE_WIDTH);
+        return GL11.glGetTexLevelParameteri(this.target, 0, GL11.GL_TEXTURE_WIDTH);
     }
 
     public int getHeight() {
         bind0();
-        return GL11.glGetTexLevelParameteri(target, 0, GL11.GL_TEXTURE_HEIGHT);
+        return GL11.glGetTexLevelParameteri(this.target, 0, GL11.GL_TEXTURE_HEIGHT);
     }
 
-    public ByteBuffer getPixelsBuffer() {
-        final ByteBuffer byteBuffer = MemoryUtils.allocByte(4 * getWidth() * getHeight());
-        GL11.glGetTexImage(target, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, byteBuffer);
-        return byteBuffer;
+    public void getPixelsBuffer(FormatType format, DataType dataType, ByteBuffer buffer) {
+        GL11.glGetTexImage(this.target, 0, format.get(), dataType.get(), buffer);
+    }
+
+    public ByteBuffer getPixelsBuffer(FormatType format, DataType dataType) {
+        final int size = 4 * getWidth() * getHeight();
+        final ByteBuffer buffer = MemoryUtils.allocByte(size);
+        getPixelsBuffer(format, dataType, buffer);
+        return buffer;
     }
 
     @Override
     public void bind(int unit) {
-        if (GlConfigs.CACHE_STATE || activeTexture != unit) {
+        if (!GlConfigs.CACHE_STATE || activeTexture != unit) {
             activeTexture = unit;
             GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
         }
@@ -156,7 +165,7 @@ public class Texture implements ReadOnlyTexture {
 
     @Override
     public void bind() {
-        if (GlConfigs.CACHE_STATE || boundTextures[activeTexture] != id) {
+        if (!GlConfigs.CACHE_STATE || boundTextures[activeTexture] != id) {
             bind0();
         }
     }

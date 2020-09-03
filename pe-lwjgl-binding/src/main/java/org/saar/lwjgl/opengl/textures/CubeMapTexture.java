@@ -17,7 +17,8 @@ public class CubeMapTexture implements ReadOnlyTexture {
         return new CubeMapTexture(texture);
     }
 
-    public static CubeMapTexture of(TextureInfo px, TextureInfo py, TextureInfo pz, TextureInfo nx, TextureInfo ny, TextureInfo nz) {
+    public static CubeMapTexture of(TextureInfo px, TextureInfo py, TextureInfo pz,
+                                    TextureInfo nx, TextureInfo ny, TextureInfo nz) {
         final Texture texture = Texture.create(TextureTarget.TEXTURE_CUBE_MAP);
         allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_POSITIVE_X, px);
         allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_NEGATIVE_X, nx);
