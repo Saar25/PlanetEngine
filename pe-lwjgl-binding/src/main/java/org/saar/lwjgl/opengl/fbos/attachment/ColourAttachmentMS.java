@@ -53,11 +53,6 @@ public class ColourAttachmentMS implements IColourAttachment, AttachmentMS {
     }
 
     @Override
-    public Texture getTexture() {
-        return null;
-    }
-
-    @Override
     public void init(ReadOnlyFbo fbo) {
         getBuffer().allocateMultisample(fbo.getWidth(), fbo.getHeight(), this.samples);
         getBuffer().attachToFbo(getAttachmentPoint());
