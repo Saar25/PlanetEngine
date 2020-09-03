@@ -8,9 +8,8 @@ public class RenderBuffer {
 
     private static final RenderBuffer NULL = new RenderBuffer(0);
 
-    private static int boundRenderBuffer = 0;
-
     private final int id;
+
     private boolean deleted;
 
     private RenderBuffer(int id) {
@@ -24,23 +23,26 @@ public class RenderBuffer {
 
     public void loadStorage(int width, int height, FormatType iFormat) {
         bind();
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, iFormat.get(), width, height);
+        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER,
+                iFormat.get(), width, height);
     }
 
     public void loadStorageMultisample(int width, int height, FormatType iFormat, int samples) {
         bind();
-        GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, samples, iFormat.get(), width, height);
+        GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER,
+                samples, iFormat.get(), width, height);
     }
 
     public void attachToFbo(int attachment) {
         bind();
-        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, attachment, GL30.GL_RENDERBUFFER, id);
+        GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER,
+                attachment, GL30.GL_RENDERBUFFER, this.id);
     }
 
     public void bind() {
-        if (!GlConfigs.CACHE_STATE || RenderBuffer.boundRenderBuffer != id) {
-            RenderBuffer.boundRenderBuffer = id;
+        if (!GlConfigs.CACHE_STATE || BoundRbo.isBound(this.id)) {
             GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
+            BoundRbo.set(this.id);
         }
     }
 
@@ -49,9 +51,9 @@ public class RenderBuffer {
     }
 
     public void delete() {
-        if (!deleted) {
-            deleted = true;
+        if (!GlConfigs.CACHE_STATE || !this.deleted) {
             GL30.glDeleteRenderbuffers(id);
+            this.deleted = true;
         }
     }
 }
