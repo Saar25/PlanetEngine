@@ -9,6 +9,10 @@ import java.util.List;
 
 public abstract class ScreenBase implements Screen {
 
+    protected void init() {
+        
+    }
+
     @Override
     public int getWidth() {
         return getFbo().getWidth();
