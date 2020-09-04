@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.objects.rbos;
 
 import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.IFormatType;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class RenderBuffer {
@@ -21,13 +21,13 @@ public class RenderBuffer {
         return new RenderBuffer(id);
     }
 
-    public void loadStorage(int width, int height, FormatType iFormat) {
+    public void loadStorage(int width, int height, IFormatType iFormat) {
         bind();
         GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER,
                 iFormat.get(), width, height);
     }
 
-    public void loadStorageMultisample(int width, int height, FormatType iFormat, int samples) {
+    public void loadStorageMultisample(int width, int height, IFormatType iFormat, int samples) {
         bind();
         GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER,
                 samples, iFormat.get(), width, height);

@@ -9,6 +9,7 @@ import org.saar.core.renderer.r3d.RenderNode3D;
 import org.saar.core.renderer.r3d.Renderer3D;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
@@ -59,7 +60,7 @@ public class Renderer3DExample {
         window.init();
 
         colorAttachment = new ColourAttachmentMS(0, AttachmentRenderBuffer.create(FormatType.BGRA), 16);
-        depthAttachment = new DepthAttachmentMS(AttachmentRenderBuffer.create(FormatType.DEPTH_COMPONENT24), 16);
+        depthAttachment = new DepthAttachmentMS(AttachmentRenderBuffer.create(DepthFormatType.COMPONENT24), 16);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
         final ICamera camera = new Camera(projection);

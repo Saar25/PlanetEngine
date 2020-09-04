@@ -1,5 +1,6 @@
 package org.saar.lwjgl.opengl.fbos.attachment.colour;
 
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
@@ -31,7 +32,7 @@ public class ColourAttachment implements IColourAttachment, Attachment {
     }
 
     public static ColourAttachment withRenderBuffer(int index, RenderBuffer texture) {
-        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture);
+        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture, FormatType.RGBA8);
         return new ColourAttachment(index, buffer);
     }
 

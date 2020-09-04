@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment.depth;
 
 import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
@@ -22,25 +23,25 @@ public class DepthAttachmentMS implements IDepthAttachment, AttachmentMS {
         this.samples = samples;
     }
 
-    public static DepthAttachmentMS withTexture(Texture texture, int samples) {
+    public static DepthAttachmentMS withTexture(DepthFormatType format, Texture texture, int samples) {
         final AttachmentBuffer buffer = new AttachmentTextureBuffer(texture,
-                FormatType.DEPTH_COMPONENT, FormatType.DEPTH_COMPONENT24, DataType.U_BYTE);
+                FormatType.DEPTH_COMPONENT, format, DataType.U_BYTE);
         return new DepthAttachmentMS(buffer, samples);
     }
 
-    public static DepthAttachmentMS withTexture(int samples) {
+    public static DepthAttachmentMS withTexture(DepthFormatType format, int samples) {
         final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
-        return DepthAttachmentMS.withTexture(texture, samples);
+        return DepthAttachmentMS.withTexture(format, texture, samples);
     }
 
-    public static DepthAttachmentMS withRenderBuffer(RenderBuffer texture, int samples) {
-        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture, FormatType.DEPTH_COMPONENT24);
+    public static DepthAttachmentMS withRenderBuffer(DepthFormatType format, RenderBuffer texture, int samples) {
+        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture, format);
         return new DepthAttachmentMS(buffer, samples);
     }
 
-    public static DepthAttachmentMS withRenderBuffer(int samples) {
+    public static DepthAttachmentMS withRenderBuffer(DepthFormatType format, int samples) {
         final RenderBuffer texture = RenderBuffer.create();
-        return DepthAttachmentMS.withRenderBuffer(texture, samples);
+        return DepthAttachmentMS.withRenderBuffer(format, texture, samples);
     }
 
     private AttachmentBuffer getBuffer() {

@@ -1,28 +1,19 @@
 package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 
-import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.IFormatType;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 
 public class AttachmentRenderBuffer implements AttachmentBuffer {
 
     private final RenderBuffer renderBuffer;
-    private final FormatType iFormat;
+    private final IFormatType iFormat;
 
-    public AttachmentRenderBuffer(RenderBuffer renderBuffer) {
-        this(renderBuffer, FormatType.RGBA8);
-    }
-
-    public AttachmentRenderBuffer(RenderBuffer renderBuffer, FormatType iFormat) {
+    public AttachmentRenderBuffer(RenderBuffer renderBuffer, IFormatType iFormat) {
         this.renderBuffer = renderBuffer;
         this.iFormat = iFormat;
     }
 
-    public static AttachmentRenderBuffer create() {
-        final RenderBuffer renderBuffer = RenderBuffer.create();
-        return new AttachmentRenderBuffer(renderBuffer);
-    }
-
-    public static AttachmentRenderBuffer create(FormatType iFormat) {
+    public static AttachmentRenderBuffer create(IFormatType iFormat) {
         final RenderBuffer renderBuffer = RenderBuffer.create();
         return new AttachmentRenderBuffer(renderBuffer, iFormat);
     }

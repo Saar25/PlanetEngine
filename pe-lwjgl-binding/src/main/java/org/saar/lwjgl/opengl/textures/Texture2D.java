@@ -2,6 +2,7 @@ package org.saar.lwjgl.opengl.textures;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.IFormatType;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.settings.*;
@@ -80,7 +81,7 @@ public class Texture2D implements ReadOnlyTexture {
     /**
      * Allocates memory for the texture
      */
-    private void allocate(FormatType internalFormat, FormatType format, DataType dataType) {
+    private void allocate(IFormatType internalFormat, IFormatType format, DataType dataType) {
         this.texture.allocate(target, 0, internalFormat, getWidth(),
                 getHeight(), 0, format, dataType, null);
         applySettings();
@@ -93,7 +94,7 @@ public class Texture2D implements ReadOnlyTexture {
      * @param format   the data format
      * @param dataType the data type
      */
-    public void load(ByteBuffer data, FormatType format, DataType dataType) {
+    public void load(ByteBuffer data, IFormatType format, DataType dataType) {
         this.texture.load(Texture2D.target, 0, 0, 0, getWidth(), getHeight(),
                 format, dataType, data);
         applySettings();
