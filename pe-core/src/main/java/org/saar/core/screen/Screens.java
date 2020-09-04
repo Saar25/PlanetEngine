@@ -1,7 +1,7 @@
 package org.saar.core.screen;
 
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.lwjgl.opengl.fbos.IFbo;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 
 import java.util.List;
 
@@ -12,12 +12,12 @@ public final class Screens {
                 + getClass().getSimpleName());
     }
 
-    public static Screen fromPrototype(IFbo fbo, ScreenPrototype prototype) {
-        final List<ScreenImage> screenImages = locateAttachments(prototype);
-        return new ScreenPrototypeWrapper(fbo, screenImages);
-    }
-
-    private static List<ScreenImage> locateAttachments(ScreenPrototype prototype) {
-        return new ScreenImagesLocator(prototype).getScreenImages();
+    public static OffScreen fromPrototype(ScreenPrototype prototype, int width, int height) {
+        final Fbo fbo = Fbo.create(width, height);
+        final ScreenImagesLocator locator = new ScreenImagesLocator(prototype);
+        final List<ScreenImage> readImages = locator.getReadScreenImages();
+        final List<ScreenImage> drawImages = locator.getDrawScreenImages();
+        final List<ScreenImage> screenImages = locator.getScreenImages();
+        return new ScreenPrototypeWrapper(fbo, screenImages, readImages, drawImages);
     }
 }

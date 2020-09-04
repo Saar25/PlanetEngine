@@ -12,7 +12,6 @@ import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,12 +61,20 @@ public class Fbo implements IFbo {
     public void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
         bindAsRead();
         fbo.bindAsDraw();
-        blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0,
-                fbo.getWidth(), fbo.getHeight(), filter, buffers);
+        blitFramebuffer(fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }
 
-    private void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2,
-                                 MagFilterParameter filter, GlBuffer... buffers) {
+    public void blitFramebuffer(int w, int h, MagFilterParameter filter, GlBuffer... buffers) {
+        blitFramebuffer(getWidth(), getHeight(), w, h, filter, buffers);
+    }
+
+    public void blitFramebuffer(int w1, int h1, int w2, int h2, MagFilterParameter filter, GlBuffer... buffers) {
+        blitFramebuffer(0, 0, w1, h1, 0, 0, w2, h2, filter, buffers);
+    }
+
+    @Override
+    public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
+                                int h2, MagFilterParameter filter, GlBuffer... buffers) {
         GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
     }
 
@@ -77,7 +84,12 @@ public class Fbo implements IFbo {
      * @param attachment the read attachment
      */
     public void setReadAttachment(IColourAttachment attachment) {
-        this.readAttachment = attachment;
+        bind();
+        GL11.glReadBuffer(attachment.getAttachmentPoint());
+    }
+
+    private Attachment getReadAttachment() {
+        throw new FboAttachmentMissingException("Read attachment is not set");
     }
 
     /**
@@ -86,31 +98,17 @@ public class Fbo implements IFbo {
      * @param attachments the draw attachments
      */
     public void setDrawAttachments(Attachment... attachments) {
-        this.drawAttachments = Arrays.asList(attachments);
+        bind();
+        setDrawBuffers(attachmentsPoints(attachments));
     }
 
-    private Attachment getReadAttachment() {
-        if (this.readAttachment != null) {
-            return this.readAttachment;
-        }
-        throw new FboAttachmentMissingException("Read attachment is not set");
-    }
-
-    private void readAttachment() {
-        GL11.glReadBuffer(getReadAttachment().getAttachmentPoint());
-    }
-
-    private List<Attachment> getDrawAttachments() {
-        return this.drawAttachments;
-    }
-
-    private void drawAttachments() {
-        final int[] buffer = new int[getDrawAttachments().size()];
-        for (int i = 0; i < getDrawAttachments().size(); i++) {
-            final Attachment attachment = getDrawAttachments().get(i);
+    private static int[] attachmentsPoints(Attachment... attachments) {
+        final int[] buffer = new int[attachments.length];
+        for (int i = 0; i < attachments.length; i++) {
+            final Attachment attachment = attachments[i];
             buffer[i] = attachment.getAttachmentPoint();
         }
-        setDrawBuffers(buffer);
+        return buffer;
     }
 
     private void setDrawBuffers(int... buffers) {
@@ -144,13 +142,11 @@ public class Fbo implements IFbo {
     @Override
     public void bindAsRead() {
         bind(FboTarget.READ_FRAMEBUFFER);
-        readAttachment();
     }
 
     @Override
     public void bindAsDraw() {
         bind(FboTarget.DRAW_FRAMEBUFFER);
-        drawAttachments();
         setViewport();
     }
 
@@ -181,7 +177,6 @@ public class Fbo implements IFbo {
         if (!GlConfigs.CACHE_STATE || BoundFbo.isBound(target, this.id)) {
             bind0(target);
         }
-        setViewport();
     }
 
     public void unbind(FboTarget target) {

@@ -8,12 +8,10 @@ import java.util.List;
 public abstract class ScreenBase implements Screen {
 
     @Override
-    public void resize(int width, int height) {
-        getFbo().bind();
-        getFbo().resize(width, height);
-        for (ScreenImage screenImage : getScreenImages()) {
-            screenImage.init(getFbo());
-        }
+    public void copyTo(Screen other) {
+        setAsRead();
+        other.setAsDraw();
+        getFbo().blitFbo(other.getFbo());
     }
 
     @Override
@@ -26,15 +24,26 @@ public abstract class ScreenBase implements Screen {
         getFbo().bindAsRead();
     }
 
-    @Override
-    public void delete() {
+    protected void resize(int width, int height) {
+        getFbo().bind();
+        getFbo().resize(width, height);
+        for (ScreenImage screenImage : getScreenImages()) {
+            screenImage.init(getFbo());
+        }
+    }
+
+    protected void delete() {
         getFbo().delete();
         for (ScreenImage screenImage : getScreenImages()) {
             screenImage.delete();
         }
     }
 
-    protected abstract IFbo getFbo();
+    public abstract IFbo getFbo();
 
     protected abstract List<ScreenImage> getScreenImages();
+
+    protected abstract List<ScreenImage> getReadScreenImages();
+
+    protected abstract List<ScreenImage> getDrawScreenImages();
 }

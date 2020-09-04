@@ -33,7 +33,7 @@ public class AttachmentRenderBuffer implements AttachmentBuffer {
 
     @Override
     public void allocate(int width, int height) {
-        getRenderBuffer().loadStorage(width, height, FormatType.RGBA8);
+        getRenderBuffer().loadStorage(width, height, this.iFormat);
     }
 
     @Override
