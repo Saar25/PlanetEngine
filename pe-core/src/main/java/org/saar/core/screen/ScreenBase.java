@@ -2,16 +2,29 @@ package org.saar.core.screen;
 
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbos.IFbo;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 import java.util.List;
 
 public abstract class ScreenBase implements Screen {
 
     @Override
+    public int getWidth() {
+        return getFbo().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getFbo().getHeight();
+    }
+
+    @Override
     public void copyTo(Screen other) {
         setAsRead();
         other.setAsDraw();
-        getFbo().blitFbo(other.getFbo());
+        getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, other.getWidth(),
+                other.getHeight(), MagFilterParameter.LINEAR, GlBuffer.COLOUR);
     }
 
     @Override
@@ -39,7 +52,7 @@ public abstract class ScreenBase implements Screen {
         }
     }
 
-    public abstract IFbo getFbo();
+    protected abstract IFbo getFbo();
 
     protected abstract List<ScreenImage> getScreenImages();
 

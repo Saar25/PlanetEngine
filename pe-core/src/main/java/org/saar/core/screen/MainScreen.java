@@ -1,7 +1,8 @@
 package org.saar.core.screen;
 
-import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.ScreenFbo;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 public final class MainScreen implements Screen {
 
@@ -15,14 +16,25 @@ public final class MainScreen implements Screen {
         return MainScreen.instance;
     }
 
-    @Override
-    public IFbo getFbo() {
+    private ScreenFbo getFbo() {
         return ScreenFbo.getInstance();
     }
 
     @Override
+    public int getWidth() {
+        return getFbo().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return getFbo().getHeight();
+    }
+
+    @Override
     public void copyTo(Screen other) {
-        getFbo().blitFbo(other.getFbo());
+        other.setAsDraw();
+        getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, other.getWidth(),
+                other.getHeight(), MagFilterParameter.LINEAR, GlBuffer.COLOUR);
     }
 
     @Override

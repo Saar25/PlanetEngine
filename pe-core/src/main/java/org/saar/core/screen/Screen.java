@@ -1,12 +1,12 @@
 package org.saar.core.screen;
 
-import org.saar.lwjgl.opengl.fbos.DrawableFbo;
-
 public interface Screen {
 
-    void copyTo(Screen other);
+    int getWidth();
 
-    DrawableFbo getFbo();
+    int getHeight();
+
+    void copyTo(Screen other);
 
     void setAsDraw();
 

@@ -32,7 +32,7 @@ public class ScreenPrototypeWrapper extends ScreenBase implements OffScreen {
     }
 
     @Override
-    public IFbo getFbo() {
+    protected IFbo getFbo() {
         return this.fbo;
     }
 
