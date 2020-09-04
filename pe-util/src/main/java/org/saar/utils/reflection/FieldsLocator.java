@@ -18,8 +18,8 @@ public class FieldsLocator {
     public <A extends Annotation> List<Field> filterByAnnotation(
             List<Field> fields, Class<A> annotation, Predicate<A> predicate) {
         final List<Field> filtered = new ArrayList<>(fields);
-        fields.removeIf(field -> field.isAnnotationPresent(annotation) &&
-                predicate.test(field.getAnnotation(annotation)));
+        filtered.removeIf(field -> !field.isAnnotationPresent(annotation) ||
+                !predicate.test(field.getAnnotation(annotation)));
         return filtered;
     }
 
