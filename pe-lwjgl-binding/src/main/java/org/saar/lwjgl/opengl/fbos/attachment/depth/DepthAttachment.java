@@ -1,5 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment.depth;
 
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
@@ -19,7 +21,8 @@ public class DepthAttachment implements IDepthAttachment, Attachment {
     }
 
     public static DepthAttachment withTexture(Texture texture) {
-        final AttachmentBuffer buffer = new AttachmentTextureBuffer(texture);
+        final AttachmentBuffer buffer = new AttachmentTextureBuffer(texture,
+                FormatType.DEPTH_COMPONENT, FormatType.DEPTH_COMPONENT24, DataType.U_BYTE);
         return new DepthAttachment(buffer);
     }
 
@@ -29,7 +32,7 @@ public class DepthAttachment implements IDepthAttachment, Attachment {
     }
 
     public static DepthAttachment withRenderBuffer(RenderBuffer texture) {
-        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture);
+        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture, FormatType.DEPTH_COMPONENT24);
         return new DepthAttachment(buffer);
     }
 
