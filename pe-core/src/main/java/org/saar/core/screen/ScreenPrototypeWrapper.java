@@ -9,16 +9,10 @@ public class ScreenPrototypeWrapper extends ScreenBase implements OffScreen {
 
     private final IFbo fbo;
     private final List<ScreenImage> attachments;
-    private final List<ScreenImage> readAttachments;
-    private final List<ScreenImage> drawAttachments;
 
-    public ScreenPrototypeWrapper(IFbo fbo, List<ScreenImage> attachments,
-                                  List<ScreenImage> readAttachments,
-                                  List<ScreenImage> drawAttachments) {
+    public ScreenPrototypeWrapper(IFbo fbo, List<ScreenImage> attachments) {
         this.fbo = fbo;
         this.attachments = attachments;
-        this.readAttachments = readAttachments;
-        this.drawAttachments = drawAttachments;
     }
 
     @Override
@@ -39,15 +33,5 @@ public class ScreenPrototypeWrapper extends ScreenBase implements OffScreen {
     @Override
     protected List<ScreenImage> getScreenImages() {
         return this.attachments;
-    }
-
-    @Override
-    protected List<ScreenImage> getReadScreenImages() {
-        return this.readAttachments;
-    }
-
-    @Override
-    protected List<ScreenImage> getDrawScreenImages() {
-        return this.drawAttachments;
     }
 }

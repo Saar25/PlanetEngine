@@ -15,9 +15,7 @@ public final class Screens {
     public static OffScreen fromPrototype(ScreenPrototype prototype, int width, int height) {
         final Fbo fbo = Fbo.create(width, height);
         final ScreenImagesLocator locator = new ScreenImagesLocator(prototype);
-        final List<ScreenImage> readImages = locator.getReadScreenImages();
-        final List<ScreenImage> drawImages = locator.getDrawScreenImages();
         final List<ScreenImage> screenImages = locator.getScreenImages();
-        return new ScreenPrototypeWrapper(fbo, screenImages, readImages, drawImages);
+        return new ScreenPrototypeWrapper(fbo, screenImages);
     }
 }

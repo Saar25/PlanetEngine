@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class ScreenBase implements Screen {
 
     protected void init() {
-        
+
     }
 
     @Override
@@ -59,8 +59,4 @@ public abstract class ScreenBase implements Screen {
     protected abstract IFbo getFbo();
 
     protected abstract List<ScreenImage> getScreenImages();
-
-    protected abstract List<ScreenImage> getReadScreenImages();
-
-    protected abstract List<ScreenImage> getDrawScreenImages();
 }
