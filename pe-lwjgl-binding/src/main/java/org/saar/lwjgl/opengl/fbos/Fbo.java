@@ -49,16 +49,11 @@ public class Fbo implements IFbo {
     }
 
     public void blitToScreen() {
-        blitFbo(ScreenFbo.getInstance());
+        final ScreenFbo other = ScreenFbo.getInstance();
+        blitFramebuffer(other, MagFilterParameter.LINEAR, GlBuffer.COLOUR);
     }
 
-    @Override
-    public void blitFbo(DrawableFbo fbo) {
-        blitFbo(fbo, MagFilterParameter.NEAREST, GlBuffer.COLOUR, GlBuffer.DEPTH);
-    }
-
-    @Override
-    public void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
+    public void blitFramebuffer(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
         fbo.bindAsDraw();
         blitFramebuffer(fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }

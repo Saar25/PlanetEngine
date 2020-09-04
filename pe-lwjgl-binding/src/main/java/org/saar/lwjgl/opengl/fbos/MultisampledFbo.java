@@ -36,16 +36,6 @@ public class MultisampledFbo implements IFbo {
     }
 
     @Override
-    public void blitFbo(DrawableFbo fbo) {
-        getFbo().blitFbo(fbo);
-    }
-
-    @Override
-    public void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
-        getFbo().blitFbo(fbo, filter, buffers);
-    }
-
-    @Override
     public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
                                 int h2, MagFilterParameter filter, GlBuffer... buffers) {
         getFbo().blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, buffers);
