@@ -5,7 +5,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachments;
 import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -42,25 +41,25 @@ public class Fbo implements IFbo {
 
     public void blitToScreen() {
         final ScreenFbo other = ScreenFbo.getInstance();
-        blitFramebuffer(other, MagFilterParameter.LINEAR, GlBuffer.COLOUR);
+        blitFramebuffer(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR);
     }
 
-    public void blitFramebuffer(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
+    public void blitFramebuffer(DrawableFbo fbo, FboBlitFilter filter, GlBuffer... buffers) {
         fbo.bindAsDraw();
         blitFramebuffer(fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }
 
-    public void blitFramebuffer(int w, int h, MagFilterParameter filter, GlBuffer... buffers) {
+    public void blitFramebuffer(int w, int h, FboBlitFilter filter, GlBuffer... buffers) {
         blitFramebuffer(getWidth(), getHeight(), w, h, filter, buffers);
     }
 
-    public void blitFramebuffer(int w1, int h1, int w2, int h2, MagFilterParameter filter, GlBuffer... buffers) {
+    public void blitFramebuffer(int w1, int h1, int w2, int h2, FboBlitFilter filter, GlBuffer... buffers) {
         blitFramebuffer(0, 0, w1, h1, 0, 0, w2, h2, filter, buffers);
     }
 
     @Override
     public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
-                                int h2, MagFilterParameter filter, GlBuffer... buffers) {
+                                int h2, FboBlitFilter filter, GlBuffer... buffers) {
         bindAsRead();
         GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
     }

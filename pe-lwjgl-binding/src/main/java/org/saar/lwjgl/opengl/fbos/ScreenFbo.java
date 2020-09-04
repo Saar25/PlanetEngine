@@ -3,7 +3,6 @@ package org.saar.lwjgl.opengl.fbos;
 import org.lwjgl.opengl.GL11;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
@@ -24,7 +23,7 @@ public class ScreenFbo implements IFbo {
 
     @Override
     public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2,
-                                MagFilterParameter filter, GlBuffer... buffers) {
+                                FboBlitFilter filter, GlBuffer... buffers) {
         getFbo().blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, buffers);
     }
 

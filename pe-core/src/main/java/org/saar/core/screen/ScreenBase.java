@@ -1,8 +1,8 @@
 package org.saar.core.screen;
 
 import org.saar.core.screen.image.ScreenImage;
+import org.saar.lwjgl.opengl.fbos.FboBlitFilter;
 import org.saar.lwjgl.opengl.fbos.IFbo;
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public abstract class ScreenBase implements Screen {
         setAsRead();
         other.setAsDraw();
         getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, other.getWidth(),
-                other.getHeight(), MagFilterParameter.LINEAR, GlBuffer.COLOUR);
+                other.getHeight(), FboBlitFilter.LINEAR, GlBuffer.COLOUR);
     }
 
     @Override

@@ -4,7 +4,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
 import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 public class MultisampledFbo implements IFbo {
@@ -37,7 +36,7 @@ public class MultisampledFbo implements IFbo {
 
     @Override
     public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
-                                int h2, MagFilterParameter filter, GlBuffer... buffers) {
+                                int h2, FboBlitFilter filter, GlBuffer... buffers) {
         getFbo().blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, buffers);
     }
 

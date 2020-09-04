@@ -1,6 +1,5 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 public interface IFbo extends ReadOnlyFbo, ReadableFbo, DrawableFbo {
@@ -9,7 +8,7 @@ public interface IFbo extends ReadOnlyFbo, ReadableFbo, DrawableFbo {
      * Blit the fbo into the bound read fbo
      */
     void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
-                         int h2, MagFilterParameter filter, GlBuffer... buffers);
+                         int h2, FboBlitFilter filter, GlBuffer... buffers);
 
     /**
      * Sets the size of the fbo
