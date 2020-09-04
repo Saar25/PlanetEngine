@@ -2,7 +2,7 @@ package org.saar.lwjgl.opengl.constants;
 
 import org.lwjgl.opengl.*;
 
-public enum FormatType {
+public enum FormatType implements IFormatType  {
 
     DEPTH_COMPONENT(GL11.GL_DEPTH_COMPONENT),
     RGBA(GL11.GL_RGBA),
