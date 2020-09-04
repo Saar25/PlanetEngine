@@ -59,7 +59,6 @@ public class Fbo implements IFbo {
 
     @Override
     public void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
-        bindAsRead();
         fbo.bindAsDraw();
         blitFramebuffer(fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }
@@ -75,6 +74,7 @@ public class Fbo implements IFbo {
     @Override
     public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
                                 int h2, MagFilterParameter filter, GlBuffer... buffers) {
+        bindAsRead();
         GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
     }
 

@@ -1,6 +1,5 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
@@ -14,7 +13,7 @@ public interface IFbo extends ReadOnlyFbo, ReadableFbo, DrawableFbo {
     void blitFbo(DrawableFbo fbo, MagFilterParameter filter, GlBuffer... buffers);
 
     /**
-     * Blit the fbo
+     * Blit the fbo into the bound read fbo
      */
     void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
                          int h2, MagFilterParameter filter, GlBuffer... buffers);
@@ -32,10 +31,5 @@ public interface IFbo extends ReadOnlyFbo, ReadableFbo, DrawableFbo {
      * Delete the fbo
      */
     void delete();
-
-    /**
-     * Ensure that the fbo status is good
-     */
-    void ensureStatus() throws FrameBufferException;
 
 }
