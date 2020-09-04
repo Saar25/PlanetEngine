@@ -1,19 +1,14 @@
 package org.saar.lwjgl.opengl.fbos;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbos.attachment.Attachments;
 import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
-import org.saar.lwjgl.opengl.fbos.exceptions.FboAttachmentMissingException;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-
-import java.util.Collections;
-import java.util.List;
 
 public class Fbo implements IFbo {
 
@@ -23,9 +18,6 @@ public class Fbo implements IFbo {
 
     private int width;
     private int height;
-
-    private List<Attachment> drawAttachments = Collections.emptyList();
-    private IColourAttachment readAttachment;
 
     private Fbo(int id, int width, int height) {
         this.id = id;
@@ -80,11 +72,7 @@ public class Fbo implements IFbo {
      */
     public void setReadAttachment(IColourAttachment attachment) {
         bind();
-        GL11.glReadBuffer(attachment.getAttachmentPoint());
-    }
-
-    private Attachment getReadAttachment() {
-        throw new FboAttachmentMissingException("Read attachment is not set");
+        Attachments.readAttachment(attachment);
     }
 
     /**
@@ -94,24 +82,7 @@ public class Fbo implements IFbo {
      */
     public void setDrawAttachments(Attachment... attachments) {
         bind();
-        setDrawBuffers(attachmentsPoints(attachments));
-    }
-
-    private static int[] attachmentsPoints(Attachment... attachments) {
-        final int[] buffer = new int[attachments.length];
-        for (int i = 0; i < attachments.length; i++) {
-            final Attachment attachment = attachments[i];
-            buffer[i] = attachment.getAttachmentPoint();
-        }
-        return buffer;
-    }
-
-    private void setDrawBuffers(int... buffers) {
-        if (buffers.length == 1) {
-            GL11.glDrawBuffer(buffers[0]);
-        } else if (buffers.length > 1) {
-            GL20.glDrawBuffers(buffers);
-        }
+        Attachments.drawAttachments(attachments);
     }
 
     private void setViewport() {

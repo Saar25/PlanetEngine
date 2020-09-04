@@ -32,6 +32,7 @@ public final class MainScreen implements Screen {
 
     @Override
     public void copyTo(Screen other) {
+        setAsRead();
         other.setAsDraw();
         getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, other.getWidth(),
                 other.getHeight(), MagFilterParameter.LINEAR, GlBuffer.COLOUR);
