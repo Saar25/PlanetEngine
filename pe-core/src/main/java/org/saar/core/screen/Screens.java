@@ -16,6 +16,7 @@ public final class Screens {
         final Fbo fbo = Fbo.create(width, height);
         final ScreenImagesLocator locator = new ScreenImagesLocator(prototype);
         final List<ScreenImage> screenImages = locator.getScreenImages();
+        screenImages.forEach(i -> fbo.addAttachment(i.getAttachment()));
         return new ScreenPrototypeWrapper(fbo, screenImages);
     }
 }

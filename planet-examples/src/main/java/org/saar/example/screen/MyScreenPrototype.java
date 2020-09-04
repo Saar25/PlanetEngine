@@ -11,8 +11,8 @@ import org.saar.lwjgl.opengl.fbos.attachment.depth.DepthAttachmentMS;
 public class MyScreenPrototype implements ScreenPrototype {
 
     @ScreenImageProperty
-    private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachmentMS.withTexture(0, 16));
+    private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachmentMS.withRenderBuffer(0, 16));
 
     @ScreenImageProperty
-    private final ScreenImage depthImage = new DepthScreenImageBase(DepthAttachmentMS.withTexture(16));
+    private final ScreenImage depthImage = new DepthScreenImageBase(DepthAttachmentMS.withRenderBuffer(16));
 }
