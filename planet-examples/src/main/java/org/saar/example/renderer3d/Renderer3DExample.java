@@ -1,12 +1,11 @@
 package org.saar.example.renderer3d;
 
-import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.renderer.r3d.RenderNode3D;
 import org.saar.core.renderer.r3d.Renderer3D;
+import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
@@ -17,7 +16,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
 import org.saar.lwjgl.opengl.fbos.attachment.depth.DepthAttachmentMS;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.Rotation;
 import org.saar.maths.utils.Quaternion;
@@ -76,7 +74,7 @@ public class Renderer3DExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
 //            renderNode.update();
-            move(camera, keyboard);
+            ExamplesUtils.move(camera, keyboard);
             renderer.render();
 
             window.pollEvents();
@@ -96,37 +94,6 @@ public class Renderer3DExample {
         colorAttachment.delete();
         depthAttachment.delete();
         window.destroy();
-    }
-
-    private static void move(ICamera camera, Keyboard keyboard) {
-        final Vector3f toMove = Vector3.zero();
-        final Vector3f toRotate = Vector3.zero();
-        if (keyboard.isKeyPressed('W')) {
-            toMove.add(0, 0, 1);
-        }
-        if (keyboard.isKeyPressed('A')) {
-            toMove.add(1, 0, 0);
-        }
-        if (keyboard.isKeyPressed('S')) {
-            toMove.add(0, 0, -1);
-        }
-        if (keyboard.isKeyPressed('D')) {
-            toMove.add(-1, 0, 0);
-        }
-        if (keyboard.isKeyPressed('Q')) {
-            toRotate.add(0, .5f, 0);
-        }
-        if (keyboard.isKeyPressed('E')) {
-            toRotate.add(0, -.5f, 0);
-        }
-        if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            toMove.add(0, -1, 0);
-        }
-        if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            toMove.add(0, 1, 0);
-        }
-        camera.getTransform().getPosition().add(toMove.rotate(camera.getTransform().getRotation().getValue()).mul(-1));
-        camera.getTransform().addRotation(Angle.degrees(toRotate.x), Angle.degrees(toRotate.y), Angle.degrees(toRotate.z));
     }
 
     private static RenderNode3D[] renderNode3D() {
