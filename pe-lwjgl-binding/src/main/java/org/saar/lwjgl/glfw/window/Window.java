@@ -328,4 +328,11 @@ public class Window {
         Window.current = this;
         GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
+
+    /**
+     * Destroy the window and free all resources allocated in its context
+     */
+    public void destroy() {
+        GLFW.glfwDestroyWindow(this.id);
+    }
 }
