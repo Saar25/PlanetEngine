@@ -1,4 +1,4 @@
-package org.saar.core.renderer.r3d;
+package org.saar.core.common.r3d;
 
 import org.joml.Vector3fc;
 import org.saar.core.model.Vertex;

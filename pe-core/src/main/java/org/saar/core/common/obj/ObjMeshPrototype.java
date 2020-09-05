@@ -1,4 +1,4 @@
-package org.saar.core.renderer.obj;
+package org.saar.core.common.obj;
 
 public class ObjMeshPrototype {
 

@@ -1,4 +1,4 @@
-package org.saar.core.renderer.r2d;
+package org.saar.core.common.r2d;
 
 import org.saar.core.node.Node;
 

@@ -1,4 +1,4 @@
-package org.saar.core.renderer.obj;
+package org.saar.core.common.obj;
 
 import org.saar.core.model.ElementsModel;
 import org.saar.core.model.loader.AbstractModelBuffers;

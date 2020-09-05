@@ -1,7 +1,7 @@
 package org.saar.example.renderer3d;
 
 import org.joml.Vector3fc;
-import org.saar.core.renderer.r3d.Vertex3D;
+import org.saar.core.common.r3d.Vertex3D;
 
 public class MyVertex implements Vertex3D {
 

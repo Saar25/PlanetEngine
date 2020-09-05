@@ -1,4 +1,4 @@
-package org.saar.core.renderer.r3d;
+package org.saar.core.common.r3d;
 
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;

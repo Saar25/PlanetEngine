@@ -2,7 +2,7 @@ package org.saar.example.obj;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
-import org.saar.core.renderer.obj.ObjVertexPrototype;
+import org.saar.core.common.obj.ObjVertexPrototype;
 
 public class MyVertex implements ObjVertexPrototype {
 

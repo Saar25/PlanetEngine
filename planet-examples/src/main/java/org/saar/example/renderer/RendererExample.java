@@ -1,7 +1,7 @@
 package org.saar.example.renderer;
 
-import org.saar.core.renderer.r2d.RenderNode2D;
-import org.saar.core.renderer.r2d.Renderer2D;
+import org.saar.core.common.r2d.RenderNode2D;
+import org.saar.core.common.r2d.Renderer2D;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;

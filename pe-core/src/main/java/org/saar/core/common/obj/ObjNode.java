@@ -1,4 +1,4 @@
-package org.saar.core.renderer.obj;
+package org.saar.core.common.obj;
 
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;

@@ -1,7 +1,7 @@
 package org.saar.example.deferred;
 
+import org.saar.core.common.obj.ObjNode;
 import org.saar.core.node.AbstractNode;
-import org.saar.core.renderer.obj.ObjNode;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.objects.Transform;
 

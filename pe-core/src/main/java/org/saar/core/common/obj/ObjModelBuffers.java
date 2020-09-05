@@ -1,4 +1,4 @@
-package org.saar.core.renderer.obj;
+package org.saar.core.common.obj;
 
 import org.saar.core.model.loader.ModelBuffers;
 import org.saar.lwjgl.opengl.constants.DataType;
