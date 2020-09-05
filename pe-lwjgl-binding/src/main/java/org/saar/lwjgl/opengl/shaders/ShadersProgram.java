@@ -2,10 +2,9 @@ package org.saar.lwjgl.opengl.shaders;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class ShadersProgram {
-
-    private static int boundProgram = 0;
 
     private final int id;
 
@@ -65,32 +64,27 @@ public class ShadersProgram {
     }
 
     public int getUniformLocation(String name) {
-        this.bind0();
-        return GL20.glGetUniformLocation(id, name);
+        return GL20.glGetUniformLocation(this.id, name);
     }
 
     public void bind() {
-        if (boundProgram != id) {
-            boundProgram = id;
-            bind0();
+        if (!GlConfigs.CACHE_STATE || !BoundProgram.isBound(this.id)) {
+            GL20.glUseProgram(this.id);
+            BoundProgram.set(this.id);
         }
     }
 
-    private void bind0() {
-        GL20.glUseProgram(id);
-    }
-
     public void unbind() {
-        if (boundProgram != 0) {
+        if (!GlConfigs.CACHE_STATE || !BoundProgram.isBound(0)) {
             GL20.glUseProgram(0);
-            boundProgram = 0;
+            BoundProgram.set(0);
         }
     }
 
     public void delete() {
-        if (!deleted) {
+        if (!this.deleted) {
             GL20.glDeleteProgram(id);
-            deleted = true;
+            this.deleted = true;
         }
     }
 
