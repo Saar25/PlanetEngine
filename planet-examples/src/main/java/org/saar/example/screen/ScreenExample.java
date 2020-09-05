@@ -11,6 +11,8 @@ import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.fbos.IFbo;
+import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -45,8 +47,9 @@ public class ScreenExample {
 
         final ObjRenderer renderer = new ObjRenderer(camera, new ObjRenderNode[]{renderNode});
 
+        final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-        final OffScreen screen = Screens.fromPrototype(screenPrototype, WIDTH, HEIGHT);
+        final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

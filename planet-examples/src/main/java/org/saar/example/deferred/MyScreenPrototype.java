@@ -12,11 +12,11 @@ import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 
 public class MyScreenPrototype implements ScreenPrototype {
 
-    @ScreenImageProperty(draw = true)
+    @ScreenImageProperty(draw = true, read = true)
     private final ScreenImage colourImage = new ColourScreenImageBase(
             ColourAttachment.withRenderBuffer(0, FormatType.RGBA8));
 
-    @ScreenImageProperty(draw = true, read = true)
+    @ScreenImageProperty(draw = true)
     private final ScreenImage normalImage = new ColourScreenImageBase(
             ColourAttachment.withRenderBuffer(1, FormatType.RGBA8));
 
