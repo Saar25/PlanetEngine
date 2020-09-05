@@ -45,13 +45,14 @@ class ObjDeferredRenderer(private val camera: ICamera, private val renderNodes: 
         private val vertex: Shader = Shader.createVertex(
                 "/shaders/obj/vertex.glsl")
         private val fragment: Shader = Shader.createFragment(
-                "/shaders/obj/fragment.glsl")
+                "/shaders/obj/fragmentDeferred.glsl")
         private val shadersProgram: ShadersProgram =
                 ShadersProgram.create(vertex, fragment)
     }
 
     init {
         shadersProgram.bindAttributes("in_position", "in_uvCoord", "in_normal")
+        shadersProgram.bindFragmentOutputs("f_colour", "f_normal")
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.enableCulling()
