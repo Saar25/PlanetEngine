@@ -9,9 +9,9 @@ uniform sampler2D texture;
 
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
-layout (location = 1) out vec3 f_normal;
+layout (location = 1) out vec4 f_normal;
 
 void main(void) {
     f_colour = texture(texture, v_uvCoord);
-    f_normal = v_normal;
+    f_normal = vec4(v_normal, 1);
 }
