@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.shaders;
 
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 public class ShadersProgram {
 
@@ -50,6 +51,16 @@ public class ShadersProgram {
     public void bindAttributes(String... names) {
         for (String name : names) {
             bindAttribute(name);
+        }
+    }
+
+    public void bindFragmentOutput(int location, String name) {
+        GL30.glBindFragDataLocation(this.id, location, name);
+    }
+
+    public void bindFragmentOutputs(String... names) {
+        for (int i = 0; i < names.length; i++) {
+            bindFragmentOutput(i, names[i]);
         }
     }
 
