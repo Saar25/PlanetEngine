@@ -95,6 +95,7 @@ public class Renderer3DExample {
         renderer.delete();
         colorAttachment.delete();
         depthAttachment.delete();
+        window.destroy();
     }
 
     private static void move(ICamera camera, Keyboard keyboard) {

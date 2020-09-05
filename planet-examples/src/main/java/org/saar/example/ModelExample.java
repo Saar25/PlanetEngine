@@ -62,6 +62,7 @@ public class ModelExample {
         fbo.delete();
         model.delete();
         attachment.delete();
+        window.destroy();
     }
 
 }

@@ -63,6 +63,7 @@ public class PrimitiveExample {
         fbo.delete();
         model.delete();
         attachment.delete();
+        window.destroy();
     }
 
 }

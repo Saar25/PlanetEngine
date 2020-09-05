@@ -72,6 +72,7 @@ public class IndexedModelExample {
         fbo.delete();
         model.delete();
         attachment.delete();
+        window.destroy();
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

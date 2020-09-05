@@ -81,6 +81,7 @@ public class ObjRendererExample {
         renderer.delete();
         fbo.delete();
         colorAttachment.delete();
+        window.destroy();
     }
 
     private static void move(ICamera camera, Keyboard keyboard) {

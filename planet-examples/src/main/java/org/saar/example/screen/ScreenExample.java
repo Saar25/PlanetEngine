@@ -73,6 +73,7 @@ public class ScreenExample {
 
         renderer.delete();
         screen.delete();
+        window.destroy();
     }
 
     private static void move(ICamera camera, Keyboard keyboard) {

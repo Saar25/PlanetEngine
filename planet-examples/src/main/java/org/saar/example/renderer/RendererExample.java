@@ -62,6 +62,7 @@ public class RendererExample {
         fbo.delete();
         renderNode.delete();
         attachment.delete();
+        window.destroy();
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

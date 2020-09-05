@@ -48,6 +48,8 @@ public class Example {
             window.update(true);
             window.pollEvents();
         }
+
+        window.destroy();
     }
 
 }

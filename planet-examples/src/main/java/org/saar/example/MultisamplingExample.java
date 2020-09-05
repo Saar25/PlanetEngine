@@ -65,6 +65,7 @@ public class MultisamplingExample {
         fbo.delete();
         vao.delete();
         attachment.delete();
+        window.destroy();
     }
 
 }

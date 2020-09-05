@@ -72,6 +72,7 @@ public class InstancedModelExample {
         fbo.delete();
         vao.delete();
         attachment.delete();
+        window.destroy();
     }
 
 }
