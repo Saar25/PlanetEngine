@@ -1,19 +1,16 @@
-package org.saar.lwjgl.opengl.fbos.attachment.depth;
+package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
-import org.saar.lwjgl.opengl.textures.TextureTarget;
 
-public class DepthAttachment implements IDepthAttachment, Attachment {
+public class DepthAttachment implements Attachment {
 
     private final AttachmentBuffer buffer;
 
@@ -21,25 +18,18 @@ public class DepthAttachment implements IDepthAttachment, Attachment {
         this.buffer = buffer;
     }
 
-    public static DepthAttachment withTexture(Texture texture) {
-        final AttachmentBuffer buffer = new AttachmentTextureBuffer(texture,
-                FormatType.DEPTH_COMPONENT, DepthFormatType.COMPONENT24, DataType.U_BYTE);
+    public static DepthAttachment withTexture(Texture texture, DepthFormatType iFormat, DataType dataType) {
+        final AttachmentTextureBuffer buffer = new AttachmentTextureBuffer(
+                texture, iFormat, FormatType.DEPTH_COMPONENT, dataType);
         return new DepthAttachment(buffer);
     }
 
-    public static DepthAttachment withTexture() {
-        final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
-        return DepthAttachment.withTexture(texture);
+    public static DepthAttachment withRenderBuffer(RenderBuffer renderBuffer, DepthFormatType iFormat) {
+        return new DepthAttachment(new AttachmentRenderBuffer(renderBuffer, iFormat));
     }
 
-    public static DepthAttachment withRenderBuffer(RenderBuffer texture) {
-        final AttachmentBuffer buffer = new AttachmentRenderBuffer(texture, DepthFormatType.COMPONENT24);
-        return new DepthAttachment(buffer);
-    }
-
-    public static DepthAttachment withRenderBuffer() {
-        final RenderBuffer texture = RenderBuffer.create();
-        return DepthAttachment.withRenderBuffer(texture);
+    public static DepthAttachment withRenderBuffer(DepthFormatType iFormat) {
+        return DepthAttachment.withRenderBuffer(RenderBuffer.create(), iFormat);
     }
 
     private AttachmentBuffer getBuffer() {
@@ -54,6 +44,12 @@ public class DepthAttachment implements IDepthAttachment, Attachment {
     @Override
     public void init(ReadOnlyFbo fbo) {
         getBuffer().allocate(fbo.getWidth(), fbo.getHeight());
+        getBuffer().attachToFbo(getAttachmentPoint());
+    }
+
+    @Override
+    public void initMS(ReadOnlyFbo fbo, int samples) {
+        getBuffer().allocateMultisample(fbo.getWidth(), fbo.getHeight(), samples);
         getBuffer().attachToFbo(getAttachmentPoint());
     }
 

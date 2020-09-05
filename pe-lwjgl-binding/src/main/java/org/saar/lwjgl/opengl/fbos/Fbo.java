@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.fbos;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.Attachments;
-import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
@@ -69,7 +69,7 @@ public class Fbo implements IFbo {
      *
      * @param attachment the read attachment
      */
-    public void setReadAttachment(IColourAttachment attachment) {
+    public void setReadAttachment(ColourAttachment attachment) {
         bind();
         Attachments.readAttachment(attachment);
     }

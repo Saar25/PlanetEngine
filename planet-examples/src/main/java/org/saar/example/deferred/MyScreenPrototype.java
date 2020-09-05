@@ -6,20 +6,21 @@ import org.saar.core.screen.image.ColourScreenImageBase;
 import org.saar.core.screen.image.DepthScreenImageBase;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
-import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
-import org.saar.lwjgl.opengl.fbos.attachment.depth.DepthAttachmentMS;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 
 public class MyScreenPrototype implements ScreenPrototype {
 
     @ScreenImageProperty(draw = true)
     private final ScreenImage colourImage = new ColourScreenImageBase(
-            ColourAttachmentMS.withRenderBuffer(0, 16));
+            ColourAttachment.withRenderBuffer(0, FormatType.RGBA8));
 
     @ScreenImageProperty(draw = true, read = true)
     private final ScreenImage normalImage = new ColourScreenImageBase(
-            ColourAttachmentMS.withRenderBuffer(1, 16));
+            ColourAttachment.withRenderBuffer(1, FormatType.RGBA8));
 
     @ScreenImageProperty
     private final ScreenImage depthImage = new DepthScreenImageBase(
-            DepthAttachmentMS.withRenderBuffer(DepthFormatType.COMPONENT24, 16));
+            DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24));
 }

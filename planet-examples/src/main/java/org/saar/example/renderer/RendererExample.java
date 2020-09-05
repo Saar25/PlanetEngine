@@ -4,8 +4,9 @@ import org.saar.core.renderer.r2d.RenderNode2D;
 import org.saar.core.renderer.r2d.Renderer2D;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
@@ -16,13 +17,13 @@ public class RendererExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static ColourAttachmentMS attachment;
+    private static ColourAttachment attachment;
 
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        attachment = ColourAttachmentMS.withRenderBuffer(0, 16);
+        attachment = ColourAttachment.withRenderBuffer(0, FormatType.RGBA8);
 
         final float a = 0.7f, b = 0.3f;
         final int[] indices = {0, 1, 2, 0, 2, 3};
@@ -66,7 +67,7 @@ public class RendererExample {
     }
 
     private static MultisampledFbo createFbo(int width, int height) {
-        final MultisampledFbo fbo = new MultisampledFbo(width, height);
+        final MultisampledFbo fbo = new MultisampledFbo(width, height, 16);
         fbo.setDrawAttachments(attachment);
         fbo.setReadAttachment(attachment);
         fbo.addAttachment(attachment);

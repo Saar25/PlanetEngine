@@ -11,9 +11,8 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
-import org.saar.lwjgl.opengl.fbos.attachment.colour.ColourAttachmentMS;
-import org.saar.lwjgl.opengl.fbos.attachment.depth.DepthAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
@@ -50,15 +49,15 @@ public class Renderer3DExample {
             3, 7, 4, 3, 4, 0, // bottom , PV: 3
     };
 
-    private static ColourAttachmentMS colorAttachment;
-    private static DepthAttachmentMS depthAttachment;
+    private static ColourAttachment colorAttachment;
+    private static DepthAttachment depthAttachment;
 
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
-        colorAttachment = new ColourAttachmentMS(0, AttachmentRenderBuffer.create(FormatType.BGRA), 16);
-        depthAttachment = new DepthAttachmentMS(AttachmentRenderBuffer.create(DepthFormatType.COMPONENT24), 16);
+        colorAttachment = ColourAttachment.withRenderBuffer(0, FormatType.RGBA8);
+        depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
         final ICamera camera = new Camera(projection);
@@ -117,7 +116,7 @@ public class Renderer3DExample {
     }
 
     private static MultisampledFbo createFbo(int width, int height) {
-        final MultisampledFbo fbo = new MultisampledFbo(width, height);
+        final MultisampledFbo fbo = new MultisampledFbo(width, height, 16);
         fbo.addAttachment(depthAttachment);
         fbo.addAttachment(colorAttachment);
         fbo.setReadAttachment(colorAttachment);

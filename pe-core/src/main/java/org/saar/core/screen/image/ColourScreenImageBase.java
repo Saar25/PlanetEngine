@@ -1,17 +1,17 @@
 package org.saar.core.screen.image;
 
-import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 
 public class ColourScreenImageBase extends ScreenImageBase implements ColourScreenImage {
 
-    private final IColourAttachment attachment;
+    private final ColourAttachment attachment;
 
-    public ColourScreenImageBase(IColourAttachment attachment) {
+    public ColourScreenImageBase(ColourAttachment attachment) {
         this.attachment = attachment;
     }
 
     @Override
-    public IColourAttachment getAttachment() {
+    public ColourAttachment getAttachment() {
         return this.attachment;
     }
 }

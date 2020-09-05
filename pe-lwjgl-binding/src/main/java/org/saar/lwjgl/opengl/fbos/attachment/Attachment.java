@@ -8,6 +8,8 @@ public interface Attachment {
 
     void init(ReadOnlyFbo fbo);
 
+    void initMS(ReadOnlyFbo fbo, int samples);
+
     void delete();
 
 }

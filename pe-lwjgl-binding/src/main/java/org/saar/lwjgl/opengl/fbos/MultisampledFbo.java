@@ -1,24 +1,25 @@
 package org.saar.lwjgl.opengl.fbos;
 
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentMS;
-import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 public class MultisampledFbo implements IFbo {
 
     private final Fbo fbo;
+    private final int samples;
 
-    public MultisampledFbo(int width, int height) {
+    public MultisampledFbo(int width, int height, int samples) {
         this.fbo = Fbo.create(width, height);
+        this.samples = samples;
     }
 
     private Fbo getFbo() {
         return fbo;
     }
 
-    public void setReadAttachment(IColourAttachment attachment) {
+    public void setReadAttachment(ColourAttachment attachment) {
         getFbo().setReadAttachment(attachment);
     }
 
@@ -26,8 +27,9 @@ public class MultisampledFbo implements IFbo {
         getFbo().setDrawAttachments(attachments);
     }
 
-    public void addAttachment(AttachmentMS attachment) {
-        getFbo().addAttachment(attachment);
+    public void addAttachment(Attachment attachment) {
+        bind();
+        attachment.initMS(this, this.samples);
     }
 
     public void blitToScreen() {

@@ -3,7 +3,7 @@ package org.saar.core.screen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.fbos.attachment.colour.IColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public final class Screens {
         }
     }
 
-    private static IColourAttachment[] toColourAttachments(List<ColourScreenImage> images) {
-        return images.stream().map(ColourScreenImage::getAttachment).toArray(IColourAttachment[]::new);
+    private static ColourAttachment[] toColourAttachments(List<ColourScreenImage> images) {
+        return images.stream().map(ColourScreenImage::getAttachment).toArray(ColourAttachment[]::new);
     }
 }
