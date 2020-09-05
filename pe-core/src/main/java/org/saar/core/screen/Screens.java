@@ -35,7 +35,6 @@ public final class Screens {
     }
 
     private static void addReadAttachments(Fbo fbo, ScreenImagesLocator locator) {
-        System.out.println(locator.getReadScreenImages());
         final List<ColourScreenImage> readScreenImages = locator.getReadScreenImages();
         if (readScreenImages.size() > 0) {
             fbo.setReadAttachment(readScreenImages.get(0).getAttachment());

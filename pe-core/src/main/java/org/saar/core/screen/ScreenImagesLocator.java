@@ -25,7 +25,6 @@ public final class ScreenImagesLocator {
 
     public List<ColourScreenImage> getDrawScreenImage() {
         final List<Field> fields = filterAnnotated(ScreenImageProperty::draw);
-        System.out.println(fields);
         return fieldsLocator.getValues(ColourScreenImage.class, fields);
     }
 
