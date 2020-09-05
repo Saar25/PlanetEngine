@@ -19,14 +19,17 @@ public class MultisampledFbo implements IFbo {
         return fbo;
     }
 
+    @Override
     public void setReadAttachment(ColourAttachment attachment) {
         getFbo().setReadAttachment(attachment);
     }
 
+    @Override
     public void setDrawAttachments(Attachment... attachments) {
         getFbo().setDrawAttachments(attachments);
     }
 
+    @Override
     public void addAttachment(Attachment attachment) {
         bind();
         attachment.initMS(this, this.samples);

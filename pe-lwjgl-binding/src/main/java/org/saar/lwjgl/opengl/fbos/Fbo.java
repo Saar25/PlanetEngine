@@ -29,14 +29,22 @@ public class Fbo implements IFbo {
         return new Fbo(id, width, height);
     }
 
-    /**
-     * Adds an attachment to the fbo
-     *
-     * @param attachment the attachment to add
-     */
+    @Override
     public void addAttachment(Attachment attachment) {
         bind();
         attachment.init(this);
+    }
+
+    @Override
+    public void setReadAttachment(ColourAttachment attachment) {
+        bind();
+        Attachments.readAttachment(attachment);
+    }
+
+    @Override
+    public void setDrawAttachments(Attachment... attachments) {
+        bind();
+        Attachments.drawAttachments(attachments);
     }
 
     public void blitToScreen() {
@@ -62,26 +70,6 @@ public class Fbo implements IFbo {
                                 int h2, FboBlitFilter filter, GlBuffer... buffers) {
         bindAsRead();
         GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
-    }
-
-    /**
-     * Sets the read attachments of the fbo
-     *
-     * @param attachment the read attachment
-     */
-    public void setReadAttachment(ColourAttachment attachment) {
-        bind();
-        Attachments.readAttachment(attachment);
-    }
-
-    /**
-     * Sets the draw attachments of the fbo
-     *
-     * @param attachments the draw attachments
-     */
-    public void setDrawAttachments(Attachment... attachments) {
-        bind();
-        Attachments.drawAttachments(attachments);
     }
 
     private void setViewport() {
