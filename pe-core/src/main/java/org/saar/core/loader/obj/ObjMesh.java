@@ -1,4 +1,4 @@
-package org.saar.core.common.obj;
+package org.saar.core.loader.obj;
 
 import org.saar.core.model.Mesh;
 import org.saar.core.model.vertex.ModelIndices;

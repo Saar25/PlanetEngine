@@ -1,4 +1,4 @@
-package org.saar.core.common.obj;
+package org.saar.core.loader.obj;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
