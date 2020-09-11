@@ -33,9 +33,9 @@ public class PrimitiveModelBuffers extends AbstractModelBuffers {
     }
 
     public void load(PrimitiveVertex[] vertices, int[] indices, PrimitiveNode[] instances) {
-        ModelWriters.writeNodes(this.writer, instances);
-        ModelWriters.writeVertices(this.writer, vertices);
-        ModelWriters.writeIndices(this.writer, indices);
+        if (instances != null) ModelWriters.writeNodes(this.writer, instances);
+        if (vertices != null) ModelWriters.writeVertices(this.writer, vertices);
+        if (indices != null) ModelWriters.writeIndices(this.writer, indices);
 
         updateBuffers();
         deleteBuffers();
