@@ -26,11 +26,11 @@ public final class Primitives {
         return new PrimitiveNode(properties.toArray(new GlPrimitive[0]));
     }
 
-    public static PrimitiveVertex[] verticesFromPrototypes(PrimitivePrototype[] prototypes) {
+    public static PrimitiveVertex[] verticesFromPrototypes(PrimitivePrototype... prototypes) {
         return Arrays.stream(prototypes).map(Primitives::vertexFromPrototype).toArray(PrimitiveVertex[]::new);
     }
 
-    public static PrimitiveNode[] nodesFromPrototypes(PrimitivePrototype[] prototypes) {
+    public static PrimitiveNode[] nodesFromPrototypes(PrimitivePrototype... prototypes) {
         return Arrays.stream(prototypes).map(Primitives::nodeFromPrototype).toArray(PrimitiveNode[]::new);
     }
 }
