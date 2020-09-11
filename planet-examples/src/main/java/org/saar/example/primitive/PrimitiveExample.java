@@ -1,8 +1,9 @@
-package org.saar.example;
+package org.saar.example.primitive;
 
 import org.saar.core.common.primitive.PrimitiveModelLoader;
 import org.saar.core.common.primitive.PrimitiveNode;
 import org.saar.core.common.primitive.PrimitiveVertex;
+import org.saar.core.common.primitive.Primitives;
 import org.saar.core.model.Model;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -24,16 +25,16 @@ public class PrimitiveExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final PrimitiveVertex[] vertices = {
-                new PrimitiveVertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
-                new PrimitiveVertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
-                new PrimitiveVertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
-        };
-        final PrimitiveNode[] nodes = new PrimitiveNode[]{
-                new PrimitiveNode(GlFloat.of(+0.5f)),
-                new PrimitiveNode(GlFloat.of(+0.1f)),
-                new PrimitiveNode(GlFloat.of(+0.2f))
-        };
+        final PrimitiveVertex[] vertices = Primitives.verticesFromPrototypes(
+                new MyVertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
+                new MyVertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
+                new MyVertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
+        );
+        final PrimitiveNode[] nodes = Primitives.nodesFromPrototypes(
+                new MyNode(GlFloat.of(+0.5f)),
+                new MyNode(GlFloat.of(+0.1f)),
+                new MyNode(GlFloat.of(+0.2f))
+        );
 
         final Model model = new PrimitiveModelLoader(vertices, nodes).createModel();
 
