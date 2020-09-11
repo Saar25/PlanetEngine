@@ -1,31 +1,48 @@
 package org.saar.core.common.primitive;
 
-import org.saar.core.model.loader.ModelBuffersSingleVbo;
+import org.saar.core.model.InstancedElementsModel;
+import org.saar.core.model.Model;
+import org.saar.core.model.loader.AbstractModelBuffers;
+import org.saar.core.model.loader.ModelBuffer;
+import org.saar.core.model.loader.ModelWriters;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.primitive.GlPrimitive;
+import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 
-public class PrimitiveModelBuffers extends ModelBuffersSingleVbo<PrimitiveNode, PrimitiveVertex> {
+public class PrimitiveModelBuffers extends AbstractModelBuffers {
+
+    private final Model model;
+
+    private final PrimitiveModelWriter writer;
 
     public PrimitiveModelBuffers(int vertices, int indices, int instances, Attribute[] vertexAttributes, Attribute[] instanceAttributes) {
-        super(vertices, indices, instances, vertexAttributes, instanceAttributes);
+        final ModelBuffer instanceBuffer = loadDataBuffer(new DataBuffer(
+                VboUsage.STATIC_DRAW), instances, instanceAttributes);
+        final ModelBuffer vertexBuffer = loadDataBuffer(new DataBuffer(
+                VboUsage.STATIC_DRAW), vertices, vertexAttributes);
+        final ModelBuffer indexBuffer = loadIndexBuffer(new IndexBuffer(
+                VboUsage.STATIC_DRAW), indices);
+
+        this.writer = new PrimitiveModelWriter(instanceBuffer.getWriter(),
+                vertexBuffer.getWriter(), indexBuffer.getWriter());
+
+        this.model = new InstancedElementsModel(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
+    }
+
+    public void load(PrimitiveVertex[] vertices, int[] indices, PrimitiveNode[] instances) {
+        ModelWriters.writeNodes(this.writer, instances);
+        ModelWriters.writeVertices(this.writer, vertices);
+        ModelWriters.writeIndices(this.writer, indices);
+
+        updateBuffers();
+        deleteBuffers();
     }
 
     @Override
-    public void writeInstance(PrimitiveNode instance) {
-        for (GlPrimitive value : instance.getValues()) {
-            value.write(instanceWriter());
-        }
-    }
-
-    @Override
-    public void writeVertex(PrimitiveVertex vertex) {
-        for (GlPrimitive value : vertex.getValues()) {
-            value.write(vertexWriter());
-        }
-    }
-
-    @Override
-    public void writeIndex(int index) {
-        indexWriter().write(index);
+    public Model getModel() {
+        return this.model;
     }
 }
