@@ -4,6 +4,4 @@ public interface RenderPass {
 
     void render();
 
-    RenderPassOutput getOutput();
-
 }
