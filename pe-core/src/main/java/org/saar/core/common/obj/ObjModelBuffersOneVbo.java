@@ -21,10 +21,16 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers<IObjNode, IObjVe
     private final ModelBuffer vertexBuffer;
     private final ModelBuffer indexBuffer;
 
+    private final ObjModelWriter writer;
+
     public ObjModelBuffersOneVbo(int vertices, int indices) {
         this.vertexBuffer = loadDataBuffer(new DataBuffer(VboUsage.STATIC_DRAW), vertices, vertexAttributes);
         this.indexBuffer = loadIndexBuffer(new IndexBuffer(VboUsage.STATIC_DRAW), indices);
         this.model = new ElementsModel(vao, RenderMode.TRIANGLES, indices, DataType.U_INT);
+
+        this.writer = new ObjModelWriter(
+                this.vertexBuffer.getWriter(), this.vertexBuffer.getWriter(),
+                this.vertexBuffer.getWriter(), this.indexBuffer.getWriter());
     }
 
     @Override
@@ -33,14 +39,12 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers<IObjNode, IObjVe
 
     @Override
     public void writeVertex(IObjVertex vertex) {
-        this.vertexBuffer.getWriter().write(vertex.getPosition3f());
-        this.vertexBuffer.getWriter().write(vertex.getUvCoord2f());
-        this.vertexBuffer.getWriter().write(vertex.getNormal3f());
+        this.writer.writeVertex(vertex);
     }
 
     @Override
     public void writeIndex(int index) {
-        this.indexBuffer.getWriter().write(index);
+        this.writer.writeIndex(index);
     }
 
     @Override
