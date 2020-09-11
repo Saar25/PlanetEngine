@@ -2,9 +2,9 @@ package org.saar.example.obj;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
-import org.saar.core.common.obj.ObjVertexPrototype;
+import org.saar.core.common.obj.IObjVertex;
 
-public class MyVertex implements ObjVertexPrototype {
+public class MyVertex implements IObjVertex {
 
     private final Vector3fc position;
     private final Vector2fc uvCoord;

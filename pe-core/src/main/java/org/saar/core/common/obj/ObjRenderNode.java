@@ -9,18 +9,18 @@ import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.objects.Transform;
 
-public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
+public class ObjRenderNode extends AbstractNode implements RenderNode, IObjNode {
 
     private final ObjModelBuffers mesh;
-    private final ObjNode instance;
+    private final IObjNode instance;
 
-    public ObjRenderNode(ObjVertexPrototype[] vertices, int[] indices, ObjNode instance) {
+    public ObjRenderNode(IObjVertex[] vertices, int[] indices, IObjNode instance) {
         this.mesh = new ObjModelBuffersOneVbo(vertices.length, indices.length);
         this.mesh.load(vertices, indices);
         this.instance = instance;
     }
 
-    public static ObjRenderNode load(String objFile, ObjNode node) throws Exception {
+    public static ObjRenderNode load(String objFile, IObjNode node) throws Exception {
         final AssimpData mesh = AssimpUtil.load(objFile);
         return new ObjRenderNode(toVertices(mesh), toIndices(mesh), node);
     }

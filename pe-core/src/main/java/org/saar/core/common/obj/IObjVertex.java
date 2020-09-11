@@ -4,7 +4,7 @@ import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.saar.core.model.Vertex;
 
-public interface ObjVertexPrototype extends Vertex {
+public interface IObjVertex extends Vertex {
 
     Vector3fc getPosition3f();
 

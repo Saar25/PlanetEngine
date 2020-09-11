@@ -3,7 +3,7 @@ package org.saar.core.common.obj;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 
-public class ObjVertex implements ObjVertexPrototype {
+public class ObjVertex implements IObjVertex {
 
     private final Vector3fc position;
     private final Vector2fc uvCoord;

@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 
-public class ObjModelBuffersOneVbo extends AbstractModelBuffers<ObjNode, ObjVertexPrototype> implements ObjModelBuffers {
+public class ObjModelBuffersOneVbo extends AbstractModelBuffers<IObjNode, IObjVertex> implements ObjModelBuffers {
 
     private static final Attribute[] vertexAttributes = {
             positionAttribute, uvCoordAttribute, normalAttribute
@@ -28,11 +28,11 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers<ObjNode, ObjVert
     }
 
     @Override
-    public void writeInstance(ObjNode instance) {
+    public void writeInstance(IObjNode instance) {
     }
 
     @Override
-    public void writeVertex(ObjVertexPrototype vertex) {
+    public void writeVertex(IObjVertex vertex) {
         this.vertexBuffer.getWriter().write(vertex.getPosition3f());
         this.vertexBuffer.getWriter().write(vertex.getUvCoord2f());
         this.vertexBuffer.getWriter().write(vertex.getNormal3f());
@@ -44,7 +44,7 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers<ObjNode, ObjVert
     }
 
     @Override
-    public void load(ObjVertexPrototype[] vertices, int[] indices) {
+    public void load(IObjVertex[] vertices, int[] indices) {
         writeVertices(vertices);
         writeIndices(indices);
         updateBuffers();
