@@ -4,7 +4,7 @@ import org.saar.core.model.loader.ModelIndexWriter;
 import org.saar.core.model.loader.ModelVertexWriter;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
-public class ObjModelWriter implements ModelVertexWriter<IObjVertex>, ModelIndexWriter {
+public class ObjModelWriter implements ModelVertexWriter<ObjVertex>, ModelIndexWriter {
 
     private final BufferWriter positionWriter;
     private final BufferWriter uvCoordWriter;
@@ -20,7 +20,7 @@ public class ObjModelWriter implements ModelVertexWriter<IObjVertex>, ModelIndex
     }
 
     @Override
-    public void writeVertex(IObjVertex vertex) {
+    public void writeVertex(ObjVertex vertex) {
         this.positionWriter.write(vertex.getPosition3f());
         this.uvCoordWriter.write(vertex.getUvCoord2f());
         this.normalWriter.write(vertex.getNormal3f());

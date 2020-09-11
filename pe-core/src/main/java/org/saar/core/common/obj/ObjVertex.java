@@ -2,31 +2,14 @@ package org.saar.core.common.obj;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
+import org.saar.core.model.Vertex;
 
-public class ObjVertex implements IObjVertex {
+public interface ObjVertex extends Vertex {
 
-    private final Vector3fc position;
-    private final Vector2fc uvCoord;
-    private final Vector3fc normal;
+    Vector3fc getPosition3f();
 
-    public ObjVertex(Vector3fc position, Vector2fc uvCoord, Vector3fc normal) {
-        this.position = position;
-        this.uvCoord = uvCoord;
-        this.normal = normal;
-    }
+    Vector2fc getUvCoord2f();
 
-    @Override
-    public Vector3fc getPosition3f() {
-        return this.position;
-    }
+    Vector3fc getNormal3f();
 
-    @Override
-    public Vector2fc getUvCoord2f() {
-        return this.uvCoord;
-    }
-
-    @Override
-    public Vector3fc getNormal3f() {
-        return this.normal;
-    }
 }

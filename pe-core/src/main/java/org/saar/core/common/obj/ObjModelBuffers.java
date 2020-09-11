@@ -12,6 +12,6 @@ interface ObjModelBuffers extends ModelBuffers {
 
     Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
 
-    void load(IObjVertex[] vertices, int[] indices);
+    void load(ObjVertex[] vertices, int[] indices);
 
 }

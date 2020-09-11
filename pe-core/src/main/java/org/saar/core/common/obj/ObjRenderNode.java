@@ -9,18 +9,18 @@ import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.objects.Transform;
 
-public class ObjRenderNode extends AbstractNode implements RenderNode, IObjNode {
+public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
 
     private final ObjModelBuffers mesh;
-    private final IObjNode instance;
+    private final ObjNode instance;
 
-    public ObjRenderNode(IObjVertex[] vertices, int[] indices, IObjNode instance) {
+    public ObjRenderNode(ObjVertex[] vertices, int[] indices, ObjNode instance) {
         this.mesh = new ObjModelBuffersOneVbo(vertices.length, indices.length);
         this.mesh.load(vertices, indices);
         this.instance = instance;
     }
 
-    public static ObjRenderNode load(String objFile, IObjNode node) throws Exception {
+    public static ObjRenderNode load(String objFile, ObjNode node) throws Exception {
         final AssimpData mesh = AssimpUtil.load(objFile);
         return new ObjRenderNode(toVertices(mesh), toIndices(mesh), node);
     }
@@ -33,14 +33,14 @@ public class ObjRenderNode extends AbstractNode implements RenderNode, IObjNode 
         return indices;
     }
 
-    private static ObjVertex[] toVertices(AssimpData mesh) {
+    private static ObjVertexBase[] toVertices(AssimpData mesh) {
         final int vertexCount = mesh.getPositions().length;
-        final ObjVertex[] vertices = new ObjVertex[vertexCount];
+        final ObjVertexBase[] vertices = new ObjVertexBase[vertexCount];
         for (int i = 0; i < vertexCount; i++) {
             final Vector3fc position = mesh.getPositions()[i].getValue();
             final Vector2fc uvCoord = mesh.getUvCoords()[i].getValue();
             final Vector3fc normal = mesh.getNormals()[i].getValue();
-            vertices[i] = new ObjVertex(position, uvCoord, normal);
+            vertices[i] = new ObjVertexBase(position, uvCoord, normal);
         }
         return vertices;
     }

@@ -1,17 +1,20 @@
-package org.saar.example.deferred;
+package org.saar.core.common.obj;
 
-import org.saar.core.common.obj.ObjNode;
 import org.saar.core.node.AbstractNode;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.objects.Transform;
 
-public class MyNode extends AbstractNode implements ObjNode {
+public class ObjNodeBase extends AbstractNode implements ObjNode {
 
-    private final Transform transform = new Transform();
-
+    private final Transform transform;
     private final ReadOnlyTexture texture;
 
-    public MyNode(ReadOnlyTexture texture) {
+    public ObjNodeBase(ReadOnlyTexture texture) {
+        this(new Transform(), texture);
+    }
+
+    public ObjNodeBase(Transform transform, ReadOnlyTexture texture) {
+        this.transform = transform;
         this.texture = texture;
     }
 

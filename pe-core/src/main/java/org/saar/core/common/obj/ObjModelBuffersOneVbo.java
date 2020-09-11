@@ -32,7 +32,7 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers implements ObjMo
     }
 
     @Override
-    public void load(IObjVertex[] vertices, int[] indices) {
+    public void load(ObjVertex[] vertices, int[] indices) {
         ModelWriters.writeVertices(this.writer, vertices);
         ModelWriters.writeIndices(this.writer, indices);
 
