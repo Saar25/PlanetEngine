@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.saar.lwjgl.glfw.input.Keyboard;
 import org.saar.lwjgl.glfw.input.Mouse;
+import org.saar.lwjgl.glfw.window.hint.*;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class Window {
@@ -42,17 +43,18 @@ public class Window {
         windowBuilder.setContextVersion(3, 2);
         windowBuilder.setOpenGLProfile(GLFW.GLFW_OPENGL_CORE_PROFILE);
         windowBuilder.setOpenGLForwardCompatibility(true);
+        final WindowHint[] hints = {
+                new WindowHintVisible(false),
+                new WindowHintResizeable(true),
+                new WindowHintContextVersion(3, 2),
+                new WindowHintOpenGlProfile(OpenGlProfileType.CORE),
+                new WindowHintOpenGlForwardCompatibility(true)
+        };
         return windowBuilder;
     }
 
-    public static Window create(String title, int width, int height, boolean vSync, WindowHintGroup hints) {
-        GLFW.glfwDefaultWindowHints();
-        hints.getHints().forEach(Window::setHint);
-        return new Window(title, width, height, vSync);
-    }
-
     public static Window create(String title, int width, int height, boolean vSync) {
-        return Window.create(title, width, height, vSync, new WindowHintGroup());
+        return new Window(title, width, height, vSync);
     }
 
     /**
@@ -75,10 +77,10 @@ public class Window {
         }
 
         GLFW.glfwDefaultWindowHints();
-        setHint(WindowHint.CONTEXT_VERSION_MAJOR, 3);
-        setHint(WindowHint.CONTEXT_VERSION_MINOR, 2);
-        setHint(WindowHint.OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-        setHint(WindowHint.OPENGL_FORWARD_COMPAT, true);
+        setHint(WindowHintType.CONTEXT_VERSION_MAJOR, 3);
+        setHint(WindowHintType.CONTEXT_VERSION_MINOR, 2);
+        setHint(WindowHintType.OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
+        setHint(WindowHintType.OPENGL_FORWARD_COMPAT, true);
 
         // Create the window
         id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
@@ -110,11 +112,11 @@ public class Window {
         this.keyboard = new Keyboard(this.id);
     }
 
-    private static void setHint(WindowHint hint, int value) {
+    private static void setHint(WindowHintType hint, int value) {
         GLFW.glfwWindowHint(hint.get(), value);
     }
 
-    private static void setHint(WindowHint hint, boolean value) {
+    private static void setHint(WindowHintType hint, boolean value) {
         GLFW.glfwWindowHint(hint.get(), value ? 1 : 0);
     }
 
