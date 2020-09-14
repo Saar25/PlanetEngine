@@ -4,7 +4,7 @@ import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.Renderer
-import org.saar.core.renderer.annotations.StageUniformProperty
+import org.saar.core.renderer.annotations.InstanceUniformProperty
 import org.saar.lwjgl.opengl.shaders.RenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
@@ -14,10 +14,11 @@ import org.saar.maths.utils.Matrix4
 
 class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<RenderNode3D>) : AbstractRenderer(shadersProgram), Renderer {
 
-    @StageUniformProperty
-    private val viewProjectionUniform = object : UniformMat4Property<Any>("viewProjectionMatrix") {
-        override fun getUniformValue(state: RenderState<Any>?): Matrix4fc {
+    @InstanceUniformProperty
+    private val mvpMatrixUniform = object : UniformMat4Property<RenderNode3D>("mvpMatrix") {
+        override fun getUniformValue(state: RenderState<RenderNode3D>): Matrix4fc {
             return camera.projection.matrix.mul(camera.viewMatrix, matrix)
+                    .mul(state.instance.transform.transformationMatrix)
         }
     }
 
@@ -41,8 +42,9 @@ class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<R
     }
 
     override fun onRender() {
-        viewProjectionUniform.load(null)
         for (renderNode3D in this.renderNodes3D) {
+            val renderState = RenderState(renderNode3D)
+            mvpMatrixUniform.load(renderState)
             renderNode3D.render()
         }
     }
