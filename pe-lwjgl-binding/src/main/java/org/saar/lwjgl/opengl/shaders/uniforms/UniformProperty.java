@@ -1,15 +1,14 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import org.saar.lwjgl.opengl.shaders.RenderState;
+import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public interface UniformProperty<T> {
 
-    void load(RenderState<T> state);
-
     void initialize(ShadersProgram shadersProgram);
 
-    default boolean valueAvailable() {
-        return true;
-    }
+    void loadOnInstance(InstanceRenderState<T> state);
+
+    void loadOnStage(StageRenderState state);
 }

@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.lwjgl.opengl.GL20;
-import org.saar.lwjgl.opengl.shaders.RenderState;
+import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shaders.StageRenderState;
 import org.saar.lwjgl.opengl.textures.MultiTexture;
-import org.saar.lwjgl.opengl.textures.Texture;
 
 public abstract class UniformMultiTextureProperty<T> implements UniformProperty<T> {
 
@@ -25,21 +25,35 @@ public abstract class UniformMultiTextureProperty<T> implements UniformProperty<
         this.unit = unit;
     }
 
-    @Override
-    public void load(RenderState<T> state) {
-        if (valueAvailable()) {
-            Texture.bind(getUniformValue(state), unit);
+    public void load(MultiTexture value) {
+        if (value != null) {
+            value.bind(unit);
         }
     }
 
     @Override
-    public void initialize(ShadersProgram shadersProgram) {
-        GL20.glUniform1i(shadersProgram.getUniformLocation(blendMap), unit);
-        GL20.glUniform1i(shadersProgram.getUniformLocation(dTexture), unit + 1);
-        GL20.glUniform1i(shadersProgram.getUniformLocation(rTexture), unit + 2);
-        GL20.glUniform1i(shadersProgram.getUniformLocation(gTexture), unit + 3);
-        GL20.glUniform1i(shadersProgram.getUniformLocation(bTexture), unit + 4);
+    public void loadOnInstance(InstanceRenderState<T> state) {
+        load(getInstanceValue(state));
     }
 
-    protected abstract MultiTexture getUniformValue(RenderState<T> renderState);
+    @Override
+    public void loadOnStage(StageRenderState state) {
+        load(getStageValue(state));
+    }
+
+    @Override
+    public void initialize(ShadersProgram shadersProgram) {
+        final String[] textures = {blendMap, dTexture, rTexture, gTexture, bTexture};
+        for (int i = 0; i < textures.length; i++) {
+            GL20.glUniform1i(shadersProgram.getUniformLocation(textures[i]), unit + i);
+        }
+    }
+
+    public MultiTexture getInstanceValue(InstanceRenderState<T> state) {
+        return null;
+    }
+
+    public MultiTexture getStageValue(StageRenderState state) {
+        return null;
+    }
 }

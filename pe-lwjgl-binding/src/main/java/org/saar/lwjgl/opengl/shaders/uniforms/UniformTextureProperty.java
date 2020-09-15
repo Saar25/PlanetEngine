@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.lwjgl.opengl.GL20;
-import org.saar.lwjgl.opengl.shaders.RenderState;
+import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shaders.StageRenderState;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture;
 
 public abstract class UniformTextureProperty<T> implements UniformProperty<T> {
 
@@ -16,19 +16,32 @@ public abstract class UniformTextureProperty<T> implements UniformProperty<T> {
         this.unit = unit;
     }
 
-    @Override
-    public void load(RenderState<T> state) {
-        if (valueAvailable()) {
-            Texture.bind(getUniformValue(state), unit);
+    public void load(ReadOnlyTexture value) {
+        if (value != null) {
+            value.bind(unit);
         }
+    }
+
+    @Override
+    public void loadOnInstance(InstanceRenderState<T> state) {
+        load(getInstanceValue(state));
+    }
+
+    @Override
+    public void loadOnStage(StageRenderState state) {
+        load(getStageValue(state));
     }
 
     @Override
     public void initialize(ShadersProgram shadersProgram) {
-        if (name.charAt(0) != '#') {
-            GL20.glUniform1i(shadersProgram.getUniformLocation(name), unit);
-        }
+        GL20.glUniform1i(shadersProgram.getUniformLocation(name), unit);
     }
 
-    public abstract ReadOnlyTexture getUniformValue(RenderState<T> state);
+    public ReadOnlyTexture getInstanceValue(InstanceRenderState<T> state) {
+        return null;
+    }
+
+    public ReadOnlyTexture getStageValue(StageRenderState state) {
+        return null;
+    }
 }

@@ -1,7 +1,8 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import org.saar.lwjgl.opengl.shaders.RenderState;
+import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +31,16 @@ public class UniformArrayProperty<T> implements UniformProperty<T> {
     }
 
     @Override
-    public void load(RenderState<T> state) {
-        if (valueAvailable()) {
-            for (int i = 0; i < length; i++) {
-                uniforms.get(i).load(state);
-            }
+    public void loadOnStage(StageRenderState state) {
+        for (int i = 0; i < length; i++) {
+            uniforms.get(i).loadOnStage(state);
+        }
+    }
+
+    @Override
+    public void loadOnInstance(InstanceRenderState<T> state) {
+        for (int i = 0; i < length; i++) {
+            uniforms.get(i).loadOnInstance(state);
         }
     }
 

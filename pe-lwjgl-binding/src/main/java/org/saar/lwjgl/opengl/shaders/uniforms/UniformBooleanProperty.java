@@ -1,7 +1,8 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import org.saar.lwjgl.opengl.shaders.RenderState;
 import org.lwjgl.opengl.GL20;
+import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
+import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public abstract class UniformBooleanProperty<T> extends AbstractUniformProperty<T> {
 
@@ -9,13 +10,25 @@ public abstract class UniformBooleanProperty<T> extends AbstractUniformProperty<
         super(name);
     }
 
-    @Override
-    public void load(RenderState<T> state) {
-        if (valueAvailable()) {
-            final boolean value = getUniformValue(state);
-            GL20.glUniform1i(getLocation(), value ? 1 : 0);
-        }
+    public void load(boolean value) {
+        GL20.glUniform1i(getLocation(), value ? 1 : 0);
     }
 
-    public abstract boolean getUniformValue(RenderState<T> state);
+    @Override
+    public void loadOnInstance(InstanceRenderState<T> state) {
+        load(getInstanceValue(state));
+    }
+
+    @Override
+    public void loadOnStage(StageRenderState state) {
+        load(getStageValue(state));
+    }
+
+    public boolean getInstanceValue(InstanceRenderState<T> state) {
+        return false;
+    }
+
+    public boolean getStageValue(StageRenderState state) {
+        return false;
+    }
 }

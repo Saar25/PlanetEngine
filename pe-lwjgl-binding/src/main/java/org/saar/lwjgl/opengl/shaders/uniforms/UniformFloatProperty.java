@@ -1,7 +1,8 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import org.saar.lwjgl.opengl.shaders.RenderState;
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
+import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public abstract class UniformFloatProperty<T> extends AbstractUniformProperty<T> {
 
@@ -9,14 +10,25 @@ public abstract class UniformFloatProperty<T> extends AbstractUniformProperty<T>
         super(name);
     }
 
-    @Override
-    public void load(RenderState<T> state) {
-        if (valueAvailable()) {
-            final float value = getUniformValue(state);
-            GL20.glUniform1f(getLocation(), value);
-        }
+    public void load(float value) {
+        GL30.glUniform1f(getLocation(), value);
     }
 
-    public abstract float getUniformValue(RenderState<T> state);
+    @Override
+    public void loadOnInstance(InstanceRenderState<T> state) {
+        load(getInstanceValue(state));
+    }
 
+    @Override
+    public void loadOnStage(StageRenderState state) {
+        load(getStageValue(state));
+    }
+
+    public float getInstanceValue(InstanceRenderState<T> state) {
+        return 0f;
+    }
+
+    public float getStageValue(StageRenderState state) {
+        return 0f;
+    }
 }

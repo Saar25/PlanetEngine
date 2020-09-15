@@ -1,4 +1,4 @@
-package org.saar.core.renderer.annotations;
+package org.saar.core.renderer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface InstanceUniformProperty {
+public @interface AUniformProperty {
 
 }

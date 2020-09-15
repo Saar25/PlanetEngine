@@ -10,32 +10,22 @@ public abstract class AbstractRenderer implements Renderer {
 
     private final ShadersProgram shadersProgram;
 
-    private final List<UniformProperty<?>> stageUniformProperties = new LinkedList<>();
-    private final List<UniformProperty<?>> InstanceUniformProperties = new LinkedList<>();
+    private final List<UniformProperty<?>> uniformProperties = new LinkedList<>();
 
     public AbstractRenderer(ShadersProgram shadersProgram) {
         this.shadersProgram = shadersProgram;
     }
 
     protected final void init() {
-        for (UniformProperty<?> uniform : Renderers.findInstanceUniformProperties(this)) {
-            addInstanceUniformProperty(uniform);
-        }
-        for (UniformProperty<?> uniform : Renderers.findStageUniformProperties(this)) {
-            addStageUniformProperty(uniform);
+        for (UniformProperty<?> uniform : Renderers.findUniformProperties(this)) {
+            addUniformProperty(uniform);
         }
     }
 
-    protected final void addStageUniformProperty(UniformProperty<?> uniform) {
+    protected final void addUniformProperty(UniformProperty<?> uniform) {
         this.shadersProgram.bind();
         uniform.initialize(this.shadersProgram);
-        this.stageUniformProperties.add(uniform);
-    }
-
-    protected final void addInstanceUniformProperty(UniformProperty<?> uniform) {
-        this.shadersProgram.bind();
-        uniform.initialize(this.shadersProgram);
-        this.InstanceUniformProperties.add(uniform);
+        this.uniformProperties.add(uniform);
     }
 
     @Override
