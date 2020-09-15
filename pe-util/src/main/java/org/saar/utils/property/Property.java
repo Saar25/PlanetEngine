@@ -6,9 +6,9 @@ public interface Property<T> extends ReadOnlyProperty<T> {
 
     void unbind();
 
-    void bindBidirectional(Property<? extends T> observable);
+    void bindBidirectional(Property<T> observable);
 
-    void unbindBidirectional(Property<? extends T> observable);
+    void unbindBidirectional(Property<T> observable);
 
     void setValue(T value);
 }
