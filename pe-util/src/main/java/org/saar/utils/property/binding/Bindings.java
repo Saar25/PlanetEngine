@@ -10,11 +10,11 @@ public final class Bindings {
                 + getClass().getSimpleName());
     }
 
-    public static <T> void bind(Property<T> property1, ReadOnlyProperty<T> property2) {
+    public static <T> void bind(Property<T> property1, ReadOnlyProperty<? extends T> property2) {
         property2.addListener(UnidirectionalBinding.bind(property1));
     }
 
-    public static <T> void unbind(Property<T> property1, ReadOnlyProperty<T> property2) {
+    public static <T> void unbind(Property<T> property1, ReadOnlyProperty<? extends T> property2) {
         property2.removeListener(UnidirectionalBinding.bind(property1));
     }
 
