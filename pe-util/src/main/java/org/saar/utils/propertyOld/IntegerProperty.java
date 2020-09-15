@@ -1,4 +1,4 @@
-package org.saar.utils.property;
+package org.saar.utils.propertyOld;
 
 public class IntegerProperty extends AbstractProperty<Integer> implements Property<Integer> {
 

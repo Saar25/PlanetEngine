@@ -1,4 +1,4 @@
-package org.saar.utils.property;
+package org.saar.utils.propertyOld;
 
 public interface Property<T> extends ReadOnlyProperty<T>, Observable<T> {
 

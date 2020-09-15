@@ -1,4 +1,4 @@
-package org.saar.utils.property;
+package org.saar.utils.propertyOld;
 
 public class DoubleProperty extends AbstractProperty<Double> implements Property<Double> {
 

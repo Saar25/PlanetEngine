@@ -1,4 +1,4 @@
-package org.saar.utils.property;
+package org.saar.utils.propertyOld;
 
 public class ObjectProperty<T> extends AbstractProperty<T> implements Property<T> {
 
