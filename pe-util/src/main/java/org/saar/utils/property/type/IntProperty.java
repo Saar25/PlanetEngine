@@ -42,10 +42,10 @@ public class IntProperty extends ReadOnlyIntProperty implements Property<Integer
 
     @Override
     public void setValue(Integer value) {
-        setValue(value.intValue());
+        set(value);
     }
 
-    public void setValue(int value) {
+    public void set(int value) {
         if (get() != value) {
             final ChangeEventBase<Integer> event = new ChangeEventBase<>(this, this.value, value);
 

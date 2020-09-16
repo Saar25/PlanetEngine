@@ -42,10 +42,10 @@ public class FloatProperty extends ReadOnlyFloatProperty implements Property<Flo
 
     @Override
     public void setValue(Float value) {
-        setValue(value.floatValue());
+        set(value);
     }
 
-    public void setValue(float value) {
+    public void set(float value) {
         if (get() != value) {
             final ChangeEventBase<Float> event = new ChangeEventBase<>(this, this.value, value);
 
