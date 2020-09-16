@@ -84,7 +84,7 @@ public abstract class ListenersHelper<T> {
             }
             final List<ChangeListener<? super T>> listeners =
                     new ArrayList<>(this.listeners);
-            listeners.remove(listener);
+            listeners.removeIf(listener::equals);
 
             return new Generic<>(listeners);
         }
