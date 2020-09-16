@@ -41,7 +41,7 @@ public abstract class UnidirectionalBinding<T> implements ChangeListener<T> {
         }
 
         @Override
-        public void onChange(ChangeEvent<T> e) {
+        public void onChange(ChangeEvent<? extends T> e) {
             getProperty().setValue(e.getNewValue());
         }
     }

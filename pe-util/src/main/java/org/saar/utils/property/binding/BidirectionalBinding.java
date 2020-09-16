@@ -52,11 +52,11 @@ public abstract class BidirectionalBinding<T> implements ChangeListener<T> {
         }
 
         @Override
-        public void onChange(ChangeEvent<T> e) {
+        public void onChange(ChangeEvent<? extends T> e) {
             if (!this.updating) {
                 this.updating = true;
 
-                if (getProperty1() == e.getObservable()) {
+                if (getProperty1() == e.getProperty()) {
                     getProperty2().setValue(e.getNewValue());
                 } else {
                     getProperty1().setValue(e.getNewValue());
