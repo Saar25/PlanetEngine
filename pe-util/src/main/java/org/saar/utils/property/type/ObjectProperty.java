@@ -1,22 +1,19 @@
 package org.saar.utils.property.type;
 
-import org.saar.utils.property.ChangeListener;
+import org.saar.utils.property.ChangeEvent;
 import org.saar.utils.property.Property;
 import org.saar.utils.property.ReadOnlyProperty;
 import org.saar.utils.property.binding.Bindings;
 
-public class ObjectProperty<T> implements Property<T> {
+public class ObjectProperty<T> extends ReadOnlyObjectProperty<T> implements Property<T> {
 
     private ReadOnlyProperty<? extends T> bound = null;
 
-    private T value;
-
     public ObjectProperty() {
-        this.value = null;
     }
 
     public ObjectProperty(T value) {
-        this.value = value;
+        super(value);
     }
 
     @Override
@@ -44,23 +41,12 @@ public class ObjectProperty<T> implements Property<T> {
     }
 
     @Override
-    public void addListener(ChangeListener<? super T> l) {
-        // TODO: add listeners
-    }
-
-    @Override
-    public void removeListener(ChangeListener<? super T> l) {
-        // TODO: add listeners
-    }
-
-    @Override
-    public T getValue() {
-        return this.value;
-    }
-
-    @Override
     public void setValue(T value) {
-        this.value = value;
-        // TODO: invoke listeners
+        if (this.value != value) {
+            final ChangeEvent<T> event = new ChangeEvent<>(this, this.value, value);
+
+            this.value = value;
+            this.helper.fireEvent(event);
+        }
     }
 }
