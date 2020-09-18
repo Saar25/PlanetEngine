@@ -12,7 +12,7 @@ public class ObjMesh implements Mesh {
     private final ObjModelBuffers buffers;
 
     public ObjMesh(ObjVertex[] vertices, int[] indices) {
-        this.buffers = new ObjModelBuffersOneVbo(vertices.length, indices.length);
+        this.buffers = ObjModelBuffers.singleDataBuffer(vertices.length, indices.length);
         this.buffers.load(vertices, indices);
     }
 

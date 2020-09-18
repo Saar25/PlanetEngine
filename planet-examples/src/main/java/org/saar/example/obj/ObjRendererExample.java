@@ -28,7 +28,7 @@ public class ObjRendererExample {
     private static DepthAttachment depthAttachment;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
+        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
         colorAttachment = ColourAttachment.withRenderBuffer(0, FormatType.RGBA8);
@@ -58,6 +58,7 @@ public class ObjRendererExample {
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
         final Keyboard keyboard = window.getKeyboard();
+        long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             fbo.bind();
 
@@ -74,6 +75,10 @@ public class ObjRendererExample {
                 fbo.delete();
                 fbo = createFbo(window.getWidth(), window.getHeight());
             }
+
+            System.out.print("\rFps: " +
+                    1000f / (-current + (current = System.currentTimeMillis()))
+            );
         }
 
         renderer.delete();
