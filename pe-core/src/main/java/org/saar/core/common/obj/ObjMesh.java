@@ -29,14 +29,14 @@ public class ObjMesh implements Mesh {
         return indices;
     }
 
-    private static ObjVertexBase[] toVertices(AssimpData mesh) {
+    private static ObjVertex[] toVertices(AssimpData mesh) {
         final int vertexCount = mesh.getPositions().length;
-        final ObjVertexBase[] vertices = new ObjVertexBase[vertexCount];
+        final ObjVertex[] vertices = new ObjVertex[vertexCount];
         for (int i = 0; i < vertexCount; i++) {
             final Vector3fc position = mesh.getPositions()[i].getValue();
             final Vector2fc uvCoord = mesh.getUvCoords()[i].getValue();
             final Vector3fc normal = mesh.getNormals()[i].getValue();
-            vertices[i] = new ObjVertexBase(position, uvCoord, normal);
+            vertices[i] = ObjVertex.of(position, uvCoord, normal);
         }
         return vertices;
     }
