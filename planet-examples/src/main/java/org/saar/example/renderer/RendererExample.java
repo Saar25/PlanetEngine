@@ -1,5 +1,6 @@
 package org.saar.example.renderer;
 
+import org.saar.core.common.r2d.Mesh2D;
 import org.saar.core.common.r2d.RenderNode2D;
 import org.saar.core.common.r2d.Renderer2D;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -33,7 +34,8 @@ public class RendererExample {
                 new MyVertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
                 new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
-        final RenderNode2D renderNode = new RenderNode2D(vertices, indices);
+        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        final RenderNode2D renderNode = new RenderNode2D(mesh);
         final Renderer2D renderer = new Renderer2D(renderNode);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);

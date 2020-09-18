@@ -6,13 +6,12 @@ import org.saar.maths.objects.Transform;
 
 public class RenderNode3D extends AbstractNode implements RenderNode {
 
-    private final ModelBuffers3D buffers;
+    private final Mesh3D mesh;
 
     private final Transform transform = new Transform();
 
-    public RenderNode3D(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
-        this.buffers = new ModelBuffers3DOneVbo(vertices.length, indices.length, instances.length);
-        this.buffers.load(vertices, indices, instances);
+    public RenderNode3D(Mesh3D mesh) {
+        this.mesh = mesh;
     }
 
     public Transform getTransform() {
@@ -21,11 +20,11 @@ public class RenderNode3D extends AbstractNode implements RenderNode {
 
     @Override
     public void render() {
-        this.buffers.getMesh().draw();
+        this.mesh.draw();
     }
 
     @Override
     public void delete() {
-        this.buffers.getMesh().delete();
+        this.mesh.delete();
     }
 }

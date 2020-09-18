@@ -3,6 +3,7 @@ package org.saar.example.renderer3d;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
+import org.saar.core.common.r3d.Mesh3D;
 import org.saar.core.common.r3d.RenderNode3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.example.ExamplesUtils;
@@ -110,7 +111,8 @@ public class Renderer3DExample {
                         (float) Math.random(), (float) Math.random(), (float) Math.random()).normalize()));
                 nodes[j] = newNode;
             }
-            batches[i] = new RenderNode3D(flatData, indices, nodes);
+            final Mesh3D mesh = Mesh3D.load(flatData, indices, nodes);
+            batches[i] = new RenderNode3D(mesh);
         }
         return batches;
     }

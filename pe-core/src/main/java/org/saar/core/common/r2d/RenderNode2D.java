@@ -3,22 +3,21 @@ package org.saar.core.common.r2d;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 
-public class RenderNode2D extends AbstractNode implements RenderNode {
+public class RenderNode2D extends AbstractNode implements RenderNode, Node2D {
 
-    private final ModelBuffers2D buffers;
+    private final Mesh2D mesh;
 
-    public RenderNode2D(Vertex2D[] vertices, int[] indices) {
-        this.buffers = new ModelBuffers2DOneVbo(vertices.length, indices.length);
-        this.buffers.load(vertices, indices);
+    public RenderNode2D(Mesh2D mesh) {
+        this.mesh = mesh;
     }
 
     @Override
     public void render() {
-        this.buffers.getMesh().draw();
+        this.mesh.draw();
     }
 
     @Override
     public void delete() {
-        this.buffers.getMesh().delete();
+        this.mesh.delete();
     }
 }

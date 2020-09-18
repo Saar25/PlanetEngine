@@ -3,6 +3,7 @@ package org.saar.example.renderer3d;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
+import org.saar.core.common.r3d.Mesh3D;
 import org.saar.core.common.r3d.RenderNode3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.example.ExamplesUtils;
@@ -113,7 +114,8 @@ public class ManyCubesExample {
                     a * SPACE, b * SPACE, c * SPACE));
             nodes[i] = newNode;
         }
-        return new RenderNode3D(flatData, indices, nodes);
+        final Mesh3D mesh = Mesh3D.load(flatData, indices, nodes);
+        return new RenderNode3D(mesh);
     }
 
     private static MultisampledFbo createFbo(int width, int height) {
