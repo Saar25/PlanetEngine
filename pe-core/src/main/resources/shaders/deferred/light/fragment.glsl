@@ -9,8 +9,8 @@ uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 
 // Fragment outputs
-vec4 f_colour;
+out vec4 f_colour;
 
 void main(void) {
-    f_colour = texture(colourTexture, v_position);
+    f_colour = texture(normalTexture, v_position);
 }

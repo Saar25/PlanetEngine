@@ -6,17 +6,13 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
-import org.saar.core.screen.MainScreen;
-import org.saar.core.screen.OffScreen;
-import org.saar.core.screen.Screens;
+import org.saar.core.renderer.deferred.DeferredRendererBase;
+import org.saar.core.renderer.deferred.light.LightRenderPass;
+import org.saar.core.renderer.deferred.light.LightRenderPassInput;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.fbos.IFbo;
-import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 
 public class DeferredExample {
@@ -36,9 +32,10 @@ public class DeferredExample {
 
         MyNode node;
         ObjRenderNode renderNode = null;
+        Texture2D texture = null;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
-            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
+            texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             node = new MyNode(texture);
 
             renderNode = new ObjRenderNode(mesh, node);
@@ -49,32 +46,26 @@ public class DeferredExample {
 
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(camera, new ObjRenderNode[]{renderNode});
 
-        final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 1);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-        final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo);
+
+        final DeferredRendererBase deferredRenderer = new DeferredRendererBase(screenPrototype, renderer);
+        final LightRenderPass lightRenderPass = new LightRenderPass(new LightRenderPassInput(
+                screenPrototype.getNormalTexture(), screenPrototype.getDepthTexture()));
+        deferredRenderer.addRenderPass(lightRenderPass);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            screen.setAsDraw();
-
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render();
 
-            screen.copyTo(MainScreen.getInstance());
+            deferredRenderer.render();
 
             window.update(true);
             window.pollEvents();
-            if (window.isResized()) {
-                final int w = window.getWidth();
-                final int h = window.getHeight();
-                screen.resize(w, h);
-            }
         }
 
         renderer.delete();
-        screen.delete();
+        deferredRenderer.delete();
         window.destroy();
     }
 

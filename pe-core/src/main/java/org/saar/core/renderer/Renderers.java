@@ -10,7 +10,7 @@ public final class Renderers {
         throw new AssertionError("Cannot create instance of class " + getClass().getSimpleName());
     }
 
-    public static List<UniformProperty<?>> findUniformProperties(Renderer renderer) {
+    public static List<UniformProperty<?>> findUniformProperties(Object renderer) {
         return new UniformPropertiesLocator(renderer).getUniformProperties();
     }
 }
