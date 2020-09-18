@@ -1,5 +1,7 @@
 package org.saar.core.renderer.deferred.light
 
+import org.saar.core.light.DirectionalLight
+import org.saar.core.light.DirectionalLightUniformProperty
 import org.saar.core.renderer.AUniformProperty
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
@@ -9,6 +11,7 @@ import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.StageRenderState
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformArrayProperty
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
@@ -37,6 +40,10 @@ class LightRenderPass(private val input: LightRenderPassInput) : RenderPassBase(
         }
     }
 
+    @AUniformProperty
+    private val directionalLightsUniform = UniformArrayProperty<DirectionalLight>("directionalLights", 5)
+    { name, index -> DirectionalLightUniformProperty(name) }
+
     companion object {
         private val vertex: Shader = Shader.createVertex(
                 "/shaders/deferred/quadVertex.glsl")
@@ -61,8 +68,11 @@ class LightRenderPass(private val input: LightRenderPassInput) : RenderPassBase(
         val instanceState = InstanceRenderState(image)
         this.colourTextureUniform.loadOnInstance(instanceState)
 
-        input.normalTexture.bind(1)
-        input.depthTexture.bind(2)
+        val light = DirectionalLight()
+        light.colour.set(1.0f, 1.0f, 1.0f)
+        light.direction.set(-50f ,-50f ,-50f)
+        val state = InstanceRenderState<DirectionalLight>(light)
+        this.directionalLightsUniform.loadOnInstance(state)
 
         // TODO: bind some default vao, cannot draw without bound vao!
         Vao.EMPTY.bind()
