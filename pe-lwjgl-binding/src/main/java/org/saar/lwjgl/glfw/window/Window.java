@@ -4,8 +4,8 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.saar.lwjgl.glfw.input.Keyboard;
-import org.saar.lwjgl.glfw.input.Mouse;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
+import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.hint.*;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 

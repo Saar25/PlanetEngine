@@ -2,7 +2,7 @@ package org.saar.example;
 
 import org.saar.core.model.InstancedArraysModel;
 import org.saar.core.model.Model;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;

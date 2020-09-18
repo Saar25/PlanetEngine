@@ -3,7 +3,7 @@ package org.saar.example;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.ICamera;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.maths.Angle;
 import org.saar.maths.utils.Vector3;
 

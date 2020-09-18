@@ -5,7 +5,7 @@ import org.saar.core.common.primitive.PrimitiveNode;
 import org.saar.core.common.primitive.PrimitiveVertex;
 import org.saar.core.common.primitive.Primitives;
 import org.saar.core.model.Model;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;

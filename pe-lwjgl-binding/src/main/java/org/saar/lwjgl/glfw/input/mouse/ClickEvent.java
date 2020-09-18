@@ -1,7 +1,4 @@
-package org.saar.lwjgl.glfw.input.event;
-
-import org.saar.lwjgl.glfw.input.Mouse;
-import org.saar.lwjgl.glfw.input.MouseButton;
+package org.saar.lwjgl.glfw.input.mouse;
 
 public class ClickEvent extends MouseEvent {
 

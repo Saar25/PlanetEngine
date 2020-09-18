@@ -9,7 +9,7 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;

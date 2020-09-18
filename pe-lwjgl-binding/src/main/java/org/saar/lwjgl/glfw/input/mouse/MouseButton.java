@@ -1,10 +1,8 @@
-package org.saar.lwjgl.glfw.input;
+package org.saar.lwjgl.glfw.input.mouse;
 
 import org.lwjgl.glfw.GLFW;
 
 public enum MouseButton {
-
-    NONE(-1),
 
     BTN_1(GLFW.GLFW_MOUSE_BUTTON_1), // PRIMARY
     BTN_2(GLFW.GLFW_MOUSE_BUTTON_2), // SECONDARY
@@ -15,6 +13,8 @@ public enum MouseButton {
     BTN_7(GLFW.GLFW_MOUSE_BUTTON_7),
     BTN_8(GLFW.GLFW_MOUSE_BUTTON_8), // LAST
     ;
+
+    private static final MouseButton[] values = values();
 
     public static final MouseButton PRIMARY = BTN_1;
     public static final MouseButton SECONDARY = BTN_2;
@@ -27,30 +27,24 @@ public enum MouseButton {
         this.value = value;
     }
 
-    public static MouseButton valueOf(int button) {
-        switch (button) {
-            case 0: return BTN_1;
-            case 1: return BTN_2;
-            case 2: return BTN_3;
-            case 3: return BTN_4;
-            case 4: return BTN_5;
-            case 5: return BTN_6;
-            case 6: return BTN_7;
-            case 7: return BTN_8;
-            default: return NONE;
+    public static MouseButton valueOf(int value) {
+        final int index = value - MouseButton.values[0].get();
+        if (index >= 0 && index <= MouseButton.values.length) {
+            return MouseButton.values[index];
         }
+        throw new IllegalArgumentException("MouseButton non found: " + value);
     }
 
     public int get() {
-        return value;
+        return this.value;
     }
 
     public boolean isPrimary() {
-        return this == PRIMARY;
+        return this == MouseButton.PRIMARY;
     }
 
     public boolean isSecondary() {
-        return this == SECONDARY;
+        return this == MouseButton.SECONDARY;
     }
 
 }

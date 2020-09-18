@@ -6,7 +6,7 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.RenderNode3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.example.ExamplesUtils;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;

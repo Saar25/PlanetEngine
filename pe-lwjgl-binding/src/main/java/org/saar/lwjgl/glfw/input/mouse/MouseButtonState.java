@@ -1,12 +1,11 @@
-package org.saar.lwjgl.glfw.input;
+package org.saar.lwjgl.glfw.input.mouse;
 
 import org.lwjgl.glfw.GLFW;
 
 public enum MouseButtonState {
 
-    RELEASED(GLFW.GLFW_RELEASE),
-    PRESSED(GLFW.GLFW_PRESS),
-    REPEATED(GLFW.GLFW_REPEAT),
+    RELEASE(GLFW.GLFW_RELEASE),
+    PRESS(GLFW.GLFW_PRESS),
     ;
 
     private final int value;
@@ -16,17 +15,15 @@ public enum MouseButtonState {
     }
 
     public int get() {
-        return value;
+        return this.value;
     }
 
     public static MouseButtonState valueOf(int value) {
         switch (value) {
             case GLFW.GLFW_RELEASE:
-                return RELEASED;
+                return MouseButtonState.RELEASE;
             case GLFW.GLFW_PRESS:
-                return PRESSED;
-            case GLFW.GLFW_REPEAT:
-                return REPEATED;
+                return MouseButtonState.PRESS;
         }
         throw new IllegalArgumentException("MouseButtonState non found: " + value);
     }
