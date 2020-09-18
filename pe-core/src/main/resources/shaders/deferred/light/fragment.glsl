@@ -12,5 +12,8 @@ uniform sampler2D depthTexture;
 out vec4 f_colour;
 
 void main(void) {
+    colourTexture;
+    normalTexture;
+    depthTexture;
     f_colour = texture(normalTexture, v_position);
 }

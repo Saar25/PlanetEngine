@@ -61,6 +61,9 @@ class LightRenderPass(private val input: LightRenderPassInput) : RenderPassBase(
         val instanceState = InstanceRenderState(image)
         this.colourTextureUniform.loadOnInstance(instanceState)
 
+        input.normalTexture.bind(1)
+        input.depthTexture.bind(2)
+
         // TODO: bind some default vao, cannot draw without bound vao!
         Vao.EMPTY.bind()
         GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)

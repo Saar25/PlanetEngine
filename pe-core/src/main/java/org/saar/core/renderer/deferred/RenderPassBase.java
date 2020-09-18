@@ -14,6 +14,7 @@ public abstract class RenderPassBase implements RenderPass {
     }
 
     protected final void init() {
+        this.shadersProgram.bind();
         for (UniformProperty<?> uniform : Renderers.findUniformProperties(this)) {
             uniform.initialize(this.shadersProgram);
         }
