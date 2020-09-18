@@ -9,13 +9,13 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformVec3Property
 
 class DirectionalLightUniformProperty(private val name: String) : UniformProperty<DirectionalLight> {
 
-    private val directionUniform = object : UniformVec3Property<DirectionalLight>("${name}.direction") {
+    private val directionUniform = object : UniformVec3Property<DirectionalLight>("$name.direction") {
         override fun getInstanceValue(state: InstanceRenderState<DirectionalLight>): Vector3fc {
             return state.instance.direction.normalize()
         }
     }
 
-    private val colourUniform = object : UniformVec3Property<DirectionalLight>("${name}.colour") {
+    private val colourUniform = object : UniformVec3Property<DirectionalLight>("$name.colour") {
         override fun getInstanceValue(state: InstanceRenderState<DirectionalLight>): Vector3fc {
             return state.instance.colour
         }

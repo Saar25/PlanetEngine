@@ -49,7 +49,7 @@ public class DeferredExample {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
         final DeferredRendererBase deferredRenderer = new DeferredRendererBase(screenPrototype, renderer);
-        final LightRenderPass lightRenderPass = new LightRenderPass(new LightRenderPassInput(
+        final LightRenderPass lightRenderPass = new LightRenderPass(camera, new LightRenderPassInput(
                 screenPrototype.getNormalTexture(), screenPrototype.getDepthTexture()));
         deferredRenderer.addRenderPass(lightRenderPass);
 
