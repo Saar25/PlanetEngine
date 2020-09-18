@@ -1,7 +1,7 @@
 package org.saar.example;
 
-import org.saar.core.model.InstancedArraysModel;
-import org.saar.core.model.Model;
+import org.saar.core.model.InstancedArraysMesh;
+import org.saar.core.model.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -44,7 +44,7 @@ public class InstancedModelExample {
         instanceBuffer.storeData(0, instanceData);
         vao.loadVbo(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
 
-        final Model model = new InstancedArraysModel(vao, RenderMode.TRIANGLES, 3, 3);
+        final Mesh mesh = new InstancedArraysMesh(vao, RenderMode.TRIANGLES, 3, 3);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -63,7 +63,7 @@ public class InstancedModelExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
-            model.draw();
+            mesh.draw();
             fbo.blitToScreen();
 
             window.update(true);

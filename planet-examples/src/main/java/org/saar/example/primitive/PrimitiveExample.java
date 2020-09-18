@@ -4,7 +4,7 @@ import org.saar.core.common.primitive.PrimitiveModelLoader;
 import org.saar.core.common.primitive.PrimitiveNode;
 import org.saar.core.common.primitive.PrimitiveVertex;
 import org.saar.core.common.primitive.Primitives;
-import org.saar.core.model.Model;
+import org.saar.core.model.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.FormatType;
@@ -36,7 +36,7 @@ public class PrimitiveExample {
                 new MyNode(GlFloat.of(+0.2f))
         );
 
-        final Model model = new PrimitiveModelLoader(vertices, nodes).createModel();
+        final Mesh mesh = new PrimitiveModelLoader(vertices, nodes).createModel();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -55,7 +55,7 @@ public class PrimitiveExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
-            model.draw();
+            mesh.draw();
             fbo.blitToScreen();
 
             window.update(true);
@@ -63,7 +63,7 @@ public class PrimitiveExample {
         }
 
         fbo.delete();
-        model.delete();
+        mesh.delete();
         attachment.delete();
         window.destroy();
     }

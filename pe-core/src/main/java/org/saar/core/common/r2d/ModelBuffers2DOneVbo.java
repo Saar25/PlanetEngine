@@ -1,7 +1,7 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.model.ElementsModel;
-import org.saar.core.model.Model;
+import org.saar.core.model.ElementsMesh;
+import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.AbstractModelBuffers;
 import org.saar.core.model.loader.ModelBuffer;
 import org.saar.core.model.loader.ModelWriters;
@@ -13,7 +13,7 @@ import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 
 public class ModelBuffers2DOneVbo extends AbstractModelBuffers implements ModelBuffers2D {
 
-    private final Model model;
+    private final Mesh mesh;
 
     private final ModelWriter2D writer;
 
@@ -21,7 +21,7 @@ public class ModelBuffers2DOneVbo extends AbstractModelBuffers implements ModelB
         final ModelBuffer vertexBuffer = loadDataBuffer(new DataBuffer(VboUsage.STATIC_DRAW), vertices, attributes);
         final ModelBuffer indexBuffer = loadIndexBuffer(new IndexBuffer(VboUsage.STATIC_DRAW), indices);
 
-        this.model = new ElementsModel(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT);
+        this.mesh = new ElementsMesh(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT);
 
         this.writer = new ModelWriter2D(vertexBuffer.getWriter(), vertexBuffer.getWriter(), indexBuffer.getWriter());
     }
@@ -35,7 +35,7 @@ public class ModelBuffers2DOneVbo extends AbstractModelBuffers implements ModelB
     }
 
     @Override
-    public Model getModel() {
-        return this.model;
+    public Mesh getModel() {
+        return this.mesh;
     }
 }

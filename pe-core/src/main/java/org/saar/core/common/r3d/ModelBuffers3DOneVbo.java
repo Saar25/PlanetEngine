@@ -1,7 +1,7 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.model.InstancedElementsModel;
-import org.saar.core.model.Model;
+import org.saar.core.model.InstancedElementsMesh;
+import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.AbstractModelBuffers;
 import org.saar.core.model.loader.ModelBuffer;
 import org.saar.core.model.loader.ModelWriters;
@@ -16,7 +16,7 @@ public class ModelBuffers3DOneVbo extends AbstractModelBuffers implements ModelB
 
     private static final Attribute[] vertexAttributes = {positionAttribute, coloursAttribute};
 
-    private final Model model;
+    private final Mesh mesh;
 
     private final ModelWriter3D writer;
 
@@ -28,7 +28,7 @@ public class ModelBuffers3DOneVbo extends AbstractModelBuffers implements ModelB
         final ModelBuffer indexBuffer = loadIndexBuffer(new IndexBuffer(
                 VboUsage.STATIC_DRAW), indices);
 
-        this.model = new InstancedElementsModel(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
+        this.mesh = new InstancedElementsMesh(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
 
         this.writer = new ModelWriter3D(
                 instanceBuffer.getWriter(), vertexBuffer.getWriter(),
@@ -46,7 +46,7 @@ public class ModelBuffers3DOneVbo extends AbstractModelBuffers implements ModelB
     }
 
     @Override
-    public Model getModel() {
-        return this.model;
+    public Mesh getModel() {
+        return this.mesh;
     }
 }

@@ -1,7 +1,7 @@
 package org.saar.core.common.primitive;
 
-import org.saar.core.model.InstancedElementsModel;
-import org.saar.core.model.Model;
+import org.saar.core.model.InstancedElementsMesh;
+import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.AbstractModelBuffers;
 import org.saar.core.model.loader.ModelBuffer;
 import org.saar.core.model.loader.ModelWriters;
@@ -14,7 +14,7 @@ import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 
 public class PrimitiveModelBuffers extends AbstractModelBuffers {
 
-    private final Model model;
+    private final Mesh mesh;
 
     private final PrimitiveModelWriter writer;
 
@@ -29,7 +29,7 @@ public class PrimitiveModelBuffers extends AbstractModelBuffers {
         this.writer = new PrimitiveModelWriter(instanceBuffer.getWriter(),
                 vertexBuffer.getWriter(), indexBuffer.getWriter());
 
-        this.model = new InstancedElementsModel(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
+        this.mesh = new InstancedElementsMesh(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
     }
 
     public void load(PrimitiveVertex[] vertices, int[] indices, PrimitiveNode[] instances) {
@@ -42,7 +42,7 @@ public class PrimitiveModelBuffers extends AbstractModelBuffers {
     }
 
     @Override
-    public Model getModel() {
-        return this.model;
+    public Mesh getModel() {
+        return this.mesh;
     }
 }

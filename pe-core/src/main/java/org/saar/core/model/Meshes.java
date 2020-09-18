@@ -7,24 +7,24 @@ import org.saar.lwjgl.opengl.constants.RenderMode;
 
 import java.util.List;
 
-public final class Models {
+public final class Meshes {
 
-    private Models() {
+    private Meshes() {
         throw new AssertionError("Cannot create instance of class "
                 + getClass().getSimpleName());
     }
 
-    public static <T extends Vertex> Model arraysModel(
+    public static <T extends Vertex> Mesh arraysModel(
             RenderMode renderMode, ModelBufferWriter<T> writer, List<T> vertices) {
         writer.write(vertices);
-        return new ArraysModel(writer.toVao(), renderMode, vertices.size());
+        return new ArraysMesh(writer.toVao(), renderMode, vertices.size());
     }
 
-    public static <T extends Vertex> Model elementsModel(
+    public static <T extends Vertex> Mesh elementsModel(
             RenderMode renderMode, ModelBufferWriter<T> writer,
             ModelIndices indices, List<T> vertices) {
         writer.write(vertices);
         writer.write(indices);
-        return new ElementsModel(writer.toVao(), renderMode, indices.count(), DataType.U_INT);
+        return new ElementsMesh(writer.toVao(), renderMode, indices.count(), DataType.U_INT);
     }
 }

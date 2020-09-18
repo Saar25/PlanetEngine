@@ -3,12 +3,12 @@ package org.saar.core.model;
 import org.saar.lwjgl.opengl.drawable.GlDrawable;
 import org.saar.lwjgl.opengl.objects.vaos.IVao;
 
-public class ModelBase implements Model {
+public class MeshBase implements Mesh {
 
     private final IVao vao;
     private final GlDrawable drawable;
 
-    public ModelBase(IVao vao, GlDrawable drawable) {
+    public MeshBase(IVao vao, GlDrawable drawable) {
         this.vao = vao;
         this.drawable = drawable;
     }

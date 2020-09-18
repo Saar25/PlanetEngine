@@ -2,8 +2,8 @@ package org.saar.example;
 
 import org.saar.core.common.simple.SimpleBufferWriter;
 import org.saar.core.common.simple.SimpleVertex;
-import org.saar.core.model.Model;
-import org.saar.core.model.Models;
+import org.saar.core.model.Mesh;
+import org.saar.core.model.Meshes;
 import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -34,7 +34,7 @@ public class ModelExample {
         final SimpleBufferWriter writer = new SimpleBufferWriter(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.arraysModel(RenderMode.TRIANGLE_STRIP, writer, vertices);
+        final Mesh mesh = Meshes.arraysModel(RenderMode.TRIANGLE_STRIP, writer, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -53,7 +53,7 @@ public class ModelExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
-            model.draw();
+            mesh.draw();
             fbo.blitToScreen();
 
             window.update(true);
@@ -61,7 +61,7 @@ public class ModelExample {
         }
 
         fbo.delete();
-        model.delete();
+        mesh.delete();
         attachment.delete();
         window.destroy();
     }

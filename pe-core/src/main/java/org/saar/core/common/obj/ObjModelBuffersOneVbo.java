@@ -1,6 +1,6 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.model.ElementsModel;
+import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.loader.AbstractModelBuffers;
 import org.saar.core.model.loader.ModelBuffer;
 import org.saar.core.model.loader.ModelWriters;
@@ -17,14 +17,14 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers implements ObjMo
             positionAttribute, uvCoordAttribute, normalAttribute
     };
 
-    private final ElementsModel model;
+    private final ElementsMesh model;
 
     private final ObjModelWriter writer;
 
     public ObjModelBuffersOneVbo(int vertices, int indices) {
         final ModelBuffer vertexBuffer = loadDataBuffer(new DataBuffer(VboUsage.STATIC_DRAW), vertices, vertexAttributes);
         final ModelBuffer indexBuffer = loadIndexBuffer(new IndexBuffer(VboUsage.STATIC_DRAW), indices);
-        this.model = new ElementsModel(vao, RenderMode.TRIANGLES, indices, DataType.U_INT);
+        this.model = new ElementsMesh(vao, RenderMode.TRIANGLES, indices, DataType.U_INT);
 
         this.writer = new ObjModelWriter(
                 vertexBuffer.getWriter(), vertexBuffer.getWriter(),
@@ -41,7 +41,7 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers implements ObjMo
     }
 
     @Override
-    public ElementsModel getModel() {
+    public ElementsMesh getModel() {
         return this.model;
     }
 }

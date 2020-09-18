@@ -2,8 +2,8 @@ package org.saar.example;
 
 import org.saar.core.common.simple.SimpleBufferWriter;
 import org.saar.core.common.simple.SimpleVertex;
-import org.saar.core.model.Model;
-import org.saar.core.model.Models;
+import org.saar.core.model.Mesh;
+import org.saar.core.model.Meshes;
 import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.core.model.vertex.ModelIndices;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -43,7 +43,7 @@ public class IndexedModelExample {
         final SimpleBufferWriter writer = new SimpleBufferWriter(
                 new ModelAttribute(2, true, DataType.FLOAT),
                 new ModelAttribute(3, true, DataType.FLOAT));
-        final Model model = Models.elementsModel(RenderMode.TRIANGLE_STRIP, writer, indices, vertices);
+        final Mesh mesh = Meshes.elementsModel(RenderMode.TRIANGLE_STRIP, writer, indices, vertices);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -59,7 +59,7 @@ public class IndexedModelExample {
 
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOUR);
-            model.draw();
+            mesh.draw();
             fbo.blitToScreen();
 
             window.update(true);
@@ -71,7 +71,7 @@ public class IndexedModelExample {
         }
 
         fbo.delete();
-        model.delete();
+        mesh.delete();
         attachment.delete();
         window.destroy();
     }

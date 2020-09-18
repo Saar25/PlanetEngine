@@ -1,11 +1,10 @@
 package org.saar.core.loader.obj;
 
-import org.saar.core.model.Mesh;
 import org.saar.core.model.vertex.ModelIndices;
 
 import java.util.List;
 
-public class ObjMesh implements Mesh {
+public class ObjMesh {
 
     private final List<ObjVertex> vertices;
     private final ModelIndices indices;
