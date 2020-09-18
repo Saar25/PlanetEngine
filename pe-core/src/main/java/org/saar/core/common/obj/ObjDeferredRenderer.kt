@@ -53,13 +53,14 @@ class ObjDeferredRenderer(private val camera: ICamera, private val renderNodes: 
     init {
         shadersProgram.bindAttributes("in_position", "in_uvCoord", "in_normal")
         shadersProgram.bindFragmentOutputs("f_colour", "f_normal")
-        GlUtils.enableAlphaBlending()
-        GlUtils.enableDepthTest()
-        GlUtils.enableCulling()
         init()
     }
 
     override fun onRender() {
+        GlUtils.enableAlphaBlending()
+        GlUtils.enableDepthTest()
+        GlUtils.enableCulling()
+
         val stageRenderState = StageRenderState()
         viewProjectionUniform.loadOnStage(stageRenderState)
 

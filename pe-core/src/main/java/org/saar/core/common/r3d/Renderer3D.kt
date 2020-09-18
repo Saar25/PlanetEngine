@@ -35,13 +35,14 @@ class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<R
 
     init {
         shadersProgram.bindAttributes("in_position", "in_colour", "in_transformation")
-        GlUtils.enableAlphaBlending()
-        GlUtils.enableDepthTest()
-        GlUtils.enableCulling()
         init()
     }
 
     override fun onRender() {
+        GlUtils.enableAlphaBlending()
+        GlUtils.enableDepthTest()
+        GlUtils.enableCulling()
+
         for (renderNode3D in this.renderNodes3D) {
             val state = InstanceRenderState(renderNode3D)
             mvpMatrixUniform.loadOnInstance(state)

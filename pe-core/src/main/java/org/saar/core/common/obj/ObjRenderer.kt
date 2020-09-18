@@ -51,13 +51,14 @@ class ObjRenderer(private val camera: ICamera, private val renderNodes: Array<Ob
 
     init {
         shadersProgram.bindAttributes("in_position", "in_uvCoord", "in_normal")
-        GlUtils.enableAlphaBlending()
-        GlUtils.enableDepthTest()
-        GlUtils.enableCulling()
         init()
     }
 
     override fun onRender() {
+        GlUtils.enableAlphaBlending()
+        GlUtils.enableDepthTest()
+        GlUtils.enableCulling()
+
         val stageState = StageRenderState()
         viewProjectionUniform.loadOnStage(stageState)
 
