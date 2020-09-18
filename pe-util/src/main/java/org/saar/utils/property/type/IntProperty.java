@@ -5,9 +5,9 @@ import org.saar.utils.property.Property;
 import org.saar.utils.property.ReadOnlyProperty;
 import org.saar.utils.property.binding.Bindings;
 
-public class IntProperty extends ReadOnlyIntProperty implements Property<Integer> {
+public class IntProperty extends ReadOnlyIntProperty implements Property<Number> {
 
-    private ReadOnlyProperty<? extends Integer> bound = null;
+    private ReadOnlyProperty<? extends Number> bound = null;
 
     public IntProperty() {
     }
@@ -17,7 +17,7 @@ public class IntProperty extends ReadOnlyIntProperty implements Property<Integer
     }
 
     @Override
-    public void bind(ReadOnlyProperty<? extends Integer> observable) {
+    public void bind(ReadOnlyProperty<? extends Number> observable) {
         Bindings.bind(this, observable);
         this.bound = observable;
     }
@@ -31,23 +31,23 @@ public class IntProperty extends ReadOnlyIntProperty implements Property<Integer
     }
 
     @Override
-    public void bindBidirectional(Property<Integer> observable) {
+    public void bindBidirectional(Property<Number> observable) {
         Bindings.bindBidirectional(this, observable);
     }
 
     @Override
-    public void unbindBidirectional(Property<Integer> observable) {
+    public void unbindBidirectional(Property<Number> observable) {
         Bindings.unbindBidirectional(this, observable);
     }
 
     @Override
-    public void setValue(Integer value) {
-        set(value);
+    public void setValue(Number value) {
+        set(value.intValue());
     }
 
     public void set(int value) {
         if (get() != value) {
-            final ChangeEventBase<Integer> event = new ChangeEventBase<>(this, this.value, value);
+            final ChangeEventBase<Number> event = new ChangeEventBase<>(this, this.value, value);
 
             this.value = value;
             this.helper.fireEvent(event);

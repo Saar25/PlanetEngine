@@ -1,12 +1,8 @@
 package org.saar.utils.property.type;
 
-import org.saar.utils.property.ChangeListener;
-import org.saar.utils.property.ListenersHelper;
 import org.saar.utils.property.ReadOnlyProperty;
 
-public class ReadOnlyFloatProperty implements ReadOnlyProperty<Float> {
-
-    protected ListenersHelper<Float> helper = ListenersHelper.empty();
+public class ReadOnlyFloatProperty extends ReadOnlyNumberProperty implements ReadOnlyProperty<Number> {
 
     protected float value;
 
@@ -19,13 +15,8 @@ public class ReadOnlyFloatProperty implements ReadOnlyProperty<Float> {
     }
 
     @Override
-    public void addListener(ChangeListener<? super Float> listener) {
-        this.helper = this.helper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(ChangeListener<? super Float> listener) {
-        this.helper = this.helper.removeListener(listener);
+    public float getFloatValue() {
+        return get();
     }
 
     @Override

@@ -1,12 +1,8 @@
 package org.saar.utils.property.type;
 
-import org.saar.utils.property.ChangeListener;
-import org.saar.utils.property.ListenersHelper;
 import org.saar.utils.property.ReadOnlyProperty;
 
-public class ReadOnlyIntProperty implements ReadOnlyProperty<Integer> {
-
-    protected ListenersHelper<Integer> helper = ListenersHelper.empty();
+public class ReadOnlyIntProperty extends ReadOnlyNumberProperty implements ReadOnlyProperty<Number> {
 
     protected int value;
 
@@ -19,13 +15,8 @@ public class ReadOnlyIntProperty implements ReadOnlyProperty<Integer> {
     }
 
     @Override
-    public void addListener(ChangeListener<? super Integer> listener) {
-        this.helper = this.helper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(ChangeListener<? super Integer> listener) {
-        this.helper = this.helper.removeListener(listener);
+    public int getIntValue() {
+        return get();
     }
 
     @Override

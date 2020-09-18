@@ -5,9 +5,9 @@ import org.saar.utils.property.Property;
 import org.saar.utils.property.ReadOnlyProperty;
 import org.saar.utils.property.binding.Bindings;
 
-public class FloatProperty extends ReadOnlyFloatProperty implements Property<Float> {
+public class FloatProperty extends ReadOnlyFloatProperty implements Property<Number> {
 
-    private ReadOnlyProperty<? extends Float> bound = null;
+    private ReadOnlyProperty<? extends Number> bound = null;
 
     public FloatProperty() {
     }
@@ -17,7 +17,7 @@ public class FloatProperty extends ReadOnlyFloatProperty implements Property<Flo
     }
 
     @Override
-    public void bind(ReadOnlyProperty<? extends Float> observable) {
+    public void bind(ReadOnlyProperty<? extends Number> observable) {
         Bindings.bind(this, observable);
         this.bound = observable;
     }
@@ -31,23 +31,23 @@ public class FloatProperty extends ReadOnlyFloatProperty implements Property<Flo
     }
 
     @Override
-    public void bindBidirectional(Property<Float> observable) {
+    public void bindBidirectional(Property<Number> observable) {
         Bindings.bindBidirectional(this, observable);
     }
 
     @Override
-    public void unbindBidirectional(Property<Float> observable) {
+    public void unbindBidirectional(Property<Number> observable) {
         Bindings.unbindBidirectional(this, observable);
     }
 
     @Override
-    public void setValue(Float value) {
-        set(value);
+    public void setValue(Number value) {
+        set(value.floatValue());
     }
 
     public void set(float value) {
         if (get() != value) {
-            final ChangeEventBase<Float> event = new ChangeEventBase<>(this, this.value, value);
+            final ChangeEventBase<Number> event = new ChangeEventBase<>(this, this.value, value);
 
             this.value = value;
             this.helper.fireEvent(event);
