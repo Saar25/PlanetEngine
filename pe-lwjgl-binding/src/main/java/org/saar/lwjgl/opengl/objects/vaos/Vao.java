@@ -11,7 +11,7 @@ import java.util.List;
 public class Vao implements WriteableVao {
 
     private static final ReadOnlyVao NULL = new Vao(0);
-    private static final ReadOnlyVao FIRST = Vao.create();
+    public static final ReadOnlyVao EMPTY = Vao.create();
 
     private final int id;
 
