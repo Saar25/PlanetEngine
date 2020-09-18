@@ -4,6 +4,6 @@ import org.saar.core.model.Mesh;
 
 public interface ModelBuffers {
 
-    Mesh getModel();
+    Mesh getMesh();
 
 }

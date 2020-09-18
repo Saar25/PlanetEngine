@@ -74,7 +74,7 @@ public class PrimitiveModelLoader {
 
         buffers.load(vertices, indices, instances);
 
-        return buffers.getModel();
+        return buffers.getMesh();
 
     }
 }

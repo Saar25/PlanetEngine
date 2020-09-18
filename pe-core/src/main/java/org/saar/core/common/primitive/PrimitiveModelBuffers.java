@@ -42,7 +42,7 @@ public class PrimitiveModelBuffers extends AbstractModelBuffers {
     }
 
     @Override
-    public Mesh getModel() {
+    public Mesh getMesh() {
         return this.mesh;
     }
 }

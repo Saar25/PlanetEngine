@@ -41,7 +41,7 @@ public class ObjModelBuffersOneVbo extends AbstractModelBuffers implements ObjMo
     }
 
     @Override
-    public ElementsMesh getModel() {
+    public ElementsMesh getMesh() {
         return this.model;
     }
 }

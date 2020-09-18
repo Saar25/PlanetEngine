@@ -35,7 +35,7 @@ public class ModelBuffers2DOneVbo extends AbstractModelBuffers implements ModelB
     }
 
     @Override
-    public Mesh getModel() {
+    public Mesh getMesh() {
         return this.mesh;
     }
 }

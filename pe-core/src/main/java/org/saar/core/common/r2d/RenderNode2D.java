@@ -14,11 +14,11 @@ public class RenderNode2D extends AbstractNode implements RenderNode {
 
     @Override
     public void render() {
-        this.buffers.getModel().draw();
+        this.buffers.getMesh().draw();
     }
 
     @Override
     public void delete() {
-        this.buffers.getModel().delete();
+        this.buffers.getMesh().delete();
     }
 }

@@ -4,6 +4,7 @@ import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
+import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -36,10 +37,11 @@ public class DeferredExample {
         MyNode node;
         ObjRenderNode renderNode = null;
         try {
+            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             node = new MyNode(texture);
 
-            renderNode = ObjRenderNode.load("/assets/cottage/cottage.obj", node);
+            renderNode = new ObjRenderNode(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
