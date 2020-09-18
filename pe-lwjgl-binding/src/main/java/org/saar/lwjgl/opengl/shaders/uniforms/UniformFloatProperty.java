@@ -6,6 +6,9 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public abstract class UniformFloatProperty<T> extends AbstractUniformProperty<T> {
 
+    private boolean loadOnInstance = true;
+    private boolean loadOnStage = true;
+
     protected UniformFloatProperty(String name) {
         super(name);
     }
@@ -16,19 +19,23 @@ public abstract class UniformFloatProperty<T> extends AbstractUniformProperty<T>
 
     @Override
     public void loadOnInstance(InstanceRenderState<T> state) {
-        load(getInstanceValue(state));
+        final float value = getInstanceValue(state);
+        if (this.loadOnInstance) load(value);
     }
 
     @Override
     public void loadOnStage(StageRenderState state) {
-        load(getStageValue(state));
+        final float value = getStageValue(state);
+        if (this.loadOnStage) load(value);
     }
 
     public float getInstanceValue(InstanceRenderState<T> state) {
-        return 0f;
+        this.loadOnInstance = false;
+        return 0;
     }
 
     public float getStageValue(StageRenderState state) {
-        return 0f;
+        this.loadOnStage = false;
+        return 0;
     }
 }
