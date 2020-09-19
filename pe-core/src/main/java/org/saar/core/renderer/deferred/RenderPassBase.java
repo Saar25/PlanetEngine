@@ -26,6 +26,10 @@ public abstract class RenderPassBase implements RenderPass {
     protected <T> UniformsHelper<T> buildHelper(UniformsHelper<T> helper) {
         this.shadersProgram.bind();
 
+        for (UniformProperty<?> uniform : Renderers.findUniformProperties(this)) {
+            uniform.initialize(this.shadersProgram);
+        }
+
         final List<UniformProperty.Stage<T>> stage =
                 Renderers.findStageUniformProperties(this);
         for (UniformProperty.Stage<T> uniform : stage) {

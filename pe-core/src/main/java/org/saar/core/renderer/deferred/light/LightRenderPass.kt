@@ -15,10 +15,7 @@ import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.StageRenderState
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformArrayProperty
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformIntProperty
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
+import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -67,7 +64,7 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
     @AUniformProperty
     private val directionalLightsUniform = UniformArrayProperty.Instance<LightRenderPassInstance, DirectionalLight>(
             "directionalLights", 1) { name, index ->
-        object : DirectionalLightUniformProperty.Instance<LightRenderPassInstance>(name) {
+        object : InstanceUniform<LightRenderPassInstance, DirectionalLight>(DirectionalLightUniformProperty(name)) {
             override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): DirectionalLight {
                 return state.instance.directionalLights[index]
             }
