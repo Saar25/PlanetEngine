@@ -6,9 +6,10 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
-import org.saar.core.renderer.deferred.DeferredRendererBase;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.light.LightRenderPassInput;
+import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -48,7 +49,7 @@ public class DeferredExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final DeferredRendererBase deferredRenderer = new DeferredRendererBase(screenPrototype, renderer);
+        final DeferredRenderingPipeline deferredRenderer = new DeferredRenderingPipeline(screenPrototype, renderer);
         final LightRenderPass lightRenderPass = new LightRenderPass(camera, new LightRenderPassInput(
                 screenPrototype.getNormalTexture(), screenPrototype.getDepthTexture()));
         deferredRenderer.addRenderPass(lightRenderPass);
@@ -58,7 +59,8 @@ public class DeferredExample {
 
             ExamplesUtils.move(camera, keyboard);
 
-            deferredRenderer.render();
+            final MainScreen screen = MainScreen.getInstance();
+            deferredRenderer.render(screen);
 
             window.update(true);
             window.pollEvents();

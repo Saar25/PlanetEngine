@@ -1,8 +1,10 @@
 package org.saar.core.renderer.deferred;
 
 import org.saar.core.renderer.Renderer;
+import org.saar.core.renderer.RenderingPipeline;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.Screen;
 import org.saar.core.screen.Screens;
 import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImageBase;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DeferredRendererBase implements DeferredRenderer {
+public class DeferredRenderingPipeline implements RenderingPipeline {
 
     private final DeferredScreenPrototype prototype = new DeferredScreenPrototype() {
 
@@ -45,7 +47,7 @@ public class DeferredRendererBase implements DeferredRenderer {
 
     private final List<RenderPass> renderPasses = new ArrayList<>();
 
-    public DeferredRendererBase(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
+    public DeferredRenderingPipeline(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
         this.screen = Screens.fromPrototype(screen, fbo());
         this.output = screen.getColourTexture();
         this.passesScreen = Screens.fromPrototype(prototype, fbo());
@@ -63,9 +65,9 @@ public class DeferredRendererBase implements DeferredRenderer {
     }
 
     @Override
-    public void render() {
-        final int width = MainScreen.getInstance().getWidth();
-        final int height = MainScreen.getInstance().getHeight();
+    public void render(Screen drawScreen) {
+        final int width = drawScreen.getWidth();
+        final int height = drawScreen.getHeight();
         if (this.screen.getWidth() != width || this.screen.getHeight() != height) {
             this.screen.resize(width, height);
             this.passesScreen.resize(width, height);
@@ -87,7 +89,7 @@ public class DeferredRendererBase implements DeferredRenderer {
             output = this.prototype.getColourTexture();
         }
 
-        passesScreen.copyTo(MainScreen.getInstance());
+        passesScreen.copyTo(drawScreen);
     }
 
     @Override
