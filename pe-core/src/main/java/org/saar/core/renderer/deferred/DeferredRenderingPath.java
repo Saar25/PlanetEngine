@@ -1,6 +1,7 @@
 package org.saar.core.renderer.deferred;
 
 import org.saar.core.renderer.Renderer;
+import org.saar.core.renderer.RenderersHelper;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -17,10 +18,6 @@ import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class DeferredRenderingPath implements RenderingPath {
 
@@ -42,15 +39,17 @@ public class DeferredRenderingPath implements RenderingPath {
     private final ReadOnlyTexture output;
     private final OffScreen passesScreen;
 
-    private final List<DeferredRenderer> renderers;
+    private RenderersHelper renderersHelper = RenderersHelper.empty();
 
-    private final List<RenderPass> renderPasses = new ArrayList<>();
+    private final DeferredRenderingPipeline pipeline = new DeferredRenderingPipeline();
 
     public DeferredRenderingPath(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
         this.screen = Screens.fromPrototype(screen, fbo());
         this.output = screen.getColourTexture();
         this.passesScreen = Screens.fromPrototype(prototype, fbo());
-        this.renderers = Arrays.asList(renderers);
+        for (DeferredRenderer renderer : renderers) {
+            addRenderer(renderer);
+        }
     }
 
     private static Fbo fbo() {
@@ -59,8 +58,20 @@ public class DeferredRenderingPath implements RenderingPath {
         return Fbo.create(width, height);
     }
 
+    public void addRenderer(Renderer renderer) {
+        this.renderersHelper = this.renderersHelper.addRenderer(renderer);
+    }
+
+    public void removeRenderer(Renderer renderer) {
+        this.renderersHelper = this.renderersHelper.removeRenderer(renderer);
+    }
+
     public void addRenderPass(RenderPass renderPass) {
-        this.renderPasses.add(renderPass);
+        this.pipeline.addRenderPass(renderPass);
+    }
+
+    public void removeRenderPass(RenderPass renderPass) {
+        this.pipeline.removeRenderPass(renderPass);
     }
 
     @Override
@@ -72,34 +83,29 @@ public class DeferredRenderingPath implements RenderingPath {
             this.passesScreen.resize(width, height);
         }
 
+        doFirstPass();
+        doRenderPasses();
+
+        this.passesScreen.copyTo(MainScreen.getInstance());
+    }
+
+    private void doFirstPass() {
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+        this.renderersHelper.render();
+    }
 
-        for (Renderer renderer : this.renderers) {
-            renderer.render();
-        }
-
+    private void doRenderPasses() {
         this.passesScreen.setAsDraw();
         GlUtils.clear(GlBuffer.COLOUR);
-
-        ReadOnlyTexture output = this.output;
-        for (RenderPass renderPass : this.renderPasses) {
-            renderPass.render(output);
-            output = this.prototype.getColourTexture();
-        }
-
-        passesScreen.copyTo(MainScreen.getInstance());
+        this.pipeline.render(this.output);
     }
 
     @Override
     public void delete() {
         this.screen.delete();
-        for (DeferredRenderer renderer : this.renderers) {
-            renderer.delete();
-        }
+        this.renderersHelper.delete();
         this.passesScreen.delete();
-        for (RenderPass renderPass : this.renderPasses) {
-            renderPass.delete();
-        }
+        this.pipeline.delete();
     }
 }
