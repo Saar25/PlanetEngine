@@ -6,6 +6,7 @@ import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformProperty
 import org.saar.core.renderer.AUniformProperty
+import org.saar.core.renderer.UniformsHelper
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -25,37 +26,39 @@ import org.saar.maths.utils.Matrix4
 
 class LightRenderPass(private val camera: ICamera, private val input: LightRenderPassInput) : RenderPassBase(shadersProgram), RenderPass {
 
+    private var uniformsHelper: UniformsHelper<ReadOnlyTexture> = UniformsHelper.empty()
+
     @AUniformProperty
-    private val colourTextureUniform = object : UniformTextureProperty<ReadOnlyTexture>("colourTexture", 0) {
-        override fun getInstanceValue(state: InstanceRenderState<ReadOnlyTexture>): ReadOnlyTexture {
-            return state.instance
+    private val colourTextureUniform = object : UniformTextureProperty<LightRenderPassInstance>("colourTexture", 0) {
+        override fun getInstanceValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+            return state.instance.image
         }
     }
 
     @AUniformProperty
-    private val normalTextureUniform = object : UniformTextureProperty<ReadOnlyTexture>("normalTexture", 1) {
+    private val normalTextureUniform = object : UniformTextureProperty<LightRenderPassInstance>("normalTexture", 1) {
         override fun getStageValue(state: StageRenderState): ReadOnlyTexture {
             return this@LightRenderPass.input.normalTexture
         }
     }
 
     @AUniformProperty
-    private val depthTextureUniform = object : UniformTextureProperty<ReadOnlyTexture>("depthTexture", 2) {
+    private val depthTextureUniform = object : UniformTextureProperty<LightRenderPassInstance>("depthTexture", 2) {
         override fun getStageValue(state: StageRenderState): ReadOnlyTexture {
             return this@LightRenderPass.input.depthTexture
         }
     }
 
     @AUniformProperty
-    private val projectionMatrixInvUniform = object : UniformMat4Property<ReadOnlyTexture>("projectionMatrixInv") {
+    private val projectionMatrixInvUniform = object : UniformMat4Property<LightRenderPassInstance>("projectionMatrixInv") {
         override fun getStageValue(state: StageRenderState): Matrix4fc {
             return this@LightRenderPass.camera.projection.matrix.invertPerspective(matrix)
         }
     }
 
     @AUniformProperty
-    private val directionalLightsCountUniform = object : UniformIntProperty<DirectionalLight>("directionalLightsCount") {
-        override fun getStageValue(state: StageRenderState?): Int {
+    private val directionalLightsCountUniform = object : UniformIntProperty<LightRenderPassInstance>("directionalLightsCount") {
+        override fun getStageValue(state: StageRenderState): Int {
             return 1
         }
     }
@@ -65,8 +68,8 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
     { name, index -> DirectionalLightUniformProperty(name) }
 
     /*@AUniformProperty
-    private val pointLightsCountUniform = object : UniformIntProperty<DirectionalLight>("pointLightsCount") {
-        override fun getStageValue(state: StageRenderState?): Int {
+    private val pointLightsCountUniform = object : UniformIntProperty<LightRenderPassInstance>("pointLightsCount") {
+        override fun getStageValue(state: StageRenderState): Int {
             return 5
         }
     }
@@ -88,24 +91,23 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
 
     init {
         shadersProgram.bindFragmentOutputs("f_colour")
-        init()
+
+        this.uniformsHelper = buildHelper(uniformsHelper)
     }
 
     override fun onRender(image: ReadOnlyTexture) {
         GlUtils.disableCulling()
 
         val stageState = StageRenderState()
-        this.normalTextureUniform.loadOnStage(stageState)
-        this.depthTextureUniform.loadOnStage(stageState)
-        this.directionalLightsCountUniform.loadOnStage(stageState)
-        this.projectionMatrixInvUniform.loadOnStage(stageState)
-
-        val instanceState = InstanceRenderState(image)
-        this.colourTextureUniform.loadOnInstance(instanceState)
+        this.uniformsHelper.loadOnStage(stageState)
 
         val light = DirectionalLight()
         light.colour.set(1.0f, 1.0f, 1.0f)
         light.direction.set(-50f, -50f, -50f)
+
+        val instance = LightRenderPassInstance(image, emptyArray(), arrayOf(light))
+        val instanceState = InstanceRenderState(instance)
+        this.colourTextureUniform.loadOnInstance(instanceState)
 
         val state = InstanceRenderState<DirectionalLight>(light)
         this.directionalLightsUniform.loadOnInstance(state)
