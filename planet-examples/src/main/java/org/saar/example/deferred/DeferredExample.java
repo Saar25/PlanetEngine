@@ -9,7 +9,6 @@ import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.light.LightRenderPassInput;
-import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -59,8 +58,7 @@ public class DeferredExample {
 
             ExamplesUtils.move(camera, keyboard);
 
-            final MainScreen screen = MainScreen.getInstance();
-            deferredRenderer.render(screen);
+            deferredRenderer.render();
 
             window.update(true);
             window.pollEvents();

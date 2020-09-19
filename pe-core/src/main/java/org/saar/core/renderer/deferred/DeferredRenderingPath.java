@@ -4,7 +4,6 @@ import org.saar.core.renderer.Renderer;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
-import org.saar.core.screen.Screen;
 import org.saar.core.screen.Screens;
 import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImageBase;
@@ -65,9 +64,9 @@ public class DeferredRenderingPath implements RenderingPath {
     }
 
     @Override
-    public void render(Screen drawScreen) {
-        final int width = drawScreen.getWidth();
-        final int height = drawScreen.getHeight();
+    public void render() {
+        final int width = MainScreen.getInstance().getWidth();
+        final int height = MainScreen.getInstance().getHeight();
         if (this.screen.getWidth() != width || this.screen.getHeight() != height) {
             this.screen.resize(width, height);
             this.passesScreen.resize(width, height);
@@ -89,7 +88,7 @@ public class DeferredRenderingPath implements RenderingPath {
             output = this.prototype.getColourTexture();
         }
 
-        passesScreen.copyTo(drawScreen);
+        passesScreen.copyTo(MainScreen.getInstance());
     }
 
     @Override
