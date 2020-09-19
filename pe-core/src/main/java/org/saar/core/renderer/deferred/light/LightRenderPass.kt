@@ -49,7 +49,7 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
     @AUniformProperty
     private val projectionMatrixInvUniform = object : UniformMat4Property<ReadOnlyTexture>("projectionMatrixInv") {
         override fun getStageValue(state: StageRenderState): Matrix4fc {
-            return this@LightRenderPass.camera.projection.matrix.invert(matrix)
+            return this@LightRenderPass.camera.projection.matrix.invertPerspective(matrix)
         }
     }
 
@@ -98,6 +98,7 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
         this.normalTextureUniform.loadOnStage(stageState)
         this.depthTextureUniform.loadOnStage(stageState)
         this.directionalLightsCountUniform.loadOnStage(stageState)
+        this.projectionMatrixInvUniform.loadOnStage(stageState)
 
         val instanceState = InstanceRenderState(image)
         this.colourTextureUniform.loadOnInstance(instanceState)
