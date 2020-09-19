@@ -47,9 +47,9 @@ public class DeferredExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype, renderer);
-        final LightRenderPass lightRenderPass = new LightRenderPass(camera);
-        deferredRenderer.addRenderPass(lightRenderPass);
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype);
+        deferredRenderer.addRenderer(renderer);
+        deferredRenderer.addRenderPass(new LightRenderPass(camera));
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

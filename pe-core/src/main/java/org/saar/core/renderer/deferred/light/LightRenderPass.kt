@@ -96,8 +96,8 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         this.uniformsHelper.loadOnStage(stageState)
 
         val light = DirectionalLight()
-        light.colour.set(1.0f, 1.0f, 1.0f)
-        light.direction.set(-50f, -50f, -50f)
+                .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
+                .also { light -> light.direction.set(-50f, -50f, -50f) }
 
         val instance = LightRenderPassInstance(buffers, emptyArray(), arrayOf(light))
         val instanceState = InstanceRenderState(instance)

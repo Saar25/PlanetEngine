@@ -31,7 +31,7 @@ public class DeferredRenderingPath implements RenderingPath {
 
     private final DeferredRenderingPipeline pipeline = new DeferredRenderingPipeline();
 
-    public DeferredRenderingPath(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
+    public DeferredRenderingPath(DeferredScreenPrototype screen) {
         this.screen = Screens.fromPrototype(screen, fbo());
         this.buffers = new DeferredRenderingBuffers(
                 screen.getColourTexture(),
@@ -43,9 +43,6 @@ public class DeferredRenderingPath implements RenderingPath {
             private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachment.withTexture(
                     0, colourTexture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE));
         }, fbo());
-        for (DeferredRenderer renderer : renderers) {
-            addRenderer(renderer);
-        }
     }
 
     private static Fbo fbo() {
