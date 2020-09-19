@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformVec3Property
 
-open class DirectionalLightUniformProperty(private val name: String) : UniformProperty<DirectionalLight> {
+open class DirectionalLightUniformProperty(val name: String) : UniformProperty<DirectionalLight> {
 
     val directionUniform = UniformVec3Property("$name.direction")
 
