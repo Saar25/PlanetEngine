@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.constants;
 
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL31;
 
 public enum VboTarget {
@@ -8,7 +9,11 @@ public enum VboTarget {
     ARRAY_BUFFER(GL15.GL_ARRAY_BUFFER),
     ELEMENT_ARRAY_BUFFER(GL15.GL_ELEMENT_ARRAY_BUFFER),
     UNIFORM_BUFFER(GL31.GL_UNIFORM_BUFFER),
+    PACK_BUFFER(GL21.GL_PIXEL_PACK_BUFFER),
+    UNPACK_BUFFER(GL21.GL_PIXEL_UNPACK_BUFFER),
     ;
+
+    private static final VboTarget[] values = values();
 
     private final int value;
 
@@ -21,12 +26,10 @@ public enum VboTarget {
     }
 
     public static VboTarget valueOf(int id) {
-        switch (id) {
-            case GL15.GL_ARRAY_BUFFER: return ARRAY_BUFFER;
-            case GL15.GL_ELEMENT_ARRAY_BUFFER: return ELEMENT_ARRAY_BUFFER;
-            case GL31.GL_UNIFORM_BUFFER: return UNIFORM_BUFFER;
-            default: return null;
+        for (VboTarget value : VboTarget.values) {
+            if (value.get() == id) return value;
         }
+        return null;
     }
 
 }
