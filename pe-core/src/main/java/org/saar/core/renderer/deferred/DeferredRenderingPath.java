@@ -1,7 +1,7 @@
 package org.saar.core.renderer.deferred;
 
 import org.saar.core.renderer.Renderer;
-import org.saar.core.renderer.RenderingPipeline;
+import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screen;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DeferredRenderingPipeline implements RenderingPipeline {
+public class DeferredRenderingPath implements RenderingPath {
 
     private final DeferredScreenPrototype prototype = new DeferredScreenPrototype() {
 
@@ -47,7 +47,7 @@ public class DeferredRenderingPipeline implements RenderingPipeline {
 
     private final List<RenderPass> renderPasses = new ArrayList<>();
 
-    public DeferredRenderingPipeline(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
+    public DeferredRenderingPath(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
         this.screen = Screens.fromPrototype(screen, fbo());
         this.output = screen.getColourTexture();
         this.passesScreen = Screens.fromPrototype(prototype, fbo());

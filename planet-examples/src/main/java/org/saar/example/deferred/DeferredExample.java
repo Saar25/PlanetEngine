@@ -6,7 +6,7 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.light.LightRenderPassInput;
 import org.saar.core.screen.MainScreen;
@@ -49,7 +49,7 @@ public class DeferredExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final DeferredRenderingPipeline deferredRenderer = new DeferredRenderingPipeline(screenPrototype, renderer);
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype, renderer);
         final LightRenderPass lightRenderPass = new LightRenderPass(camera, new LightRenderPassInput(
                 screenPrototype.getNormalTexture(), screenPrototype.getDepthTexture()));
         deferredRenderer.addRenderPass(lightRenderPass);

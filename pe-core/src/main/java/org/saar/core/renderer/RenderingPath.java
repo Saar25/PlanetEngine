@@ -2,7 +2,7 @@ package org.saar.core.renderer;
 
 import org.saar.core.screen.Screen;
 
-public interface RenderingPipeline {
+public interface RenderingPath {
 
     void render(Screen drawScreen);
 
