@@ -8,7 +8,6 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
-import org.saar.core.renderer.deferred.light.LightRenderPassInput;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -49,8 +48,7 @@ public class DeferredExample {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype, renderer);
-        final LightRenderPass lightRenderPass = new LightRenderPass(camera, new LightRenderPassInput(
-                screenPrototype.getNormalTexture(), screenPrototype.getDepthTexture()));
+        final LightRenderPass lightRenderPass = new LightRenderPass(camera);
         deferredRenderer.addRenderPass(lightRenderPass);
 
         final Keyboard keyboard = window.getKeyboard();

@@ -38,10 +38,12 @@ public class MyScreenPrototype implements DeferredScreenPrototype {
         return this.colourTexture;
     }
 
+    @Override
     public Texture getNormalTexture() {
         return this.normalTexture;
     }
 
+    @Override
     public Texture getDepthTexture() {
         return this.depthTexture;
     }

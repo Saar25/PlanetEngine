@@ -4,7 +4,6 @@ import org.saar.core.renderer.Renderers;
 import org.saar.core.renderer.UniformsHelper;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 
 import java.util.List;
 
@@ -48,10 +47,10 @@ public abstract class RenderPassBase implements RenderPass {
     }
 
     @Override
-    public void render(ReadOnlyTexture image) {
+    public void render(DeferredRenderingBuffers buffers) {
         this.shadersProgram.bind();
 
-        onRender(image);
+        onRender(buffers);
 
         this.shadersProgram.unbind();
     }
@@ -61,5 +60,5 @@ public abstract class RenderPassBase implements RenderPass {
         this.shadersProgram.delete();
     }
 
-    protected abstract void onRender(ReadOnlyTexture image);
+    protected abstract void onRender(DeferredRenderingBuffers buffers);
 }

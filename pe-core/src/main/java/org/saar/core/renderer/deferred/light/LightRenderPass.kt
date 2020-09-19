@@ -7,6 +7,7 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformProperty
 import org.saar.core.renderer.AUniformProperty
 import org.saar.core.renderer.UniformsHelper
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -21,28 +22,28 @@ import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class LightRenderPass(private val camera: ICamera, private val input: LightRenderPassInput) : RenderPassBase(shadersProgram), RenderPass {
+class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgram), RenderPass {
 
     private var uniformsHelper: UniformsHelper<LightRenderPassInstance> = UniformsHelper.empty()
 
     @AUniformProperty
     private val colourTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("colourTexture", 0) {
         override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
-            return state.instance.image
+            return state.instance.buffers.albedo
         }
     }
 
     @AUniformProperty
-    private val normalTextureUniform = object : UniformTextureProperty.Stage("normalTexture", 1) {
-        override fun getUniformValue(state: StageRenderState): ReadOnlyTexture {
-            return this@LightRenderPass.input.normalTexture
+    private val normalTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("normalTexture", 1) {
+        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+            return state.instance.buffers.normal
         }
     }
 
     @AUniformProperty
-    private val depthTextureUniform = object : UniformTextureProperty.Stage("depthTexture", 2) {
-        override fun getUniformValue(state: StageRenderState): ReadOnlyTexture {
-            return this@LightRenderPass.input.depthTexture
+    private val depthTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("depthTexture", 2) {
+        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+            return state.instance.buffers.depth
         }
     }
 
@@ -88,7 +89,7 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
         this.uniformsHelper = buildHelper(uniformsHelper)
     }
 
-    override fun onRender(image: ReadOnlyTexture) {
+    override fun onRender(buffers: DeferredRenderingBuffers) {
         GlUtils.disableCulling()
 
         val stageState = StageRenderState()
@@ -98,7 +99,7 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
         light.colour.set(1.0f, 1.0f, 1.0f)
         light.direction.set(-50f, -50f, -50f)
 
-        val instance = LightRenderPassInstance(image, emptyArray(), arrayOf(light))
+        val instance = LightRenderPassInstance(buffers, emptyArray(), arrayOf(light))
         val instanceState = InstanceRenderState(instance)
         uniformsHelper.loadOnInstance(instanceState)
 

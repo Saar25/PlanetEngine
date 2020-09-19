@@ -5,6 +5,7 @@ import org.saar.core.renderer.RenderersHelper;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.ScreenPrototype;
 import org.saar.core.screen.Screens;
 import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImageBase;
@@ -13,7 +14,6 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -21,23 +21,11 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class DeferredRenderingPath implements RenderingPath {
 
-    private final DeferredScreenPrototype prototype = new DeferredScreenPrototype() {
-
-        private final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
-
-        @ScreenImageProperty(draw = true, read = true)
-        private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachment.withTexture(
-                0, colourTexture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE));
-
-        @Override
-        public ReadOnlyTexture getColourTexture() {
-            return this.colourTexture;
-        }
-    };
+    private final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
 
     private final OffScreen screen;
-    private final ReadOnlyTexture output;
     private final OffScreen passesScreen;
+    private final DeferredRenderingBuffers buffers;
 
     private RenderersHelper renderersHelper = RenderersHelper.empty();
 
@@ -45,8 +33,16 @@ public class DeferredRenderingPath implements RenderingPath {
 
     public DeferredRenderingPath(DeferredScreenPrototype screen, DeferredRenderer... renderers) {
         this.screen = Screens.fromPrototype(screen, fbo());
-        this.output = screen.getColourTexture();
-        this.passesScreen = Screens.fromPrototype(prototype, fbo());
+        this.buffers = new DeferredRenderingBuffers(
+                screen.getColourTexture(),
+                screen.getNormalTexture(),
+                screen.getDepthTexture());
+
+        this.passesScreen = Screens.fromPrototype(new ScreenPrototype() {
+            @ScreenImageProperty(draw = true, read = true)
+            private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachment.withTexture(
+                    0, colourTexture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE));
+        }, fbo());
         for (DeferredRenderer renderer : renderers) {
             addRenderer(renderer);
         }
@@ -98,7 +94,7 @@ public class DeferredRenderingPath implements RenderingPath {
     private void doRenderPasses() {
         this.passesScreen.setAsDraw();
         GlUtils.clear(GlBuffer.COLOUR);
-        this.pipeline.render(this.output);
+        this.pipeline.render(this.buffers);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package org.saar.core.renderer.deferred;
 
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +14,7 @@ public abstract class RenderPassesHelper {
 
     public abstract RenderPassesHelper removeRenderPass(RenderPass renderPass);
 
-    public abstract void render(ReadOnlyTexture image);
+    public abstract void render(DeferredRenderingBuffers buffers);
 
     public abstract void delete();
 
@@ -35,7 +33,7 @@ public abstract class RenderPassesHelper {
         }
 
         @Override
-        public void render(ReadOnlyTexture image) {
+        public void render(DeferredRenderingBuffers buffers) {
 
         }
 
@@ -64,8 +62,8 @@ public abstract class RenderPassesHelper {
         }
 
         @Override
-        public void render(ReadOnlyTexture image) {
-            this.renderPass.render(image);
+        public void render(DeferredRenderingBuffers buffers) {
+            this.renderPass.render(buffers);
         }
 
         @Override
@@ -100,9 +98,9 @@ public abstract class RenderPassesHelper {
         }
 
         @Override
-        public void render(ReadOnlyTexture image) {
+        public void render(DeferredRenderingBuffers buffers) {
             for (RenderPass renderPass : this.renderPasses) {
-                renderPass.render(image);
+                renderPass.render(buffers);
             }
         }
 

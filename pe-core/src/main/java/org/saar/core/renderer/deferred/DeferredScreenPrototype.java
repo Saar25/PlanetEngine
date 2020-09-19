@@ -7,4 +7,8 @@ public interface DeferredScreenPrototype extends ScreenPrototype {
 
     ReadOnlyTexture getColourTexture();
 
+    ReadOnlyTexture getNormalTexture();
+
+    ReadOnlyTexture getDepthTexture();
+
 }
