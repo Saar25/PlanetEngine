@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public class UniformUIntProperty extends AbstractUniformProperty<Integer> {
 
-    protected UniformUIntProperty(String name) {
+    public UniformUIntProperty(String name) {
         super(name);
     }
 

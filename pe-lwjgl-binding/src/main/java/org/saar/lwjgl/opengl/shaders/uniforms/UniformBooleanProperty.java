@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public class UniformBooleanProperty extends AbstractUniformProperty<Boolean> {
 
-    protected UniformBooleanProperty(String name) {
+    public UniformBooleanProperty(String name) {
         super(name);
     }
 

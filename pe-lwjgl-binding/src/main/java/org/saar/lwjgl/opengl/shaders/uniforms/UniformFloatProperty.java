@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
 public class UniformFloatProperty extends AbstractUniformProperty<Float> {
 
-    protected UniformFloatProperty(String name) {
+    public UniformFloatProperty(String name) {
         super(name);
     }
 
