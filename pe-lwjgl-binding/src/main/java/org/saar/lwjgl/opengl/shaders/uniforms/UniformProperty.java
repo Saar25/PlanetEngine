@@ -8,7 +8,17 @@ public interface UniformProperty<T> {
 
     void initialize(ShadersProgram shadersProgram);
 
-    void loadOnInstance(InstanceRenderState<T> state);
+    void loadValue(T value);
 
-    void loadOnStage(StageRenderState state);
+    interface Stage<T> extends UniformProperty<T> {
+
+        void loadOnStage(StageRenderState state);
+
+    }
+
+    interface Instance<T, E> extends UniformProperty<E> {
+
+        void loadOnInstance(InstanceRenderState<T> state);
+
+    }
 }

@@ -26,57 +26,53 @@ import org.saar.maths.utils.Matrix4
 
 class LightRenderPass(private val camera: ICamera, private val input: LightRenderPassInput) : RenderPassBase(shadersProgram), RenderPass {
 
-    private var uniformsHelper: UniformsHelper<ReadOnlyTexture> = UniformsHelper.empty()
+    private var uniformsHelper: UniformsHelper<LightRenderPassInstance> = UniformsHelper.empty()
 
     @AUniformProperty
-    private val colourTextureUniform = object : UniformTextureProperty<LightRenderPassInstance>("colourTexture", 0) {
-        override fun getInstanceValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+    private val colourTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("colourTexture", 0) {
+        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
             return state.instance.image
         }
     }
 
     @AUniformProperty
-    private val normalTextureUniform = object : UniformTextureProperty<LightRenderPassInstance>("normalTexture", 1) {
-        override fun getStageValue(state: StageRenderState): ReadOnlyTexture {
+    private val normalTextureUniform = object : UniformTextureProperty.Stage("normalTexture", 1) {
+        override fun getUniformValue(state: StageRenderState): ReadOnlyTexture {
             return this@LightRenderPass.input.normalTexture
         }
     }
 
     @AUniformProperty
-    private val depthTextureUniform = object : UniformTextureProperty<LightRenderPassInstance>("depthTexture", 2) {
-        override fun getStageValue(state: StageRenderState): ReadOnlyTexture {
+    private val depthTextureUniform = object : UniformTextureProperty.Stage("depthTexture", 2) {
+        override fun getUniformValue(state: StageRenderState): ReadOnlyTexture {
             return this@LightRenderPass.input.depthTexture
         }
     }
 
     @AUniformProperty
-    private val projectionMatrixInvUniform = object : UniformMat4Property<LightRenderPassInstance>("projectionMatrixInv") {
-        override fun getStageValue(state: StageRenderState): Matrix4fc {
+    private val projectionMatrixInvUniform = object : UniformMat4Property.Stage("projectionMatrixInv") {
+        override fun getUniformValue(state: StageRenderState): Matrix4fc {
             return this@LightRenderPass.camera.projection.matrix.invertPerspective(matrix)
         }
     }
 
     @AUniformProperty
-    private val directionalLightsCountUniform = object : UniformIntProperty<LightRenderPassInstance>("directionalLightsCount") {
-        override fun getStageValue(state: StageRenderState): Int {
-            return 1
+    private val directionalLightsCountUniform = object : UniformIntProperty.Instance<LightRenderPassInstance>(
+            "directionalLightsCount") {
+        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): Int {
+            return state.instance.directionalLights.size
         }
     }
 
     @AUniformProperty
-    private val directionalLightsUniform = UniformArrayProperty<DirectionalLight>("directionalLights", 2)
-    { name, index -> DirectionalLightUniformProperty(name) }
-
-    /*@AUniformProperty
-    private val pointLightsCountUniform = object : UniformIntProperty<LightRenderPassInstance>("pointLightsCount") {
-        override fun getStageValue(state: StageRenderState): Int {
-            return 5
+    private val directionalLightsUniform = UniformArrayProperty.Instance<LightRenderPassInstance, DirectionalLight>(
+            "directionalLights", 1) { name, index ->
+        object : DirectionalLightUniformProperty.Instance<LightRenderPassInstance>(name) {
+            override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): DirectionalLight {
+                return state.instance.directionalLights[index]
+            }
         }
     }
-
-    @AUniformProperty
-    private val pointLightsUniform = UniformArrayProperty<DirectionalLight>("pointLights", 2)
-    { name, index -> DirectionalLightUniformProperty(name) }*/
 
     companion object {
         private val matrix: Matrix4f = Matrix4.create()
@@ -107,10 +103,7 @@ class LightRenderPass(private val camera: ICamera, private val input: LightRende
 
         val instance = LightRenderPassInstance(image, emptyArray(), arrayOf(light))
         val instanceState = InstanceRenderState(instance)
-        this.colourTextureUniform.loadOnInstance(instanceState)
-
-        val state = InstanceRenderState<DirectionalLight>(light)
-        this.directionalLightsUniform.loadOnInstance(state)
+        uniformsHelper.loadOnInstance(instanceState)
 
         // TODO: bind some default vao, cannot draw without bound vao!
         Vao.EMPTY.bind()

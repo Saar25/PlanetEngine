@@ -13,4 +13,12 @@ public final class Renderers {
     public static List<UniformProperty<?>> findUniformProperties(Object renderer) {
         return new UniformPropertiesLocator(renderer).getUniformProperties();
     }
+
+    public static <T> List<UniformProperty.Stage<T>> findStageUniformProperties(Object renderer) {
+        return new UniformPropertiesLocator(renderer).getStageUniformProperties();
+    }
+
+    public static <T, E> List<UniformProperty.Instance<T, E>> findInstanceUniformProperties(Object renderer) {
+        return new UniformPropertiesLocator(renderer).getInstanceUniformProperties();
+    }
 }

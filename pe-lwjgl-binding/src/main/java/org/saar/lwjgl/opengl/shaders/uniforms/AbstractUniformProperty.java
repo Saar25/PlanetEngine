@@ -6,6 +6,7 @@ public abstract class AbstractUniformProperty<T> implements UniformProperty<T> {
 
     private final String name;
     private int location = -1;
+    private boolean exists = true;
 
     AbstractUniformProperty(String name) {
         this.name = name;
@@ -15,14 +16,19 @@ public abstract class AbstractUniformProperty<T> implements UniformProperty<T> {
     public final void initialize(ShadersProgram shadersProgram) {
         if ((location = shadersProgram.getUniformLocation(name)) == -1) {
             System.err.println("Cannot locate uniform " + name);
+            exists = false;
         }
     }
 
     int getLocation() {
-        return location;
+        return this.location;
     }
 
     public String getName() {
-        return name;
+        return this.name;
+    }
+
+    public boolean isExists() {
+        return this.exists;
     }
 }

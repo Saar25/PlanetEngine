@@ -1,41 +1,47 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
-public abstract class UniformFloatProperty<T> extends AbstractUniformProperty<T> {
-
-    private boolean loadOnInstance = true;
-    private boolean loadOnStage = true;
+public class UniformFloatProperty extends AbstractUniformProperty<Float> {
 
     protected UniformFloatProperty(String name) {
         super(name);
     }
 
+    @Override
+    public void loadValue(Float value) {
+        load(value);
+    }
+
     public void load(float value) {
-        GL30.glUniform1f(getLocation(), value);
+        GL20.glUniform1f(getLocation(), value);
     }
 
-    @Override
-    public void loadOnInstance(InstanceRenderState<T> state) {
-        final float value = getInstanceValue(state);
-        if (this.loadOnInstance) load(value);
+    public static abstract class Stage extends UniformFloatProperty implements UniformProperty.Stage<Float> {
+        public Stage(String name) {
+            super(name);
+        }
+
+        @Override
+        public void loadOnStage(StageRenderState state) {
+            load(getUniformValue(state));
+        }
+
+        public abstract float getUniformValue(StageRenderState state);
     }
 
-    @Override
-    public void loadOnStage(StageRenderState state) {
-        final float value = getStageValue(state);
-        if (this.loadOnStage) load(value);
-    }
+    public static abstract class Instance<T> extends UniformFloatProperty implements UniformProperty.Instance<T, Float> {
+        public Instance(String name) {
+            super(name);
+        }
 
-    public float getInstanceValue(InstanceRenderState<T> state) {
-        this.loadOnInstance = false;
-        return 0;
-    }
+        @Override
+        public void loadOnInstance(InstanceRenderState<T> state) {
+            load(getUniformValue(state));
+        }
 
-    public float getStageValue(StageRenderState state) {
-        this.loadOnStage = false;
-        return 0;
+        public abstract float getUniformValue(InstanceRenderState<T> state);
     }
 }

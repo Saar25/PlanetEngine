@@ -15,8 +15,8 @@ import org.saar.maths.utils.Matrix4
 class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<RenderNode3D>) : AbstractRenderer(shadersProgram), Renderer {
 
     @AUniformProperty
-    private val mvpMatrixUniform = object : UniformMat4Property<RenderNode3D>("mvpMatrix") {
-        override fun getInstanceValue(state: InstanceRenderState<RenderNode3D>): Matrix4fc {
+    private val mvpMatrixUniform = object : UniformMat4Property.Instance<RenderNode3D>("mvpMatrix") {
+        override fun getUniformValue(state: InstanceRenderState<RenderNode3D>): Matrix4fc {
             return camera.projection.matrix.mul(camera.viewMatrix, matrix)
                     .mul(state.instance.transform.transformationMatrix)
         }

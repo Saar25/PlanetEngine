@@ -19,22 +19,22 @@ class ObjDeferredRenderer(private val camera: ICamera, private val renderNodes: 
     : AbstractRenderer(shadersProgram), DeferredRenderer {
 
     @AUniformProperty
-    private val viewProjectionUniform = object : UniformMat4Property<ObjNode>("viewProjectionMatrix") {
-        override fun getStageValue(state: StageRenderState): Matrix4fc {
+    private val viewProjectionUniform = object : UniformMat4Property.Stage("viewProjectionMatrix") {
+        override fun getUniformValue(state: StageRenderState): Matrix4fc {
             return camera.projection.matrix.mul(camera.viewMatrix, matrix)
         }
     }
 
     @AUniformProperty
-    private val textureUniform = object : UniformTextureProperty<ObjNode>("texture", 0) {
-        override fun getInstanceValue(state: InstanceRenderState<ObjNode>): ReadOnlyTexture {
+    private val textureUniform = object : UniformTextureProperty.Instance<ObjNode>("texture", 0) {
+        override fun getUniformValue(state: InstanceRenderState<ObjNode>): ReadOnlyTexture {
             return state.instance.texture
         }
     }
 
     @AUniformProperty
-    private val transformUniform = object : UniformMat4Property<ObjNode>("transformationMatrix") {
-        override fun getInstanceValue(state: InstanceRenderState<ObjNode>): Matrix4fc {
+    private val transformUniform = object : UniformMat4Property.Instance<ObjNode>("transformationMatrix") {
+        override fun getUniformValue(state: InstanceRenderState<ObjNode>): Matrix4fc {
             return state.instance.transform.transformationMatrix
         }
     }

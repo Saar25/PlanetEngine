@@ -6,6 +6,8 @@ import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 
+import java.util.List;
+
 public abstract class RenderPassBase implements RenderPass {
 
     private final ShadersProgram shadersProgram;
@@ -21,14 +23,23 @@ public abstract class RenderPassBase implements RenderPass {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected <T> UniformsHelper<T> buildHelper(UniformsHelper<T> helper) {
         this.shadersProgram.bind();
-        for (UniformProperty<?> uniform : Renderers.findUniformProperties(this)) {
-            final UniformProperty<T> cast = (UniformProperty<T>) uniform;
-            cast.initialize(this.shadersProgram);
-            helper = helper.addUniform(cast);
+
+        final List<UniformProperty.Stage<T>> stage =
+                Renderers.findStageUniformProperties(this);
+        for (UniformProperty.Stage<T> uniform : stage) {
+            uniform.initialize(this.shadersProgram);
+            helper = helper.addUniform(uniform);
         }
+
+        final List<UniformProperty.Instance<T, Object>> instance =
+                Renderers.findInstanceUniformProperties(this);
+        for (UniformProperty.Instance<T, ?> uniform : instance) {
+            uniform.initialize(this.shadersProgram);
+            helper = helper.addUniform(uniform);
+        }
+
         return helper;
     }
 

@@ -5,7 +5,6 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState;
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class UniformsHelper<T> {
@@ -14,17 +13,9 @@ public abstract class UniformsHelper<T> {
 
     public abstract void loadOnStage(StageRenderState state);
 
-    public abstract UniformsHelper<T> addUniform(UniformProperty<T> property);
+    public abstract UniformsHelper<T> addUniform(UniformProperty.Instance<T, ?> property);
 
-    public static <T> UniformsHelper<T> locate(Object object) {
-        UniformsHelper<T> helper = empty();
-        for (UniformProperty<?> property : Renderers.findUniformProperties(object)) {
-            @SuppressWarnings("unchecked") final UniformProperty<T> cast =
-                    (UniformProperty<T>) property;
-            helper = helper.addUniform(cast);
-        }
-        return helper;
-    }
+    public abstract UniformsHelper<T> addUniform(UniformProperty.Stage<T> property);
 
     public static <T> UniformsHelper<T> empty() {
         @SuppressWarnings("unchecked") final UniformsHelper<T> empty =
@@ -45,61 +36,114 @@ public abstract class UniformsHelper<T> {
         }
 
         @Override
-        public UniformsHelper<T> addUniform(UniformProperty<T> property) {
-            return new UniformsHelper.Single<>(property);
+        public UniformsHelper<T> addUniform(UniformProperty.Instance<T, ?> property) {
+            return new OnlyInstance<>(property);
+        }
+
+        @Override
+        public UniformsHelper<T> addUniform(UniformProperty.Stage<T> property) {
+            return new OnlyStage<>(property);
         }
     }
 
-    private static class Single<T> extends UniformsHelper<T> {
+    private static class OnlyStage<T> extends UniformsHelper<T> {
 
-        private final UniformProperty<T> property;
+        private final List<UniformProperty.Stage<T>> properties;
 
-        public Single(UniformProperty<T> property) {
-            this.property = property;
+        public OnlyStage(UniformProperty.Stage<T> property) {
+            this.properties = new ArrayList<>();
+            this.properties.add(property);
         }
 
         @Override
         public void loadOnInstance(InstanceRenderState<T> state) {
-            this.property.loadOnInstance(state);
         }
 
         @Override
         public void loadOnStage(StageRenderState state) {
-            this.property.loadOnStage(state);
+            for (UniformProperty.Stage<T> property : this.properties) {
+                property.loadOnStage(state);
+            }
         }
 
         @Override
-        public UniformsHelper<T> addUniform(UniformProperty<T> property) {
-            return new UniformsHelper.Generic<>(this.property, property);
+        public UniformsHelper<T> addUniform(UniformProperty.Instance<T, ?> property) {
+            return new Generic<>(this, property);
+        }
+
+        @Override
+        public UniformsHelper<T> addUniform(UniformProperty.Stage<T> property) {
+            this.properties.add(property);
+            return this;
         }
     }
 
-    private static class Generic<T> extends UniformsHelper<T> {
+    private static class OnlyInstance<T> extends UniformsHelper<T> {
 
-        private final List<UniformProperty<T>> properties;
+        private final List<UniformProperty.Instance<T, ?>> properties;
 
-        @SafeVarargs
-        public Generic(UniformProperty<T>... properties) {
-            this.properties = new ArrayList<>(Arrays.asList(properties));
+        public OnlyInstance(UniformProperty.Instance<T, ?> property) {
+            this.properties = new ArrayList<>();
+            this.properties.add(property);
         }
 
         @Override
         public void loadOnInstance(InstanceRenderState<T> state) {
-            for (UniformProperty<T> property : this.properties) {
+            for (UniformProperty.Instance<T, ?> property : this.properties) {
                 property.loadOnInstance(state);
             }
         }
 
         @Override
         public void loadOnStage(StageRenderState state) {
-            for (UniformProperty<T> property : this.properties) {
-                property.loadOnStage(state);
-            }
         }
 
         @Override
-        public UniformsHelper<T> addUniform(UniformProperty<T> property) {
+        public UniformsHelper<T> addUniform(UniformProperty.Instance<T, ?> property) {
             this.properties.add(property);
+            return this;
+        }
+
+        @Override
+        public UniformsHelper<T> addUniform(UniformProperty.Stage<T> property) {
+            return new Generic<>(this, property);
+        }
+    }
+
+    private static class Generic<T> extends UniformsHelper<T> {
+
+        private final OnlyStage<T> stageHelper;
+        private final OnlyInstance<T> instanceHelper;
+
+        public Generic(OnlyStage<T> stageHelper, UniformProperty.Instance<T, ?> instance) {
+            this.stageHelper = stageHelper;
+            this.instanceHelper = new OnlyInstance<>(instance);
+        }
+
+        public Generic(OnlyInstance<T> instanceHelper, UniformProperty.Stage<T> stage) {
+            this.instanceHelper = instanceHelper;
+            this.stageHelper = new OnlyStage<>(stage);
+        }
+
+        @Override
+        public void loadOnInstance(InstanceRenderState<T> state) {
+            this.instanceHelper.loadOnInstance(state);
+        }
+
+        @Override
+        public void loadOnStage(StageRenderState state) {
+            this.stageHelper.loadOnStage(state);
+        }
+
+        @Override
+        public UniformsHelper<T> addUniform(UniformProperty.Instance<T, ?> property) {
+            this.instanceHelper.addUniform(property);
+            return this;
+        }
+
+        @Override
+        public UniformsHelper<T> addUniform(UniformProperty.Stage<T> property) {
+            this.stageHelper.addUniform(property);
             return this;
         }
     }
