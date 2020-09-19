@@ -18,7 +18,7 @@ open class DirectionalLightUniformProperty(private val name: String) : UniformPr
     }
 
     override fun loadValue(value: DirectionalLight) {
-        this.directionUniform.loadValue(value.direction)
+        this.directionUniform.loadValue(value.direction.normalize())
         this.colourUniform.loadValue(value.colour)
     }
 
