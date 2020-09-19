@@ -4,7 +4,7 @@ import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
-public abstract class UniformGlPrimitiveProperty extends UniformPropertyBase<GlPrimitive> {
+public class UniformGlPrimitiveProperty extends UniformPropertyBase<GlPrimitive> {
 
     public UniformGlPrimitiveProperty(String name) {
         super(name);

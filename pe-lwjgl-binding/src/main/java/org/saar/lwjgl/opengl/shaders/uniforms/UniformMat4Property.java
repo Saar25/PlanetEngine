@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
 import org.saar.lwjgl.opengl.shaders.StageRenderState;
 
-public abstract class UniformMat4Property extends UniformPropertyBase<Matrix4fc> {
+public class UniformMat4Property extends UniformPropertyBase<Matrix4fc> {
 
     public UniformMat4Property(String name) {
         super(name);

@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.StageRenderState;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 
-public abstract class UniformTextureProperty implements UniformProperty<ReadOnlyTexture> {
+public class UniformTextureProperty implements UniformProperty<ReadOnlyTexture> {
 
     private final String name;
     private final int unit;
