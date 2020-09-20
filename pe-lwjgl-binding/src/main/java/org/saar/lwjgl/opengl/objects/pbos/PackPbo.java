@@ -22,7 +22,7 @@ public class PackPbo implements ReadablePbo {
     }
 
     @Override
-    public void readPixels(int x, int y, int width, int height, IFormatType format, DataType dataType) {
+    public void readPixels(int x, int y, int width, int height, InternalFormat format, DataType dataType) {
         this.buffer.bind();
         GL21.glReadPixels(x, y, width, height, format.get(), dataType.get(), 0);
     }
