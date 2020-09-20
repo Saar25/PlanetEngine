@@ -42,6 +42,7 @@ class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<R
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.enableCulling()
+        GlUtils.setProvokingVertexFirst()
 
         for (renderNode3D in this.renderNodes3D) {
             val state = InstanceRenderState(renderNode3D)

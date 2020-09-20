@@ -10,13 +10,15 @@ public class ModelWriter3D implements ModelNodeWriter<Node3D>, ModelVertexWriter
 
     private final BufferWriter instanceWriter;
     private final BufferWriter positionWriter;
+    private final BufferWriter normalWriter;
     private final BufferWriter colourWriter;
     private final BufferWriter indexWriter;
 
     public ModelWriter3D(BufferWriter instanceWriter, BufferWriter positionWriter,
-                         BufferWriter colourWriter, BufferWriter indexWriter) {
+                         BufferWriter normalWriter, BufferWriter colourWriter, BufferWriter indexWriter) {
         this.instanceWriter = instanceWriter;
         this.positionWriter = positionWriter;
+        this.normalWriter = normalWriter;
         this.colourWriter = colourWriter;
         this.indexWriter = indexWriter;
     }
@@ -30,6 +32,7 @@ public class ModelWriter3D implements ModelNodeWriter<Node3D>, ModelVertexWriter
     @Override
     public void writeVertex(Vertex3D vertex) {
         this.positionWriter.write(vertex.getPosition3f());
+        this.normalWriter.write(vertex.getNormal3f());
         this.colourWriter.write(vertex.getColour3f());
     }
 

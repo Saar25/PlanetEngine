@@ -15,14 +15,14 @@ import org.saar.maths.utils.Vector3;
 public final class ExamplesUtils {
 
     public static final Vertex3D[] cubeVertices = new Vertex3D[]{ // xyz position, xyz normal,
-            Vertex3D.of(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
-            Vertex3D.of(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0).add(1, 1, 1).div(2)), // 1
-            Vertex3D.of(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0).add(1, 1, 1).div(2)), // 2
-            Vertex3D.of(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0).add(1, 1, 1).div(2)), // 3
-            Vertex3D.of(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0).add(1, 1, 1).div(2)), // 4
-            Vertex3D.of(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 5
-            Vertex3D.of(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 6
-            Vertex3D.of(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1).add(1, 1, 1).div(2)), // 7
+            Vertex3D.of(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1), Vector3.of(0.5f, 0.5f, 0.0f)), // 0
+            Vertex3D.of(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0), Vector3.of(0.5f, 1.0f, 0.5f)), // 1
+            Vertex3D.of(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0), Vector3.of(1.0f, 0.5f, 0.5f)), // 2
+            Vertex3D.of(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0), Vector3.of(0.5f, 0.0f, 0.5f)), // 3
+            Vertex3D.of(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0), Vector3.of(0.0f, 0.5f, 0.5f)), // 4
+            Vertex3D.of(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0), Vector3.of(0.5f, 0.5f, 0.5f)), // 5
+            Vertex3D.of(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0), Vector3.of(0.5f, 0.5f, 0.5f)), // 6
+            Vertex3D.of(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1), Vector3.of(0.5f, 0.5f, 1.0f)), // 7
     };
 
     public static final int[] cubeIndices = {
@@ -40,7 +40,7 @@ public final class ExamplesUtils {
     }
 
     public static void move(ICamera camera, Keyboard keyboard) {
-        ExamplesUtils.move(camera, keyboard, 1);
+        ExamplesUtils.move(camera, keyboard, 100);
     }
 
     public static void move(ICamera camera, Keyboard keyboard, long ms) {

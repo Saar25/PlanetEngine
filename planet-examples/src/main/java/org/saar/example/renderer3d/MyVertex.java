@@ -6,16 +6,23 @@ import org.saar.core.common.r3d.Vertex3D;
 public class MyVertex implements Vertex3D {
 
     private final Vector3fc position;
+    private final Vector3fc normal;
     private final Vector3fc colour;
 
-    public MyVertex(Vector3fc position, Vector3fc colour) {
+    public MyVertex(Vector3fc position, Vector3fc normal, Vector3fc colour) {
         this.position = position;
+        this.normal = normal;
         this.colour = colour;
     }
 
     @Override
     public Vector3fc getPosition3f() {
         return this.position;
+    }
+
+    @Override
+    public Vector3fc getNormal3f() {
+        return this.normal;
     }
 
     @Override

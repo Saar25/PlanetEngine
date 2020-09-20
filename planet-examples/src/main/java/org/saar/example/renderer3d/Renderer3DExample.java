@@ -19,7 +19,6 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.Rotation;
 import org.saar.maths.utils.Quaternion;
-import org.saar.maths.utils.Vector3;
 
 public class Renderer3DExample {
 
@@ -29,26 +28,6 @@ public class Renderer3DExample {
     private static final int CUBES = 1_000_000;
     private static final int AREA = 1000;
     private static final int BATCHES = 10;
-
-    private static final MyVertex[] flatData = new MyVertex[]{ // xyz position, xyz normal,
-            new MyVertex(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
-            new MyVertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0).add(1, 1, 1).div(2)), // 1
-            new MyVertex(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0).add(1, 1, 1).div(2)), // 2
-            new MyVertex(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0).add(1, 1, 1).div(2)), // 3
-            new MyVertex(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0).add(1, 1, 1).div(2)), // 4
-            new MyVertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 5
-            new MyVertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 6
-            new MyVertex(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1).add(1, 1, 1).div(2)), // 7
-    };
-
-    private static final int[] indices = {
-            0, 1, 2, 0, 2, 3, // back   , PV: 0
-            4, 5, 1, 4, 1, 0, // left   , PV: 4
-            7, 6, 5, 7, 5, 4, // front  , PV: 7
-            2, 6, 7, 2, 7, 3, // right  , PV: 2
-            1, 5, 6, 1, 6, 2, // top    , PV: 1
-            3, 7, 4, 3, 4, 0, // bottom , PV: 3
-    };
 
     private static ColourAttachment colorAttachment;
     private static DepthAttachment depthAttachment;
@@ -111,7 +90,7 @@ public class Renderer3DExample {
                         (float) Math.random(), (float) Math.random(), (float) Math.random()).normalize()));
                 nodes[j] = newNode;
             }
-            final Mesh3D mesh = Mesh3D.load(flatData, indices, nodes);
+            final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
             batches[i] = new RenderNode3D(mesh);
         }
         return batches;

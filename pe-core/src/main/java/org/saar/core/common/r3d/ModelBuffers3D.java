@@ -16,14 +16,16 @@ import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 public abstract class ModelBuffers3D extends AbstractModelBuffers implements ModelBuffers {
 
     private static final Attribute[] transformAttributes = new Attribute[]{
-            Attribute.ofInstance(2, 4, DataType.FLOAT, false),
             Attribute.ofInstance(3, 4, DataType.FLOAT, false),
             Attribute.ofInstance(4, 4, DataType.FLOAT, false),
-            Attribute.ofInstance(5, 4, DataType.FLOAT, false)};
+            Attribute.ofInstance(5, 4, DataType.FLOAT, false),
+            Attribute.ofInstance(6, 4, DataType.FLOAT, false)};
 
     private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, true);
 
-    private static final Attribute coloursAttribute = Attribute.of(1, 3, DataType.FLOAT, true);
+    private static final Attribute normalAttribute = Attribute.of(1, 3, DataType.FLOAT, true);
+
+    private static final Attribute colourAttribute = Attribute.of(2, 3, DataType.FLOAT, true);
 
     public final void load(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
         ModelWriters.writeNodes(getWriter(), instances);
@@ -44,7 +46,8 @@ public abstract class ModelBuffers3D extends AbstractModelBuffers implements Mod
 
         private static final Attribute[] vertexAttributes = {
                 ModelBuffers3D.positionAttribute,
-                ModelBuffers3D.coloursAttribute
+                ModelBuffers3D.normalAttribute,
+                ModelBuffers3D.colourAttribute
         };
 
         private final Mesh mesh;
@@ -61,9 +64,8 @@ public abstract class ModelBuffers3D extends AbstractModelBuffers implements Mod
 
             this.mesh = new InstancedElementsMesh(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
 
-            this.writer = new ModelWriter3D(
-                    instanceBuffer.getWriter(), vertexBuffer.getWriter(),
-                    vertexBuffer.getWriter(), indexBuffer.getWriter());
+            this.writer = new ModelWriter3D(instanceBuffer.getWriter(), vertexBuffer.getWriter(),
+                    vertexBuffer.getWriter(), vertexBuffer.getWriter(), indexBuffer.getWriter());
         }
 
         @Override
