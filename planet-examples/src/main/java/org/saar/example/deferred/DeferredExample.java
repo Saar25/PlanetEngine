@@ -49,10 +49,11 @@ public class DeferredExample {
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(camera, new ObjRenderNode[]{renderNode});
 
         final Node3D cube = new NodeBase3D();
-        cube.getTransform().setPosition(Position.of(0, 50, 0));
         cube.getTransform().setScale(Scale.of(10, 10, 10));
+        cube.getTransform().setPosition(Position.of(0, 0, 50));
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
         final RenderNode3D cubeRenderNode = new RenderNode3D(cubeMesh);
+
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(camera, new RenderNode3D[]{cubeRenderNode});
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
