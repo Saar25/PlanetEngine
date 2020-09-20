@@ -21,7 +21,7 @@ public class DeferredExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
+        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);

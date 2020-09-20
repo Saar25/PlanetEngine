@@ -3,6 +3,7 @@ package org.saar.example;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.ICamera;
+import org.saar.core.common.r3d.Vertex3D;
 import org.saar.lwjgl.glfw.input.EventListener;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -12,6 +13,26 @@ import org.saar.maths.Angle;
 import org.saar.maths.utils.Vector3;
 
 public final class ExamplesUtils {
+
+    public static final Vertex3D[] cubeVertices = new Vertex3D[]{ // xyz position, xyz normal,
+            Vertex3D.of(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1).add(1, 1, 1).div(2)), // 0
+            Vertex3D.of(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0).add(1, 1, 1).div(2)), // 1
+            Vertex3D.of(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0).add(1, 1, 1).div(2)), // 2
+            Vertex3D.of(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0).add(1, 1, 1).div(2)), // 3
+            Vertex3D.of(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0).add(1, 1, 1).div(2)), // 4
+            Vertex3D.of(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 5
+            Vertex3D.of(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0).add(1, 1, 1).div(2)), // 6
+            Vertex3D.of(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1).add(1, 1, 1).div(2)), // 7
+    };
+
+    public static final int[] cubeIndices = {
+            0, 1, 2, 0, 2, 3, // back   , PV: 0
+            4, 5, 1, 4, 1, 0, // left   , PV: 4
+            7, 6, 5, 7, 5, 4, // front  , PV: 7
+            2, 6, 7, 2, 7, 3, // right  , PV: 2
+            1, 5, 6, 1, 6, 2, // top    , PV: 1
+            3, 7, 4, 3, 4, 0, // bottom , PV: 3
+    };
 
     private ExamplesUtils() {
         throw new AssertionError("Cannot create instance of class "
