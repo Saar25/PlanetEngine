@@ -2,6 +2,7 @@ package org.saar.core.renderer.deferred.light
 
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
+import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformProperty
@@ -48,9 +49,23 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     }
 
     @AUniformProperty
+    private val cameraWorldPositionUniform = object : UniformVec3Property.Stage("cameraWorldPosition") {
+        override fun getUniformValue(state: StageRenderState): Vector3fc {
+            return this@LightRenderPass.camera.transform.position.value
+        }
+    }
+
+    @AUniformProperty
     private val projectionMatrixInvUniform = object : UniformMat4Property.Stage("projectionMatrixInv") {
         override fun getUniformValue(state: StageRenderState): Matrix4fc {
             return this@LightRenderPass.camera.projection.matrix.invertPerspective(matrix)
+        }
+    }
+
+    @AUniformProperty
+    private val viewMatrixInvUniform = object : UniformMat4Property.Stage("viewMatrixInv") {
+        override fun getUniformValue(state: StageRenderState): Matrix4fc {
+            return this@LightRenderPass.camera.viewMatrix.invert(matrix)
         }
     }
 

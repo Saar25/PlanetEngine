@@ -22,7 +22,9 @@ uniform sampler2D colourTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 
+uniform vec3 cameraWorldPosition;
 uniform mat4 projectionMatrixInv;
+uniform mat4 viewMatrixInv;
 
 uniform int directionalLightsCount;
 uniform DirectionalLight[MAX_DIRECTIONAL_LIGHTS] directionalLights;
@@ -38,11 +40,13 @@ vec3 g_colour;
 vec3 g_normal;
 float g_depth;
 vec3 g_viewPosition;
+vec3 g_worldPosition;
 
 // Methods declaration
 
 void initBufferValues(void);
 void initViewPosition(void);
+void initWorldPosition(void);
 
 vec3 finalAmbientColour(void);
 vec3 ambientColour(const DirectionalLight light);
@@ -57,7 +61,12 @@ vec3 specularColour(const DirectionalLight light);
 // Main
 void main(void) {
     initBufferValues();
+    if (g_depth == 1) {
+        discard;
+    }
+
     initViewPosition();
+    initWorldPosition();
 
     vec3 ambientColour = finalAmbientColour();
     vec3 diffuseColour = finalDiffuseColour();
@@ -78,6 +87,11 @@ void initViewPosition(void) {
     vec4 clipSpacePosition = vec4(vec3(x, y, z) * 2.0 - 1.0, 1.0);
     vec4 viewSpacePosition = projectionMatrixInv * clipSpacePosition;
     g_viewPosition = viewSpacePosition.rgb / viewSpacePosition.w;
+}
+
+void initWorldPosition(void) {
+    vec4 worldSpacePosition = viewMatrixInv * vec4(g_viewPosition, 1);
+    g_worldPosition = worldSpacePosition.xyz / worldSpacePosition.w;
 }
 
 vec3 finalAmbientColour(void) {
@@ -120,7 +134,7 @@ vec3 specularColour(const DirectionalLight light) {
     const float specularPower = 16, specularScalar = 2.5;
 
     vec3 reflect = reflect(light.direction, g_normal);
-    vec3 viewDirection = -normalize(g_viewPosition);
+    vec3 viewDirection = -normalize(g_worldPosition - cameraWorldPosition);
     float specular = dot(reflect, viewDirection);
     specular = pow(specular, specularPower) * specularScalar;
     return specular * light.colour;
