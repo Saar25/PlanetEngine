@@ -10,7 +10,7 @@ layout (location = 3) in mat4 in_transformation;
 uniform mat4 mvpMatrix;
 
 // Vertex outputs
-out vec3 v_colour;
+flat out vec3 v_colour;
 flat out vec3 v_normal;
 
 void main(void) {

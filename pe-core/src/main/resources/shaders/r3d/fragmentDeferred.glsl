@@ -4,9 +4,14 @@
 flat in vec3 v_colour;
 flat in vec3 v_normal;
 
+// Uniforms
+uniform sampler2D texture;
+
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
+layout (location = 1) out vec4 f_normal;
 
 void main(void) {
-    f_colour = vec4(v_colour, 1.0);
+    f_colour = vec4(v_colour, 1);
+    f_normal = vec4(v_normal, 1);
 }
