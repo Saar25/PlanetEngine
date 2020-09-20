@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.IFormatType;
+import org.saar.lwjgl.opengl.constants.IInternalFormat;
 import org.saar.lwjgl.opengl.textures.settings.TextureSetting;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
@@ -71,19 +72,19 @@ public class Texture implements ITexture {
     }
 
     @Override
-    public void allocate(TextureTarget target, int level, IFormatType internalFormat, int width,
+    public void allocate(TextureTarget target, int level, IInternalFormat internalFormat, int width,
                          int height, int border, IFormatType format, DataType type, ByteBuffer data) {
         bind();
         GL11.glTexImage2D(target.get(), level, internalFormat.get(), width,
                 height, border, format.get(), type.get(), data);
     }
 
-    public void allocateMultisample(int samples, IFormatType iFormat, int width, int height) {
+    public void allocateMultisample(int samples, IInternalFormat iFormat, int width, int height) {
         GL32.glTexImage2DMultisample(target.get(), samples, iFormat.get(), width, height, true);
     }
 
     @Override
-    public void allocateMultisample(TextureTarget target, int samples, IFormatType iFormat,
+    public void allocateMultisample(TextureTarget target, int samples, IInternalFormat iFormat,
                                     int width, int height, boolean fixedSampleLocations) {
         bind();
         GL32.glTexImage2DMultisample(target.get(), samples,

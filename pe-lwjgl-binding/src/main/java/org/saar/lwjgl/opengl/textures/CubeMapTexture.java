@@ -2,6 +2,7 @@ package org.saar.lwjgl.opengl.textures;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.textures.settings.TextureSetting;
 
 public class CubeMapTexture implements ReadOnlyTexture {
@@ -34,7 +35,7 @@ public class CubeMapTexture implements ReadOnlyTexture {
 
     private static void allocate(Texture texture, TextureTarget target, TextureInfo info) {
         if (info != null) {
-            texture.allocate(target, 0, FormatType.RGBA8, info.getWidth(),
+            texture.allocate(target, 0, InternalFormat.RGBA8, info.getWidth(),
                     info.getHeight(), 0, FormatType.RGBA, DataType.U_BYTE, info.getData());
         }
     }

@@ -8,6 +8,7 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.textures.Texture;
@@ -19,13 +20,13 @@ public class MyScreenPrototype implements DeferredScreenPrototype {
 
     @ScreenImageProperty(draw = true, read = true)
     private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachment.withTexture(
-            0, this.colourTexture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE));
+            0, this.colourTexture, InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE));
 
     private final Texture normalTexture = Texture.create(TextureTarget.TEXTURE_2D);
 
     @ScreenImageProperty(draw = true)
     private final ScreenImage normalImage = new ColourScreenImageBase(ColourAttachment.withTexture(
-            1, this.normalTexture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE));
+            1, this.normalTexture, InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE));
 
     private final Texture depthTexture = Texture.create(TextureTarget.TEXTURE_2D);
 

@@ -8,7 +8,7 @@ import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
@@ -44,7 +44,7 @@ public class ModelExample {
         shadersProgram.bind();
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
-        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, FormatType.RGBA8);
+        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);

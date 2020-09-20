@@ -1,8 +1,6 @@
 package org.saar.lwjgl.opengl.textures;
 
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.constants.IFormatType;
+import org.saar.lwjgl.opengl.constants.*;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.settings.*;
@@ -33,7 +31,7 @@ public class Texture2D implements ReadOnlyTexture {
         this.width = width;
         this.height = height;
 
-        allocate(FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE);
+        allocate(InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE);
     }
 
     public static Texture2D of(int width, int height) {
@@ -50,7 +48,7 @@ public class Texture2D implements ReadOnlyTexture {
         final TextureInfo info = TextureLoader.load(fileName);
         final Texture texture = Texture.create(Texture2D.target);
 
-        texture.allocate(Texture2D.target, 0, FormatType.RGBA8, info.getWidth(),
+        texture.allocate(Texture2D.target, 0, InternalFormat.RGBA8, info.getWidth(),
                 info.getHeight(), 0, info.getFormatType(), DataType.U_BYTE, info.getData());
 
         TextureCache.addToCache(fileName, texture);
@@ -81,7 +79,7 @@ public class Texture2D implements ReadOnlyTexture {
     /**
      * Allocates memory for the texture
      */
-    private void allocate(IFormatType internalFormat, IFormatType format, DataType dataType) {
+    private void allocate(IInternalFormat internalFormat, IFormatType format, DataType dataType) {
         this.texture.allocate(target, 0, internalFormat, getWidth(),
                 getHeight(), 0, format, dataType, null);
         applySettings();

@@ -2,10 +2,7 @@ package org.saar.example.deferred;
 
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.constants.*;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.objects.Attribute;
@@ -49,7 +46,7 @@ public class CheckExample {
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final ColourAttachment attachment = ColourAttachment.withTexture(0,
-                Texture.create(), FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE);
+                Texture.create(), InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);

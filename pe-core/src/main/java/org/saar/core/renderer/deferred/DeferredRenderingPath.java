@@ -12,6 +12,7 @@ import org.saar.core.screen.image.ColourScreenImageBase;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.textures.Texture;
@@ -41,7 +42,7 @@ public class DeferredRenderingPath implements RenderingPath {
         this.passesScreen = Screens.fromPrototype(new ScreenPrototype() {
             @ScreenImageProperty(draw = true, read = true)
             private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachment.withTexture(
-                    0, colourTexture, FormatType.RGBA8, FormatType.RGBA, DataType.U_BYTE));
+                    0, colourTexture, InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE));
         }, fbo());
     }
 
