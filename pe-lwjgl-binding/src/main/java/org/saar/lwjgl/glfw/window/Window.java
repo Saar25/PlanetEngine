@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.hint.*;
@@ -107,6 +108,7 @@ public class Window {
         setVisible(true);
 
         GL.createCapabilities();
+        GLUtil.setupDebugMessageCallback(System.err);
 
         this.mouse = new Mouse(this.id);
         this.keyboard = new Keyboard(this.id);

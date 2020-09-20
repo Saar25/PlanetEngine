@@ -14,7 +14,7 @@ public class ShadersProgram {
     private ShadersProgram(int id, Shader... shaders) throws Exception {
         this.id = id;
 
-        bind();
+//        bind();
         for (Shader shader : shaders) {
             shader.init();
             shader.attach(id);
