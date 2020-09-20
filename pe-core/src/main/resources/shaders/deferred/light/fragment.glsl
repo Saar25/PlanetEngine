@@ -47,6 +47,7 @@ vec3 g_worldPosition;
 void initBufferValues(void);
 void initViewPosition(void);
 void initWorldPosition(void);
+vec3 findNormal(vec2 normal);
 
 vec3 finalAmbientColour(void);
 vec3 ambientColour(const DirectionalLight light);
@@ -80,6 +81,8 @@ void initBufferValues(void) {
     g_colour = texture(colourTexture, v_position).rgb;
     g_normal = texture(normalTexture, v_position).xyz;
     g_depth = texture(depthTexture, v_position).r;
+
+    // g_normal = findNormal(texture(normalTexture, v_position).xy);
 }
 
 void initViewPosition(void) {
@@ -92,6 +95,13 @@ void initViewPosition(void) {
 void initWorldPosition(void) {
     vec4 worldSpacePosition = viewMatrixInv * vec4(g_viewPosition, 1);
     g_worldPosition = worldSpacePosition.xyz / worldSpacePosition.w;
+}
+
+vec3 findNormal(vec2 normal) {
+    float x2 = pow(normal.x, 2);
+    float y2 = pow(normal.y, 2);
+    float z = sqrt(1 - x2 - y2);
+    return vec3(normal, z);
 }
 
 vec3 finalAmbientColour(void) {
