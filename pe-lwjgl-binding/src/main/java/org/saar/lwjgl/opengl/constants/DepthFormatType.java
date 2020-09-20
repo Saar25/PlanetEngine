@@ -2,7 +2,7 @@ package org.saar.lwjgl.opengl.constants;
 
 import org.lwjgl.opengl.GL14;
 
-public enum DepthFormatType implements IInternalFormat, IFormatType {
+public enum DepthFormatType implements IInternalFormat {
 
     COMPONENT16(GL14.GL_DEPTH_COMPONENT16),
     COMPONENT24(GL14.GL_DEPTH_COMPONENT24),

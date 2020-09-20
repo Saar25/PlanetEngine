@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.IFormatType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.IInternalFormat;
 import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
@@ -21,7 +21,7 @@ public class ColourAttachment implements Attachment {
     }
 
     public static ColourAttachment withTexture(int index, Texture texture, IInternalFormat iFormat,
-                                               IFormatType format, DataType dataType) {
+                                               FormatType format, DataType dataType) {
         return new ColourAttachment(index, new AttachmentTextureBuffer(texture, iFormat, format, dataType));
     }
 

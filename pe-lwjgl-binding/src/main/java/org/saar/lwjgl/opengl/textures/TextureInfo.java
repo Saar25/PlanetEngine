@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.textures;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.IFormatType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 
 import java.nio.ByteBuffer;
 
@@ -9,11 +9,11 @@ public class TextureInfo {
 
     private final int width;
     private final int height;
-    private final IFormatType formatType;
+    private final FormatType formatType;
     private final DataType dataType;
     private final ByteBuffer data;
 
-    public TextureInfo(int width, int height, IFormatType formatType, DataType dataType, ByteBuffer data) {
+    public TextureInfo(int width, int height, FormatType formatType, DataType dataType, ByteBuffer data) {
         this.width = width;
         this.height = height;
         this.formatType = formatType;
@@ -29,7 +29,7 @@ public class TextureInfo {
         return this.height;
     }
 
-    public IFormatType getFormatType() {
+    public FormatType getFormatType() {
         return this.formatType;
     }
 

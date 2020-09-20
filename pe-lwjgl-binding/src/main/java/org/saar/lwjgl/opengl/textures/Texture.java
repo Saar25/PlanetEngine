@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.IFormatType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.IInternalFormat;
 import org.saar.lwjgl.opengl.textures.settings.TextureSetting;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
@@ -73,7 +73,7 @@ public class Texture implements ITexture {
 
     @Override
     public void allocate(TextureTarget target, int level, IInternalFormat internalFormat, int width,
-                         int height, int border, IFormatType format, DataType type, ByteBuffer data) {
+                         int height, int border, FormatType format, DataType type, ByteBuffer data) {
         bind();
         GL11.glTexImage2D(target.get(), level, internalFormat.get(), width,
                 height, border, format.get(), type.get(), data);
@@ -93,7 +93,7 @@ public class Texture implements ITexture {
 
     @Override
     public void load(TextureTarget target, int level, int xOffset, int yOffset, int width,
-                     int height, IFormatType format, DataType type, ByteBuffer data) {
+                     int height, FormatType format, DataType type, ByteBuffer data) {
         bind();
         GL11.glTexSubImage2D(target.get(), level, xOffset, yOffset, width,
                 height, format.get(), type.get(), data);
@@ -109,7 +109,7 @@ public class Texture implements ITexture {
         return GL11.glGetTexLevelParameteri(this.target.get(), 0, GL11.GL_TEXTURE_HEIGHT);
     }
 
-    public void getPixelsBuffer(IFormatType format, DataType dataType, ByteBuffer buffer) {
+    public void getPixelsBuffer(FormatType format, DataType dataType, ByteBuffer buffer) {
         GL11.glGetTexImage(this.target.get(), 0, format.get(), dataType.get(), buffer);
     }
 

@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.constants;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
-public enum InternalFormat implements IInternalFormat, IFormatType {
+public enum InternalFormat implements IInternalFormat {
 
     // 1 Component
     R8(1, GL30.GL_R8),
