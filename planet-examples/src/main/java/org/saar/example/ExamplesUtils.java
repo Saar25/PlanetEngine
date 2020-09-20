@@ -44,10 +44,10 @@ public final class ExamplesUtils {
             toRotate.add(0, -.5f, 0);
         }
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            toMove.add(0, -1, 0);
+            toMove.add(0, 1, 0);
         }
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            toMove.add(0, 1, 0);
+            toMove.add(0, -1, 0);
         }
         toMove.mul(ms / 1000f).mul(100);
         toRotate.mul(ms / 1000f).mul(100);
