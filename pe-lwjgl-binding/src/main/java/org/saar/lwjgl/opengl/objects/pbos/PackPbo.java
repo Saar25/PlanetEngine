@@ -1,10 +1,7 @@
 package org.saar.lwjgl.opengl.objects.pbos;
 
 import org.lwjgl.opengl.GL21;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.IFormatType;
-import org.saar.lwjgl.opengl.constants.VboTarget;
-import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.constants.*;
 import org.saar.lwjgl.opengl.objects.vbos.Vbo;
 
 import java.nio.ByteBuffer;
@@ -25,10 +22,17 @@ public class PackPbo implements ReadablePbo {
     }
 
     @Override
-    public void readPixels(int x, int y, int width, int height, IFormatType format,
-                           DataType dataType, ByteBuffer pixels) {
+    public void readPixels(int x, int y, int width, int height, IFormatType format, DataType dataType) {
         this.buffer.bind();
-        GL21.glReadPixels(x, y, width, height, format.get(), dataType.get(), pixels);
+        GL21.glReadPixels(x, y, width, height, format.get(), dataType.get(), 0);
+    }
+
+    public ByteBuffer map(VboAccess access) {
+        return this.buffer.map(access);
+    }
+
+    public void unmap() {
+        this.buffer.unmap();
     }
 
     @Override
