@@ -78,18 +78,16 @@ public final class ExamplesUtils {
 
     public static void addRotationListener(ICamera camera, Mouse mouse) {
         mouse.addMoveListener(new EventListener<MoveEvent>() {
-            private long last = System.currentTimeMillis();
             private int lastX = mouse.getXPos();
             private int lastY = mouse.getYPos();
 
             @Override
             public void onEvent(MoveEvent e) {
-                final long d = System.currentTimeMillis() - last;
-                if (d < 300 && mouse.isButtonDown(MouseButton.PRIMARY)) {
+                if (mouse.isButtonDown(MouseButton.PRIMARY)) {
                     final Vector3f toRotate = Vector3.zero();
                     toRotate.y += this.lastX - e.getX();
                     toRotate.x += this.lastY - e.getY();
-                    toRotate.mul(d / 1000f).mul(30);
+                    toRotate.mul(.3f);
                     camera.getTransform().addRotation(
                             Angle.degrees(toRotate.x),
                             Angle.degrees(toRotate.y),
@@ -97,7 +95,6 @@ public final class ExamplesUtils {
                 }
                 lastX = (int) e.getX();
                 lastY = (int) e.getY();
-                last = System.currentTimeMillis();
             }
         });
     }
