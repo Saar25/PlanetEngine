@@ -1,18 +1,15 @@
 package org.saar.lwjgl.glfw.input.mouse;
 
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.MemoryStack;
 import org.saar.lwjgl.glfw.input.EventListener;
 import org.saar.lwjgl.glfw.input.EventListenersHelper;
 import org.saar.lwjgl.glfw.input.OnAction;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.DoubleBuffer;
 
 public class Mouse {
-
-    private static final DoubleBuffer xPos = MemoryUtils.allocDouble(1);
-    private static final DoubleBuffer yPos = MemoryUtils.allocDouble(1);
 
     private final long window;
 
@@ -22,14 +19,11 @@ public class Mouse {
 
     private MouseCursor cursor = MouseCursor.NORMAL;
 
+    private final Vector2i position = new Vector2i();
+
     public Mouse(long window) {
         this.window = window;
         init();
-    }
-
-    public static void cleanUp() {
-        MemoryUtil.memFree(Mouse.xPos);
-        MemoryUtil.memFree(Mouse.yPos);
     }
 
     public void init() {
@@ -71,18 +65,21 @@ public class Mouse {
 
     public int getXPos() {
         updateMousePosition();
-        return (int) Mouse.xPos.get();
+        return this.position.x;
     }
 
     public int getYPos() {
         updateMousePosition();
-        return (int) Mouse.yPos.get();
+        return this.position.y;
     }
 
     private void updateMousePosition() {
-        Mouse.xPos.flip();
-        Mouse.yPos.flip();
-        GLFW.glfwGetCursorPos(this.window, Mouse.xPos, Mouse.yPos);
+        try (final MemoryStack stack = MemoryStack.stackPush()) {
+            final DoubleBuffer x = stack.mallocDouble(1);
+            final DoubleBuffer y = stack.mallocDouble(1);
+            GLFW.glfwGetCursorPos(this.window, x, y);
+            this.position.set((int) x.get(), (int) y.get());
+        }
     }
 
     public boolean isButtonDown(MouseButton button) {
