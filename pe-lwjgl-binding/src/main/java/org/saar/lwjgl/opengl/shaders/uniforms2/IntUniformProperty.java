@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.shaders.uniforms2;
 
-import org.saar.utils.property.type.IntProperty;
+import org.jproperty.type.IntProperty;
 
 public class IntUniformProperty extends IntUniform implements UniformProperty<Integer> {
 

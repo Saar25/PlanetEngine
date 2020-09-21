@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.shaders.uniforms2;
 
-import org.saar.utils.property.type.FloatProperty;
+import org.jproperty.type.FloatProperty;
 
 public class FloatUniformProperty extends FloatUniform implements UniformProperty<Float> {
 

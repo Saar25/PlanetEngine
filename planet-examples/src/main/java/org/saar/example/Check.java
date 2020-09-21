@@ -1,7 +1,7 @@
 package org.saar.example;
 
-import org.saar.utils.property.type.FloatProperty;
-import org.saar.utils.property.type.IntProperty;
+import org.jproperty.type.FloatProperty;
+import org.jproperty.type.IntProperty;
 
 public class Check {
 
