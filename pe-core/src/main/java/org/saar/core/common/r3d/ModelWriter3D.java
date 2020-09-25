@@ -4,7 +4,7 @@ import org.saar.core.model.loader.ModelIndexWriter;
 import org.saar.core.model.loader.ModelNodeWriter;
 import org.saar.core.model.loader.ModelVertexWriter;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
-import org.saar.maths.objects.Transform;
+import org.saar.maths.transform.Transform;
 
 public class ModelWriter3D implements ModelNodeWriter<Node3D>, ModelVertexWriter<Vertex3D>, ModelIndexWriter {
 

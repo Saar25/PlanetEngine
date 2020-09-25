@@ -2,7 +2,7 @@ package org.saar.core.common.r3d;
 
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
-import org.saar.maths.objects.Transform;
+import org.saar.maths.transform.Transform;
 
 public class RenderNode3D extends AbstractNode implements RenderNode {
 

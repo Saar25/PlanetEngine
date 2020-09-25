@@ -1,13 +1,10 @@
-package org.saar.maths.objects;
+package org.saar.maths.transform;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.maths.Angle;
-import org.saar.maths.transform.Position;
-import org.saar.maths.transform.Rotation;
-import org.saar.maths.transform.Scale;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;

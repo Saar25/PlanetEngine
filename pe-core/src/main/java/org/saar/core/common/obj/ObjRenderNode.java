@@ -3,7 +3,7 @@ package org.saar.core.common.obj;
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.maths.objects.Transform;
+import org.saar.maths.transform.Transform;
 
 public class ObjRenderNode extends AbstractNode implements RenderNode, ObjNode {
 
