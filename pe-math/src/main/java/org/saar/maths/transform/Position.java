@@ -41,6 +41,10 @@ public class Position {
         this.wrapper.getValue().set(position);
     }
 
+    public void set(float x, float y, float z) {
+        this.wrapper.getValue().set(x, y, z);
+    }
+
     public Vector3fc getValue() {
         return this.wrapper.getReadonly();
     }
