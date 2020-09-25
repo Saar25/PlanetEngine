@@ -2,13 +2,13 @@ package org.saar.core.camera;
 
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
-import org.saar.maths.transform.Transform;
+import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.utils.Matrix4;
 
 public class Camera implements ICamera {
 
     private final Matrix4f viewMatrix = Matrix4.create();
-    private final Transform transform = new Transform();
+    private final SimpleTransform transform = new SimpleTransform();
     private final Projection projection;
 
     public Camera(Projection projection) {
@@ -24,7 +24,7 @@ public class Camera implements ICamera {
     }
 
     @Override
-    public Transform getTransform() {
+    public SimpleTransform getTransform() {
         return this.transform;
     }
 

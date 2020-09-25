@@ -2,24 +2,24 @@ package org.saar.core.common.obj;
 
 import org.saar.core.node.AbstractNode;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.maths.transform.Transform;
+import org.saar.maths.transform.SimpleTransform;
 
 public class ObjNodeBase extends AbstractNode implements ObjNode {
 
-    private final Transform transform;
+    private final SimpleTransform transform;
     private final ReadOnlyTexture texture;
 
     public ObjNodeBase(ReadOnlyTexture texture) {
-        this(new Transform(), texture);
+        this(new SimpleTransform(), texture);
     }
 
-    public ObjNodeBase(Transform transform, ReadOnlyTexture texture) {
+    public ObjNodeBase(SimpleTransform transform, ReadOnlyTexture texture) {
         this.transform = transform;
         this.texture = texture;
     }
 
     @Override
-    public Transform getTransform() {
+    public SimpleTransform getTransform() {
         return this.transform;
     }
 

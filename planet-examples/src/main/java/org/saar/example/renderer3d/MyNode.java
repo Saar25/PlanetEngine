@@ -2,14 +2,14 @@ package org.saar.example.renderer3d;
 
 import org.saar.core.common.r3d.Node3D;
 import org.saar.core.node.AbstractNode;
-import org.saar.maths.transform.Transform;
+import org.saar.maths.transform.SimpleTransform;
 
 public class MyNode extends AbstractNode implements Node3D {
 
-    private final Transform transform = new Transform();
+    private final SimpleTransform transform = new SimpleTransform();
 
     @Override
-    public Transform getTransform() {
+    public SimpleTransform getTransform() {
         return this.transform;
     }
 }

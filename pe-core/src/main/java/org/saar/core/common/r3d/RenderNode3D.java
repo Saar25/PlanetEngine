@@ -2,19 +2,19 @@ package org.saar.core.common.r3d;
 
 import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
-import org.saar.maths.transform.Transform;
+import org.saar.maths.transform.SimpleTransform;
 
 public class RenderNode3D extends AbstractNode implements RenderNode {
 
     private final Mesh3D mesh;
 
-    private final Transform transform = new Transform();
+    private final SimpleTransform transform = new SimpleTransform();
 
     public RenderNode3D(Mesh3D mesh) {
         this.mesh = mesh;
     }
 
-    public Transform getTransform() {
+    public SimpleTransform getTransform() {
         return this.transform;
     }
 
