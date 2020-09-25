@@ -78,6 +78,7 @@ public class ShadowExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
 
+            shadowsRenderingPath.render();
             deferredRenderer.render();
 
             window.update(true);
@@ -92,6 +93,7 @@ public class ShadowExample {
         }
 
         renderer.delete();
+        shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
     }
