@@ -7,6 +7,16 @@ import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
+import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
+import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ShadowsRenderingPath implements RenderingPath {
 
@@ -19,6 +29,11 @@ public class ShadowsRenderingPath implements RenderingPath {
     public ShadowsRenderingPath(int imageSize) {
         final Fbo fbo = Fbo.create(imageSize, imageSize);
         this.screen = Screens.fromPrototype(this.prototype, fbo);
+        this.prototype.getDepthTexture().setSettings(TextureTarget.TEXTURE_2D,
+                new TextureMinFilterSetting(MinFilterParameter.LINEAR),
+                new TextureMagFilterSetting(MagFilterParameter.LINEAR),
+                new TextureSWrapSetting(WrapParameter.CLAMP_TO_EDGE),
+                new TextureTWrapSetting(WrapParameter.CLAMP_TO_EDGE));
     }
 
     public void addRenderer(final Renderer renderer) {
@@ -36,6 +51,7 @@ public class ShadowsRenderingPath implements RenderingPath {
     @Override
     public void render() {
         this.screen.setAsDraw();
+        GlUtils.clear(GlBuffer.DEPTH);
         this.helper.render();
     }
 

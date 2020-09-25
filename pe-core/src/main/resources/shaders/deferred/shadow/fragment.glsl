@@ -1,7 +1,7 @@
 #version 400
 
 // Constants
-float SHADOW_BIAS = 0.1f;
+float SHADOW_BIAS = 0.001f;
 
 // Vertex outputs
 in vec2 v_position;
@@ -12,7 +12,9 @@ uniform sampler2D colourTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 
-uniform mat4 shadowMatrixInv;
+uniform mat4 shadowMatrix;
+uniform mat4 projectionMatrixInv;
+uniform mat4 viewMatrixInv;
 
 // Fragment outputs
 out vec4 f_colour;
@@ -25,6 +27,8 @@ vec3 g_viewPosition;
 vec3 g_worldPosition;
 float g_shadowDepth;
 float g_shadowMapPixelDepth;
+
+vec4 shadowCoords;
 
 // Methods declaration
 void initBufferValues(void);
@@ -42,8 +46,11 @@ void main(void) {
     if (g_shadowDepth < g_shadowMapPixelDepth + SHADOW_BIAS) {
         f_colour = vec4(g_colour, 1);
     } else {
-        f_colour = vec4(g_colour * .5, 1);
+        f_colour = vec4(g_colour * .2, 1);
     }
+//    f_colour = texture(shadowMap, v_position).rrrr;
+//    f_colour = vec4(g_colour, 1);
+//    f_colour = vec4(g_shadowDepth, 1);
 }
 
 void initBufferValues(void) {
@@ -56,7 +63,7 @@ void initViewPosition(void) {
     float x = v_position.x, y = v_position.y, z = g_depth;
     vec4 clipSpacePosition = vec4(vec3(x, y, z) * 2.0 - 1.0, 1.0);
     vec4 viewSpacePosition = projectionMatrixInv * clipSpacePosition;
-    g_viewPosition = viewSpacePosition.rgb / viewSpacePosition.w;
+    g_viewPosition = viewSpacePosition.xyz / viewSpacePosition.w;
 }
 
 void initWorldPosition(void) {
@@ -65,7 +72,7 @@ void initWorldPosition(void) {
 }
 
 void initShadowDepth(void) {
-    vec4 shadowCoords = uViewProjectionMatrix * vec4(g_worldPosition, 1);
+    shadowCoords = shadowMatrix * vec4(g_worldPosition, 1);
     shadowCoords = shadowCoords / shadowCoords.w;
     shadowCoords = shadowCoords * 0.5f + 0.5f;
 

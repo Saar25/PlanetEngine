@@ -1,6 +1,7 @@
 package org.saar.example.shadow;
 
 import org.saar.core.camera.Camera;
+import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
@@ -16,6 +17,7 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.maths.transform.Position;
+import org.saar.maths.utils.Vector3;
 
 public class ShadowExample {
 
@@ -58,24 +60,27 @@ public class ShadowExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final OrthographicProjection shadowProjection = new OrthographicProjection(200, 200, 200, 200, 200, 200);
+        final Keyboard keyboard = window.getKeyboard();
+
+        final OrthographicProjection shadowProjection = new OrthographicProjection(-100, 100, -100, 100, -100, 100);
         final Camera shadowsCamera = new Camera(shadowProjection);
-        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(512);
-        shadowsRenderingPath.addRenderer(renderer);
-        shadowsRenderingPath.addRenderer(renderer3D);
+        shadowsCamera.getTransform().getPosition().set(Vector3.of(1).normalize());
+        shadowsCamera.getTransform().lookAt(Position.of(0, 0, 0));
+        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(4096);
+        shadowsRenderingPath.addRenderer(new DeferredRenderer3D(shadowsCamera, new RenderNode3D[]{cubeRenderNode}));
+        shadowsRenderingPath.addRenderer(new ObjDeferredRenderer(shadowsCamera, new ObjRenderNode[]{renderNode}));
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype);
-        deferredRenderer.addRenderer(renderer3D);
         deferredRenderer.addRenderer(renderer);
+        deferredRenderer.addRenderer(renderer3D);
 
         deferredRenderer.addRenderPass(new ShadowsRenderPass(
-                shadowsCamera, shadowsRenderingPath.getShadowMap()));
+                camera, shadowsCamera, shadowsRenderingPath.getShadowMap()));
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
 
         long current = System.currentTimeMillis();
-        final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
 
             shadowsRenderingPath.render();
