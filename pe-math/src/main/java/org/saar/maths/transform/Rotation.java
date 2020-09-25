@@ -56,24 +56,38 @@ public class Rotation implements ReadOnlyProperty<Quaternionfc> {
         onChange(old);
     }
 
+    public void setRotation(Angle x, Angle y, Angle z) {
+        final Quaternionfc old = copyValue();
+        this.wrapper.getValue().rotateXYZ(x.getRadians(),
+                y.getRadians(), z.getRadians());
+        onChange(old);
+    }
+
+    public void rotate(Angle x, Angle y, Angle z) {
+        final Quaternionfc old = copyValue();
+        this.wrapper.getValue()
+                .rotateX(x.getRadians())
+                .rotateLocalY(y.getRadians())
+                .rotateZ(z.getRadians());
+        onChange(old);
+    }
+
+    public void rotate(Rotation rotation) {
+        rotate(rotation.getValue());
+    }
+
+    public void rotate(Quaternionfc rotation) {
+        final Quaternionfc old = copyValue();
+        this.wrapper.getValue().mul(rotation);
+        onChange(old);
+    }
+
     private void onChange(Quaternionfc old) {
         if (!old.equals(getValue())) {
             final ChangeEvent<Quaternionfc> event =
                     new ChangeEventBase<>(this, old, getValue());
             this.helper.fireEvent(event);
         }
-    }
-
-    public void setRotation(Angle x, Angle y, Angle z) {
-        set(Quaternion.create().rotateXYZ(x.getRadians(),
-                y.getRadians(), z.getRadians()));
-    }
-
-    public void rotate(Angle x, Angle y, Angle z) {
-        set(Quaternion.of(getValue())
-                .rotateX(x.getRadians())
-                .rotateLocalY(y.getRadians())
-                .rotateZ(z.getRadians()));
     }
 
     public void lookAlong(Vector3fc direction) {
