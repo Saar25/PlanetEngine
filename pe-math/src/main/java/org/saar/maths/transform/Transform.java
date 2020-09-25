@@ -33,24 +33,12 @@ public final class Transform {
         return this.position;
     }
 
-    public void setPosition(Position position) {
-        getPosition().set(position);
-    }
-
     public Rotation getRotation() {
         return this.rotation;
     }
 
-    public void setRotation(Rotation rotation) {
-        getRotation().set(rotation);
-    }
-
     public Scale getScale() {
         return this.scale;
-    }
-
-    public void setScale(Scale scale) {
-        getScale().set(scale);
     }
 
     public void setRotation(Angle x, Angle y, Angle z) {

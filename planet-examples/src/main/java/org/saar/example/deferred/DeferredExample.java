@@ -15,7 +15,6 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.maths.transform.Position;
-import org.saar.maths.transform.Scale;
 
 public class DeferredExample {
 
@@ -29,7 +28,7 @@ public class DeferredExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, 200));
+        camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         MyNode node;
@@ -49,8 +48,8 @@ public class DeferredExample {
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(camera, new ObjRenderNode[]{renderNode});
 
         final Node3D cube = new NodeBase3D();
-        cube.getTransform().setScale(Scale.of(10, 10, 10));
-        cube.getTransform().setPosition(Position.of(0, 0, 50));
+        cube.getTransform().getScale().set(10, 10, 10);
+        cube.getTransform().getPosition().set(0, 0, 50);
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
         final RenderNode3D cubeRenderNode = new RenderNode3D(cubeMesh);
 

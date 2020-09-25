@@ -16,7 +16,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-import org.saar.maths.transform.Position;
 
 public class ManyCubesExample {
 
@@ -56,8 +55,8 @@ public class ManyCubesExample {
 
             for (int i = 0; i < ROWS; i++) {
                 for (int j = 0; j < COLS; j++) {
-                    renderNode3D.getTransform().setPosition(Position.of(
-                            i * size - size / 2f, 0, j * size - size / 2f));
+                    renderNode3D.getTransform().getPosition().set(
+                            i * size - size / 2f, 0, j * size - size / 2f);
                     renderer.render();
                 }
             }
@@ -89,8 +88,8 @@ public class ManyCubesExample {
             final int b = (i / size) % size;
             final int c = i % size;
             final MyNode newNode = new MyNode();
-            newNode.getTransform().setPosition(Position.of(
-                    a * SPACE, b * SPACE, c * SPACE));
+            newNode.getTransform().getPosition().set(
+                    a * SPACE, b * SPACE, c * SPACE);
             nodes[i] = newNode;
         }
         final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);

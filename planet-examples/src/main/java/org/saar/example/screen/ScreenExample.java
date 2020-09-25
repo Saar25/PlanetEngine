@@ -31,7 +31,7 @@ public class ScreenExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, 200));
+        camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         MyNode node;

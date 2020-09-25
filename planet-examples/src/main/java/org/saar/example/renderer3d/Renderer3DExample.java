@@ -17,7 +17,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
-import org.saar.maths.transform.Rotation;
 import org.saar.maths.utils.Quaternion;
 
 public class Renderer3DExample {
@@ -42,7 +41,7 @@ public class Renderer3DExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
         final ICamera camera = new Camera(projection);
 
-        camera.getTransform().setPosition(Position.of(0, 0, -1000));
+        camera.getTransform().getPosition().set(0, 0, -1000);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
@@ -85,9 +84,10 @@ public class Renderer3DExample {
                 final float x = (float) (Math.random() * AREA - AREA / 2);
                 final float y = (float) (Math.random() * AREA - AREA / 2);
                 final float z = (float) (Math.random() * AREA - AREA / 2);
-                newNode.getTransform().setPosition(Position.of(x, y, z));
-                newNode.getTransform().setRotation(Rotation.fromQuaternion(Quaternion.of((float) Math.random(),
-                        (float) Math.random(), (float) Math.random(), (float) Math.random()).normalize()));
+                newNode.getTransform().getPosition().set(x, y, z);
+                newNode.getTransform().getRotation().set(Quaternion.of(
+                        (float) Math.random(), (float) Math.random(),
+                        (float) Math.random(), (float) Math.random()).normalize());
                 nodes[j] = newNode;
             }
             final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
