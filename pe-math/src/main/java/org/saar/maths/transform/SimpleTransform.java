@@ -1,6 +1,6 @@
 package org.saar.maths.transform;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -8,10 +8,11 @@ import org.saar.maths.Angle;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
+import org.saar.maths.wrapper.Matrix4fWrapper;
 
 public final class SimpleTransform implements Transform {
 
-    private final Matrix4f transformation = Matrix4.create();
+    private final Matrix4fWrapper transformation = new Matrix4fWrapper();
 
     private final Position position = Position.create();
     private final Rotation rotation = Rotation.create();
@@ -28,16 +29,12 @@ public final class SimpleTransform implements Transform {
                 getPosition().getValue(),
                 getRotation().getValue(),
                 getScale().getValue(),
-                this.transformation);
+                this.transformation.getValue());
     }
 
     @Override
-    public Matrix4f getTransformationMatrix() {
-        return Matrix4.ofTransformation(
-                getPosition().getValue(),
-                getRotation().getValue(),
-                getScale().getValue(),
-                this.transformation);
+    public Matrix4fc getTransformationMatrix() {
+        return this.transformation.getReadonly();
     }
 
     @Override

@@ -1,10 +1,10 @@
 package org.saar.maths.transform;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
 public interface Transform {
 
-    Matrix4f getTransformationMatrix();
+    Matrix4fc getTransformationMatrix();
 
     Position getPosition();
 
