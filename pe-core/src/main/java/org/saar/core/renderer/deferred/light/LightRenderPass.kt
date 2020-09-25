@@ -6,6 +6,7 @@ import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformProperty
+import org.saar.core.light.PointLight
 import org.saar.core.renderer.AUniformProperty
 import org.saar.core.renderer.UniformsHelper
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
@@ -25,25 +26,25 @@ import org.saar.maths.utils.Matrix4
 
 class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgram), RenderPass {
 
-    private var uniformsHelper: UniformsHelper<LightRenderPassInstance> = UniformsHelper.empty()
+    private var uniformsHelper: UniformsHelper<PerInstance> = UniformsHelper.empty()
 
     @AUniformProperty
-    private val colourTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("colourTexture", 0) {
-        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+    private val colourTextureUniform = object : UniformTextureProperty.Instance<PerInstance>("colourTexture", 0) {
+        override fun getUniformValue(state: InstanceRenderState<PerInstance>): ReadOnlyTexture {
             return state.instance.buffers.albedo
         }
     }
 
     @AUniformProperty
-    private val normalTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("normalTexture", 1) {
-        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+    private val normalTextureUniform = object : UniformTextureProperty.Instance<PerInstance>("normalTexture", 1) {
+        override fun getUniformValue(state: InstanceRenderState<PerInstance>): ReadOnlyTexture {
             return state.instance.buffers.normal
         }
     }
 
     @AUniformProperty
-    private val depthTextureUniform = object : UniformTextureProperty.Instance<LightRenderPassInstance>("depthTexture", 2) {
-        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): ReadOnlyTexture {
+    private val depthTextureUniform = object : UniformTextureProperty.Instance<PerInstance>("depthTexture", 2) {
+        override fun getUniformValue(state: InstanceRenderState<PerInstance>): ReadOnlyTexture {
             return state.instance.buffers.depth
         }
     }
@@ -70,18 +71,18 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     }
 
     @AUniformProperty
-    private val directionalLightsCountUniform = object : UniformIntProperty.Instance<LightRenderPassInstance>(
+    private val directionalLightsCountUniform = object : UniformIntProperty.Instance<PerInstance>(
             "directionalLightsCount") {
-        override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): Int {
+        override fun getUniformValue(state: InstanceRenderState<PerInstance>): Int {
             return state.instance.directionalLights.size
         }
     }
 
     @AUniformProperty
-    private val directionalLightsUniform = UniformArrayProperty.Instance<LightRenderPassInstance, DirectionalLight>(
+    private val directionalLightsUniform = UniformArrayProperty.Instance<PerInstance, DirectionalLight>(
             "directionalLights", 1) { name, index ->
-        object : InstanceUniform<LightRenderPassInstance, DirectionalLight>(DirectionalLightUniformProperty(name)) {
-            override fun getUniformValue(state: InstanceRenderState<LightRenderPassInstance>): DirectionalLight {
+        object : InstanceUniform<PerInstance, DirectionalLight>(DirectionalLightUniformProperty(name)) {
+            override fun getUniformValue(state: InstanceRenderState<PerInstance>): DirectionalLight {
                 return state.instance.directionalLights[index]
             }
         }
@@ -114,7 +115,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
                 .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
                 .also { light -> light.direction.set(-50f, -50f, -50f) }
 
-        val instance = LightRenderPassInstance(buffers, emptyArray(), arrayOf(light))
+        val instance = PerInstance(buffers, emptyArray(), arrayOf(light))
         val instanceState = InstanceRenderState(instance)
         uniformsHelper.loadOnInstance(instanceState)
 
@@ -122,4 +123,9 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         Vao.EMPTY.bind()
         GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
     }
+
+    private class PerInstance(
+            val buffers: DeferredRenderingBuffers,
+            val pointLights: Array<PointLight>,
+            val directionalLights: Array<DirectionalLight>)
 }
