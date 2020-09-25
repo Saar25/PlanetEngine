@@ -3,13 +3,14 @@ package org.saar.maths.transform;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.maths.utils.Vector3;
+import org.saar.maths.wrapper.Vector3fWrapper;
 
 public class Scale {
 
-    private final Vector3f value;
+    private final Vector3fWrapper wrapper = new Vector3fWrapper();
 
     private Scale(Vector3f value) {
-        this.value = value;
+        this.wrapper.getValue().set(value);
     }
 
     public static Scale of(float x, float y, float z) {
@@ -20,20 +21,28 @@ public class Scale {
         return new Scale(Vector3.of(1));
     }
 
-    public void scaleBy(float scale) {
-        this.value.mul(scale);
+    public void scale(float scale) {
+        this.wrapper.getValue().mul(scale);
     }
 
-    public void scaleBy(Vector3f scale) {
-        this.value.mul(scale);
-    }
-
-    public Vector3fc getValue() {
-        return this.value;
+    public void scale(Vector3f scale) {
+        this.wrapper.getValue().mul(scale);
     }
 
     public void set(Scale scale) {
-        this.value.set(scale.getValue());
+        this.wrapper.getValue().set(scale.getValue());
+    }
+
+    public void set(Vector3fc value) {
+        this.wrapper.getValue().set(value);
+    }
+
+    public void set(float value) {
+        this.wrapper.getValue().set(value);
+    }
+
+    public Vector3fc getValue() {
+        return this.wrapper.getReadonly();
     }
 
     @Override

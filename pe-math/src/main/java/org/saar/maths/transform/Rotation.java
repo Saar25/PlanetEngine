@@ -6,15 +6,15 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
+import org.saar.maths.wrapper.QuaternionfWrapper;
 
 public class Rotation {
 
-    private final Quaternionf value;
-    private final Vector3f eulerAngles;
+    private final QuaternionfWrapper wrapper = new QuaternionfWrapper();
+    private final Vector3f eulerAngles = Vector3.create();
 
     private Rotation(Quaternionf value) {
-        this.value = value;
-        this.eulerAngles = Vector3.create();
+        this.wrapper.getValue().set(value);
     }
 
     public static Rotation fromEulerAngles(Vector3fc eulerAngles) {
@@ -38,15 +38,15 @@ public class Rotation {
     }
 
     public void set(Rotation rotation) {
-        this.value.set(rotation.getValue());
+        this.wrapper.getValue().set(rotation.getValue());
     }
 
     public Vector3fc getEulerAngles() {
-        return this.value.getEulerAnglesXYZ(this.eulerAngles);
+        return this.wrapper.getValue().getEulerAnglesXYZ(this.eulerAngles);
     }
 
     public Quaternionfc getValue() {
-        return this.value;
+        return this.wrapper.getReadonly();
     }
 
     @Override
