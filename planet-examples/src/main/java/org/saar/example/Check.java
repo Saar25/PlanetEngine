@@ -1,13 +1,13 @@
 package org.saar.example;
 
-import org.jproperty.type.FloatProperty;
-import org.jproperty.type.IntProperty;
+import org.jproperty.type.*;
 
 public class Check {
 
     public static void main(String[] args) {
-        final FloatProperty property1 = new FloatProperty(4f);
-        final IntProperty property2 = new IntProperty(8);
+        final FloatProperty property1 = new SimpleFloatProperty(4f);
+        final IntProperty property2 = new SimpleIntProperty(8);
+        final ReadOnlyFloatProperty f = new ConstantFloatProperty(5);
 
         property1.bindBidirectional(property2);
 

@@ -1,10 +1,11 @@
 package org.saar.lwjgl.opengl.shaders.uniforms2;
 
 import org.jproperty.type.FloatProperty;
+import org.jproperty.type.SimpleFloatProperty;
 
 public class FloatUniformProperty extends FloatUniform implements UniformProperty<Float> {
 
-    private final FloatProperty property = new FloatProperty(0f);
+    private final FloatProperty property = new SimpleFloatProperty(0f);
 
     private final String name;
 
