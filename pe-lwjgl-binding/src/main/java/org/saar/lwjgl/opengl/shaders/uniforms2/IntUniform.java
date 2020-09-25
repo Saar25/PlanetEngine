@@ -13,7 +13,7 @@ public abstract class IntUniform extends UniformBase implements Uniform {
 
     public abstract int getUniformValue();
 
-    public static abstract class Base extends IntUniform {
+    private static abstract class Base extends IntUniform {
 
         protected final String name;
         protected int uniformValue = 0;

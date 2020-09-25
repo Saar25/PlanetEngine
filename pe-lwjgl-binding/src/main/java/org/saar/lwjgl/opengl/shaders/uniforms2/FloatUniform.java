@@ -13,7 +13,7 @@ public abstract class FloatUniform extends UniformBase implements Uniform {
 
     public abstract float getUniformValue();
 
-    public static abstract class Base extends FloatUniform {
+    private static abstract class Base extends FloatUniform {
 
         protected final String name;
         protected float uniformValue = 0;
