@@ -18,7 +18,17 @@ public final class SimpleTransform implements Transform {
     private final Scale scale = Scale.create();
 
     public SimpleTransform() {
+        getPosition().addListener(e -> updateTransformationMatrix());
+        getRotation().addListener(e -> updateTransformationMatrix());
+        getScale().addListener(e -> updateTransformationMatrix());
+    }
 
+    private void updateTransformationMatrix() {
+        Matrix4.ofTransformation(
+                getPosition().getValue(),
+                getRotation().getValue(),
+                getScale().getValue(),
+                this.transformation);
     }
 
     @Override

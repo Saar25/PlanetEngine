@@ -1,19 +1,21 @@
 package org.saar.maths.transform;
 
-import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.jproperty.*;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
 import org.saar.maths.wrapper.QuaternionfWrapper;
 
-public class Rotation {
+public class Rotation implements ReadOnlyProperty<Quaternionfc> {
+
+    private ListenersHelper<Quaternionfc> helper = ListenersHelper.empty();
 
     private final QuaternionfWrapper wrapper = new QuaternionfWrapper();
     private final Vector3f eulerAngles = Vector3.create();
 
-    private Rotation(Quaternionf value) {
+    private Rotation(Quaternionfc value) {
         this.wrapper.getValue().set(value);
     }
 
@@ -37,20 +39,48 @@ public class Rotation {
         return new Rotation(Quaternion.create());
     }
 
-    public void set(Rotation rotation) {
-        this.wrapper.getValue().set(rotation.getValue());
+    private Quaternionfc copyValue() {
+        return Quaternion.of(this.wrapper.getValue());
     }
 
-    public void set(Quaternionf rotation) {
+    public void set(Rotation rotation) {
+        final Quaternionfc old = copyValue();
+        this.wrapper.getValue().set(rotation.getValue());
+        onChange(old);
+    }
+
+    public void set(Quaternionfc rotation) {
+        final Quaternionfc old = copyValue();
         this.wrapper.getValue().set(rotation);
+        onChange(old);
+    }
+
+    private void onChange(Quaternionfc old) {
+        if (!old.equals(getValue())) {
+            final ChangeEvent<Quaternionfc> event =
+                    new ChangeEventBase<>(this, old, getValue());
+            this.helper.fireEvent(event);
+        }
+    }
+
+    @Override
+    public void addListener(ChangeListener<? super Quaternionfc> changeListener) {
+        this.helper = this.helper.addListener(changeListener);
+    }
+
+    @Override
+    public void removeListener(ChangeListener<? super Quaternionfc> changeListener) {
+        this.helper = this.helper.removeListener(changeListener);
+    }
+
+    @Override
+    public Quaternionfc getValue() {
+        return this.wrapper.getReadonly();
     }
 
     public Vector3fc getEulerAngles() {
-        return this.wrapper.getValue().getEulerAnglesXYZ(this.eulerAngles);
-    }
-
-    public Quaternionfc getValue() {
-        return this.wrapper.getReadonly();
+        final Quaternionfc value = this.wrapper.getValue();
+        return value.getEulerAnglesXYZ(this.eulerAngles);
     }
 
     @Override
