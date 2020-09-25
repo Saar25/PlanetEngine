@@ -1,7 +1,6 @@
 package org.saar.example.renderer3d;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
 import org.saar.core.common.r3d.RenderNode3D;
@@ -38,7 +37,7 @@ public class ManyCubesExample {
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
-        final ICamera camera = new Camera(projection);
+        final Camera camera = new Camera(projection);
 
         final RenderNode3D renderNode3D = renderNode3D();
         final Renderer3D renderer = new Renderer3D(camera, new RenderNode3D[]{renderNode3D});

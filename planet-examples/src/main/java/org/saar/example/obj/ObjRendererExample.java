@@ -1,7 +1,6 @@
 package org.saar.example.obj;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
@@ -35,7 +34,7 @@ public class ObjRendererExample {
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
-        final ICamera camera = new Camera(projection);
+        final Camera camera = new Camera(projection);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));

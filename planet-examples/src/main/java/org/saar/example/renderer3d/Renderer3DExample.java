@@ -1,7 +1,6 @@
 package org.saar.example.renderer3d;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
 import org.saar.core.common.r3d.RenderNode3D;
@@ -39,7 +38,7 @@ public class Renderer3DExample {
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
-        final ICamera camera = new Camera(projection);
+        final Camera camera = new Camera(projection);
 
         camera.getTransform().getPosition().set(0, 0, -1000);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
