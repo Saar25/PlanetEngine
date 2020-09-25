@@ -1,7 +1,6 @@
 package org.saar.example.shadow;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
