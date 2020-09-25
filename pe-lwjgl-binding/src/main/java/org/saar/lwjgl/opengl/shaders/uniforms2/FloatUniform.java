@@ -13,18 +13,30 @@ public abstract class FloatUniform extends UniformBase implements Uniform {
 
     public abstract float getUniformValue();
 
-    public static abstract class Stage extends FloatUniform implements StageUniform {
+    public static abstract class Base extends FloatUniform {
 
-        private final String name;
-        private float uniformValue = 0;
+        protected final String name;
+        protected float uniformValue = 0;
 
-        public Stage(String name) {
+        public Base(String name) {
             this.name = name;
         }
 
         @Override
         public final float getUniformValue() {
             return this.uniformValue;
+        }
+
+        @Override
+        public final String getName() {
+            return this.name;
+        }
+    }
+
+    public static abstract class Stage extends Base implements StageUniform {
+
+        public Stage(String name) {
+            super(name);
         }
 
         @Override
@@ -32,36 +44,18 @@ public abstract class FloatUniform extends UniformBase implements Uniform {
             this.uniformValue = getUniformValue(state);
         }
 
-        @Override
-        public final String getName() {
-            return this.name;
-        }
-
         public abstract float getUniformValue(StageRenderState state);
     }
 
-    public static abstract class Instance<T> extends FloatUniform implements InstanceUniform<T> {
-
-        private final String name;
-        private float uniformValue = 0;
+    public static abstract class Instance<T> extends Base implements InstanceUniform<T> {
 
         public Instance(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public final float getUniformValue() {
-            return this.uniformValue;
+            super(name);
         }
 
         @Override
         public void update(InstanceRenderState<T> state) {
             this.uniformValue = getUniformValue(state);
-        }
-
-        @Override
-        public final String getName() {
-            return this.name;
         }
 
         public abstract float getUniformValue(InstanceRenderState<T> state);
