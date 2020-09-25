@@ -73,7 +73,10 @@ public final class ExamplesUtils {
         toMove.mul(ms / 1000f).mul(100);
         toRotate.mul(ms / 1000f).mul(100);
         camera.getTransform().getPosition().add(toMove.rotate(camera.getTransform().getRotation().getValue()).mul(-1));
-        camera.getTransform().addRotation(Angle.degrees(toRotate.x), Angle.degrees(toRotate.y), Angle.degrees(toRotate.z));
+        camera.getTransform().getRotation().rotate(
+                Angle.degrees(toRotate.x),
+                Angle.degrees(toRotate.y),
+                Angle.degrees(toRotate.z));
     }
 
     public static void addRotationListener(Camera camera, Mouse mouse) {
@@ -88,7 +91,7 @@ public final class ExamplesUtils {
                     toRotate.y += this.lastX - e.getX();
                     toRotate.x += this.lastY - e.getY();
                     toRotate.mul(.3f);
-                    camera.getTransform().addRotation(
+                    camera.getTransform().getRotation().rotate(
                             Angle.degrees(toRotate.x),
                             Angle.degrees(toRotate.y),
                             Angle.degrees(toRotate.z));
