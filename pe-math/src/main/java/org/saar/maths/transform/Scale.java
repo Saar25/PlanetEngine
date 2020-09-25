@@ -37,6 +37,10 @@ public class Scale {
         this.wrapper.getValue().set(value);
     }
 
+    public void set(float x, float y, float z) {
+        this.wrapper.getValue().set(x, y, z);
+    }
+
     public void set(float value) {
         this.wrapper.getValue().set(value);
     }

@@ -41,6 +41,10 @@ public class Rotation {
         this.wrapper.getValue().set(rotation.getValue());
     }
 
+    public void set(Quaternionf rotation) {
+        this.wrapper.getValue().set(rotation);
+    }
+
     public Vector3fc getEulerAngles() {
         return this.wrapper.getValue().getEulerAnglesXYZ(this.eulerAngles);
     }
