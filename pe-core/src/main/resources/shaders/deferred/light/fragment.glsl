@@ -1,4 +1,3 @@
-#version 400
 #define MAX_DIRECTIONAL_LIGHTS 2
 #define MAX_POINT_LIGHTS 5
 

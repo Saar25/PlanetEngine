@@ -9,7 +9,7 @@ public class Shader {
     private final ShaderType type;
     private final String[] code;
 
-    private Shader(int id, ShaderType type, String... code) {
+    public Shader(int id, ShaderType type, String... code) {
         this.id = id;
         this.type = type;
         this.code = code;
@@ -23,15 +23,16 @@ public class Shader {
      * @return a vertex shader
      * @throws Exception In case could not read the file
      */
-    public static Shader of(ShaderType type, String... sources) throws Exception {
+    public static Shader of(ShaderType type, GlslVersion version, String... sources) throws Exception {
         final int id = GL20.glCreateShader(type.get());
-        return new Shader(id, type, loadSources(sources));
+        return new Shader(id, type, loadSources(version, sources));
     }
 
-    private static String[] loadSources(String... sources) throws Exception {
-        final String[] codes = new String[sources.length];
+    private static String[] loadSources(GlslVersion version, String... sources) throws Exception {
+        final String[] codes = new String[sources.length + 1];
+        codes[0] = version.toString();
         for (int i = 0; i < sources.length; i++) {
-            codes[i] = TextFileLoader.loadResource(sources[i]);
+            codes[i + 1] = TextFileLoader.loadResource(sources[i]);
         }
         return codes;
     }
@@ -39,23 +40,33 @@ public class Shader {
     /**
      * Creates a vertex shader with the given file that contains the code
      *
+     * @param version the shader version
      * @param sources the sources code file
      * @return a vertex shader
      * @throws Exception In case could not read the file
      */
+    public static Shader createVertex(GlslVersion version, String... sources) throws Exception {
+        return Shader.of(ShaderType.VERTEX, version, sources);
+    }
+
     public static Shader createVertex(String... sources) throws Exception {
-        return Shader.of(ShaderType.VERTEX, sources);
+        return Shader.createVertex(GlslVersion.NONE, sources);
     }
 
     /**
      * Creates a fragment shader with the given file that contains the code
      *
+     * @param version the shader version
      * @param sources the sources code file
      * @return a fragment shader
      * @throws Exception In case could not read the file
      */
+    public static Shader createFragment(GlslVersion version, String... sources) throws Exception {
+        return Shader.of(ShaderType.FRAGMENT, version, sources);
+    }
+
     public static Shader createFragment(String... sources) throws Exception {
-        return Shader.of(ShaderType.FRAGMENT, sources);
+        return Shader.of(ShaderType.FRAGMENT, GlslVersion.NONE, sources);
     }
 
     /**
@@ -65,8 +76,8 @@ public class Shader {
      * @return a geometry shader
      * @throws Exception In case could not read the file
      */
-    public static Shader createGeometry(String... sources) throws Exception {
-        return Shader.of(ShaderType.GEOMETRY, sources);
+    public static Shader createGeometry(GlslVersion version, String... sources) throws Exception {
+        return Shader.of(ShaderType.GEOMETRY, version, sources);
     }
 
     /**
@@ -76,8 +87,8 @@ public class Shader {
      * @return a tessellation control shader
      * @throws Exception In case could not read the file
      */
-    public static Shader createTessControl(String... sources) throws Exception {
-        return Shader.of(ShaderType.TESS_CONTROL, sources);
+    public static Shader createTessControl(GlslVersion version, String... sources) throws Exception {
+        return Shader.of(ShaderType.TESS_CONTROL, version, sources);
     }
 
     /**
@@ -87,8 +98,8 @@ public class Shader {
      * @return a tessellation evaluation shader
      * @throws Exception In case could not read the file
      */
-    public static Shader createTessEvaluation(String... sources) throws Exception {
-        return Shader.of(ShaderType.TESS_EVALUATION, sources);
+    public static Shader createTessEvaluation(GlslVersion version, String... sources) throws Exception {
+        return Shader.of(ShaderType.TESS_EVALUATION, version, sources);
     }
 
     /**

@@ -1,5 +1,3 @@
-#version 400
-
 // Constants
 float SHADOW_BIAS = 0.001f;
 

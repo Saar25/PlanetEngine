@@ -14,10 +14,7 @@ import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
-import org.saar.lwjgl.opengl.shaders.InstanceRenderState
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.StageRenderState
+import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
@@ -91,9 +88,9 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     companion object {
         private val matrix: Matrix4f = Matrix4.create()
 
-        private val vertex: Shader = Shader.createVertex(
+        private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
                 "/shaders/deferred/quadVertex.glsl")
-        private val fragment: Shader = Shader.createFragment(
+        private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
                 "/shaders/deferred/light/fragment.glsl",
                 "/shaders/common/light/light.source.glsl",
                 "/shaders/common/transform/transform.source.glsl")
