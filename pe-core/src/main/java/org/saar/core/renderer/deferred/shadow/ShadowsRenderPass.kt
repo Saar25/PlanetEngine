@@ -84,6 +84,7 @@ class ShadowsRenderPass(private val camera: ICamera, private val shadowCamera: I
         private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
                 "/shaders/deferred/quadVertex.glsl")
         private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
+                "/shaders/common/transform/transform.header.glsl",
                 "/shaders/deferred/shadow/fragment.glsl",
                 "/shaders/common/transform/transform.source.glsl")
         private val shadersProgram: ShadersProgram =

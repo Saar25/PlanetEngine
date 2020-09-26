@@ -1,17 +1,12 @@
+/**
+*
+* Light fragment shader
+*
+**/
+
+// definitions
 #define MAX_DIRECTIONAL_LIGHTS 2
 #define MAX_POINT_LIGHTS 5
-
-// Structs
-struct DirectionalLight {
-    vec3 direction;
-    vec3 colour;
-};
-
-struct PointLight {
-    vec3 position;
-    vec3 radiuses;
-    vec3 colour;
-};
 
 // Vertex outputs
 in vec2 v_position;
@@ -52,18 +47,6 @@ vec3 findNormal(vec2 normal);
 vec3 finalAmbientColour(void);
 vec3 finalDiffuseColour(void);
 vec3 finalSpecularColour(void);
-
-// light.header.glsl
-vec3 totalAmbientColour(const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
-vec3 totalDiffuseColour(const vec3 normal, const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
-vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewDirection,
-                         const vec3 normal, const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
-
-// transform.header.glsl
-vec3 ndcToClipSpace(const vec2 ndc, const float depth);
-vec3 clipSpaceToViewSpace(const vec3 clipSpace, const mat4 projectionInv);
-vec3 viewSpaceToWorldSpace(const vec3 viewSpace, const mat4 viewInv);
-vec3 calcViewDirection(const vec3 cameraWorldSpace, const vec3 fragWorldSpace);
 
 // Main
 void main(void) {

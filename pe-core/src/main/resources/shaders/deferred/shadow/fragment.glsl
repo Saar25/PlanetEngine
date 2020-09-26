@@ -1,3 +1,9 @@
+/**
+*
+* Shadows fragment shader
+*
+**/
+
 // Constants
 float SHADOW_BIAS = 0.001f;
 
@@ -30,12 +36,6 @@ float g_shadowMapPixelDepth;
 void initBufferValues(void);
 void initGlobals(void);
 void initShadowDepth(void);
-
-// transform.header.glsl
-vec3 ndcToClipSpace(const vec2 ndc, const float depth);
-vec3 clipSpaceToViewSpace(const vec3 clipSpace, const mat4 projectionInv);
-vec3 viewSpaceToWorldSpace(const vec3 viewSpace, const mat4 viewInv);
-vec3 calcViewDirection(const vec3 cameraWorldSpace, const vec3 fragWorldSpace);
 
 // Main
 void main(void) {
