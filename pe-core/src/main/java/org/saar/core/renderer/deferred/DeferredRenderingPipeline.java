@@ -1,6 +1,5 @@
 package org.saar.core.renderer.deferred;
 
-import org.lwjgl.opengl.GL20;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.SimpleScreen;

@@ -65,8 +65,9 @@ public abstract class RenderPassesHelper {
 
         @Override
         public void render(OffScreen screen, OffScreen output, DeferredRenderingBuffers buffers) {
-            output.setAsDraw();
+            screen.setAsDraw();
             this.renderPass.render(buffers);
+            screen.copyTo(output);
         }
 
         @Override
