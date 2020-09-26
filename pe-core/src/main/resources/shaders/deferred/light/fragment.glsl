@@ -46,20 +46,25 @@ vec3 g_viewDirection;
 // Methods declaration
 
 void initBufferValues(void);
-void initViewPosition(void);
-void initWorldPosition(void);
-void initViewDirection(void);
+void initGlobals(void);
+
 vec3 findNormal(vec2 normal);
 
 vec3 finalAmbientColour(void);
 vec3 finalDiffuseColour(void);
 vec3 finalSpecularColour(void);
 
-// Light.header.glsl
+// light.header.glsl
 vec3 totalAmbientColour(const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
 vec3 totalDiffuseColour(const vec3 normal, const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
 vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewDirection,
                          const vec3 normal, const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
+
+// transform.header.glsl
+vec3 ndcToClipSpace(const vec2 ndc, const float depth);
+vec3 clipSpaceToViewSpace(const vec3 clipSpace, const mat4 projectionInv);
+vec3 viewSpaceToWorldSpace(const vec3 viewSpace, const mat4 viewInv);
+vec3 calcViewDirection(const vec3 cameraWorldSpace, const vec3 fragWorldSpace);
 
 // Main
 void main(void) {
@@ -68,9 +73,7 @@ void main(void) {
         discard;
     }
 
-    initViewPosition();
-    initWorldPosition();
-    initViewDirection();
+    initGlobals();
 
     vec3 ambientColour = finalAmbientColour();
     vec3 diffuseColour = finalDiffuseColour();
@@ -84,24 +87,13 @@ void initBufferValues(void) {
     g_colour = texture(colourTexture, v_position).rgb;
     g_normal = texture(normalTexture, v_position).xyz;
     g_depth = texture(depthTexture, v_position).r;
-
-    // g_normal = findNormal(texture(normalTexture, v_position).xy);
 }
 
-void initViewPosition(void) {
-    float x = v_position.x, y = v_position.y, z = g_depth;
-    vec4 clipSpacePosition = vec4(vec3(x, y, z) * 2.0 - 1.0, 1.0);
-    vec4 viewSpacePosition = projectionMatrixInv * clipSpacePosition;
-    g_viewPosition = viewSpacePosition.rgb / viewSpacePosition.w;
-}
-
-void initWorldPosition(void) {
-    vec4 worldSpacePosition = viewMatrixInv * vec4(g_viewPosition, 1);
-    g_worldPosition = worldSpacePosition.xyz / worldSpacePosition.w;
-}
-
-void initViewDirection(void) {
-    g_viewDirection = normalize(cameraWorldPosition - g_worldPosition);
+void initGlobals(void) {
+    vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
+    g_viewPosition = clipSpaceToViewSpace(clipSpace, projectionMatrixInv);
+    g_worldPosition = viewSpaceToWorldSpace(g_viewPosition, viewMatrixInv);
+    g_viewDirection = calcViewDirection(cameraWorldPosition, g_worldPosition);
 }
 
 vec3 findNormal(vec2 normal) {
