@@ -89,16 +89,20 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         private val matrix: Matrix4f = Matrix4.create()
 
         private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-                "/shaders/deferred/quadVertex.glsl")
-        private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-                "/shaders/common/light/light.struct.glsl",
-                "/shaders/common/light/light.header.glsl",
-                "/shaders/common/transform/transform.header.glsl",
+                ShaderCode.loadSource("/shaders/deferred/quadVertex.glsl"))
+        private val fragment: Shader = Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.define("MAX_POINT_LIGHTS", "5"),
+                ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "2"),
 
-                "/shaders/deferred/light/fragment.glsl",
+                ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
+                ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
+                ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
 
-                "/shaders/common/light/light.source.glsl",
-                "/shaders/common/transform/transform.source.glsl")
+                ShaderCode.loadSource("/shaders/deferred/light/fragment.glsl"),
+
+                ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
+                ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
         private val shadersProgram: ShadersProgram =
                 ShadersProgram.create(vertex, fragment)
     }

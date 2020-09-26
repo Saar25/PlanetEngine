@@ -46,6 +46,6 @@ public class GlslVersion {
         if (this == NONE) return "";
         final String type = this.type.value;
         final String version = this.major + "" + this.minor + "0";
-        return "#version " + version + ' ' + type + '\n';
+        return "#version " + version + ' ' + type;
     }
 }

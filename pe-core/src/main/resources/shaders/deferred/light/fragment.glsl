@@ -5,8 +5,12 @@
 **/
 
 // definitions
-#define MAX_DIRECTIONAL_LIGHTS 2
-#define MAX_POINT_LIGHTS 5
+#ifndef MAX_DIRECTIONAL_LIGHTS
+    #define MAX_DIRECTIONAL_LIGHTS 10
+#endif
+#ifndef MAX_POINT_LIGHTS
+    #define MAX_POINT_LIGHTS 10
+#endif
 
 // Vertex outputs
 in vec2 v_position;
