@@ -4,8 +4,10 @@ import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.ModifiableFbo;
+import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 
+import java.util.Arrays;
 import java.util.List;
 
 public final class Screens {
@@ -22,6 +24,10 @@ public final class Screens {
         Screens.setDrawAttachments(fbo, locator);
         Screens.setReadAttachments(fbo, locator);
         return new ScreenPrototypeWrapper(fbo, screenImages);
+    }
+
+    public static Attachment[] toAttachments(ScreenImage... images) {
+        return Arrays.stream(images).map(ScreenImage::getAttachment).toArray(Attachment[]::new);
     }
 
     private static void addAttachments(ModifiableFbo fbo, List<ScreenImage> screenImages) {
