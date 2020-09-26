@@ -41,23 +41,25 @@ vec3 g_normal;
 float g_depth;
 vec3 g_viewPosition;
 vec3 g_worldPosition;
+vec3 g_viewDirection;
 
 // Methods declaration
 
 void initBufferValues(void);
 void initViewPosition(void);
 void initWorldPosition(void);
+void initViewDirection(void);
 vec3 findNormal(vec2 normal);
 
 vec3 finalAmbientColour(void);
-vec3 ambientColour(const DirectionalLight light);
-
 vec3 finalDiffuseColour(void);
-vec3 diffuseColour(const DirectionalLight light);
-
 vec3 finalSpecularColour(void);
-vec3 specularColour(const DirectionalLight light);
 
+// Light.header.glsl
+vec3 totalAmbientColour(const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
+vec3 totalDiffuseColour(const vec3 normal, const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
+vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewDirection,
+                         const vec3 normal, const int count, const DirectionalLight lights[MAX_DIRECTIONAL_LIGHTS]);
 
 // Main
 void main(void) {
@@ -68,6 +70,7 @@ void main(void) {
 
     initViewPosition();
     initWorldPosition();
+    initViewDirection();
 
     vec3 ambientColour = finalAmbientColour();
     vec3 diffuseColour = finalDiffuseColour();
@@ -97,6 +100,10 @@ void initWorldPosition(void) {
     g_worldPosition = worldSpacePosition.xyz / worldSpacePosition.w;
 }
 
+void initViewDirection(void) {
+    g_viewDirection = normalize(cameraWorldPosition - g_worldPosition);
+}
+
 vec3 findNormal(vec2 normal) {
     float x2 = pow(normal.x, 2);
     float y2 = pow(normal.y, 2);
@@ -105,47 +112,13 @@ vec3 findNormal(vec2 normal) {
 }
 
 vec3 finalAmbientColour(void) {
-    vec3 ambientColour = vec3(0, 0, 0);
-    for (int i = 0; i < directionalLightsCount; i++) {
-        DirectionalLight light = directionalLights[i];
-        ambientColour += ambientColour(light);
-    }
-    return ambientColour;
-}
-
-vec3 ambientColour(const DirectionalLight light) {
-    return light.colour * 0.1;
+    return totalAmbientColour(directionalLightsCount, directionalLights);
 }
 
 vec3 finalDiffuseColour(void) {
-    vec3 diffuseColour = vec3(0, 0, 0);
-    for (int i = 0; i < directionalLightsCount; i++) {
-        DirectionalLight light = directionalLights[i];
-        diffuseColour += diffuseColour(light);
-    }
-    return diffuseColour;
-}
-
-vec3 diffuseColour(const DirectionalLight light) {
-    float diffuse = dot(g_normal, -light.direction);
-    return light.colour * max(diffuse, 0);
+    return totalDiffuseColour(g_normal, directionalLightsCount, directionalLights);
 }
 
 vec3 finalSpecularColour(void) {
-    vec3 specularColour = vec3(0, 0, 0);
-    for (int i = 0; i < directionalLightsCount; i++) {
-        DirectionalLight light = directionalLights[i];
-        specularColour += specularColour(light);
-    }
-    return specularColour;
-}
-
-vec3 specularColour(const DirectionalLight light) {
-    const float specularPower = 16, specularScalar = 2.5;
-
-    vec3 reflect = reflect(light.direction, g_normal);
-    vec3 viewDirection = -normalize(g_worldPosition - cameraWorldPosition);
-    float specular = dot(reflect, viewDirection);
-    specular = pow(specular, specularPower) * specularScalar;
-    return specular * light.colour;
+    return totalSpecularColour(16, 2.5, g_viewDirection, g_normal, directionalLightsCount, directionalLights);
 }

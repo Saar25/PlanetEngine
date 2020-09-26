@@ -94,7 +94,8 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         private val vertex: Shader = Shader.createVertex(
                 "/shaders/deferred/quadVertex.glsl")
         private val fragment: Shader = Shader.createFragment(
-                "/shaders/deferred/light/fragment.glsl")
+                "/shaders/deferred/light/fragment.glsl",
+                "/shaders/light/light.source.glsl")
         private val shadersProgram: ShadersProgram =
                 ShadersProgram.create(vertex, fragment)
     }
