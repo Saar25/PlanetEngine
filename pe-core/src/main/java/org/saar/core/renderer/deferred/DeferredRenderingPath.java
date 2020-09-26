@@ -5,32 +5,19 @@ import org.saar.core.renderer.RenderersHelper;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
-import org.saar.core.screen.ScreenPrototype;
 import org.saar.core.screen.Screens;
-import org.saar.core.screen.annotations.ScreenImageProperty;
-import org.saar.core.screen.image.ColourScreenImageBase;
-import org.saar.core.screen.image.ScreenImage;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.textures.Texture;
-import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class DeferredRenderingPath implements RenderingPath {
 
-    private final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
-
     private final OffScreen screen;
-    private final OffScreen passesScreen;
     private final DeferredRenderingBuffers buffers;
 
     private RenderersHelper renderersHelper = RenderersHelper.empty();
 
-    private final DeferredRenderingPipeline pipeline = new DeferredRenderingPipeline();
+    private final DeferredRenderingPipeline pipeline;
 
     public DeferredRenderingPath(DeferredScreenPrototype screen) {
         this.screen = Screens.fromPrototype(screen, fbo());
@@ -38,12 +25,7 @@ public class DeferredRenderingPath implements RenderingPath {
                 screen.getColourTexture(),
                 screen.getNormalTexture(),
                 screen.getDepthTexture());
-
-        this.passesScreen = Screens.fromPrototype(new ScreenPrototype() {
-            @ScreenImageProperty(draw = true, read = true)
-            private final ScreenImage colourImage = new ColourScreenImageBase(ColourAttachment.withTexture(
-                    0, colourTexture, InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE));
-        }, fbo());
+        this.pipeline = new DeferredRenderingPipeline(this.screen);
     }
 
     private static Fbo fbo() {
@@ -68,19 +50,23 @@ public class DeferredRenderingPath implements RenderingPath {
         this.pipeline.removeRenderPass(renderPass);
     }
 
-    @Override
-    public void render() {
+    private void checkSize() {
         final int width = MainScreen.getInstance().getWidth();
         final int height = MainScreen.getInstance().getHeight();
         if (this.screen.getWidth() != width || this.screen.getHeight() != height) {
             this.screen.resize(width, height);
-            this.passesScreen.resize(width, height);
+            this.pipeline.resize(width, height);
         }
+    }
+
+    @Override
+    public void render() {
+        checkSize();
 
         doFirstPass();
         doRenderPasses();
 
-        this.passesScreen.copyTo(MainScreen.getInstance());
+        this.screen.copyTo(MainScreen.getInstance());
     }
 
     private void doFirstPass() {
@@ -90,16 +76,13 @@ public class DeferredRenderingPath implements RenderingPath {
     }
 
     private void doRenderPasses() {
-        this.passesScreen.setAsDraw();
-        GlUtils.clear(GlBuffer.COLOUR);
         this.pipeline.render(this.buffers);
     }
 
     @Override
     public void delete() {
         this.screen.delete();
-        this.renderersHelper.delete();
-        this.passesScreen.delete();
         this.pipeline.delete();
+        this.renderersHelper.delete();
     }
 }

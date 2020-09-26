@@ -1,5 +1,7 @@
 package org.saar.core.renderer.deferred;
 
+import org.saar.core.screen.OffScreen;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +16,7 @@ public abstract class RenderPassesHelper {
 
     public abstract RenderPassesHelper removeRenderPass(RenderPass renderPass);
 
-    public abstract void render(DeferredRenderingBuffers buffers);
+    public abstract void render(OffScreen screen, OffScreen output, DeferredRenderingBuffers buffers);
 
     public abstract void delete();
 
@@ -33,7 +35,7 @@ public abstract class RenderPassesHelper {
         }
 
         @Override
-        public void render(DeferredRenderingBuffers buffers) {
+        public void render(OffScreen screen, OffScreen output, DeferredRenderingBuffers buffers) {
 
         }
 
@@ -62,7 +64,8 @@ public abstract class RenderPassesHelper {
         }
 
         @Override
-        public void render(DeferredRenderingBuffers buffers) {
+        public void render(OffScreen screen, OffScreen output, DeferredRenderingBuffers buffers) {
+            output.setAsDraw();
             this.renderPass.render(buffers);
         }
 
@@ -98,9 +101,17 @@ public abstract class RenderPassesHelper {
         }
 
         @Override
-        public void render(DeferredRenderingBuffers buffers) {
+        public void render(OffScreen screen, OffScreen output, DeferredRenderingBuffers buffers) {
+            final OffScreen[] screens = {screen, output};
+            int index = this.renderPasses.size() % 2 == 0 ? 1 : 0;
             for (RenderPass renderPass : this.renderPasses) {
+                screens[index].setAsDraw();
+
                 renderPass.render(buffers);
+
+                final int next = 1 - index;
+                screens[index].copyTo(screens[next]);
+                index = next;
             }
         }
 
