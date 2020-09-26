@@ -19,7 +19,7 @@ public class SimpleScreen extends ScreenBase implements OffScreen {
     }
 
     public void addScreenImage(ScreenImage image) {
-        image.getAttachment().init(this.fbo);
+        getFbo().addAttachment(image.getAttachment());
         getScreenImages().add(image);
     }
 
