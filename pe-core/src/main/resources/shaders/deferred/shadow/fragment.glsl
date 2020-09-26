@@ -23,24 +23,26 @@ out vec4 f_colour;
 vec3 g_colour;
 vec3 g_normal;
 float g_depth;
-vec3 g_viewPosition;
-vec3 g_worldPosition;
+vec3 g_viewSpace;
+vec3 g_worldSpace;
 float g_shadowDepth;
 float g_shadowMapPixelDepth;
 
-vec4 shadowCoords;
-
 // Methods declaration
 void initBufferValues(void);
-void initViewPosition(void);
-void initWorldPosition(void);
+void initGlobals(void);
 void initShadowDepth(void);
+
+// transform.header.glsl
+vec3 ndcToClipSpace(const vec2 ndc, const float depth);
+vec3 clipSpaceToViewSpace(const vec3 clipSpace, const mat4 projectionInv);
+vec3 viewSpaceToWorldSpace(const vec3 viewSpace, const mat4 viewInv);
+vec3 calcViewDirection(const vec3 cameraWorldSpace, const vec3 fragWorldSpace);
 
 // Main
 void main(void) {
     initBufferValues();
-    initViewPosition();
-    initWorldPosition();
+    initGlobals();
     initShadowDepth();
 
     if (g_shadowDepth < g_shadowMapPixelDepth + SHADOW_BIAS) {
@@ -48,9 +50,6 @@ void main(void) {
     } else {
         f_colour = vec4(g_colour * .2, 1);
     }
-//    f_colour = texture(shadowMap, v_position).rrrr;
-//    f_colour = vec4(g_colour, 1);
-//    f_colour = vec4(g_shadowDepth, 1);
 }
 
 void initBufferValues(void) {
@@ -59,20 +58,14 @@ void initBufferValues(void) {
     g_depth = texture(depthTexture, v_position).r;
 }
 
-void initViewPosition(void) {
-    float x = v_position.x, y = v_position.y, z = g_depth;
-    vec4 clipSpacePosition = vec4(vec3(x, y, z) * 2.0 - 1.0, 1.0);
-    vec4 viewSpacePosition = projectionMatrixInv * clipSpacePosition;
-    g_viewPosition = viewSpacePosition.xyz / viewSpacePosition.w;
-}
-
-void initWorldPosition(void) {
-    vec4 worldSpacePosition = viewMatrixInv * vec4(g_viewPosition, 1);
-    g_worldPosition = worldSpacePosition.xyz / worldSpacePosition.w;
+void initGlobals(void) {
+    vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
+    g_viewSpace = clipSpaceToViewSpace(clipSpace, projectionMatrixInv);
+    g_worldSpace = viewSpaceToWorldSpace(g_viewSpace, viewMatrixInv);
 }
 
 void initShadowDepth(void) {
-    shadowCoords = shadowMatrix * vec4(g_worldPosition, 1);
+    vec4 shadowCoords = shadowMatrix * vec4(g_worldSpace, 1);
     shadowCoords = shadowCoords / shadowCoords.w;
     shadowCoords = shadowCoords * 0.5f + 0.5f;
 
