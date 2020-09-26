@@ -103,16 +103,12 @@ public abstract class RenderPassesHelper {
 
         @Override
         public void render(OffScreen screen, OffScreen output, DeferredRenderingBuffers buffers) {
-            final OffScreen[] screens = {screen, output};
-            int index = this.renderPasses.size() % 2 == 0 ? 1 : 0;
             for (RenderPass renderPass : this.renderPasses) {
-                screens[index].setAsDraw();
+                screen.setAsDraw();
 
                 renderPass.render(buffers);
 
-                final int next = 1 - index;
-                screens[index].copyTo(screens[next]);
-                index = next;
+                screen.copyTo(output);
             }
         }
 

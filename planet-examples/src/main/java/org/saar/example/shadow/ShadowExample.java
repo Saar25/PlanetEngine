@@ -8,6 +8,7 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.example.ExamplesUtils;
@@ -35,7 +36,7 @@ public class ShadowExample {
 
         MyNode node;
         ObjRenderNode renderNode = null;
-        Texture2D texture = null;
+        Texture2D texture;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
@@ -75,6 +76,8 @@ public class ShadowExample {
 
         deferredRenderer.addRenderPass(new ShadowsRenderPass(
                 camera, shadowsCamera, shadowsRenderingPath.getShadowMap()));
+
+        deferredRenderer.addRenderPass(new LightRenderPass(camera));
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
