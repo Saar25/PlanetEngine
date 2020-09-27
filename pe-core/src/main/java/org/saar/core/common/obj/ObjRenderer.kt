@@ -12,6 +12,7 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
@@ -57,9 +58,10 @@ class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRende
     private var context: RenderContext? = null
 
     override fun onRender(context: RenderContext) {
+        GlUtils.setCullFace(context.hints.cullFace)
+
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
-        GlUtils.enableCulling()
 
         this.context = context
 

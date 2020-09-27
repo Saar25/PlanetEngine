@@ -6,4 +6,6 @@ public abstract class RenderContext {
 
     public abstract ICamera getCamera();
 
+    public abstract RenderingHints getHints();
+
 }

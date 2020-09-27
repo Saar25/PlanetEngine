@@ -17,6 +17,7 @@ import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
@@ -114,7 +115,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     }
 
     override fun onRender(buffers: DeferredRenderingBuffers) {
-        GlUtils.disableCulling()
+        GlUtils.setCullFace(GlCullFace.NONE)
 
         val stageState = StageRenderState()
         this.uniformsHelper.loadOnStage(stageState)

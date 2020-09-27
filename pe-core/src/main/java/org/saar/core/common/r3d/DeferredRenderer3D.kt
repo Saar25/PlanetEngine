@@ -9,6 +9,7 @@ import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
+import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
@@ -42,9 +43,10 @@ class DeferredRenderer3D(private vararg val renderNodes3D: RenderNode3D)
     private var context: RenderContext? = null
 
     override fun onRender(context: RenderContext) {
+        GlUtils.setCullFace(context.hints.cullFace)
+
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
-        GlUtils.enableCulling()
         GlUtils.setProvokingVertexFirst()
 
         this.context = context
