@@ -17,6 +17,7 @@ import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
 import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting;
 import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlCullFace;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ShadowsRenderingPath implements RenderingPath {
@@ -65,7 +66,8 @@ public class ShadowsRenderingPath implements RenderingPath {
 
     @Override
     public void render() {
-        final RenderContext context = new RenderContextBase(getCamera());
+        final RenderContextBase context = new RenderContextBase(getCamera());
+        context.getHints().cullFace = GlCullFace.FRONT;
 
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.DEPTH);
