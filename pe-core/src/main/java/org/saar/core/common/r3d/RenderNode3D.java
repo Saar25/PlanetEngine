@@ -18,7 +18,7 @@ public class RenderNode3D implements RenderNode {
     }
 
     @Override
-    public void render() {
+    public void draw() {
         this.mesh.draw();
     }
 

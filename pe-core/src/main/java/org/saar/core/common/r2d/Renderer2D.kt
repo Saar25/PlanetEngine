@@ -20,6 +20,6 @@ class Renderer2D(private val renderNode: RenderNode2D) : AbstractRenderer(shader
     }
 
     override fun onRender() {
-        renderNode.render()
+        renderNode.draw()
     }
 }

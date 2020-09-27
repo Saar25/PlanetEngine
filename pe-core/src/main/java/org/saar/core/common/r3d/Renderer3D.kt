@@ -47,7 +47,7 @@ class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<R
         for (renderNode3D in this.renderNodes3D) {
             val state = InstanceRenderState(renderNode3D)
             mvpMatrixUniform.loadOnInstance(state)
-            renderNode3D.render()
+            renderNode3D.draw()
         }
     }
 

@@ -68,7 +68,7 @@ class ObjDeferredRenderer(private val camera: ICamera, private val renderNodes: 
             val state = InstanceRenderState<ObjNode>(renderNode3D)
             transformUniform.loadOnInstance(state)
             textureUniform.loadOnInstance(state)
-            renderNode3D.render()
+            renderNode3D.draw()
         }
     }
 

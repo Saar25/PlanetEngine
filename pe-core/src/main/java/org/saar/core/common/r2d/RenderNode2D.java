@@ -11,7 +11,7 @@ public class RenderNode2D implements RenderNode, Node2D {
     }
 
     @Override
-    public void render() {
+    public void draw() {
         this.mesh.draw();
     }
 

@@ -25,7 +25,7 @@ public class ObjRenderNode implements RenderNode, ObjNode {
     }
 
     @Override
-    public void render() {
+    public void draw() {
         this.mesh.draw();
     }
 

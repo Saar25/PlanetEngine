@@ -2,7 +2,7 @@ package org.saar.core.node;
 
 public interface RenderNode extends Node {
 
-    void render();
+    void draw();
 
     void delete();
 }
