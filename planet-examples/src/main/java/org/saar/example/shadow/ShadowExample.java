@@ -25,7 +25,7 @@ public class ShadowExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
+        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
@@ -69,7 +69,7 @@ public class ShadowExample {
         final OrthographicProjection shadowProjection = new OrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.HIGH, shadowProjection, light);
+                ShadowsQuality.LOW, shadowProjection, light);
         shadowsRenderingPath.addRenderer(renderer3D);
         shadowsRenderingPath.addRenderer(renderer);
 
@@ -97,8 +97,7 @@ public class ShadowExample {
             final float fps = 1_000_000_000f / (delta);
             System.out.print("\r" +
                     "Fps: " + String.format("%.2f", fps) +
-                    ", Delta: " + delta +
-                    ", Current: " + current);
+                    ", Delta: " + delta);
             current = System.nanoTime();
         }
 
