@@ -1,9 +1,9 @@
 package org.saar.core.common.obj
 
 import org.joml.Matrix4fc
-import org.saar.core.camera.ICamera
 import org.saar.core.renderer.AUniformProperty
 import org.saar.core.renderer.AbstractRenderer
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -15,13 +15,13 @@ import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class ObjDeferredRenderer(private val camera: ICamera, private val renderNodes: Array<ObjRenderNode>)
+class ObjDeferredRenderer(private vararg val renderNodes: ObjRenderNode)
     : AbstractRenderer(shadersProgram), DeferredRenderer {
 
     @AUniformProperty
     private val viewProjectionUniform = object : UniformMat4Property.Stage("viewProjectionMatrix") {
         override fun getUniformValue(state: StageRenderState): Matrix4fc {
-            return camera.projection.matrix.mul(camera.viewMatrix, matrix)
+            return context!!.camera.projection.matrix.mul(context!!.camera.viewMatrix, matrix)
         }
     }
 
@@ -56,10 +56,14 @@ class ObjDeferredRenderer(private val camera: ICamera, private val renderNodes: 
         init()
     }
 
-    override fun onRender() {
+    private var context: RenderContext? = null
+
+    override fun onRender(context: RenderContext) {
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.enableCulling()
+
+        this.context = context
 
         val stageRenderState = StageRenderState()
         viewProjectionUniform.loadOnStage(stageRenderState)

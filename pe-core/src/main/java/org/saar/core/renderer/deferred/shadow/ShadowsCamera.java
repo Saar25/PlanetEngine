@@ -12,7 +12,7 @@ public class ShadowsCamera implements ICamera {
 
 
     private final Matrix4f viewMatrix = Matrix4.create();
-    private final Transform transform = new SimpleTransform();
+    private final SimpleTransform transform = new SimpleTransform();
     private final OrthographicProjection projection;
 
     public ShadowsCamera(OrthographicProjection projection) {
@@ -28,7 +28,7 @@ public class ShadowsCamera implements ICamera {
     }
 
     @Override
-    public Transform getTransform() {
+    public SimpleTransform getTransform() {
         return this.transform;
     }
 

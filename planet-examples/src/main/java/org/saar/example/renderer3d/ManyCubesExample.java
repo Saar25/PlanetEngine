@@ -5,6 +5,7 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
 import org.saar.core.common.r3d.RenderNode3D;
 import org.saar.core.common.r3d.Renderer3D;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -40,7 +41,7 @@ public class ManyCubesExample {
         final Camera camera = new Camera(projection);
 
         final RenderNode3D renderNode3D = renderNode3D();
-        final Renderer3D renderer = new Renderer3D(camera, new RenderNode3D[]{renderNode3D});
+        final Renderer3D renderer = new Renderer3D(renderNode3D);
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
@@ -56,7 +57,7 @@ public class ManyCubesExample {
                 for (int j = 0; j < COLS; j++) {
                     renderNode3D.getTransform().getPosition().set(
                             i * size - size / 2f, 0, j * size - size / 2f);
-                    renderer.render();
+                    renderer.render(new RenderContextBase(camera));
                 }
             }
 

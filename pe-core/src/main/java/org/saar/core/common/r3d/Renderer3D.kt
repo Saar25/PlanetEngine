@@ -1,9 +1,9 @@
 package org.saar.core.common.r3d
 
 import org.joml.Matrix4fc
-import org.saar.core.camera.ICamera
 import org.saar.core.renderer.AUniformProperty
 import org.saar.core.renderer.AbstractRenderer
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -12,12 +12,12 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<RenderNode3D>) : AbstractRenderer(shadersProgram), Renderer {
+class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRenderer(shadersProgram), Renderer {
 
     @AUniformProperty
     private val mvpMatrixUniform = object : UniformMat4Property.Instance<RenderNode3D>("mvpMatrix") {
         override fun getUniformValue(state: InstanceRenderState<RenderNode3D>): Matrix4fc {
-            return camera.projection.matrix.mul(camera.viewMatrix, matrix)
+            return context!!.camera.projection.matrix.mul(context!!.camera.viewMatrix, matrix)
                     .mul(state.instance.transform.transformationMatrix)
         }
     }
@@ -38,11 +38,15 @@ class Renderer3D(private val camera: ICamera, private val renderNodes3D: Array<R
         init()
     }
 
-    override fun onRender() {
+    private var context: RenderContext? = null
+
+    override fun onRender(context: RenderContext) {
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.enableCulling()
         GlUtils.setProvokingVertexFirst()
+
+        this.context = context
 
         for (renderNode3D in this.renderNodes3D) {
             val state = InstanceRenderState(renderNode3D)

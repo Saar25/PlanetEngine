@@ -45,7 +45,7 @@ public class DeferredExample {
             System.exit(1);
         }
 
-        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(camera, new ObjRenderNode[]{renderNode});
+        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(renderNode);
 
         final Node3D cube = new Spatial3D();
         cube.getTransform().getScale().set(10, 10, 10);
@@ -53,11 +53,11 @@ public class DeferredExample {
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
         final RenderNode3D cubeRenderNode = new RenderNode3D(cubeMesh);
 
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(camera, new RenderNode3D[]{cubeRenderNode});
+        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeRenderNode);
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype);
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
         deferredRenderer.addRenderer(renderer3D);
         deferredRenderer.addRenderer(renderer);
         deferredRenderer.addRenderPass(new LightRenderPass(camera));

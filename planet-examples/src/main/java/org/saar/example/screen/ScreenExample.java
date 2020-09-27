@@ -6,6 +6,7 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.common.obj.ObjSpatial;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -47,7 +48,7 @@ public class ScreenExample {
             System.exit(1);
         }
 
-        final ObjRenderer renderer = new ObjRenderer(camera, new ObjRenderNode[]{renderNode});
+        final ObjRenderer renderer = new ObjRenderer(renderNode);
 
         final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
@@ -60,7 +61,7 @@ public class ScreenExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render();
+            renderer.render(new RenderContextBase(camera));
 
             screen.copyTo(MainScreen.getInstance());
 

@@ -3,6 +3,7 @@ package org.saar.example.renderer;
 import org.saar.core.common.r2d.Mesh2D;
 import org.saar.core.common.r2d.RenderNode2D;
 import org.saar.core.common.r2d.Renderer2D;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -49,7 +50,7 @@ public class RendererExample {
 //            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).x += .001f;
 //            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).y += .001f;
 //            renderNode.update();
-            renderer.render();
+            renderer.render(new RenderContextBase(null));
 
             fbo.blitToScreen();
 

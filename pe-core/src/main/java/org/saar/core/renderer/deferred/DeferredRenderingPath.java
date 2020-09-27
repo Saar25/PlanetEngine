@@ -1,8 +1,7 @@
 package org.saar.core.renderer.deferred;
 
-import org.saar.core.renderer.Renderer;
-import org.saar.core.renderer.RenderersHelper;
-import org.saar.core.renderer.RenderingPath;
+import org.saar.core.camera.ICamera;
+import org.saar.core.renderer.*;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -12,6 +11,8 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class DeferredRenderingPath implements RenderingPath {
 
+    private final ICamera camera;
+
     private final OffScreen screen;
     private final DeferredRenderingBuffers buffers;
 
@@ -19,7 +20,8 @@ public class DeferredRenderingPath implements RenderingPath {
 
     private final DeferredRenderingPipeline pipeline;
 
-    public DeferredRenderingPath(DeferredScreenPrototype screen) {
+    public DeferredRenderingPath(ICamera camera, DeferredScreenPrototype screen) {
+        this.camera = camera;
         this.screen = Screens.fromPrototype(screen, fbo());
         this.buffers = new DeferredRenderingBuffers(
                 screen.getColourTexture(),
@@ -70,9 +72,11 @@ public class DeferredRenderingPath implements RenderingPath {
     }
 
     private void doFirstPass() {
+        final RenderContext context = new RenderContextBase(this.camera);
+
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
-        this.renderersHelper.render();
+        this.renderersHelper.render(context);
     }
 
     private void doRenderPasses() {

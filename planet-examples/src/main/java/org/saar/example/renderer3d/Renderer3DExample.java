@@ -5,6 +5,7 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
 import org.saar.core.common.r3d.RenderNode3D;
 import org.saar.core.common.r3d.Renderer3D;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -43,7 +44,7 @@ public class Renderer3DExample {
         camera.getTransform().getPosition().set(0, 0, -1000);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final Renderer3D renderer = new Renderer3D(camera, renderNode3D());
+        final Renderer3D renderer = new Renderer3D(renderNode3D());
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
@@ -52,7 +53,7 @@ public class Renderer3DExample {
 
 //            renderNode.update();
             ExamplesUtils.move(camera, keyboard);
-            renderer.render();
+            renderer.render(new RenderContextBase(camera));
 
             window.pollEvents();
             if (window.isResized()) {

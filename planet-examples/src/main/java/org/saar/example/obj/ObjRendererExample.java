@@ -6,6 +6,7 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.common.obj.ObjSpatial;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -53,7 +54,7 @@ public class ObjRendererExample {
             System.exit(1);
         }
 
-        final ObjRenderer renderer = new ObjRenderer(camera, new ObjRenderNode[]{renderNode});
+        final ObjRenderer renderer = new ObjRenderer(renderNode);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
@@ -65,7 +66,7 @@ public class ObjRendererExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render();
+            renderer.render(new RenderContextBase(camera));
 
             fbo.blitToScreen();
 

@@ -7,6 +7,7 @@ import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.common.r3d.*;
+import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
@@ -17,7 +18,6 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.maths.transform.Position;
-import org.saar.maths.utils.Vector3;
 
 public class ShadowExample {
 
@@ -48,7 +48,7 @@ public class ShadowExample {
             System.exit(1);
         }
 
-        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(camera, new ObjRenderNode[]{renderNode});
+        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(renderNode);
 
         final Node3D cube = new Spatial3D();
         cube.getTransform().getScale().set(10, 10, 10);
@@ -56,28 +56,29 @@ public class ShadowExample {
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
         final RenderNode3D cubeRenderNode = new RenderNode3D(cubeMesh);
 
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(camera, new RenderNode3D[]{cubeRenderNode});
+        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeRenderNode);
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
         final Keyboard keyboard = window.getKeyboard();
 
-        final OrthographicProjection shadowProjection = new OrthographicProjection(-100, 100, -100, 100, -100, 100);
-        final Camera shadowsCamera = new Camera(shadowProjection);
-        shadowsCamera.getTransform().getPosition().set(Vector3.of(1).normalize());
-        shadowsCamera.getTransform().lookAt(Position.of(0, 0, 0));
-        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(4096);
-        shadowsRenderingPath.addRenderer(new DeferredRenderer3D(shadowsCamera, new RenderNode3D[]{cubeRenderNode}));
-        shadowsRenderingPath.addRenderer(new ObjDeferredRenderer(shadowsCamera, new ObjRenderNode[]{renderNode}));
+        final DirectionalLight light = new DirectionalLight();
+        light.getDirection().set(-1, -1, -1);
+        light.getColour().set(1, 1, 1);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype);
+        final OrthographicProjection shadowProjection = new OrthographicProjection(-100, 100, -100, 100, -100, 100);
+        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(4096, shadowProjection, light);
+        shadowsRenderingPath.addRenderer(renderer3D);
+        shadowsRenderingPath.addRenderer(renderer);
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
         deferredRenderer.addRenderer(renderer);
         deferredRenderer.addRenderer(renderer3D);
 
         deferredRenderer.addRenderPass(new LightRenderPass(camera));
 
-        deferredRenderer.addRenderPass(new ShadowsRenderPass(
-                camera, shadowsCamera, shadowsRenderingPath.getShadowMap()));
+        deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
+                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap()));
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);

@@ -14,7 +14,7 @@ public abstract class RenderersHelper {
 
     public abstract RenderersHelper removeRenderer(Renderer renderer);
 
-    public abstract void render();
+    public abstract void render(RenderContext context);
 
     public abstract void delete();
 
@@ -33,7 +33,7 @@ public abstract class RenderersHelper {
         }
 
         @Override
-        public void render() {
+        public void render(RenderContext context) {
 
         }
 
@@ -62,8 +62,8 @@ public abstract class RenderersHelper {
         }
 
         @Override
-        public void render() {
-            this.renderer.render();
+        public void render(RenderContext context) {
+            this.renderer.render(context);
         }
 
         @Override
@@ -98,9 +98,9 @@ public abstract class RenderersHelper {
         }
 
         @Override
-        public void render() {
+        public void render(RenderContext context) {
             for (Renderer renderer : this.renderers) {
-                renderer.render();
+                renderer.render(context);
             }
         }
 

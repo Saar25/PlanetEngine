@@ -1,8 +1,10 @@
 package org.saar.core.renderer.deferred.shadow;
 
-import org.saar.core.renderer.Renderer;
-import org.saar.core.renderer.RenderersHelper;
-import org.saar.core.renderer.RenderingPath;
+import org.joml.Vector3fc;
+import org.saar.core.camera.ICamera;
+import org.saar.core.camera.projection.OrthographicProjection;
+import org.saar.core.light.IDirectionalLight;
+import org.saar.core.renderer.*;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
@@ -24,16 +26,25 @@ public class ShadowsRenderingPath implements RenderingPath {
 
     private final ShadowsScreenPrototype prototype = new ShadowsScreenPrototype();
 
+    private final ShadowsCamera camera;
     private final OffScreen screen;
 
-    public ShadowsRenderingPath(int imageSize) {
-        final Fbo fbo = Fbo.create(imageSize, imageSize);
-        this.screen = Screens.fromPrototype(this.prototype, fbo);
+    public ShadowsRenderingPath(int imageSize, OrthographicProjection projection, IDirectionalLight light) {
+        this.camera = camera(projection, light.getDirection());
+
+        this.screen = Screens.fromPrototype(this.prototype, Fbo.create(imageSize, imageSize));
         this.prototype.getDepthTexture().setSettings(TextureTarget.TEXTURE_2D,
                 new TextureMinFilterSetting(MinFilterParameter.LINEAR),
                 new TextureMagFilterSetting(MagFilterParameter.LINEAR),
                 new TextureSWrapSetting(WrapParameter.CLAMP_TO_EDGE),
                 new TextureTWrapSetting(WrapParameter.CLAMP_TO_EDGE));
+    }
+
+    private static ShadowsCamera camera(OrthographicProjection projection, Vector3fc direction) {
+        final ShadowsCamera shadowsCamera = new ShadowsCamera(projection);
+        shadowsCamera.getTransform().getRotation().lookAlong(direction);
+        shadowsCamera.getTransform().getPosition().set(0, 0, 0);
+        return shadowsCamera;
     }
 
     public void addRenderer(final Renderer renderer) {
@@ -48,11 +59,17 @@ public class ShadowsRenderingPath implements RenderingPath {
         return this.prototype.getDepthTexture();
     }
 
+    public ShadowsCamera getCamera() {
+        return this.camera;
+    }
+
     @Override
     public void render() {
+        final RenderContext context = new RenderContextBase(getCamera());
+
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.DEPTH);
-        this.helper.render();
+        this.helper.render(context);
     }
 
     @Override

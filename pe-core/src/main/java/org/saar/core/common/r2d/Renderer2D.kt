@@ -1,6 +1,7 @@
 package org.saar.core.common.r2d
 
 import org.saar.core.renderer.AbstractRenderer
+import org.saar.core.renderer.RenderContext
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
@@ -19,7 +20,7 @@ class Renderer2D(private val renderNode: RenderNode2D) : AbstractRenderer(shader
         shadersProgram.bindAttributes("in_position", "in_colour")
     }
 
-    override fun onRender() {
+    override fun onRender(context: RenderContext) {
         renderNode.draw()
     }
 }
