@@ -1,10 +1,9 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.node.AbstractNode;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.transform.SimpleTransform;
 
-public class ObjNodeBase extends AbstractNode implements ObjNode {
+public class ObjNodeBase implements ObjNode {
 
     private final SimpleTransform transform;
     private final ReadOnlyTexture texture;

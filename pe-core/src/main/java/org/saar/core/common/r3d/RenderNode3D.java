@@ -1,10 +1,9 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.node.AbstractNode;
 import org.saar.core.node.RenderNode;
 import org.saar.maths.transform.SimpleTransform;
 
-public class RenderNode3D extends AbstractNode implements RenderNode {
+public class RenderNode3D implements RenderNode {
 
     private final Mesh3D mesh;
 

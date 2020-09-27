@@ -1,9 +1,8 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.node.AbstractNode;
 import org.saar.maths.transform.SimpleTransform;
 
-public class NodeBase3D extends AbstractNode implements Node3D {
+public class NodeBase3D implements Node3D {
 
     private final SimpleTransform transform;
 
