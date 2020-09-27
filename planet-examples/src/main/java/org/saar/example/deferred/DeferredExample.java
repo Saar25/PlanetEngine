@@ -5,6 +5,7 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
+import org.saar.core.common.obj.ObjSpatial;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
@@ -30,13 +31,13 @@ public class DeferredExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        MyNode node;
+        ObjSpatial node;
         ObjRenderNode renderNode = null;
         Texture2D texture = null;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            node = new MyNode(texture);
+            node = new ObjSpatial(texture);
 
             renderNode = new ObjRenderNode(mesh, node);
         } catch (Exception e) {
@@ -46,7 +47,7 @@ public class DeferredExample {
 
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(camera, new ObjRenderNode[]{renderNode});
 
-        final Node3D cube = new NodeBase3D();
+        final Node3D cube = new Spatial3D();
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});

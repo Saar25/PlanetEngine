@@ -5,6 +5,7 @@ import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.common.obj.ObjRenderer;
+import org.saar.core.common.obj.ObjSpatial;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -39,12 +40,12 @@ public class ObjRendererExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        MyNode node;
+        ObjSpatial node;
         ObjRenderNode renderNode = null;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            node = new MyNode(texture);
+            node = new ObjSpatial(texture);
 
             renderNode = new ObjRenderNode(mesh, node);
         } catch (Exception e) {

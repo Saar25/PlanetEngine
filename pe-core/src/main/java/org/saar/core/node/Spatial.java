@@ -11,7 +11,5 @@ public abstract class Spatial implements Node {
         return this.localTransform;
     }
 
-    public Transform getWorldTransform() {
-        return getLocalTransform();
-    }
+    public abstract Transform getWorldTransform();
 }
