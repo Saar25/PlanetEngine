@@ -9,7 +9,7 @@ import org.saar.core.common.obj.ObjRenderNode;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.light.LightRenderPass;
+import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.example.ExamplesUtils;
@@ -25,7 +25,7 @@ public class ShadowExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
+        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
@@ -66,8 +66,10 @@ public class ShadowExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final OrthographicProjection shadowProjection = new OrthographicProjection(-100, 100, -100, 100, -100, 100);
-        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(4096, shadowProjection, light);
+        final OrthographicProjection shadowProjection = new OrthographicProjection(
+                -100, 100, -100, 100, -100, 100);
+        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
+                ShadowsQuality.HIGH, shadowProjection, light);
         shadowsRenderingPath.addRenderer(renderer3D);
         shadowsRenderingPath.addRenderer(renderer);
 
@@ -75,29 +77,29 @@ public class ShadowExample {
         deferredRenderer.addRenderer(renderer);
         deferredRenderer.addRenderer(renderer3D);
 
-        deferredRenderer.addRenderPass(new LightRenderPass(camera));
-
         deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
                 shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap()));
+        shadowsRenderingPath.render();
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-
-            shadowsRenderingPath.render();
             deferredRenderer.render();
 
             window.update(true);
             window.pollEvents();
 
-            final long delta = System.currentTimeMillis() - current;
-            ExamplesUtils.move(camera, keyboard, delta);
+            final long delta = System.nanoTime() - current;
+            ExamplesUtils.move(camera, keyboard, delta / 1000000);
 
-            System.out.print("\rFps: " +
-                    1000f / (-current + (current = System.currentTimeMillis()))
-            );
+            final float fps = 1_000_000_000f / (delta);
+            System.out.print("\r" +
+                    "Fps: " + String.format("%.2f", fps) +
+                    ", Delta: " + delta +
+                    ", Current: " + current);
+            current = System.nanoTime();
         }
 
         renderer.delete();

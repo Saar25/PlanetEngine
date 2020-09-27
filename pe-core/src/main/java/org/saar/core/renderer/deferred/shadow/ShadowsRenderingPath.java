@@ -1,7 +1,6 @@
 package org.saar.core.renderer.deferred.shadow;
 
 import org.joml.Vector3fc;
-import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.light.IDirectionalLight;
 import org.saar.core.renderer.*;
@@ -29,10 +28,11 @@ public class ShadowsRenderingPath implements RenderingPath {
     private final ShadowsCamera camera;
     private final OffScreen screen;
 
-    public ShadowsRenderingPath(int imageSize, OrthographicProjection projection, IDirectionalLight light) {
+    public ShadowsRenderingPath(ShadowsQuality quality, OrthographicProjection projection, IDirectionalLight light) {
         this.camera = camera(projection, light.getDirection());
 
-        this.screen = Screens.fromPrototype(this.prototype, Fbo.create(imageSize, imageSize));
+        final Fbo fbo = Fbo.create(quality.getImageSize(), quality.getImageSize());
+        this.screen = Screens.fromPrototype(this.prototype, fbo);
         this.prototype.getDepthTexture().setSettings(TextureTarget.TEXTURE_2D,
                 new TextureMinFilterSetting(MinFilterParameter.LINEAR),
                 new TextureMagFilterSetting(MagFilterParameter.LINEAR),
