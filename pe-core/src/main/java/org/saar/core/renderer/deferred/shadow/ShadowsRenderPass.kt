@@ -2,7 +2,10 @@ package org.saar.core.renderer.deferred.shadow
 
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
+import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
+import org.saar.core.light.DirectionalLight
+import org.saar.core.light.DirectionalLightUniformProperty
 import org.saar.core.renderer.AUniformProperty
 import org.saar.core.renderer.UniformsHelper
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
@@ -13,11 +16,13 @@ import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformVec3Property
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.maths.utils.Matrix4
 
-class ShadowsRenderPass(private val camera: ICamera, private val shadowCamera: ICamera, private val shadowMap: ReadOnlyTexture)
+class ShadowsRenderPass(private val camera: ICamera, private val shadowCamera: ICamera,
+                        private val shadowMap: ReadOnlyTexture, private val light: DirectionalLight)
     : RenderPassBase(shadersProgram), RenderPass {
 
     private var uniformsHelper: UniformsHelper<DeferredRenderingBuffers> = UniformsHelper.empty()
@@ -41,6 +46,20 @@ class ShadowsRenderPass(private val camera: ICamera, private val shadowCamera: I
     private val viewMatrixInvUniform = object : UniformMat4Property.Stage("viewMatrixInv") {
         override fun getUniformValue(state: StageRenderState): Matrix4fc {
             return this@ShadowsRenderPass.camera.viewMatrix.invert(matrix)
+        }
+    }
+
+    @AUniformProperty
+    private val cameraWorldPositionUniform = object : UniformVec3Property.Stage("cameraWorldPosition") {
+        override fun getUniformValue(state: StageRenderState): Vector3fc {
+            return this@ShadowsRenderPass.camera.transform.position.value
+        }
+    }
+
+    @AUniformProperty
+    private val lightUniform = object : DirectionalLightUniformProperty.Stage("light") {
+        override fun getUniformValue(state: StageRenderState): DirectionalLight {
+            return this@ShadowsRenderPass.light
         }
     }
 
@@ -84,8 +103,12 @@ class ShadowsRenderPass(private val camera: ICamera, private val shadowCamera: I
         private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
                 ShaderCode.loadSource("/shaders/deferred/quadVertex.glsl"))
         private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
+                ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
                 ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
+                ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
+                ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
                 ShaderCode.loadSource("/shaders/deferred/shadow/fragment.glsl"),
+                ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
                 ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
         private val shadersProgram: ShadersProgram =
                 ShadersProgram.create(vertex, fragment)

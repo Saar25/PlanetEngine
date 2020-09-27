@@ -76,7 +76,7 @@ public class ShadowExample {
         deferredRenderer.addRenderer(renderer3D);
 
         deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
-                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap()));
+                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
         shadowsRenderingPath.render();
 
         final Mouse mouse = window.getMouse();
