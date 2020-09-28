@@ -21,7 +21,7 @@ vec3 specularColour(const float power, const float scalar, const vec3 viewDirect
                     const vec3 normal, const DirectionalLight light) {
     vec3 reflect = reflect(light.direction, normal);
     float specular = dot(reflect, viewDirection);
-    specular = pow(specular, power) * scalar;
+    specular = pow(max(specular, 0), power) * scalar;
     return specular * light.colour;
 }
 
