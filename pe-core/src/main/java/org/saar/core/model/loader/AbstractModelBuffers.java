@@ -36,6 +36,7 @@ public abstract class AbstractModelBuffers implements ModelBuffers {
         for (final ModelBuffer modelBuffer : this.buffers) {
             final ByteBuffer buffer = modelBuffer.getBuffer();
             final IVbo vbo = modelBuffer.getVbo();
+            buffer.flip();
             Vbos.allocateAndStore(vbo, buffer);
         }
     }

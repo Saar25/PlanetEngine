@@ -26,7 +26,7 @@ public final class Vbos {
     }
 
     public static void allocateAndStore(IVbo vbo, ByteBuffer buffer) {
-        vbo.allocateByte(buffer.flip().limit());
+        vbo.allocateByte(buffer.limit());
         vbo.storeData(0, buffer);
     }
 
