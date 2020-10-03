@@ -44,6 +44,10 @@ public final class ExamplesUtils {
     }
 
     public static void move(Camera camera, Keyboard keyboard, long ms) {
+        ExamplesUtils.move(camera, keyboard, 100, 100f);
+    }
+
+    public static void move(Camera camera, Keyboard keyboard, long ms, float speed) {
         final Vector3f toMove = Vector3.zero();
         final Vector3f toRotate = Vector3.zero();
         if (keyboard.isKeyPressed('W')) {
@@ -70,7 +74,7 @@ public final class ExamplesUtils {
         if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             toMove.add(0, -1, 0);
         }
-        toMove.mul(ms / 1000f).mul(100);
+        toMove.mul(ms / 1000f).mul(speed);
         toRotate.mul(ms / 1000f).mul(100);
         camera.getTransform().getPosition().add(toMove.rotate(camera.getTransform().getRotation().getValue()).mul(-1));
         camera.getTransform().getRotation().rotate(

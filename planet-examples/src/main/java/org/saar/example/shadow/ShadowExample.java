@@ -27,6 +27,8 @@ public class ShadowExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
+    private static float scrollSpeed = 50f;
+
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
@@ -81,6 +83,10 @@ public class ShadowExample {
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
+        mouse.addScrollListener(e -> {
+            scrollSpeed += e.getOffset();
+            scrollSpeed = Math.max(scrollSpeed, 1);
+        });
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -89,14 +95,15 @@ public class ShadowExample {
             window.update(true);
             window.pollEvents();
 
-            final long delta = System.nanoTime() - current;
-            ExamplesUtils.move(camera, keyboard, delta / 1000000);
+            final long delta = System.currentTimeMillis() - current;
+            ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
-            final float fps = 1_000_000_000f / (delta);
-            System.out.print("\r" +
-                    "Fps: " + String.format("%.2f", fps) +
+            final float fps = 1000f / delta;
+            System.out.print("\r --> " +
+                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    ", Fps: " + String.format("%.2f", fps) +
                     ", Delta: " + delta);
-            current = System.nanoTime();
+            current = System.currentTimeMillis();
         }
 
         renderer.delete();
