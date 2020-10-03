@@ -14,9 +14,7 @@ import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformVec3Property
+import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.maths.utils.Matrix4
@@ -53,6 +51,13 @@ class ShadowsRenderPass(private val camera: ICamera, private val shadowCamera: I
     private val cameraWorldPositionUniform = object : UniformVec3Property.Stage("cameraWorldPosition") {
         override fun getUniformValue(state: StageRenderState): Vector3fc {
             return this@ShadowsRenderPass.camera.transform.position.value
+        }
+    }
+
+    @AUniformProperty
+    private val pcfRadiusUniform = object : UniformIntProperty.Stage("pcfRadius") {
+        override fun getUniformValue(state: StageRenderState): Int {
+            return 2
         }
     }
 

@@ -21,6 +21,8 @@ uniform mat4 projectionMatrixInv;
 uniform mat4 viewMatrixInv;
 uniform vec3 cameraWorldPosition;
 
+uniform int pcfRadius;
+
 uniform DirectionalLight light;
 
 // Fragment outputs
@@ -33,13 +35,17 @@ float g_depth;
 vec3 g_viewSpace;
 vec3 g_worldSpace;
 vec3 g_viewDirection;
+
 float g_shadowDepth;
-float g_shadowMapPixelDepth;
+float g_shadowMapDepth;
+vec2 g_shadowMapCoords;
 
 // Methods declaration
 void initBufferValues(void);
 void initGlobals(void);
-void initShadowDepth(void);
+void initShadowGlobals(void);
+
+float calcShadowFactor(void);
 
 vec3 ambientColour(void);
 vec3 diffuseColour(void);
@@ -49,14 +55,16 @@ vec3 specularColour(void);
 void main(void) {
     initBufferValues();
     initGlobals();
-    initShadowDepth();
+    initShadowGlobals();
 
     vec3 ambientColour = ambientColour();
 
-    if (g_shadowDepth < g_shadowMapPixelDepth + SHADOW_BIAS) {
+    float shadowFactor = calcShadowFactor();
+
+    if (shadowFactor > 0) {
         vec3 diffuseColour = diffuseColour();
         vec3 specularColour = specularColour();
-        vec3 finalColour = g_colour * (ambientColour + diffuseColour + specularColour);
+        vec3 finalColour = g_colour * (ambientColour + diffuseColour + specularColour) * shadowFactor;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -79,13 +87,30 @@ void initGlobals(void) {
     g_viewDirection = calcViewDirection(cameraWorldPosition, g_worldSpace);
 }
 
-void initShadowDepth(void) {
+void initShadowGlobals(void) {
     vec4 shadowCoords = shadowMatrix * vec4(g_worldSpace, 1);
     shadowCoords = shadowCoords / shadowCoords.w;
     shadowCoords = shadowCoords * 0.5f + 0.5f;
 
-    g_shadowMapPixelDepth = texture(shadowMap, shadowCoords.xy).x;
+    g_shadowMapCoords = shadowCoords.xy;
+    g_shadowMapDepth = texture(shadowMap, shadowCoords.xy).r;
     g_shadowDepth = shadowCoords.z;
+}
+
+float calcShadowFactor(void) {
+    float shadowFactor = 0.0;
+    vec2 inc = 1.0 / textureSize(shadowMap, 0);
+    for (int row = -pcfRadius; row <= pcfRadius; row++){
+        for (int col = -pcfRadius; col <= pcfRadius; col++){
+            vec2 offset = vec2(row, col) * inc;
+            vec2 coords = g_shadowMapCoords + offset;
+            float depth = texture(shadowMap, coords).r;
+            if (g_shadowDepth + SHADOW_BIAS > depth) {
+                shadowFactor += 1.0;
+            }
+        }
+    }
+    return 1 - shadowFactor / (pcfRadius * pcfRadius);
 }
 
 vec3 ambientColour(void) {
