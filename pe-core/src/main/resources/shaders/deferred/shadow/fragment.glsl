@@ -5,7 +5,7 @@
 **/
 
 // Constants
-float SHADOW_BIAS = 0.001f;
+float SHADOW_BIAS = -0.0001f;
 
 // Vertex outputs
 in vec2 v_position;
