@@ -21,7 +21,7 @@ public final class ObjLoader {
                 + getClass().getSimpleName());
     }
 
-    public static AssimpData load(String path) throws Exception {
+    public static AssimpMesh load(String path) throws Exception {
         final List<String> lines = TextFileLoader.readAllLines(path);
 
         final List<GlFloat3> positions = new ArrayList<>();
@@ -68,7 +68,7 @@ public final class ObjLoader {
         return ObjLoader.processFaces(positions, uvCoords, normals, faces);
     }
 
-    private static AssimpData processFaces(List<GlFloat3> filePositions,
+    private static AssimpMesh processFaces(List<GlFloat3> filePositions,
                                            List<GlFloat2> fileUvCoords,
                                            List<GlFloat3> fileNormals,
                                            List<GlInt3> fileFaces) {
@@ -83,11 +83,12 @@ public final class ObjLoader {
             normals.add(fileNormals.get(fileFace.getValue().z() - 1));
             indices.add(GlUInt.of(i));
         }
-        final AssimpData mesh = new AssimpData();
+        return null;
+        /*final AssimpObject mesh = new AssimpObject();
         mesh.loadPositions(positions.toArray(new GlFloat3[0]));
         mesh.loadUvCoords(uvCoords.toArray(new GlFloat2[0]));
         mesh.loadNormals(normals.toArray(new GlFloat3[0]));
         mesh.loadIndices(indices.toArray(new GlUInt[0]));
-        return mesh;
+        return mesh;*/
     }
 }

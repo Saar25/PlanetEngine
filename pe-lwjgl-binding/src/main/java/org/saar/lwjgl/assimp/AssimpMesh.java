@@ -1,85 +1,52 @@
 package org.saar.lwjgl.assimp;
 
+import org.lwjgl.assimp.AIFace;
+import org.lwjgl.assimp.AIMesh;
+import org.lwjgl.assimp.AIScene;
+import org.lwjgl.assimp.Assimp;
 import org.lwjgl.system.MemoryUtil;
-import org.saar.lwjgl.opengl.constants.VboUsage;
-import org.saar.lwjgl.opengl.objects.vaos.ReadOnlyVao;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
-import org.saar.lwjgl.opengl.objects.vbos.*;
-import org.saar.lwjgl.opengl.primitive.*;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
 import java.nio.ByteBuffer;
 
-public class AssimpMesh {
+public class AssimpMesh implements AutoCloseable {
 
-    private final Vao vao;
-    private final DataBuffer positionVbo;
-    private final DataBuffer uvCoordVbo;
-    private final DataBuffer normalVbo;
-    private final IndexBuffer indexVbo;
+    private final AIScene aiScene;
+    private final AIMesh aiMesh;
 
-    private AssimpMesh(Vao vao, DataBuffer positionVbo, DataBuffer uvCoordVbo,
-                       DataBuffer normalVbo, IndexBuffer indexVbo) {
-        this.vao = vao;
-        this.positionVbo = positionVbo;
-        this.uvCoordVbo = uvCoordVbo;
-        this.normalVbo = normalVbo;
-        this.indexVbo = indexVbo;
+    public AssimpMesh(AIScene aiScene, AIMesh aiMesh) {
+        this.aiScene = aiScene;
+        this.aiMesh = aiMesh;
     }
 
-    public static AssimpMesh create() {
-        return new AssimpMesh(Vao.create(),
-                new DataBuffer(VboUsage.STATIC_DRAW),
-                new DataBuffer(VboUsage.STATIC_DRAW),
-                new DataBuffer(VboUsage.STATIC_DRAW),
-                new IndexBuffer(VboUsage.STATIC_DRAW));
-    }
+    public ByteBuffer allocateByteBuffer(AssimpComponent... components) throws AssimpException {
+        final int vertices = this.aiMesh.mVertices().limit();
+        final int bytes = AssimpComponent.bytes(components);
 
-    public void loadPositions(GlFloat3... positions) {
-        AssimpMesh.load(this.positionVbo, positions);
-    }
+        final ByteBuffer byteBuffer = MemoryUtil.memAlloc(bytes * vertices);
+        final BufferWriter bufferWriter = new BufferWriter(byteBuffer);
 
-    public void loadUvCoords(GlFloat2... uvCoords) {
-        AssimpMesh.load(this.uvCoordVbo, uvCoords);
-    }
-
-    public void loadNormals(GlFloat3... normals) {
-        AssimpMesh.load(this.normalVbo, normals);
-    }
-
-    public void loadIndices(GlUInt... indices) {
-        AssimpMesh.load(this.indexVbo, indices);
-    }
-
-    private static void load(IVbo vbo, GlPrimitive... primitives) {
-        if (primitives.length > 0) {
-            final int bytes = primitives.length * primitives[0].getSize();
-            final ByteBuffer buffer = MemoryUtils.allocByte(bytes);
-            final BufferWriter writer = new BufferWriter(buffer);
-            GlPrimitives.write(writer, primitives);
-            Vbos.allocateAndStore(vbo, buffer);
-            MemoryUtil.memFree(buffer);
+        for (AssimpComponent component : components) {
+            component.init(this.aiMesh);
         }
+        for (int i = 0; i < vertices; i++) {
+            for (AssimpComponent component : components) {
+                component.next(bufferWriter);
+            }
+        }
+
+        byteBuffer.flip();
+        return byteBuffer;
     }
 
-    public ReadOnlyVao getVao() {
-        return this.vao;
+    public ByteBuffer allocateIndexBuffer() throws AssimpException {
+        final AIFace.Buffer faceBuffer = this.aiMesh.mFaces();
+        AssimpUtil.requiredNotNull(faceBuffer, "Indices data not found");
+        return AssimpUtil.toIndexBuffer(faceBuffer);
     }
 
-    public ReadOnlyVbo getPositionVbo() {
-        return this.positionVbo;
-    }
-
-    public ReadOnlyVbo getUvCoordVbo() {
-        return this.uvCoordVbo;
-    }
-
-    public ReadOnlyVbo getNormalVbo() {
-        return this.normalVbo;
-    }
-
-    public ReadOnlyVbo getIndexVbo() {
-        return this.indexVbo;
+    @Override
+    public void close() {
+        Assimp.aiReleaseImport(this.aiScene);
     }
 }

@@ -1,16 +1,23 @@
 package org.saar.core.common.obj;
 
+import org.lwjgl.system.MemoryUtil;
 import org.saar.core.model.ElementsMesh;
+import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.AbstractModelBuffers;
 import org.saar.core.model.loader.ModelBuffer;
 import org.saar.core.model.loader.ModelBuffers;
 import org.saar.core.model.loader.ModelWriters;
+import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.Vbos;
+
+import java.nio.ByteBuffer;
 
 public abstract class ObjModelBuffers extends AbstractModelBuffers implements ModelBuffers {
 
@@ -29,6 +36,20 @@ public abstract class ObjModelBuffers extends AbstractModelBuffers implements Mo
     }
 
     protected abstract ObjModelWriter getWriter();
+
+    public static Mesh toMesh(ByteBuffer dataBuffer, ByteBuffer indexBuffer) {
+        final Vao vao = Vao.create();
+
+        final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
+        Vbos.allocateAndStore(vbo, dataBuffer);
+        vao.loadVbo(vbo, positionAttribute, uvCoordAttribute, normalAttribute);
+
+        final IndexBuffer indexVbo = new IndexBuffer(VboUsage.STATIC_DRAW);
+        Vbos.allocateAndStore(indexVbo, indexBuffer);
+        vao.loadVbo(indexVbo);
+
+        return new ElementsMesh(vao, RenderMode.TRIANGLES, indexBuffer.limit(), DataType.U_INT);
+    }
 
     public static ObjModelBuffers singleDataBuffer(int vertices, int indices) {
         return new SingleDataBuffer(vertices, indices);
