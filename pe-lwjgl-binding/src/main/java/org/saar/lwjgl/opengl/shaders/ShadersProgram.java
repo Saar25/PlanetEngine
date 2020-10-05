@@ -11,7 +11,7 @@ public class ShadersProgram {
     private int attributeCount = 0;
     private boolean deleted = false;
 
-    private ShadersProgram(int id, Shader... shaders) throws Exception {
+    private ShadersProgram(int id, Shader... shaders) throws ShaderCompileException {
         this.id = id;
 
 //        bind();
@@ -28,15 +28,9 @@ public class ShadersProgram {
         unbind();
     }
 
-    public static ShadersProgram create(Shader vertexShader, Shader fragmentShader) throws Exception {
+    public static ShadersProgram create(Shader vertexShader, Shader fragmentShader) throws ShaderCompileException {
         final int id = GL20.glCreateProgram();
         return new ShadersProgram(id, vertexShader, fragmentShader);
-    }
-
-    public static ShadersProgram create(String vertexFile, String fragmentFile) throws Exception {
-        final Shader vertexShader = Shader.createVertex(vertexFile);
-        final Shader fragmentShader = Shader.createFragment(fragmentFile);
-        return ShadersProgram.create(vertexShader, fragmentShader);
     }
 
     public void bindAttribute(int location, String name) {
