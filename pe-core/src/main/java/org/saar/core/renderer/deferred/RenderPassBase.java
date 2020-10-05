@@ -14,7 +14,7 @@ public abstract class RenderPassBase implements RenderPass {
         this.shadersProgram = shadersProgram;
     }
 
-    protected UniformsHelper2 buildHelper(UniformsHelper2 helper) {
+    protected UniformsHelper buildHelper(UniformsHelper helper) {
         for (Uniform uniform : Renderers.findUniforms(this)) {
             helper = helper.addUniform(uniform);
         }

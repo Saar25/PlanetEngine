@@ -23,7 +23,7 @@ import org.saar.maths.utils.Matrix4
 
 class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgram), RenderPass {
 
-    private var uniformsHelper = UniformsHelper2.empty()
+    private var uniformsHelper = UniformsHelper.empty()
     private var stageUpdatersHelper = StageUpdatersHelper.empty()
     private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<PerInstance>()
 

@@ -24,7 +24,7 @@ class ShadowsRenderPass(private val camera: ICamera,
                         private val light: DirectionalLight)
     : RenderPassBase(shadersProgram), RenderPass {
 
-    private var uniformsHelper = UniformsHelper2.empty()
+    private var uniformsHelper = UniformsHelper.empty()
     private var stageUpdatersHelper = StageUpdatersHelper.empty()
     private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<DeferredRenderingBuffers>()
 
