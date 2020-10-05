@@ -6,8 +6,8 @@ import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.StageRenderState
-import org.saar.lwjgl.opengl.shaders.uniforms2.Mat4UniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms2.TextureUniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 

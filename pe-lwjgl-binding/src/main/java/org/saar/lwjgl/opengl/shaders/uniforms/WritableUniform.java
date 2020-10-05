@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders.uniforms2;
+package org.saar.lwjgl.opengl.shaders.uniforms;
 
 public interface WritableUniform<T> extends Uniform {
 

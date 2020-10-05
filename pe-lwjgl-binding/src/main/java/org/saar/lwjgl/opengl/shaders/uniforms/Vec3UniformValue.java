@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders.uniforms2;
+package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;

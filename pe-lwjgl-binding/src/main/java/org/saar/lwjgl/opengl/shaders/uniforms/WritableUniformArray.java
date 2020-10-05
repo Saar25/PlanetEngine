@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders.uniforms2;
+package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
@@ -14,7 +14,7 @@ public class WritableUniformArray<T> implements WritableUniform<T[]> {
 
     private final List<WritableUniform<T>> uniforms = new ArrayList<>();
 
-    private int currentSize = 0;
+    private int currentSize;
 
     public WritableUniformArray(String name, int size, UniformValueSupplier<T> supplier) {
         this.name = name;

@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders.uniforms2;
+package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.lwjgl.opengl.GL20;
 

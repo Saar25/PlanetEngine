@@ -1,7 +1,7 @@
 package org.saar.core.renderer;
 
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
-import org.saar.lwjgl.opengl.shaders.uniforms2.Uniform;
+import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public abstract class UniformsHelper {
 
     private static class Generic extends UniformsHelper {
 
-        private final List<Uniform> uniforms = new ArrayList();
+        private final List<Uniform> uniforms = new ArrayList<>();
 
         public Generic(Uniform uniform) {
             this.uniforms.add(uniform);

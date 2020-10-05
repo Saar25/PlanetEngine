@@ -1,8 +1,8 @@
 package org.saar.core.light
 
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms2.Uniform
-import org.saar.lwjgl.opengl.shaders.uniforms2.Vec3UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.Uniform
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
 
 abstract class DirectionalLightUniform(val name: String) : Uniform {
 

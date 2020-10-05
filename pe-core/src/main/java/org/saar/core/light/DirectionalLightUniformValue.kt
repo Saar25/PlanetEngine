@@ -1,6 +1,6 @@
 package org.saar.core.light
 
-import org.saar.lwjgl.opengl.shaders.uniforms2.UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformValue
 
 class DirectionalLightUniformValue(name: String) : DirectionalLightUniform(name), UniformValue<IDirectionalLight> {
 

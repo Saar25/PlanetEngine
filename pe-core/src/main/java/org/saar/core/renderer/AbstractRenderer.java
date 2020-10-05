@@ -1,7 +1,7 @@
 package org.saar.core.renderer;
 
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
-import org.saar.lwjgl.opengl.shaders.uniforms2.Uniform;
+import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
 public abstract class AbstractRenderer implements Renderer {
 

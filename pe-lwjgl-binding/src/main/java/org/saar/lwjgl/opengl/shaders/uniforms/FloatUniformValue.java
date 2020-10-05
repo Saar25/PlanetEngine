@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders.uniforms2;
+package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.jproperty.type.FloatProperty;
 import org.jproperty.type.SimpleFloatProperty;
