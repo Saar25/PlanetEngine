@@ -101,17 +101,17 @@ class ShadowsRenderPass(private val camera: ICamera,
     @UniformProperty
     private val depthTextureUniform = TextureUniformValue("depthTexture", 3)
 
-    @UpdaterProperty
+    @UniformUpdaterProperty
     private val colourTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
         this@ShadowsRenderPass.colourTextureUniform.value = state.instance.albedo
     }
 
-    @UpdaterProperty
+    @UniformUpdaterProperty
     private val normalTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
         this@ShadowsRenderPass.normalTextureUniform.value = state.instance.normal
     }
 
-    @UpdaterProperty
+    @UniformUpdaterProperty
     private val depthTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
         this@ShadowsRenderPass.depthTextureUniform.value = state.instance.depth
     }

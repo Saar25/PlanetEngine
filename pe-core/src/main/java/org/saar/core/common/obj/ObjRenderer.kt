@@ -17,7 +17,7 @@ class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRende
     @UniformProperty
     private val textureUniform = TextureUniformValue("texture", 0)
 
-    @UpdaterProperty
+    @UniformUpdaterProperty
     private val textureUpdater = UniformUpdater<ObjNode> { state ->
         this@ObjRenderer.textureUniform.value = state.instance.texture
     }
@@ -25,7 +25,7 @@ class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRende
     @UniformProperty
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
-    @UpdaterProperty
+    @UniformUpdaterProperty
     private val transformUpdater = UniformUpdater<ObjNode> { state ->
         this@ObjRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
     }

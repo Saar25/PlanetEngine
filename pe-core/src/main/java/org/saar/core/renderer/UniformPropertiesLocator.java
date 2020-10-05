@@ -23,7 +23,7 @@ public final class UniformPropertiesLocator {
 
     @SuppressWarnings("unchecked")
     public <T> List<UniformUpdater<T>> getInstanceUniformUpdaters() {
-        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UpdaterProperty.class);
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdaterProperty.class);
         return this.fieldsLocator.getValues(fields).stream()
                 .filter(UniformUpdater.class::isInstance)
                 .map(u -> (UniformUpdater<T>) u)

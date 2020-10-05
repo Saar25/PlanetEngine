@@ -13,7 +13,7 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
 
-    @UpdaterProperty
+    @UniformUpdaterProperty
     private val mvpMatrixUpdater = UniformUpdater<RenderNode3D> { state ->
         val v = context!!.camera.viewMatrix
         val p = context!!.camera.projection.matrix
