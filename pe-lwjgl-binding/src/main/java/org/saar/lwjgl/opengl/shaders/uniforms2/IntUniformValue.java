@@ -1,10 +1,13 @@
 package org.saar.lwjgl.opengl.shaders.uniforms2;
 
+import org.jproperty.type.IntProperty;
+import org.jproperty.type.SimpleIntProperty;
+
 public class IntUniformValue extends IntUniform implements UniformValue<Integer> {
 
-    private final String name;
+    private final IntProperty property = new SimpleIntProperty(0);
 
-    private int value = 0;
+    private final String name;
 
     public IntUniformValue(String name) {
         this.name = name;
@@ -30,11 +33,15 @@ public class IntUniformValue extends IntUniform implements UniformValue<Integer>
         set(value);
     }
 
+    public final IntProperty valueProperty() {
+        return this.property;
+    }
+
     public final int get() {
-        return this.value;
+        return valueProperty().get();
     }
 
     public final void set(int value) {
-        this.value = value;
+        valueProperty().set(value);
     }
 }

@@ -1,10 +1,13 @@
 package org.saar.lwjgl.opengl.shaders.uniforms2;
 
+import org.jproperty.type.FloatProperty;
+import org.jproperty.type.SimpleFloatProperty;
+
 public class FloatUniformValue extends FloatUniform implements UniformValue<Float> {
 
-    private final String name;
+    private final FloatProperty property = new SimpleFloatProperty(0f);
 
-    private float value = 0;
+    private final String name;
 
     public FloatUniformValue(String name) {
         this.name = name;
@@ -30,11 +33,15 @@ public class FloatUniformValue extends FloatUniform implements UniformValue<Floa
         set(value);
     }
 
+    public final FloatProperty valueProperty() {
+        return this.property;
+    }
+
     public final float get() {
-        return this.value;
+        return valueProperty().get();
     }
 
     public final void set(float value) {
-        this.value = value;
+        valueProperty().set(value);
     }
 }
