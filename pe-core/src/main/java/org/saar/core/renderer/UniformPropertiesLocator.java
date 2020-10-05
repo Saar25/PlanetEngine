@@ -1,6 +1,7 @@
 package org.saar.core.renderer;
 
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
+import org.saar.lwjgl.opengl.shaders.uniforms2.Uniform;
 import org.saar.utils.reflection.FieldsLocator;
 
 import java.lang.reflect.Field;
@@ -13,6 +14,29 @@ public final class UniformPropertiesLocator {
 
     public UniformPropertiesLocator(Object object) {
         this.fieldsLocator = new FieldsLocator(object);
+    }
+
+    public List<Uniform> getUniforms() {
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(AUniformProperty.class);
+        return this.fieldsLocator.getValues(fields).stream().map(
+                Uniform.class::cast).collect(Collectors.toList());
+    }
+
+    public List<StageUniformUpdater> getStageUniformUpdaters() {
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdater.class);
+        return this.fieldsLocator.getValues(fields).stream()
+                .filter(StageUniformUpdater.class::isInstance)
+                .map(u -> (StageUniformUpdater) u)
+                .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<InstanceUniformUpdater<T>> getInstanceUniformUpdaters() {
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdater.class);
+        return this.fieldsLocator.getValues(fields).stream()
+                .filter(InstanceUniformUpdater.class::isInstance)
+                .map(u -> (InstanceUniformUpdater<T>) u)
+                .collect(Collectors.toList());
     }
 
     public List<UniformProperty<?>> getUniformProperties() {

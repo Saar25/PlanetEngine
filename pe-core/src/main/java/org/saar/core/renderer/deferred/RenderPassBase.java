@@ -1,9 +1,8 @@
 package org.saar.core.renderer.deferred;
 
-import org.saar.core.renderer.Renderers;
-import org.saar.core.renderer.UniformsHelper;
+import org.saar.core.renderer.*;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
+import org.saar.lwjgl.opengl.shaders.uniforms2.Uniform;
 
 import java.util.List;
 
@@ -15,32 +14,34 @@ public abstract class RenderPassBase implements RenderPass {
         this.shadersProgram = shadersProgram;
     }
 
-    protected final void init() {
-        this.shadersProgram.bind();
-        for (UniformProperty<?> uniform : Renderers.findUniformProperties(this)) {
-            uniform.initialize(this.shadersProgram);
+    protected UniformsHelper2 buildHelper(UniformsHelper2 helper) {
+        for (Uniform uniform : Renderers.findUniforms(this)) {
+            helper = helper.addUniform(uniform);
         }
+
+        this.shadersProgram.bind();
+        helper.initialize(this.shadersProgram);
+
+        return helper;
     }
 
-    protected <T> UniformsHelper<T> buildHelper(UniformsHelper<T> helper) {
-        this.shadersProgram.bind();
+    protected <T> InstanceUpdatersHelper<T> buildHelper(InstanceUpdatersHelper<T> helper) {
+        final List<InstanceUniformUpdater<T>> instanceUniformsUpdaters =
+                Renderers.findInstanceUniformsUpdaters(this);
 
-        for (UniformProperty<?> uniform : Renderers.findUniformProperties(this)) {
-            uniform.initialize(this.shadersProgram);
+        for (InstanceUniformUpdater<T> uniform : instanceUniformsUpdaters) {
+            helper = helper.addUpdater(uniform);
         }
 
-        final List<UniformProperty.Stage<T>> stage =
-                Renderers.findStageUniformProperties(this);
-        for (UniformProperty.Stage<T> uniform : stage) {
-            uniform.initialize(this.shadersProgram);
-            helper = helper.addUniform(uniform);
-        }
+        return helper;
+    }
 
-        final List<UniformProperty.Instance<T, Object>> instance =
-                Renderers.findInstanceUniformProperties(this);
-        for (UniformProperty.Instance<T, ?> uniform : instance) {
-            uniform.initialize(this.shadersProgram);
-            helper = helper.addUniform(uniform);
+    protected StageUpdatersHelper buildHelper(StageUpdatersHelper helper) {
+        final List<StageUniformUpdater> instanceUniformsUpdaters =
+                Renderers.findStageUniformsUpdaters(this);
+
+        for (StageUniformUpdater uniform : instanceUniformsUpdaters) {
+            helper = helper.addUpdater(uniform);
         }
 
         return helper;

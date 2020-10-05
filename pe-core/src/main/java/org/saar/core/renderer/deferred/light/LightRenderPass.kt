@@ -5,18 +5,17 @@ import org.joml.Matrix4fc
 import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
-import org.saar.core.light.DirectionalLightUniformProperty
+import org.saar.core.light.DirectionalLightUniformValue
+import org.saar.core.light.IDirectionalLight
 import org.saar.core.light.PointLight
-import org.saar.core.renderer.AUniformProperty
-import org.saar.core.renderer.UniformsHelper
+import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
-import org.saar.lwjgl.opengl.shaders.uniforms.*
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.shaders.uniforms2.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -24,66 +23,76 @@ import org.saar.maths.utils.Matrix4
 
 class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgram), RenderPass {
 
-    private var uniformsHelper: UniformsHelper<PerInstance> = UniformsHelper.empty()
+    private var uniformsHelper = UniformsHelper2.empty()
+    private var stageUpdatersHelper = StageUpdatersHelper.empty()
+    private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<PerInstance>()
 
     @AUniformProperty
-    private val colourTextureUniform = object : UniformTextureProperty.Instance<PerInstance>("colourTexture", 0) {
-        override fun getUniformValue(state: InstanceRenderState<PerInstance>): ReadOnlyTexture {
-            return state.instance.buffers.albedo
-        }
+    private val colourTextureUniform = TextureUniformValue("colourTexture", 0)
+
+    @AUniformProperty
+    private val normalTextureUniform = TextureUniformValue("normalTexture", 1)
+
+    @AUniformProperty
+    private val depthTextureUniform = TextureUniformValue("depthTexture", 2)
+
+    @UniformUpdater
+    private val colourTextureUpdater = InstanceUniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.colourTextureUniform.value = state.instance.buffers.albedo
+    }
+
+    @UniformUpdater
+    private val normalTextureUpdater = InstanceUniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.normalTextureUniform.value = state.instance.buffers.normal
+    }
+
+    @UniformUpdater
+    private val depthTextureUpdater = InstanceUniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.depthTextureUniform.value = state.instance.buffers.depth
     }
 
     @AUniformProperty
-    private val normalTextureUniform = object : UniformTextureProperty.Instance<PerInstance>("normalTexture", 1) {
-        override fun getUniformValue(state: InstanceRenderState<PerInstance>): ReadOnlyTexture {
-            return state.instance.buffers.normal
-        }
-    }
+    private val cameraWorldPositionUniform = object : Vec3Uniform() {
+        override fun getName(): String = "cameraWorldPosition"
 
-    @AUniformProperty
-    private val depthTextureUniform = object : UniformTextureProperty.Instance<PerInstance>("depthTexture", 2) {
-        override fun getUniformValue(state: InstanceRenderState<PerInstance>): ReadOnlyTexture {
-            return state.instance.buffers.depth
-        }
-    }
-
-    @AUniformProperty
-    private val cameraWorldPositionUniform = object : UniformVec3Property.Stage("cameraWorldPosition") {
-        override fun getUniformValue(state: StageRenderState): Vector3fc {
+        override fun getUniformValue(): Vector3fc {
             return this@LightRenderPass.camera.transform.position.value
         }
     }
 
     @AUniformProperty
-    private val projectionMatrixInvUniform = object : UniformMat4Property.Stage("projectionMatrixInv") {
-        override fun getUniformValue(state: StageRenderState): Matrix4fc {
+    private val projectionMatrixInvUniform = object : Mat4Uniform() {
+        override fun getName(): String = "projectionMatrixInv"
+
+        override fun getUniformValue(): Matrix4fc {
             return this@LightRenderPass.camera.projection.matrix.invertPerspective(matrix)
         }
     }
 
     @AUniformProperty
-    private val viewMatrixInvUniform = object : UniformMat4Property.Stage("viewMatrixInv") {
-        override fun getUniformValue(state: StageRenderState): Matrix4fc {
+    private val viewMatrixInvUniform = object : Mat4Uniform() {
+        override fun getName(): String = "viewMatrixInv"
+
+        override fun getUniformValue(): Matrix4fc {
             return this@LightRenderPass.camera.viewMatrix.invert(matrix)
         }
     }
 
     @AUniformProperty
-    private val directionalLightsCountUniform = object : UniformIntProperty.Instance<PerInstance>(
-            "directionalLightsCount") {
-        override fun getUniformValue(state: InstanceRenderState<PerInstance>): Int {
-            return state.instance.directionalLights.size
-        }
+    private val directionalLightsCountUniform = IntUniformValue("directionalLightsCount")
+
+    @UniformUpdater
+    private val directionalLightsCountUpdater = InstanceUniformUpdater<PerInstance> { state ->
+        directionalLightsCountUniform.value = state.instance.directionalLights.size
     }
 
     @AUniformProperty
-    private val directionalLightsUniform = UniformArrayProperty.Instance<PerInstance, DirectionalLight>(
-            "directionalLights", 1) { name, index ->
-        object : InstanceUniform<PerInstance, DirectionalLight>(DirectionalLightUniformProperty(name)) {
-            override fun getUniformValue(state: InstanceRenderState<PerInstance>): DirectionalLight {
-                return state.instance.directionalLights[index]
-            }
-        }
+    private val directionalLightsUniform2 = WritableUniformArray<IDirectionalLight>("directionalLights", 1)
+    { name, _ -> DirectionalLightUniformValue(name) }
+
+    @UniformUpdater
+    private val directionalLightsUpdater = InstanceUniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.directionalLightsUniform2.setValue(state.instance.directionalLights)
     }
 
     companion object {
@@ -112,13 +121,15 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         shadersProgram.bindFragmentOutputs("f_colour")
 
         this.uniformsHelper = buildHelper(uniformsHelper)
+        this.stageUpdatersHelper = buildHelper(stageUpdatersHelper)
+        this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)
     }
 
     override fun onRender(buffers: DeferredRenderingBuffers) {
         GlUtils.setCullFace(GlCullFace.NONE)
 
         val stageState = StageRenderState()
-        this.uniformsHelper.loadOnStage(stageState)
+        this.stageUpdatersHelper.update(stageState)
 
         val light = DirectionalLight()
                 .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
@@ -126,9 +137,10 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
 
         val instance = PerInstance(buffers, emptyArray(), arrayOf(light))
         val instanceState = InstanceRenderState(instance)
-        uniformsHelper.loadOnInstance(instanceState)
+        this.instanceUpdatersHelper.update(instanceState)
 
-        // TODO: bind some default vao, cannot draw without bound vao!
+        this.uniformsHelper.load()
+
         Vao.EMPTY.bind()
         GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
     }
