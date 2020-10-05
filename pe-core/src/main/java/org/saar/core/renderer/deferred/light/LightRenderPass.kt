@@ -27,13 +27,13 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     private var stageUpdatersHelper = StageUpdatersHelper.empty()
     private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<PerInstance>()
 
-    @AUniformProperty
+    @UniformProperty
     private val colourTextureUniform = TextureUniformValue("colourTexture", 0)
 
-    @AUniformProperty
+    @UniformProperty
     private val normalTextureUniform = TextureUniformValue("normalTexture", 1)
 
-    @AUniformProperty
+    @UniformProperty
     private val depthTextureUniform = TextureUniformValue("depthTexture", 2)
 
     @UniformUpdater
@@ -51,7 +51,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         this@LightRenderPass.depthTextureUniform.value = state.instance.buffers.depth
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val cameraWorldPositionUniform = object : Vec3Uniform() {
         override fun getName(): String = "cameraWorldPosition"
 
@@ -60,7 +60,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val projectionMatrixInvUniform = object : Mat4Uniform() {
         override fun getName(): String = "projectionMatrixInv"
 
@@ -69,7 +69,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val viewMatrixInvUniform = object : Mat4Uniform() {
         override fun getName(): String = "viewMatrixInv"
 
@@ -78,7 +78,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val directionalLightsCountUniform = IntUniformValue("directionalLightsCount")
 
     @UniformUpdater
@@ -86,7 +86,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         directionalLightsCountUniform.value = state.instance.directionalLights.size
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val directionalLightsUniform2 = WritableUniformArray<IDirectionalLight>("directionalLights", 1)
     { name, _ -> DirectionalLightUniformValue(name) }
 

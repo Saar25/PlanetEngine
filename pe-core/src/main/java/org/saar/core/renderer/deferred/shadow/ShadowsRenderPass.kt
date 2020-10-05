@@ -28,7 +28,7 @@ class ShadowsRenderPass(private val camera: ICamera,
     private var stageUpdatersHelper = StageUpdatersHelper.empty()
     private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<DeferredRenderingBuffers>()
 
-    @AUniformProperty
+    @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
         override fun getName(): String = "shadowMatrix"
 
@@ -38,7 +38,7 @@ class ShadowsRenderPass(private val camera: ICamera,
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val projectionMatrixInvUniform = object : Mat4Uniform() {
         override fun getName(): String = "projectionMatrixInv"
 
@@ -47,7 +47,7 @@ class ShadowsRenderPass(private val camera: ICamera,
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val viewMatrixInvUniform = object : Mat4Uniform() {
         override fun getName(): String = "viewMatrixInv"
 
@@ -56,7 +56,7 @@ class ShadowsRenderPass(private val camera: ICamera,
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val cameraWorldPositionUniform = object : Vec3Uniform() {
         override fun getName(): String = "cameraWorldPosition"
 
@@ -65,21 +65,21 @@ class ShadowsRenderPass(private val camera: ICamera,
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val pcfRadiusUniform = object : IntUniform() {
         override fun getName(): String = "pcfRadius"
 
         override fun getUniformValue(): Int = 2
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val lightUniform = object : DirectionalLightUniform("light") {
         override fun getUniformValue(): DirectionalLight {
             return this@ShadowsRenderPass.light
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val shadowMapUniform = object : TextureUniform() {
         override fun getName(): String = "shadowMap"
 
@@ -90,13 +90,13 @@ class ShadowsRenderPass(private val camera: ICamera,
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val colourTextureUniform = TextureUniformValue("colourTexture", 1)
 
-    @AUniformProperty
+    @UniformProperty
     private val normalTextureUniform = TextureUniformValue("normalTexture", 2)
 
-    @AUniformProperty
+    @UniformProperty
     private val depthTextureUniform = TextureUniformValue("depthTexture", 3)
 
     @UniformUpdater

@@ -1,7 +1,7 @@
 package org.saar.core.common.r3d
 
 import org.joml.Matrix4fc
-import org.saar.core.renderer.AUniformProperty
+import org.saar.core.renderer.UniformProperty
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderer
@@ -9,14 +9,13 @@ import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
-import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 class DeferredRenderer3D(private vararg val renderNodes3D: RenderNode3D)
     : AbstractRenderer(shadersProgram), DeferredRenderer {
 
-    @AUniformProperty
+    @UniformProperty
     private val mvpMatrixUniform = object : UniformMat4Property.Instance<RenderNode3D>("mvpMatrix") {
         override fun getUniformValue(state: InstanceRenderState<RenderNode3D>): Matrix4fc {
             return context!!.camera.projection.matrix.mul(context!!.camera.viewMatrix, matrix)

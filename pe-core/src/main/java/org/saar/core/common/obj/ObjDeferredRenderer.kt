@@ -1,7 +1,7 @@
 package org.saar.core.common.obj
 
 import org.joml.Matrix4fc
-import org.saar.core.renderer.AUniformProperty
+import org.saar.core.renderer.UniformProperty
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderer
@@ -12,28 +12,27 @@ import org.saar.lwjgl.opengl.shaders.StageRenderState
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
-import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 class ObjDeferredRenderer(private vararg val renderNodes: ObjRenderNode)
     : AbstractRenderer(shadersProgram), DeferredRenderer {
 
-    @AUniformProperty
+    @UniformProperty
     private val viewProjectionUniform = object : UniformMat4Property.Stage("viewProjectionMatrix") {
         override fun getUniformValue(state: StageRenderState): Matrix4fc {
             return context!!.camera.projection.matrix.mul(context!!.camera.viewMatrix, matrix)
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val textureUniform = object : UniformTextureProperty.Instance<ObjNode>("texture", 0) {
         override fun getUniformValue(state: InstanceRenderState<ObjNode>): ReadOnlyTexture {
             return state.instance.texture
         }
     }
 
-    @AUniformProperty
+    @UniformProperty
     private val transformUniform = object : UniformMat4Property.Instance<ObjNode>("transformationMatrix") {
         override fun getUniformValue(state: InstanceRenderState<ObjNode>): Matrix4fc {
             return state.instance.transform.transformationMatrix
