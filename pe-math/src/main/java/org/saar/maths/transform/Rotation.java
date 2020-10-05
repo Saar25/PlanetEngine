@@ -3,13 +3,16 @@ package org.saar.maths.transform;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.jproperty.*;
+import org.jproperty.ChangeEvent;
+import org.jproperty.ChangeEventBase;
+import org.jproperty.ChangeListener;
+import org.jproperty.ListenersHelper;
 import org.saar.maths.Angle;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
 import org.saar.maths.wrapper.QuaternionfWrapper;
 
-public class Rotation implements ReadOnlyProperty<Quaternionfc> {
+public class Rotation implements ReadonlyRotation {
 
     private ListenersHelper<Quaternionfc> helper = ListenersHelper.empty();
 
@@ -44,7 +47,7 @@ public class Rotation implements ReadOnlyProperty<Quaternionfc> {
         return Quaternion.of(this.wrapper.getValue());
     }
 
-    public void set(Rotation rotation) {
+    public void set(ReadonlyRotation rotation) {
         final Quaternionfc old = copyValue();
         this.wrapper.getValue().set(rotation.getValue());
         onChange(old);
@@ -115,11 +118,13 @@ public class Rotation implements ReadOnlyProperty<Quaternionfc> {
         return this.wrapper.getReadonly();
     }
 
+    @Override
     public Vector3fc getEulerAngles() {
         final Quaternionfc value = this.wrapper.getValue();
         return value.getEulerAnglesXYZ(this.eulerAngles);
     }
 
+    @Override
     public Vector3f getDirection() {
         return Vector3.forward().rotate(getValue());
     }

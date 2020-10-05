@@ -1,11 +1,14 @@
 package org.saar.maths.transform;
 
 import org.joml.Vector3fc;
-import org.jproperty.*;
+import org.jproperty.ChangeEvent;
+import org.jproperty.ChangeEventBase;
+import org.jproperty.ChangeListener;
+import org.jproperty.ListenersHelper;
 import org.saar.maths.utils.Vector3;
 import org.saar.maths.wrapper.Vector3fWrapper;
 
-public class Scale implements ReadOnlyProperty<Vector3fc> {
+public class Scale implements ReadonlyScale {
 
     private ListenersHelper<Vector3fc> helper = ListenersHelper.empty();
 
@@ -39,7 +42,7 @@ public class Scale implements ReadOnlyProperty<Vector3fc> {
         onChange(old);
     }
 
-    public void set(Scale scale) {
+    public void set(ReadonlyScale scale) {
         final Vector3fc old = copyValue();
         this.wrapper.getValue().set(scale.getValue());
         onChange(old);
