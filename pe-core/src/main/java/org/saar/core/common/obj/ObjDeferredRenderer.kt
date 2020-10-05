@@ -18,16 +18,16 @@ class ObjDeferredRenderer(private vararg val renderNodes: ObjRenderNode)
     @UniformProperty
     private val textureUniform = TextureUniformValue("texture", 1)
 
-    @UniformUpdater
-    private val textureUpdater = InstanceUniformUpdater<ObjNode> { state ->
+    @UpdaterProperty
+    private val textureUpdater = UniformUpdater<ObjNode> { state ->
         this@ObjDeferredRenderer.textureUniform.value = state.instance.texture
     }
 
     @UniformProperty
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
-    @UniformUpdater
-    private val transformUpdater = InstanceUniformUpdater<ObjNode> { state ->
+    @UpdaterProperty
+    private val transformUpdater = UniformUpdater<ObjNode> { state ->
         this@ObjDeferredRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
     }
 
@@ -60,7 +60,7 @@ class ObjDeferredRenderer(private vararg val renderNodes: ObjRenderNode)
         this.viewProjectionUniform.load()
 
         for (renderNode3D in this.renderNodes) {
-            val state = InstanceRenderState<ObjNode>(renderNode3D)
+            val state = RenderState<ObjNode>(renderNode3D)
             transformUpdater.update(state)
             transformUniform.load()
             textureUpdater.update(state)

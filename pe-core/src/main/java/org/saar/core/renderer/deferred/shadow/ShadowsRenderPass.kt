@@ -28,7 +28,7 @@ class ShadowsRenderPass(private val camera: ICamera,
     : RenderPassBase(shadersProgram), RenderPass {
 
     private var uniformsHelper = UniformsHelper.empty()
-    private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<DeferredRenderingBuffers>()
+    private var instanceUpdatersHelper = UpdatersHelper.empty<DeferredRenderingBuffers>()
 
     @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
@@ -101,18 +101,18 @@ class ShadowsRenderPass(private val camera: ICamera,
     @UniformProperty
     private val depthTextureUniform = TextureUniformValue("depthTexture", 3)
 
-    @UniformUpdater
-    private val colourTextureUpdater = InstanceUniformUpdater<DeferredRenderingBuffers> { state ->
+    @UpdaterProperty
+    private val colourTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
         this@ShadowsRenderPass.colourTextureUniform.value = state.instance.albedo
     }
 
-    @UniformUpdater
-    private val normalTextureUpdater = InstanceUniformUpdater<DeferredRenderingBuffers> { state ->
+    @UpdaterProperty
+    private val normalTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
         this@ShadowsRenderPass.normalTextureUniform.value = state.instance.normal
     }
 
-    @UniformUpdater
-    private val depthTextureUpdater = InstanceUniformUpdater<DeferredRenderingBuffers> { state ->
+    @UpdaterProperty
+    private val depthTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
         this@ShadowsRenderPass.depthTextureUniform.value = state.instance.depth
     }
 
@@ -142,7 +142,7 @@ class ShadowsRenderPass(private val camera: ICamera,
 
 
     override fun onRender(buffers: DeferredRenderingBuffers) {
-        val instance = InstanceRenderState(buffers)
+        val instance = RenderState(buffers)
         this.instanceUpdatersHelper.update(instance)
 
         this.uniformsHelper.load()

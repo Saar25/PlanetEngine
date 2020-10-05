@@ -1,10 +1,10 @@
 package org.saar.core.renderer;
 
-public class InstanceRenderState<T> {
+public class RenderState<T> {
 
     private final T instance;
 
-    public InstanceRenderState(T instance) {
+    public RenderState(T instance) {
         this.instance = instance;
     }
 

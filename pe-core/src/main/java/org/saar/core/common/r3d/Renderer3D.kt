@@ -1,7 +1,7 @@
 package org.saar.core.common.r3d
 
 import org.saar.core.renderer.*
-import org.saar.core.renderer.InstanceRenderState
+import org.saar.core.renderer.RenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
@@ -13,8 +13,8 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
 
-    @UniformUpdater
-    private val mvpMatrixUpdater = InstanceUniformUpdater<RenderNode3D> { state ->
+    @UpdaterProperty
+    private val mvpMatrixUpdater = UniformUpdater<RenderNode3D> { state ->
         val v = context!!.camera.viewMatrix
         val p = context!!.camera.projection.matrix
         val m = state.instance.transform.transformationMatrix
@@ -49,7 +49,7 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
         this.context = context
 
         for (renderNode3D in this.renderNodes3D) {
-            val state = InstanceRenderState(renderNode3D)
+            val state = RenderState(renderNode3D)
             mvpMatrixUpdater.update(state)
             mvpMatrixUniform.load()
             renderNode3D.draw()

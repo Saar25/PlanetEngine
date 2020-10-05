@@ -1,7 +1,7 @@
 package org.saar.core.renderer.deferred;
 
-import org.saar.core.renderer.InstanceUniformUpdater;
-import org.saar.core.renderer.InstanceUpdatersHelper;
+import org.saar.core.renderer.UniformUpdater;
+import org.saar.core.renderer.UpdatersHelper;
 import org.saar.core.renderer.Renderers;
 import org.saar.core.renderer.UniformsHelper;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
@@ -28,11 +28,11 @@ public abstract class RenderPassBase implements RenderPass {
         return helper;
     }
 
-    protected <T> InstanceUpdatersHelper<T> buildHelper(InstanceUpdatersHelper<T> helper) {
-        final List<InstanceUniformUpdater<T>> instanceUniformsUpdaters =
+    protected <T> UpdatersHelper<T> buildHelper(UpdatersHelper<T> helper) {
+        final List<UniformUpdater<T>> instanceUniformsUpdaters =
                 Renderers.findInstanceUniformsUpdaters(this);
 
-        for (InstanceUniformUpdater<T> uniform : instanceUniformsUpdaters) {
+        for (UniformUpdater<T> uniform : instanceUniformsUpdaters) {
             helper = helper.addUpdater(uniform);
         }
 

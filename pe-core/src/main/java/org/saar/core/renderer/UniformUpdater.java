@@ -1,12 +1,7 @@
 package org.saar.core.renderer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface UniformUpdater<T> {
 
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface UniformUpdater {
+    void update(RenderState<T> state);
 
 }

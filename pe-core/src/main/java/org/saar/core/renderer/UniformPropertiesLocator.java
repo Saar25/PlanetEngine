@@ -22,11 +22,11 @@ public final class UniformPropertiesLocator {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<InstanceUniformUpdater<T>> getInstanceUniformUpdaters() {
-        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdater.class);
+    public <T> List<UniformUpdater<T>> getInstanceUniformUpdaters() {
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UpdaterProperty.class);
         return this.fieldsLocator.getValues(fields).stream()
-                .filter(InstanceUniformUpdater.class::isInstance)
-                .map(u -> (InstanceUniformUpdater<T>) u)
+                .filter(UniformUpdater.class::isInstance)
+                .map(u -> (UniformUpdater<T>) u)
                 .collect(Collectors.toList());
     }
 }
