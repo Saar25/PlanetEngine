@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.shaders.uniforms2;
 import org.jproperty.type.FloatProperty;
 import org.jproperty.type.SimpleFloatProperty;
 
-public class FloatUniformProperty extends FloatUniform implements UniformProperty<Float> {
+public class FloatUniformProperty extends FloatUniform implements UniformValue<Float> {
 
     private final FloatProperty property = new SimpleFloatProperty(0f);
 
@@ -11,6 +11,10 @@ public class FloatUniformProperty extends FloatUniform implements UniformPropert
 
     public FloatUniformProperty(String name) {
         this.name = name;
+    }
+
+    public final FloatProperty valueProperty() {
+        return this.property;
     }
 
     @Override
@@ -21,11 +25,6 @@ public class FloatUniformProperty extends FloatUniform implements UniformPropert
     @Override
     public final String getName() {
         return this.name;
-    }
-
-    @Override
-    public final FloatProperty valueProperty() {
-        return this.property;
     }
 
     @Override
