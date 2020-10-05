@@ -2,10 +2,8 @@ package org.saar.core.common.obj
 
 import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderer
-import org.saar.core.renderer.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.core.renderer.StageRenderState
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -16,13 +14,6 @@ class ObjDeferredRenderer(private vararg val renderNodes: ObjRenderNode)
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
-
-    @UniformUpdater
-    private val viewProjectionUpdater = StageUniformUpdater {
-        val v = context!!.camera.viewMatrix
-        val p = context!!.camera.projection.matrix
-        this@ObjDeferredRenderer.viewProjectionUniform.value = p.mul(v, matrix)
-    }
 
     @UniformProperty
     private val textureUniform = TextureUniformValue("texture", 1)
@@ -57,19 +48,16 @@ class ObjDeferredRenderer(private vararg val renderNodes: ObjRenderNode)
         init()
     }
 
-    private var context: RenderContext? = null
-
     override fun onRender(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
 
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
 
-        this.context = context
-
-        val stageState = StageRenderState()
-        viewProjectionUpdater.update(stageState)
-        viewProjectionUniform.load()
+        val v = context.camera.viewMatrix
+        val p = context.camera.projection.matrix
+        this.viewProjectionUniform.value = p.mul(v, matrix)
+        this.viewProjectionUniform.load()
 
         for (renderNode3D in this.renderNodes) {
             val state = InstanceRenderState<ObjNode>(renderNode3D)

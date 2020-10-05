@@ -14,7 +14,10 @@ import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
-import org.saar.lwjgl.opengl.shaders.*
+import org.saar.lwjgl.opengl.shaders.GlslVersion
+import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
+import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlRendering
@@ -24,7 +27,6 @@ import org.saar.maths.utils.Matrix4
 class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgram), RenderPass {
 
     private var uniformsHelper = UniformsHelper.empty()
-    private var stageUpdatersHelper = StageUpdatersHelper.empty()
     private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<PerInstance>()
 
     @UniformProperty
@@ -121,15 +123,11 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         shadersProgram.bindFragmentOutputs("f_colour")
 
         this.uniformsHelper = buildHelper(uniformsHelper)
-        this.stageUpdatersHelper = buildHelper(stageUpdatersHelper)
         this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)
     }
 
     override fun onRender(buffers: DeferredRenderingBuffers) {
         GlUtils.setCullFace(GlCullFace.NONE)
-
-        val stageState = StageRenderState()
-        this.stageUpdatersHelper.update(stageState)
 
         val light = DirectionalLight()
                 .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }

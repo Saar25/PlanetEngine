@@ -12,7 +12,10 @@ import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
-import org.saar.lwjgl.opengl.shaders.*
+import org.saar.lwjgl.opengl.shaders.GlslVersion
+import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
+import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
@@ -25,7 +28,6 @@ class ShadowsRenderPass(private val camera: ICamera,
     : RenderPassBase(shadersProgram), RenderPass {
 
     private var uniformsHelper = UniformsHelper.empty()
-    private var stageUpdatersHelper = StageUpdatersHelper.empty()
     private var instanceUpdatersHelper = InstanceUpdatersHelper.empty<DeferredRenderingBuffers>()
 
     @UniformProperty
@@ -118,7 +120,6 @@ class ShadowsRenderPass(private val camera: ICamera,
         shadersProgram.bindFragmentOutputs("f_colour")
 
         this.uniformsHelper = buildHelper(uniformsHelper)
-        this.stageUpdatersHelper = buildHelper(stageUpdatersHelper)
         this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)
     }
 
@@ -141,9 +142,6 @@ class ShadowsRenderPass(private val camera: ICamera,
 
 
     override fun onRender(buffers: DeferredRenderingBuffers) {
-        val stage = StageRenderState()
-        this.stageUpdatersHelper.update(stage)
-
         val instance = InstanceRenderState(buffers)
         this.instanceUpdatersHelper.update(instance)
 

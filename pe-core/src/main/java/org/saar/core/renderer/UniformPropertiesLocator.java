@@ -21,14 +21,6 @@ public final class UniformPropertiesLocator {
                 Uniform.class::cast).collect(Collectors.toList());
     }
 
-    public List<StageUniformUpdater> getStageUniformUpdaters() {
-        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdater.class);
-        return this.fieldsLocator.getValues(fields).stream()
-                .filter(StageUniformUpdater.class::isInstance)
-                .map(u -> (StageUniformUpdater) u)
-                .collect(Collectors.toList());
-    }
-
     @SuppressWarnings("unchecked")
     public <T> List<InstanceUniformUpdater<T>> getInstanceUniformUpdaters() {
         final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdater.class);
