@@ -4,13 +4,17 @@ import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
 public abstract class UniformBase implements Uniform {
 
-    private int location = Uniform.NOT_FOUND;
+    private static final int NOT_FOUND = -1;
+
+    private int location = UniformBase.NOT_FOUND;
 
     @Override
     public final void initialize(ShadersProgram shadersProgram) {
         this.location = shadersProgram.getUniformLocation(getName());
         if (!isFound()) {
             System.err.println("Cannot initialize uniform " + getName());
+        } else {
+            doInitialize();
         }
     }
 
@@ -22,11 +26,15 @@ public abstract class UniformBase implements Uniform {
     }
 
     public final boolean isFound() {
-        return getLocation() != Uniform.NOT_FOUND;
+        return getLocation() != UniformBase.NOT_FOUND;
     }
 
     protected final int getLocation() {
         return this.location;
+    }
+
+    public void doInitialize() {
+
     }
 
     public abstract void doLoad();

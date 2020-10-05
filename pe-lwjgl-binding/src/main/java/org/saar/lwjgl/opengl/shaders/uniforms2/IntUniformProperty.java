@@ -14,17 +14,35 @@ public class IntUniformProperty extends IntUniform implements UniformProperty<In
     }
 
     @Override
-    public int getUniformValue() {
-        return valueProperty().get();
+    public final int getUniformValue() {
+        return get();
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
     @Override
-    public IntProperty valueProperty() {
+    public final IntProperty valueProperty() {
         return this.property;
+    }
+
+    @Override
+    public final Integer getValue() {
+        return valueProperty().get();
+    }
+
+    @Override
+    public final void setValue(Integer value) {
+        valueProperty().set(value);
+    }
+
+    public final int get() {
+        return valueProperty().get();
+    }
+
+    public final void set(int value) {
+        valueProperty().set(value);
     }
 }
