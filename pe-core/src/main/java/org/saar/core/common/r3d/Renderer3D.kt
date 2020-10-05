@@ -1,25 +1,24 @@
 package org.saar.core.common.r3d
 
-import org.joml.Matrix4fc
-import org.saar.core.renderer.UniformProperty
-import org.saar.core.renderer.AbstractRenderer
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.*
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
+import org.saar.lwjgl.opengl.shaders.uniforms2.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRenderer(shadersProgram), Renderer {
 
     @UniformProperty
-    private val mvpMatrixUniform = object : UniformMat4Property.Instance<RenderNode3D>("mvpMatrix") {
-        override fun getUniformValue(state: InstanceRenderState<RenderNode3D>): Matrix4fc {
-            return context!!.camera.projection.matrix.mul(context!!.camera.viewMatrix, matrix)
-                    .mul(state.instance.transform.transformationMatrix)
-        }
+    private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
+
+    @UniformUpdater
+    private val mvpMatrixUpdater = InstanceUniformUpdater<RenderNode3D> { state ->
+        val v = context!!.camera.viewMatrix
+        val p = context!!.camera.projection.matrix
+        val m = state.instance.transform.transformationMatrix
+        this@Renderer3D.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
     }
 
     companion object {
@@ -51,7 +50,8 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
 
         for (renderNode3D in this.renderNodes3D) {
             val state = InstanceRenderState(renderNode3D)
-            mvpMatrixUniform.loadOnInstance(state)
+            mvpMatrixUpdater.update(state)
+            mvpMatrixUniform.load()
             renderNode3D.draw()
         }
     }

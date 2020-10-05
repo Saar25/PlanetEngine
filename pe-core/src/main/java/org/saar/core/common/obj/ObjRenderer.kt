@@ -1,41 +1,41 @@
 package org.saar.core.common.obj
 
-import org.joml.Matrix4fc
-import org.saar.core.renderer.UniformProperty
-import org.saar.core.renderer.AbstractRenderer
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.*
 import org.saar.lwjgl.opengl.shaders.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.StageRenderState
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformMat4Property
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformTextureProperty
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.shaders.uniforms2.Mat4UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms2.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRenderer(shadersProgram), Renderer {
 
     @UniformProperty
-    private val viewProjectionUniform = object : UniformMat4Property.Stage("viewProjectionMatrix") {
-        override fun getUniformValue(state: StageRenderState): Matrix4fc {
-            return context!!.camera.projection.matrix.mul(context!!.camera.viewMatrix, matrix)
-        }
+    private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
+
+    @UniformUpdater
+    private val viewProjectionUpdater = StageUniformUpdater {
+        val v = context!!.camera.viewMatrix
+        val p = context!!.camera.projection.matrix
+        this@ObjRenderer.viewProjectionUniform.value = p.mul(v, matrix)
     }
 
     @UniformProperty
-    private val textureUniform = object : UniformTextureProperty.Instance<ObjNode>("texture", 0) {
-        override fun getUniformValue(state: InstanceRenderState<ObjNode>): ReadOnlyTexture {
-            return state.instance.texture
-        }
+    private val textureUniform = TextureUniformValue("texture", 0)
+
+    @UniformUpdater
+    private val textureUpdater = InstanceUniformUpdater<ObjNode> { state ->
+        this@ObjRenderer.textureUniform.value = state.instance.texture
     }
 
     @UniformProperty
-    private val transformUniform = object : UniformMat4Property.Instance<ObjNode>("transformationMatrix") {
-        override fun getUniformValue(state: InstanceRenderState<ObjNode>): Matrix4fc {
-            return state.instance.transform.transformationMatrix
-        }
+    private val transformUniform = Mat4UniformValue("transformationMatrix")
+
+    @UniformUpdater
+    private val transformUpdater = InstanceUniformUpdater<ObjNode> { state ->
+        this@ObjRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
     }
 
     companion object {
@@ -65,12 +65,15 @@ class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRende
         this.context = context
 
         val stageState = StageRenderState()
-        viewProjectionUniform.loadOnStage(stageState)
+        viewProjectionUpdater.update(stageState)
+        viewProjectionUniform.load()
 
         for (renderNode3D in this.renderNodes) {
             val state = InstanceRenderState<ObjNode>(renderNode3D)
-            transformUniform.loadOnInstance(state)
-            textureUniform.loadOnInstance(state)
+            transformUpdater.update(state)
+            transformUniform.load()
+            textureUpdater.update(state)
+            textureUniform.load()
             renderNode3D.draw()
         }
     }

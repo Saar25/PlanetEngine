@@ -1,14 +1,14 @@
 package org.saar.core.light
 
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformVec3Property
 import org.saar.lwjgl.opengl.shaders.uniforms2.Uniform
+import org.saar.lwjgl.opengl.shaders.uniforms2.Vec3UniformValue
 
 abstract class DirectionalLightUniform(val name: String) : Uniform {
 
-    private val directionUniform = UniformVec3Property("$name.direction")
+    private val directionUniform = Vec3UniformValue("$name.direction")
 
-    private val colourUniform = UniformVec3Property("$name.colour")
+    private val colourUniform = Vec3UniformValue("$name.colour")
 
     final override fun initialize(shadersProgram: ShadersProgram) {
         this.directionUniform.initialize(shadersProgram)
@@ -17,8 +17,11 @@ abstract class DirectionalLightUniform(val name: String) : Uniform {
 
     final override fun load() {
         val value = getUniformValue()
-        this.colourUniform.loadValue(value.colour)
-        this.directionUniform.loadValue(value.direction.normalize())
+        this.colourUniform.value = value.colour
+        this.directionUniform.value = value.direction.normalize()
+
+        this.colourUniform.load()
+        this.directionUniform.load()
     }
 
     abstract fun getUniformValue(): DirectionalLight
