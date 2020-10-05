@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shaders;
+package org.saar.core.renderer;
 
 public class InstanceRenderState<T> {
 

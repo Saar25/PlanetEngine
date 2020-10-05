@@ -1,10 +1,10 @@
 package org.saar.core.common.obj
 
 import org.saar.core.renderer.*
-import org.saar.lwjgl.opengl.shaders.InstanceRenderState
+import org.saar.core.renderer.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.StageRenderState
+import org.saar.core.renderer.StageRenderState
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils

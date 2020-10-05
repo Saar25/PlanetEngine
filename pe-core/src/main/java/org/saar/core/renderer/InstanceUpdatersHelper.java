@@ -1,7 +1,5 @@
 package org.saar.core.renderer;
 
-import org.saar.lwjgl.opengl.shaders.InstanceRenderState;
-
 import java.util.ArrayList;
 import java.util.List;
 

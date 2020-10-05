@@ -1,7 +1,7 @@
 package org.saar.core.common.r3d
 
 import org.saar.core.renderer.*
-import org.saar.lwjgl.opengl.shaders.InstanceRenderState
+import org.saar.core.renderer.InstanceRenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
