@@ -10,10 +10,10 @@ public class FlatReflectedMesh implements Mesh {
         this.buffers = buffers;
     }
 
-    public static FlatReflectedMesh load(FlatReflectedVertex[] vertices) {
+    public static FlatReflectedMesh load(FlatReflectedVertex[] vertices, int[] indices) {
         final FlatReflectedModelBuffers buffers = FlatReflectedModelBuffers
-                .singleModelBuffer(vertices.length);
-        buffers.load(vertices);
+                .singleModelBuffer(vertices.length, indices.length);
+        buffers.load(vertices, indices);
 
         return new FlatReflectedMesh(buffers);
     }

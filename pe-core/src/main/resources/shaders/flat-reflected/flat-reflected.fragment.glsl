@@ -17,10 +17,11 @@ in vec2 v_uvCoords;
 uniform sampler2D reflectionMap;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_normal;
+layout (location = 0) out vec4 f_colour;
+layout (location = 1) out vec4 f_normal;
 
 void main(void) {
     f_normal = vec4(v_normal, 1.0);
 
-    f_color = vec4(texture2D(reflectionMap, v_uvCoords).rgb, 1.0);
+    f_colour = vec4(texture(reflectionMap, v_uvCoords).rgb, 1.0);
 }

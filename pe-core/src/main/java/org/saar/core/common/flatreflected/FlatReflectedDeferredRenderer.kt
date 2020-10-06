@@ -9,6 +9,7 @@ import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
@@ -18,7 +19,7 @@ class FlatReflectedDeferredRenderer(private vararg val renderNodes: FlatReflecte
 
     @UniformProperty
     private val reflectionMapUniform = object : TextureUniform() {
-        override fun getUnit(): Int = 1
+        override fun getUnit(): Int = 0
 
         override fun getName(): String = "reflectionMap"
 
@@ -60,7 +61,7 @@ class FlatReflectedDeferredRenderer(private vararg val renderNodes: FlatReflecte
     private var context: RenderContext? = null
 
     override fun onRender(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
+        GlUtils.setCullFace(GlCullFace.NONE)
 
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()

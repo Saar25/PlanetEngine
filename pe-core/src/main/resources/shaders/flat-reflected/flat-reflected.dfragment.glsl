@@ -27,5 +27,5 @@ layout (location = 1) out vec4 f_normal;
 void main(void) {
     f_normal = vec4(v_normal, 1);
 
-    f_color = vec4(texture2D(reflectionMap, v_uvCoords).rgb, 1.0);
+    f_colour = vec4(texture(reflectionMap, v_uvCoords).rgb, 1.0);
 }

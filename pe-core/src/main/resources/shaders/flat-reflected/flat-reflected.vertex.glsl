@@ -30,6 +30,6 @@ void main(void) {
 
     v_uvCoords = uvCoords[gl_VertexID];
 
-    vec4 world = in_transformation * vec4(in_position, 1.0);
+    vec4 world = vec4(in_position, 1.0);
     gl_Position = mvpMatrix * world;
 }
