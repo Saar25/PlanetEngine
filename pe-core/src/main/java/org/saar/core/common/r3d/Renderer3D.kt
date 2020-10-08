@@ -1,7 +1,6 @@
 package org.saar.core.common.r3d
 
 import org.saar.core.renderer.*
-import org.saar.core.renderer.RenderState
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
@@ -12,14 +11,6 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
 
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
-
-    @UniformUpdaterProperty
-    private val mvpMatrixUpdater = UniformUpdater<RenderNode3D> { state ->
-        val v = context!!.camera.viewMatrix
-        val p = context!!.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
-        this@Renderer3D.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
-    }
 
     companion object {
         private val matrix = Matrix4.create()
@@ -37,8 +28,6 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
         init()
     }
 
-    private var context: RenderContext? = null
-
     override fun onRender(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
 
@@ -46,12 +35,16 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
 
-        this.context = context
-
         for (renderNode3D in this.renderNodes3D) {
             val state = RenderState(renderNode3D)
-            mvpMatrixUpdater.update(state)
-            mvpMatrixUniform.load()
+
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            val m = state.instance.transform.transformationMatrix
+
+            this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
+            this.mvpMatrixUniform.load()
+
             renderNode3D.draw()
         }
     }

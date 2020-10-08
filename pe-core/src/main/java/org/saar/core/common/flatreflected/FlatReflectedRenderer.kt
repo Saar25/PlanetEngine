@@ -30,14 +30,6 @@ class FlatReflectedRenderer(private vararg val renderNodes: FlatReflectedRenderN
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
 
-    @UniformUpdaterProperty
-    private val mvpMatrixUpdater = UniformUpdater<FlatReflectedRenderNode> { state ->
-        val v = context!!.camera.viewMatrix
-        val p = context!!.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
-        this@FlatReflectedRenderer.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
-    }
-
     companion object {
         private val matrix = Matrix4.create()
 
@@ -57,8 +49,6 @@ class FlatReflectedRenderer(private vararg val renderNodes: FlatReflectedRenderN
         init()
     }
 
-    private var context: RenderContext? = null
-
     override fun onRender(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
 
@@ -66,12 +56,16 @@ class FlatReflectedRenderer(private vararg val renderNodes: FlatReflectedRenderN
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
 
-        this.context = context
-
         for (renderNode in this.renderNodes) {
             val state = RenderState(renderNode)
-            mvpMatrixUpdater.update(state)
-            mvpMatrixUniform.load()
+
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            val m = state.instance.transform.transformationMatrix
+
+            this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
+            this.mvpMatrixUniform.load()
+
             renderNode.draw()
         }
     }

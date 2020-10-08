@@ -1,6 +1,9 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.AbstractRenderer
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderState
+import org.saar.core.renderer.UniformProperty
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -31,14 +34,6 @@ class FlatReflectedDeferredRenderer(private vararg val renderNodes: FlatReflecte
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
 
-    @UniformUpdaterProperty
-    private val mvpMatrixUpdater = UniformUpdater<FlatReflectedRenderNode> { state ->
-        val v = context!!.camera.viewMatrix
-        val p = context!!.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
-        this@FlatReflectedDeferredRenderer.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
-    }
-
     companion object {
         private val matrix = Matrix4.create()
 
@@ -58,8 +53,6 @@ class FlatReflectedDeferredRenderer(private vararg val renderNodes: FlatReflecte
         init()
     }
 
-    private var context: RenderContext? = null
-
     override fun onRender(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
 
@@ -67,12 +60,16 @@ class FlatReflectedDeferredRenderer(private vararg val renderNodes: FlatReflecte
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
 
-        this.context = context
-
         for (renderNode in this.renderNodes) {
             val state = RenderState(renderNode)
-            mvpMatrixUpdater.update(state)
-            mvpMatrixUniform.load()
+
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            val m = state.instance.transform.transformationMatrix
+
+            this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
+            this.mvpMatrixUniform.load()
+
             renderNode.draw()
         }
     }
