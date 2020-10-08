@@ -119,10 +119,10 @@ public class ReflectionExample {
             reflection.updateReflectionMap();
 
             deferredRenderer.render();
+            reflectionDeferredRenderer.render();
 
             window.update(true);
             window.pollEvents();
-
             final long delta = System.currentTimeMillis() - current;
             ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
