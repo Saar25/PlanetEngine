@@ -13,7 +13,7 @@ public class Mesh3D implements Mesh {
     public static Mesh3D load(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
         final ModelBuffers3D buffers = ModelBuffers3D.singleModelBuffer();
         buffers.load(vertices, indices, instances);
-        return new Mesh3D(buffers.getMesh());
+        return new Mesh3D(buffers.createMesh());
     }
 
     @Override

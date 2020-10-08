@@ -8,28 +8,28 @@ import org.saar.lwjgl.opengl.objects.vbos.Vbos;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MeshBuffersBase implements ModelBuffers {
+public abstract class MeshBuffersBase implements MeshBuffers {
 
     protected final Vao vao = Vao.create();
 
-    private final List<ModelBuffer> buffers = new ArrayList<>();
+    private final List<MeshBuffer> buffers = new ArrayList<>();
 
-    public void addModelBuffer(ModelBuffer buffer) {
+    public void addMeshBuffer(MeshBuffer buffer) {
         this.buffers.add(buffer);
     }
 
     protected final void updateBuffers() {
-        for (final ModelBuffer modelBuffer : this.buffers) {
-            modelBuffer.getBuffer().flip();
-            final IVbo vbo = modelBuffer.getVbo();
-            this.vao.loadVbo(vbo, modelBuffer.getAttributes());
-            Vbos.allocateAndStore(vbo, modelBuffer.getBuffer());
+        for (final MeshBuffer meshBuffer : this.buffers) {
+            meshBuffer.getBuffer().flip();
+            final IVbo vbo = meshBuffer.getVbo();
+            this.vao.loadVbo(vbo, meshBuffer.getAttributes());
+            Vbos.allocateAndStore(vbo, meshBuffer.getBuffer());
         }
     }
 
     protected final void deleteBuffers() {
-        for (final ModelBuffer modelBuffer : this.buffers) {
-            MemoryUtil.memFree(modelBuffer.getBuffer());
+        for (final MeshBuffer meshBuffer : this.buffers) {
+            MemoryUtil.memFree(meshBuffer.getBuffer());
         }
     }
 

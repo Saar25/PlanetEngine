@@ -2,10 +2,7 @@ package org.saar.core.common.r3d;
 
 import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.MeshBuffersBase;
-import org.saar.core.model.loader.ModelBuffer;
-import org.saar.core.model.loader.ModelBuffers;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.loader.*;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.constants.VboUsage;
@@ -14,7 +11,7 @@ import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
-public abstract class ModelBuffers3D extends MeshBuffersBase implements ModelBuffers {
+public abstract class ModelBuffers3D extends MeshBuffersBase implements MeshBuffers {
 
     private static final Attribute[] transformAttributes = new Attribute[]{
             Attribute.ofInstance(3, 4, DataType.FLOAT, false),
@@ -54,13 +51,13 @@ public abstract class ModelBuffers3D extends MeshBuffersBase implements ModelBuf
                 ModelBuffers3D.colourAttribute
         };
 
-        private final ModelBuffer instanceBuffer = new ModelBuffer(
+        private final MeshBuffer instanceBuffer = new MeshBuffer(
                 new DataBuffer(VboUsage.STATIC_DRAW), transformAttributes);
 
-        private final ModelBuffer vertexBuffer = new ModelBuffer(
+        private final MeshBuffer vertexBuffer = new MeshBuffer(
                 new DataBuffer(VboUsage.STATIC_DRAW), vertexAttributes);
 
-        private final ModelBuffer indexBuffer = new ModelBuffer(
+        private final MeshBuffer indexBuffer = new MeshBuffer(
                 new IndexBuffer(VboUsage.STATIC_DRAW));
 
         private final ModelWriter3D writer = new ModelWriter3D() {
@@ -76,9 +73,9 @@ public abstract class ModelBuffers3D extends MeshBuffersBase implements ModelBuf
         };
 
         public SingleDataBuffer() {
-            addModelBuffer(this.instanceBuffer);
-            addModelBuffer(this.vertexBuffer);
-            addModelBuffer(this.indexBuffer);
+            addMeshBuffer(this.instanceBuffer);
+            addMeshBuffer(this.vertexBuffer);
+            addMeshBuffer(this.indexBuffer);
         }
 
         @Override
@@ -94,7 +91,7 @@ public abstract class ModelBuffers3D extends MeshBuffersBase implements ModelBuf
         }
 
         @Override
-        public Mesh getMesh() {
+        public Mesh createMesh() {
             final int indices = this.indexBuffer.getBufferSize() / 4;
             final int instances = this.instanceBuffer.getBufferCount();
             return new InstancedElementsMesh(this.vao, RenderMode.TRIANGLES,
