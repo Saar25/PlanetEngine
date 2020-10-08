@@ -24,8 +24,6 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.maths.Angle;
-import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -44,9 +42,6 @@ public class ReflectionExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
         final Camera camera = new Camera(projection);
 
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-
         final ObjRenderNode cottageNode = Objects.requireNonNull(loadCottage());
 
         final ObjRenderNode dragonNode = Objects.requireNonNull(loadDragon());
@@ -54,7 +49,7 @@ public class ReflectionExample {
 
         final ObjRenderNode stallNode = Objects.requireNonNull(loadStall());
         stallNode.getTransform().getPosition().set(-50, 0, 0);
-        stallNode.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
+        stallNode.getTransform().getRotation().rotateDegrees(0, 180, 0);
 
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
 

@@ -67,11 +67,20 @@ public class Rotation implements ReadonlyRotation {
     }
 
     public void rotate(Angle x, Angle y, Angle z) {
+        rotateRadians(x.getRadians(), y.getRadians(), z.getRadians());
+    }
+
+    public void rotateDegrees(float x, float y, float z) {
+        final float xRadians = (float) Math.toRadians(x);
+        final float yRadians = (float) Math.toRadians(y);
+        final float zRadians = (float) Math.toRadians(z);
+        rotateRadians(xRadians, yRadians, zRadians);
+    }
+
+    public void rotateRadians(float x, float y, float z) {
         final Quaternionfc old = copyValue();
-        this.wrapper.getValue()
-                .rotateX(x.getRadians())
-                .rotateLocalY(y.getRadians())
-                .rotateZ(z.getRadians());
+        this.wrapper.getValue().rotateX(x)
+                .rotateLocalY(y).rotateZ(z);
         onChange(old);
     }
 
