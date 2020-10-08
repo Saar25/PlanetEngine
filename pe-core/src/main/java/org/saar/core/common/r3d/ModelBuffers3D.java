@@ -2,7 +2,7 @@ package org.saar.core.common.r3d;
 
 import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.AbstractModelBuffers;
+import org.saar.core.model.loader.MeshBuffersBase;
 import org.saar.core.model.loader.ModelBuffer;
 import org.saar.core.model.loader.ModelBuffers;
 import org.saar.core.model.loader.ModelWriters;
@@ -12,8 +12,9 @@ import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 
-public abstract class ModelBuffers3D extends AbstractModelBuffers implements ModelBuffers {
+public abstract class ModelBuffers3D extends MeshBuffersBase implements ModelBuffers {
 
     private static final Attribute[] transformAttributes = new Attribute[]{
             Attribute.ofInstance(3, 4, DataType.FLOAT, false),
@@ -28,6 +29,7 @@ public abstract class ModelBuffers3D extends AbstractModelBuffers implements Mod
     private static final Attribute colourAttribute = Attribute.of(2, 3, DataType.FLOAT, true);
 
     public final void load(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+        beforeLoad(vertices, indices, instances);
         ModelWriters.writeNodes(getWriter(), instances);
         ModelWriters.writeVertices(getWriter(), vertices);
         ModelWriters.writeIndices(getWriter(), indices);
@@ -36,10 +38,12 @@ public abstract class ModelBuffers3D extends AbstractModelBuffers implements Mod
         deleteBuffers();
     }
 
+    protected abstract void beforeLoad(Vertex3D[] vertices, int[] indices, Node3D[] instances);
+
     protected abstract ModelWriter3D getWriter();
 
-    public static ModelBuffers3D singleModelBuffer(int vertices, int indices, int instances) {
-        return new SingleDataBuffer(vertices, indices, instances);
+    public static ModelBuffers3D singleModelBuffer() {
+        return new SingleDataBuffer();
     }
 
     private static class SingleDataBuffer extends ModelBuffers3D {
@@ -50,22 +54,38 @@ public abstract class ModelBuffers3D extends AbstractModelBuffers implements Mod
                 ModelBuffers3D.colourAttribute
         };
 
-        private final Mesh mesh;
+        private final ModelBuffer instanceBuffer = new ModelBuffer(
+                new DataBuffer(VboUsage.STATIC_DRAW), transformAttributes);
 
-        private final ModelWriter3D writer;
+        private final ModelBuffer vertexBuffer = new ModelBuffer(
+                new DataBuffer(VboUsage.STATIC_DRAW), vertexAttributes);
 
-        public SingleDataBuffer(int vertices, int indices, int instances) {
-            final ModelBuffer instanceBuffer = loadDataBuffer(
-                    new DataBuffer(VboUsage.STATIC_DRAW), instances, transformAttributes);
-            final ModelBuffer vertexBuffer = loadDataBuffer(
-                    new DataBuffer(VboUsage.STATIC_DRAW), vertices, vertexAttributes);
-            final ModelBuffer indexBuffer = loadIndexBuffer(
-                    new IndexBuffer(VboUsage.STATIC_DRAW), indices);
+        private final ModelBuffer indexBuffer = new ModelBuffer(
+                new IndexBuffer(VboUsage.STATIC_DRAW));
 
-            this.mesh = new InstancedElementsMesh(this.vao, RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
+        private final ModelWriter3D writer = new ModelWriter3D() {
+            @Override public BufferWriter getInstanceWriter() { return instanceBuffer.getWriter(); }
 
-            this.writer = new ModelWriter3D(instanceBuffer.getWriter(), vertexBuffer.getWriter(),
-                    vertexBuffer.getWriter(), vertexBuffer.getWriter(), indexBuffer.getWriter());
+            @Override public BufferWriter getPositionWriter() { return vertexBuffer.getWriter(); }
+
+            @Override public BufferWriter getNormalWriter() { return vertexBuffer.getWriter(); }
+
+            @Override public BufferWriter getColourWriter() { return vertexBuffer.getWriter(); }
+
+            @Override public BufferWriter getIndexWriter() { return indexBuffer.getWriter(); }
+        };
+
+        public SingleDataBuffer() {
+            addModelBuffer(this.instanceBuffer);
+            addModelBuffer(this.vertexBuffer);
+            addModelBuffer(this.indexBuffer);
+        }
+
+        @Override
+        protected void beforeLoad(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+            this.instanceBuffer.allocateByCount(indices.length);
+            this.vertexBuffer.allocateByCount(vertices.length);
+            this.indexBuffer.allocate(indices.length * 4);
         }
 
         @Override
@@ -75,7 +95,10 @@ public abstract class ModelBuffers3D extends AbstractModelBuffers implements Mod
 
         @Override
         public Mesh getMesh() {
-            return this.mesh;
+            final int indices = this.indexBuffer.getBufferSize() / 4;
+            final int instances = this.instanceBuffer.getBufferCount();
+            return new InstancedElementsMesh(this.vao, RenderMode.TRIANGLES,
+                    indices, DataType.U_INT, instances);
         }
     }
 
