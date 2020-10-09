@@ -1,12 +1,10 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
-import org.lwjgl.opengl.GL15;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.VboAccess;
 import org.saar.lwjgl.opengl.constants.VboTarget;
 import org.saar.lwjgl.opengl.constants.VboUsage;
-import org.saar.lwjgl.opengl.objects.exceptions.VboTooSmallException;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObject;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -14,36 +12,30 @@ import java.nio.IntBuffer;
 
 public class Vbo implements WriteableVbo {
 
-    public static final Vbo NULL_ARRAY = new Vbo(0, VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-    public static final Vbo NULL_INDEX = new Vbo(0, VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW);
+    public static final Vbo NULL_ARRAY = new Vbo(BufferObject.NULL,
+            VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
 
-    private final int id;
+    public static final Vbo NULL_INDEX = new Vbo(BufferObject.NULL,
+            VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW);
+
+    private final BufferObject buffer;
     private final VboTarget target;
     private final VboUsage usage;
 
-    private long size = 0;
-    private boolean deleted = false;
-
-    private Vbo(int id, VboTarget target, VboUsage usage) {
-        this.id = id;
+    private Vbo(BufferObject buffer, VboTarget target, VboUsage usage) {
+        this.buffer = buffer;
         this.target = target;
         this.usage = usage;
     }
 
     public static Vbo create(VboTarget target, VboUsage usage) {
-        final int id = GL15.glGenBuffers();
-        return new Vbo(id, target, usage);
+        final BufferObject buffer = BufferObject.create();
+        return new Vbo(buffer, target, usage);
     }
-
-    /*
-     *  Vbo allocate data
-     */
 
     @Override
     public void allocateByte(long size) {
-        this.bind();
-        GL15.glBufferData(this.target.get(), size, this.usage.get());
-        this.size = size;
+        this.buffer.allocate(this.target, size, this.usage);
     }
 
     @Override
@@ -58,89 +50,57 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void storeData(long offset, int[] data) {
-        this.bind();
-        final int bytes = DataType.INT.getBytes();
-        ensureSize(offset, data.length * bytes);
-        GL15.glBufferSubData(this.target.get(), offset, data);
+        this.buffer.store(this.target, offset, data);
     }
 
     @Override
     public void storeData(long offset, float[] data) {
-        this.bind();
-        final int bytes = DataType.FLOAT.getBytes();
-        ensureSize(offset, data.length * bytes);
-        GL15.glBufferSubData(this.target.get(), offset, data);
+        this.buffer.store(this.target, offset, data);
     }
 
     @Override
     public void storeData(long offset, ByteBuffer buffer) {
-        this.bind();
-        ensureSize(offset, buffer.limit());
-        GL15.glBufferSubData(this.target.get(), offset, buffer);
+        this.buffer.store(this.target, offset, buffer);
     }
 
     @Override
     public void storeData(long offset, IntBuffer data) {
-        this.bind();
-        final int bytes = DataType.INT.getBytes();
-        ensureSize(offset, data.limit() * bytes);
-        GL15.glBufferSubData(this.target.get(), offset, data);
+        this.buffer.store(this.target, offset, data);
     }
 
     @Override
     public void storeData(long offset, FloatBuffer data) {
-        this.bind();
-        final int bytes = DataType.FLOAT.getBytes();
-        ensureSize(offset, data.limit() * bytes);
-        GL15.glBufferSubData(this.target.get(), offset, data);
-    }
-
-    private void ensureSize(long offset, long size) {
-        if (offset + size > getSize()) {
-            throw new VboTooSmallException("Vbo storage too small, vbo size: "
-                    + getSize() + ", offset: " + offset + ", input size: " + size);
-        }
+        this.buffer.store(this.target, offset, data);
     }
 
     @Override
     public ByteBuffer map(VboAccess access) {
-        this.bind();
-        return GL15.glMapBuffer(this.target.get(), access.get());
+        return this.buffer.map(this.target, access);
     }
 
     @Override
     public void unmap() {
-        this.bind();
-        GL15.glUnmapBuffer(this.target.get());
+        this.buffer.unmap(this.target);
     }
 
     @Override
     public long getSize() {
-        return this.size;
+        return this.buffer.getCapacity();
     }
 
     @Override
     public void bind() {
-        if (!GlConfigs.CACHE_STATE || !BoundVbo.isBound(this.target, this.id)) {
-            GL15.glBindBuffer(this.target.get(), this.id);
-            BoundVbo.set(this.target, this.id);
-        }
+        this.buffer.bind(this.target);
     }
 
     @Override
     public void unbind() {
-        if (!GlConfigs.CACHE_STATE || !BoundVbo.isBound(this.target, 0)) {
-            GL15.glBindBuffer(this.target.get(), 0);
-            BoundVbo.set(this.target, 0);
-        }
+        this.buffer.unbind(this.target);
     }
 
     @Override
     public void delete() {
-        if (!GlConfigs.CACHE_STATE || !this.deleted) {
-            GL15.glDeleteBuffers(this.id);
-            this.deleted = true;
-        }
+        this.buffer.delete();
     }
 
 }
