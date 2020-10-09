@@ -1,9 +1,6 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.VboAccess;
-import org.saar.lwjgl.opengl.constants.VboTarget;
-import org.saar.lwjgl.opengl.constants.VboUsage;
 import org.saar.lwjgl.opengl.objects.buffers.BufferObject;
 
 import java.nio.ByteBuffer;
@@ -35,7 +32,7 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void allocateByte(long size) {
-        this.buffer.allocate(this.target, size, this.usage);
+        this.buffer.allocate(this.target.get(), size, this.usage.get());
     }
 
     @Override
@@ -50,37 +47,37 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void storeData(long offset, int[] data) {
-        this.buffer.store(this.target, offset, data);
+        this.buffer.store(this.target.get(), offset, data);
     }
 
     @Override
     public void storeData(long offset, float[] data) {
-        this.buffer.store(this.target, offset, data);
+        this.buffer.store(this.target.get(), offset, data);
     }
 
     @Override
     public void storeData(long offset, ByteBuffer buffer) {
-        this.buffer.store(this.target, offset, buffer);
+        this.buffer.store(this.target.get(), offset, buffer);
     }
 
     @Override
     public void storeData(long offset, IntBuffer data) {
-        this.buffer.store(this.target, offset, data);
+        this.buffer.store(this.target.get(), offset, data);
     }
 
     @Override
     public void storeData(long offset, FloatBuffer data) {
-        this.buffer.store(this.target, offset, data);
+        this.buffer.store(this.target.get(), offset, data);
     }
 
     @Override
     public ByteBuffer map(VboAccess access) {
-        return this.buffer.map(this.target, access);
+        return this.buffer.map(this.target.get(), access.get());
     }
 
     @Override
     public void unmap() {
-        this.buffer.unmap(this.target);
+        this.buffer.unmap(this.target.get());
     }
 
     @Override
@@ -90,12 +87,12 @@ public class Vbo implements WriteableVbo {
 
     @Override
     public void bind() {
-        this.buffer.bind(this.target);
+        this.buffer.bind(this.target.get());
     }
 
     @Override
     public void unbind() {
-        this.buffer.unbind(this.target);
+        this.buffer.unbind(this.target.get());
     }
 
     @Override

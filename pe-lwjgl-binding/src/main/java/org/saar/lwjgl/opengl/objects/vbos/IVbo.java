@@ -1,7 +1,5 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
-import org.saar.lwjgl.opengl.constants.VboAccess;
-
 import java.nio.ByteBuffer;
 
 public interface IVbo extends ReadOnlyVbo {

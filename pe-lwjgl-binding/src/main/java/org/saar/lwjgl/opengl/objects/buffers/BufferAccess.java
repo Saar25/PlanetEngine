@@ -1,8 +1,8 @@
-package org.saar.lwjgl.opengl.constants;
+package org.saar.lwjgl.opengl.objects.buffers;
 
 import org.lwjgl.opengl.GL15;
 
-public enum VboAccess {
+public enum BufferAccess {
 
     READ_ONLY(GL15.GL_READ_ONLY),
     WRITE_ONLY(GL15.GL_WRITE_ONLY),
@@ -11,11 +11,11 @@ public enum VboAccess {
 
     private final int value;
 
-    VboAccess(int value) {
+    BufferAccess(int value) {
         this.value = value;
     }
 
     public int get() {
-        return value;
+        return this.value;
     }
 }

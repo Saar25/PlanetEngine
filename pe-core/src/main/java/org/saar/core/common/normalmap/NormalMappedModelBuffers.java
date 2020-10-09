@@ -8,7 +8,7 @@ import org.saar.core.model.loader.ModelBuffers;
 import org.saar.core.model.loader.ModelWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;

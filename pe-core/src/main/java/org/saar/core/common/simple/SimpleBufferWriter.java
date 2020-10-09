@@ -4,7 +4,7 @@ import org.lwjgl.system.MemoryUtil;
 import org.saar.core.model.vertex.ModelAttribute;
 import org.saar.core.model.vertex.ModelBufferWriter;
 import org.saar.core.model.vertex.ModelIndices;
-import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;

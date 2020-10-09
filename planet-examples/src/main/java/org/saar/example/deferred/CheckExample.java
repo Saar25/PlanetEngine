@@ -8,6 +8,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.textures.Texture;

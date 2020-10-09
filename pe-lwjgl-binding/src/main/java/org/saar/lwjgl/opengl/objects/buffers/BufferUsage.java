@@ -1,8 +1,8 @@
-package org.saar.lwjgl.opengl.constants;
+package org.saar.lwjgl.opengl.objects.buffers;
 
 import org.lwjgl.opengl.GL15;
 
-public enum VboUsage {
+public enum BufferUsage {
 
     STREAM_DRAW(GL15.GL_STREAM_DRAW),
     STREAM_READ(GL15.GL_STREAM_READ),
@@ -18,11 +18,11 @@ public enum VboUsage {
 
     private final int value;
 
-    VboUsage(int value) {
+    BufferUsage(int value) {
         this.value = value;
     }
 
     public int get() {
-        return value;
+        return this.value;
     }
 }
