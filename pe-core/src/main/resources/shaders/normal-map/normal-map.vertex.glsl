@@ -24,9 +24,9 @@ vec3 transformNormal(in vec3 normal) {
 }
 
 mat3 calcTbnMatrix(void) {
-    const vec3 T = transformNormal(in_tangent);
-    const vec3 B = transformNormal(in_biTangent);
-    const vec3 N = transformNormal(in_normal);
+    vec3 T = transformNormal(in_tangent);
+    vec3 B = transformNormal(in_biTangent);
+    vec3 N = transformNormal(in_normal);
     return mat3(T, B, N);
 }
 
