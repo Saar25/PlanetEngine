@@ -4,8 +4,8 @@
 layout (location = 0) in vec3 in_position;
 layout (location = 1) in vec2 in_uvCoord;
 layout (location = 2) in vec3 in_normal;
-layout (location = 3) in vec3 in_tanget;
-layout (location = 4) in vec3 in_bitanget;
+layout (location = 3) in vec3 in_tangent;
+layout (location = 4) in vec3 in_biTangent;
 
 // Uniforms
 uniform mat4 u_viewProjection;
@@ -24,8 +24,8 @@ vec3 transformNormal(in vec3 normal) {
 }
 
 mat3 calcTbnMatrix(void) {
-    const vec3 T = transformNormal(in_tanget);
-    const vec3 B = transformNormal(in_bitanget);
+    const vec3 T = transformNormal(in_tangent);
+    const vec3 B = transformNormal(in_biTangent);
     const vec3 N = transformNormal(in_normal);
     return mat3(T, B, N);
 }
