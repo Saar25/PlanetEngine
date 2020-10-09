@@ -26,6 +26,10 @@ public abstract class NormalMappedModelBuffers extends AbstractModelBuffers impl
 
     private static final Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
 
+    private static final Attribute tangentAttribute = Attribute.of(3, 3, DataType.FLOAT, false);
+
+    private static final Attribute biTangentAttribute = Attribute.of(4, 3, DataType.FLOAT, false);
+
     public void load(NormalMappedVertex[] vertices, int[] indices) {
         ModelWriters.writeVertices(getWriter(), vertices);
         ModelWriters.writeIndices(getWriter(), indices);
@@ -41,7 +45,8 @@ public abstract class NormalMappedModelBuffers extends AbstractModelBuffers impl
 
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
         Vbos.allocateAndStore(vbo, dataBuffer);
-        vao.loadVbo(vbo, positionAttribute, uvCoordAttribute, normalAttribute);
+        vao.loadVbo(vbo, positionAttribute, uvCoordAttribute,
+                normalAttribute, tangentAttribute, biTangentAttribute);
 
         final IndexBuffer indexVbo = new IndexBuffer(VboUsage.STATIC_DRAW);
         Vbos.allocateAndStore(indexVbo, indexBuffer);
@@ -63,7 +68,9 @@ public abstract class NormalMappedModelBuffers extends AbstractModelBuffers impl
         private static final Attribute[] attributes = {
                 NormalMappedModelBuffers.positionAttribute,
                 NormalMappedModelBuffers.uvCoordAttribute,
-                NormalMappedModelBuffers.normalAttribute
+                NormalMappedModelBuffers.normalAttribute,
+                NormalMappedModelBuffers.tangentAttribute,
+                NormalMappedModelBuffers.biTangentAttribute
         };
 
         private final ElementsMesh model;
@@ -117,9 +124,9 @@ public abstract class NormalMappedModelBuffers extends AbstractModelBuffers impl
             final ModelBuffer normalBuffer = loadDataBuffer(
                     new DataBuffer(VboUsage.STATIC_DRAW), vertices, normalAttribute);
             final ModelBuffer tangentBuffer = loadDataBuffer(
-                    new DataBuffer(VboUsage.STATIC_DRAW), vertices, normalAttribute);
+                    new DataBuffer(VboUsage.STATIC_DRAW), vertices, tangentAttribute);
             final ModelBuffer biTangentBuffer = loadDataBuffer(
-                    new DataBuffer(VboUsage.STATIC_DRAW), vertices, normalAttribute);
+                    new DataBuffer(VboUsage.STATIC_DRAW), vertices, biTangentAttribute);
             final ModelBuffer indexBuffer = loadIndexBuffer(
                     new IndexBuffer(VboUsage.STATIC_DRAW), indices);
             this.model = new ElementsMesh(vao, RenderMode.TRIANGLES, indices, DataType.U_INT);

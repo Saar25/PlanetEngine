@@ -20,7 +20,8 @@ public class AssimpUtil {
 
     public static AssimpMesh load(String resourcePath) throws Exception {
         return AssimpUtil.load(resourcePath, Assimp.aiProcess_JoinIdenticalVertices |
-                Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals);
+                Assimp.aiProcess_Triangulate | Assimp.aiProcess_FixInfacingNormals |
+                Assimp.aiProcess_CalcTangentSpace);
     }
 
     public static AssimpMesh load(String resourcePath, int flags) throws Exception {
