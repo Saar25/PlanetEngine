@@ -5,7 +5,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-class Renderer2D(private val renderNode: RenderNode2D) : AbstractRenderer(shadersProgram) {
+class Renderer2D(private val model: Model2D) : AbstractRenderer(shadersProgram) {
 
     companion object {
         private val vertex: Shader = Shader.createVertex(
@@ -21,6 +21,6 @@ class Renderer2D(private val renderNode: RenderNode2D) : AbstractRenderer(shader
     }
 
     override fun onRender(context: RenderContext) {
-        renderNode.draw()
+        model.draw()
     }
 }

@@ -3,7 +3,7 @@ package org.saar.example.renderer3d;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
-import org.saar.core.common.r3d.RenderNode3D;
+import org.saar.core.common.r3d.Model3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
@@ -44,14 +44,13 @@ public class Renderer3DExample {
         camera.getTransform().getPosition().set(0, 0, -1000);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final Renderer3D renderer = new Renderer3D(renderNode3D());
+        final Renderer3D renderer = new Renderer3D(models());
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
-//            renderNode.update();
             ExamplesUtils.move(camera, keyboard);
             renderer.render(new RenderContextBase(camera));
 
@@ -74,9 +73,9 @@ public class Renderer3DExample {
         window.destroy();
     }
 
-    private static RenderNode3D[] renderNode3D() {
+    private static Model3D[] models() {
         final int cubesPerBatch = CUBES / BATCHES;
-        final RenderNode3D[] batches = new RenderNode3D[BATCHES];
+        final Model3D[] batches = new Model3D[BATCHES];
         final MyNode[] nodes = new MyNode[cubesPerBatch];
         for (int i = 0; i < BATCHES; i++) {
             for (int j = 0; j < cubesPerBatch; j++) {
@@ -91,7 +90,7 @@ public class Renderer3DExample {
                 nodes[j] = newNode;
             }
             final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
-            batches[i] = new RenderNode3D(mesh);
+            batches[i] = new Model3D(mesh);
         }
         return batches;
     }

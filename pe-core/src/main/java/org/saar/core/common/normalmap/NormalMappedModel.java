@@ -1,15 +1,15 @@
 package org.saar.core.common.normalmap;
 
-import org.saar.core.node.RenderNode;
+import org.saar.core.node.Model;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.transform.Transform;
 
-public class NormalMappedRenderNode implements RenderNode, NormalMappedNode {
+public class NormalMappedModel implements Model, NormalMappedNode {
 
     private final NormalMappedMesh mesh;
     private final NormalMappedNode instance;
 
-    public NormalMappedRenderNode(NormalMappedMesh mesh, NormalMappedNode instance) {
+    public NormalMappedModel(NormalMappedMesh mesh, NormalMappedNode instance) {
         this.mesh = mesh;
         this.instance = instance;
     }

@@ -1,12 +1,12 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.node.RenderNode;
+import org.saar.core.node.Model;
 
-public class RenderNode2D implements RenderNode, Node2D {
+public class Model2D implements Model, Node2D {
 
     private final Mesh2D mesh;
 
-    public RenderNode2D(Mesh2D mesh) {
+    public Model2D(Mesh2D mesh) {
         this.mesh = mesh;
     }
 

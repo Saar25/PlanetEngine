@@ -9,7 +9,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRenderer(shadersProgram), Renderer {
+class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(shadersProgram), Renderer {
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
@@ -57,19 +57,19 @@ class ObjRenderer(private vararg val renderNodes: ObjRenderNode) : AbstractRende
         this.viewProjectionUniform.value = p.mul(v, matrix)
         this.viewProjectionUniform.load()
 
-        for (renderNode3D in this.renderNodes) {
-            val state = RenderState<ObjNode>(renderNode3D)
+        for (model in this.models) {
+            val state = RenderState<ObjNode>(model)
             transformUpdater.update(state)
             transformUniform.load()
             textureUpdater.update(state)
             textureUniform.load()
-            renderNode3D.draw()
+            model.draw()
         }
     }
 
     override fun onDelete() {
-        for (renderNode3D in this.renderNodes) {
-            renderNode3D.delete()
+        for (model in this.models) {
+            model.delete()
         }
     }
 }

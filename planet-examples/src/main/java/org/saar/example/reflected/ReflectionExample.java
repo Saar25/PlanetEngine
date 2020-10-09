@@ -6,7 +6,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.flatreflected.FlatReflectedDeferredRenderer;
 import org.saar.core.common.flatreflected.FlatReflectedMesh;
-import org.saar.core.common.flatreflected.FlatReflectedRenderNode;
+import org.saar.core.common.flatreflected.FlatReflectedModel;
 import org.saar.core.common.flatreflected.FlatReflectedVertex;
 import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
@@ -42,12 +42,12 @@ public class ReflectionExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
         final Camera camera = new Camera(projection);
 
-        final ObjRenderNode cottageNode = Objects.requireNonNull(loadCottage());
+        final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
 
-        final ObjRenderNode dragonNode = Objects.requireNonNull(loadDragon());
+        final ObjModel dragonNode = Objects.requireNonNull(loadDragon());
         dragonNode.getTransform().getPosition().set(50, 0, 0);
 
-        final ObjRenderNode stallNode = Objects.requireNonNull(loadStall());
+        final ObjModel stallNode = Objects.requireNonNull(loadStall());
         stallNode.getTransform().getPosition().set(-50, 0, 0);
         stallNode.getTransform().getRotation().rotateDegrees(0, 180, 0);
 
@@ -57,9 +57,9 @@ public class ReflectionExample {
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
-        final RenderNode3D cubeRenderNode = new RenderNode3D(cubeMesh);
+        final Model3D cubeModel = new Model3D(cubeMesh);
 
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeRenderNode);
+        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
         final Camera reflectionCamera = new Camera(projection);
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
@@ -71,7 +71,7 @@ public class ReflectionExample {
         final Reflection reflection = new Reflection(new Planef(Vector3.of(0, 20, 30), Vector3.forward()), camera,
                 reflectionCamera, reflectionDeferredRenderer);
 
-        final FlatReflectedRenderNode mirror = new FlatReflectedRenderNode(FlatReflectedMesh.load(
+        final FlatReflectedModel mirror = new FlatReflectedModel(FlatReflectedMesh.load(
                 new FlatReflectedVertex[]{
                         FlatReflectedVertex.of(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.forward()), // 0
                         FlatReflectedVertex.of(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.forward()), // 1
@@ -82,7 +82,7 @@ public class ReflectionExample {
         mirror.getTransform().getPosition().set(0, 20, 30);
         mirror.getTransform().getScale().scale(10);
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
-                new FlatReflectedRenderNode[]{mirror}, reflectionScreenPrototype.getColourTexture());
+                new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
 
         final Keyboard keyboard = window.getKeyboard();
 
@@ -141,36 +141,36 @@ public class ReflectionExample {
         window.destroy();
     }
 
-    private static ObjRenderNode loadCottage() {
+    private static ObjModel loadCottage() {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             final ObjNode node = new ObjSpatial(texture);
-            return new ObjRenderNode(mesh, node);
+            return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static ObjRenderNode loadStall() {
+    private static ObjModel loadStall() {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             final ObjNode node = new ObjSpatial(texture);
-            return new ObjRenderNode(mesh, node);
+            return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static ObjRenderNode loadDragon() {
+    private static ObjModel loadDragon() {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             final ObjNode node = new ObjSpatial(texture);
-            return new ObjRenderNode(mesh, node);
+            return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }

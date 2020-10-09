@@ -1,15 +1,15 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.node.RenderNode;
+import org.saar.core.node.Model;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.transform.Transform;
 
-public class ObjRenderNode implements RenderNode, ObjNode {
+public class ObjModel implements Model, ObjNode {
 
     private final ObjMesh mesh;
     private final ObjNode instance;
 
-    public ObjRenderNode(ObjMesh mesh, ObjNode instance) {
+    public ObjModel(ObjMesh mesh, ObjNode instance) {
         this.mesh = mesh;
         this.instance = instance;
     }

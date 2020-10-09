@@ -7,7 +7,7 @@ import org.saar.maths.transform.Transform;
 
 public class Spatial3D extends Spatial implements ChildNode, Node3D {
 
-    private RenderNode3D parent;
+    private Model3D parent;
     private Transform worldTransform = getLocalTransform();
 
     @Override
@@ -21,11 +21,11 @@ public class Spatial3D extends Spatial implements ChildNode, Node3D {
     }
 
     @Override
-    public RenderNode3D getParent() {
+    public Model3D getParent() {
         return this.parent;
     }
 
-    public void setParent(RenderNode3D parent) {
+    public void setParent(Model3D parent) {
         this.worldTransform = new ChildTransform(getLocalTransform(), parent.getTransform());
         this.parent = parent;
     }

@@ -40,24 +40,24 @@ public class NormalMappingExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final ObjRenderNode cottageNode = Objects.requireNonNull(loadCottage());
+        final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
 
-        final ObjRenderNode dragonNode = Objects.requireNonNull(loadDragon());
+        final ObjModel dragonNode = Objects.requireNonNull(loadDragon());
         dragonNode.getTransform().getPosition().set(50, 0, 0);
 
-        final ObjRenderNode stallNode = Objects.requireNonNull(loadStall());
+        final ObjModel stallNode = Objects.requireNonNull(loadStall());
         stallNode.getTransform().getRotation().rotateDegrees(0, 180, 0);
         stallNode.getTransform().getPosition().set(-50, 0, 0);
 
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
 
-        final NormalMappedRenderNode boulder = Objects.requireNonNull(loadBoulder());
+        final NormalMappedModel boulder = Objects.requireNonNull(loadBoulder());
         boulder.getTransform().getPosition().set(0, 20, 0);
 
-        final NormalMappedRenderNode barrel = Objects.requireNonNull(loadBarrel());
+        final NormalMappedModel barrel = Objects.requireNonNull(loadBarrel());
         barrel.getTransform().getPosition().set(-20, 20, 0);
 
-        final NormalMappedRenderNode crate = Objects.requireNonNull(loadCrate());
+        final NormalMappedModel crate = Objects.requireNonNull(loadCrate());
         crate.getTransform().getPosition().set(+20, 20, 0);
         crate.getTransform().getScale().scale(.05f);
 
@@ -68,9 +68,9 @@ public class NormalMappingExample {
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
-        final RenderNode3D cubeRenderNode = new RenderNode3D(cubeMesh);
+        final Model3D cubeModel = new Model3D(cubeMesh);
 
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeRenderNode);
+        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
@@ -128,75 +128,75 @@ public class NormalMappingExample {
         window.destroy();
     }
 
-    private static ObjRenderNode loadCottage() {
+    private static ObjModel loadCottage() {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             final ObjNode node = new ObjSpatial(texture);
-            return new ObjRenderNode(mesh, node);
+            return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static ObjRenderNode loadStall() {
+    private static ObjModel loadStall() {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             final ObjNode node = new ObjSpatial(texture);
-            return new ObjRenderNode(mesh, node);
+            return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static ObjRenderNode loadDragon() {
+    private static ObjModel loadDragon() {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             final ObjNode node = new ObjSpatial(texture);
-            return new ObjRenderNode(mesh, node);
+            return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static NormalMappedRenderNode loadBoulder() {
+    private static NormalMappedModel loadBoulder() {
         try {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/boulder/boulder.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/boulder/boulder.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/boulder/boulder.diffuse.png");
             final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedRenderNode(mesh, node);
+            return new NormalMappedModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static NormalMappedRenderNode loadBarrel() {
+    private static NormalMappedModel loadBarrel() {
         try {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/barrel/barrel.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/barrel/barrel.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/barrel/barrel.diffuse.png");
             final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedRenderNode(mesh, node);
+            return new NormalMappedModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static NormalMappedRenderNode loadCrate() {
+    private static NormalMappedModel loadCrate() {
         try {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/crate/crate.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/crate/crate.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/crate/crate.diffuse.png");
             final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedRenderNode(mesh, node);
+            return new NormalMappedModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
         }

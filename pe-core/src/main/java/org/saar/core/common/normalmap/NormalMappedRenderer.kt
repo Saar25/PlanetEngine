@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer(private vararg val renderNodes: NormalMappedRenderNode) : AbstractRenderer(shadersProgram), Renderer {
+class NormalMappedRenderer(private vararg val models: NormalMappedModel) : AbstractRenderer(shadersProgram), Renderer {
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
@@ -66,8 +66,8 @@ class NormalMappedRenderer(private vararg val renderNodes: NormalMappedRenderNod
         this.viewProjectionUniform.value = p.mul(v, matrix)
         this.viewProjectionUniform.load()
 
-        for (renderNode3D in this.renderNodes) {
-            val state = RenderState<NormalMappedNode>(renderNode3D)
+        for (model in this.models) {
+            val state = RenderState<NormalMappedNode>(model)
 
             this.transformationUpdater.update(state)
             this.transformationUniform.load()
@@ -78,13 +78,13 @@ class NormalMappedRenderer(private vararg val renderNodes: NormalMappedRenderNod
             this.normalMapUpdater.update(state)
             this.normalMapUniform.load()
 
-            renderNode3D.draw()
+            model.draw()
         }
     }
 
     override fun onDelete() {
-        for (renderNode3D in this.renderNodes) {
-            renderNode3D.delete()
+        for (model in this.models) {
+            model.delete()
         }
     }
 }

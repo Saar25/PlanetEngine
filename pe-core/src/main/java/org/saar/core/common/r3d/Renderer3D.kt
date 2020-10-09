@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRenderer(shadersProgram), Renderer {
+class Renderer3D(private vararg val models: Model3D) : AbstractRenderer(shadersProgram), Renderer {
 
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
@@ -35,8 +35,8 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
 
-        for (renderNode3D in this.renderNodes3D) {
-            val state = RenderState(renderNode3D)
+        for (model in this.models) {
+            val state = RenderState(model)
 
             val v = context.camera.viewMatrix
             val p = context.camera.projection.matrix
@@ -45,13 +45,13 @@ class Renderer3D(private vararg val renderNodes3D: RenderNode3D) : AbstractRende
             this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
             this.mvpMatrixUniform.load()
 
-            renderNode3D.draw()
+            model.draw()
         }
     }
 
     override fun onDelete() {
-        for (renderNode3D in this.renderNodes3D) {
-            renderNode3D.delete()
+        for (model in this.models) {
+            model.delete()
         }
     }
 }

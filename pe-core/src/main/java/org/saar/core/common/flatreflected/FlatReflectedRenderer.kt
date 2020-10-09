@@ -12,7 +12,7 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedRenderer(private vararg val renderNodes: FlatReflectedRenderNode,
+class FlatReflectedRenderer(private vararg val models: FlatReflectedModel,
                             private val reflectionMap: ReadOnlyTexture)
     : AbstractRenderer(shadersProgram), Renderer {
 
@@ -56,8 +56,8 @@ class FlatReflectedRenderer(private vararg val renderNodes: FlatReflectedRenderN
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
 
-        for (renderNode in this.renderNodes) {
-            val state = RenderState(renderNode)
+        for (model in this.models) {
+            val state = RenderState(model)
 
             val v = context.camera.viewMatrix
             val p = context.camera.projection.matrix
@@ -66,13 +66,13 @@ class FlatReflectedRenderer(private vararg val renderNodes: FlatReflectedRenderN
             this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
             this.mvpMatrixUniform.load()
 
-            renderNode.draw()
+            model.draw()
         }
     }
 
     override fun onDelete() {
-        for (renderNode in this.renderNodes) {
-            renderNode.delete()
+        for (model in this.models) {
+            model.delete()
         }
     }
 }

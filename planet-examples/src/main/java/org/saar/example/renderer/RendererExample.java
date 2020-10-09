@@ -1,7 +1,7 @@
 package org.saar.example.renderer;
 
 import org.saar.core.common.r2d.Mesh2D;
-import org.saar.core.common.r2d.RenderNode2D;
+import org.saar.core.common.r2d.Model2D;
 import org.saar.core.common.r2d.Renderer2D;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -36,8 +36,8 @@ public class RendererExample {
                 new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
         final Mesh2D mesh = Mesh2D.load(vertices, indices);
-        final RenderNode2D renderNode = new RenderNode2D(mesh);
-        final Renderer2D renderer = new Renderer2D(renderNode);
+        final Model2D model = new Model2D(mesh);
+        final Renderer2D renderer = new Renderer2D(model);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
@@ -49,7 +49,7 @@ public class RendererExample {
 
 //            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).x += .001f;
 //            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).y += .001f;
-//            renderNode.update();
+//            model.update();
             renderer.render(new RenderContextBase(null));
 
             fbo.blitToScreen();
@@ -64,7 +64,7 @@ public class RendererExample {
 
         renderer.delete();
         fbo.delete();
-        renderNode.delete();
+        model.delete();
         attachment.delete();
         window.destroy();
     }

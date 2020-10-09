@@ -3,7 +3,7 @@ package org.saar.example.renderer3d;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
-import org.saar.core.common.r3d.RenderNode3D;
+import org.saar.core.common.r3d.Model3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
@@ -40,22 +40,21 @@ public class ManyCubesExample {
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
         final Camera camera = new Camera(projection);
 
-        final RenderNode3D renderNode3D = renderNode3D();
-        final Renderer3D renderer = new Renderer3D(renderNode3D);
+        final Model3D model = model();
+        final Renderer3D renderer = new Renderer3D(model);
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
-//            renderNode.update();
             ExamplesUtils.move(camera, keyboard);
 
             final int size = (int) Math.ceil(Math.pow(CUBES, 1 / 3.0) * SPACE);
 
             for (int i = 0; i < ROWS; i++) {
                 for (int j = 0; j < COLS; j++) {
-                    renderNode3D.getTransform().getPosition().set(
+                    model.getTransform().getPosition().set(
                             i * size - size / 2f, 0, j * size - size / 2f);
                     renderer.render(new RenderContextBase(camera));
                 }
@@ -80,7 +79,7 @@ public class ManyCubesExample {
         window.destroy();
     }
 
-    private static RenderNode3D renderNode3D() {
+    private static Model3D model() {
         final int size = (int) Math.pow(CUBES, 1 / 3f);
         final MyNode[] nodes = new MyNode[CUBES];
         for (int i = 0; i < CUBES; i++) {
@@ -93,7 +92,7 @@ public class ManyCubesExample {
             nodes[i] = newNode;
         }
         final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
-        return new RenderNode3D(mesh);
+        return new Model3D(mesh);
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

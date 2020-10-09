@@ -1,6 +1,6 @@
 package org.saar.core.node;
 
-public interface RenderNode extends Node {
+public interface Model extends Node {
 
     void draw();
 

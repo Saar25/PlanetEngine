@@ -3,7 +3,7 @@ package org.saar.example.obj;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjRenderNode;
+import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.common.obj.ObjSpatial;
 import org.saar.core.renderer.RenderContextBase;
@@ -42,19 +42,19 @@ public class ObjRendererExample {
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         ObjSpatial node;
-        ObjRenderNode renderNode = null;
+        ObjModel model = null;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             node = new ObjSpatial(texture);
 
-            renderNode = new ObjRenderNode(mesh, node);
+            model = new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
 
-        final ObjRenderer renderer = new ObjRenderer(renderNode);
+        final ObjRenderer renderer = new ObjRenderer(model);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
