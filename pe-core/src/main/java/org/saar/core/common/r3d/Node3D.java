@@ -7,8 +7,4 @@ public interface Node3D extends Node {
 
     Transform getTransform();
 
-    static Node3D of(Transform transform) {
-        return () -> transform;
-    }
-
 }

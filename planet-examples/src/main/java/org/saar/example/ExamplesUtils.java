@@ -3,6 +3,7 @@ package org.saar.example;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
+import org.saar.core.common.r3d.R3D;
 import org.saar.core.common.r3d.Vertex3D;
 import org.saar.lwjgl.glfw.input.EventListener;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -15,14 +16,14 @@ import org.saar.maths.utils.Vector3;
 public final class ExamplesUtils {
 
     public static final Vertex3D[] cubeVertices = new Vertex3D[]{ // xyz position, xyz normal,
-            Vertex3D.of(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1), Vector3.of(0.5f, 0.5f, 0.0f)), // 0
-            Vertex3D.of(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0), Vector3.of(0.5f, 1.0f, 0.5f)), // 1
-            Vertex3D.of(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0), Vector3.of(1.0f, 0.5f, 0.5f)), // 2
-            Vertex3D.of(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0), Vector3.of(0.5f, 0.0f, 0.5f)), // 3
-            Vertex3D.of(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0), Vector3.of(0.0f, 0.5f, 0.5f)), // 4
-            Vertex3D.of(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0), Vector3.of(0.5f, 0.5f, 0.5f)), // 5
-            Vertex3D.of(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0), Vector3.of(0.5f, 0.5f, 0.5f)), // 6
-            Vertex3D.of(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1), Vector3.of(0.5f, 0.5f, 1.0f)), // 7
+            R3D.vertex(Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1), Vector3.of(0.5f, 0.5f, 0.0f)), // 0
+            R3D.vertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector3.of(+0, +1, +0), Vector3.of(0.5f, 1.0f, 0.5f)), // 1
+            R3D.vertex(Vector3.of(+0.5f, +0.5f, -0.5f), Vector3.of(+1, +0, +0), Vector3.of(1.0f, 0.5f, 0.5f)), // 2
+            R3D.vertex(Vector3.of(+0.5f, -0.5f, -0.5f), Vector3.of(+0, -1, +0), Vector3.of(0.5f, 0.0f, 0.5f)), // 3
+            R3D.vertex(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.of(-1, +0, +0), Vector3.of(0.0f, 0.5f, 0.5f)), // 4
+            R3D.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0), Vector3.of(0.5f, 0.5f, 0.5f)), // 5
+            R3D.vertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.of(+0, +0, +0), Vector3.of(0.5f, 0.5f, 0.5f)), // 6
+            R3D.vertex(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.of(+0, +0, +1), Vector3.of(0.5f, 0.5f, 1.0f)), // 7
     };
 
     public static final int[] cubeIndices = {

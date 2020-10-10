@@ -44,7 +44,7 @@ public class DeferredExample {
 
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(model);
 
-        final Node3D cube = new Spatial3D();
+        final Node3D cube = R3D.node();
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
         final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});

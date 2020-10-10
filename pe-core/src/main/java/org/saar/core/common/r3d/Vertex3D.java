@@ -12,14 +12,4 @@ public interface Vertex3D extends Vertex {
 
     Vector3fc getColour3f();
 
-    static Vertex3D of(Vector3fc position, Vector3fc normal, Vector3fc colour) {
-        return new Vertex3D() {
-            @Override public Vector3fc getPosition3f() { return position; }
-
-            @Override public Vector3fc getNormal3f() { return normal; }
-
-            @Override public Vector3fc getColour3f() { return colour; }
-        };
-    }
-
 }
