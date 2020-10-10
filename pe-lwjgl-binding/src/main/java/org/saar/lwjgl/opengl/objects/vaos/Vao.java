@@ -49,6 +49,7 @@ public class Vao implements WriteableVao {
         buffer.bind();
         linkAttributes(attributes);
         this.buffers.add(buffer);
+        unbind();
     }
 
     /**
