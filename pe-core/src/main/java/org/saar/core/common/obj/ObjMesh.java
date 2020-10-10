@@ -3,7 +3,7 @@ package org.saar.core.common.obj;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
@@ -42,8 +42,8 @@ public class ObjMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final ObjMeshWriter writer = new ObjMeshWriter(prototype);
-        ModelWriters.writeVertices(writer, vertices);
-        ModelWriters.writeIndices(writer, indices);
+        MeshWriters.writeVertices(writer, vertices);
+        MeshWriters.writeIndices(writer, indices);
 
         helper.store();
 

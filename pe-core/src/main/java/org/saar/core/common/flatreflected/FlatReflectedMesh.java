@@ -2,7 +2,7 @@ package org.saar.core.common.flatreflected;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
@@ -36,8 +36,8 @@ public class FlatReflectedMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final FlatReflectedMeshWriter writer = new FlatReflectedMeshWriter(prototype);
-        ModelWriters.writeVertices(writer, vertices);
-        ModelWriters.writeIndices(writer, indices);
+        MeshWriters.writeVertices(writer, vertices);
+        MeshWriters.writeIndices(writer, indices);
 
         helper.store();
 

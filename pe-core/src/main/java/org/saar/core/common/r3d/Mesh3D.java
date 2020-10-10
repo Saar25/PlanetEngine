@@ -2,7 +2,7 @@ package org.saar.core.common.r3d;
 
 import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
@@ -44,9 +44,9 @@ public class Mesh3D implements Mesh {
         helper.allocateInstances(instances);
 
         final Mesh3DWriter writer = new Mesh3DWriter(prototype);
-        ModelWriters.writeVertices(writer, vertices);
-        ModelWriters.writeIndices(writer, indices);
-        ModelWriters.writeNodes(writer, instances);
+        MeshWriters.writeVertices(writer, vertices);
+        MeshWriters.writeIndices(writer, indices);
+        MeshWriters.writeNodes(writer, instances);
 
         helper.store();
 

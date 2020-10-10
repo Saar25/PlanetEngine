@@ -1,9 +1,9 @@
 package org.saar.core.common.flatreflected;
 
-import org.saar.core.model.loader.ModelIndexWriter;
-import org.saar.core.model.loader.ModelVertexWriter;
+import org.saar.core.model.mesh.writers.MeshIndexWriter;
+import org.saar.core.model.mesh.writers.MeshVertexWriter;
 
-public class FlatReflectedMeshWriter implements ModelVertexWriter<FlatReflectedVertex>, ModelIndexWriter {
+public class FlatReflectedMeshWriter implements MeshVertexWriter<FlatReflectedVertex>, MeshIndexWriter {
 
     private final FlatReflectedMeshPrototype prototype;
 

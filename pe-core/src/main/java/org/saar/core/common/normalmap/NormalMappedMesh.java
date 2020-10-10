@@ -2,7 +2,7 @@ package org.saar.core.common.normalmap;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
@@ -45,8 +45,8 @@ public class NormalMappedMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
-        ModelWriters.writeVertices(writer, vertices);
-        ModelWriters.writeIndices(writer, indices);
+        MeshWriters.writeVertices(writer, vertices);
+        MeshWriters.writeIndices(writer, indices);
 
         helper.store();
 

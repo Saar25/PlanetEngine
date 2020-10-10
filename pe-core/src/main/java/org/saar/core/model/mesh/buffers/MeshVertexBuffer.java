@@ -1,5 +1,6 @@
-package org.saar.core.model.mesh;
+package org.saar.core.model.mesh.buffers;
 
+import org.saar.core.model.mesh.MeshBuffer;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 import org.saar.lwjgl.opengl.objects.vbos.*;
@@ -8,27 +9,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MeshInstanceBuffer extends MeshBuffer {
+public class MeshVertexBuffer extends MeshBuffer {
 
     private final List<Attribute> attributes = new ArrayList<>();
     private final IVbo vbo;
 
-    public MeshInstanceBuffer(IVbo vbo, VboWrapper wrapper) {
+    public MeshVertexBuffer(IVbo vbo, VboWrapper wrapper) {
         super(wrapper);
         this.vbo = vbo;
     }
 
-    private static MeshInstanceBuffer create(VboUsage usage) {
+    private static MeshVertexBuffer create(VboUsage usage) {
         final IVbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, usage);
-        return new MeshInstanceBuffer(vbo, new VboWrapper(vbo));
+        return new MeshVertexBuffer(vbo, new VboWrapper(vbo));
     }
 
-    public static MeshInstanceBuffer createStatic() {
-        return MeshInstanceBuffer.create(VboUsage.STATIC_DRAW);
+    public static MeshVertexBuffer createStatic() {
+        return MeshVertexBuffer.create(VboUsage.STATIC_DRAW);
     }
 
-    public static MeshInstanceBuffer createDynamic() {
-        return MeshInstanceBuffer.create(VboUsage.DYNAMIC_DRAW);
+    public static MeshVertexBuffer createDynamic() {
+        return MeshVertexBuffer.create(VboUsage.DYNAMIC_DRAW);
     }
 
     public void allocateCount(int count) {

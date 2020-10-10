@@ -1,5 +1,8 @@
 package org.saar.core.model.mesh;
 
+import org.saar.core.model.mesh.buffers.MeshIndexBuffer;
+import org.saar.core.model.mesh.buffers.MeshInstanceBuffer;
+import org.saar.core.model.mesh.buffers.MeshVertexBuffer;
 import org.saar.utils.reflection.FieldsLocator;
 
 import java.lang.reflect.Field;

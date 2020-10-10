@@ -4,7 +4,7 @@ import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.AbstractModelBuffers;
 import org.saar.core.model.loader.ModelBuffer;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
@@ -33,9 +33,9 @@ public class PrimitiveModelBuffers extends AbstractModelBuffers {
     }
 
     public void load(PrimitiveVertex[] vertices, int[] indices, PrimitiveNode[] instances) {
-        if (instances != null) ModelWriters.writeNodes(this.writer, instances);
-        if (vertices != null) ModelWriters.writeVertices(this.writer, vertices);
-        if (indices != null) ModelWriters.writeIndices(this.writer, indices);
+        if (instances != null) MeshWriters.writeNodes(this.writer, instances);
+        if (vertices != null) MeshWriters.writeVertices(this.writer, vertices);
+        if (indices != null) MeshWriters.writeIndices(this.writer, indices);
 
         updateBuffers();
         deleteBuffers();

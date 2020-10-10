@@ -1,12 +1,12 @@
 package org.saar.core.common.primitive;
 
-import org.saar.core.model.loader.ModelIndexWriter;
-import org.saar.core.model.loader.ModelNodeWriter;
-import org.saar.core.model.loader.ModelVertexWriter;
+import org.saar.core.model.mesh.writers.MeshIndexWriter;
+import org.saar.core.model.mesh.writers.MeshNodeWriter;
+import org.saar.core.model.mesh.writers.MeshVertexWriter;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
-public class PrimitiveModelWriter implements ModelNodeWriter<PrimitiveNode>, ModelVertexWriter<PrimitiveVertex>, ModelIndexWriter {
+public class PrimitiveModelWriter implements MeshNodeWriter<PrimitiveNode>, MeshVertexWriter<PrimitiveVertex>, MeshIndexWriter {
 
     private final BufferWriter instanceWriter;
     private final BufferWriter vertexWriter;

@@ -2,8 +2,8 @@ package org.saar.core.common.flatreflected
 
 import org.joml.Vector3fc
 import org.saar.core.model.mesh.MeshBufferProperty
-import org.saar.core.model.mesh.MeshIndexBuffer
-import org.saar.core.model.mesh.MeshVertexBuffer
+import org.saar.core.model.mesh.buffers.MeshIndexBuffer
+import org.saar.core.model.mesh.buffers.MeshVertexBuffer
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.transform.Transform
 

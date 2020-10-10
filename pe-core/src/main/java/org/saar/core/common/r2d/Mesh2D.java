@@ -2,7 +2,7 @@ package org.saar.core.common.r2d;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.loader.ModelWriters;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
@@ -33,8 +33,8 @@ public class Mesh2D implements Mesh {
         helper.allocateVertices(vertices);
 
         final Mesh2DWriter writer = new Mesh2DWriter(prototype);
-        ModelWriters.writeVertices(writer, vertices);
-        ModelWriters.writeIndices(writer, indices);
+        MeshWriters.writeVertices(writer, vertices);
+        MeshWriters.writeIndices(writer, indices);
 
         helper.store();
 
