@@ -2,10 +2,7 @@ package org.saar.example.deferred;
 
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.obj.ObjDeferredRenderer;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjSpatial;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
@@ -31,13 +28,13 @@ public class DeferredExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        ObjSpatial node;
+        ObjNode node;
         ObjModel model = null;
         Texture2D texture;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            node = new ObjSpatial(texture);
+            node = Obj.node(texture);
 
             model = new ObjModel(mesh, node);
         } catch (Exception e) {

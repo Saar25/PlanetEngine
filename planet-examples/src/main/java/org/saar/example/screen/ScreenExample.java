@@ -2,10 +2,7 @@ package org.saar.example.screen;
 
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjRenderer;
-import org.saar.core.common.obj.ObjSpatial;
+import org.saar.core.common.obj.*;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -35,12 +32,12 @@ public class ScreenExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        ObjSpatial node;
+        ObjNode node;
         ObjModel model = null;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            node = new ObjSpatial(texture);
+            node = Obj.node(texture);
 
             model = new ObjModel(mesh, node);
         } catch (Exception e) {

@@ -116,7 +116,7 @@ public class ShadowExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            final ObjNode node = new ObjSpatial(texture);
+            final ObjNode node = Obj.node(texture);
             return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,7 +128,7 @@ public class ShadowExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            final ObjNode node = new ObjSpatial(texture);
+            final ObjNode node = Obj.node(texture);
             return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
@@ -140,7 +140,7 @@ public class ShadowExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            final ObjNode node = new ObjSpatial(texture);
+            final ObjNode node = Obj.node(texture);
             return new ObjModel(mesh, node);
         } catch (Exception e) {
             e.printStackTrace();
