@@ -1,6 +1,7 @@
 package org.saar.core.model.mesh;
 
 import org.saar.core.model.Vertex;
+import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class MeshPrototypeHelper {
     private List<MeshBuffer> buffers;
     private List<MeshIndexBuffer> indexBuffers;
     private List<MeshVertexBuffer> vertexBuffers;
+    private List<MeshInstanceBuffer> instanceBuffers;
 
     public MeshPrototypeHelper(MeshPrototype prototype) {
         this.locator = new MeshBufferLocator(prototype);
@@ -20,6 +22,12 @@ public class MeshPrototypeHelper {
     public void loadToVao(WriteableVao vao) {
         for (MeshBuffer buffer : getBuffers()) {
             buffer.loadInVao(vao);
+        }
+    }
+
+    public void allocateInstances(Node[] instances) {
+        for (MeshInstanceBuffer buffer : getInstanceBuffers()) {
+            buffer.allocateCount(instances.length);
         }
     }
 
@@ -48,11 +56,11 @@ public class MeshPrototypeHelper {
         return this.buffers;
     }
 
-    private List<MeshIndexBuffer> getIndexBuffers() {
-        if (this.indexBuffers == null) {
-            this.indexBuffers = this.locator.getMeshIndexBuffers();
+    private List<MeshInstanceBuffer> getInstanceBuffers() {
+        if (this.instanceBuffers == null) {
+            this.instanceBuffers = this.locator.getMeshInstanceBuffers();
         }
-        return this.indexBuffers;
+        return this.instanceBuffers;
     }
 
     private List<MeshVertexBuffer> getVertexBuffers() {
@@ -60,5 +68,12 @@ public class MeshPrototypeHelper {
             this.vertexBuffers = this.locator.getMeshVertexBuffers();
         }
         return this.vertexBuffers;
+    }
+
+    private List<MeshIndexBuffer> getIndexBuffers() {
+        if (this.indexBuffers == null) {
+            this.indexBuffers = this.locator.getMeshIndexBuffers();
+        }
+        return this.indexBuffers;
     }
 }

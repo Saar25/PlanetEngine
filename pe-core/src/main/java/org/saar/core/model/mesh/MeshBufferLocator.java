@@ -26,6 +26,10 @@ public final class MeshBufferLocator {
         return getMeshBuffers(MeshVertexBuffer.class);
     }
 
+    public List<MeshInstanceBuffer> getMeshInstanceBuffers() {
+        return getMeshBuffers(MeshInstanceBuffer.class);
+    }
+
     public <T extends MeshBuffer> List<T> getMeshBuffers(Class<T> tClass) {
         final List<Field> fields = this.fieldsLocator
                 .getAnnotatedFields(MeshBufferProperty.class);
