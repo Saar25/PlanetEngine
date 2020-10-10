@@ -5,6 +5,7 @@ import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 import org.saar.lwjgl.opengl.objects.vbos.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MeshVertexBuffer extends MeshBuffer {
@@ -43,6 +44,10 @@ public class MeshVertexBuffer extends MeshBuffer {
 
     public void addAttribute(Attribute attribute) {
         this.attributes.add(attribute);
+    }
+
+    public void addAttributes(Attribute... attributes) {
+        Collections.addAll(this.attributes, attributes);
     }
 
     private Attribute[] attributesArray() {
