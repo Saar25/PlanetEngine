@@ -9,12 +9,4 @@ public interface FlatReflectedVertex extends Vertex {
 
     Vector3fc getNormal3f();
 
-    static FlatReflectedVertex of(Vector3fc position, Vector3fc normal) {
-        return new FlatReflectedVertex() {
-            @Override public Vector3fc getPosition3f() { return position; }
-
-            @Override public Vector3fc getNormal3f() { return normal; }
-        };
-    }
-
 }

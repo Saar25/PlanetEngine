@@ -4,10 +4,7 @@ import org.joml.Planef;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.flatreflected.FlatReflectedDeferredRenderer;
-import org.saar.core.common.flatreflected.FlatReflectedMesh;
-import org.saar.core.common.flatreflected.FlatReflectedModel;
-import org.saar.core.common.flatreflected.FlatReflectedVertex;
+import org.saar.core.common.flatreflected.*;
 import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
@@ -73,10 +70,10 @@ public class ReflectionExample {
 
         final FlatReflectedModel mirror = new FlatReflectedModel(FlatReflectedMesh.load(
                 new FlatReflectedVertex[]{
-                        FlatReflectedVertex.of(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.forward()), // 0
-                        FlatReflectedVertex.of(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.forward()), // 1
-                        FlatReflectedVertex.of(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.forward()), // 2
-                        FlatReflectedVertex.of(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.forward()), // 3
+                        FlatReflected.vertex(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.forward()), // 0
+                        FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.forward()), // 1
+                        FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.forward()), // 2
+                        FlatReflected.vertex(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.forward()), // 3
                 }, new int[]{3, 2, 1, 3, 1, 0}
         ));
         mirror.getTransform().getPosition().set(0, 20, 30);
@@ -119,7 +116,6 @@ public class ReflectionExample {
             reflection.updateReflectionMap();
 
             deferredRenderer.render();
-            reflectionDeferredRenderer.render();
 
             window.update(true);
             window.pollEvents();
