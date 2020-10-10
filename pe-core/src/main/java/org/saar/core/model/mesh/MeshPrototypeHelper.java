@@ -25,13 +25,13 @@ public class MeshPrototypeHelper {
 
     public void allocateVertices(Vertex[] vertices) {
         for (MeshVertexBuffer buffer : getVertexBuffers()) {
-            buffer.allocate(vertices.length);
+            buffer.allocateCount(vertices.length);
         }
     }
 
     public void allocateIndices(int[] indices) {
         for (MeshIndexBuffer buffer : getIndexBuffers()) {
-            buffer.allocate(indices.length);
+            buffer.allocateCount(indices.length);
         }
     }
 
