@@ -1,6 +1,7 @@
 package org.saar.core.common.r3d;
 
 import org.saar.core.model.ElementsMesh;
+import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.ModelWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
@@ -50,8 +51,8 @@ public class Mesh3D implements Mesh {
 
         helper.store();
 
-        final Mesh mesh = new ElementsMesh(vao,
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        final Mesh mesh = new InstancedElementsMesh(vao,
+                RenderMode.TRIANGLES, indices.length, DataType.U_INT, instances.length);
         return new Mesh3D(mesh);
     }
 
