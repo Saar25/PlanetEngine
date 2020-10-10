@@ -6,6 +6,7 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.Assimp;
 import org.lwjgl.system.MemoryUtil;
+import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.saar.utils.file.TextFileLoader;
 
@@ -48,15 +49,20 @@ public class AssimpUtil {
         return aiScene;
     }
 
-    public static ByteBuffer toIndexBuffer(AIFace.Buffer facesBuffer) {
-        final ByteBuffer byteBuffer = MemoryUtil.memAlloc(facesBuffer.limit() * 4 * 3);
+    public static void writeIndexBuffer(BufferWriter writer, AIFace.Buffer facesBuffer) {
         while (facesBuffer.hasRemaining()) {
             final AIFace aiFace = facesBuffer.get();
             final IntBuffer indicesBuffer = aiFace.mIndices();
             while (indicesBuffer.hasRemaining()) {
-                byteBuffer.putInt(indicesBuffer.get());
+                writer.write(indicesBuffer.get());
             }
         }
+    }
+
+    public static ByteBuffer toIndexBuffer(AIFace.Buffer facesBuffer) {
+        final int capacity = facesBuffer.limit() * 4 * 3;
+        final ByteBuffer byteBuffer = MemoryUtil.memAlloc(capacity);
+        writeIndexBuffer(new BufferWriter(byteBuffer), facesBuffer);
         byteBuffer.flip();
         return byteBuffer;
     }
