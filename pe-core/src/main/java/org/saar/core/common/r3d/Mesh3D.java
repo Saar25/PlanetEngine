@@ -1,6 +1,5 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.loader.ModelWriters;
