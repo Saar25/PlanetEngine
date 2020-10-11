@@ -1,6 +1,10 @@
 package org.saar.core.common.r3d
 
 import org.joml.Vector3fc
+import org.saar.core.model.mesh.MeshBufferProperty
+import org.saar.core.model.mesh.buffers.MeshIndexBuffer
+import org.saar.core.model.mesh.buffers.MeshInstanceBuffer
+import org.saar.core.model.mesh.buffers.MeshVertexBuffer
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.transform.Transform
 
@@ -25,6 +29,41 @@ object R3D {
 
             override fun getColour3f(): Vector3fc = colour
         }
+    }
+
+    @JvmStatic
+    fun mesh(meshVertexBuffer: MeshVertexBuffer,
+             meshInstanceBuffer: MeshInstanceBuffer,
+             meshIndexBuffer: MeshIndexBuffer): Mesh3DPrototype {
+        return object : Mesh3DPrototype {
+
+            @MeshBufferProperty
+            val meshVertexBuffer: MeshVertexBuffer = meshVertexBuffer
+
+            @MeshBufferProperty
+            val meshInstanceBuffer: MeshInstanceBuffer = meshInstanceBuffer
+
+            @MeshBufferProperty
+            val meshIndexBuffer: MeshIndexBuffer = meshIndexBuffer
+
+            override fun getPositionBuffer(): MeshVertexBuffer = this.meshVertexBuffer
+
+            override fun getNormalBuffer(): MeshVertexBuffer = this.meshVertexBuffer
+
+            override fun getColourBuffer(): MeshVertexBuffer = this.meshVertexBuffer
+
+            override fun getTransformBuffer(): MeshInstanceBuffer = this.meshInstanceBuffer
+
+            override fun getIndexBuffer(): MeshIndexBuffer = this.meshIndexBuffer
+        }
+    }
+
+    @JvmStatic
+    fun mesh(): Mesh3DPrototype {
+        val instance = MeshInstanceBuffer.createStatic()
+        val vertex = MeshVertexBuffer.createStatic()
+        val index = MeshIndexBuffer.createStatic()
+        return mesh(vertex, instance, index)
     }
 
 }

@@ -2,8 +2,8 @@ package org.saar.core.common.r2d;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.Attribute;
@@ -44,8 +44,7 @@ public class Mesh2D implements Mesh {
     }
 
     public static Mesh2D load(Vertex2D[] vertices, int[] indices) {
-        final Mesh2DPrototype prototype = new Mesh2DPrototypeImpl();
-        return Mesh2D.load(prototype, vertices, indices);
+        return Mesh2D.load(R2D.mesh(), vertices, indices);
     }
 
     @Override

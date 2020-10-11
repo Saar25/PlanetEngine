@@ -2,8 +2,8 @@ package org.saar.core.common.r3d;
 
 import org.saar.core.model.InstancedElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.Attribute;
@@ -56,8 +56,7 @@ public class Mesh3D implements Mesh {
     }
 
     public static Mesh3D load(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
-        final Mesh3DPrototype prototype = new Mesh3DPrototypeImpl();
-        return Mesh3D.load(prototype, vertices, indices, instances);
+        return Mesh3D.load(R3D.mesh(), vertices, indices, instances);
     }
 
     @Override

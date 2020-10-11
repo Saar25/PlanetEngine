@@ -3,11 +3,13 @@ package org.saar.core.common.obj;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.assimp.component.*;
+import org.saar.lwjgl.assimp.component.AssimpNormalComponent;
+import org.saar.lwjgl.assimp.component.AssimpPositionComponent;
+import org.saar.lwjgl.assimp.component.AssimpTexCoordComponent;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.Attribute;
@@ -53,12 +55,11 @@ public class ObjMesh implements Mesh {
     }
 
     public static ObjMesh load(ObjVertex[] vertices, int[] indices) {
-        final ObjMeshPrototype prototype = new ObjMeshPrototypeImpl();
-        return ObjMesh.load(prototype, vertices, indices);
+        return ObjMesh.load(Obj.mesh(), vertices, indices);
     }
 
     public static ObjMesh load(String objFile) throws Exception {
-        final ObjMeshPrototypeImpl prototype = new ObjMeshPrototypeImpl();
+        final ObjMeshPrototype prototype = Obj.mesh();
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
@@ -66,12 +67,12 @@ public class ObjMesh implements Mesh {
         final Vao vao = Vao.create();
 
         try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
-            assimpMesh.writeDataBuffer(prototype.getMeshVertexBuffer().getWrapper(),
+            assimpMesh.writeDataBuffer(prototype.getPositionBuffer().getWrapper(),
                     new AssimpPositionComponent(),
                     new AssimpTexCoordComponent(0),
                     new AssimpNormalComponent());
 
-            assimpMesh.writeIndexBuffer(prototype.getMeshIndexBuffer().getWrapper());
+            assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
 
             helper.store();
             helper.loadToVao(vao);

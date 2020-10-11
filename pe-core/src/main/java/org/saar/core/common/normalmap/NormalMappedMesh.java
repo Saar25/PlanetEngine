@@ -2,8 +2,8 @@ package org.saar.core.common.normalmap;
 
 import org.saar.core.model.ElementsMesh;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.assimp.component.*;
@@ -56,12 +56,11 @@ public class NormalMappedMesh implements Mesh {
     }
 
     public static NormalMappedMesh load(NormalMappedVertex[] vertices, int[] indices) {
-        final NormalMappedMeshPrototype prototype = new NormalMappedMeshPrototypeImpl();
-        return NormalMappedMesh.load(prototype, vertices, indices);
+        return NormalMappedMesh.load(NormalMapped.mesh(), vertices, indices);
     }
 
     public static NormalMappedMesh load(String objFile) throws Exception {
-        final NormalMappedMeshPrototypeImpl prototype = new NormalMappedMeshPrototypeImpl();
+        final NormalMappedMeshPrototype prototype = NormalMapped.mesh();
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
@@ -69,14 +68,14 @@ public class NormalMappedMesh implements Mesh {
         final Vao vao = Vao.create();
 
         try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
-            assimpMesh.writeDataBuffer(prototype.getMeshVertexBuffer().getWrapper(),
+            assimpMesh.writeDataBuffer(prototype.getPositionBuffer().getWrapper(),
                     new AssimpPositionComponent(),
                     new AssimpTexCoordComponent(0),
                     new AssimpNormalComponent(),
                     new AssimpTangentComponent(),
                     new AssimpBiTangentComponent());
 
-            assimpMesh.writeIndexBuffer(prototype.getMeshIndexBuffer().getWrapper());
+            assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
 
             helper.store();
             helper.loadToVao(vao);
