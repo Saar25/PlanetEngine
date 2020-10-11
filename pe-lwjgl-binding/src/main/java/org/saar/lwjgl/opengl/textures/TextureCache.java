@@ -5,17 +5,17 @@ import java.util.Map;
 
 public final class TextureCache {
 
-    private static final Map<String, ITexture> CACHE = new HashMap<>();
+    private static final Map<String, ReadOnlyTexture> CACHE = new HashMap<>();
 
     private TextureCache() {
 
     }
 
-    public static void addToCache(String file, ITexture texture) {
+    public static void addToCache(String file, ReadOnlyTexture texture) {
         CACHE.put(file, texture);
     }
 
-    public static ITexture getTexture(String file) {
+    public static ReadOnlyTexture getTexture(String file) {
         return CACHE.get(file);
     }
 }

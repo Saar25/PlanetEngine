@@ -2,7 +2,7 @@ package org.saar.example.renderer;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
-import org.saar.core.renderer.r2d.Vertex2D;
+import org.saar.core.common.r2d.Vertex2D;
 
 public class MyVertex implements Vertex2D {
 

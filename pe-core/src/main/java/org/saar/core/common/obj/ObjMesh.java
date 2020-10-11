@@ -1,25 +1,95 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.model.Mesh;
-import org.saar.core.model.vertex.ModelIndices;
 
-import java.util.List;
+import org.saar.core.model.ElementsMesh;
+import org.saar.core.model.Mesh;
+import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.model.mesh.MeshWriters;
+import org.saar.lwjgl.assimp.AssimpMesh;
+import org.saar.lwjgl.assimp.AssimpUtil;
+import org.saar.lwjgl.assimp.component.AssimpNormalComponent;
+import org.saar.lwjgl.assimp.component.AssimpPositionComponent;
+import org.saar.lwjgl.assimp.component.AssimpTexCoordComponent;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class ObjMesh implements Mesh {
 
-    private final List<ObjVertex> vertices;
-    private final ModelIndices indices;
+    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
+    private static final Attribute uvCoordAttribute = Attribute.of(1, 2, DataType.FLOAT, false);
+    private static final Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
 
-    public ObjMesh(List<ObjVertex> vertices, ModelIndices indices) {
-        this.vertices = vertices;
-        this.indices = indices;
+    private final Mesh mesh;
+
+    public ObjMesh(Mesh mesh) {
+        this.mesh = mesh;
     }
 
-    public List<ObjVertex> getVertices() {
-        return this.vertices;
+    private static void setUpPrototype(ObjMeshPrototype prototype) {
+        prototype.getPositionBuffer().addAttribute(positionAttribute);
+        prototype.getUvCoordBuffer().addAttribute(uvCoordAttribute);
+        prototype.getNormalBuffer().addAttribute(normalAttribute);
     }
 
-    public ModelIndices getIndices() {
-        return this.indices;
+    public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
+        setUpPrototype(prototype);
+
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+
+        final Vao vao = Vao.create();
+        helper.loadToVao(vao);
+        helper.allocateIndices(indices);
+        helper.allocateVertices(vertices);
+
+        final ObjMeshWriter writer = new ObjMeshWriter(prototype);
+        MeshWriters.writeVertices(writer, vertices);
+        MeshWriters.writeIndices(writer, indices);
+
+        helper.store();
+
+        final Mesh mesh = new ElementsMesh(vao,
+                RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        return new ObjMesh(mesh);
+    }
+
+    public static ObjMesh load(ObjVertex[] vertices, int[] indices) {
+        return ObjMesh.load(Obj.mesh(), vertices, indices);
+    }
+
+    public static ObjMesh load(String objFile) throws Exception {
+        final ObjMeshPrototype prototype = Obj.mesh();
+        setUpPrototype(prototype);
+
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+
+        final Vao vao = Vao.create();
+
+        try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
+            assimpMesh.writeDataBuffer(prototype.getPositionBuffer().getWrapper(),
+                    new AssimpPositionComponent(),
+                    new AssimpTexCoordComponent(0),
+                    new AssimpNormalComponent());
+
+            assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
+
+            helper.store();
+            helper.loadToVao(vao);
+
+            final Mesh mesh = new ElementsMesh(vao, RenderMode.TRIANGLES,
+                    assimpMesh.indexCount(), DataType.U_INT);
+            return new ObjMesh(mesh);
+        }
+    }
+
+    @Override
+    public void draw() {
+        this.mesh.draw();
+    }
+
+    @Override
+    public void delete() {
+        this.mesh.delete();
     }
 }

@@ -1,87 +1,98 @@
 package org.saar.lwjgl.opengl.shaders;
 
 import org.lwjgl.opengl.GL20;
-import org.saar.utils.file.TextFileLoader;
 
 public class Shader {
 
     public final int id;
-    private final String code;
     private final ShaderType type;
+    private final String[] code;
 
-    private Shader(int id, String code, ShaderType type) {
+    public Shader(int id, ShaderType type, String... code) {
         this.id = id;
-        this.code = code;
         this.type = type;
+        this.code = code;
     }
 
     /**
      * Creates a shader of the given type, with the given file that contains the code
      *
-     * @param fileName the code file
-     * @param type     the shader type
+     * @param sources the sources code file
+     * @param type    the shader type
      * @return a vertex shader
-     * @throws Exception In case could not read the file
      */
-    public static Shader of(String fileName, ShaderType type) throws Exception {
+    public static Shader of(ShaderType type, GlslVersion version, ShaderCode... sources) {
         final int id = GL20.glCreateShader(type.get());
-        final String code = TextFileLoader.loadResource(fileName);
-        return new Shader(id, code, type);
+        return new Shader(id, type, getSources(version, sources));
+    }
+
+    private static String[] getSources(GlslVersion version, ShaderCode... sources) {
+        final String[] codes = new String[sources.length + 1];
+        codes[0] = version.toString() + '\n';
+        for (int i = 0; i < sources.length; i++) {
+            codes[i + 1] = sources[i].getCode() + '\n';
+        }
+        return codes;
     }
 
     /**
      * Creates a vertex shader with the given file that contains the code
      *
-     * @param fileName the code file
+     * @param version the shader version
+     * @param sources the sources code file
      * @return a vertex shader
-     * @throws Exception In case could not read the file
      */
-    public static Shader createVertex(String fileName) throws Exception {
-        return Shader.of(fileName, ShaderType.VERTEX);
+    public static Shader createVertex(GlslVersion version, ShaderCode... sources) {
+        return Shader.of(ShaderType.VERTEX, version, sources);
+    }
+
+    public static Shader createVertex(String source) throws Exception {
+        return Shader.createVertex(GlslVersion.NONE, ShaderCode.loadSource(source));
     }
 
     /**
      * Creates a fragment shader with the given file that contains the code
      *
-     * @param fileName the code file
+     * @param version the shader version
+     * @param sources the sources code file
      * @return a fragment shader
-     * @throws Exception In case could not read the file
      */
-    public static Shader createFragment(String fileName) throws Exception {
-        return Shader.of(fileName, ShaderType.FRAGMENT);
+    public static Shader createFragment(GlslVersion version, ShaderCode... sources) {
+        return Shader.of(ShaderType.FRAGMENT, version, sources);
+    }
+
+    public static Shader createFragment(String source) throws Exception {
+        return Shader.of(ShaderType.FRAGMENT, GlslVersion.NONE, ShaderCode.loadSource(source));
     }
 
     /**
      * Creates a geometry shader with the given file that contains the code
      *
-     * @param fileName the code file
+     * @param sources the sources code file
      * @return a geometry shader
-     * @throws Exception In case could not read the file
      */
-    public static Shader createGeometry(String fileName) throws Exception {
-        return Shader.of(fileName, ShaderType.GEOMETRY);
+    public static Shader createGeometry(GlslVersion version, ShaderCode... sources) {
+        return Shader.of(ShaderType.GEOMETRY, version, sources);
     }
 
     /**
      * Creates a tessellation control shader with the given file that contains the code
      *
-     * @param fileName the code file
+     * @param sources the sources code file
      * @return a tessellation control shader
-     * @throws Exception In case could not read the file
      */
-    public static Shader createTessControl(String fileName) throws Exception {
-        return Shader.of(fileName, ShaderType.TESS_CONTROL);
+    public static Shader createTessControl(GlslVersion version, ShaderCode... sources) {
+        return Shader.of(ShaderType.TESS_CONTROL, version, sources);
     }
 
     /**
      * Creates a tessellation evaluation shader with the given file that contains the code
      *
-     * @param fileName the code file
+     * @param sources the sources code file
      * @return a tessellation evaluation shader
-     * @throws Exception In case could not read the file
      */
-    public static Shader createTessEvaluation(String fileName) throws Exception {
-        return Shader.of(fileName, ShaderType.TESS_EVALUATION);
+    public static Shader createTessEvaluation(GlslVersion version, ShaderCode... sources) {
+        return Shader.of(ShaderType.TESS_EVALUATION, version, sources);
     }
 
     /**

@@ -1,60 +1,32 @@
 package org.saar.core.renderer;
 
-import org.saar.core.renderer.annotations.InstanceUniformProperty;
-import org.saar.core.renderer.annotations.StageUniformProperty;
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
+import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
+import org.saar.utils.reflection.FieldsLocator;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public final class UniformPropertiesLocator {
 
-    private final Object object;
+    private final FieldsLocator fieldsLocator;
 
     public UniformPropertiesLocator(Object object) {
-        this.object = object;
+        this.fieldsLocator = new FieldsLocator(object);
     }
 
-    public List<UniformProperty<?>> getInstanceUniformProperties() {
-        return getUniformProperties(InstanceUniformProperty.class);
+    public List<Uniform> getUniforms() {
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformProperty.class);
+        return this.fieldsLocator.getValues(fields).stream().map(
+                Uniform.class::cast).collect(Collectors.toList());
     }
 
-    public List<UniformProperty<?>> getStageUniformProperties() {
-        return getUniformProperties(StageUniformProperty.class);
+    @SuppressWarnings("unchecked")
+    public <T> List<UniformUpdater<T>> getInstanceUniformUpdaters() {
+        final List<Field> fields = this.fieldsLocator.getAnnotatedFields(UniformUpdaterProperty.class);
+        return this.fieldsLocator.getValues(fields).stream()
+                .filter(UniformUpdater.class::isInstance)
+                .map(u -> (UniformUpdater<T>) u)
+                .collect(Collectors.toList());
     }
-
-    private List<UniformProperty<?>> getUniformProperties(Class<? extends Annotation> annotation) {
-        return mapToUniformProperties(getAnnotatedFields(getAllFields(), annotation));
-    }
-
-    private List<Field> getAllFields() {
-        final ArrayList<Field> fields = new ArrayList<>();
-        final Class<?> iClass = this.object.getClass();
-        Collections.addAll(fields, iClass.getDeclaredFields());
-        return fields;
-    }
-
-    private List<Field> getAnnotatedFields(List<Field> fields, Class<? extends Annotation> annotation) {
-        return fields.stream().filter(field -> field.isAnnotationPresent(annotation)).collect(Collectors.toList());
-    }
-
-    private List<UniformProperty<?>> mapToUniformProperties(List<Field> fields) {
-        final List<UniformProperty<?>> uniforms = new ArrayList<>(fields.size());
-
-        for (Field field : fields) {
-            try {
-                field.setAccessible(true);
-                final Object uniform = field.get(this.object);
-                uniforms.add((UniformProperty<?>) uniform);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return uniforms;
-    }
-
 }

@@ -1,20 +1,21 @@
 package org.saar.core.renderer;
 
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformProperty;
+import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
 import java.util.List;
 
 public final class Renderers {
 
     private Renderers() {
-        throw new AssertionError("Cannot create instance of class " + getClass().getSimpleName());
+        throw new AssertionError("Cannot create instance of class "
+                + getClass().getSimpleName());
     }
 
-    public static List<UniformProperty<?>> findStageUniformProperties(Renderer renderer) {
-        return new UniformPropertiesLocator(renderer).getStageUniformProperties();
+    public static List<Uniform> findUniforms(Object renderer) {
+        return new UniformPropertiesLocator(renderer).getUniforms();
     }
 
-    public static List<UniformProperty<?>> findInstanceUniformProperties(Renderer renderer) {
-        return new UniformPropertiesLocator(renderer).getInstanceUniformProperties();
+    public static <T> List<UniformUpdater<T>> findInstanceUniformsUpdaters(Object renderer) {
+        return new UniformPropertiesLocator(renderer).getInstanceUniformUpdaters();
     }
 }

@@ -1,6 +1,6 @@
 package org.saar.core.common.primitive;
 
-import org.saar.core.model.Model;
+import org.saar.core.model.Mesh;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 
@@ -62,7 +62,7 @@ public class PrimitiveModelLoader {
         return new Attribute[0];
     }
 
-    public Model createModel() {
+    public Mesh createModel() {
         final Attribute[] vertexAttributes = vertexAttributes();
         final Attribute[] nodeAttributes = nodeAttributes(vertexAttributes.length);
 
@@ -74,7 +74,7 @@ public class PrimitiveModelLoader {
 
         buffers.load(vertices, indices, instances);
 
-        return buffers.getModel();
+        return buffers.getMesh();
 
     }
 }

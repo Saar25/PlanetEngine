@@ -3,6 +3,10 @@ package org.saar.lwjgl.opengl.textures;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
+import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting;
+import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting;
 
 public class CubeMapTextureBuilder {
 
@@ -80,12 +84,13 @@ public class CubeMapTextureBuilder {
     }
 
     public CubeMapTexture create() {
-        CubeMapTexture texture = CubeMapTexture.of(positiveX, positiveY, positiveZ, negativeX, negativeY, negativeZ);
-        TextureFunctions function = new TextureFunctions(texture, TextureTarget.TEXTURE_CUBE_MAP);
-        function.minFilter(MinFilterParameter.LINEAR)
-                .magFilter(MagFilterParameter.LINEAR)
-                .wrapS(WrapParameter.CLAMP_TO_EDGE)
-                .wrapT(WrapParameter.CLAMP_TO_EDGE);
+        final CubeMapTexture texture = CubeMapTexture.of(this.positiveX, this.positiveY,
+                this.positiveZ, this.negativeX, this.negativeY, this.negativeZ);
+        texture.setSettings(
+                new TextureMinFilterSetting(MinFilterParameter.LINEAR),
+                new TextureMagFilterSetting(MagFilterParameter.LINEAR),
+                new TextureSWrapSetting(WrapParameter.CLAMP_TO_EDGE),
+                new TextureTWrapSetting(WrapParameter.CLAMP_TO_EDGE));
         return texture;
     }
 

@@ -5,19 +5,19 @@ import java.util.Map;
 
 public class WindowHintGroup {
 
-    private final Map<WindowHint, Integer> hints = new EnumMap<>(WindowHint.class);
+    private final Map<WindowHintType, Integer> hints = new EnumMap<>(WindowHintType.class);
 
-    public WindowHintGroup setHint(WindowHint hint, int value) {
+    public WindowHintGroup setHint(WindowHintType hint, int value) {
         getHints().put(hint, value);
         return this;
     }
 
-    public WindowHintGroup setHint(WindowHint hint, boolean value) {
+    public WindowHintGroup setHint(WindowHintType hint, boolean value) {
         getHints().put(hint, value ? 1 : 0);
         return this;
     }
 
-    public Map<WindowHint, Integer> getHints() {
+    public Map<WindowHintType, Integer> getHints() {
         return this.hints;
     }
 }

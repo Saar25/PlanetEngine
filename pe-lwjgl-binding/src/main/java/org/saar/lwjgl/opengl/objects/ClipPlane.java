@@ -1,33 +1,36 @@
 package org.saar.lwjgl.opengl.objects;
 
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
+import org.saar.maths.utils.Vector4;
 
 public class ClipPlane {
 
     public static final ClipPlane NONE = ClipPlane.of(0, 0, 0, 0);
 
-    private final Vector4f value;
+    private final Vector4fc value;
 
     private ClipPlane(Vector4f value) {
         this.value = value;
     }
 
+    public static ClipPlane of(Vector4fc value) {
+        return new ClipPlane(Vector4.of(value).normalize());
+    }
+
     public static ClipPlane of(float a, float b, float c, float d) {
-        Vector4f value = new Vector4f(a, b, c, d);
-        return new ClipPlane(value);
+        return new ClipPlane(Vector4.of(a, b, c, d).normalize());
     }
 
     public static ClipPlane ofAbove(float height) {
-        Vector4f value = new Vector4f(0, +1, 0, -height);
-        return new ClipPlane(value);
+        return ClipPlane.of(0, +1, 0, -height);
     }
 
     public static ClipPlane ofBelow(float height) {
-        Vector4f value = new Vector4f(0, -1, 0, +height);
-        return new ClipPlane(value);
+        return ClipPlane.of(0, -1, 0, +height);
     }
 
-    public Vector4f getValue() {
-        return value;
+    public Vector4fc getValue() {
+        return this.value;
     }
 }

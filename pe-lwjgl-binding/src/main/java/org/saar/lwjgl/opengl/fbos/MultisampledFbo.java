@@ -1,46 +1,53 @@
 package org.saar.lwjgl.opengl.fbos;
 
 import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.MultisampledAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.exceptions.FrameBufferException;
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
 public class MultisampledFbo implements IFbo {
 
     private final Fbo fbo;
+    private final int samples;
 
-    public MultisampledFbo(int width, int height) {
+    public MultisampledFbo(int width, int height, int samples) {
         this.fbo = Fbo.create(width, height);
+        this.samples = samples;
     }
 
     private Fbo getFbo() {
         return fbo;
     }
 
-    public void setReadAttachment(Attachment attachment) {
+    @Override
+    public void setReadAttachment(ColourAttachment attachment) {
         getFbo().setReadAttachment(attachment);
     }
 
+    @Override
     public void setDrawAttachments(Attachment... attachments) {
         getFbo().setDrawAttachments(attachments);
     }
 
-    public void addAttachment(MultisampledAttachment attachment) {
-        getFbo().addAttachment(attachment);
+    @Override
+    public void addAttachment(Attachment attachment) {
+        bind();
+        attachment.initMS(this, this.samples);
     }
 
     public void blitToScreen() {
         getFbo().blitToScreen();
     }
 
-    public void blitFbo(IFbo fbo) {
-        getFbo().blitFbo(fbo);
+    @Override
+    public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
+                                int h2, FboBlitFilter filter, GlBuffer... buffers) {
+        getFbo().blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, buffers);
     }
 
     @Override
-    public void blitFbo(IFbo fbo, MagFilterParameter filter, GlBuffer... buffers) {
-        getFbo().blitFbo(fbo, filter, buffers);
+    public void resize(int width, int height) {
+        getFbo().resize(width, height);
     }
 
     @Override
@@ -54,19 +61,18 @@ public class MultisampledFbo implements IFbo {
     }
 
     @Override
+    public void bindAsDraw() {
+        getFbo().bindAsDraw();
+    }
+
+    @Override
+    public void bindAsRead() {
+        getFbo().bindAsRead();
+    }
+
+    @Override
     public void bind() {
         getFbo().bind();
-    }
-
-
-    @Override
-    public void bind(FboTarget target) {
-        getFbo().bind(target);
-    }
-
-    @Override
-    public void unbind(FboTarget target) {
-        getFbo().unbind(target);
     }
 
     @Override

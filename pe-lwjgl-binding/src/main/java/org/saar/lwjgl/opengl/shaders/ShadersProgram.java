@@ -1,20 +1,20 @@
 package org.saar.lwjgl.opengl.shaders;
 
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class ShadersProgram {
-
-    private static int boundProgram = 0;
 
     private final int id;
 
     private int attributeCount = 0;
     private boolean deleted = false;
 
-    private ShadersProgram(int id, Shader... shaders) throws Exception {
+    private ShadersProgram(int id, Shader... shaders) throws ShaderCompileException {
         this.id = id;
 
-        bind();
+//        bind();
         for (Shader shader : shaders) {
             shader.init();
             shader.attach(id);
@@ -28,15 +28,9 @@ public class ShadersProgram {
         unbind();
     }
 
-    public static ShadersProgram create(Shader vertexShader, Shader fragmentShader) throws Exception {
+    public static ShadersProgram create(Shader vertexShader, Shader fragmentShader) throws ShaderCompileException {
         final int id = GL20.glCreateProgram();
         return new ShadersProgram(id, vertexShader, fragmentShader);
-    }
-
-    public static ShadersProgram create(String vertexFile, String fragmentFile) throws Exception {
-        final Shader vertexShader = Shader.createVertex(vertexFile);
-        final Shader fragmentShader = Shader.createFragment(fragmentFile);
-        return ShadersProgram.create(vertexShader, fragmentShader);
     }
 
     public void bindAttribute(int location, String name) {
@@ -53,33 +47,38 @@ public class ShadersProgram {
         }
     }
 
-    public int getUniformLocation(String name) {
-        this.bind0();
-        return GL20.glGetUniformLocation(id, name);
+    public void bindFragmentOutput(int location, String name) {
+        GL30.glBindFragDataLocation(this.id, location, name);
     }
 
-    public void bind() {
-        if (boundProgram != id) {
-            boundProgram = id;
-            bind0();
+    public void bindFragmentOutputs(String... names) {
+        for (int i = 0; i < names.length; i++) {
+            bindFragmentOutput(i, names[i]);
         }
     }
 
-    private void bind0() {
-        GL20.glUseProgram(id);
+    public int getUniformLocation(String name) {
+        return GL20.glGetUniformLocation(this.id, name);
+    }
+
+    public void bind() {
+        if (!GlConfigs.CACHE_STATE || !BoundProgram.isBound(this.id)) {
+            GL20.glUseProgram(this.id);
+            BoundProgram.set(this.id);
+        }
     }
 
     public void unbind() {
-        if (boundProgram != 0) {
+        if (!GlConfigs.CACHE_STATE || !BoundProgram.isBound(0)) {
             GL20.glUseProgram(0);
-            boundProgram = 0;
+            BoundProgram.set(0);
         }
     }
 
     public void delete() {
-        if (!deleted) {
+        if (!this.deleted) {
             GL20.glDeleteProgram(id);
-            deleted = true;
+            this.deleted = true;
         }
     }
 

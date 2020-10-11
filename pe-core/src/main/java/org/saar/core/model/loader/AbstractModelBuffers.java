@@ -1,14 +1,18 @@
 package org.saar.core.model.loader;
 
-import org.saar.core.model.Vertex;
-import org.saar.core.node.Node;
-import org.saar.lwjgl.opengl.objects.*;
+import org.lwjgl.system.MemoryUtil;
+import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.IVbo;
+import org.saar.lwjgl.opengl.objects.vbos.IndexBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.Vbos;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> implements ModelBuffers, ModelWriter<N, V> {
+public abstract class AbstractModelBuffers implements ModelBuffers {
 
     protected final Vao vao = Vao.create();
     private final List<ModelBuffer> buffers = new ArrayList<>();
@@ -31,26 +35,15 @@ public abstract class AbstractModelBuffers<N extends Node, V extends Vertex> imp
     protected final void updateBuffers() {
         for (final ModelBuffer modelBuffer : this.buffers) {
             final ByteBuffer buffer = modelBuffer.getBuffer();
-            final WriteableVbo vbo = modelBuffer.getVbo();
+            final IVbo vbo = modelBuffer.getVbo();
+            buffer.flip();
             Vbos.allocateAndStore(vbo, buffer);
         }
     }
 
-    protected final void writeVertices(V[] vertices) {
-        for (V vertex : vertices) {
-            writeVertex(vertex);
-        }
-    }
-
-    protected final void writeInstances(N[] instances) {
-        for (N instance : instances) {
-            writeInstance(instance);
-        }
-    }
-
-    protected final void writeIndices(int[] indices) {
-        for (int index : indices) {
-            writeIndex(index);
+    protected final void deleteBuffers() {
+        for (final ModelBuffer modelBuffer : this.buffers) {
+            MemoryUtil.memFree(modelBuffer.getBuffer());
         }
     }
 

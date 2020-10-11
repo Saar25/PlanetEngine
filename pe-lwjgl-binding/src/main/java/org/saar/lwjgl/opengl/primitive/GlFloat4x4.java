@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.maths.utils.Matrix4;
 
-public class GlFloat4x4 implements GlPrimitive {
+public class GlFloat4x4 extends GlPrimitiveBase implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
     private static final int COMPONENT_COUNT = 16;

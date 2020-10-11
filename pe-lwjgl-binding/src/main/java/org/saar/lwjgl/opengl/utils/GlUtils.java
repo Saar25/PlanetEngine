@@ -14,6 +14,7 @@ public final class GlUtils {
 
     private static BlendFunction blendFunction = BlendFunction.NONE;
     private static DepthFunction depthFunction = DepthFunction.NONE;
+    private static GlCullFace cullFace = GlCullFace.NONE;
 
     private GlUtils() {
 
@@ -48,38 +49,23 @@ public final class GlUtils {
     }
 
     /**
-     * Enable culling the back faced triangles
+     * Setting the cull face
+     *
+     * @param face the face to cull, GlCullFace.NONE if disable
      */
-    public static void enableCulling() {
-        cull(GL11.GL_BACK);
-    }
-
-    /**
-     * Enable culling the front faced triangles
-     */
-    public static void enableFrontCulling() {
-        cull(GL11.GL_FRONT);
-    }
-
-    /**
-     * Disable culling the back faced triangles
-     */
-    public static void disableCulling() {
-        if (cullingFaces) {
-            GL11.glDisable(GL11.GL_CULL_FACE);
-            cullingFaces = false;
-            cullingFace = 0;
+    public static void setCullFace(GlCullFace face) {
+        if (GlUtils.cullFace != face) {
+            GlUtils.cullFace = face;
+            setCullFace0(face);
         }
     }
 
-    private static void cull(int face) {
-        if (!cullingFaces) {
+    private static void setCullFace0(GlCullFace face) {
+        if (face == GlCullFace.NONE) {
+            GL11.glDisable(GL11.GL_CULL_FACE);
+        } else {
             GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glCullFace(face);
-            cullingFaces = true;
-            cullingFace = face;
-        } else if (cullingFace != face) {
-            GL11.glCullFace(face);
+            GL11.glCullFace(face.get());
         }
     }
 

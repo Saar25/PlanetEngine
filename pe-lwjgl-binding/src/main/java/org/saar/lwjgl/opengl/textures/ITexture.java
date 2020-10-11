@@ -1,23 +1,14 @@
 package org.saar.lwjgl.opengl.textures;
 
-public interface ITexture {
+public interface ITexture extends WritableTexture, ReadOnlyTexture {
 
     /**
-     * Binds the texture to a specific texture unit
+     * Attaches the texture to the bound fbo
      *
-     * @param unit the texture active to active and bind to
+     * @param attachment the attachment of the texture
+     * @param level      the mip map level of texture to attach
      */
-    void bind(int unit);
-
-    /**
-     * Binds the texture to the current active texture
-     */
-    void bind();
-
-    /**
-     * Unbinds the texture from the current active texture
-     */
-    void unbind();
+    void attachToFbo(int attachment, int level);
 
     /**
      * Deletes the texture

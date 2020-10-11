@@ -1,17 +1,14 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
-import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 
 public interface Attachment {
 
     int getAttachmentPoint();
 
-    AttachmentType getAttachmentType();
+    void init(ReadOnlyFbo fbo);
 
-    Texture getTexture();
-
-    void init(Fbo fbo);
+    void initMS(ReadOnlyFbo fbo, int samples);
 
     void delete();
 

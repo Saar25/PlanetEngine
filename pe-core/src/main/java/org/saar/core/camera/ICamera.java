@@ -1,7 +1,7 @@
 package org.saar.core.camera;
 
 import org.joml.Matrix4fc;
-import org.saar.maths.objects.Transform;
+import org.saar.maths.transform.Transform;
 
 public interface ICamera {
 

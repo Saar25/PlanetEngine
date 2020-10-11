@@ -1,18 +1,18 @@
 package org.saar.example;
 
-import org.saar.core.model.InstancedArraysModel;
-import org.saar.core.model.Model;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.core.model.InstancedArraysMesh;
+import org.saar.core.model.Mesh;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.constants.VboUsage;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.objects.DataBuffer;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
@@ -44,7 +44,7 @@ public class InstancedModelExample {
         instanceBuffer.storeData(0, instanceData);
         vao.loadVbo(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
 
-        final Model model = new InstancedArraysModel(vao, RenderMode.TRIANGLES, 3, 3);
+        final Mesh mesh = new InstancedArraysMesh(vao, RenderMode.TRIANGLES, 3, 3);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -53,8 +53,8 @@ public class InstancedModelExample {
 
         shadersProgram.bind();
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT);
-        final RenderBufferAttachmentMS attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);
@@ -63,7 +63,7 @@ public class InstancedModelExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
-            model.draw();
+            mesh.draw();
             fbo.blitToScreen();
 
             window.update(true);
@@ -73,6 +73,7 @@ public class InstancedModelExample {
         fbo.delete();
         vao.delete();
         attachment.delete();
+        window.destroy();
     }
 
 }

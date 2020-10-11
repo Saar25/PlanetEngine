@@ -1,7 +1,7 @@
 package org.saar.core.model.vertex;
 
 import org.saar.core.model.Vertex;
-import org.saar.lwjgl.opengl.objects.Vao;
+import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 import java.util.List;
 

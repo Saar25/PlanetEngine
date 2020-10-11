@@ -1,12 +1,19 @@
 package org.saar.lwjgl.opengl.textures;
 
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.IInternalFormat;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
+import org.saar.lwjgl.opengl.textures.settings.*;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class Texture2D implements ITexture {
+public class Texture2D implements ReadOnlyTexture {
 
     private static final TextureTarget target = TextureTarget.TEXTURE_2D;
 
@@ -14,29 +21,20 @@ public class Texture2D implements ITexture {
     private final int width;
     private final int height;
 
-    private final TextureConfigs configs;
-    private final TextureFunctions functions;
+    private final List<TextureSetting> settings = new ArrayList<>();
 
     public Texture2D(Texture texture) {
         this.texture = texture;
         this.width = texture.getWidth();
         this.height = texture.getHeight();
-        this.configs = new TextureConfigs();
-        this.functions = new TextureFunctions(this, target);
     }
 
     public Texture2D(int width, int height) {
-        this(width, height, new TextureConfigs());
-    }
-
-    public Texture2D(int width, int height, TextureConfigs configs) {
         this.texture = Texture.create(target);
         this.width = width;
         this.height = height;
-        this.configs = configs.copy();
-        this.functions = new TextureFunctions(this, target);
 
-        allocate();
+        allocate(InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE);
     }
 
     public static Texture2D of(int width, int height) {
@@ -44,67 +42,63 @@ public class Texture2D implements ITexture {
     }
 
     public static Texture2D of(String fileName) throws Exception {
-        ITexture cached = TextureCache.getTexture(fileName);
+        ReadOnlyTexture cached = TextureCache.getTexture(fileName);
         if (cached instanceof Texture2D) {
             return (Texture2D) cached;
+        } else if (cached instanceof Texture) {
+            return new Texture2D((Texture) cached);
         }
-        final TextureConfigs configs = defaultConfigs();
         final TextureInfo info = TextureLoader.load(fileName);
-        final Texture2D texture = new Texture2D(info.getWidth(),
-                info.getHeight(), configs);
-        texture.load(info.getData());
+        final Texture texture = Texture.create(Texture2D.target);
+
+        texture.allocate(Texture2D.target, 0, InternalFormat.RGBA8, info.getWidth(),
+                info.getHeight(), 0, info.getFormatType(), DataType.U_BYTE, info.getData());
 
         TextureCache.addToCache(fileName, texture);
 
-        return texture;
+        final Texture2D texture2D = new Texture2D(texture);
+
+        texture2D.setSettings(
+                new TextureMinFilterSetting(MinFilterParameter.NEAREST_MIPMAP_LINEAR),
+                new TextureMagFilterSetting(MagFilterParameter.LINEAR),
+                new TextureAnisotropicFilterSetting(4f),
+                new TextureMipMapSetting()
+        );
+
+        return texture2D;
     }
 
-    private static TextureConfigs defaultConfigs() {
-        final TextureConfigs configs = new TextureConfigs();
-        configs.minFilter = MinFilterParameter.NEAREST_MIPMAP_LINEAR;
-        configs.magFilter = MagFilterParameter.LINEAR;
-        configs.anisotropicFilter = 4f;
-        configs.mipmap = true;
-        return configs;
+    public void setSettings(TextureSetting... settings) {
+        this.settings.clear();
+        this.settings.addAll(Arrays.asList(settings));
+        applySettings();
+    }
+
+    private void applySettings() {
+        this.texture.setSettings(Texture2D.target,
+                this.settings.toArray(new TextureSetting[0]));
     }
 
     /**
      * Allocates memory for the texture
      */
-    private void allocate() {
-        this.texture.allocate(target, 0, configs.internalFormat, width,
-                height, 0, configs.format, configs.dataType, (ByteBuffer) null);
-        this.functions.apply(configs);
+    private void allocate(IInternalFormat internalFormat, FormatType format, DataType dataType) {
+        this.texture.allocate(target, 0, internalFormat, getWidth(),
+                getHeight(), 0, format, dataType, null);
+        applySettings();
     }
 
     /**
      * Loads the given data to the texture
      *
-     * @param data the texture data
+     * @param data     the texture data
+     * @param format   the data format
+     * @param dataType the data type
      */
-    public void load(ByteBuffer data) {
-        if (configs.dataType.getBytes() != 1) {
-            throw new IllegalArgumentException("Texture with data type of " +
-                    configs.dataType + " " + "cannot load byte buffer");
-        }
-        this.texture.load(target, 0, 0, 0, width, height,
-                configs.format, configs.dataType, data);
-        this.functions.apply(configs);
-    }
-
-    /**
-     * Loads the given data to the texture
-     *
-     * @param data the texture data
-     */
-    public void load(IntBuffer data) {
-        /*if (configs.dataType.getBytes() != 4) {
-            throw new IllegalArgumentException("Texture with data type of " +
-                    configs.dataType + " cannot load int buffer");
-        }*/
-        this.texture.load(target, 0, 0, 0, width, height,
-                configs.format, configs.dataType, data);
-        this.functions.apply(configs);
+    public void load(ByteBuffer data, FormatType format, DataType dataType) {
+        this.texture.load(Texture2D.target, 0, 0, 0, getWidth(), getHeight(),
+                format, dataType, data);
+        applySettings();
     }
 
     /**
@@ -114,11 +108,8 @@ public class Texture2D implements ITexture {
      * @throws Exception thrown when could not load the texture file
      */
     public void load(String textureFile) throws Exception {
-        this.load(TextureLoader.load(textureFile).getData());
-    }
-
-    public ByteBuffer getPixels() {
-        return texture.getPixelsBuffer();
+        final TextureInfo info = TextureLoader.load(textureFile);
+        this.load(info.getData(), info.getFormatType(), info.getDataType());
     }
 
     /**
@@ -127,7 +118,7 @@ public class Texture2D implements ITexture {
      * @return the width of the texture
      */
     public int getWidth() {
-        return width;
+        return this.width;
     }
 
     /**
@@ -136,7 +127,7 @@ public class Texture2D implements ITexture {
      * @return the height of the texture
      */
     public int getHeight() {
-        return height;
+        return this.height;
     }
 
     @Override

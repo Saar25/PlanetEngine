@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 import org.saar.maths.utils.Vector2;
 
-public class GlFloat2 implements GlPrimitive {
+public class GlFloat2 extends GlPrimitiveBase implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
     private static final int COMPONENT_COUNT = 2;

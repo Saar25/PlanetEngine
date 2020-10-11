@@ -1,7 +1,8 @@
 #version 400
 
 // Vertex outputs
-in vec3 v_colour;
+flat in vec3 v_colour;
+flat in vec3 v_normal;
 
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;

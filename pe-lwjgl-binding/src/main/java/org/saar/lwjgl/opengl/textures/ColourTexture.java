@@ -1,38 +1,55 @@
 package org.saar.lwjgl.opengl.textures;
 
+import org.lwjgl.system.MemoryUtil;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.utils.MemoryUtils;
 
-public class ColourTexture implements ITexture {
+import java.nio.ByteBuffer;
 
-    private final Texture2D texture;
+public class ColourTexture implements ReadOnlyTexture {
+
+    private final ReadOnlyTexture texture;
     private final int r;
     private final int g;
     private final int b;
+    private final int a;
 
-    public ColourTexture(int r, int g, int b) {
-        this.texture = new Texture2D(1, 1);
-        final byte[] bytes = new byte[]{(byte) r, (byte) g, (byte) b};
-        getTexture().load(MemoryUtils.loadToByteBuffer(bytes));
-
+    public ColourTexture(ReadOnlyTexture texture, int r, int g, int b, int a) {
+        this.texture = texture;
         this.r = r;
         this.g = g;
         this.b = b;
+        this.a = a;
+    }
+
+    public static ColourTexture of(int r, int g, int b, int a) {
+        final Texture2D texture = new Texture2D(1, 1);
+        final ByteBuffer buffer = MemoryUtils.allocByte(4);
+        buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) a).flip();
+        texture.load(buffer, FormatType.RGBA, DataType.U_BYTE);
+        MemoryUtil.memFree(buffer);
+        return new ColourTexture(texture, r, g, b, a);
     }
 
     public int getRed() {
-        return r;
+        return this.r;
     }
 
     public int getGreen() {
-        return g;
+        return this.g;
     }
 
     public int getBlue() {
-        return b;
+        return this.b;
     }
 
-    private Texture2D getTexture() {
-        return texture;
+    public int getAlpha() {
+        return this.a;
+    }
+
+    private ReadOnlyTexture getTexture() {
+        return this.texture;
     }
 
     @Override

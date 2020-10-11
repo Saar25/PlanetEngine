@@ -1,10 +1,9 @@
 package org.saar.core.common.primitive;
 
-import org.saar.core.node.AbstractNode;
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 
-public class PrimitiveNode extends AbstractNode implements Node {
+public class PrimitiveNode implements Node {
 
     private final GlPrimitive[] values;
 

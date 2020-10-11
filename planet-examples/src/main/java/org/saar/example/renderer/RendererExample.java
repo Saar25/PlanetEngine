@@ -1,46 +1,43 @@
 package org.saar.example.renderer;
 
-import org.saar.core.model.vertex.ModelIndices;
-import org.saar.core.renderer.r2d.RenderNode2D;
-import org.saar.core.renderer.r2d.Renderer2D;
-import org.saar.lwjgl.glfw.input.Keyboard;
+import org.saar.core.common.r2d.Mesh2D;
+import org.saar.core.common.r2d.Model2D;
+import org.saar.core.common.r2d.Renderer2D;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.RenderBufferAttachmentMS;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class RendererExample {
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static RenderBufferAttachmentMS attachment;
+    private static ColourAttachment attachment;
 
     public static void main(String[] args) {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        attachment = RenderBufferAttachmentMS.ofColour(0, FormatType.BGRA, 16);
+        attachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
 
         final float a = 0.7f, b = 0.3f;
-        final ModelIndices indices = new ModelIndices(0, 1, 2, 0, 2, 3);
-        final List<MyVertex> vertices = Arrays.asList(
+        final int[] indices = {0, 1, 2, 0, 2, 3};
+        final MyVertex[] vertices = {
                 new MyVertex(Vector2.of(-a, -a + .1f), Vector3.of(+0.0f, +0.0f, +0.5f)),
                 new MyVertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
                 new MyVertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f)));
-        final MyMesh mesh = new MyMesh(vertices, indices);
-        final MyNode node = new MyNode();
+                new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
-        final RenderNode2D renderNode = new RenderNode2D(mesh, node);
-        final Renderer2D renderer = new Renderer2D(renderNode);
+        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        final Model2D model = new Model2D(mesh);
+        final Renderer2D renderer = new Renderer2D(model);
 
         MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
 
@@ -52,8 +49,8 @@ public class RendererExample {
 
 //            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).x += .001f;
 //            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).y += .001f;
-//            renderNode.update();
-            renderer.render();
+//            model.update();
+            renderer.render(new RenderContextBase(null));
 
             fbo.blitToScreen();
 
@@ -67,12 +64,13 @@ public class RendererExample {
 
         renderer.delete();
         fbo.delete();
-        renderNode.getModel().delete();
+        model.delete();
         attachment.delete();
+        window.destroy();
     }
 
     private static MultisampledFbo createFbo(int width, int height) {
-        final MultisampledFbo fbo = new MultisampledFbo(width, height);
+        final MultisampledFbo fbo = new MultisampledFbo(width, height, 16);
         fbo.setDrawAttachments(attachment);
         fbo.setReadAttachment(attachment);
         fbo.addAttachment(attachment);
