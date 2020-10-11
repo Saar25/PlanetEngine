@@ -30,7 +30,7 @@ public class Renderer3DExample {
 
     private static final int CUBES = 100_000;
     private static final int AREA = 1000;
-    private static final int BATCHES = singleBatch ? 1 : 100_000;
+    private static final int BATCHES = singleBatch ? 1 : 10_000;
 
     private static ColourAttachment colorAttachment;
     private static DepthAttachment depthAttachment;
