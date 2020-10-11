@@ -3,6 +3,7 @@ package org.saar.example.renderer3d;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.Mesh3D;
+import org.saar.core.common.r3d.Mesh3DPrototype;
 import org.saar.core.common.r3d.Model3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.core.renderer.RenderContextBase;
@@ -21,12 +22,15 @@ import org.saar.maths.utils.Quaternion;
 
 public class Renderer3DExample {
 
+    private static final boolean optimizeMesh = true;
+    private static final boolean singleBatch = true;
+
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static final int CUBES = 1_000_000;
+    private static final int CUBES = 100_000;
     private static final int AREA = 1000;
-    private static final int BATCHES = 10;
+    private static final int BATCHES = singleBatch ? 1 : 100_000;
 
     private static ColourAttachment colorAttachment;
     private static DepthAttachment depthAttachment;
@@ -89,7 +93,8 @@ public class Renderer3DExample {
                         (float) Math.random(), (float) Math.random()).normalize());
                 nodes[j] = newNode;
             }
-            final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
+            final Mesh3DPrototype prototype = optimizeMesh ? new MeshOptimized() : new MeshUnoptimized();
+            final Mesh3D mesh = Mesh3D.load(prototype, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
             batches[i] = new Model3D(mesh);
         }
         return batches;
