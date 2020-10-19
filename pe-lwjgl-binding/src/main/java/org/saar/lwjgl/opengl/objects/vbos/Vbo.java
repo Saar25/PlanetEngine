@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class Vbo implements WriteableVbo {
+public class Vbo implements IVbo {
 
     public static final Vbo NULL_ARRAY = new Vbo(BufferObject.NULL,
             VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
@@ -30,44 +30,38 @@ public class Vbo implements WriteableVbo {
         return new Vbo(buffer, target, usage);
     }
 
+    public void allocateInt(long size) {
+        allocateByte(size * DataType.INT.getBytes());
+    }
+
+    public void allocateFloat(long size) {
+        allocateByte(size * DataType.FLOAT.getBytes());
+    }
+
+    public void storeData(long offset, int[] data) {
+        this.buffer.store(this.target.get(), offset, data);
+    }
+
+    public void storeData(long offset, float[] data) {
+        this.buffer.store(this.target.get(), offset, data);
+    }
+
+    public void storeData(long offset, IntBuffer data) {
+        this.buffer.store(this.target.get(), offset, data);
+    }
+
+    public void storeData(long offset, FloatBuffer data) {
+        this.buffer.store(this.target.get(), offset, data);
+    }
+
     @Override
     public void allocateByte(long size) {
         this.buffer.allocate(this.target.get(), size, this.usage.get());
     }
 
     @Override
-    public void allocateInt(long size) {
-        allocateByte(size * DataType.INT.getBytes());
-    }
-
-    @Override
-    public void allocateFloat(long size) {
-        allocateByte(size * DataType.FLOAT.getBytes());
-    }
-
-    @Override
-    public void storeData(long offset, int[] data) {
-        this.buffer.store(this.target.get(), offset, data);
-    }
-
-    @Override
-    public void storeData(long offset, float[] data) {
-        this.buffer.store(this.target.get(), offset, data);
-    }
-
-    @Override
     public void storeData(long offset, ByteBuffer buffer) {
         this.buffer.store(this.target.get(), offset, buffer);
-    }
-
-    @Override
-    public void storeData(long offset, IntBuffer data) {
-        this.buffer.store(this.target.get(), offset, data);
-    }
-
-    @Override
-    public void storeData(long offset, FloatBuffer data) {
-        this.buffer.store(this.target.get(), offset, data);
     }
 
     @Override

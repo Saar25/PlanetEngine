@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class DataBuffer implements WriteableVbo {
+public class DataBuffer implements IVbo {
 
     public static final DataBuffer NULL = new DataBuffer(Vbo.NULL_ARRAY);
 
@@ -22,14 +22,28 @@ public class DataBuffer implements WriteableVbo {
         return this.vbo;
     }
 
-    @Override
     public void allocateFloat(long size) {
         getVbo().allocateFloat(size);
     }
 
-    @Override
     public void allocateInt(long size) {
         getVbo().allocateInt(size);
+    }
+
+    public void storeData(long offset, int[] data) {
+        getVbo().storeData(offset, data);
+    }
+
+    public void storeData(long offset, float[] data) {
+        getVbo().storeData(offset, data);
+    }
+
+    public void storeData(long offset, IntBuffer data) {
+        getVbo().storeData(offset, data);
+    }
+
+    public void storeData(long offset, FloatBuffer data) {
+        getVbo().storeData(offset, data);
     }
 
     @Override
@@ -38,28 +52,8 @@ public class DataBuffer implements WriteableVbo {
     }
 
     @Override
-    public void storeData(long offset, int[] data) {
-        getVbo().storeData(offset, data);
-    }
-
-    @Override
-    public void storeData(long offset, float[] data) {
-        getVbo().storeData(offset, data);
-    }
-
-    @Override
     public void storeData(long offset, ByteBuffer buffer) {
         getVbo().storeData(offset, buffer);
-    }
-
-    @Override
-    public void storeData(long offset, IntBuffer data) {
-        getVbo().storeData(offset, data);
-    }
-
-    @Override
-    public void storeData(long offset, FloatBuffer data) {
-        getVbo().storeData(offset, data);
     }
 
     @Override
