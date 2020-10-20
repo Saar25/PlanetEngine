@@ -16,6 +16,12 @@ public class VboWrapper {
         this.vbo = vbo;
     }
 
+    public void allocateMore(int capacity) {
+        final int current = this.buffer == null
+                ? 0 : this.buffer.capacity();
+        allocate(capacity + current);
+    }
+
     public void allocate(int capacity) {
         MemoryUtil.memFree(this.buffer);
         this.vbo.allocateByte(capacity);
