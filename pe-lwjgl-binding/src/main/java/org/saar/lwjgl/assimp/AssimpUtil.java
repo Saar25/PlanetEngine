@@ -58,12 +58,4 @@ public class AssimpUtil {
             }
         }
     }
-
-    public static ByteBuffer toIndexBuffer(AIFace.Buffer facesBuffer) {
-        final int capacity = facesBuffer.limit() * 4 * 3;
-        final ByteBuffer byteBuffer = MemoryUtil.memAlloc(capacity);
-        writeIndexBuffer(new BufferWriter(byteBuffer), facesBuffer);
-        byteBuffer.flip();
-        return byteBuffer;
-    }
 }

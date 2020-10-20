@@ -4,33 +4,33 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
 import org.saar.lwjgl.assimp.AssimpComponent;
 import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
 
 public class AssimpTexCoordComponent extends AssimpComponent {
 
     private final int index;
+    private final VboWrapper vbo;
 
     private AIVector3D.Buffer buffer;
 
-    public AssimpTexCoordComponent(int index) {
+    public AssimpTexCoordComponent(int index, VboWrapper vbo) {
         this.index = index;
-    }
-
-    @Override
-    public int bytes() {
-        return 2 * Float.BYTES;
+        this.vbo = vbo;
     }
 
     @Override
     public void init(AIMesh aiMesh) {
         this.buffer = aiMesh.mTextureCoords(this.index);
         AssimpUtil.requiredNotNull(this.buffer, "Tex coords data not found");
+
+        final int bytes = 2 * Float.BYTES;
+        this.vbo.allocateMore(bytes * aiMesh.mVertices().limit());
     }
 
     @Override
-    public void next(BufferWriter writer) {
+    public void next() {
         final AIVector3D value = this.buffer.get();
-        writer.write(value.x());
-        writer.write(1 - value.y());
+        this.vbo.getWriter().write(value.x());
+        this.vbo.getWriter().write(1 - value.y());
     }
 }

@@ -67,10 +67,10 @@ public class ObjMesh implements Mesh {
         final Vao vao = Vao.create();
 
         try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
-            assimpMesh.writeDataBuffer(prototype.getPositionBuffer().getWrapper(),
-                    new AssimpPositionComponent(),
-                    new AssimpTexCoordComponent(0),
-                    new AssimpNormalComponent());
+            assimpMesh.writeDataBuffer(
+                    new AssimpPositionComponent(prototype.getPositionBuffer().getWrapper()),
+                    new AssimpTexCoordComponent(0, prototype.getUvCoordBuffer().getWrapper()),
+                    new AssimpNormalComponent(prototype.getNormalBuffer().getWrapper()));
 
             assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
 
