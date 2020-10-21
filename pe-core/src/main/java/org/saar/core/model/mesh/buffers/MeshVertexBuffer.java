@@ -2,6 +2,7 @@ package org.saar.core.model.mesh.buffers;
 
 import org.saar.core.model.mesh.MeshBuffer;
 import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 import org.saar.lwjgl.opengl.objects.vbos.*;
 
@@ -14,14 +15,14 @@ public class MeshVertexBuffer extends MeshBuffer {
     private final List<Attribute> attributes = new ArrayList<>();
     private final IVbo vbo;
 
-    public MeshVertexBuffer(IVbo vbo, VboWrapper wrapper) {
+    public MeshVertexBuffer(IVbo vbo, BufferObjectWrapper wrapper) {
         super(wrapper);
         this.vbo = vbo;
     }
 
     private static MeshVertexBuffer create(VboUsage usage) {
         final IVbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, usage);
-        return new MeshVertexBuffer(vbo, new VboWrapper(vbo));
+        return new MeshVertexBuffer(vbo, new BufferObjectWrapper(vbo));
     }
 
     public static MeshVertexBuffer createStatic() {

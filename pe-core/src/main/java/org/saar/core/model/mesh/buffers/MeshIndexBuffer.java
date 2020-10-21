@@ -2,6 +2,7 @@ package org.saar.core.model.mesh.buffers;
 
 import org.saar.core.model.mesh.MeshBuffer;
 import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 import org.saar.lwjgl.opengl.objects.vbos.*;
 
@@ -9,14 +10,14 @@ public class MeshIndexBuffer extends MeshBuffer {
 
     private final IVbo vbo;
 
-    public MeshIndexBuffer(IVbo vbo, VboWrapper wrapper) {
+    public MeshIndexBuffer(IVbo vbo, BufferObjectWrapper wrapper) {
         super(wrapper);
         this.vbo = vbo;
     }
 
     private static MeshIndexBuffer create(VboUsage usage) {
         final IVbo vbo = Vbo.create(VboTarget.ELEMENT_ARRAY_BUFFER, usage);
-        return new MeshIndexBuffer(vbo, new VboWrapper(vbo));
+        return new MeshIndexBuffer(vbo, new BufferObjectWrapper(vbo));
     }
 
     public static MeshIndexBuffer createStatic() {

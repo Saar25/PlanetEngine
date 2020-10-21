@@ -4,14 +4,14 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
 import org.saar.lwjgl.assimp.AssimpComponent;
 import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public abstract class AssimpComponent3D extends AssimpComponent {
 
-    private final VboWrapper vbo;
+    private final BufferObjectWrapper vbo;
     private AIVector3D.Buffer buffer;
 
-    public AssimpComponent3D(VboWrapper vbo) {
+    public AssimpComponent3D(BufferObjectWrapper vbo) {
         this.vbo = vbo;
     }
 

@@ -1,19 +1,18 @@
-package org.saar.lwjgl.opengl.objects.vbos;
+package org.saar.lwjgl.opengl.objects.buffers;
 
 import org.lwjgl.system.MemoryUtil;
-import org.saar.lwjgl.opengl.objects.buffers.WritableBufferObject;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 import java.nio.ByteBuffer;
 
-public class VboWrapper {
+public class BufferObjectWrapper {
 
     private final WritableBufferObject bufferObject;
 
     private ByteBuffer buffer = null;
     private BufferWriter writer = null;
 
-    public VboWrapper(WritableBufferObject bufferObject) {
+    public BufferObjectWrapper(WritableBufferObject bufferObject) {
         this.bufferObject = bufferObject;
     }
 

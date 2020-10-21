@@ -9,9 +9,7 @@ import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.Vbo;
 import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
-
-import java.util.Arrays;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public class WeakMesh implements Mesh {
 
@@ -95,7 +93,7 @@ public class WeakMesh implements Mesh {
 
     private static void loadIndices(Vao vao, int[] indices) {
         final Vbo vbo = Vbo.create(VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-        final VboWrapper wrapper = new VboWrapper(vbo);
+        final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
         wrapper.allocate(indices.length * DataType.INT.getBytes());
         MeshWriters.writeIndices(wrapper.getWriter()::write, indices);
@@ -105,7 +103,7 @@ public class WeakMesh implements Mesh {
 
     private static void loadVertices(Vao vao, WeakVertex[] vertices, Attribute[] attributes) {
         final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-        final VboWrapper wrapper = new VboWrapper(vbo);
+        final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
         wrapper.allocate(vertices.length * Attribute.sumBytes(attributes));
         MeshWriters.writeVertices(vertex -> vertex.write(wrapper.getWriter()), vertices);
@@ -116,7 +114,7 @@ public class WeakMesh implements Mesh {
 
     private static void loadInstances(Vao vao, WeakInstance[] instances, Attribute[] attributes) {
         final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-        final VboWrapper wrapper = new VboWrapper(vbo);
+        final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
         wrapper.allocate(instances.length * Attribute.sumBytes(attributes));
         MeshWriters.writeNodes(instance -> instance.write(wrapper.getWriter()), instances);

@@ -4,7 +4,7 @@ import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.Assimp;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public class AssimpMesh implements AutoCloseable {
 
@@ -29,7 +29,7 @@ public class AssimpMesh implements AutoCloseable {
         }
     }
 
-    public void writeIndexBuffer(VboWrapper vbo) throws AssimpException {
+    public void writeIndexBuffer(BufferObjectWrapper vbo) throws AssimpException {
         final AIFace.Buffer faceBuffer = this.aiMesh.mFaces();
 
         vbo.allocate(faceBuffer.limit() * 4 * 3);

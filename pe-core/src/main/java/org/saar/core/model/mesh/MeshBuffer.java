@@ -1,14 +1,14 @@
 package org.saar.core.model.mesh;
 
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 public abstract class MeshBuffer {
 
-    private final VboWrapper wrapper;
+    private final BufferObjectWrapper wrapper;
 
-    public MeshBuffer(VboWrapper wrapper) {
+    public MeshBuffer(BufferObjectWrapper wrapper) {
         this.wrapper = wrapper;
     }
 
@@ -26,7 +26,7 @@ public abstract class MeshBuffer {
         return getWrapper().getWriter();
     }
 
-    public VboWrapper getWrapper() {
+    public BufferObjectWrapper getWrapper() {
         return this.wrapper;
     }
 }

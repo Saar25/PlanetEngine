@@ -4,16 +4,16 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
 import org.saar.lwjgl.assimp.AssimpComponent;
 import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public class AssimpTexCoordComponent extends AssimpComponent {
 
     private final int index;
-    private final VboWrapper vbo;
+    private final BufferObjectWrapper vbo;
 
     private AIVector3D.Buffer buffer;
 
-    public AssimpTexCoordComponent(int index, VboWrapper vbo) {
+    public AssimpTexCoordComponent(int index, BufferObjectWrapper vbo) {
         this.index = index;
         this.vbo = vbo;
     }
