@@ -2,25 +2,25 @@ package org.saar.core.model;
 
 import org.saar.lwjgl.opengl.objects.vaos.IVao;
 
-public abstract class MeshBase implements Mesh {
+public class DrawCallMesh implements Mesh {
 
     private final IVao vao;
+    private final DrawCall drawCall;
 
-    public MeshBase(IVao vao) {
+    public DrawCallMesh(IVao vao, DrawCall drawCall) {
         this.vao = vao;
+        this.drawCall = drawCall;
     }
 
     @Override
-    public final void draw() {
+    public void draw() {
         this.vao.bind();
         this.vao.enableAttributes();
-        doDrawCall();
+        this.drawCall.doDrawCall();
     }
 
     @Override
-    public final void delete() {
+    public void delete() {
         this.vao.delete();
     }
-
-    protected abstract void doDrawCall();
 }

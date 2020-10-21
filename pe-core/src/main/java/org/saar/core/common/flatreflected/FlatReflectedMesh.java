@@ -1,9 +1,11 @@
 package org.saar.core.common.flatreflected;
 
-import org.saar.core.model.ElementsMesh;
+import org.saar.core.model.DrawCall;
+import org.saar.core.model.DrawCallMesh;
+import org.saar.core.model.ElementsDrawCall;
 import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.Attribute;
@@ -41,8 +43,9 @@ public class FlatReflectedMesh implements Mesh {
 
         helper.store();
 
-        final Mesh mesh = new ElementsMesh(vao,
+        final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
         return new FlatReflectedMesh(mesh);
     }
 

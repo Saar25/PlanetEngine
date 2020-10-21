@@ -1,6 +1,8 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.model.InstancedElementsMesh;
+import org.saar.core.model.DrawCall;
+import org.saar.core.model.DrawCallMesh;
+import org.saar.core.model.InstancedElementsDrawCall;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.core.model.mesh.MeshWriters;
@@ -50,8 +52,9 @@ public class Mesh3D implements Mesh {
 
         helper.store();
 
-        final Mesh mesh = new InstancedElementsMesh(vao,
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT, instances.length);
+        final DrawCall drawCall = new InstancedElementsDrawCall(RenderMode.TRIANGLES,
+                indices.length, DataType.U_INT, instances.length);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
         return new Mesh3D(mesh);
     }
 

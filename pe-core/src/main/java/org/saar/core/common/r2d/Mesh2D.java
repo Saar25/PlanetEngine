@@ -1,6 +1,8 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.model.ElementsMesh;
+import org.saar.core.model.DrawCall;
+import org.saar.core.model.DrawCallMesh;
+import org.saar.core.model.ElementsDrawCall;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.core.model.mesh.MeshWriters;
@@ -38,8 +40,9 @@ public class Mesh2D implements Mesh {
 
         helper.store();
 
-        final Mesh mesh = new ElementsMesh(vao,
+        final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
         return new Mesh2D(mesh);
     }
 

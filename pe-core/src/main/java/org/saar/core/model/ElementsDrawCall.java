@@ -2,26 +2,26 @@ package org.saar.core.model;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.vaos.IVao;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 
-public class ElementsMesh extends MeshBase implements Mesh {
+public class ElementsDrawCall implements DrawCall {
 
     private final RenderMode mode;
     private final int count;
     private final DataType indexType;
-    private final long indices;
 
-    public ElementsMesh(IVao vao, RenderMode renderMode, int count, DataType indexType) {
-        super(vao);
+    public ElementsDrawCall(RenderMode renderMode, int count, DataType indexType) {
         this.mode = renderMode;
         this.count = count;
         this.indexType = indexType;
-        this.indices = 0;
+    }
+
+    public static void drawCall(RenderMode mode, int count, DataType indexType, long indices) {
+        GlRendering.drawElements(mode, count, indexType, indices);
     }
 
     @Override
-    protected void doDrawCall() {
-        GlRendering.drawElements(this.mode, this.count, this.indexType, this.indices);
+    public void doDrawCall() {
+        drawCall(this.mode, this.count, this.indexType, 0);
     }
 }
