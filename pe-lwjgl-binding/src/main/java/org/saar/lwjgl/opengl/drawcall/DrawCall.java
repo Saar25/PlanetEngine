@@ -1,4 +1,4 @@
-package org.saar.core.model;
+package org.saar.lwjgl.opengl.drawcall;
 
 public interface DrawCall {
 

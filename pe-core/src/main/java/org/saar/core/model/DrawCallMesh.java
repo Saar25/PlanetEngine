@@ -1,5 +1,6 @@
 package org.saar.core.model;
 
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.objects.vaos.IVao;
 
 public class DrawCallMesh implements Mesh {

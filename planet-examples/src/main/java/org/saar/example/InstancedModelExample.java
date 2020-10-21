@@ -1,8 +1,8 @@
 package org.saar.example;
 
-import org.saar.core.model.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.core.model.DrawCallMesh;
-import org.saar.core.model.InstancedArraysDrawCall;
+import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.core.model.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;

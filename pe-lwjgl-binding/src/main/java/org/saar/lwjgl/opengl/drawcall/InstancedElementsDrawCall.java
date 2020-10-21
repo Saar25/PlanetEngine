@@ -1,4 +1,4 @@
-package org.saar.core.model;
+package org.saar.lwjgl.opengl.drawcall;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
