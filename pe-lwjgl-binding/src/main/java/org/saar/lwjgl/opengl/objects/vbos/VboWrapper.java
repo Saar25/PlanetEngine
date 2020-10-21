@@ -24,14 +24,14 @@ public class VboWrapper {
 
     public void allocate(int capacity) {
         MemoryUtil.memFree(this.buffer);
-        this.vbo.allocateByte(capacity);
+        this.vbo.allocate(capacity);
         this.buffer = MemoryUtil.memAlloc(capacity);
         this.writer = new BufferWriter(this.buffer);
     }
 
     public void store(long offset) {
         this.buffer.flip();
-        this.vbo.storeData(offset, this.buffer);
+        this.vbo.store(offset, this.buffer);
         MemoryUtil.memFree(this.buffer);
         this.buffer = null;
         this.writer = null;

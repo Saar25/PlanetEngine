@@ -31,36 +31,36 @@ public class Vbo implements IVbo {
     }
 
     public void allocateInt(long size) {
-        allocateByte(size * DataType.INT.getBytes());
+        allocate(size * DataType.INT.getBytes());
     }
 
     public void allocateFloat(long size) {
-        allocateByte(size * DataType.FLOAT.getBytes());
+        allocate(size * DataType.FLOAT.getBytes());
     }
 
-    public void storeData(long offset, int[] data) {
+    public void storeInt(long offset, int[] data) {
         this.buffer.store(this.target.get(), offset, data);
     }
 
-    public void storeData(long offset, float[] data) {
+    public void storeInt(long offset, IntBuffer data) {
         this.buffer.store(this.target.get(), offset, data);
     }
 
-    public void storeData(long offset, IntBuffer data) {
+    public void storeFloat(long offset, float[] data) {
         this.buffer.store(this.target.get(), offset, data);
     }
 
-    public void storeData(long offset, FloatBuffer data) {
+    public void storeFloat(long offset, FloatBuffer data) {
         this.buffer.store(this.target.get(), offset, data);
     }
 
     @Override
-    public void allocateByte(long size) {
+    public void allocate(long size) {
         this.buffer.allocate(this.target.get(), size, this.usage.get());
     }
 
     @Override
-    public void storeData(long offset, ByteBuffer buffer) {
+    public void store(long offset, ByteBuffer buffer) {
         this.buffer.store(this.target.get(), offset, buffer);
     }
 
@@ -93,5 +93,4 @@ public class Vbo implements IVbo {
     public void delete() {
         this.buffer.delete();
     }
-
 }

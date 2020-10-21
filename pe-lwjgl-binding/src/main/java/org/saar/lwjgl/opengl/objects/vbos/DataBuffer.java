@@ -22,38 +22,38 @@ public class DataBuffer implements IVbo {
         return this.vbo;
     }
 
-    public void allocateFloat(long size) {
-        getVbo().allocateFloat(size);
-    }
-
     public void allocateInt(long size) {
         getVbo().allocateInt(size);
     }
 
-    public void storeData(long offset, int[] data) {
-        getVbo().storeData(offset, data);
+    public void allocateFloat(long size) {
+        getVbo().allocateFloat(size);
     }
 
-    public void storeData(long offset, float[] data) {
-        getVbo().storeData(offset, data);
+    public void storeInt(long offset, int[] data) {
+        getVbo().storeInt(offset, data);
     }
 
-    public void storeData(long offset, IntBuffer data) {
-        getVbo().storeData(offset, data);
+    public void storeInt(long offset, IntBuffer data) {
+        getVbo().storeInt(offset, data);
     }
 
-    public void storeData(long offset, FloatBuffer data) {
-        getVbo().storeData(offset, data);
+    public void storeFloat(long offset, float[] data) {
+        getVbo().storeFloat(offset, data);
+    }
+
+    public void storeFloat(long offset, FloatBuffer data) {
+        getVbo().storeFloat(offset, data);
     }
 
     @Override
-    public void allocateByte(long size) {
-        getVbo().allocateByte(size);
+    public void allocate(long size) {
+        getVbo().allocate(size);
     }
 
     @Override
-    public void storeData(long offset, ByteBuffer buffer) {
-        getVbo().storeData(offset, buffer);
+    public void store(long offset, ByteBuffer buffer) {
+        getVbo().store(offset, buffer);
     }
 
     @Override

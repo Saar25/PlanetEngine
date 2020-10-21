@@ -9,7 +9,7 @@ public interface IVbo extends ReadOnlyVbo {
      *
      * @param size the bytes to allocate
      */
-    void allocateByte(long size);
+    void allocate(long size);
 
     /**
      * Store memory in the vbo
@@ -17,7 +17,7 @@ public interface IVbo extends ReadOnlyVbo {
      * @param offset the offset of the vbo
      * @param buffer the buffer to store in the vbo
      */
-    void storeData(long offset, ByteBuffer buffer);
+    void store(long offset, ByteBuffer buffer);
 
     /**
      * Map the vbo

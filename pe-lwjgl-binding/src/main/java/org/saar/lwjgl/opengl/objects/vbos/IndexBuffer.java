@@ -25,22 +25,22 @@ public class IndexBuffer implements IVbo {
         getVbo().allocateInt(size);
     }
 
-    public void storeData(long offset, int[] data) {
-        getVbo().storeData(offset, data);
+    public void storeInt(long offset, int[] data) {
+        getVbo().storeInt(offset, data);
     }
 
-    public void storeData(long offset, IntBuffer data) {
-        getVbo().storeData(offset, data);
-    }
-
-    @Override
-    public void allocateByte(long size) {
-        getVbo().allocateByte(size);
+    public void storeInt(long offset, IntBuffer data) {
+        getVbo().storeInt(offset, data);
     }
 
     @Override
-    public void storeData(long offset, ByteBuffer buffer) {
-        getVbo().storeData(offset, buffer);
+    public void allocate(long size) {
+        getVbo().allocate(size);
+    }
+
+    @Override
+    public void store(long offset, ByteBuffer buffer) {
+        getVbo().store(offset, buffer);
     }
 
     @Override
