@@ -27,7 +27,7 @@ public class MultisamplingExample {
         final Vao vao = Vao.create();
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
         vbo.allocateFloat(18);
-        vbo.storeData(0, new float[]{
+        vbo.storeFloat(0, new float[]{
                 -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
