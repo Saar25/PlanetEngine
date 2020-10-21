@@ -1,23 +1,10 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
+import org.saar.lwjgl.opengl.objects.buffers.WritableBufferObject;
+
 import java.nio.ByteBuffer;
 
-public interface IVbo extends ReadOnlyVbo {
-
-    /**
-     * Allocate memory for the vbo
-     *
-     * @param size the bytes to allocate
-     */
-    void allocate(long size);
-
-    /**
-     * Store memory in the vbo
-     *
-     * @param offset the offset of the vbo
-     * @param buffer the buffer to store in the vbo
-     */
-    void store(long offset, ByteBuffer buffer);
+public interface IVbo extends ReadOnlyVbo, WritableBufferObject {
 
     /**
      * Map the vbo

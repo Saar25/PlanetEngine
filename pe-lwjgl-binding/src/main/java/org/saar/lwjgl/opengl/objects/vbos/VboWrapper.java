@@ -1,19 +1,20 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
 import org.lwjgl.system.MemoryUtil;
+import org.saar.lwjgl.opengl.objects.buffers.WritableBufferObject;
 import org.saar.lwjgl.opengl.utils.BufferWriter;
 
 import java.nio.ByteBuffer;
 
 public class VboWrapper {
 
-    private final IVbo vbo;
+    private final WritableBufferObject bufferObject;
 
     private ByteBuffer buffer = null;
     private BufferWriter writer = null;
 
-    public VboWrapper(IVbo vbo) {
-        this.vbo = vbo;
+    public VboWrapper(WritableBufferObject bufferObject) {
+        this.bufferObject = bufferObject;
     }
 
     public void allocateMore(int capacity) {
@@ -24,14 +25,14 @@ public class VboWrapper {
 
     public void allocate(int capacity) {
         MemoryUtil.memFree(this.buffer);
-        this.vbo.allocate(capacity);
+        this.bufferObject.allocate(capacity);
         this.buffer = MemoryUtil.memAlloc(capacity);
         this.writer = new BufferWriter(this.buffer);
     }
 
     public void store(long offset) {
         this.buffer.flip();
-        this.vbo.store(offset, this.buffer);
+        this.bufferObject.store(offset, this.buffer);
         MemoryUtil.memFree(this.buffer);
         this.buffer = null;
         this.writer = null;
