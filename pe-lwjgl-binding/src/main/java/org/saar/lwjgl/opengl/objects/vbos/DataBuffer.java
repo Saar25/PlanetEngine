@@ -1,88 +1,96 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObject;
+import org.saar.lwjgl.opengl.objects.buffers.BufferTarget;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class DataBuffer implements IVbo {
 
-    public static final DataBuffer NULL = new DataBuffer(Vbo.NULL_ARRAY);
+    private static final BufferTarget TARGET = BufferTarget.ARRAY;
 
-    private final Vbo vbo;
+    public static final DataBuffer NULL = new DataBuffer(BufferObject.NULL, VboUsage.STATIC_DRAW);
 
-    private DataBuffer(Vbo vbo) {
-        this.vbo = vbo;
+    private final BufferObject buffer;
+    private final VboUsage usage;
+
+    private DataBuffer(BufferObject buffer, VboUsage usage) {
+        this.buffer = buffer;
+        this.usage = usage;
     }
 
     public DataBuffer(VboUsage usage) {
-        this.vbo = Vbo.create(VboTarget.ARRAY_BUFFER, usage);
+        this(BufferObject.create(), usage);
     }
 
-    private Vbo getVbo() {
-        return this.vbo;
+    private BufferObject getBuffer() {
+        return this.buffer;
     }
 
-    public void allocateInt(long size) {
-        getVbo().allocateInt(size);
+    public void allocateInt(long capacity) {
+        allocate(capacity * DataType.INT.getBytes());
     }
 
-    public void allocateFloat(long size) {
-        getVbo().allocateFloat(size);
+    public void allocateFloat(long capacity) {
+        allocate(capacity * DataType.FLOAT.getBytes());
     }
 
     public void storeInt(long offset, int[] data) {
-        getVbo().storeInt(offset, data);
+        getBuffer().store(TARGET, offset, data);
     }
 
     public void storeInt(long offset, IntBuffer data) {
-        getVbo().storeInt(offset, data);
+        getBuffer().store(TARGET, offset, data);
     }
 
     public void storeFloat(long offset, float[] data) {
-        getVbo().storeFloat(offset, data);
+        getBuffer().store(TARGET, offset, data);
     }
 
     public void storeFloat(long offset, FloatBuffer data) {
-        getVbo().storeFloat(offset, data);
+        getBuffer().store(TARGET, offset, data);
     }
 
     @Override
-    public void allocate(long size) {
-        getVbo().allocate(size);
+    public void allocate(long capacity) {
+        getBuffer().allocate(TARGET, capacity, this.usage.get());
     }
 
     @Override
     public void store(long offset, ByteBuffer buffer) {
-        getVbo().store(offset, buffer);
+        getBuffer().store(TARGET, offset, buffer);
     }
 
     @Override
     public ByteBuffer map(VboAccess access) {
-        return getVbo().map(access);
+        return getBuffer().map(TARGET, access.get());
     }
 
     @Override
     public void unmap() {
-        getVbo().unmap();
+        getBuffer().unmap(TARGET);
     }
 
     @Override
-    public long getSize() {
-        return getVbo().getSize();
+    public long getCapacity() {
+        return getBuffer().getCapacity();
     }
 
     @Override
     public void bind() {
-        getVbo().bind();
+        getBuffer().bind(TARGET);
     }
 
     @Override
     public void unbind() {
-        getVbo().unbind();
+        getBuffer().unbind(TARGET);
     }
 
     @Override
     public void delete() {
-        getVbo().delete();
+        getBuffer().delete();
     }
 }

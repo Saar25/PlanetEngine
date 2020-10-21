@@ -1,75 +1,83 @@
 package org.saar.lwjgl.opengl.objects.vbos;
 
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObject;
+import org.saar.lwjgl.opengl.objects.buffers.BufferTarget;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public class IndexBuffer implements IVbo {
 
-    public static final IndexBuffer NULL = new IndexBuffer(Vbo.NULL_INDEX);
+    private static final BufferTarget TARGET = BufferTarget.ELEMENT_ARRAY;
 
-    private final Vbo vbo;
+    public static final IndexBuffer NULL = new IndexBuffer(BufferObject.NULL, VboUsage.STATIC_DRAW);
 
-    private IndexBuffer(Vbo vbo) {
-        this.vbo = vbo;
+    private final BufferObject buffer;
+    private final VboUsage usage;
+
+    private IndexBuffer(BufferObject buffer, VboUsage usage) {
+        this.buffer = buffer;
+        this.usage = usage;
     }
 
     public IndexBuffer(VboUsage usage) {
-        this.vbo = Vbo.create(VboTarget.ELEMENT_ARRAY_BUFFER, usage);
+        this(BufferObject.create(), usage);
     }
 
-    private Vbo getVbo() {
-        return this.vbo;
+    private BufferObject getBuffer() {
+        return this.buffer;
     }
 
-    public void allocateInt(long size) {
-        getVbo().allocateInt(size);
+    public void allocateInt(long capacity) {
+        allocate(capacity * DataType.INT.getBytes());
     }
 
     public void storeInt(long offset, int[] data) {
-        getVbo().storeInt(offset, data);
+        getBuffer().store(TARGET, offset, data);
     }
 
     public void storeInt(long offset, IntBuffer data) {
-        getVbo().storeInt(offset, data);
+        getBuffer().store(TARGET, offset, data);
     }
 
     @Override
-    public void allocate(long size) {
-        getVbo().allocate(size);
+    public void allocate(long capacity) {
+        getBuffer().allocate(TARGET, capacity, this.usage.get());
     }
 
     @Override
     public void store(long offset, ByteBuffer buffer) {
-        getVbo().store(offset, buffer);
+        getBuffer().store(TARGET, offset, buffer);
     }
 
     @Override
     public ByteBuffer map(VboAccess access) {
-        return getVbo().map(access);
+        return getBuffer().map(TARGET, access.get());
     }
 
     @Override
     public void unmap() {
-        getVbo().unmap();
+        getBuffer().unmap(TARGET);
     }
 
     @Override
-    public long getSize() {
-        return getVbo().getSize();
+    public long getCapacity() {
+        return getBuffer().getCapacity();
     }
 
     @Override
     public void bind() {
-        getVbo().bind();
+        getBuffer().bind(TARGET);
     }
 
     @Override
     public void unbind() {
-        getVbo().unbind();
+        getBuffer().unbind(TARGET);
     }
 
     @Override
     public void delete() {
-        getVbo().delete();
+        getBuffer().delete();
     }
 }
