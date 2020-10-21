@@ -2,7 +2,7 @@ package org.saar.core.common.r2d;
 
 import org.saar.core.node.Model;
 
-public class Model2D implements Model, Node2D {
+public class Model2D implements Model {
 
     private final Mesh2D mesh;
 

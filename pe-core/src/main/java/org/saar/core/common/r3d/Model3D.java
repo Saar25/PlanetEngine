@@ -3,7 +3,7 @@ package org.saar.core.common.r3d;
 import org.saar.core.node.Model;
 import org.saar.maths.transform.SimpleTransform;
 
-public class Model3D implements Node3D, Model {
+public class Model3D implements Model {
 
     private final Mesh3D mesh;
 
@@ -13,7 +13,6 @@ public class Model3D implements Node3D, Model {
         this.mesh = mesh;
     }
 
-    @Override
     public SimpleTransform getTransform() {
         return this.transform;
     }

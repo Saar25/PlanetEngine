@@ -25,17 +25,17 @@ class NormalMappedDeferredRenderer(private vararg val models: NormalMappedModel)
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformUpdaterProperty
-    private val transformationUpdater = UniformUpdater<NormalMappedNode> { state ->
+    private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
         this@NormalMappedDeferredRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
     }
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<NormalMappedNode> { state ->
+    private val textureUpdater = UniformUpdater<NormalMappedModel> { state ->
         this@NormalMappedDeferredRenderer.textureUniform.value = state.instance.texture
     }
 
     @UniformUpdaterProperty
-    private val normalMapUpdater = UniformUpdater<NormalMappedNode> { state ->
+    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { state ->
         this@NormalMappedDeferredRenderer.normalMapUniform.value = state.instance.normalMap
     }
 
@@ -69,7 +69,7 @@ class NormalMappedDeferredRenderer(private vararg val models: NormalMappedModel)
         this.viewProjectionUniform.load()
 
         for (model in this.models) {
-            val state = RenderState<NormalMappedNode>(model)
+            val state = RenderState<NormalMappedModel>(model)
 
             this.transformationUpdater.update(state)
             this.transformationUniform.load()

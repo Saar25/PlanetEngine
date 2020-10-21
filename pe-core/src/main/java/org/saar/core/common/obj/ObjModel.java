@@ -4,7 +4,7 @@ import org.saar.core.node.Model;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.transform.Transform;
 
-public class ObjModel implements Model, ObjNode {
+public class ObjModel implements Model {
 
     private final ObjMesh mesh;
     private final ObjNode instance;
@@ -14,12 +14,10 @@ public class ObjModel implements Model, ObjNode {
         this.instance = instance;
     }
 
-    @Override
     public Transform getTransform() {
         return this.instance.getTransform();
     }
 
-    @Override
     public ReadOnlyTexture getTexture() {
         return this.instance.getTexture();
     }
