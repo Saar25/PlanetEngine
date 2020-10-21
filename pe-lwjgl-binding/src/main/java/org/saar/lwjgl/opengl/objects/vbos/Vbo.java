@@ -75,7 +75,7 @@ public class Vbo implements IVbo {
     }
 
     @Override
-    public long getSize() {
+    public long getCapacity() {
         return this.buffer.getCapacity();
     }
 
