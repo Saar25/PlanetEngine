@@ -8,9 +8,7 @@ public final class GlUtils {
     private final static boolean[] clipPlanes = new boolean[6];
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
-    private static boolean cullingFaces = false;
     private static boolean depthMasking = false;
-    private static int cullingFace = 0;
 
     private static BlendFunction blendFunction = BlendFunction.NONE;
     private static DepthFunction depthFunction = DepthFunction.NONE;
