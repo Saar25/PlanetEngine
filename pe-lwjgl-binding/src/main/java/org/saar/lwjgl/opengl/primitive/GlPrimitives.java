@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.primitive;
 
 import org.lwjgl.system.MemoryUtil;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 import java.nio.ByteBuffer;
 

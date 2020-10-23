@@ -3,7 +3,7 @@ package org.saar.core.common.inference.weak;
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;

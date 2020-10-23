@@ -2,7 +2,7 @@ package org.saar.core.model.mesh;
 
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 public abstract class MeshBuffer {
 

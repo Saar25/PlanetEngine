@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.primitive;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 public class GlFloat extends GlPrimitiveBase implements GlPrimitive {
 

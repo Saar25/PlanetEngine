@@ -5,7 +5,7 @@ import org.joml.Vector3ic;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 public class GlUInt3 extends GlPrimitiveBase implements GlPrimitive {
 

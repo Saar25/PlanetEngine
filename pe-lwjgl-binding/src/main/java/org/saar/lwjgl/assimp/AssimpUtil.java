@@ -6,7 +6,7 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.Assimp;
 import org.lwjgl.system.MemoryUtil;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 import org.saar.utils.file.TextFileLoader;
 
 import java.nio.ByteBuffer;

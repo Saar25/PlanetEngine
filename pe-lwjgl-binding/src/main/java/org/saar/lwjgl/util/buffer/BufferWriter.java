@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.utils;
+package org.saar.lwjgl.util.buffer;
 
 import org.joml.*;
 
