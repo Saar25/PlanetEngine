@@ -1,8 +1,8 @@
 package org.saar.lwjgl.opengl.textures;
 
+import org.lwjgl.system.MemoryUtil;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
 import org.saar.utils.file.PNGDecoder;
 
 import java.nio.ByteBuffer;
@@ -41,7 +41,7 @@ public final class TextureLoader {
     private static TextureInfo decodePng(String textureFile) throws Exception {
         final PNGDecoder decoder = new PNGDecoder(Class.class.getResourceAsStream(textureFile));
 
-        final ByteBuffer textureBuffer = MemoryUtils.allocByte(4 * decoder.getWidth() * decoder.getHeight());
+        final ByteBuffer textureBuffer = MemoryUtil.memAlloc(4 * decoder.getWidth() * decoder.getHeight());
         decoder.decode(textureBuffer, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
         textureBuffer.flip();
 
