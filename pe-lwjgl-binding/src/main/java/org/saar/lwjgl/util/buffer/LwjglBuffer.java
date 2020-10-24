@@ -1,50 +1,47 @@
 package org.saar.lwjgl.util.buffer;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-
 public interface LwjglBuffer extends ReadonlyLwjglBuffer, AutoCloseable {
 
-    Buffer position(int newPosition);
+    LwjglBuffer position(int newPosition);
 
-    Buffer limit(int newLimit);
+    LwjglBuffer limit(int newLimit);
 
-    Buffer mark();
+    LwjglBuffer mark();
 
-    Buffer reset();
+    LwjglBuffer reset();
 
-    Buffer clear();
+    LwjglBuffer clear();
 
-    Buffer flip();
+    LwjglBuffer flip();
 
-    Buffer rewind();
+    LwjglBuffer rewind();
 
-    ByteBuffer put(byte b);
+    LwjglBuffer put(byte b);
 
-    ByteBuffer putChar(char value);
+    LwjglBuffer putChar(char value);
 
-    ByteBuffer putShort(short value);
+    LwjglBuffer putShort(short value);
 
-    ByteBuffer putInt(int value);
+    LwjglBuffer putInt(int value);
 
-    ByteBuffer putLong(long value);
+    LwjglBuffer putLong(long value);
 
-    ByteBuffer putFloat(float value);
+    LwjglBuffer putFloat(float value);
 
-    ByteBuffer putDouble(double value);
+    LwjglBuffer putDouble(double value);
 
-    ByteBuffer put(int index, byte b);
+    LwjglBuffer put(int index, byte b);
 
-    ByteBuffer putChar(int index, char value);
+    LwjglBuffer putChar(int index, char value);
 
-    ByteBuffer putShort(int index, short value);
+    LwjglBuffer putShort(int index, short value);
 
-    ByteBuffer putInt(int index, int value);
+    LwjglBuffer putInt(int index, int value);
 
-    ByteBuffer putLong(int index, long value);
+    LwjglBuffer putLong(int index, long value);
 
-    ByteBuffer putFloat(int index, float value);
+    LwjglBuffer putFloat(int index, float value);
 
-    ByteBuffer putDouble(int index, double value);
+    LwjglBuffer putDouble(int index, double value);
 
 }

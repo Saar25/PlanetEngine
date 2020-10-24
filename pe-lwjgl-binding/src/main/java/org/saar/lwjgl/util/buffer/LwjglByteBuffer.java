@@ -2,7 +2,6 @@ package org.saar.lwjgl.util.buffer;
 
 import org.lwjgl.system.MemoryUtil;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public class LwjglByteBuffer implements LwjglBuffer {
@@ -13,114 +12,140 @@ public class LwjglByteBuffer implements LwjglBuffer {
         this.buffer = buffer;
     }
 
+    public static LwjglByteBuffer allocate(int capacity) {
+        final ByteBuffer buffer = MemoryUtil.memAlloc(capacity);
+        return new LwjglByteBuffer(buffer);
+    }
+
     @Override
     public ByteBuffer asByteBuffer() {
         return this.buffer;
     }
 
     @Override
-    public Buffer position(int newPosition) {
-        return this.buffer.position(newPosition);
+    public LwjglByteBuffer position(int newPosition) {
+        this.buffer.position(newPosition);
+        return this;
     }
 
     @Override
-    public Buffer limit(int newLimit) {
-        return this.buffer.limit(newLimit);
+    public LwjglByteBuffer limit(int newLimit) {
+        this.buffer.limit(newLimit);
+        return this;
     }
 
     @Override
-    public Buffer mark() {
-        return this.buffer.mark();
+    public LwjglByteBuffer mark() {
+        this.buffer.mark();
+        return this;
     }
 
     @Override
-    public Buffer reset() {
-        return this.buffer.reset();
+    public LwjglByteBuffer reset() {
+        this.buffer.reset();
+        return this;
     }
 
     @Override
-    public Buffer clear() {
-        return this.buffer.clear();
+    public LwjglByteBuffer clear() {
+        this.buffer.clear();
+        return this;
     }
 
     @Override
-    public Buffer flip() {
-        return this.buffer.flip();
+    public LwjglByteBuffer flip() {
+        this.buffer.flip();
+        return this;
     }
 
     @Override
-    public Buffer rewind() {
-        return this.buffer.rewind();
+    public LwjglByteBuffer rewind() {
+        this.buffer.rewind();
+        return this;
     }
 
     @Override
-    public ByteBuffer put(byte b) {
-        return this.buffer.put(b);
+    public LwjglByteBuffer put(byte b) {
+        this.buffer.put(b);
+        return this;
     }
 
     @Override
-    public ByteBuffer putChar(char value) {
-        return this.buffer.putChar(value);
+    public LwjglByteBuffer putChar(char value) {
+        this.buffer.putChar(value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putShort(short value) {
-        return this.buffer.putShort(value);
+    public LwjglByteBuffer putShort(short value) {
+        this.buffer.putShort(value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putInt(int value) {
-        return this.buffer.putInt(value);
+    public LwjglByteBuffer putInt(int value) {
+        this.buffer.putInt(value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putLong(long value) {
-        return this.buffer.putLong(value);
+    public LwjglByteBuffer putLong(long value) {
+        this.buffer.putLong(value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putFloat(float value) {
-        return this.buffer.putFloat(value);
+    public LwjglByteBuffer putFloat(float value) {
+        this.buffer.putFloat(value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putDouble(double value) {
-        return this.buffer.putDouble(value);
+    public LwjglByteBuffer putDouble(double value) {
+        this.buffer.putDouble(value);
+        return this;
     }
 
     @Override
-    public ByteBuffer put(int index, byte b) {
-        return this.buffer.put(index, b);
+    public LwjglByteBuffer put(int index, byte b) {
+        this.buffer.put(index, b);
+        return this;
     }
 
     @Override
-    public ByteBuffer putChar(int index, char value) {
-        return this.buffer.putChar(index, value);
+    public LwjglByteBuffer putChar(int index, char value) {
+        this.buffer.putChar(index, value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putShort(int index, short value) {
-        return this.buffer.putShort(index, value);
+    public LwjglByteBuffer putShort(int index, short value) {
+        this.buffer.putShort(index, value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putInt(int index, int value) {
-        return this.buffer.putInt(index, value);
+    public LwjglByteBuffer putInt(int index, int value) {
+        this.buffer.putInt(index, value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putLong(int index, long value) {
-        return this.buffer.putLong(index, value);
+    public LwjglByteBuffer putLong(int index, long value) {
+        this.buffer.putLong(index, value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putFloat(int index, float value) {
-        return this.buffer.putFloat(index, value);
+    public LwjglByteBuffer putFloat(int index, float value) {
+        this.buffer.putFloat(index, value);
+        return this;
     }
 
     @Override
-    public ByteBuffer putDouble(int index, double value) {
-        return this.buffer.putDouble(index, value);
+    public LwjglByteBuffer putDouble(int index, double value) {
+        this.buffer.putDouble(index, value);
+        return this;
     }
 
     @Override
