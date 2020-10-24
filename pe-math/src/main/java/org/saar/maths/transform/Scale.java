@@ -42,6 +42,12 @@ public class Scale implements ReadonlyScale {
         onChange(old);
     }
 
+    public void scale(float x, float y, float z) {
+        final Vector3fc old = copyValue();
+        this.wrapper.getValue().mul(x, y, z);
+        onChange(old);
+    }
+
     public void set(ReadonlyScale scale) {
         final Vector3fc old = copyValue();
         this.wrapper.getValue().set(scale.getValue());
