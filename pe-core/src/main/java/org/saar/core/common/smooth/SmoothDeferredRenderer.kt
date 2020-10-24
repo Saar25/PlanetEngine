@@ -13,11 +13,15 @@ import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
+import kotlin.math.max
+import kotlin.math.min
 
 class SmoothDeferredRenderer(private vararg val models: SmoothModel)
     : AbstractRenderer(shadersProgram), DeferredRenderer {
 
-    val targetScalar: FloatProperty = SimpleFloatProperty(.5f)
+    val targetScalar: FloatProperty = SimpleFloatProperty(.5f).also {
+        it.addListener { e -> it.set(min(max(it.value, 0f), 1f)) }
+    }
 
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
