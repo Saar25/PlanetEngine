@@ -4,6 +4,7 @@ import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.smooth.*;
+import org.saar.core.common.terrain.smooth.SmoothTerrain;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.example.ExamplesUtils;
@@ -66,7 +67,12 @@ public class SmoothExample {
         node.getTransform().getScale().set(10, 10, 10);
         node.getTransform().getPosition().set(0, 15, 50);
 
-        final SmoothDeferredRenderer renderer = new SmoothDeferredRenderer(model);
+        final SmoothNode terrainNode = Smooth.node();
+        final SmoothMesh terrainMesh = SmoothTerrain.generateMesh();
+        final SmoothModel terrainModel = new SmoothModel(terrainNode, terrainMesh);
+        terrainNode.getTransform().getScale().scale(50);
+
+        final SmoothDeferredRenderer renderer = new SmoothDeferredRenderer(model, terrainModel);
 
         final Node3D cube = R3D.node();
         cube.getTransform().getScale().set(10, 10, 10);
