@@ -5,9 +5,6 @@ import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
-import org.saar.lwjgl.opengl.objects.vbos.Vbo;
-import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 
 import java.util.ArrayList;
 import java.util.Collections;
