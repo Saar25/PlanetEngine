@@ -1,7 +1,7 @@
 package org.saar.core.common.inference.weak;
 
-import org.saar.core.model.*;
-import org.saar.core.model.mesh.MeshWriters;
+import org.saar.core.model.DrawCallMesh;
+import org.saar.core.model.Mesh;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.*;
@@ -101,7 +101,9 @@ public class WeakMesh implements Mesh {
         final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
         wrapper.allocate(indices.length * DataType.INT.getBytes());
-        MeshWriters.writeIndices(wrapper.getWriter()::write, indices);
+        for (int index : indices) {
+            wrapper.getWriter().write(index);
+        }
         wrapper.store(0);
         vao.loadVbo(vbo);
     }
@@ -111,7 +113,9 @@ public class WeakMesh implements Mesh {
         final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
         wrapper.allocate(vertices.length * Attribute.sumBytes(attributes));
-        MeshWriters.writeVertices(vertex -> vertex.write(wrapper.getWriter()), vertices);
+        for (WeakVertex vertex : vertices) {
+            vertex.write(wrapper.getWriter());
+        }
         wrapper.store(0);
 
         vao.loadVbo(vbo, attributes);
@@ -122,7 +126,9 @@ public class WeakMesh implements Mesh {
         final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
         wrapper.allocate(instances.length * Attribute.sumBytes(attributes));
-        MeshWriters.writeNodes(instance -> instance.write(wrapper.getWriter()), instances);
+        for (WeakInstance instance : instances) {
+            instance.write(wrapper.getWriter());
+        }
         wrapper.store(0);
 
         vao.loadVbo(vbo, attributes);

@@ -1,13 +1,12 @@
 package org.saar.core.common.flatreflected;
 
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.core.model.DrawCallMesh;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
@@ -38,8 +37,8 @@ public class FlatReflectedMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final FlatReflectedMeshWriter writer = new FlatReflectedMeshWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
 
         helper.store();
 

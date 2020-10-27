@@ -3,7 +3,6 @@ package org.saar.core.common.smooth;
 import org.saar.core.model.DrawCallMesh;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
@@ -45,8 +44,8 @@ public class SmoothMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final SmoothMeshWriter writer = new SmoothMeshWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
 
         helper.store();
 

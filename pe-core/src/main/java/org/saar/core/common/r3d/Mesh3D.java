@@ -3,7 +3,6 @@ package org.saar.core.common.r3d;
 import org.saar.core.model.DrawCallMesh;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
@@ -64,9 +63,9 @@ public class Mesh3D implements Mesh {
         helper.allocateInstances(instances);
 
         final Mesh3DWriter writer = new Mesh3DWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
-        MeshWriters.writeNodes(writer, instances);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
+        writer.writeInstances(instances);
 
         helper.store();
 

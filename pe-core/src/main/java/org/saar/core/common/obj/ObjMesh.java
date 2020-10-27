@@ -1,12 +1,9 @@
 package org.saar.core.common.obj;
 
 
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.core.model.DrawCallMesh;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.assimp.component.AssimpNormalComponent;
@@ -14,6 +11,8 @@ import org.saar.lwjgl.assimp.component.AssimpPositionComponent;
 import org.saar.lwjgl.assimp.component.AssimpTexCoordComponent;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
@@ -46,8 +45,8 @@ public class ObjMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final ObjMeshWriter writer = new ObjMeshWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
 
         helper.store();
 

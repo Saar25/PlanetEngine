@@ -3,7 +3,6 @@ package org.saar.core.common.r3d;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshBuilder;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
 
 public class Mesh3DBuilder implements MeshBuilder {
 
@@ -36,7 +35,7 @@ public class Mesh3DBuilder implements MeshBuilder {
     }
 
     public void writeVertices(Vertex3D... vertices) {
-        MeshWriters.writeVertices(this.writer, vertices);
+        this.writer.writeVertices(vertices);
     }
 
     public void writeInstance(Node3D instance) {
@@ -44,7 +43,7 @@ public class Mesh3DBuilder implements MeshBuilder {
     }
 
     public void writeInstance(Node3D... instances) {
-        MeshWriters.writeNodes(this.writer, instances);
+        this.writer.writeInstances(instances);
     }
 
     public void writeIndex(int index) {
@@ -52,7 +51,7 @@ public class Mesh3DBuilder implements MeshBuilder {
     }
 
     public void writeIndices(int... indices) {
-        MeshWriters.writeIndices(this.writer, indices);
+        this.writer.writeIndices(indices);
     }
 
     @Override
