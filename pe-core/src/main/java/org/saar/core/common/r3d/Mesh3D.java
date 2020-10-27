@@ -30,7 +30,7 @@ public class Mesh3D implements Mesh {
         this.mesh = mesh;
     }
 
-    private static void addAttributes(Mesh3DPrototype prototype) {
+    static void addAttributes(Mesh3DPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);
         prototype.getNormalBuffer().addAttribute(normalAttribute);
         prototype.getColourBuffer().addAttribute(colourAttribute);
@@ -38,9 +38,8 @@ public class Mesh3D implements Mesh {
     }
 
     static Mesh3D create(Mesh3DPrototype prototype, int indices, int instances) {
-        addAttributes(prototype);
-
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        helper.store();
 
         final Vao vao = Vao.create();
         helper.loadToVao(vao);

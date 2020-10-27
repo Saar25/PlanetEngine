@@ -6,24 +6,28 @@ import org.saar.core.model.mesh.MeshPrototypeHelper;
 
 public class Mesh3DBuilder implements MeshBuilder {
 
+    private final Mesh3DPrototype prototype;
     private final Mesh3DWriter writer;
-    private final MeshPrototypeHelper helper;
-    private final Mesh3D mesh;
 
-    private Mesh3DBuilder(Mesh3DWriter writer, MeshPrototypeHelper helper, Mesh3D mesh) {
+    private final int indices;
+    private final int instances;
+
+    public Mesh3DBuilder(Mesh3DPrototype prototype, Mesh3DWriter writer, int indices, int instances) {
+        this.prototype = prototype;
         this.writer = writer;
-        this.helper = helper;
-        this.mesh = mesh;
+        this.indices = indices;
+        this.instances = instances;
     }
 
     public static Mesh3DBuilder create(Mesh3DPrototype prototype, int vertices, int indices, int instances) {
-        final Mesh3DWriter writer = new Mesh3DWriter(prototype);
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        final Mesh3D mesh = Mesh3D.create(prototype, indices, instances);
+        Mesh3D.addAttributes(prototype);
         helper.allocateInstances(instances);
         helper.allocateVertices(vertices);
         helper.allocateIndices(indices);
-        return new Mesh3DBuilder(writer, helper, mesh);
+
+        final Mesh3DWriter writer = new Mesh3DWriter(prototype);
+        return new Mesh3DBuilder(prototype, writer, indices, instances);
     }
 
     public static Mesh3DBuilder create(int vertices, int indices, int instances) {
@@ -35,12 +39,8 @@ public class Mesh3DBuilder implements MeshBuilder {
     }
 
     @Override
-    public void finishBuilding() {
-        this.helper.store();
-    }
-
-    @Override
-    public Mesh asMesh() {
-        return this.mesh;
+    public Mesh load() {
+        return Mesh3D.create(this.prototype,
+                this.indices, this.instances);
     }
 }

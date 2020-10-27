@@ -6,8 +6,16 @@ public class FutureMesh implements Mesh {
 
     private FutureMeshHelper helper;
 
-    public FutureMesh(CompletableFuture<Mesh> task) {
-        this.helper = FutureMeshHelper.create(task);
+    private FutureMesh(FutureMeshHelper helper) {
+        this.helper = helper;
+    }
+
+    public FutureMesh create(CompletableFuture<Mesh> task) {
+        return new FutureMesh(FutureMeshHelper.create(task));
+    }
+
+    public FutureMesh unloaded(CompletableFuture<UnloadedMesh> task) {
+        return new FutureMesh(FutureMeshHelper.unloaded(task));
     }
 
     @Override

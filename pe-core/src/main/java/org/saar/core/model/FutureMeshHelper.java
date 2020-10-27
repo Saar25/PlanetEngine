@@ -20,7 +20,7 @@ abstract class FutureMeshHelper implements Mesh {
         return new Unloaded(task);
     }
 
-    public static class Running extends FutureMeshHelper {
+    private static class Running extends FutureMeshHelper {
 
         private final CompletableFuture<Mesh> task;
 
@@ -47,7 +47,7 @@ abstract class FutureMeshHelper implements Mesh {
         }
     }
 
-    public static class Unloaded extends FutureMeshHelper {
+    private static class Unloaded extends FutureMeshHelper {
 
         private final CompletableFuture<UnloadedMesh> task;
 
@@ -75,7 +75,7 @@ abstract class FutureMeshHelper implements Mesh {
         }
     }
 
-    public static class Finished extends FutureMeshHelper {
+    private static class Finished extends FutureMeshHelper {
 
         private final Mesh mesh;
 
