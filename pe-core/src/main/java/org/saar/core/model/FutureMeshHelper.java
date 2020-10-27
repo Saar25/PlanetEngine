@@ -16,6 +16,10 @@ abstract class FutureMeshHelper implements Mesh {
         return new Running(task);
     }
 
+    public static FutureMeshHelper unloaded(CompletableFuture<UnloadedMesh> task) {
+        return new Unloaded(task);
+    }
+
     public static class Running extends FutureMeshHelper {
 
         private final CompletableFuture<Mesh> task;
@@ -28,6 +32,34 @@ abstract class FutureMeshHelper implements Mesh {
         public FutureMeshHelper next() {
             if (this.task.isDone()) {
                 final Mesh mesh = this.task.getNow(null);
+                return new Finished(mesh);
+            }
+            return this;
+        }
+
+        @Override
+        public void draw() {
+        }
+
+        @Override
+        public void delete() {
+            this.task.cancel(true);
+        }
+    }
+
+    public static class Unloaded extends FutureMeshHelper {
+
+        private final CompletableFuture<UnloadedMesh> task;
+
+        public Unloaded(CompletableFuture<UnloadedMesh> task) {
+            this.task = task;
+        }
+
+        @Override
+        public FutureMeshHelper next() {
+            if (this.task.isDone()) {
+                final UnloadedMesh unloaded = this.task.getNow(null);
+                final Mesh mesh = unloaded.load();
                 return new Finished(mesh);
             }
             return this;
