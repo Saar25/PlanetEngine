@@ -7,6 +7,7 @@ import org.saar.core.common.r3d.Mesh3DPrototype;
 import org.saar.core.common.r3d.Model3D;
 import org.saar.core.common.r3d.Renderer3D;
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -18,7 +19,7 @@ import org.saar.maths.utils.Quaternion;
 public class Renderer3DExample {
 
     private static final boolean optimizeMesh = true;
-    private static final boolean singleBatch = false;
+    private static final boolean singleBatch = true;
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
@@ -40,7 +41,7 @@ public class Renderer3DExample {
         final Renderer3D renderer = new Renderer3D(models());
 
         final Keyboard keyboard = window.getKeyboard();
-        long current = System.currentTimeMillis();
+        final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
@@ -55,9 +56,9 @@ public class Renderer3DExample {
 
             window.update(true);
 
-            System.out.print("\rFps: " +
-                    1000f / (-current + (current = System.currentTimeMillis()))
-            );
+            System.out.print("\rFps: " + fps.fps());
+
+            fps.update();
         }
 
         renderer.delete();

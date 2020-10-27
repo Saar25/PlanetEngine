@@ -10,6 +10,7 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
+import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -88,22 +89,21 @@ public class ShadowExample {
             scrollSpeed = Math.max(scrollSpeed, 1);
         });
 
-        long current = System.currentTimeMillis();
+        final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             deferredRenderer.render();
 
             window.update(true);
             window.pollEvents();
 
-            final long delta = System.currentTimeMillis() - current;
-            ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
+            final double delta = fps.delta();
+            ExamplesUtils.move(camera, keyboard, (long) delta, scrollSpeed);
 
-            final float fps = 1000f / delta;
             System.out.print("\r --> " +
                     "Speed: " + String.format("%.2f", scrollSpeed) +
-                    ", Fps: " + String.format("%.2f", fps) +
+                    ", Fps: " + String.format("%.2f", fps.fps()) +
                     ", Delta: " + delta);
-            current = System.currentTimeMillis();
+            fps.update();
         }
 
         renderer.delete();
