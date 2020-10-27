@@ -28,22 +28,34 @@ public class MeshPrototypeHelper {
         }
     }
 
-    public void allocateInstances(Node[] instances) {
+    public void allocateInstances(int instances) {
         for (MeshInstanceBuffer buffer : getInstanceBuffers()) {
-            buffer.allocateCount(instances.length);
+            buffer.allocateCount(instances);
         }
+    }
+
+    public void allocateVertices(int vertices) {
+        for (MeshVertexBuffer buffer : getVertexBuffers()) {
+            buffer.allocateCount(vertices);
+        }
+    }
+
+    public void allocateIndices(int indices) {
+        for (MeshIndexBuffer buffer : getIndexBuffers()) {
+            buffer.allocateCount(indices);
+        }
+    }
+
+    public void allocateInstances(Node[] instances) {
+        allocateInstances(instances.length);
     }
 
     public void allocateVertices(Vertex[] vertices) {
-        for (MeshVertexBuffer buffer : getVertexBuffers()) {
-            buffer.allocateCount(vertices.length);
-        }
+        allocateVertices(vertices.length);
     }
 
     public void allocateIndices(int[] indices) {
-        for (MeshIndexBuffer buffer : getIndexBuffers()) {
-            buffer.allocateCount(indices.length);
-        }
+        allocateIndices(indices.length);
     }
 
     public void store() {
