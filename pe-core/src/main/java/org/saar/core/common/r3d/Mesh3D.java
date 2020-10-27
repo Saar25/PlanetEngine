@@ -1,13 +1,13 @@
 package org.saar.core.common.r3d;
 
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.core.model.DrawCallMesh;
-import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall;
 import org.saar.core.model.Mesh;
 import org.saar.core.model.mesh.MeshPrototypeHelper;
 import org.saar.core.model.mesh.MeshWriters;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
@@ -31,11 +31,29 @@ public class Mesh3D implements Mesh {
         this.mesh = mesh;
     }
 
-    public static Mesh3D load(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+    private static void addAttributes(Mesh3DPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);
         prototype.getNormalBuffer().addAttribute(normalAttribute);
         prototype.getColourBuffer().addAttribute(colourAttribute);
         prototype.getTransformBuffer().addAttributes(transformAttributes);
+    }
+
+    static Mesh3D create(Mesh3DPrototype prototype, int indices, int instances) {
+        addAttributes(prototype);
+
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+
+        final Vao vao = Vao.create();
+        helper.loadToVao(vao);
+
+        final DrawCall drawCall = new InstancedElementsDrawCall(
+                RenderMode.TRIANGLES, indices, DataType.U_INT, instances);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
+        return new Mesh3D(mesh);
+    }
+
+    public static Mesh3D load(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+        addAttributes(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
 
