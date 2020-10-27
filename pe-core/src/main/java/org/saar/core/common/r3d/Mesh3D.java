@@ -30,11 +30,20 @@ public class Mesh3D implements Mesh {
         this.mesh = mesh;
     }
 
-    static void addAttributes(Mesh3DPrototype prototype) {
+    private static void addAttributes(Mesh3DPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);
         prototype.getNormalBuffer().addAttribute(normalAttribute);
         prototype.getColourBuffer().addAttribute(colourAttribute);
         prototype.getTransformBuffer().addAttributes(transformAttributes);
+    }
+
+    static void initPrototype(Mesh3DPrototype prototype, int vertices, int indices, int instances) {
+        addAttributes(prototype);
+
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        helper.allocateInstances(instances);
+        helper.allocateVertices(vertices);
+        helper.allocateIndices(indices);
     }
 
     static Mesh3D create(Mesh3DPrototype prototype, int indices, int instances) {
@@ -51,27 +60,12 @@ public class Mesh3D implements Mesh {
     }
 
     public static Mesh3D load(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Node3D[] instances) {
-        addAttributes(prototype);
-
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.allocateIndices(indices);
-        helper.allocateVertices(vertices);
-        helper.allocateInstances(instances);
-
-        final Mesh3DWriter writer = new Mesh3DWriter(prototype);
-        writer.writeVertices(vertices);
-        writer.writeIndices(indices);
-        writer.writeInstances(instances);
-
-        helper.store();
-
-        final DrawCall drawCall = new InstancedElementsDrawCall(RenderMode.TRIANGLES,
-                indices.length, DataType.U_INT, instances.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new Mesh3D(mesh);
+        final Mesh3DBuilder builder = Mesh3DBuilder.create(prototype,
+                vertices.length, indices.length, instances.length);
+        builder.getWriter().writeInstances(instances);
+        builder.getWriter().writeVertices(vertices);
+        builder.getWriter().writeIndices(indices);
+        return builder.load();
     }
 
     public static Mesh3D load(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
