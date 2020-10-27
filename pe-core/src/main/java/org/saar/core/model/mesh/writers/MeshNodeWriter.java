@@ -6,4 +6,10 @@ public interface MeshNodeWriter<T extends Node> {
 
     void writeNode(T node);
 
+    default void writeInstances(T[] instances) {
+        for (T instance : instances) {
+            writeNode(instance);
+        }
+    }
+
 }
