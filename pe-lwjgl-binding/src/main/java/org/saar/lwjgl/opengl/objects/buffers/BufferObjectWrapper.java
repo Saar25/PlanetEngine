@@ -24,13 +24,13 @@ public class BufferObjectWrapper {
 
     public void allocate(int capacity) {
         MemoryUtil.memFree(this.buffer);
-        this.bufferObject.allocate(capacity);
         this.buffer = MemoryUtil.memAlloc(capacity);
         this.writer = new BufferWriter(this.buffer);
     }
 
     public void store(long offset) {
         this.buffer.flip();
+        this.bufferObject.allocate(this.buffer.limit());
         this.bufferObject.store(offset, this.buffer);
         MemoryUtil.memFree(this.buffer);
         this.buffer = null;
