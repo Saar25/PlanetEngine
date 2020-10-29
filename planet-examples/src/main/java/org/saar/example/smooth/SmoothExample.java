@@ -68,7 +68,7 @@ public class SmoothExample {
         node.getTransform().getPosition().set(0, 15, 50);
 
         final SmoothNode terrainNode = Smooth.node();
-        final SmoothMesh terrainMesh = SmoothTerrain.generateMesh();
+        final SmoothMesh terrainMesh = SmoothTerrain.generateMeshAsync();
         final SmoothModel terrainModel = new SmoothModel(terrainNode, terrainMesh);
         terrainNode.getTransform().getScale().scale(50);
 

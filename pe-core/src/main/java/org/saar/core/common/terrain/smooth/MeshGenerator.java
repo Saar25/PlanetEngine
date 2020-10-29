@@ -4,6 +4,7 @@ import org.joml.Vector2ic;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.core.common.smooth.Smooth;
+import org.saar.core.common.smooth.SmoothMeshWriter;
 import org.saar.core.common.smooth.SmoothVertex;
 import org.saar.core.common.terrain.colour.ColourGenerator;
 import org.saar.core.common.terrain.height.HeightGenerator;
@@ -38,29 +39,31 @@ public class MeshGenerator {
         this.space = 1f / this.vertices;
     }
 
-    public SmoothVertex[] generateVertices() {
+    public int getTotalVertexCount() {
         final int outerVertices = this.vertices * this.vertices;
         final int centerVertices = (this.vertices - 1) * (this.vertices - 1);
-        final int totalVertices = centerVertices + outerVertices;
-        final SmoothVertex[] vertices = new SmoothVertex[totalVertices];
-        int index = 0;
+        return centerVertices + outerVertices;
+    }
 
+    public int getTotalIndexCount() {
+        return (this.vertices - 1) * (this.vertices - 1) * 4 * 3;
+    }
+
+    public void generateVertices(SmoothMeshWriter writer) {
         for (int x = 0; x < this.vertices; x++) {
             final float vx = x * this.space - .5f;
             for (int z = 0; z < this.vertices; z++) {
                 final float vz = z * this.space - .5f;
-                vertices[index++] = generateVertex(vx, vz);
+                writer.writeVertex(generateVertex(vx, vz));
             }
         }
         for (int x = 0; x < this.vertices - 1; x++) {
             final float vx = (x + .5f) * this.space - .5f;
             for (int z = 0; z < this.vertices - 1; z++) {
                 final float vz = (z + .5f) * this.space - .5f;
-                vertices[index++] = generateVertex(vx, vz);
+                writer.writeVertex(generateVertex(vx, vz));
             }
         }
-
-        return vertices;
     }
 
     private Vector3f vertexPosition(float x, float z, Vector3f dest) {
@@ -96,11 +99,7 @@ public class MeshGenerator {
         return Smooth.vertex(position, normal, colour, target);
     }
 
-    public int[] generateIndices() {
-        final int totalIndices = (this.vertices - 1) * (this.vertices - 1) * 4 * 3;
-        final int[] indices = new int[totalIndices];
-        int index = 0;
-
+    public void generateIndices(SmoothMeshWriter writer) {
         final int innerOffset = this.vertices * this.vertices;
 
         for (int x1 = 0; x1 < this.vertices - 1; x1++) {
@@ -116,14 +115,12 @@ public class MeshGenerator {
                 final int center = innerOffset + x1 + z1 * (this.vertices - 1);
 
                 for (int i = 0; i < 4; i++) {
-                    indices[index++] = current[(i + 1) % 4];
-                    indices[index++] = center;
-                    indices[index++] = current[i];
+                    writer.writeIndex(current[(i + 1) % 4]);
+                    writer.writeIndex(center);
+                    writer.writeIndex(current[i]);
                 }
             }
         }
-
-        return indices;
     }
 
 }
