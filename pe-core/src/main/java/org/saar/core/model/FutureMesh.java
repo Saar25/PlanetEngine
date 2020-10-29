@@ -10,11 +10,11 @@ public class FutureMesh implements Mesh {
         this.helper = helper;
     }
 
-    public static FutureMesh create(CompletableFuture<Mesh> task) {
+    public static FutureMesh create(CompletableFuture<? extends Mesh> task) {
         return new FutureMesh(FutureMeshHelper.create(task));
     }
 
-    public static FutureMesh unloaded(CompletableFuture<UnloadedMesh> task) {
+    public static FutureMesh unloaded(CompletableFuture<? extends UnloadedMesh> task) {
         return new FutureMesh(FutureMeshHelper.unloaded(task));
     }
 

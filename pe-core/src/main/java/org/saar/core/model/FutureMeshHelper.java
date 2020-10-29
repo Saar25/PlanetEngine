@@ -12,19 +12,19 @@ abstract class FutureMeshHelper implements Mesh {
     @Override
     public abstract void delete();
 
-    public static FutureMeshHelper create(CompletableFuture<Mesh> task) {
+    public static FutureMeshHelper create(CompletableFuture<? extends Mesh> task) {
         return new Running(task);
     }
 
-    public static FutureMeshHelper unloaded(CompletableFuture<UnloadedMesh> task) {
+    public static FutureMeshHelper unloaded(CompletableFuture<? extends UnloadedMesh> task) {
         return new Unloaded(task);
     }
 
     private static class Running extends FutureMeshHelper {
 
-        private final CompletableFuture<Mesh> task;
+        private final CompletableFuture<? extends Mesh> task;
 
-        public Running(CompletableFuture<Mesh> task) {
+        public Running(CompletableFuture<? extends Mesh> task) {
             this.task = task;
         }
 
@@ -49,9 +49,9 @@ abstract class FutureMeshHelper implements Mesh {
 
     private static class Unloaded extends FutureMeshHelper {
 
-        private final CompletableFuture<UnloadedMesh> task;
+        private final CompletableFuture<? extends UnloadedMesh> task;
 
-        public Unloaded(CompletableFuture<UnloadedMesh> task) {
+        public Unloaded(CompletableFuture<? extends UnloadedMesh> task) {
             this.task = task;
         }
 
