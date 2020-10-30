@@ -8,40 +8,16 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 import java.util.concurrent.CompletableFuture;
 
 public class SmoothMesh implements Mesh {
 
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, true);
-
-    private static final Attribute normalAttribute = Attribute.of(1, 3, DataType.FLOAT, true);
-
-    private static final Attribute colourAttribute = Attribute.of(2, 3, DataType.FLOAT, true);
-
-    private static final Attribute targetAttribute = Attribute.of(3, 3, DataType.FLOAT, true);
-
     private final Mesh mesh;
 
     private SmoothMesh(Mesh mesh) {
         this.mesh = mesh;
-    }
-
-    private static void addAttributes(SmoothMeshPrototype prototype) {
-        prototype.getPositionBuffer().addAttribute(positionAttribute);
-        prototype.getNormalBuffer().addAttribute(normalAttribute);
-        prototype.getColourBuffer().addAttribute(colourAttribute);
-        prototype.getTargetBuffer().addAttributes(targetAttribute);
-    }
-
-    static void initPrototype(SmoothMeshPrototype prototype, int vertices, int indices) {
-        addAttributes(prototype);
-
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        helper.allocateVertices(vertices);
-        helper.allocateIndices(indices);
     }
 
     static SmoothMesh create(SmoothMeshPrototype prototype, int indices) {
@@ -58,15 +34,11 @@ public class SmoothMesh implements Mesh {
     }
 
     public static SmoothMesh load(SmoothMeshPrototype prototype, SmoothVertex[] vertices, int[] indices) {
-        final SmoothMeshBuilder builder = SmoothMeshBuilder.create(
-                prototype, vertices.length, indices.length);
-        builder.getWriter().writeVertices(vertices);
-        builder.getWriter().writeIndices(indices);
-        return builder.load();
+        return SmoothMeshBuilder.build(prototype, vertices, indices).load();
     }
 
     public static SmoothMesh load(SmoothVertex[] vertices, int[] indices) {
-        return SmoothMesh.load(Smooth.mesh(), vertices, indices);
+        return SmoothMeshBuilder.build(Smooth.mesh(), vertices, indices).load();
     }
 
     public static SmoothMesh loadAsync(CompletableFuture<SmoothMeshBuilder> builder) {

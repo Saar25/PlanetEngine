@@ -1,8 +1,19 @@
 package org.saar.core.common.smooth;
 
 import org.saar.core.model.mesh.MeshBuilder;
+import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.objects.Attribute;
 
 public class SmoothMeshBuilder implements MeshBuilder {
+
+    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, true);
+
+    private static final Attribute normalAttribute = Attribute.of(1, 3, DataType.FLOAT, true);
+
+    private static final Attribute colourAttribute = Attribute.of(2, 3, DataType.FLOAT, true);
+
+    private static final Attribute targetAttribute = Attribute.of(3, 3, DataType.FLOAT, true);
 
     private final SmoothMeshPrototype prototype;
     private final SmoothMeshWriter writer;
@@ -15,8 +26,23 @@ public class SmoothMeshBuilder implements MeshBuilder {
         this.indices = indices;
     }
 
+    private static void addAttributes(SmoothMeshPrototype prototype) {
+        prototype.getPositionBuffer().addAttribute(positionAttribute);
+        prototype.getNormalBuffer().addAttribute(normalAttribute);
+        prototype.getColourBuffer().addAttribute(colourAttribute);
+        prototype.getTargetBuffer().addAttributes(targetAttribute);
+    }
+
+    private static void initPrototype(SmoothMeshPrototype prototype, int vertices, int indices) {
+        addAttributes(prototype);
+
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        helper.allocateVertices(vertices);
+        helper.allocateIndices(indices);
+    }
+
     public static SmoothMeshBuilder create(SmoothMeshPrototype prototype, int vertices, int indices) {
-        SmoothMesh.initPrototype(prototype, vertices, indices);
+        SmoothMeshBuilder.initPrototype(prototype, vertices, indices);
         return new SmoothMeshBuilder(prototype, indices);
     }
 
