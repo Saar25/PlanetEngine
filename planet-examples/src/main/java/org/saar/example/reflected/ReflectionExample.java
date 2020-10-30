@@ -5,7 +5,9 @@ import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.PerspectiveProjection;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.obj.ObjDeferredRenderer;
+import org.saar.core.common.obj.ObjMesh;
+import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -141,8 +143,7 @@ public class ReflectionExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -153,8 +154,7 @@ public class ReflectionExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,8 +165,7 @@ public class ReflectionExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }

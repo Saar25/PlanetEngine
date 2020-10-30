@@ -29,7 +29,6 @@ public class SmoothExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final SmoothNode node = Smooth.node();
         final SmoothMesh mesh = SmoothMesh.load(new SmoothVertex[]{
                 Smooth.vertex(
                         Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1), Vector3.of(0.5f, 0.5f, 0.0f),
@@ -63,14 +62,13 @@ public class SmoothExample {
                 1, 5, 6, 1, 6, 2, // top    , PV: 1
                 3, 7, 4, 3, 4, 0, // bottom , PV: 3
         });
-        final SmoothModel model = new SmoothModel(node, mesh);
-        node.getTransform().getScale().set(10, 10, 10);
-        node.getTransform().getPosition().set(0, 15, 50);
+        final SmoothModel model = new SmoothModel(mesh);
+        model.getTransform().getScale().set(10, 10, 10);
+        model.getTransform().getPosition().set(0, 15, 50);
 
-        final SmoothNode terrainNode = Smooth.node();
         final SmoothMesh terrainMesh = SmoothTerrain.generateMeshAsync();
-        final SmoothModel terrainModel = new SmoothModel(terrainNode, terrainMesh);
-        terrainNode.getTransform().getScale().scale(50);
+        final SmoothModel terrainModel = new SmoothModel(terrainMesh);
+        terrainModel.getTransform().getScale().scale(50);
 
         final SmoothDeferredRenderer renderer = new SmoothDeferredRenderer(model, terrainModel);
 

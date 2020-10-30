@@ -2,24 +2,27 @@ package org.saar.core.common.obj;
 
 import org.saar.core.node.Model;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.transform.Transform;
 
 public class ObjModel implements Model {
 
     private final ObjMesh mesh;
-    private final ObjNode instance;
+    private final ReadOnlyTexture texture;
 
-    public ObjModel(ObjMesh mesh, ObjNode instance) {
+    private final Transform transform = new SimpleTransform();
+
+    public ObjModel(ObjMesh mesh, ReadOnlyTexture texture) {
         this.mesh = mesh;
-        this.instance = instance;
+        this.texture = texture;
     }
 
     public Transform getTransform() {
-        return this.instance.getTransform();
+        return this.transform;
     }
 
     public ReadOnlyTexture getTexture() {
-        return this.instance.getTexture();
+        return this.texture;
     }
 
     @Override

@@ -2,28 +2,33 @@ package org.saar.core.common.normalmap;
 
 import org.saar.core.node.Model;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.transform.Transform;
 
 public class NormalMappedModel implements Model {
 
     private final NormalMappedMesh mesh;
-    private final NormalMappedNode instance;
+    private final ReadOnlyTexture texture;
+    private final ReadOnlyTexture normalMap;
 
-    public NormalMappedModel(NormalMappedMesh mesh, NormalMappedNode instance) {
+    private final Transform transform = new SimpleTransform();
+
+    public NormalMappedModel(NormalMappedMesh mesh, ReadOnlyTexture texture, ReadOnlyTexture normalMap) {
         this.mesh = mesh;
-        this.instance = instance;
+        this.texture = texture;
+        this.normalMap = normalMap;
     }
 
     public Transform getTransform() {
-        return this.instance.getTransform();
+        return this.transform;
     }
 
     public ReadOnlyTexture getTexture() {
-        return this.instance.getTexture();
+        return this.texture;
     }
 
     public ReadOnlyTexture getNormalMap() {
-        return this.instance.getNormalMap();
+        return this.normalMap;
     }
 
     @Override

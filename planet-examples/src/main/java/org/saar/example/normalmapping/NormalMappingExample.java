@@ -3,8 +3,12 @@ package org.saar.example.normalmapping;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.normalmap.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.normalmap.NormalMappedDeferredRenderer;
+import org.saar.core.common.normalmap.NormalMappedMesh;
+import org.saar.core.common.normalmap.NormalMappedModel;
+import org.saar.core.common.obj.ObjDeferredRenderer;
+import org.saar.core.common.obj.ObjMesh;
+import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -132,8 +136,7 @@ public class NormalMappingExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,8 +147,7 @@ public class NormalMappingExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,8 +158,7 @@ public class NormalMappingExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,8 +170,7 @@ public class NormalMappingExample {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/boulder/boulder.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/boulder/boulder.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/boulder/boulder.diffuse.png");
-            final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedModel(mesh, node);
+            return new NormalMappedModel(mesh, texture, normalMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,8 +182,7 @@ public class NormalMappingExample {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/barrel/barrel.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/barrel/barrel.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/barrel/barrel.diffuse.png");
-            final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedModel(mesh, node);
+            return new NormalMappedModel(mesh, texture, normalMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,8 +194,7 @@ public class NormalMappingExample {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/crate/crate.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/crate/crate.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/crate/crate.diffuse.png");
-            final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedModel(mesh, node);
+            return new NormalMappedModel(mesh, texture, normalMap);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,25 +5,8 @@ import org.joml.Vector3fc
 import org.saar.core.model.mesh.MeshBufferProperty
 import org.saar.core.model.mesh.buffers.MeshIndexBuffer
 import org.saar.core.model.mesh.buffers.MeshVertexBuffer
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
-import org.saar.maths.transform.SimpleTransform
-import org.saar.maths.transform.Transform
 
 object Obj {
-
-    @JvmStatic
-    fun node(transform: Transform, texture: ReadOnlyTexture): ObjNode {
-        return object : ObjNode {
-            override fun getTransform(): Transform = transform
-
-            override fun getTexture(): ReadOnlyTexture = texture
-        }
-    }
-
-    @JvmStatic
-    fun node(texture: ReadOnlyTexture): ObjNode {
-        return node(SimpleTransform(), texture)
-    }
 
     @JvmStatic
     fun vertex(position: Vector3fc, uvCoord: Vector2fc, normal: Vector3fc): ObjVertex {

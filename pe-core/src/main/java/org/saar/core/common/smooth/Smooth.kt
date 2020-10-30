@@ -4,20 +4,8 @@ import org.joml.Vector3fc
 import org.saar.core.model.mesh.MeshBufferProperty
 import org.saar.core.model.mesh.buffers.MeshIndexBuffer
 import org.saar.core.model.mesh.buffers.MeshVertexBuffer
-import org.saar.maths.transform.SimpleTransform
-import org.saar.maths.transform.Transform
 
 object Smooth {
-
-    @JvmStatic
-    fun node(transform: Transform): SmoothNode {
-        return SmoothNode { transform }
-    }
-
-    @JvmStatic
-    fun node(): SmoothNode {
-        return node(SimpleTransform())
-    }
 
     @JvmStatic
     fun vertex(position: Vector3fc, normal: Vector3fc, colour: Vector3fc, target: Vector3fc): SmoothVertex {
