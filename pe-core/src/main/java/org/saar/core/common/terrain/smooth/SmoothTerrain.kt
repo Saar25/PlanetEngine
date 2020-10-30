@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 object SmoothTerrain {
 
-    private val generator = MeshGenerator(
+    private val generator: MeshGenerator = SquareMeshGenerator(
             1024,
             { x, z -> SimplexNoise.noise(x, z) },
             { x, y, z ->
@@ -25,24 +25,30 @@ object SmoothTerrain {
     )
 
     @JvmStatic
-    fun generateMeshAsync(): SmoothMesh {
+    fun generateMeshAsync(generator: MeshGenerator = this.generator): SmoothMesh {
         val prototype = Smooth.mesh()
-        val future = CompletableFuture.supplyAsync { builder(prototype) }
+        val future = CompletableFuture.supplyAsync { builder(prototype, generator) }
         return SmoothMesh.loadAsync(future)
     }
 
     @JvmStatic
-    fun generateMesh(): SmoothMesh {
+    fun generateMesh(generator: MeshGenerator = this.generator): SmoothMesh {
         val prototype = Smooth.mesh()
-        return builder(prototype).load()
+        return builder(prototype, generator).load()
     }
 
-    private fun builder(prototype: SmoothMeshPrototype): SmoothMeshBuilder {
+    @JvmStatic
+    fun generateMeshAsync(): SmoothMesh = generateMeshAsync(this.generator)
+
+    @JvmStatic
+    fun generateMesh(): SmoothMesh = generateMesh(this.generator)
+
+    private fun builder(prototype: SmoothMeshPrototype, generator: MeshGenerator): SmoothMeshBuilder {
         val builder = SmoothMeshBuilder.create(prototype,
-                this.generator.totalVertexCount,
-                this.generator.totalIndexCount)
-        this.generator.generateIndices(builder.writer)
-        this.generator.generateVertices(builder.writer)
+                generator.totalVertexCount,
+                generator.totalIndexCount)
+        generator.generateVertices(builder.writer)
+        generator.generateIndices(builder.writer)
         return builder
     }
 
