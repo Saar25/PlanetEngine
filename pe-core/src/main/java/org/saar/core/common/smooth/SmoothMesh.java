@@ -22,10 +22,10 @@ public class SmoothMesh implements Mesh {
 
     static SmoothMesh create(SmoothMeshPrototype prototype, int indices) {
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        helper.store();
 
         final Vao vao = Vao.create();
         helper.loadToVao(vao);
+        helper.store();
 
         final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices, DataType.U_INT);

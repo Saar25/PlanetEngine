@@ -43,10 +43,10 @@ public class ObjMesh implements Mesh {
 
     static ObjMesh create(ObjMeshPrototype prototype, int indices) {
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        helper.store();
 
         final Vao vao = Vao.create();
         helper.loadToVao(vao);
+        helper.store();
 
         final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices, DataType.U_INT);
@@ -55,14 +55,11 @@ public class ObjMesh implements Mesh {
     }
 
     public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
-        final ObjMeshBuilder builder = new ObjMeshBuilder(prototype, indices.length);
-        builder.getWriter().writeVertices(vertices);
-        builder.getWriter().writeIndices(indices);
-        return builder.load();
+        return ObjMeshBuilder.build(prototype, vertices, indices).load();
     }
 
     public static ObjMesh load(ObjVertex[] vertices, int[] indices) {
-        return ObjMesh.load(Obj.mesh(), vertices, indices);
+        return ObjMeshBuilder.build(Obj.mesh(), vertices, indices).load();
     }
 
     public static ObjMesh load(String objFile) throws Exception {

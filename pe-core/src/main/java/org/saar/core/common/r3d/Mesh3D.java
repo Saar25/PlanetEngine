@@ -19,10 +19,10 @@ public class Mesh3D implements Mesh {
 
     static Mesh3D create(Mesh3DPrototype prototype, int indices, int instances) {
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        helper.store();
 
         final Vao vao = Vao.create();
         helper.loadToVao(vao);
+        helper.store();
 
         final DrawCall drawCall = new InstancedElementsDrawCall(
                 RenderMode.TRIANGLES, indices, DataType.U_INT, instances);

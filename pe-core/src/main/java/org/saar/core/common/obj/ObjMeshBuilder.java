@@ -24,6 +24,17 @@ public class ObjMeshBuilder implements MeshBuilder {
         return ObjMeshBuilder.create(Obj.mesh(), vertices, indices);
     }
 
+    public static ObjMeshBuilder build(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
+        final ObjMeshBuilder builder = ObjMeshBuilder.create(prototype, vertices.length, indices.length);
+        builder.getWriter().writeVertices(vertices);
+        builder.getWriter().writeIndices(indices);
+        return builder;
+    }
+
+    public static ObjMeshBuilder build(ObjVertex[] vertices, int[] indices) {
+        return ObjMeshBuilder.build(Obj.mesh(), vertices, indices);
+    }
+
     public ObjMeshWriter getWriter() {
         return this.writer;
     }
