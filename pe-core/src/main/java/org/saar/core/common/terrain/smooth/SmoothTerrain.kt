@@ -1,21 +1,23 @@
 package org.saar.core.common.terrain.smooth
 
-import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.saar.core.common.smooth.Smooth
 import org.saar.core.common.smooth.SmoothMesh
 import org.saar.core.common.smooth.SmoothMeshBuilder
 import org.saar.core.common.smooth.SmoothMeshPrototype
+import org.saar.core.common.terrain.colour.ColourGenerator
+import org.saar.core.common.terrain.height.FlatHeightGenerator
 import org.saar.maths.utils.Vector3
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
 object SmoothTerrain {
 
-    private val generator: MeshGenerator = SquareMeshGenerator(
-            1024,
-            { x, z -> SimplexNoise.noise(x, z) },
-            { x, y, z ->
+    private val generator: MeshGenerator = TriangleMeshGenerator(
+            32,
+            FlatHeightGenerator(0f),
+//            { x, z -> SimplexNoise.noise(x, z) },
+            ColourGenerator { x, y, z ->
                 Vector3.of(
                         Random.nextFloat(),
                         Random.nextFloat(),
