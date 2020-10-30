@@ -1,4 +1,4 @@
-package org.saar.core.model.mesh.buffers;
+package org.saar.core.mesh.build.buffers;
 
 import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;

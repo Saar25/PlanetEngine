@@ -4,7 +4,7 @@ import org.saar.core.common.inference.weak.WeakInference;
 import org.saar.core.common.inference.weak.WeakInstance;
 import org.saar.core.common.inference.weak.WeakMesh;
 import org.saar.core.common.inference.weak.WeakVertex;
-import org.saar.core.model.Mesh;
+import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.primitive.GlFloat;

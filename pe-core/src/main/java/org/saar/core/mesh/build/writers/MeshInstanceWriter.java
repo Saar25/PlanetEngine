@@ -1,6 +1,6 @@
-package org.saar.core.model.mesh.writers;
+package org.saar.core.mesh.build.writers;
 
-import org.saar.core.model.Instance;
+import org.saar.core.mesh.Instance;
 
 public interface MeshInstanceWriter<T extends Instance> {
 

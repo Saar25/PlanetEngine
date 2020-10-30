@@ -2,9 +2,9 @@ package org.saar.core.common.normalmap
 
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.saar.core.model.mesh.MeshBufferProperty
-import org.saar.core.model.mesh.buffers.MeshIndexBuffer
-import org.saar.core.model.mesh.buffers.MeshVertexBuffer
+import org.saar.core.mesh.build.MeshBufferProperty
+import org.saar.core.mesh.build.buffers.MeshIndexBuffer
+import org.saar.core.mesh.build.buffers.MeshVertexBuffer
 import org.saar.maths.utils.Vector3
 
 object NormalMapped {

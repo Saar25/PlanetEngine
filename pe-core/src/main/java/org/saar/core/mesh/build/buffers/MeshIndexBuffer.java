@@ -1,10 +1,13 @@
-package org.saar.core.model.mesh.buffers;
+package org.saar.core.mesh.build.buffers;
 
-import org.saar.core.model.mesh.MeshBuffer;
+import org.saar.core.mesh.build.MeshBuffer;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
-import org.saar.lwjgl.opengl.objects.vbos.*;
+import org.saar.lwjgl.opengl.objects.vbos.IVbo;
+import org.saar.lwjgl.opengl.objects.vbos.Vbo;
+import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 
 public class MeshIndexBuffer extends MeshBuffer {
 

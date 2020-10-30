@@ -1,8 +1,8 @@
 package org.saar.core.common.normalmap;
 
-import org.saar.core.model.DrawCallMesh;
-import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.assimp.component.*;

@@ -1,6 +1,6 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.model.mesh.MeshBuilder;
+import org.saar.core.mesh.build.MeshBuilder;
 
 public class ObjMeshBuilder implements MeshBuilder {
 

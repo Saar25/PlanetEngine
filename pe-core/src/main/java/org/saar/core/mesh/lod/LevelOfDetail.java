@@ -1,4 +1,4 @@
-package org.saar.core.model.lod;
+package org.saar.core.mesh.lod;
 
 public class LevelOfDetail {
 

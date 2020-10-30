@@ -1,10 +1,9 @@
 package org.saar.core.common.smooth;
 
 
-import org.saar.core.model.mesh.MeshPrototype;
-import org.saar.core.model.mesh.buffers.MeshIndexBuffer;
-import org.saar.core.model.mesh.buffers.MeshInstanceBuffer;
-import org.saar.core.model.mesh.buffers.MeshVertexBuffer;
+import org.saar.core.mesh.build.MeshPrototype;
+import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
+import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
 
 public interface SmoothMeshPrototype extends MeshPrototype {
 

@@ -1,9 +1,9 @@
-package org.saar.core.model.mesh;
+package org.saar.core.mesh.build;
 
-import org.saar.core.model.Vertex;
-import org.saar.core.model.mesh.buffers.MeshIndexBuffer;
-import org.saar.core.model.mesh.buffers.MeshInstanceBuffer;
-import org.saar.core.model.mesh.buffers.MeshVertexBuffer;
+import org.saar.core.mesh.Vertex;
+import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
+import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
+import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
 import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 

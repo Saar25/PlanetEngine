@@ -1,4 +1,4 @@
-package org.saar.core.model;
+package org.saar.core.mesh;
 
 public interface Vertex {
 

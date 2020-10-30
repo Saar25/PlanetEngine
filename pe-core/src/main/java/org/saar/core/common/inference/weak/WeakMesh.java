@@ -1,7 +1,7 @@
 package org.saar.core.common.inference.weak;
 
-import org.saar.core.model.DrawCallMesh;
-import org.saar.core.model.Mesh;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.*;

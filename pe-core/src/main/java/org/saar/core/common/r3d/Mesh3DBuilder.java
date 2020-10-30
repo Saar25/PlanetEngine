@@ -1,7 +1,7 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.model.mesh.MeshBuilder;
-import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.mesh.build.MeshBuilder;
+import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.Attribute;
 

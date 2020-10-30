@@ -1,4 +1,4 @@
-package org.saar.core.model.mesh.writers;
+package org.saar.core.mesh.build.writers;
 
 public interface MeshIndexWriter {
 

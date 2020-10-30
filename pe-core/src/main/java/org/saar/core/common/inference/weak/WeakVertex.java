@@ -1,6 +1,6 @@
 package org.saar.core.common.inference.weak;
 
-import org.saar.core.model.Vertex;
+import org.saar.core.mesh.Vertex;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.util.buffer.BufferWriter;

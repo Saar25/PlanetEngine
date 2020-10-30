@@ -1,14 +1,14 @@
 package org.saar.example;
 
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.core.model.DrawCallMesh;
-import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
-import org.saar.core.model.Mesh;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.objects.Attribute;

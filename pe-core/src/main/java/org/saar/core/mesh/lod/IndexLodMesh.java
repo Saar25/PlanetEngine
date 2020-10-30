@@ -1,6 +1,6 @@
-package org.saar.core.model.lod;
+package org.saar.core.mesh.lod;
 
-import org.saar.core.model.Mesh;
+import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.objects.vaos.IVao;
 

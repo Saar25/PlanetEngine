@@ -1,7 +1,7 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.model.mesh.writers.MeshIndexWriter;
-import org.saar.core.model.mesh.writers.MeshVertexWriter;
+import org.saar.core.mesh.build.writers.MeshIndexWriter;
+import org.saar.core.mesh.build.writers.MeshVertexWriter;
 
 public class Mesh2DWriter implements MeshVertexWriter<Vertex2D>, MeshIndexWriter {
 

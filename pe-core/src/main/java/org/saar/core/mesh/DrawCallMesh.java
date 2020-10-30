@@ -1,4 +1,4 @@
-package org.saar.core.model;
+package org.saar.core.mesh;
 
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.objects.vaos.IVao;

@@ -1,6 +1,6 @@
-package org.saar.core.model.mesh.writers;
+package org.saar.core.mesh.build.writers;
 
-import org.saar.core.model.Vertex;
+import org.saar.core.mesh.Vertex;
 
 public interface MeshVertexWriter<T extends Vertex> {
 
