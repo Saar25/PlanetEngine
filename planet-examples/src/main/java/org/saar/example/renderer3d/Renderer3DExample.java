@@ -68,10 +68,10 @@ public class Renderer3DExample {
     private static Model3D[] models() {
         final int cubesPerBatch = CUBES / BATCHES;
         final Model3D[] batches = new Model3D[BATCHES];
-        final MyNode[] nodes = new MyNode[cubesPerBatch];
+        final MyInstance[] nodes = new MyInstance[cubesPerBatch];
         for (int i = 0; i < BATCHES; i++) {
             for (int j = 0; j < cubesPerBatch; j++) {
-                final MyNode newNode = new MyNode();
+                final MyInstance newNode = new MyInstance();
                 final float x = (float) (Math.random() * AREA - AREA / 2);
                 final float y = (float) (Math.random() * AREA - AREA / 2);
                 final float z = (float) (Math.random() * AREA - AREA / 2);

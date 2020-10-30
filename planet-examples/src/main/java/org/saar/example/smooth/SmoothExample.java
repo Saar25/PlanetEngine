@@ -74,10 +74,10 @@ public class SmoothExample {
 
         final SmoothDeferredRenderer renderer = new SmoothDeferredRenderer(model, terrainModel);
 
-        final Node3D cube = R3D.node();
+        final Instance3D cube = R3D.node();
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
         final Model3D cubeModel = new Model3D(cubeMesh);
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);

@@ -57,7 +57,7 @@ public class Mesh3DBuilder implements MeshBuilder {
         return Mesh3DBuilder.create(R3D.mesh(), vertices, indices, instances);
     }
 
-    public static Mesh3DBuilder build(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+    public static Mesh3DBuilder build(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Instance3D[] instances) {
         final Mesh3DBuilder builder = create(prototype, vertices.length, indices.length, instances.length);
         builder.getWriter().writeInstances(instances);
         builder.getWriter().writeVertices(vertices);
@@ -65,7 +65,7 @@ public class Mesh3DBuilder implements MeshBuilder {
         return builder;
     }
 
-    public static Mesh3DBuilder build(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+    public static Mesh3DBuilder build(Vertex3D[] vertices, int[] indices, Instance3D[] instances) {
         return Mesh3DBuilder.build(R3D.mesh(), vertices, indices, instances);
     }
 

@@ -81,12 +81,12 @@ public class ManyCubesExample {
 
     private static Model3D model() {
         final int size = (int) Math.pow(CUBES, 1 / 3f);
-        final MyNode[] nodes = new MyNode[CUBES];
+        final MyInstance[] nodes = new MyInstance[CUBES];
         for (int i = 0; i < CUBES; i++) {
             final int a = i / (size * size);
             final int b = (i / size) % size;
             final int c = i % size;
-            final MyNode newNode = new MyNode();
+            final MyInstance newNode = new MyInstance();
             newNode.getTransform().getPosition().set(
                     a * SPACE, b * SPACE, c * SPACE);
             nodes[i] = newNode;

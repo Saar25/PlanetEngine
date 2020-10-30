@@ -30,11 +30,11 @@ public class Mesh3D implements Mesh {
         return new Mesh3D(mesh);
     }
 
-    public static Mesh3D load(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+    public static Mesh3D load(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Instance3D[] instances) {
         return Mesh3DBuilder.build(prototype, vertices, indices, instances).load();
     }
 
-    public static Mesh3D load(Vertex3D[] vertices, int[] indices, Node3D[] instances) {
+    public static Mesh3D load(Vertex3D[] vertices, int[] indices, Instance3D[] instances) {
         return Mesh3DBuilder.build(R3D.mesh(), vertices, indices, instances).load();
     }
 

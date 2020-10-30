@@ -11,12 +11,12 @@ import org.saar.maths.transform.Transform
 object R3D {
 
     @JvmStatic
-    fun node(transform: Transform): Node3D {
-        return Node3D { transform }
+    fun node(transform: Transform): Instance3D {
+        return Instance3D { transform }
     }
 
     @JvmStatic
-    fun node(): Node3D {
+    fun node(): Instance3D {
         return node(SimpleTransform())
     }
 

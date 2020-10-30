@@ -5,7 +5,7 @@ import org.saar.core.model.mesh.writers.MeshIndexWriter;
 import org.saar.core.model.mesh.writers.MeshInstanceWriter;
 import org.saar.core.model.mesh.writers.MeshVertexWriter;
 
-public class Mesh3DWriter implements MeshInstanceWriter<Node3D>, MeshVertexWriter<Vertex3D>, MeshIndexWriter {
+public class Mesh3DWriter implements MeshInstanceWriter<Instance3D>, MeshVertexWriter<Vertex3D>, MeshIndexWriter {
 
     private final Mesh3DPrototype prototype;
 
@@ -21,7 +21,7 @@ public class Mesh3DWriter implements MeshInstanceWriter<Node3D>, MeshVertexWrite
     }
 
     @Override
-    public void writeInstance(Node3D instance) {
+    public void writeInstance(Instance3D instance) {
         final Matrix4fc matrix = instance.getTransform().getTransformationMatrix();
         this.prototype.getTransformBuffer().getWriter().write(matrix);
     }
