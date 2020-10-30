@@ -1,10 +1,10 @@
 package org.saar.core.mesh.build;
 
+import org.saar.core.mesh.Instance;
 import org.saar.core.mesh.Vertex;
 import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
 import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
 import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
-import org.saar.core.node.Node;
 import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class MeshPrototypeHelper {
         }
     }
 
-    public void allocateInstances(Node[] instances) {
+    public void allocateInstances(Instance[] instances) {
         allocateInstances(instances.length);
     }
 

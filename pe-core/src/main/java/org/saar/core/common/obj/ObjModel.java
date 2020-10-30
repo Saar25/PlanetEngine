@@ -1,6 +1,6 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.node.Model;
+import org.saar.core.mesh.Model;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.transform.Transform;

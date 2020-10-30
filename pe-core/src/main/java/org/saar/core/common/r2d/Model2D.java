@@ -1,6 +1,6 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.node.Model;
+import org.saar.core.mesh.Model;
 
 public class Model2D implements Model {
 

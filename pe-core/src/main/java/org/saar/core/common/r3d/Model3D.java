@@ -1,6 +1,6 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.node.Model;
+import org.saar.core.mesh.Model;
 import org.saar.maths.transform.SimpleTransform;
 
 public class Model3D implements Model {
