@@ -2,10 +2,7 @@ package org.saar.example.renderer3d;
 
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.r3d.Mesh3D;
-import org.saar.core.common.r3d.Mesh3DPrototype;
-import org.saar.core.common.r3d.Model3D;
-import org.saar.core.common.r3d.Renderer3D;
+import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
@@ -68,10 +65,10 @@ public class Renderer3DExample {
     private static Model3D[] models() {
         final int cubesPerBatch = CUBES / BATCHES;
         final Model3D[] batches = new Model3D[BATCHES];
-        final MyInstance[] nodes = new MyInstance[cubesPerBatch];
+        final Instance3D[] nodes = new Instance3D[cubesPerBatch];
         for (int i = 0; i < BATCHES; i++) {
             for (int j = 0; j < cubesPerBatch; j++) {
-                final MyInstance newNode = new MyInstance();
+                final Instance3D newNode = R3D.instance();
                 final float x = (float) (Math.random() * AREA - AREA / 2);
                 final float y = (float) (Math.random() * AREA - AREA / 2);
                 final float z = (float) (Math.random() * AREA - AREA / 2);

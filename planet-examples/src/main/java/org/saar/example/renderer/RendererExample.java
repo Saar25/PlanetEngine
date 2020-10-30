@@ -1,8 +1,6 @@
 package org.saar.example.renderer;
 
-import org.saar.core.common.r2d.Mesh2D;
-import org.saar.core.common.r2d.Model2D;
-import org.saar.core.common.r2d.Renderer2D;
+import org.saar.core.common.r2d.*;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -29,11 +27,11 @@ public class RendererExample {
 
         final float a = 0.7f, b = 0.3f;
         final int[] indices = {0, 1, 2, 0, 2, 3};
-        final MyVertex[] vertices = {
-                new MyVertex(Vector2.of(-a, -a + .1f), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                new MyVertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                new MyVertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f))};
+        final Vertex2D[] vertices = {
+                R2D.vertex(Vector2.of(-a, -a + .1f), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                R2D.vertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
+                R2D.vertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
+                R2D.vertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
         final Mesh2D mesh = Mesh2D.load(vertices, indices);
         final Model2D model = new Model2D(mesh);

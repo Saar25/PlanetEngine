@@ -2,9 +2,7 @@ package org.saar.example.renderer3d;
 
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.r3d.Mesh3D;
-import org.saar.core.common.r3d.Model3D;
-import org.saar.core.common.r3d.Renderer3D;
+import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -81,12 +79,12 @@ public class ManyCubesExample {
 
     private static Model3D model() {
         final int size = (int) Math.pow(CUBES, 1 / 3f);
-        final MyInstance[] nodes = new MyInstance[CUBES];
+        final Instance3D[] nodes = new Instance3D[CUBES];
         for (int i = 0; i < CUBES; i++) {
             final int a = i / (size * size);
             final int b = (i / size) % size;
             final int c = i % size;
-            final MyInstance newNode = new MyInstance();
+            final Instance3D newNode = R3D.instance();
             newNode.getTransform().getPosition().set(
                     a * SPACE, b * SPACE, c * SPACE);
             nodes[i] = newNode;
