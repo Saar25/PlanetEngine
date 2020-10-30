@@ -25,8 +25,7 @@ public class SmoothMeshBuilder implements MeshBuilder {
     }
 
     public static SmoothMeshBuilder build(SmoothMeshPrototype prototype, SmoothVertex[] vertices, int[] indices) {
-        SmoothMesh.initPrototype(prototype, vertices.length, indices.length);
-        final SmoothMeshBuilder builder = new SmoothMeshBuilder(prototype, indices.length);
+        final SmoothMeshBuilder builder = create(prototype, vertices.length, indices.length);
         builder.getWriter().writeVertices(vertices);
         builder.getWriter().writeIndices(indices);
         return builder;
