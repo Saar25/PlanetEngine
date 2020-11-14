@@ -33,7 +33,7 @@ public final class TextureLoader {
      * @throws UnsupportedFileTypeException if the texture type is not recognized
      */
     public static TextureInfo load(String file) throws IOException, UnsupportedFileTypeException {
-        final String type = file.substring(file.lastIndexOf("."));
+        final String type = file.substring(file.lastIndexOf(".") + 1);
         final Optional<TextureFileLoader> loader = Optional.ofNullable(loaders.get(type));
         return loader.orElseThrow(() -> typeException(type)).load(file);
     }
