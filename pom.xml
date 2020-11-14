@@ -71,7 +71,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jproperty</groupId>
+            <groupId>com.github.saar25</groupId>
             <artifactId>jproperty</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
