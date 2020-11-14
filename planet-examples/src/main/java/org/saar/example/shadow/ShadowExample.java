@@ -33,7 +33,7 @@ public class ShadowExample {
     private static float scrollSpeed = 50f;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
+        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
@@ -98,7 +98,7 @@ public class ShadowExample {
             window.update(true);
             window.pollEvents();
 
-            final double delta = fps.delta();
+            final double delta = fps.delta() * 1000;
             ExamplesUtils.move(camera, keyboard, (long) delta, scrollSpeed);
 
             System.out.print("\r --> " +
