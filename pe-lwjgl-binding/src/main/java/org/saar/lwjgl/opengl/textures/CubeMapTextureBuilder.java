@@ -1,5 +1,6 @@
 package org.saar.lwjgl.opengl.textures;
 
+import org.saar.lwjgl.opengl.textures.loader.TextureLoader;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
