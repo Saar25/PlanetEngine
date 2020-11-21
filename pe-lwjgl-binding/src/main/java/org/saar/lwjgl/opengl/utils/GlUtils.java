@@ -9,9 +9,11 @@ public final class GlUtils {
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
     private static boolean depthMasking = false;
+    private static byte stencilMasking = 0;
 
     private static BlendFunction blendFunction = BlendFunction.NONE;
     private static DepthFunction depthFunction = DepthFunction.NONE;
+    private static DepthFunction stencilFunction = DepthFunction.NONE;
     private static GlCullFace cullFace = GlCullFace.NONE;
 
     private GlUtils() {
@@ -139,6 +141,52 @@ public final class GlUtils {
         if (depthMasking) {
             GL11.glDepthMask(false);
             depthMasking = false;
+        }
+    }
+
+    public static void enableStencilTest() {
+        setStencilFunction(DepthFunction.EQUAL);
+    }
+
+    public static void disableStencilTest() {
+        setStencilFunction(DepthFunction.NONE);
+    }
+
+    /**
+     * Sets the stencil function used for stencil testing
+     *
+     * @param stencilFunction the depth function
+     */
+    public static void setStencilFunction(DepthFunction stencilFunction) {
+        if (GlUtils.stencilFunction != stencilFunction) {
+            GlUtils.stencilFunction = stencilFunction;
+            if (stencilFunction == DepthFunction.NONE) {
+                GlUtils.setEnabled(GL11.GL_STENCIL_TEST, false);
+            } else {
+                GlUtils.setEnabled(GL11.GL_STENCIL_TEST, true);
+                GL11.glStencilFunc(stencilFunction.get(), 2, 0xFF);
+            }
+        }
+    }
+
+    /**
+     * Enable stencil mask, enable this if writing to stencil buffer is needed
+     */
+    public static void enableStencilMasking() {
+        setStencilMasking((byte) 0xFF);
+    }
+
+    /**
+     * Disable stencil mask, enable this if writing to stencil buffer is not needed
+     */
+    public static void disableStencilMasking() {
+        setStencilMasking((byte) 0);
+    }
+
+    public static void setStencilMasking(byte stencilMasking) {
+        if (GlUtils.stencilMasking != stencilMasking) {
+            GlUtils.stencilMasking = stencilMasking;
+            GL11.glStencilMask(stencilMasking);
         }
     }
 
