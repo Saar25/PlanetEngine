@@ -4,7 +4,7 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImageBase;
-import org.saar.lwjgl.opengl.constants.InternalFormat;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
@@ -13,10 +13,9 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class DeferredRenderingPipeline {
 
-    private RenderPassesHelper helper = RenderPassesHelper.empty();
-
     private final OffScreen screen;
     private final OffScreen output;
+    private RenderPassesHelper helper = RenderPassesHelper.empty();
 
     public DeferredRenderingPipeline(OffScreen output) {
         this.output = output;
@@ -29,7 +28,7 @@ public class DeferredRenderingPipeline {
 
         final SimpleScreen screen = new SimpleScreen(Fbo.create(width, height));
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(
-                0, RenderBuffer.create(), InternalFormat.RGBA8);
+                0, RenderBuffer.create(), ColourFormatType.RGBA8);
         final ColourScreenImageBase image = new ColourScreenImageBase(attachment);
 
         screen.addScreenImage(image);

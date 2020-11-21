@@ -4,7 +4,7 @@ import org.saar.core.common.r2d.*;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.InternalFormat;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -23,7 +23,7 @@ public class RendererExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        attachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
+        attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
 
         final float a = 0.7f, b = 0.3f;
         final int[] indices = {0, 1, 2, 0, 2, 3};

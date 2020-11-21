@@ -1,21 +1,19 @@
 package org.saar.lwjgl.opengl.constants;
 
-import org.lwjgl.opengl.GL14;
+public enum DepthFormatType {
 
-public enum DepthFormatType implements IInternalFormat {
-
-    COMPONENT16(GL14.GL_DEPTH_COMPONENT16),
-    COMPONENT24(GL14.GL_DEPTH_COMPONENT24),
-    COMPONENT32(GL14.GL_DEPTH_COMPONENT32),
+    COMPONENT16(InternalFormat.DEPTH16),
+    COMPONENT24(InternalFormat.DEPTH24),
+    COMPONENT32(InternalFormat.DEPTH32),
     ;
 
-    private final int value;
+    private final InternalFormat value;
 
-    DepthFormatType(int value) {
+    DepthFormatType(InternalFormat value) {
         this.value = value;
     }
 
-    public int get() {
+    public InternalFormat get() {
         return this.value;
     }
 

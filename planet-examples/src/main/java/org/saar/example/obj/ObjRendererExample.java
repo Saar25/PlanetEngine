@@ -9,8 +9,8 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
-import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
@@ -31,7 +31,7 @@ public class ObjRendererExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
         window.init();
 
-        colorAttachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
+        colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
         final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
