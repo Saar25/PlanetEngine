@@ -3,7 +3,7 @@ package org.saar.core.renderer.deferred;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.SimpleScreen;
-import org.saar.core.screen.image.ColourScreenImageBase;
+import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
@@ -29,7 +29,7 @@ public class DeferredRenderingPipeline {
         final SimpleScreen screen = new SimpleScreen(Fbo.create(width, height));
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(
                 0, RenderBuffer.create(), ColourFormatType.RGBA8);
-        final ColourScreenImageBase image = new ColourScreenImageBase(attachment);
+        final ColourScreenImage image = new ColourScreenImage(attachment);
 
         screen.addScreenImage(image);
         screen.setDrawImages(image);
