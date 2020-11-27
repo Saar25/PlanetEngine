@@ -57,7 +57,7 @@ public class ObjRendererExample {
 
         fbo = createFbo(WIDTH, HEIGHT);
 
-        window.addPositionListener(e -> {
+        window.addResizeListener(e -> {
             fbo.delete();
             fbo = createFbo(window.getWidth(), window.getHeight());
         });

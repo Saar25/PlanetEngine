@@ -39,7 +39,7 @@ public class RendererExample {
 
         fbo = createFbo(WIDTH, HEIGHT);
 
-        window.addPositionListener(e -> {
+        window.addResizeListener(e -> {
             fbo.delete();
             fbo = createFbo(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
