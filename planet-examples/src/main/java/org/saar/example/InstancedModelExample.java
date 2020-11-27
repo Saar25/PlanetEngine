@@ -24,8 +24,7 @@ public class InstancedModelExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) throws Exception {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final Vao vao = Vao.create();
 

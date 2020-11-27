@@ -20,8 +20,7 @@ public class RendererExample {
     private static ColourAttachment attachment;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
 
@@ -54,10 +53,10 @@ public class RendererExample {
 
             window.update(true);
             window.pollEvents();
-            if (window.isResized()) {
+            /* TODO if (window.isResized()) {
                 fbo.delete();
                 fbo = createFbo(window.getWidth(), window.getHeight());
-            }
+            }*/
         }
 
         renderer.delete();

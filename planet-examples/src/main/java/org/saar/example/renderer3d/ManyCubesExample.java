@@ -31,8 +31,7 @@ public class ManyCubesExample {
     private static DepthAttachment depthAttachment;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
         colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);

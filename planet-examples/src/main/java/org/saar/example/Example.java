@@ -4,10 +4,10 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.objects.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlRendering;
@@ -15,8 +15,7 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 public class Example {
 
     public static void main(String[] args) throws Exception {
-        final Window window = new Window("Lwjgl", 700, 500, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", 700, 500, true);
 
         final Vao vao = Vao.create();
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);

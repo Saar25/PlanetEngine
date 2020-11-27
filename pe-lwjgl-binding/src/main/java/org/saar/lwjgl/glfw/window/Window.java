@@ -14,60 +14,7 @@ public class Window {
 
     private static Window current = null;
 
-    private final int[] xBuffer = new int[1];
-    private final int[] yBuffer = new int[1];
-
-    private String title;
-    private long id;
-    private int width;
-    private int height;
-
-    private Mouse mouse;
-    private Keyboard keyboard;
-
-    private boolean resized;
-    private boolean vSync;
-
-    public Window(String title, int width, int height, boolean vSync) {
-        this.title = title;
-        this.width = width;
-        this.height = height;
-        this.vSync = vSync;
-        this.resized = false;
-        Window.current = this;
-    }
-
-    public static WindowBuilder builder() {
-        final WindowBuilder windowBuilder = new WindowBuilder();
-        windowBuilder.setVisible(false);
-        windowBuilder.setResizeable(true);
-        windowBuilder.setContextVersion(3, 2);
-        windowBuilder.setOpenGLProfile(GLFW.GLFW_OPENGL_CORE_PROFILE);
-        windowBuilder.setOpenGLForwardCompatibility(true);
-        final WindowHint[] hints = {
-                new WindowHintVisible(false),
-                new WindowHintResizeable(true),
-                new WindowHintContextVersion(3, 2),
-                new WindowHintOpenGlProfile(OpenGlProfileType.CORE),
-                new WindowHintOpenGlForwardCompatibility(true)
-        };
-        return windowBuilder;
-    }
-
-    public static Window create(String title, int width, int height, boolean vSync) {
-        return new Window(title, width, height, vSync);
-    }
-
-    /**
-     * Returns the current focused window
-     *
-     * @return the current window
-     */
-    public static Window current() {
-        return current;
-    }
-
-    public void init() {
+    static {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -76,67 +23,80 @@ public class Window {
         if (!GLFW.glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
+    }
 
-        GLFW.glfwDefaultWindowHints();
-        setHint(WindowHintType.CONTEXT_VERSION_MAJOR, 3);
-        setHint(WindowHintType.CONTEXT_VERSION_MINOR, 2);
-        setHint(WindowHintType.OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-        setHint(WindowHintType.OPENGL_FORWARD_COMPAT, true);
+    private final long id;
 
-        // Create the window
-        id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
-        if (this.id == 0) {
-            throw new RuntimeException("Failed to init the GLFW window");
-        }
+    private final Mouse mouse;
+    private final Keyboard keyboard;
 
+    private final boolean vSync;
+    private String title;
+
+    private int width;
+    private int height;
+
+    private int x;
+    private int y;
+
+    public Window(long id, String title, int width, int height, boolean vSync) {
+        this.id = id;
+        this.vSync = vSync;
+        this.title = title;
+        this.width = width;
+        this.height = height;
+        this.mouse = new Mouse(this.id);
+        this.keyboard = new Keyboard(this.id);
+        init();
+    }
+
+    static Window create0(String title, int width, int height, boolean vSync) {
+        final long id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
+        if (id == 0) throw new RuntimeException("Failed to init the GLFW window");
+        return new Window(id, title, width, height, vSync);
+    }
+
+    public static Window create(String title, int width, int height, boolean vSync) {
+        final WindowBuilder builder = builder(title, width, height, vSync);
+        builder.hint(new WindowHintVisible(false))
+                .hint(new WindowHintResizeable(true));
+        return builder.build();
+    }
+
+    public static WindowBuilder builder(String title, int width, int height, boolean vSync) {
+        final WindowBuilder builder = new WindowBuilder(title, width, height, vSync);
+        builder.hint(new WindowHintContextVersion(3, 2))
+                .hint(new WindowHintOpenGlProfile(OpenGlProfileType.CORE))
+                .hint(new WindowHintOpenGlForwardCompatibility(true));
+        return builder;
+    }
+
+    public static Window current() {
+        return Window.current;
+    }
+
+    private void init() {
         GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            this.resized = true;
         });
-
+        GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
+            this.x = x;
+            this.y = y;
+        });
         center();
-
         makeContextCurrent();
-
-        if (isvSync()) {
-            // Enable v-sync
+        if (this.vSync) {
             GLFW.glfwSwapInterval(1);
         }
-
-        // Make the window visible
         setVisible(true);
-
         GL.createCapabilities();
         GLUtil.setupDebugMessageCallback(System.err);
-
-        this.mouse = new Mouse(this.id);
-        this.keyboard = new Keyboard(this.id);
-    }
-
-    private static void setHint(WindowHintType hint, int value) {
-        GLFW.glfwWindowHint(hint.get(), value);
-    }
-
-    private static void setHint(WindowHintType hint, boolean value) {
-        GLFW.glfwWindowHint(hint.get(), value ? 1 : 0);
     }
 
     private void makeContextCurrent() {
         GLFW.glfwMakeContextCurrent(this.id);
-    }
-
-    /**
-     * Center the window in the middle of the screen
-     */
-    public void center() {
-        final long monitor = GLFW.glfwGetPrimaryMonitor();
-        final GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
-        if (vidMode != null) {
-            final int w = (vidMode.width() - getWidth()) / 2;
-            final int h = (vidMode.height() - getHeight()) / 2;
-            this.setPosition(w, h);
-        }
+        Window.current = this;
     }
 
     /**
@@ -152,42 +112,15 @@ public class Window {
     /**
      * Sets the window invisible
      */
-    private void show() {
+    public void show() {
         GLFW.glfwShowWindow(this.id);
     }
 
     /**
      * Sets the window visible
      */
-    private void hide() {
+    public void hide() {
         GLFW.glfwHideWindow(this.id);
-    }
-
-    /**
-     * Sets the window visible
-     */
-    private void setTitle(String title) {
-        GLFW.glfwSetWindowTitle(this.id, title);
-    }
-
-    /**
-     * Sets the position of the window
-     *
-     * @param x the x position of the window
-     * @param y the y position of the window
-     */
-    public void setPosition(int x, int y) {
-        GLFW.glfwSetWindowPos(this.id, x, y);
-    }
-
-    /**
-     * Sets the size of the window
-     *
-     * @param width  the width of the window
-     * @param height the height of the window
-     */
-    public void setSize(int width, int height) {
-        GLFW.glfwSetWindowSize(this.id, width, height);
     }
 
     /**
@@ -239,13 +172,84 @@ public class Window {
     }
 
     /**
+     * Returns the window's title
+     *
+     * @return the window's title
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Sets the window visible
+     */
+    public void setTitle(String title) {
+        GLFW.glfwSetWindowTitle(this.id, title);
+        this.title = title;
+    }
+
+    /**
+     * Return the window's width
+     *
+     * @return the window's width
+     */
+    public int getWidth() {
+        return this.width;
+    }
+
+    /**
+     * Sets the width of the window
+     *
+     * @param width the width of the window
+     */
+    public void setWidth(int width) {
+        setSize(width, getHeight());
+    }
+
+    /**
+     * Return the window's height
+     *
+     * @return the window's height
+     */
+    public int getHeight() {
+        return this.height;
+    }
+
+    /**
+     * Sets the height of the window
+     *
+     * @param height the height of the window
+     */
+    public void setHeight(int height) {
+        setSize(getWidth(), height);
+    }
+
+    /**
+     * Sets the size of the window
+     *
+     * @param width  the width of the window
+     * @param height the height of the window
+     */
+    public void setSize(int width, int height) {
+        GLFW.glfwSetWindowSize(this.id, width, height);
+    }
+
+    /**
      * Return the window's x position
      *
      * @return the window's x position
      */
     public int getX() {
-        GLFW.glfwGetWindowPos(this.id, xBuffer, yBuffer);
-        return this.xBuffer[0];
+        return this.x;
+    }
+
+    /**
+     * Sets the x position of the window
+     *
+     * @param x the x position of the window
+     */
+    public void setX(int x) {
+        setPosition(x, getY());
     }
 
     /**
@@ -254,8 +258,39 @@ public class Window {
      * @return the window's y position
      */
     public int getY() {
-        GLFW.glfwGetWindowPos(this.id, xBuffer, yBuffer);
-        return this.yBuffer[0];
+        return this.y;
+    }
+
+    /**
+     * Sets the y position of the window
+     *
+     * @param y the y position of the window
+     */
+    public void setY(int y) {
+        setPosition(getX(), y);
+    }
+
+    /**
+     * Sets the position of the window
+     *
+     * @param x the x position of the window
+     * @param y the y position of the window
+     */
+    public void setPosition(int x, int y) {
+        GLFW.glfwSetWindowPos(this.id, x, y);
+    }
+
+    /**
+     * Center the window in the middle of the screen
+     */
+    public void center() {
+        final long monitor = GLFW.glfwGetPrimaryMonitor();
+        final GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+        if (vidMode != null) {
+            final int w = (vidMode.width() - getWidth()) / 2;
+            final int h = (vidMode.height() - getHeight()) / 2;
+            setPosition(w, h);
+        }
     }
 
     /**
@@ -277,59 +312,12 @@ public class Window {
     }
 
     /**
-     * Returns the window's title
-     *
-     * @return the window's title
-     */
-    public String getTitle() {
-        return this.title;
-    }
-
-    /**
-     * Return the window's width
-     *
-     * @return the window's width
-     */
-    public int getWidth() {
-        return this.width;
-    }
-
-    /**
-     * Return the window's height
-     *
-     * @return the window's height
-     */
-    public int getHeight() {
-        return this.height;
-    }
-
-    /**
-     * Returns whether the window is vSync
-     *
-     * @return true if window is vSync else false
-     */
-    public boolean isvSync() {
-        return this.vSync;
-    }
-
-    /**
-     * Returns whether the window has been resized by the user since last updated
-     *
-     * @return true if window has been resized else false
-     */
-    public boolean isResized() {
-        return this.resized;
-    }
-
-    /**
      * Updates the window
      */
     public void update(boolean swapBuffers) {
         if (swapBuffers) {
             swapBuffers();
         }
-        resized = false;
-        Window.current = this;
         GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 

@@ -19,8 +19,7 @@ public class WeakExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) throws Exception {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final WeakVertex[] vertices = {
                 WeakInference.vertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),

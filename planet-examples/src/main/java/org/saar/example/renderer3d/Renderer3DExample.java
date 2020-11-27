@@ -28,8 +28,7 @@ public class Renderer3DExample {
     private static final int BATCHES = singleBatch ? 1 : 10_000;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);

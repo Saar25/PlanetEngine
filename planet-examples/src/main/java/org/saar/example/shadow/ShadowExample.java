@@ -36,8 +36,7 @@ public class ShadowExample {
     private static float scrollSpeed = 50f;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
