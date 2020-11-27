@@ -1,12 +1,14 @@
 package org.saar.example.smooth;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.projection.PerspectiveProjection;
+import org.saar.core.camera.Projection;
+import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.smooth.*;
 import org.saar.core.common.terrain.smooth.SmoothTerrain;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
+import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -23,7 +25,8 @@ public class SmoothExample {
         final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
         window.init();
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
         final Camera camera = new Camera(projection);
 
         camera.getTransform().getPosition().set(0, 0, 200);
