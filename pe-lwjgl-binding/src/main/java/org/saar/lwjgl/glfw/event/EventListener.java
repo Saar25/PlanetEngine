@@ -1,4 +1,4 @@
-package org.saar.lwjgl.glfw.input;
+package org.saar.lwjgl.glfw.event;
 
 public interface EventListener<T extends Event> {
 

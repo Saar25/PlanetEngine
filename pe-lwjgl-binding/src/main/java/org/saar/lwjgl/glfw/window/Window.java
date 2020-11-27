@@ -5,6 +5,9 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
+import org.saar.lwjgl.glfw.event.IntValueChange;
+import org.saar.lwjgl.glfw.event.EventListener;
+import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.hint.*;
@@ -33,9 +36,11 @@ public class Window {
     private final boolean vSync;
     private String title;
 
+    private EventListenersHelper<ResizeEvent> resizeListenersHelper = EventListenersHelper.empty();
     private int width;
     private int height;
 
+    private EventListenersHelper<PositionEvent> positionListenersHelper = EventListenersHelper.empty();
     private int x;
     private int y;
 
@@ -75,15 +80,35 @@ public class Window {
         return Window.current;
     }
 
+    public void addResizeListener(EventListener<ResizeEvent> listener) {
+        this.resizeListenersHelper = this.resizeListenersHelper.addListener(listener);
+    }
+
+    public void addPositionListener(EventListener<PositionEvent> listener) {
+        this.positionListenersHelper = this.positionListenersHelper.addListener(listener);
+    }
+
     private void init() {
         GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
+            final ResizeEvent event = new ResizeEvent(
+                    new IntValueChange(this.width, width),
+                    new IntValueChange(this.height, height)
+            );
             this.width = width;
             this.height = height;
+            this.resizeListenersHelper.fireEvent(event);
         });
+
         GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
+            final PositionEvent event = new PositionEvent(
+                    new IntValueChange(this.x, x),
+                    new IntValueChange(this.y, y)
+            );
             this.x = x;
             this.y = y;
+            this.positionListenersHelper.fireEvent(event);
         });
+
         center();
         makeContextCurrent();
         if (this.vSync) {

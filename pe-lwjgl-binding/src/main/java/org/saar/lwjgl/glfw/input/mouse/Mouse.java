@@ -3,9 +3,9 @@ package org.saar.lwjgl.glfw.input.mouse;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
-import org.saar.lwjgl.glfw.input.EventListener;
-import org.saar.lwjgl.glfw.input.EventListenersHelper;
-import org.saar.lwjgl.glfw.input.OnAction;
+import org.saar.lwjgl.glfw.event.EventListener;
+import org.saar.lwjgl.glfw.event.EventListenersHelper;
+import org.saar.lwjgl.glfw.event.OnAction;
 
 import java.nio.DoubleBuffer;
 

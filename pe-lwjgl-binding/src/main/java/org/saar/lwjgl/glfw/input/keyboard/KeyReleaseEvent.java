@@ -1,6 +1,6 @@
 package org.saar.lwjgl.glfw.input.keyboard;
 
-import org.saar.lwjgl.glfw.input.Event;
+import org.saar.lwjgl.glfw.event.Event;
 
 public class KeyReleaseEvent extends Event {
 

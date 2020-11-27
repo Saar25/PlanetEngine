@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.common.r3d.R3D;
 import org.saar.core.common.r3d.Vertex3D;
-import org.saar.lwjgl.glfw.input.EventListener;
+import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.input.mouse.MouseButton;
