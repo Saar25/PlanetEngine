@@ -4,6 +4,7 @@ import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.normalmap.NormalMappedDeferredRenderer;
 import org.saar.core.common.normalmap.NormalMappedMesh;
 import org.saar.core.common.normalmap.NormalMappedModel;
@@ -87,7 +88,7 @@ public class NormalMappingExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final OrthographicProjection shadowProjection = new OrthographicProjection(
+        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
