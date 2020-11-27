@@ -28,6 +28,7 @@ public class ObjRendererExample {
 
     private static ColourAttachment colorAttachment;
     private static DepthAttachment depthAttachment;
+    private static MultisampledFbo fbo;
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
@@ -54,7 +55,12 @@ public class ObjRendererExample {
 
         final ObjRenderer renderer = new ObjRenderer(model);
 
-        MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
+        fbo = createFbo(WIDTH, HEIGHT);
+
+        window.addPositionListener(e -> {
+            fbo.delete();
+            fbo = createFbo(window.getWidth(), window.getHeight());
+        });
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
@@ -70,10 +76,6 @@ public class ObjRendererExample {
 
             window.update(true);
             window.pollEvents();
-            /* TODO if (window.isResized()) {
-                fbo.delete();
-                fbo = createFbo(window.getWidth(), window.getHeight());
-            }*/
 
             System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))

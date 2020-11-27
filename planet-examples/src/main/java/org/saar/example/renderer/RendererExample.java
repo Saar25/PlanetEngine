@@ -18,6 +18,7 @@ public class RendererExample {
     private static final int HEIGHT = 500;
 
     private static ColourAttachment attachment;
+    private static MultisampledFbo fbo;
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
@@ -36,7 +37,13 @@ public class RendererExample {
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = new Renderer2D(model);
 
-        MultisampledFbo fbo = createFbo(WIDTH, HEIGHT);
+        fbo = createFbo(WIDTH, HEIGHT);
+
+        window.addPositionListener(e -> {
+            fbo.delete();
+            fbo = createFbo(e.getWidth().getAfter(),
+                    e.getHeight().getAfter());
+        });
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
@@ -53,10 +60,6 @@ public class RendererExample {
 
             window.update(true);
             window.pollEvents();
-            /* TODO if (window.isResized()) {
-                fbo.delete();
-                fbo = createFbo(window.getWidth(), window.getHeight());
-            }*/
         }
 
         renderer.delete();

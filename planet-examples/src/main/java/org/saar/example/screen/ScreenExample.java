@@ -51,6 +51,12 @@ public class ScreenExample {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo);
 
+        window.addResizeListener(e -> {
+            final int w = e.getWidth().getAfter();
+            final int h = e.getHeight().getAfter();
+            screen.resize(w, h);
+        });
+
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             screen.setAsDraw();
@@ -64,11 +70,6 @@ public class ScreenExample {
 
             window.update(true);
             window.pollEvents();
-            /* TODO if (window.isResized()) {
-                final int w = window.getWidth();
-                final int h = window.getHeight();
-                screen.resize(w, h);
-            }*/
         }
 
         renderer.delete();
