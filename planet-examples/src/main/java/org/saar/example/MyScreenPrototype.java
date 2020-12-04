@@ -1,14 +1,14 @@
-package org.saar.example.deferred;
+package org.saar.example;
 
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.DepthScreenImage;
 import org.saar.core.screen.image.ScreenImage;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.textures.Texture;
