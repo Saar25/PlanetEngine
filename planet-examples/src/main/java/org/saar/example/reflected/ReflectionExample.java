@@ -27,6 +27,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -66,24 +67,26 @@ public class ReflectionExample {
 
         final Camera reflectionCamera = new Camera(projection);
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
-        final DeferredRenderingPath reflectionDeferredRenderer = new DeferredRenderingPath(camera, reflectionScreenPrototype);
-        reflectionDeferredRenderer.addRenderer(renderer);
-        reflectionDeferredRenderer.addRenderer(renderer3D);
-        reflectionDeferredRenderer.addRenderPass(new LightRenderPass(camera));
+        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(camera, reflectionScreenPrototype);
+        reflectionRenderingPath.addRenderer(renderer);
+        reflectionRenderingPath.addRenderer(renderer3D);
+        reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
 
-        final Reflection reflection = new Reflection(new Planef(Vector3.of(0, 20, 30), Vector3.forward()), camera,
-                reflectionCamera, reflectionDeferredRenderer);
+        final Reflection reflection = new Reflection(new Planef(Vector3.of(0, 20, 30), Vector3.upward()),
+                camera, reflectionCamera, reflectionRenderingPath);
 
-        final FlatReflectedModel mirror = new FlatReflectedModel(FlatReflectedMesh.load(
-                new FlatReflectedVertex[]{
-                        FlatReflected.vertex(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.forward()), // 0
-                        FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.forward()), // 1
-                        FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.forward()), // 2
-                        FlatReflected.vertex(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.forward()), // 3
-                }, new int[]{3, 2, 1, 3, 1, 0}
-        ));
+        final FlatReflectedVertex[] vertices = {
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector2.of(0, 0)), // 0
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector2.of(0, 1)), // 1
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector2.of(1, 1)), // 2
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f), Vector2.of(1, 0)), // 3
+        };
+        final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
+        final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
+
         mirror.getTransform().getPosition().set(0, 20, 30);
         mirror.getTransform().getScale().scale(10);
+
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
                 new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
 

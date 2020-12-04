@@ -9,7 +9,7 @@ public interface FlatReflectedMeshPrototype extends MeshPrototype {
 
     MeshVertexBuffer getPositionBuffer();
 
-    MeshVertexBuffer getNormalBuffer();
+    MeshVertexBuffer getUvCoordsBuffer();
 
     MeshIndexBuffer getIndexBuffer();
 }

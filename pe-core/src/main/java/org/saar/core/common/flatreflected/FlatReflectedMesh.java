@@ -13,7 +13,7 @@ import org.saar.lwjgl.opengl.objects.vaos.Vao;
 public class FlatReflectedMesh implements Mesh {
 
     private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
-    private static final Attribute normalAttribute = Attribute.of(1, 3, DataType.FLOAT, false);
+    private static final Attribute uvCoordsAttribute = Attribute.of(1, 2, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
@@ -23,7 +23,7 @@ public class FlatReflectedMesh implements Mesh {
 
     private static void setUpPrototype(FlatReflectedMeshPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);
-        prototype.getNormalBuffer().addAttribute(normalAttribute);
+        prototype.getUvCoordsBuffer().addAttribute(uvCoordsAttribute);
     }
 
     public static FlatReflectedMesh load(FlatReflectedMeshPrototype prototype, FlatReflectedVertex[] vertices, int[] indices) {
