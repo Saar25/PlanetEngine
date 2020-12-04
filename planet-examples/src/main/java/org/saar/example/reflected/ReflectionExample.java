@@ -72,9 +72,6 @@ public class ReflectionExample {
         reflectionRenderingPath.addRenderer(renderer3D);
         reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
 
-        final Reflection reflection = new Reflection(new Planef(Vector3.of(0, 20, 30), Vector3.upward()),
-                camera, reflectionCamera, reflectionRenderingPath);
-
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector2.of(0, 0)), // 0
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector2.of(0, 1)), // 1
@@ -86,6 +83,9 @@ public class ReflectionExample {
 
         mirror.getTransform().getPosition().set(0, 20, 30);
         mirror.getTransform().getScale().scale(10);
+
+        final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());
+        final Reflection reflection = new Reflection(mirrorPlane, camera, reflectionCamera, reflectionRenderingPath);
 
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
                 new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
