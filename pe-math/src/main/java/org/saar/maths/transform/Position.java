@@ -7,16 +7,15 @@ import org.jproperty.ChangeEventBase;
 import org.jproperty.ChangeListener;
 import org.jproperty.ListenersHelper;
 import org.saar.maths.utils.Vector3;
-import org.saar.maths.wrapper.Vector3fWrapper;
 
 public class Position implements ReadonlyPosition {
 
+    private final Vector3f value = Vector3.create();
+
     private ListenersHelper<Vector3fc> helper = ListenersHelper.empty();
 
-    private final Vector3fWrapper wrapper = new Vector3fWrapper();
-
-    private Position(Vector3f value) {
-        this.wrapper.getValue().set(value);
+    private Position(Vector3fc value) {
+        this.value.set(value);
     }
 
     public static Position of(float x, float y, float z) {
@@ -32,36 +31,36 @@ public class Position implements ReadonlyPosition {
     }
 
     private Vector3fc copyValue() {
-        return Vector3.of(this.wrapper.getValue());
+        return Vector3.of(getValue());
     }
 
     public void add(Vector3fc direction) {
         final Vector3fc old = copyValue();
-        this.wrapper.getValue().add(direction);
+        this.value.add(direction);
         onChange(old);
     }
 
     public void sub(Vector3fc direction) {
         final Vector3fc old = copyValue();
-        this.wrapper.getValue().sub(direction);
+        this.value.sub(direction);
         onChange(old);
     }
 
     public void set(ReadonlyPosition position) {
         final Vector3fc old = copyValue();
-        this.wrapper.getValue().set(position.getValue());
+        this.value.set(position.getValue());
         onChange(old);
     }
 
     public void set(Vector3fc position) {
         final Vector3fc old = copyValue();
-        this.wrapper.getValue().set(position);
+        this.value.set(position);
         onChange(old);
     }
 
     public void set(float x, float y, float z) {
         final Vector3fc old = copyValue();
-        this.wrapper.getValue().set(x, y, z);
+        this.value.set(x, y, z);
         onChange(old);
     }
 
@@ -85,19 +84,19 @@ public class Position implements ReadonlyPosition {
 
     @Override
     public Vector3fc getValue() {
-        return this.wrapper.getReadonly();
+        return this.value;
     }
 
     public float getX() {
-        return this.wrapper.getValue().x;
+        return this.value.x;
     }
 
     public float getY() {
-        return this.wrapper.getValue().y;
+        return this.value.y;
     }
 
     public float getZ() {
-        return this.wrapper.getValue().z;
+        return this.value.z;
     }
 
     @Override

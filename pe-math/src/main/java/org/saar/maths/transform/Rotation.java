@@ -1,5 +1,6 @@
 package org.saar.maths.transform;
 
+import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -10,17 +11,16 @@ import org.jproperty.ListenersHelper;
 import org.saar.maths.Angle;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
-import org.saar.maths.wrapper.QuaternionfWrapper;
 
 public class Rotation implements ReadonlyRotation {
 
-    private ListenersHelper<Quaternionfc> helper = ListenersHelper.empty();
-
-    private final QuaternionfWrapper wrapper = new QuaternionfWrapper();
+    private final Quaternionf value = Quaternion.create();
     private final Vector3f eulerAngles = Vector3.create();
 
+    private ListenersHelper<Quaternionfc> helper = ListenersHelper.empty();
+
     private Rotation(Quaternionfc value) {
-        this.wrapper.getValue().set(value);
+        this.value.set(value);
     }
 
     public static Rotation fromEulerAngles(Vector3fc eulerAngles) {
@@ -44,24 +44,24 @@ public class Rotation implements ReadonlyRotation {
     }
 
     private Quaternionfc copyValue() {
-        return Quaternion.of(this.wrapper.getValue());
+        return Quaternion.of(this.value);
     }
 
     public void set(ReadonlyRotation rotation) {
         final Quaternionfc old = copyValue();
-        this.wrapper.getValue().set(rotation.getValue());
+        this.value.set(rotation.getValue());
         onChange(old);
     }
 
     public void set(Quaternionfc rotation) {
         final Quaternionfc old = copyValue();
-        this.wrapper.getValue().set(rotation);
+        this.value.set(rotation);
         onChange(old);
     }
 
     public void setRotation(Angle x, Angle y, Angle z) {
         final Quaternionfc old = copyValue();
-        this.wrapper.getValue().rotateXYZ(x.getRadians(),
+        this.value.rotateXYZ(x.getRadians(),
                 y.getRadians(), z.getRadians());
         onChange(old);
     }
@@ -79,7 +79,7 @@ public class Rotation implements ReadonlyRotation {
 
     public void rotateRadians(float x, float y, float z) {
         final Quaternionfc old = copyValue();
-        this.wrapper.getValue().rotateX(x)
+        this.value.rotateX(x)
                 .rotateLocalY(y).rotateZ(z);
         onChange(old);
     }
@@ -90,7 +90,7 @@ public class Rotation implements ReadonlyRotation {
 
     public void rotate(Quaternionfc rotation) {
         final Quaternionfc old = copyValue();
-        this.wrapper.getValue().mul(rotation);
+        this.value.mul(rotation);
         onChange(old);
     }
 
@@ -124,12 +124,12 @@ public class Rotation implements ReadonlyRotation {
 
     @Override
     public Quaternionfc getValue() {
-        return this.wrapper.getReadonly();
+        return this.value;
     }
 
     @Override
     public Vector3fc getEulerAngles() {
-        final Quaternionfc value = this.wrapper.getValue();
+        final Quaternionfc value = this.value;
         return value.getEulerAnglesXYZ(this.eulerAngles);
     }
 
