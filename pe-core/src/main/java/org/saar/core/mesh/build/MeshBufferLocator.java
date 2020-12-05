@@ -3,18 +3,16 @@ package org.saar.core.mesh.build;
 import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
 import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
 import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
-import org.saar.utils.reflection.FieldsLocator;
+import org.saar.core.util.reflection.FieldsLocator;
 
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class MeshBufferLocator {
 
     private final FieldsLocator fieldsLocator;
 
-    public MeshBufferLocator(MeshPrototype object) {
-        this.fieldsLocator = new FieldsLocator(object);
+    public MeshBufferLocator(MeshPrototype meshPrototype) {
+        this.fieldsLocator = new FieldsLocator(meshPrototype);
     }
 
     public List<MeshBuffer> getMeshBuffers() {
@@ -34,10 +32,6 @@ public final class MeshBufferLocator {
     }
 
     public <T extends MeshBuffer> List<T> getMeshBuffers(Class<T> tClass) {
-        final List<Field> fields = this.fieldsLocator
-                .getAnnotatedFields(MeshBufferProperty.class);
-        return this.fieldsLocator.getValues(fields).stream()
-                .filter(tClass::isInstance).map(tClass::cast)
-                .collect(Collectors.toList());
+        return this.fieldsLocator.getFilteredValues(tClass, MeshBufferProperty.class);
     }
 }

@@ -8,6 +8,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public final class Screens {
@@ -48,6 +49,8 @@ public final class Screens {
     }
 
     private static ColourAttachment[] toColourAttachments(List<ColourScreenImage> images) {
-        return images.stream().map(ColourScreenImage::getAttachment).toArray(ColourAttachment[]::new);
+        return images.stream().map(ColourScreenImage::getAttachment)
+                .sorted(Comparator.comparingInt(ColourAttachment::getAttachmentPoint))
+                .toArray(ColourAttachment[]::new);
     }
 }
