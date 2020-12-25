@@ -14,7 +14,6 @@ public class FlatReflectedMeshWriter implements MeshVertexWriter<FlatReflectedVe
     @Override
     public void writeVertex(FlatReflectedVertex vertex) {
         this.prototype.getPositionBuffer().getWriter().write(vertex.getPosition3f());
-        this.prototype.getUvCoordsBuffer().getWriter().write(vertex.getUvCoords2f());
     }
 
     @Override

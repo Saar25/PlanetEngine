@@ -27,7 +27,6 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -73,10 +72,10 @@ public class ReflectionExample {
         reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
 
         final FlatReflectedVertex[] vertices = {
-                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f), Vector2.of(0, 0)), // 0
-                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector2.of(0, 1)), // 1
-                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector2.of(1, 1)), // 2
-                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f), Vector2.of(1, 0)), // 3
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f)), // 1
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
         };
         final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
@@ -87,6 +86,7 @@ public class ReflectionExample {
         final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());
         final Reflection reflection = new Reflection(mirrorPlane, camera, reflectionCamera, reflectionRenderingPath);
 
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
                 new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
 
@@ -103,7 +103,6 @@ public class ReflectionExample {
         shadowsRenderingPath.addRenderer(renderer3D);
         shadowsRenderingPath.addRenderer(renderer);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
         deferredRenderer.addRenderer(flatReflectedDeferredRenderer);
         deferredRenderer.addRenderer(renderer3D);
