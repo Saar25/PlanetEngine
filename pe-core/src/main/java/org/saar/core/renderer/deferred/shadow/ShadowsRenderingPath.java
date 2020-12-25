@@ -66,13 +66,15 @@ public class ShadowsRenderingPath implements RenderingPath {
     }
 
     @Override
-    public void render() {
+    public ShadowRenderingOutput render() {
         final RenderContextBase context = new RenderContextBase(getCamera());
         context.getHints().cullFace = GlCullFace.FRONT;
 
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.DEPTH);
         this.helper.render(context);
+
+        return new ShadowRenderingOutput(this.screen);
     }
 
     @Override

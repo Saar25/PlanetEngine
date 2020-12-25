@@ -115,7 +115,7 @@ public class NormalMappingExample {
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            deferredRenderer.render();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();

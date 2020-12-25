@@ -97,7 +97,7 @@ public class SmoothExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
 
-            deferredRenderer.render();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();

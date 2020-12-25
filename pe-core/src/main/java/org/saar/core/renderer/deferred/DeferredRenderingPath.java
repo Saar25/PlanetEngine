@@ -15,10 +15,8 @@ public class DeferredRenderingPath implements RenderingPath {
 
     private final OffScreen screen;
     private final DeferredRenderingBuffers buffers;
-
-    private RenderersHelper renderersHelper = RenderersHelper.empty();
-
     private final DeferredRenderingPipeline pipeline;
+    private RenderersHelper renderersHelper = RenderersHelper.empty();
 
     public DeferredRenderingPath(ICamera camera, DeferredScreenPrototype screen) {
         this.camera = camera;
@@ -62,13 +60,13 @@ public class DeferredRenderingPath implements RenderingPath {
     }
 
     @Override
-    public void render() {
+    public DeferredRenderingOutput render() {
         checkSize();
 
         doFirstPass();
         doRenderPasses();
 
-        this.screen.copyTo(MainScreen.getInstance());
+        return new DeferredRenderingOutput(this.screen);
     }
 
     private void doFirstPass() {

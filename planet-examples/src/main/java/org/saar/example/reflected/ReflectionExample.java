@@ -124,7 +124,7 @@ public class ReflectionExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             reflection.updateReflectionMap();
 
-            deferredRenderer.render();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
