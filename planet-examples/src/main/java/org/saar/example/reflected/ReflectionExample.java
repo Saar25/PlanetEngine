@@ -67,7 +67,7 @@ public class ReflectionExample {
 
         final Camera reflectionCamera = new Camera(projection);
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
-        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(camera, reflectionScreenPrototype);
+        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(reflectionCamera, reflectionScreenPrototype);
         reflectionRenderingPath.addRenderer(renderer);
         reflectionRenderingPath.addRenderer(renderer3D);
         reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
@@ -81,7 +81,7 @@ public class ReflectionExample {
         final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
 
-        mirror.getTransform().getPosition().set(0, 20, 30);
+        mirror.getTransform().getPosition().set(0, .1f, 30);
         mirror.getTransform().getScale().scale(10);
 
         final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());

@@ -62,6 +62,8 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
 
+        this.reflectionMapUniform.load()
+
         for (model in this.models) {
             val state = RenderState(model)
 
