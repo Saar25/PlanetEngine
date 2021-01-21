@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class NormalMappedMesh implements Mesh {

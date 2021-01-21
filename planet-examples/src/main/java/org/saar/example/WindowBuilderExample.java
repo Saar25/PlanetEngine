@@ -6,7 +6,7 @@ import org.saar.lwjgl.glfw.window.hint.WindowHintResizeable;
 import org.saar.lwjgl.glfw.window.hint.WindowHintTransparentFramebuffer;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;

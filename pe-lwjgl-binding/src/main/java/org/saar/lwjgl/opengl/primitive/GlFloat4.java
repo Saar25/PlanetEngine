@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.primitive;
 import org.joml.Vector4fc;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.util.buffer.BufferWriter;
 import org.saar.maths.utils.Vector4;
 

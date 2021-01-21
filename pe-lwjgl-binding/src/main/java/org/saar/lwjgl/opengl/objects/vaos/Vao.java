@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.objects.vaos;
 
 import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 

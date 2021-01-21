@@ -3,7 +3,7 @@ package org.saar.core.common.r3d;
 import org.saar.core.mesh.build.MeshBuilder;
 import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 
 public class Mesh3DBuilder implements MeshBuilder {
 
