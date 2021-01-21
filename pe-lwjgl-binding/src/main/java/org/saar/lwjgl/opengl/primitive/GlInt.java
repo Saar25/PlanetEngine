@@ -27,7 +27,7 @@ public class GlInt extends GlPrimitiveBase implements GlPrimitive {
 
     @Override
     public Attribute[] attribute(int index, boolean normalized, int instances) {
-        return new Attribute[]{Attribute.ofInstances(index, 1, DATA_TYPE, normalized, instances)};
+        return new Attribute[]{Attribute.ofIntegerInstances(index, 1, DATA_TYPE, instances)};
     }
 
     @Override

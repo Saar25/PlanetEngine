@@ -33,7 +33,7 @@ public class GlUInt2 extends GlPrimitiveBase implements GlPrimitive {
 
     @Override
     public Attribute[] attribute(int index, boolean normalized, int instances) {
-        return new Attribute[]{Attribute.ofInstances(index, 2, DATA_TYPE, normalized, instances)};
+        return new Attribute[]{Attribute.ofIntegerInstances(index, 2, DATA_TYPE, instances)};
     }
 
     @Override
