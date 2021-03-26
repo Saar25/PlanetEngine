@@ -22,7 +22,9 @@ public abstract class AbstractRenderer implements Renderer {
     public final void render(RenderContext context) {
         shadersProgram.bind();
 
+        this.preRender(context);
         this.onRender(context);
+        this.postRender(context);
 
         shadersProgram.unbind();
     }
@@ -33,7 +35,13 @@ public abstract class AbstractRenderer implements Renderer {
         this.shadersProgram.delete();
     }
 
+    protected void preRender(RenderContext context) {
+    }
+
     protected void onRender(RenderContext context) {
+    }
+
+    protected void postRender(RenderContext context) {
     }
 
     protected void onDelete() {
