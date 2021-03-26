@@ -55,19 +55,20 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
         init()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun preRender(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
+    }
 
+    override fun onRender(context: RenderContext) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, matrix)
         this.viewProjectionUniform.load()
 
         for (model in this.models) {
-            val state = RenderState<NormalMappedModel>(model)
+            val state = RenderState(model)
 
             this.transformationUpdater.update(state)
             this.transformationUniform.load()

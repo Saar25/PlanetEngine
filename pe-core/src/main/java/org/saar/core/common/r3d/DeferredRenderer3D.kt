@@ -33,13 +33,14 @@ class DeferredRenderer3D(private vararg val models: Model3D)
         init()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun preRender(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+    }
 
+    override fun onRender(context: RenderContext) {
         for (model in this.models) {
             val state = RenderState(model)
 

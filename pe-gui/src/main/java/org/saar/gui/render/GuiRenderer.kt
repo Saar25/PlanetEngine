@@ -70,14 +70,15 @@ class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer(s
         init()
     }
 
-    override fun onRender(context: RenderContext?) {
+    override fun preRender(context: RenderContext) {
         GlUtils.enableAlphaBlending()
         GlUtils.disableDepthTest()
         GlUtils.setCullFace(GlCullFace.NONE)
+    }
 
-        shadersProgram.bind()
-
+    override fun onRender(context: RenderContext?) {
         Vao.EMPTY.bind()
+
         for (guiObject in this.renderList) {
             windowSizeUniform.load()
 

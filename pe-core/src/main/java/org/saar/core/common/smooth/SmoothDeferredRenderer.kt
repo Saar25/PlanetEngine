@@ -47,13 +47,14 @@ class SmoothDeferredRenderer(private vararg val models: SmoothModel)
         init()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun preRender(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+    }
 
+    override fun onRender(context: RenderContext) {
         this.targetScalarUniform.load()
 
         for (model in this.models) {
@@ -65,7 +66,6 @@ class SmoothDeferredRenderer(private vararg val models: SmoothModel)
 
             this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
             this.mvpMatrixUniform.load()
-
 
             model.draw()
         }

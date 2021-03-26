@@ -52,13 +52,14 @@ class FlatReflectedRenderer(private vararg val models: FlatReflectedModel,
         init()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun preRender(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
-
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+    }
 
+    override fun onRender(context: RenderContext) {
         for (model in this.models) {
             val state = RenderState(model)
 

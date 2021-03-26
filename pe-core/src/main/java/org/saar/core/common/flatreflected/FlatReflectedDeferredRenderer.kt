@@ -55,13 +55,14 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
         init()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun preRender(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
-
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+    }
 
+    override fun onRender(context: RenderContext) {
         this.reflectionMapUniform.load()
 
         for (model in this.models) {
