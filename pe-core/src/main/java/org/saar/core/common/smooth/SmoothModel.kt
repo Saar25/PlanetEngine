@@ -1,24 +1,8 @@
-package org.saar.core.common.smooth;
+package org.saar.core.common.smooth
 
-import org.saar.core.mesh.Model;
-import org.saar.maths.transform.SimpleTransform;
-import org.saar.maths.transform.Transform;
+import org.saar.core.mesh.Model
+import org.saar.maths.transform.SimpleTransform
 
-public class SmoothModel implements Model {
-
-    private final Transform transform = new SimpleTransform();
-    private final SmoothMesh mesh;
-
-    public SmoothModel(SmoothMesh mesh) {
-        this.mesh = mesh;
-    }
-
-    public Transform getTransform() {
-        return this.transform;
-    }
-
-    @Override
-    public SmoothMesh getMesh() {
-        return this.mesh;
-    }
+class SmoothModel(override val mesh: SmoothMesh, val transform: SimpleTransform) : Model {
+    constructor(mesh: SmoothMesh) : this(mesh, SimpleTransform())
 }

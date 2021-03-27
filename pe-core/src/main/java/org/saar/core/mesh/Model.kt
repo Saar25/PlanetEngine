@@ -1,14 +1,9 @@
-package org.saar.core.mesh;
+package org.saar.core.mesh
 
-public interface Model {
+interface Model {
+    val mesh: Mesh
 
-    Mesh getMesh();
+    fun draw() = mesh.draw()
 
-    default void draw() {
-        getMesh().draw();
-    }
-
-    default void delete() {
-        getMesh().delete();
-    }
+    fun delete() = mesh.delete()
 }

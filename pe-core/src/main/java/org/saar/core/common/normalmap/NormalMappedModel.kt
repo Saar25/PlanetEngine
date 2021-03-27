@@ -1,38 +1,16 @@
-package org.saar.core.common.normalmap;
+package org.saar.core.common.normalmap
 
-import org.saar.core.mesh.Model;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.maths.transform.SimpleTransform;
-import org.saar.maths.transform.Transform;
+import org.saar.core.mesh.Model
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.maths.transform.SimpleTransform
+import org.saar.maths.transform.Transform
 
-public class NormalMappedModel implements Model {
+class NormalMappedModel(override val mesh: NormalMappedMesh,
+                        val texture: ReadOnlyTexture,
+                        val normalMap: ReadOnlyTexture,
+                        val transform: Transform) : Model {
 
-    private final NormalMappedMesh mesh;
-    private final ReadOnlyTexture texture;
-    private final ReadOnlyTexture normalMap;
+    constructor(mesh: NormalMappedMesh, texture: ReadOnlyTexture, normalMap: ReadOnlyTexture)
+            : this(mesh, texture, normalMap, SimpleTransform())
 
-    private final Transform transform = new SimpleTransform();
-
-    public NormalMappedModel(NormalMappedMesh mesh, ReadOnlyTexture texture, ReadOnlyTexture normalMap) {
-        this.mesh = mesh;
-        this.texture = texture;
-        this.normalMap = normalMap;
-    }
-
-    public Transform getTransform() {
-        return this.transform;
-    }
-
-    public ReadOnlyTexture getTexture() {
-        return this.texture;
-    }
-
-    public ReadOnlyTexture getNormalMap() {
-        return this.normalMap;
-    }
-
-    @Override
-    public NormalMappedMesh getMesh() {
-        return this.mesh;
-    }
 }
