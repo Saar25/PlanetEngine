@@ -1,9 +1,12 @@
 package org.saar.core.renderer.deferred;
 
-import org.saar.core.renderer.UniformUpdater;
-import org.saar.core.renderer.UpdatersHelper;
 import org.saar.core.renderer.Renderers;
+import org.saar.core.renderer.UniformUpdater;
 import org.saar.core.renderer.UniformsHelper;
+import org.saar.core.renderer.UpdatersHelper;
+import org.saar.core.renderer.shaders.ShadersHelper;
+import org.saar.lwjgl.opengl.shaders.Shader;
+import org.saar.lwjgl.opengl.shaders.ShaderCompileException;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
@@ -11,10 +14,22 @@ import java.util.List;
 
 public abstract class RenderPassBase implements RenderPass {
 
-    private final ShadersProgram shadersProgram;
+    private ShadersProgram shadersProgram;
 
     public RenderPassBase(ShadersProgram shadersProgram) {
         this.shadersProgram = shadersProgram;
+    }
+
+    public RenderPassBase() {
+    }
+
+    protected void buildShadersProgram() throws ShaderCompileException {
+        ShadersHelper helper = ShadersHelper.empty();
+        for (Shader shader : Renderers.findShaders(this)) {
+            helper = helper.addShader(shader);
+        }
+
+        this.shadersProgram = helper.createProgram();
     }
 
     protected UniformsHelper buildHelper(UniformsHelper helper) {
