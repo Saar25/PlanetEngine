@@ -2,6 +2,7 @@ package org.saar.core.renderer;
 
 import org.saar.core.renderer.shaders.ShaderPropertiesLocator;
 import org.saar.core.renderer.uniforms.UniformPropertiesLocator;
+import org.saar.core.renderer.uniforms.UniformTrigger;
 import org.saar.core.renderer.uniforms.UniformUpdater;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
@@ -29,6 +30,10 @@ public final class Renderers {
 
     public static List<Uniform> findUniforms(Object renderer) {
         return new UniformPropertiesLocator(renderer).getUniforms();
+    }
+
+    public static List<Uniform> findUniformsByTrigger(Object renderer, UniformTrigger trigger) {
+        return new UniformPropertiesLocator(renderer).getUniformsByTrigger(trigger);
     }
 
     public static <T> List<UniformUpdater<T>> findUniformsUpdaters(Object renderer) {

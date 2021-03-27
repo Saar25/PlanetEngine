@@ -8,17 +8,23 @@ import java.util.List;
 
 public abstract class UniformsHelper {
 
+    public static UniformsHelper empty() {
+        return Empty.EMPTY;
+    }
+
     public abstract UniformsHelper addUniform(Uniform uniform);
 
-    public abstract UniformsHelper removeUniform(Uniform uniform);
+    public abstract UniformsHelper addPerInstanceUniform(Uniform uniform);
+
+    public abstract UniformsHelper addPerRenderCycleUniform(Uniform uniform);
 
     public abstract void initialize(ShadersProgram shadersProgram);
 
     public abstract void load();
 
-    public static UniformsHelper empty() {
-        return Empty.EMPTY;
-    }
+    public abstract void loadPerInstance();
+
+    public abstract void loadPerRenderCycle();
 
     private static class Empty extends UniformsHelper {
 
@@ -26,11 +32,20 @@ public abstract class UniformsHelper {
 
         @Override
         public UniformsHelper addUniform(Uniform uniform) {
-            return new Generic(uniform);
+            final UniformsHelper helper = new Generic();
+            return helper.addUniform(uniform);
         }
 
-        public UniformsHelper removeUniform(Uniform uniform) {
-            return this;
+        @Override
+        public UniformsHelper addPerInstanceUniform(Uniform uniform) {
+            final UniformsHelper helper = new Generic();
+            return helper.addPerInstanceUniform(uniform);
+        }
+
+        @Override
+        public UniformsHelper addPerRenderCycleUniform(Uniform uniform) {
+            final UniformsHelper helper = new Generic();
+            return helper.addPerRenderCycleUniform(uniform);
         }
 
         @Override
@@ -40,40 +55,70 @@ public abstract class UniformsHelper {
         @Override
         public void load() {
         }
+
+        @Override
+        public void loadPerInstance() {
+
+        }
+
+        @Override
+        public void loadPerRenderCycle() {
+
+        }
     }
 
     private static class Generic extends UniformsHelper {
 
-        private final List<Uniform> uniforms = new ArrayList<>();
-
-        public Generic(Uniform uniform) {
-            this.uniforms.add(uniform);
-        }
+        private final List<Uniform> alwaysUniforms = new ArrayList<>();
+        private final List<Uniform> perInstanceUniforms = new ArrayList<>();
+        private final List<Uniform> perRenderCycleUniforms = new ArrayList<>();
 
         @Override
         public UniformsHelper addUniform(Uniform uniform) {
-            this.uniforms.add(uniform);
+            this.alwaysUniforms.add(uniform);
             return this;
         }
 
-        public UniformsHelper removeUniform(Uniform uniform) {
-            this.uniforms.remove(uniform);
+        @Override
+        public UniformsHelper addPerInstanceUniform(Uniform uniform) {
+            this.perInstanceUniforms.add(uniform);
+            return this;
+        }
 
-            return this.uniforms.size() > 0 ? this : empty();
+        @Override
+        public UniformsHelper addPerRenderCycleUniform(Uniform uniform) {
+            this.perRenderCycleUniforms.add(uniform);
+            return this;
         }
 
         @Override
         public void initialize(ShadersProgram shadersProgram) {
-            for (Uniform uniform : this.uniforms) {
+            for (Uniform uniform : this.alwaysUniforms) {
+                uniform.initialize(shadersProgram);
+            }
+            for (Uniform uniform : this.perInstanceUniforms) {
+                uniform.initialize(shadersProgram);
+            }
+            for (Uniform uniform : this.perRenderCycleUniforms) {
                 uniform.initialize(shadersProgram);
             }
         }
 
         @Override
         public void load() {
-            for (Uniform uniform : this.uniforms) {
-                uniform.load();
-            }
+            this.alwaysUniforms.forEach(Uniform::load);
+        }
+
+        @Override
+        public void loadPerInstance() {
+            this.alwaysUniforms.forEach(Uniform::load);
+            this.perInstanceUniforms.forEach(Uniform::load);
+        }
+
+        @Override
+        public void loadPerRenderCycle() {
+            this.alwaysUniforms.forEach(Uniform::load);
+            this.perRenderCycleUniforms.forEach(Uniform::load);
         }
     }
 

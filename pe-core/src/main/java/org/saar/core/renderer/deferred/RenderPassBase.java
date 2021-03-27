@@ -2,6 +2,7 @@ package org.saar.core.renderer.deferred;
 
 import org.saar.core.renderer.Renderers;
 import org.saar.core.renderer.shaders.ShadersHelper;
+import org.saar.core.renderer.uniforms.UniformTrigger;
 import org.saar.core.renderer.uniforms.UniformUpdater;
 import org.saar.core.renderer.uniforms.UniformsHelper;
 import org.saar.core.renderer.uniforms.UpdatersHelper;
@@ -29,8 +30,14 @@ public abstract class RenderPassBase implements RenderPass {
     }
 
     protected UniformsHelper buildHelper(UniformsHelper helper) {
-        for (Uniform uniform : Renderers.findUniforms(this)) {
+        for (Uniform uniform : Renderers.findUniformsByTrigger(this, UniformTrigger.ALWAYS)) {
             helper = helper.addUniform(uniform);
+        }
+        for (Uniform uniform : Renderers.findUniformsByTrigger(this, UniformTrigger.PER_INSTANCE)) {
+            helper = helper.addPerInstanceUniform(uniform);
+        }
+        for (Uniform uniform : Renderers.findUniformsByTrigger(this, UniformTrigger.PER_RENDER_CYCLE)) {
+            helper = helper.addPerRenderCycleUniform(uniform);
         }
 
         this.shadersProgram.bind();

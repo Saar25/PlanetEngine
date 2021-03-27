@@ -18,6 +18,11 @@ public final class UniformPropertiesLocator {
         return this.fieldsLocator.getFilteredValues(Uniform.class, UniformProperty.class);
     }
 
+    public List<Uniform> getUniformsByTrigger(UniformTrigger trigger) {
+        return this.fieldsLocator.getFilteredValues(Uniform.class, UniformProperty.class,
+                f -> f.getAnnotation(UniformProperty.class).value() == trigger);
+    }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> List<UniformUpdater<T>> getUniformUpdaters() {
         final List<UniformUpdater> values = this.fieldsLocator.getFilteredValues(
