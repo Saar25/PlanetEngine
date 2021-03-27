@@ -1,17 +1,18 @@
 package org.saar.core.common.normalmap
 
 import org.saar.core.renderer.*
+import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformUpdater
 import org.saar.core.renderer.uniforms.UniformUpdaterProperty
 import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer(private vararg val models: NormalMappedModel) : AbstractRenderer(shadersProgram), Renderer {
+class NormalMappedRenderer(private vararg val models: NormalMappedModel) : AbstractRenderer(), Renderer {
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
@@ -43,20 +44,22 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
             this@NormalMappedRenderer.normalMapUniform.value = state.instance.normalMap
         }
 
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertex: Shader = Shader.createVertex(
+        "/shaders/normal-map/normal-map.vertex.glsl")
+
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragment: Shader = Shader.createFragment(
+        "/shaders/normal-map/normal-map.fragment.glsl")
+
     companion object {
         private val matrix = Matrix4.create()
-
-        private val vertex: Shader = Shader.createVertex(
-                "/shaders/normal-map/normal-map.vertex.glsl")
-        private val fragment: Shader = Shader.createFragment(
-                "/shaders/normal-map/normal-map.fragment.glsl")
-        private val shadersProgram: ShadersProgram =
-                ShadersProgram.create(vertex, fragment)
     }
 
     init {
+        buildShadersProgram()
         shadersProgram.bindAttributes("in_position", "in_uvCoord",
-                "in_normal", "in_tangent", "in_biTangent")
+            "in_normal", "in_tangent", "in_biTangent")
         shadersProgram.bindFragmentOutputs("f_colour")
         init()
     }

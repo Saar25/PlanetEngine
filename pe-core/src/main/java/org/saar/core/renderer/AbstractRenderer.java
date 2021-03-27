@@ -10,13 +10,6 @@ public abstract class AbstractRenderer implements Renderer {
 
     protected ShadersProgram shadersProgram;
 
-    public AbstractRenderer(ShadersProgram shadersProgram) {
-        this.shadersProgram = shadersProgram;
-    }
-
-    public AbstractRenderer() {
-    }
-
     protected void buildShadersProgram() throws ShaderCompileException {
         ShadersHelper helper = ShadersHelper.empty();
         for (Shader shader : Renderers.findVertexShaders(this)) {
@@ -38,13 +31,13 @@ public abstract class AbstractRenderer implements Renderer {
 
     @Override
     public final void render(RenderContext context) {
-        shadersProgram.bind();
+        this.shadersProgram.bind();
 
         this.preRender(context);
         this.onRender(context);
         this.postRender(context);
 
-        shadersProgram.unbind();
+        this.shadersProgram.unbind();
     }
 
     @Override

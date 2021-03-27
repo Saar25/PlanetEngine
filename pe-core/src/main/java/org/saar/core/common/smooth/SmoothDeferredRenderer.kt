@@ -5,17 +5,18 @@ import org.jproperty.type.SimpleFloatProperty
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderState
-import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.deferred.DeferredRenderer
+import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 class SmoothDeferredRenderer(private vararg val models: SmoothModel)
-    : AbstractRenderer(shadersProgram), DeferredRenderer {
+    : AbstractRenderer(), DeferredRenderer {
 
     val targetScalar: FloatProperty = SimpleFloatProperty(.5f).also {
         it.addListener { _ -> it.value.coerceIn(0.0f, 1.0f) }
@@ -31,19 +32,20 @@ class SmoothDeferredRenderer(private vararg val models: SmoothModel)
         override fun getUniformValue(): Float = targetScalar.get()
     }
 
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertex = Shader.createVertex("/shaders/smooth/smooth.vertex.glsl")
+
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragment = Shader.createFragment("/shaders/smooth/smooth.dfragment.glsl")
+
     companion object {
         private val matrix = Matrix4.create()
-
-        private val vertex: Shader = Shader.createVertex(
-                "/shaders/smooth/smooth.vertex.glsl")
-        private val fragment: Shader = Shader.createFragment(
-                "/shaders/smooth/smooth.dfragment.glsl")
-        private val shadersProgram: ShadersProgram =
-                ShadersProgram.create(vertex, fragment)
     }
 
     init {
-        shadersProgram.bindAttributes("in_position", "in_normal", "in_colour", "in_target")
+        buildShadersProgram()
+        shadersProgram.bindAttributes("in_position",
+            "in_normal", "in_colour", "in_target")
         init()
     }
 

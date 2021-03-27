@@ -5,6 +5,7 @@ import org.joml.Vector2ic
 import org.joml.Vector4f
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.gui.GuiObject
 import org.saar.lwjgl.glfw.window.Window
@@ -13,13 +14,13 @@ import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer(shadersProgram) {
+class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer() {
 
     @UniformProperty
     private val windowSizeUniform = object : Vec2iUniform() {
@@ -56,17 +57,16 @@ class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer(s
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
 
-    companion object {
-        private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl"))
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl"))
 
-        private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
-
-        private val shadersProgram: ShadersProgram = ShadersProgram.create(vertex, fragment)
-    }
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
 
     init {
+        buildShadersProgram()
         init()
     }
 
