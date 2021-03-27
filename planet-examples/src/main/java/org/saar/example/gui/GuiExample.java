@@ -1,5 +1,6 @@
 package org.saar.example.gui;
 
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.gui.GuiObject;
 import org.saar.gui.render.GuiRenderer;
 import org.saar.gui.style.property.Colours;
@@ -30,7 +31,7 @@ public class GuiExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             GlUtils.clearColourAndDepthBuffer();
-            renderer.render(null);
+            renderer.render(new RenderContextBase(null));
 
             window.update(true);
             window.pollEvents();
