@@ -1,5 +1,3 @@
-#version 400
-
 #ifndef FLAT_SHADING
     #define FLAT_SHADING 1
 #endif

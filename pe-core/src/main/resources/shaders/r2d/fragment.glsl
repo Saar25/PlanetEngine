@@ -1,5 +1,3 @@
-#version 400
-
 // Vertex outputs
 in vec2 v_position;
 in vec3 v_colour;

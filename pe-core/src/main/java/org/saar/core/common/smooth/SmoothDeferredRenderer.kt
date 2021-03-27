@@ -8,7 +8,9 @@ import org.saar.core.renderer.RenderState
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
@@ -33,10 +35,12 @@ class SmoothDeferredRenderer(private vararg val models: SmoothModel)
     }
 
     @ShaderProperty(ShaderType.VERTEX)
-    private val vertex = Shader.createVertex("/shaders/smooth/smooth.vertex.glsl")
+    private val vertex = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/smooth/smooth.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
-    private val fragment = Shader.createFragment("/shaders/smooth/smooth.dfragment.glsl")
+    private val fragment = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/smooth/smooth.dfragment.glsl"))
 
     companion object {
         private val matrix = Matrix4.create()

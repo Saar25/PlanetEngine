@@ -6,7 +6,9 @@ import org.saar.core.renderer.RenderState
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -19,10 +21,12 @@ class DeferredRenderer3D(private vararg val models: Model3D)
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
-    private val vertex = Shader.createVertex("/shaders/r3d/vertex.glsl")
+    private val vertex = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
-    private val fragment = Shader.createFragment("/shaders/r3d/fragmentDeferred.glsl")
+    private val fragment = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
 
     companion object {
         private val matrix = Matrix4.create()

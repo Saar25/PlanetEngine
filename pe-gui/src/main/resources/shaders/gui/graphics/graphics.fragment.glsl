@@ -1,5 +1,3 @@
-#version 400
-
 out vec4 fragColour;
 
 uniform uint colour;

@@ -46,6 +46,7 @@ public class Shader {
         return Shader.of(ShaderType.VERTEX, version, sources);
     }
 
+    @Deprecated
     public static Shader createVertex(String source) throws Exception {
         return Shader.createVertex(GlslVersion.NONE, ShaderCode.loadSource(source));
     }
@@ -61,6 +62,7 @@ public class Shader {
         return Shader.of(ShaderType.FRAGMENT, version, sources);
     }
 
+    @Deprecated
     public static Shader createFragment(String source) throws Exception {
         return Shader.of(ShaderType.FRAGMENT, GlslVersion.NONE, ShaderCode.loadSource(source));
     }

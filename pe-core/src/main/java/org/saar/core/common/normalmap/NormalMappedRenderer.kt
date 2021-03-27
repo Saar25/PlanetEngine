@@ -5,7 +5,9 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformUpdater
 import org.saar.core.renderer.uniforms.UniformUpdaterProperty
+import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
@@ -42,12 +44,12 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
     }
 
     @ShaderProperty(ShaderType.VERTEX)
-    private val vertex: Shader = Shader.createVertex(
-        "/shaders/normal-map/normal-map.vertex.glsl")
+    private val vertex = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/normal-map/normal-map.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
-    private val fragment: Shader = Shader.createFragment(
-        "/shaders/normal-map/normal-map.fragment.glsl")
+    private val fragment = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/normal-map/normal-map.fragment.glsl"))
 
     companion object {
         private val matrix = Matrix4.create()

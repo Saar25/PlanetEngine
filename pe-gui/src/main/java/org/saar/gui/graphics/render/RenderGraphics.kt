@@ -8,7 +8,9 @@ import org.saar.gui.graphics.Graphics
 import org.saar.gui.style.property.Colours
 import org.saar.gui.style.property.IColour
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.UIntUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
@@ -43,13 +45,11 @@ class RenderGraphics : Graphics {
     }
 
     companion object {
-
-        private const val VERTEX_SHADER = "/shaders/gui/graphics/render/graphics.vertex.glsl"
-        private const val FRAGMENT_SHADER = "/shaders/gui/graphics/render/graphics.fragment.glsl"
-
-        private val shadersProgram = ShadersProgram.create(
-                Shader.createVertex(VERTEX_SHADER),
-                Shader.createFragment(FRAGMENT_SHADER))
+        private val vertex = Shader.createVertex(GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/graphics/render/graphics.vertex.glsl"))
+        private val fragment = Shader.createFragment(GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/graphics/render/graphics.fragment.glsl"))
+        private val shadersProgram = ShadersProgram.create(vertex, fragment)
     }
 
     override fun setColour(colour: IColour) {
