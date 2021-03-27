@@ -1,10 +1,9 @@
 package org.saar.core.common.obj;
 
 
-import org.saar.core.model.ElementsMesh;
-import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.assimp.component.AssimpNormalComponent;
@@ -12,7 +11,9 @@ import org.saar.lwjgl.assimp.component.AssimpPositionComponent;
 import org.saar.lwjgl.assimp.component.AssimpTexCoordComponent;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class ObjMesh implements Mesh {
@@ -27,44 +28,43 @@ public class ObjMesh implements Mesh {
         this.mesh = mesh;
     }
 
-    private static void setUpPrototype(ObjMeshPrototype prototype) {
+    private static void addAttributes(ObjMeshPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);
         prototype.getUvCoordBuffer().addAttribute(uvCoordAttribute);
         prototype.getNormalBuffer().addAttribute(normalAttribute);
     }
 
-    public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
-        setUpPrototype(prototype);
+    static void initPrototype(ObjMeshPrototype prototype, int vertices, int indices) {
+        addAttributes(prototype);
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        helper.allocateVertices(vertices);
+        helper.allocateIndices(indices);
+    }
 
+    static ObjMesh create(ObjMeshPrototype prototype, int indices) {
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
 
         final Vao vao = Vao.create();
         helper.loadToVao(vao);
-        helper.allocateIndices(indices);
-        helper.allocateVertices(vertices);
-
-        final ObjMeshWriter writer = new ObjMeshWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
-
         helper.store();
 
-        final Mesh mesh = new ElementsMesh(vao,
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        final DrawCall drawCall = new ElementsDrawCall(
+                RenderMode.TRIANGLES, indices, DataType.U_INT);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
         return new ObjMesh(mesh);
     }
 
+    public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
+        return ObjMeshBuilder.build(prototype, vertices, indices).load();
+    }
+
     public static ObjMesh load(ObjVertex[] vertices, int[] indices) {
-        return ObjMesh.load(Obj.mesh(), vertices, indices);
+        return ObjMeshBuilder.build(Obj.mesh(), vertices, indices).load();
     }
 
     public static ObjMesh load(String objFile) throws Exception {
         final ObjMeshPrototype prototype = Obj.mesh();
-        setUpPrototype(prototype);
-
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
+        addAttributes(prototype);
 
         try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
             assimpMesh.writeDataBuffer(
@@ -74,12 +74,7 @@ public class ObjMesh implements Mesh {
 
             assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
 
-            helper.store();
-            helper.loadToVao(vao);
-
-            final Mesh mesh = new ElementsMesh(vao, RenderMode.TRIANGLES,
-                    assimpMesh.indexCount(), DataType.U_INT);
-            return new ObjMesh(mesh);
+            return ObjMesh.create(prototype, assimpMesh.indexCount());
         }
     }
 

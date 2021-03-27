@@ -1,9 +1,13 @@
 package org.saar.core.renderer.deferred;
 
-import org.saar.core.renderer.UniformUpdater;
-import org.saar.core.renderer.UpdatersHelper;
 import org.saar.core.renderer.Renderers;
-import org.saar.core.renderer.UniformsHelper;
+import org.saar.core.renderer.shaders.ShadersHelper;
+import org.saar.core.renderer.uniforms.UniformTrigger;
+import org.saar.core.renderer.uniforms.UniformUpdater;
+import org.saar.core.renderer.uniforms.UniformsHelper;
+import org.saar.core.renderer.uniforms.UpdatersHelper;
+import org.saar.lwjgl.opengl.shaders.Shader;
+import org.saar.lwjgl.opengl.shaders.ShaderCompileException;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
@@ -11,15 +15,29 @@ import java.util.List;
 
 public abstract class RenderPassBase implements RenderPass {
 
-    private final ShadersProgram shadersProgram;
+    private ShadersProgram shadersProgram;
 
-    public RenderPassBase(ShadersProgram shadersProgram) {
-        this.shadersProgram = shadersProgram;
+    protected void buildShadersProgram() throws ShaderCompileException {
+        ShadersHelper helper = ShadersHelper.empty();
+        for (Shader shader : Renderers.findVertexShaders(this)) {
+            helper = helper.addShader(shader);
+        }
+        for (Shader shader : Renderers.findFragmentShaders(this)) {
+            helper = helper.addShader(shader);
+        }
+
+        this.shadersProgram = helper.createProgram();
     }
 
     protected UniformsHelper buildHelper(UniformsHelper helper) {
-        for (Uniform uniform : Renderers.findUniforms(this)) {
+        for (Uniform uniform : Renderers.findUniformsByTrigger(this, UniformTrigger.ALWAYS)) {
             helper = helper.addUniform(uniform);
+        }
+        for (Uniform uniform : Renderers.findUniformsByTrigger(this, UniformTrigger.PER_INSTANCE)) {
+            helper = helper.addPerInstanceUniform(uniform);
+        }
+        for (Uniform uniform : Renderers.findUniformsByTrigger(this, UniformTrigger.PER_RENDER_CYCLE)) {
+            helper = helper.addPerRenderCycleUniform(uniform);
         }
 
         this.shadersProgram.bind();
@@ -29,14 +47,22 @@ public abstract class RenderPassBase implements RenderPass {
     }
 
     protected <T> UpdatersHelper<T> buildHelper(UpdatersHelper<T> helper) {
-        final List<UniformUpdater<T>> instanceUniformsUpdaters =
-                Renderers.findInstanceUniformsUpdaters(this);
+        final List<UniformUpdater<T>> uniformsUpdaters =
+                Renderers.findUniformsUpdaters(this);
 
-        for (UniformUpdater<T> uniform : instanceUniformsUpdaters) {
+        for (UniformUpdater<T> uniform : uniformsUpdaters) {
             helper = helper.addUpdater(uniform);
         }
 
         return helper;
+    }
+
+    protected final void bindAttributes(String... attributes) {
+        this.shadersProgram.bindAttributes(attributes);
+    }
+
+    protected final void bindFragmentOutputs(String... attributes) {
+        this.shadersProgram.bindFragmentOutputs(attributes);
     }
 
     @Override

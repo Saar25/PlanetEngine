@@ -2,10 +2,14 @@ package org.saar.example.reflected;
 
 import org.joml.Planef;
 import org.saar.core.camera.Camera;
+import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
-import org.saar.core.camera.projection.PerspectiveProjection;
+import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.obj.ObjDeferredRenderer;
+import org.saar.core.common.obj.ObjMesh;
+import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -14,7 +18,9 @@ import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.core.renderer.reflection.Reflection;
+import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
+import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -33,10 +39,10 @@ public class ReflectionExample {
     private static float scrollSpeed = 50f;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
         final Camera camera = new Camera(projection);
 
         final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
@@ -50,34 +56,37 @@ public class ReflectionExample {
 
         final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
 
-        final Node3D cube = R3D.node();
+        final Instance3D cube = R3D.instance();
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
         final Model3D cubeModel = new Model3D(cubeMesh);
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
         final Camera reflectionCamera = new Camera(projection);
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
-        final DeferredRenderingPath reflectionDeferredRenderer = new DeferredRenderingPath(camera, reflectionScreenPrototype);
-        reflectionDeferredRenderer.addRenderer(renderer);
-        reflectionDeferredRenderer.addRenderer(renderer3D);
-        reflectionDeferredRenderer.addRenderPass(new LightRenderPass(camera));
+        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(reflectionCamera, reflectionScreenPrototype);
+        reflectionRenderingPath.addRenderer(renderer);
+        reflectionRenderingPath.addRenderer(renderer3D);
+        reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
 
-        final Reflection reflection = new Reflection(new Planef(Vector3.of(0, 20, 30), Vector3.forward()), camera,
-                reflectionCamera, reflectionDeferredRenderer);
+        final FlatReflectedVertex[] vertices = {
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f)), // 1
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
+        };
+        final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
+        final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
 
-        final FlatReflectedModel mirror = new FlatReflectedModel(FlatReflectedMesh.load(
-                new FlatReflectedVertex[]{
-                        FlatReflected.vertex(Vector3.of(-0.5f, -0.5f, +0.5f), Vector3.forward()), // 0
-                        FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f), Vector3.forward()), // 1
-                        FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f), Vector3.forward()), // 2
-                        FlatReflected.vertex(Vector3.of(+0.5f, -0.5f, +0.5f), Vector3.forward()), // 3
-                }, new int[]{3, 2, 1, 3, 1, 0}
-        ));
-        mirror.getTransform().getPosition().set(0, 20, 30);
+        mirror.getTransform().getPosition().set(0, .1f, 30);
         mirror.getTransform().getScale().scale(10);
+
+        final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());
+        final Reflection reflection = new Reflection(mirrorPlane, camera, reflectionCamera, reflectionRenderingPath);
+
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
                 new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
 
@@ -87,14 +96,13 @@ public class ReflectionExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final OrthographicProjection shadowProjection = new OrthographicProjection(
+        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
         shadowsRenderingPath.addRenderer(renderer3D);
         shadowsRenderingPath.addRenderer(renderer);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
         deferredRenderer.addRenderer(flatReflectedDeferredRenderer);
         deferredRenderer.addRenderer(renderer3D);
@@ -115,7 +123,7 @@ public class ReflectionExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             reflection.updateReflectionMap();
 
-            deferredRenderer.render();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -141,8 +149,7 @@ public class ReflectionExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -153,8 +160,7 @@ public class ReflectionExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,8 +171,7 @@ public class ReflectionExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }

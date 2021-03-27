@@ -2,6 +2,7 @@ package org.saar.lwjgl.opengl.constants;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL30;
 
 public enum DataType {
 
@@ -19,6 +20,7 @@ public enum DataType {
     U_INT_10_10_10_2(GL12.GL_UNSIGNED_INT_10_10_10_2, 4),
     U_INT_8_8_8_8_REV(GL12.GL_UNSIGNED_INT_8_8_8_8_REV, 4),
     U_INT_2_10_10_10_REV(GL12.GL_UNSIGNED_INT_2_10_10_10_REV, 4),
+    U_INT_24_8(GL30.GL_UNSIGNED_INT_24_8, 4),
 
     DOUBLE(GL11.GL_DOUBLE, 8),
     FLOAT(GL11.GL_FLOAT, 4),

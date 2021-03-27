@@ -1,18 +1,18 @@
 package org.saar.core.common.flatreflected;
 
-import org.saar.core.model.ElementsMesh;
-import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshWriters;
-import org.saar.core.model.mesh.MeshPrototypeHelper;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class FlatReflectedMesh implements Mesh {
 
     private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
-    private static final Attribute normalAttribute = Attribute.of(1, 3, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
@@ -22,7 +22,6 @@ public class FlatReflectedMesh implements Mesh {
 
     private static void setUpPrototype(FlatReflectedMeshPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);
-        prototype.getNormalBuffer().addAttribute(normalAttribute);
     }
 
     public static FlatReflectedMesh load(FlatReflectedMeshPrototype prototype, FlatReflectedVertex[] vertices, int[] indices) {
@@ -36,13 +35,14 @@ public class FlatReflectedMesh implements Mesh {
         helper.allocateVertices(vertices);
 
         final FlatReflectedMeshWriter writer = new FlatReflectedMeshWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
 
         helper.store();
 
-        final Mesh mesh = new ElementsMesh(vao,
+        final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
         return new FlatReflectedMesh(mesh);
     }
 

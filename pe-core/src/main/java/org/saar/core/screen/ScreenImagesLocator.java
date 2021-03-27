@@ -3,9 +3,8 @@ package org.saar.core.screen;
 import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.utils.reflection.FieldsLocator;
+import org.saar.core.util.reflection.FieldsLocator;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -18,25 +17,20 @@ public final class ScreenImagesLocator {
     }
 
     public List<ScreenImage> getScreenImages() {
-        final Class<ScreenImageProperty> annotation = ScreenImageProperty.class;
-        final List<Field> fields = fieldsLocator.getAnnotatedFields(annotation);
-        return fieldsLocator.getValues(ScreenImage.class, fields);
+        return this.fieldsLocator.getFilteredValues(ScreenImage.class, ScreenImageProperty.class);
     }
 
     public List<ColourScreenImage> getDrawScreenImage() {
-        final List<Field> fields = filterAnnotated(ScreenImageProperty::draw);
-        return fieldsLocator.getValues(ColourScreenImage.class, fields);
+        return filterAnnotated(ScreenImageProperty::draw);
     }
 
     public List<ColourScreenImage> getReadScreenImages() {
-        final List<Field> fields = filterAnnotated(ScreenImageProperty::read);
-        return fieldsLocator.getValues(ColourScreenImage.class, fields);
+        return filterAnnotated(ScreenImageProperty::read);
     }
 
-    private List<Field> filterAnnotated(Predicate<ScreenImageProperty> predicate) {
-        final Class<ScreenImageProperty> annotation = ScreenImageProperty.class;
-        final List<Field> fields = fieldsLocator.getAnnotatedFields(annotation);
-        return fieldsLocator.filterByAnnotation(fields, annotation, predicate);
+    private List<ColourScreenImage> filterAnnotated(Predicate<ScreenImageProperty> predicate) {
+        return this.fieldsLocator.getFilteredValues(ColourScreenImage.class, ScreenImageProperty.class,
+                field -> predicate.test(field.getAnnotation(ScreenImageProperty.class)));
     }
 
 }

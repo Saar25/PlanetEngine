@@ -2,7 +2,7 @@ package org.saar.core.renderer;
 
 public interface RenderingPath {
 
-    void render();
+    RenderingOutput render();
 
     void delete();
 

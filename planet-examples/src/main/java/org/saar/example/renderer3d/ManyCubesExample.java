@@ -1,16 +1,16 @@
 package org.saar.example.renderer3d;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.r3d.Mesh3D;
-import org.saar.core.common.r3d.Model3D;
-import org.saar.core.common.r3d.Renderer3D;
+import org.saar.core.camera.Projection;
+import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
-import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
@@ -31,13 +31,13 @@ public class ManyCubesExample {
     private static DepthAttachment depthAttachment;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, false);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        colorAttachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
+        colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 5000);
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
         final Camera camera = new Camera(projection);
 
         final Model3D model = model();
@@ -61,11 +61,6 @@ public class ManyCubesExample {
             }
 
             window.pollEvents();
-            if (window.isResized()) {
-                projection.setWidth(window.getWidth());
-                projection.setHeight(window.getHeight());
-            }
-
             window.update(true);
 
             System.out.print("\rFps: " +
@@ -81,12 +76,12 @@ public class ManyCubesExample {
 
     private static Model3D model() {
         final int size = (int) Math.pow(CUBES, 1 / 3f);
-        final MyNode[] nodes = new MyNode[CUBES];
+        final Instance3D[] nodes = new Instance3D[CUBES];
         for (int i = 0; i < CUBES; i++) {
             final int a = i / (size * size);
             final int b = (i / size) % size;
             final int c = i % size;
-            final MyNode newNode = new MyNode();
+            final Instance3D newNode = R3D.instance();
             newNode.getTransform().getPosition().set(
                     a * SPACE, b * SPACE, c * SPACE);
             nodes[i] = newNode;

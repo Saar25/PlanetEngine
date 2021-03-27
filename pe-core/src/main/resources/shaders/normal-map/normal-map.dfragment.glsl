@@ -1,5 +1,3 @@
-#version 400
-
 // Vertex outputs
 in vec2 v_uvCoord;
 in mat3 v_TBN;

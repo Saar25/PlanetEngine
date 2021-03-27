@@ -1,7 +1,7 @@
 package org.saar.core.common.normalmap;
 
-import org.saar.core.model.mesh.writers.MeshIndexWriter;
-import org.saar.core.model.mesh.writers.MeshVertexWriter;
+import org.saar.core.mesh.build.writers.MeshIndexWriter;
+import org.saar.core.mesh.build.writers.MeshVertexWriter;
 
 public class NormalMappedMeshWriter implements MeshVertexWriter<NormalMappedVertex>, MeshIndexWriter {
 

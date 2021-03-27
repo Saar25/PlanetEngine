@@ -1,7 +1,7 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.model.mesh.writers.MeshIndexWriter;
-import org.saar.core.model.mesh.writers.MeshVertexWriter;
+import org.saar.core.mesh.build.writers.MeshIndexWriter;
+import org.saar.core.mesh.build.writers.MeshVertexWriter;
 
 public class ObjMeshWriter implements MeshVertexWriter<ObjVertex>, MeshIndexWriter {
 

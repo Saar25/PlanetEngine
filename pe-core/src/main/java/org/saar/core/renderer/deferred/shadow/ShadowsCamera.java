@@ -5,7 +5,6 @@ import org.joml.Matrix4fc;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.maths.transform.SimpleTransform;
-import org.saar.maths.transform.Transform;
 import org.saar.maths.utils.Matrix4;
 
 public class ShadowsCamera implements ICamera {

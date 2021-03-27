@@ -1,23 +1,23 @@
 package org.saar.core.common.r3d
 
 import org.joml.Vector3fc
-import org.saar.core.model.mesh.MeshBufferProperty
-import org.saar.core.model.mesh.buffers.MeshIndexBuffer
-import org.saar.core.model.mesh.buffers.MeshInstanceBuffer
-import org.saar.core.model.mesh.buffers.MeshVertexBuffer
+import org.saar.core.mesh.build.MeshBufferProperty
+import org.saar.core.mesh.build.buffers.MeshIndexBuffer
+import org.saar.core.mesh.build.buffers.MeshInstanceBuffer
+import org.saar.core.mesh.build.buffers.MeshVertexBuffer
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.transform.Transform
 
 object R3D {
 
     @JvmStatic
-    fun node(transform: Transform): Node3D {
-        return Node3D { transform }
+    fun instance(transform: Transform): Instance3D {
+        return Instance3D { transform }
     }
 
     @JvmStatic
-    fun node(): Node3D {
-        return node(SimpleTransform())
+    fun instance(): Instance3D {
+        return instance(SimpleTransform())
     }
 
     @JvmStatic

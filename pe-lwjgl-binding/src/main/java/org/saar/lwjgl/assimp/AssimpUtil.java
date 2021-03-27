@@ -6,8 +6,7 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.Assimp;
 import org.lwjgl.system.MemoryUtil;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 import org.saar.utils.file.TextFileLoader;
 
 import java.nio.ByteBuffer;
@@ -42,8 +41,9 @@ public class AssimpUtil {
     }
 
     private static AIScene loadScene(String path, int flags) throws Exception {
-        final String source = TextFileLoader.loadResource(path);
-        final ByteBuffer byteBuffer = MemoryUtils.loadToByteBuffer(source.getBytes());
+        final byte[] source = TextFileLoader.loadResource(path).getBytes();
+        final ByteBuffer byteBuffer = MemoryUtil.memAlloc(source.length).put(source);
+        byteBuffer.flip();
         final AIScene aiScene = Assimp.aiImportFileFromMemory(byteBuffer, flags, "");
         MemoryUtil.memFree(byteBuffer);
         return aiScene;

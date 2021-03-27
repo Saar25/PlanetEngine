@@ -7,7 +7,11 @@ public interface ScreenImage {
 
     Attachment getAttachment();
 
-    void init(ReadOnlyFbo fbo);
+    default void init(ReadOnlyFbo fbo) {
+        getAttachment().init(fbo);
+    }
 
-    void delete();
+    default void delete() {
+        getAttachment().delete();
+    }
 }

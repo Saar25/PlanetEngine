@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <joml.version>1.9.20</joml.version>
-        <kotlin.version>1.3.72</kotlin.version>
+        <kotlin.version>1.4.20</kotlin.version>
     </properties>
 
     <dependencies>
@@ -71,9 +71,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jproperty</groupId>
+            <groupId>com.github.saar25</groupId>
             <artifactId>jproperty</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
     </dependencies>
 
@@ -83,6 +83,7 @@
         <module>pe-util</module>
         <module>planet-examples</module>
         <module>pe-core</module>
+        <module>pe-gui</module>
     </modules>
 
 

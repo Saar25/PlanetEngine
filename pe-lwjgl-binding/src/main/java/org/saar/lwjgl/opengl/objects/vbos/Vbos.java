@@ -11,21 +11,21 @@ public final class Vbos {
 
     public static DataBuffer createDataBuffer(VboUsage usage, ByteBuffer buffer) {
         final DataBuffer vbo = new DataBuffer(usage);
-        vbo.allocateByte(buffer.limit());
-        vbo.storeData(0, buffer);
+        vbo.allocate(buffer.limit());
+        vbo.store(0, buffer);
         return vbo;
     }
 
     public static IndexBuffer createIndexVbo(VboUsage usage, ByteBuffer buffer) {
         final IndexBuffer vbo = new IndexBuffer(usage);
-        vbo.allocateByte(buffer.limit());
-        vbo.storeData(0, buffer);
+        vbo.allocate(buffer.limit());
+        vbo.store(0, buffer);
         return vbo;
     }
 
     public static void allocateAndStore(IVbo vbo, ByteBuffer buffer) {
-        vbo.allocateByte(buffer.limit());
-        vbo.storeData(0, buffer);
+        vbo.allocate(buffer.limit());
+        vbo.store(0, buffer);
     }
 
 }

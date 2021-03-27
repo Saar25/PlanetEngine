@@ -4,28 +4,31 @@
 *
 **/
 
-#ifndef FLAT_SHADING
-    #define FLAT_SHADING true
-#endif
-
 // Vertex outputs
 
-#if FLAT_SHADING
-    flat in vec3 v_normal;
-#else
-    in vec3 v_normal;
-#endif
-in vec2 v_uvCoords;
+flat in vec3 v_normal;
+in vec4 v_clipSpace;
+in vec2 cors;
 
 // Uniforms
-uniform sampler2D reflectionMap;
+uniform sampler2D u_reflectionMap;
 
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
 layout (location = 1) out vec4 f_normal;
 
-void main(void) {
-    f_normal = vec4(v_normal, 1);
+// Methods declaration
+vec2 findReflectionUvCoords(void);
 
-    f_colour = vec4(texture(reflectionMap, v_uvCoords).rgb, 1.0);
+void main(void) {
+    f_normal = vec4(v_normal, 1.0);
+
+    vec2 uvCoords = findReflectionUvCoords();
+    vec3 colour = texture(u_reflectionMap, uvCoords).rgb;
+    f_colour = vec4(colour, 1.0);
+}
+
+vec2 findReflectionUvCoords(void) {
+    vec2 ndc = (v_clipSpace.xy / v_clipSpace.w) * 0.5 + 0.5;
+    return vec2(ndc.x, 1 - ndc.y);
 }

@@ -10,12 +10,11 @@ import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
+import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.*
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
@@ -25,7 +24,7 @@ class ShadowsRenderPass(private val camera: ICamera,
                         private val shadowCamera: ICamera,
                         private val shadowMap: ReadOnlyTexture,
                         private val light: DirectionalLight)
-    : RenderPassBase(shadersProgram), RenderPass {
+    : RenderPassBase(), RenderPass {
 
     private var uniformsHelper = UniformsHelper.empty()
     private var instanceUpdatersHelper = UpdatersHelper.empty<DeferredRenderingBuffers>()
@@ -36,7 +35,7 @@ class ShadowsRenderPass(private val camera: ICamera,
 
         override fun getUniformValue(): Matrix4fc {
             return this@ShadowsRenderPass.shadowCamera.projection.matrix.mul(
-                    this@ShadowsRenderPass.shadowCamera.viewMatrix, matrix)
+                this@ShadowsRenderPass.shadowCamera.viewMatrix, matrix)
         }
     }
 
@@ -83,9 +82,9 @@ class ShadowsRenderPass(private val camera: ICamera,
 
     @UniformProperty
     private val shadowMapUniform = object : TextureUniform() {
-        override fun getName(): String = "shadowMap"
-
         override fun getUnit(): Int = 0
+
+        override fun getName(): String = "shadowMap"
 
         override fun getUniformValue(): ReadOnlyTexture {
             return this@ShadowsRenderPass.shadowMap
@@ -116,8 +115,23 @@ class ShadowsRenderPass(private val camera: ICamera,
         this@ShadowsRenderPass.depthTextureUniform.value = state.instance.depth
     }
 
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertexShader: Shader = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/deferred/quadVertex.glsl"))
+
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
+        ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
+        ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
+        ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
+        ShaderCode.loadSource("/shaders/deferred/shadow/fragment.glsl"),
+        ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
+        ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
+
     init {
-        shadersProgram.bindFragmentOutputs("f_colour")
+        buildShadersProgram()
+        bindFragmentOutputs("f_colour")
 
         this.uniformsHelper = buildHelper(uniformsHelper)
         this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)
@@ -125,21 +139,7 @@ class ShadowsRenderPass(private val camera: ICamera,
 
     companion object {
         private val matrix: Matrix4f = Matrix4.create()
-
-        private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/deferred/quadVertex.glsl"))
-        private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-                ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
-                ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
-                ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
-                ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
-                ShaderCode.loadSource("/shaders/deferred/shadow/fragment.glsl"),
-                ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
-                ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
-        private val shadersProgram: ShadersProgram =
-                ShadersProgram.create(vertex, fragment)
     }
-
 
     override fun onRender(buffers: DeferredRenderingBuffers) {
         val instance = RenderState(buffers)

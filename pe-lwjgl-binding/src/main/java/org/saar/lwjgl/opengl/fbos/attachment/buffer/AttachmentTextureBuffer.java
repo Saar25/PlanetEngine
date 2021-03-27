@@ -2,7 +2,6 @@ package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.constants.IInternalFormat;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
@@ -16,7 +15,7 @@ import org.saar.lwjgl.opengl.textures.settings.TextureMipMapSetting;
 public class AttachmentTextureBuffer implements AttachmentBuffer {
 
     private final Texture texture;
-    private final IInternalFormat iFormat;
+    private final InternalFormat iFormat;
     private final FormatType format;
     private final DataType dataType;
 
@@ -24,7 +23,7 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
         this(texture, InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE);
     }
 
-    public AttachmentTextureBuffer(Texture texture, IInternalFormat iFormat, FormatType format, DataType dataType) {
+    public AttachmentTextureBuffer(Texture texture, InternalFormat iFormat, FormatType format, DataType dataType) {
         this.texture = texture;
         this.iFormat = iFormat;
         this.format = format;
@@ -36,7 +35,7 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
         return new AttachmentTextureBuffer(texture);
     }
 
-    public static AttachmentTextureBuffer create(IInternalFormat iFormat, FormatType format, DataType dataType) {
+    public static AttachmentTextureBuffer create(InternalFormat iFormat, FormatType format, DataType dataType) {
         final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
         return new AttachmentTextureBuffer(texture, iFormat, format, dataType);
     }

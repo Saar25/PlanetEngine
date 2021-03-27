@@ -1,10 +1,10 @@
 package org.saar.example.renderer3d;
 
 import org.saar.core.common.r3d.Mesh3DPrototype;
-import org.saar.core.model.mesh.MeshBufferProperty;
-import org.saar.core.model.mesh.buffers.MeshIndexBuffer;
-import org.saar.core.model.mesh.buffers.MeshInstanceBuffer;
-import org.saar.core.model.mesh.buffers.MeshVertexBuffer;
+import org.saar.core.mesh.build.MeshBufferProperty;
+import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
+import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
+import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
 
 public class MeshUnoptimized implements Mesh3DPrototype {
 

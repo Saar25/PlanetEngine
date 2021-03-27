@@ -1,9 +1,9 @@
 package org.saar.lwjgl.glfw.input.keyboard;
 
 import org.lwjgl.glfw.GLFW;
-import org.saar.lwjgl.glfw.input.EventListener;
-import org.saar.lwjgl.glfw.input.EventListenersHelper;
-import org.saar.lwjgl.glfw.input.OnAction;
+import org.saar.lwjgl.glfw.event.EventListener;
+import org.saar.lwjgl.glfw.event.EventListenersHelper;
+import org.saar.lwjgl.glfw.event.OnAction;
 
 public class Keyboard {
 

@@ -3,7 +3,10 @@ package org.saar.core.renderer.deferred.shadow;
 import org.joml.Vector3fc;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.light.IDirectionalLight;
-import org.saar.core.renderer.*;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.Renderer;
+import org.saar.core.renderer.RenderersHelper;
+import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
@@ -22,12 +25,10 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ShadowsRenderingPath implements RenderingPath {
 
-    private RenderersHelper helper = RenderersHelper.empty();
-
     private final ShadowsScreenPrototype prototype = new ShadowsScreenPrototype();
-
     private final ShadowsCamera camera;
     private final OffScreen screen;
+    private RenderersHelper helper = RenderersHelper.empty();
 
     public ShadowsRenderingPath(ShadowsQuality quality, OrthographicProjection projection, IDirectionalLight light) {
         this.camera = camera(projection, light.getDirection());
@@ -65,13 +66,15 @@ public class ShadowsRenderingPath implements RenderingPath {
     }
 
     @Override
-    public void render() {
+    public ShadowRenderingOutput render() {
         final RenderContextBase context = new RenderContextBase(getCamera());
         context.getHints().cullFace = GlCullFace.FRONT;
 
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.DEPTH);
         this.helper.render(context);
+
+        return new ShadowRenderingOutput(this.screen);
     }
 
     @Override

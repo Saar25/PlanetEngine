@@ -86,18 +86,6 @@ public final class Vector3 {
         return Vector3.of(v.x(), v.y(), z);
     }
 
-//    /**
-//     * Creates a new unmodifiable vector initialized with the given values
-//     *
-//     * @param x the x component
-//     * @param y the y component
-//     * @param z the z component
-//     * @return a new CVector3f
-//     */
-//    public static CVector3f of(float x, float y, float z) {
-//        return new CVector3f(x, y, z);
-//    }
-
     public static Vector3f upward() {
         return Vector3.of(UP.x(), UP.y(), UP.z());
     }
@@ -178,6 +166,10 @@ public final class Vector3 {
 
     public static float length(Vector3fc vector) {
         return vector.length();
+    }
+
+    public static Vector3f randomize(Vector3f vector) {
+        return vector.set(Math.random(), Math.random(), Math.random());
     }
 
 }

@@ -1,14 +1,20 @@
 package org.saar.core.common.normalmap
 
 import org.saar.core.renderer.*
+import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.uniforms.UniformUpdater
+import org.saar.core.renderer.uniforms.UniformUpdaterProperty
+import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.ShaderCode
+import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer(private vararg val models: NormalMappedModel) : AbstractRenderer(shadersProgram), Renderer {
+class NormalMappedRenderer(private vararg val models: NormalMappedModel) : AbstractRenderer(), Renderer {
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
@@ -23,51 +29,53 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformUpdaterProperty
-    private val transformationUpdater = UniformUpdater<NormalMappedNode> { state ->
+    private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
         this@NormalMappedRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
     }
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<NormalMappedNode> { state ->
+    private val textureUpdater = UniformUpdater<NormalMappedModel> { state ->
         this@NormalMappedRenderer.textureUniform.value = state.instance.texture
     }
 
     @UniformUpdaterProperty
-    private val normalMapUpdater = UniformUpdater<NormalMappedNode> { state ->
+    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { state ->
         this@NormalMappedRenderer.normalMapUniform.value = state.instance.normalMap
     }
 
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertex = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/normal-map/normal-map.vertex.glsl"))
+
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragment = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/normal-map/normal-map.fragment.glsl"))
+
     companion object {
         private val matrix = Matrix4.create()
-
-        private val vertex: Shader = Shader.createVertex(
-                "/shaders/normal-map/normal-map.vertex.glsl")
-        private val fragment: Shader = Shader.createFragment(
-                "/shaders/normal-map/normal-map.fragment.glsl")
-        private val shadersProgram: ShadersProgram =
-                ShadersProgram.create(vertex, fragment)
     }
 
     init {
-        shadersProgram.bindAttributes("in_position", "in_uvCoord",
-                "in_normal", "in_tangent", "in_biTangent")
-        shadersProgram.bindFragmentOutputs("f_colour")
         init()
+        bindAttributes("in_position", "in_uvCoord",
+            "in_normal", "in_tangent", "in_biTangent")
+        bindFragmentOutputs("f_colour")
+    }
+
+    override fun preRender(context: RenderContext) {
+        GlUtils.setCullFace(context.hints.cullFace)
+        GlUtils.enableAlphaBlending()
+        GlUtils.enableDepthTest()
     }
 
     override fun onRender(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
-
-        GlUtils.enableAlphaBlending()
-        GlUtils.enableDepthTest()
-
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, matrix)
         this.viewProjectionUniform.load()
 
         for (model in this.models) {
-            val state = RenderState<NormalMappedNode>(model)
+            val state = RenderState(model)
 
             this.transformationUpdater.update(state)
             this.transformationUniform.load()

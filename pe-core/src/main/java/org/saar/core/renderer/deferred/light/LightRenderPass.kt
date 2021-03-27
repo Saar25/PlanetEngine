@@ -6,25 +6,23 @@ import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformValue
-import org.saar.core.light.IDirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
+import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.*
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgram), RenderPass {
+class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPass {
 
     private var uniformsHelper = UniformsHelper.empty()
     private var instanceUpdatersHelper = UpdatersHelper.empty<PerInstance>()
@@ -89,7 +87,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     }
 
     @UniformProperty
-    private val directionalLightsUniform2 = WritableUniformArray<IDirectionalLight>("directionalLights", 1)
+    private val directionalLightsUniform2 = WritableUniformArray("directionalLights", 1)
     { name, _ -> DirectionalLightUniformValue(name) }
 
     @UniformUpdaterProperty
@@ -97,30 +95,31 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         this@LightRenderPass.directionalLightsUniform2.setValue(state.instance.directionalLights)
     }
 
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertexShader: Shader = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/deferred/quadVertex.glsl"))
+
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.define("MAX_POINT_LIGHTS", "5"),
+        ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "2"),
+
+        ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
+        ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
+        ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
+
+        ShaderCode.loadSource("/shaders/deferred/light/fragment.glsl"),
+
+        ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
+        ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
+
     companion object {
         private val matrix: Matrix4f = Matrix4.create()
-
-        private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/deferred/quadVertex.glsl"))
-        private val fragment: Shader = Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.define("MAX_POINT_LIGHTS", "5"),
-                ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "2"),
-
-                ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
-                ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
-                ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
-
-                ShaderCode.loadSource("/shaders/deferred/light/fragment.glsl"),
-
-                ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
-                ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
-        private val shadersProgram: ShadersProgram =
-                ShadersProgram.create(vertex, fragment)
     }
 
     init {
-        shadersProgram.bindFragmentOutputs("f_colour")
+        buildShadersProgram()
+        bindFragmentOutputs("f_colour")
 
         this.uniformsHelper = buildHelper(uniformsHelper)
         this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)
@@ -130,8 +129,8 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
         GlUtils.setCullFace(GlCullFace.NONE)
 
         val light = DirectionalLight()
-                .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
-                .also { light -> light.direction.set(-50f, -50f, -50f) }
+            .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
+            .also { light -> light.direction.set(-50f, -50f, -50f) }
 
         val instance = PerInstance(buffers, emptyArray(), arrayOf(light))
         val instanceState = RenderState(instance)
@@ -144,7 +143,7 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(shadersProgr
     }
 
     private class PerInstance(
-            val buffers: DeferredRenderingBuffers,
-            val pointLights: Array<PointLight>,
-            val directionalLights: Array<DirectionalLight>)
+        val buffers: DeferredRenderingBuffers,
+        val pointLights: Array<PointLight>,
+        val directionalLights: Array<DirectionalLight>)
 }

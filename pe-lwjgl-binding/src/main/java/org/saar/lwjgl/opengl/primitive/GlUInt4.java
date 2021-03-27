@@ -4,8 +4,8 @@ import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.Attribute;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 public class GlUInt4 extends GlPrimitiveBase implements GlPrimitive {
 
@@ -33,7 +33,7 @@ public class GlUInt4 extends GlPrimitiveBase implements GlPrimitive {
 
     @Override
     public Attribute[] attribute(int index, boolean normalized, int instances) {
-        return new Attribute[]{Attribute.ofInstances(index, 4, DATA_TYPE, normalized, instances)};
+        return new Attribute[]{Attribute.ofIntegerInstances(index, 4, DATA_TYPE, instances)};
     }
 
     @Override

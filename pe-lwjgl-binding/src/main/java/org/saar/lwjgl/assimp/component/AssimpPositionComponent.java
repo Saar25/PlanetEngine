@@ -2,11 +2,11 @@ package org.saar.lwjgl.assimp.component;
 
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public class AssimpPositionComponent extends AssimpComponent3D {
 
-    public AssimpPositionComponent(VboWrapper writer) {
+    public AssimpPositionComponent(BufferObjectWrapper writer) {
         super(writer);
     }
 

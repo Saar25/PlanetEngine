@@ -2,11 +2,11 @@ package org.saar.lwjgl.assimp.component;
 
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
-import org.saar.lwjgl.opengl.objects.vbos.VboWrapper;
+import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public class AssimpTangentComponent extends AssimpComponent3D {
 
-    public AssimpTangentComponent(VboWrapper vbo) {
+    public AssimpTangentComponent(BufferObjectWrapper vbo) {
         super(vbo);
     }
 

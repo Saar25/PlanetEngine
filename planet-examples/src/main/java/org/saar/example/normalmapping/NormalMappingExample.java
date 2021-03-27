@@ -1,17 +1,25 @@
 package org.saar.example.normalmapping;
 
 import org.saar.core.camera.Camera;
+import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
-import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.normalmap.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.camera.projection.SimpleOrthographicProjection;
+import org.saar.core.common.normalmap.NormalMappedDeferredRenderer;
+import org.saar.core.common.normalmap.NormalMappedMesh;
+import org.saar.core.common.normalmap.NormalMappedModel;
+import org.saar.core.common.obj.ObjDeferredRenderer;
+import org.saar.core.common.obj.ObjMesh;
+import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
+import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
+import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -31,10 +39,10 @@ public class NormalMappingExample {
     private static float scrollSpeed = 50f;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
         final Camera camera = new Camera(projection);
 
         camera.getTransform().getPosition().set(0, 0, 200);
@@ -64,10 +72,10 @@ public class NormalMappingExample {
         final NormalMappedDeferredRenderer normalMappedRenderer =
                 new NormalMappedDeferredRenderer(boulder, barrel, crate);
 
-        final Node3D cube = R3D.node();
+        final Instance3D cube = R3D.instance();
         cube.getTransform().getScale().set(10, 10, 10);
         cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Node3D[]{cube});
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
         final Model3D cubeModel = new Model3D(cubeMesh);
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
@@ -80,7 +88,7 @@ public class NormalMappingExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final OrthographicProjection shadowProjection = new OrthographicProjection(
+        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
@@ -107,7 +115,7 @@ public class NormalMappingExample {
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            deferredRenderer.render();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -132,8 +140,7 @@ public class NormalMappingExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,8 +151,7 @@ public class NormalMappingExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,8 +162,7 @@ public class NormalMappingExample {
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            final ObjNode node = Obj.node(texture);
-            return new ObjModel(mesh, node);
+            return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,8 +174,7 @@ public class NormalMappingExample {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/boulder/boulder.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/boulder/boulder.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/boulder/boulder.diffuse.png");
-            final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedModel(mesh, node);
+            return new NormalMappedModel(mesh, texture, normalMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,8 +186,7 @@ public class NormalMappingExample {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/barrel/barrel.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/barrel/barrel.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/barrel/barrel.diffuse.png");
-            final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedModel(mesh, node);
+            return new NormalMappedModel(mesh, texture, normalMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,8 +198,7 @@ public class NormalMappingExample {
             final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/crate/crate.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/crate/crate.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/crate/crate.diffuse.png");
-            final NormalMappedNode node = NormalMapped.node(texture, normalMap);
-            return new NormalMappedModel(mesh, node);
+            return new NormalMappedModel(mesh, texture, normalMap);
         } catch (Exception e) {
             e.printStackTrace();
         }

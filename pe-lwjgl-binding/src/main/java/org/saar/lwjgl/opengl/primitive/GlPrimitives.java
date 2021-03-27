@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.primitive;
 
-import org.saar.lwjgl.opengl.utils.BufferWriter;
-import org.saar.lwjgl.opengl.utils.MemoryUtils;
+import org.lwjgl.system.MemoryUtil;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 import java.nio.ByteBuffer;
 
@@ -20,7 +20,7 @@ public final class GlPrimitives {
 
     public static ByteBuffer toBuffer(GlPrimitive... primitives) {
         final int bytes = primitives.length * primitives[0].getSize();
-        final ByteBuffer buffer = MemoryUtils.allocByte(bytes);
+        final ByteBuffer buffer = MemoryUtil.memAlloc(bytes);
         final BufferWriter writer = new BufferWriter(buffer);
         GlPrimitives.write(writer, primitives);
         return buffer;

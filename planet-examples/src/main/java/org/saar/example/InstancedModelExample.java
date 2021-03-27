@@ -1,18 +1,20 @@
 package org.saar.example;
 
-import org.saar.core.model.InstancedArraysMesh;
-import org.saar.core.model.Mesh;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
+import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 
@@ -22,8 +24,7 @@ public class InstancedModelExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) throws Exception {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final Vao vao = Vao.create();
 
@@ -33,7 +34,7 @@ public class InstancedModelExample {
                 +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
                 +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
         dataBuffer.allocateFloat(data.length);
-        dataBuffer.storeData(0, data);
+        dataBuffer.storeFloat(0, data);
         vao.loadVbo(dataBuffer,
                 Attribute.of(0, 2, DataType.FLOAT, true),
                 Attribute.of(1, 3, DataType.FLOAT, true));
@@ -41,10 +42,11 @@ public class InstancedModelExample {
         final DataBuffer instanceBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
         final float[] instanceData = {0.5f, .1f, .2f};
         instanceBuffer.allocateFloat(instanceData.length);
-        instanceBuffer.storeData(0, instanceData);
+        instanceBuffer.storeFloat(0, instanceData);
         vao.loadVbo(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
 
-        final Mesh mesh = new InstancedArraysMesh(vao, RenderMode.TRIANGLES, 3, 3);
+        final DrawCall drawCall = new InstancedArraysDrawCall(RenderMode.TRIANGLES, 3, 3);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -54,7 +56,7 @@ public class InstancedModelExample {
         shadersProgram.bind();
 
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
-        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, InternalFormat.RGBA8);
+        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);

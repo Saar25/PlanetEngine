@@ -1,7 +1,7 @@
 package org.saar.core.common.flatreflected;
 
-import org.saar.core.model.mesh.writers.MeshIndexWriter;
-import org.saar.core.model.mesh.writers.MeshVertexWriter;
+import org.saar.core.mesh.build.writers.MeshIndexWriter;
+import org.saar.core.mesh.build.writers.MeshVertexWriter;
 
 public class FlatReflectedMeshWriter implements MeshVertexWriter<FlatReflectedVertex>, MeshIndexWriter {
 
@@ -14,7 +14,6 @@ public class FlatReflectedMeshWriter implements MeshVertexWriter<FlatReflectedVe
     @Override
     public void writeVertex(FlatReflectedVertex vertex) {
         this.prototype.getPositionBuffer().getWriter().write(vertex.getPosition3f());
-        this.prototype.getNormalBuffer().getWriter().write(vertex.getNormal3f());
     }
 
     @Override

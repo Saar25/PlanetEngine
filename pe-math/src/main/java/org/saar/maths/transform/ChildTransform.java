@@ -1,11 +1,12 @@
 package org.saar.maths.transform;
 
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
-import org.saar.maths.wrapper.Matrix4fWrapper;
+import org.saar.maths.utils.Matrix4;
 
 public class ChildTransform implements Transform {
 
-    private final Matrix4fWrapper wrapper = new Matrix4fWrapper();
+    private final Matrix4f transformation = Matrix4.create();
 
     private final Transform local;
     private final Transform parent;
@@ -47,7 +48,7 @@ public class ChildTransform implements Transform {
     public Matrix4fc getTransformationMatrix() {
         final Matrix4fc parent = this.parent.getTransformationMatrix();
         final Matrix4fc local = this.local.getTransformationMatrix();
-        return parent.mul(local, this.wrapper.getValue());
+        return parent.mul(local, this.transformation);
     }
 
     @Override

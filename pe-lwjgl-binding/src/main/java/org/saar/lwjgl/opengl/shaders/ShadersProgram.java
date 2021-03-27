@@ -33,6 +33,11 @@ public class ShadersProgram {
         return new ShadersProgram(id, vertexShader, fragmentShader);
     }
 
+    public static ShadersProgram create(Shader... shaders) throws ShaderCompileException {
+        final int id = GL20.glCreateProgram();
+        return new ShadersProgram(id, shaders);
+    }
+
     public void bindAttribute(int location, String name) {
         GL20.glBindAttribLocation(id, location, name);
     }

@@ -1,12 +1,13 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.model.ElementsMesh;
-import org.saar.core.model.Mesh;
-import org.saar.core.model.mesh.MeshPrototypeHelper;
-import org.saar.core.model.mesh.MeshWriters;
+import org.saar.core.mesh.DrawCallMesh;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class Mesh2D implements Mesh {
@@ -33,13 +34,14 @@ public class Mesh2D implements Mesh {
         helper.allocateVertices(vertices);
 
         final Mesh2DWriter writer = new Mesh2DWriter(prototype);
-        MeshWriters.writeVertices(writer, vertices);
-        MeshWriters.writeIndices(writer, indices);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
 
         helper.store();
 
-        final Mesh mesh = new ElementsMesh(vao,
+        final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
         return new Mesh2D(mesh);
     }
 

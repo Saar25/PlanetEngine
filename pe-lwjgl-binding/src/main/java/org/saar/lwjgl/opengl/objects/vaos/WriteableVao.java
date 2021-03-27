@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.objects.vaos;
 
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 
 public interface WriteableVao extends IVao {

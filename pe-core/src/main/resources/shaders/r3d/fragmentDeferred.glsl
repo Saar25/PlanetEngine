@@ -1,5 +1,3 @@
-#version 400
-
 // Vertex outputs
 flat in vec3 v_colour;
 flat in vec3 v_normal;

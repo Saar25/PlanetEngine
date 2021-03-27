@@ -1,8 +1,11 @@
 package org.saar.example.screen;
 
 import org.saar.core.camera.Camera;
-import org.saar.core.camera.projection.PerspectiveProjection;
-import org.saar.core.common.obj.*;
+import org.saar.core.camera.Projection;
+import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.common.obj.ObjMesh;
+import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -23,23 +26,20 @@ public class ScreenExample {
     private static final int HEIGHT = 500;
 
     public static void main(String[] args) {
-        final Window window = new Window("Lwjgl", WIDTH, HEIGHT, true);
-        window.init();
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final PerspectiveProjection projection = new PerspectiveProjection(70f, WIDTH, HEIGHT, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
         final Camera camera = new Camera(projection);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        ObjNode node;
         ObjModel model = null;
         try {
             final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            node = Obj.node(texture);
-
-            model = new ObjModel(mesh, node);
+            model = new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -50,6 +50,12 @@ public class ScreenExample {
         final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo);
+
+        window.addResizeListener(e -> {
+            final int w = e.getWidth().getAfter();
+            final int h = e.getHeight().getAfter();
+            screen.resize(w, h);
+        });
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -64,11 +70,6 @@ public class ScreenExample {
 
             window.update(true);
             window.pollEvents();
-            if (window.isResized()) {
-                final int w = window.getWidth();
-                final int h = window.getHeight();
-                screen.resize(w, h);
-            }
         }
 
         renderer.delete();

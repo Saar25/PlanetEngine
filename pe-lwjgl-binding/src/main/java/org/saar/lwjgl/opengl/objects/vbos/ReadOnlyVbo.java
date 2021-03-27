@@ -7,7 +7,7 @@ public interface ReadOnlyVbo {
      *
      * @return the size of the vbo int bytes
      */
-    long getSize();
+    long getCapacity();
 
     /**
      * Bind the vbo

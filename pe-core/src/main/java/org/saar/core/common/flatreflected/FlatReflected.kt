@@ -1,31 +1,15 @@
 package org.saar.core.common.flatreflected
 
 import org.joml.Vector3fc
-import org.saar.core.model.mesh.MeshBufferProperty
-import org.saar.core.model.mesh.buffers.MeshIndexBuffer
-import org.saar.core.model.mesh.buffers.MeshVertexBuffer
-import org.saar.maths.transform.SimpleTransform
-import org.saar.maths.transform.Transform
+import org.saar.core.mesh.build.MeshBufferProperty
+import org.saar.core.mesh.build.buffers.MeshIndexBuffer
+import org.saar.core.mesh.build.buffers.MeshVertexBuffer
 
 object FlatReflected {
 
     @JvmStatic
-    fun node(transform: Transform): FlatReflectedNode {
-        return FlatReflectedNode { transform }
-    }
-
-    @JvmStatic
-    fun node(): FlatReflectedNode {
-        return node(SimpleTransform())
-    }
-
-    @JvmStatic
-    fun vertex(position: Vector3fc, normal: Vector3fc): FlatReflectedVertex {
-        return object : FlatReflectedVertex {
-            override fun getPosition3f(): Vector3fc = position
-
-            override fun getNormal3f(): Vector3fc = normal
-        }
+    fun vertex(position: Vector3fc): FlatReflectedVertex {
+        return FlatReflectedVertex { position }
     }
 
     @JvmStatic
@@ -38,8 +22,6 @@ object FlatReflected {
             val meshIndexBuffer: MeshIndexBuffer = MeshIndexBuffer.createStatic()
 
             override fun getPositionBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getNormalBuffer(): MeshVertexBuffer = this.meshVertexBuffer
 
             override fun getIndexBuffer(): MeshIndexBuffer = this.meshIndexBuffer
         }

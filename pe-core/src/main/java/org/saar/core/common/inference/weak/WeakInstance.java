@@ -1,15 +1,15 @@
 package org.saar.core.common.inference.weak;
 
-import org.saar.core.node.Node;
-import org.saar.lwjgl.opengl.objects.Attribute;
+import org.saar.core.mesh.Instance;
+import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
-import org.saar.lwjgl.opengl.utils.BufferWriter;
+import org.saar.lwjgl.util.buffer.BufferWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WeakInstance implements Node {
+public class WeakInstance implements Instance {
 
     private final List<GlPrimitive> primitives = new ArrayList<>();
 

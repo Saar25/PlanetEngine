@@ -2,7 +2,7 @@ package org.saar.core.common.r3d;
 
 
 import org.joml.Vector3fc;
-import org.saar.core.model.Vertex;
+import org.saar.core.mesh.Vertex;
 
 public interface Vertex3D extends Vertex {
 
