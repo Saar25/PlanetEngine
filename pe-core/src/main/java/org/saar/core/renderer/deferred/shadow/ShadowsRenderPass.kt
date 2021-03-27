@@ -11,11 +11,7 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.core.renderer.shaders.ShaderProperty
-import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformUpdater
-import org.saar.core.renderer.uniforms.UniformUpdaterProperty
-import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.core.renderer.uniforms.UpdatersHelper
+import org.saar.core.renderer.uniforms.*
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
@@ -138,7 +134,7 @@ class ShadowsRenderPass(private val camera: ICamera,
 
     init {
         buildShadersProgram()
-        shadersProgram.bindFragmentOutputs("f_colour")
+        bindFragmentOutputs("f_colour")
 
         this.uniformsHelper = buildHelper(uniformsHelper)
         this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)

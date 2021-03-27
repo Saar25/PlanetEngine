@@ -50,7 +50,7 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
 
     init {
         buildShadersProgram()
-        shadersProgram.bindAttributes("in_position", "in_normal")
+        bindAttributes("in_position", "in_normal")
         init()
     }
 

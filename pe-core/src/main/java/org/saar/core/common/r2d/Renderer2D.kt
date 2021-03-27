@@ -16,7 +16,7 @@ class Renderer2D(private val model: Model2D) : AbstractRenderer() {
 
     init {
         buildShadersProgram()
-        shadersProgram.bindAttributes("in_position", "in_colour")
+        bindAttributes("in_position", "in_colour")
     }
 
     override fun onRender(context: RenderContext) {

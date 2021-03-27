@@ -49,7 +49,7 @@ class FlatReflectedRenderer(private vararg val models: FlatReflectedModel,
 
     init {
         buildShadersProgram()
-        shadersProgram.bindAttributes("in_position", "in_normal")
+        bindAttributes("in_position", "in_normal")
         init()
     }
 

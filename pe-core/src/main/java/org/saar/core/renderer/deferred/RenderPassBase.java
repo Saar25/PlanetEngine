@@ -1,10 +1,10 @@
 package org.saar.core.renderer.deferred;
 
 import org.saar.core.renderer.Renderers;
+import org.saar.core.renderer.shaders.ShadersHelper;
 import org.saar.core.renderer.uniforms.UniformUpdater;
 import org.saar.core.renderer.uniforms.UniformsHelper;
 import org.saar.core.renderer.uniforms.UpdatersHelper;
-import org.saar.core.renderer.shaders.ShadersHelper;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShaderCompileException;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class RenderPassBase implements RenderPass {
 
-    protected ShadersProgram shadersProgram;
+    private ShadersProgram shadersProgram;
 
     protected void buildShadersProgram() throws ShaderCompileException {
         ShadersHelper helper = ShadersHelper.empty();
@@ -48,6 +48,14 @@ public abstract class RenderPassBase implements RenderPass {
         }
 
         return helper;
+    }
+
+    protected final void bindAttributes(String... attributes) {
+        this.shadersProgram.bindAttributes(attributes);
+    }
+
+    protected final void bindFragmentOutputs(String... attributes) {
+        this.shadersProgram.bindFragmentOutputs(attributes);
     }
 
     @Override

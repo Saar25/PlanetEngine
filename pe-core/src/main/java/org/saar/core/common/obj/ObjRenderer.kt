@@ -46,7 +46,7 @@ class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(), Ren
 
     init {
         buildShadersProgram()
-        shadersProgram.bindAttributes("in_position", "in_uvCoord", "in_normal")
+        bindAttributes("in_position", "in_uvCoord", "in_normal")
         init()
     }
 

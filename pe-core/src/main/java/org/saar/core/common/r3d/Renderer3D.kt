@@ -29,7 +29,8 @@ class Renderer3D(private vararg val models: Model3D) : AbstractRenderer(), Rende
 
     init {
         buildShadersProgram()
-        shadersProgram.bindAttributes("in_position", "in_colour", "in_transformation")
+        bindAttributes("in_position",
+            "in_colour", "in_transformation")
         init()
     }
 

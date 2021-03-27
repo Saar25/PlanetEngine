@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
 public abstract class AbstractRenderer implements Renderer {
 
-    protected ShadersProgram shadersProgram;
+    private ShadersProgram shadersProgram;
 
     protected void buildShadersProgram() throws ShaderCompileException {
         ShadersHelper helper = ShadersHelper.empty();
@@ -27,6 +27,14 @@ public abstract class AbstractRenderer implements Renderer {
         for (Uniform uniform : Renderers.findUniforms(this)) {
             uniform.initialize(this.shadersProgram);
         }
+    }
+
+    protected final void bindAttributes(String... attributes) {
+        this.shadersProgram.bindAttributes(attributes);
+    }
+
+    protected final void bindFragmentOutputs(String... attributes) {
+        this.shadersProgram.bindFragmentOutputs(attributes);
     }
 
     @Override

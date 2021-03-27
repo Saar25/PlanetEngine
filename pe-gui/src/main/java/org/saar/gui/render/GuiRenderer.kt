@@ -111,6 +111,8 @@ class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer()
     }
 
     override fun onDelete() {
-        shadersProgram.delete()
+        for (guiObject in renderList) {
+            guiObject.delete()
+        }
     }
 }

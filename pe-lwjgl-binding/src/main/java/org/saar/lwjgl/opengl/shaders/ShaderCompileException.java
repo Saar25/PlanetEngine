@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.shaders;
 
-public class ShaderCompileException extends Exception {
+public class ShaderCompileException extends RuntimeException {
 
     public ShaderCompileException() {
     }

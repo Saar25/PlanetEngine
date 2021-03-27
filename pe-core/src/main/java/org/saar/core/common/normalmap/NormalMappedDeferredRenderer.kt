@@ -60,9 +60,9 @@ class NormalMappedDeferredRenderer(private vararg val models: NormalMappedModel)
 
     init {
         buildShadersProgram()
-        shadersProgram.bindAttributes("in_position", "in_uvCoord",
+        bindAttributes("in_position", "in_uvCoord",
             "in_normal", "in_tangent", "in_biTangent")
-        shadersProgram.bindFragmentOutputs("f_colour", "f_normal")
+        bindFragmentOutputs("f_colour", "f_normal")
         init()
     }
 
