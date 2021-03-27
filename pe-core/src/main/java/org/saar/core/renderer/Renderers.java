@@ -17,6 +17,14 @@ public final class Renderers {
         return new ShaderPropertiesLocator(renderer).getShaders();
     }
 
+    public static List<Shader> findVertexShaders(Object renderer) {
+        return new ShaderPropertiesLocator(renderer).getVertexShaders();
+    }
+
+    public static List<Shader> findFragmentShaders(Object renderer) {
+        return new ShaderPropertiesLocator(renderer).getFragmentShaders();
+    }
+
     public static List<Uniform> findUniforms(Object renderer) {
         return new UniformPropertiesLocator(renderer).getUniforms();
     }

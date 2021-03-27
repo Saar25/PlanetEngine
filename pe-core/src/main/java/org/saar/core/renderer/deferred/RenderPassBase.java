@@ -25,7 +25,10 @@ public abstract class RenderPassBase implements RenderPass {
 
     protected void buildShadersProgram() throws ShaderCompileException {
         ShadersHelper helper = ShadersHelper.empty();
-        for (Shader shader : Renderers.findShaders(this)) {
+        for (Shader shader : Renderers.findVertexShaders(this)) {
+            helper = helper.addShader(shader);
+        }
+        for (Shader shader : Renderers.findFragmentShaders(this)) {
             helper = helper.addShader(shader);
         }
 
