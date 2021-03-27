@@ -45,9 +45,8 @@ class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(), Ren
     }
 
     init {
-        buildShadersProgram()
-        bindAttributes("in_position", "in_uvCoord", "in_normal")
         init()
+        bindAttributes("in_position", "in_uvCoord", "in_normal")
     }
 
     override fun preRender(context: RenderContext) {

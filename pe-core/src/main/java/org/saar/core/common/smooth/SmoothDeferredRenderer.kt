@@ -43,10 +43,9 @@ class SmoothDeferredRenderer(private vararg val models: SmoothModel)
     }
 
     init {
-        buildShadersProgram()
+        init()
         bindAttributes("in_position",
             "in_normal", "in_colour", "in_target")
-        init()
     }
 
     override fun preRender(context: RenderContext) {

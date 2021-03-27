@@ -49,9 +49,8 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
     }
 
     init {
-        buildShadersProgram()
-        bindAttributes("in_position", "in_normal")
         init()
+        bindAttributes("in_position", "in_normal")
     }
 
     override fun preRender(context: RenderContext) {

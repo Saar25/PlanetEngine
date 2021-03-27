@@ -47,10 +47,9 @@ class ObjDeferredRenderer(private vararg val models: ObjModel)
     }
 
     init {
-        buildShadersProgram()
+        init()
         bindAttributes("in_position", "in_uvCoord", "in_normal")
         bindFragmentOutputs("f_colour", "f_normal")
-        init()
     }
 
     override fun preRender(context: RenderContext) {

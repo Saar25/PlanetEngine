@@ -66,7 +66,6 @@ class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer()
         ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
 
     init {
-        buildShadersProgram()
         init()
     }
 

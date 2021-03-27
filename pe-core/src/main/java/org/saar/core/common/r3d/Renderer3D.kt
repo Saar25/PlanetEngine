@@ -28,10 +28,9 @@ class Renderer3D(private vararg val models: Model3D) : AbstractRenderer(), Rende
     }
 
     init {
-        buildShadersProgram()
+        init()
         bindAttributes("in_position",
             "in_colour", "in_transformation")
-        init()
     }
 
     override fun preRender(context: RenderContext) {

@@ -10,7 +10,7 @@ public abstract class AbstractRenderer implements Renderer {
 
     private ShadersProgram shadersProgram;
 
-    protected void buildShadersProgram() throws ShaderCompileException {
+    private void buildShadersProgram() throws ShaderCompileException {
         ShadersHelper helper = ShadersHelper.empty();
         for (Shader shader : Renderers.findVertexShaders(this)) {
             helper = helper.addShader(shader);
@@ -23,6 +23,7 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     protected final void init() {
+        buildShadersProgram();
         this.shadersProgram.bind();
         for (Uniform uniform : Renderers.findUniforms(this)) {
             uniform.initialize(this.shadersProgram);

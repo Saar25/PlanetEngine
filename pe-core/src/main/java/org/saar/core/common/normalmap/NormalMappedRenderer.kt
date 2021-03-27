@@ -57,11 +57,10 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
     }
 
     init {
-        buildShadersProgram()
+        init()
         bindAttributes("in_position", "in_uvCoord",
             "in_normal", "in_tangent", "in_biTangent")
         bindFragmentOutputs("f_colour")
-        init()
     }
 
     override fun preRender(context: RenderContext) {

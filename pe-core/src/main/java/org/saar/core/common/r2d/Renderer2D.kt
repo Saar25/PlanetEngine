@@ -15,7 +15,7 @@ class Renderer2D(private val model: Model2D) : AbstractRenderer() {
     private val fragment = Shader.createFragment("/shaders/r2d/fragment.glsl")
 
     init {
-        buildShadersProgram()
+        init()
         bindAttributes("in_position", "in_colour")
     }
 
