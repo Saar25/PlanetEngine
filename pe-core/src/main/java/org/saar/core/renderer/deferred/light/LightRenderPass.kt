@@ -6,7 +6,6 @@ import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformValue
-import org.saar.core.light.IDirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
@@ -38,22 +37,19 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPas
     private val depthTextureUniform = TextureUniformValue("depthTexture", 2)
 
     @UniformUpdaterProperty
-    private val colourTextureUpdater =
-        UniformUpdater<PerInstance> { state ->
-            this@LightRenderPass.colourTextureUniform.value = state.instance.buffers.albedo
-        }
+    private val colourTextureUpdater = UniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.colourTextureUniform.value = state.instance.buffers.albedo
+    }
 
     @UniformUpdaterProperty
-    private val normalTextureUpdater =
-        UniformUpdater<PerInstance> { state ->
-            this@LightRenderPass.normalTextureUniform.value = state.instance.buffers.normal
-        }
+    private val normalTextureUpdater = UniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.normalTextureUniform.value = state.instance.buffers.normal
+    }
 
     @UniformUpdaterProperty
-    private val depthTextureUpdater =
-        UniformUpdater<PerInstance> { state ->
-            this@LightRenderPass.depthTextureUniform.value = state.instance.buffers.depth
-        }
+    private val depthTextureUpdater = UniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.depthTextureUniform.value = state.instance.buffers.depth
+    }
 
     @UniformProperty
     private val cameraWorldPositionUniform = object : Vec3Uniform() {
@@ -86,20 +82,18 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPas
     private val directionalLightsCountUniform = IntUniformValue("directionalLightsCount")
 
     @UniformUpdaterProperty
-    private val directionalLightsCountUpdater =
-        UniformUpdater<PerInstance> { state ->
-            directionalLightsCountUniform.value = state.instance.directionalLights.size
-        }
+    private val directionalLightsCountUpdater = UniformUpdater<PerInstance> { state ->
+        directionalLightsCountUniform.value = state.instance.directionalLights.size
+    }
 
     @UniformProperty
-    private val directionalLightsUniform2 = WritableUniformArray<IDirectionalLight>("directionalLights", 1)
+    private val directionalLightsUniform2 = WritableUniformArray("directionalLights", 1)
     { name, _ -> DirectionalLightUniformValue(name) }
 
     @UniformUpdaterProperty
-    private val directionalLightsUpdater =
-        UniformUpdater<PerInstance> { state ->
-            this@LightRenderPass.directionalLightsUniform2.setValue(state.instance.directionalLights)
-        }
+    private val directionalLightsUpdater = UniformUpdater<PerInstance> { state ->
+        this@LightRenderPass.directionalLightsUniform2.setValue(state.instance.directionalLights)
+    }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertexShader: Shader = Shader.createVertex(GlslVersion.V400,

@@ -31,10 +31,9 @@ class ObjDeferredRenderer(private vararg val models: ObjModel)
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
     @UniformUpdaterProperty
-    private val transformUpdater =
-        UniformUpdater<ObjModel> { state ->
-            this@ObjDeferredRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
-        }
+    private val transformUpdater = UniformUpdater<ObjModel> { state ->
+        this@ObjDeferredRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
+    }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex("/shaders/obj/vertex.glsl")

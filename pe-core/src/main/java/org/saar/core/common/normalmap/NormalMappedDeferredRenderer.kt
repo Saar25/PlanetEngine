@@ -29,22 +29,19 @@ class NormalMappedDeferredRenderer(private vararg val models: NormalMappedModel)
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformUpdaterProperty
-    private val transformationUpdater =
-        UniformUpdater<NormalMappedModel> { state ->
-            this@NormalMappedDeferredRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
-        }
+    private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
+        this@NormalMappedDeferredRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
+    }
 
     @UniformUpdaterProperty
-    private val textureUpdater =
-        UniformUpdater<NormalMappedModel> { state ->
-            this@NormalMappedDeferredRenderer.textureUniform.value = state.instance.texture
-        }
+    private val textureUpdater = UniformUpdater<NormalMappedModel> { state ->
+        this@NormalMappedDeferredRenderer.textureUniform.value = state.instance.texture
+    }
 
     @UniformUpdaterProperty
-    private val normalMapUpdater =
-        UniformUpdater<NormalMappedModel> { state ->
-            this@NormalMappedDeferredRenderer.normalMapUniform.value = state.instance.normalMap
-        }
+    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { state ->
+        this@NormalMappedDeferredRenderer.normalMapUniform.value = state.instance.normalMap
+    }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex: Shader = Shader.createVertex(
