@@ -20,8 +20,8 @@ import org.saar.maths.transform.Position;
 
 public class DeferredExample {
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 500;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 700;
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
@@ -74,7 +74,7 @@ public class DeferredExample {
             window.pollEvents();
 
             final long delta = System.currentTimeMillis() - current;
-            ExamplesUtils.move(camera, keyboard, delta);
+            ExamplesUtils.move(camera, keyboard, delta, 50f);
 
             System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))
