@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 
 public abstract class AbstractRenderer implements Renderer {
 
-    private ShadersProgram shadersProgram;
+    protected ShadersProgram shadersProgram;
 
     public AbstractRenderer(ShadersProgram shadersProgram) {
         this.shadersProgram = shadersProgram;

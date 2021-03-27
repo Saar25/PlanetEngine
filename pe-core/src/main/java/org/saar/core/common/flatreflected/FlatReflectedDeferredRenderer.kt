@@ -3,12 +3,10 @@ package org.saar.core.common.flatreflected
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderState
-import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.deferred.DeferredRenderer
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
@@ -19,7 +17,7 @@ import org.saar.maths.utils.Matrix4
 
 class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedModel,
                                     private val reflectionMap: ReadOnlyTexture)
-    : AbstractRenderer(shadersProgram), DeferredRenderer {
+    : AbstractRenderer(), DeferredRenderer {
 
     @UniformProperty
     private val reflectionMapUniform = object : TextureUniform() {
@@ -38,19 +36,20 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
     @UniformProperty
     private val normalUniform = Vec3UniformValue("u_normal")
 
+    @ShaderProperty(ShaderType.VERTEX)
+    private val vertex = Shader.createVertex(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
+
+    @ShaderProperty(ShaderType.FRAGMENT)
+    private val fragment = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.dfragment.glsl"))
+
     companion object {
         private val matrix = Matrix4.create()
-
-        private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
-
-        private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.dfragment.glsl"))
-
-        private val shadersProgram: ShadersProgram = ShadersProgram.create(vertex, fragment)
     }
 
     init {
+        buildShadersProgram()
         shadersProgram.bindAttributes("in_position", "in_normal")
         init()
     }
