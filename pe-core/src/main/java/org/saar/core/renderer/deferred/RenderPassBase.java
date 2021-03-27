@@ -14,14 +14,7 @@ import java.util.List;
 
 public abstract class RenderPassBase implements RenderPass {
 
-    private ShadersProgram shadersProgram;
-
-    public RenderPassBase(ShadersProgram shadersProgram) {
-        this.shadersProgram = shadersProgram;
-    }
-
-    public RenderPassBase() {
-    }
+    protected ShadersProgram shadersProgram;
 
     protected void buildShadersProgram() throws ShaderCompileException {
         ShadersHelper helper = ShadersHelper.empty();
