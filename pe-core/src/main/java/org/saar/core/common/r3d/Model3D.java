@@ -18,12 +18,7 @@ public class Model3D implements Model {
     }
 
     @Override
-    public void draw() {
-        this.mesh.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.mesh.delete();
+    public Mesh3D getMesh() {
+        return this.mesh;
     }
 }

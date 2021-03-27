@@ -2,7 +2,13 @@ package org.saar.core.mesh;
 
 public interface Model {
 
-    void draw();
+    Mesh getMesh();
 
-    void delete();
+    default void draw() {
+        getMesh().draw();
+    }
+
+    default void delete() {
+        getMesh().delete();
+    }
 }

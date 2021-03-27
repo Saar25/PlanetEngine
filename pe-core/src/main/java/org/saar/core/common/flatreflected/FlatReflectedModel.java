@@ -25,12 +25,7 @@ public class FlatReflectedModel implements Model {
     }
 
     @Override
-    public void draw() {
-        this.mesh.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.mesh.delete();
+    public FlatReflectedMesh getMesh() {
+        return this.mesh;
     }
 }

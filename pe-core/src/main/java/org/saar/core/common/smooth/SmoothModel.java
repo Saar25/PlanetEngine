@@ -18,12 +18,7 @@ public class SmoothModel implements Model {
     }
 
     @Override
-    public void draw() {
-        this.mesh.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.mesh.delete();
+    public SmoothMesh getMesh() {
+        return this.mesh;
     }
 }

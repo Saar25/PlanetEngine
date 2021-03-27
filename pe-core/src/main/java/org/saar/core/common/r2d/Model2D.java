@@ -11,12 +11,7 @@ public class Model2D implements Model {
     }
 
     @Override
-    public void draw() {
-        this.mesh.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.mesh.delete();
+    public Mesh2D getMesh() {
+        return this.mesh;
     }
 }

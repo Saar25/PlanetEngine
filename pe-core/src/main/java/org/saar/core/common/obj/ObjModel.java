@@ -26,12 +26,7 @@ public class ObjModel implements Model {
     }
 
     @Override
-    public void draw() {
-        this.mesh.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.mesh.delete();
+    public ObjMesh getMesh() {
+        return this.mesh;
     }
 }
