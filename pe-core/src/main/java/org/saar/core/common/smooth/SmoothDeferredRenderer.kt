@@ -5,7 +5,7 @@ import org.jproperty.type.SimpleFloatProperty
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderState
-import org.saar.core.renderer.UniformProperty
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram

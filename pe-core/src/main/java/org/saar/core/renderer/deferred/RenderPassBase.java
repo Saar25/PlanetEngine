@@ -1,9 +1,9 @@
 package org.saar.core.renderer.deferred;
 
 import org.saar.core.renderer.Renderers;
-import org.saar.core.renderer.UniformUpdater;
-import org.saar.core.renderer.UniformsHelper;
-import org.saar.core.renderer.UpdatersHelper;
+import org.saar.core.renderer.uniforms.UniformUpdater;
+import org.saar.core.renderer.uniforms.UniformsHelper;
+import org.saar.core.renderer.uniforms.UpdatersHelper;
 import org.saar.core.renderer.shaders.ShadersHelper;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShaderCompileException;

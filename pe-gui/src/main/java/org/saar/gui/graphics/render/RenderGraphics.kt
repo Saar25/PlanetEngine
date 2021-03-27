@@ -3,7 +3,7 @@ package org.saar.gui.graphics.render
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.saar.core.mesh.Model
-import org.saar.core.renderer.UniformProperty
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.gui.graphics.Graphics
 import org.saar.gui.style.property.Colours
 import org.saar.gui.style.property.IColour

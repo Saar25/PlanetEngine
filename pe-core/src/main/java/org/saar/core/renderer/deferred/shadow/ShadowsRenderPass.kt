@@ -11,6 +11,11 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.uniforms.UniformUpdater
+import org.saar.core.renderer.uniforms.UniformUpdaterProperty
+import org.saar.core.renderer.uniforms.UniformsHelper
+import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
@@ -100,19 +105,22 @@ class ShadowsRenderPass(private val camera: ICamera,
     private val depthTextureUniform = TextureUniformValue("depthTexture", 3)
 
     @UniformUpdaterProperty
-    private val colourTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
-        this@ShadowsRenderPass.colourTextureUniform.value = state.instance.albedo
-    }
+    private val colourTextureUpdater =
+        UniformUpdater<DeferredRenderingBuffers> { state ->
+            this@ShadowsRenderPass.colourTextureUniform.value = state.instance.albedo
+        }
 
     @UniformUpdaterProperty
-    private val normalTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
-        this@ShadowsRenderPass.normalTextureUniform.value = state.instance.normal
-    }
+    private val normalTextureUpdater =
+        UniformUpdater<DeferredRenderingBuffers> { state ->
+            this@ShadowsRenderPass.normalTextureUniform.value = state.instance.normal
+        }
 
     @UniformUpdaterProperty
-    private val depthTextureUpdater = UniformUpdater<DeferredRenderingBuffers> { state ->
-        this@ShadowsRenderPass.depthTextureUniform.value = state.instance.depth
-    }
+    private val depthTextureUpdater =
+        UniformUpdater<DeferredRenderingBuffers> { state ->
+            this@ShadowsRenderPass.depthTextureUniform.value = state.instance.depth
+        }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertexShader: Shader = Shader.createVertex(GlslVersion.V400,

@@ -2,6 +2,9 @@ package org.saar.core.common.normalmap
 
 import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderer
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.uniforms.UniformUpdater
+import org.saar.core.renderer.uniforms.UniformUpdaterProperty
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
@@ -25,19 +28,22 @@ class NormalMappedDeferredRenderer(private vararg val models: NormalMappedModel)
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformUpdaterProperty
-    private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedDeferredRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
-    }
+    private val transformationUpdater =
+        UniformUpdater<NormalMappedModel> { state ->
+            this@NormalMappedDeferredRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
+        }
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedDeferredRenderer.textureUniform.value = state.instance.texture
-    }
+    private val textureUpdater =
+        UniformUpdater<NormalMappedModel> { state ->
+            this@NormalMappedDeferredRenderer.textureUniform.value = state.instance.texture
+        }
 
     @UniformUpdaterProperty
-    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedDeferredRenderer.normalMapUniform.value = state.instance.normalMap
-    }
+    private val normalMapUpdater =
+        UniformUpdater<NormalMappedModel> { state ->
+            this@NormalMappedDeferredRenderer.normalMapUniform.value = state.instance.normalMap
+        }
 
     companion object {
         private val matrix = Matrix4.create()

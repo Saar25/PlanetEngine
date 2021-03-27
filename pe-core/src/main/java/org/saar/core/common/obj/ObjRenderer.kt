@@ -2,6 +2,9 @@ package org.saar.core.common.obj
 
 import org.saar.core.renderer.*
 import org.saar.core.renderer.RenderState
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.uniforms.UniformUpdater
+import org.saar.core.renderer.uniforms.UniformUpdaterProperty
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
@@ -26,9 +29,10 @@ class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(shader
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
     @UniformUpdaterProperty
-    private val transformUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
-    }
+    private val transformUpdater =
+        UniformUpdater<ObjModel> { state ->
+            this@ObjRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
+        }
 
     companion object {
         private val matrix = Matrix4.create()

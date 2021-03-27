@@ -1,4 +1,6 @@
-package org.saar.core.renderer;
+package org.saar.core.renderer.uniforms;
+
+import org.saar.core.renderer.RenderState;
 
 import java.util.ArrayList;
 import java.util.List;

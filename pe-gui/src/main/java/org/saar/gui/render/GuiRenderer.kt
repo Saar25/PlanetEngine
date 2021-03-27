@@ -5,7 +5,7 @@ import org.joml.Vector2ic
 import org.joml.Vector4f
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.UniformProperty
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.gui.GuiObject
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.RenderMode

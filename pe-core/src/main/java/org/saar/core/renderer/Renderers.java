@@ -1,6 +1,8 @@
 package org.saar.core.renderer;
 
 import org.saar.core.renderer.shaders.ShaderPropertiesLocator;
+import org.saar.core.renderer.uniforms.UniformPropertiesLocator;
+import org.saar.core.renderer.uniforms.UniformUpdater;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
 

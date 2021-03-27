@@ -1,13 +1,13 @@
 package org.saar.core.common.flatreflected
 
 import org.saar.core.renderer.*
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlCullFace

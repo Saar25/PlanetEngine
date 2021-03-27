@@ -1,4 +1,4 @@
-package org.saar.core.renderer;
+package org.saar.core.renderer.uniforms;
 
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;

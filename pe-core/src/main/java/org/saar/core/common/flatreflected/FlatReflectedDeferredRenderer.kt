@@ -3,7 +3,7 @@ package org.saar.core.common.flatreflected
 import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderState
-import org.saar.core.renderer.UniformProperty
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader

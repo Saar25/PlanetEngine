@@ -13,6 +13,11 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
 import org.saar.core.renderer.shaders.ShaderProperty
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.uniforms.UniformUpdater
+import org.saar.core.renderer.uniforms.UniformUpdaterProperty
+import org.saar.core.renderer.uniforms.UniformsHelper
+import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.*
@@ -37,19 +42,22 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPas
     private val depthTextureUniform = TextureUniformValue("depthTexture", 2)
 
     @UniformUpdaterProperty
-    private val colourTextureUpdater = UniformUpdater<PerInstance> { state ->
-        this@LightRenderPass.colourTextureUniform.value = state.instance.buffers.albedo
-    }
+    private val colourTextureUpdater =
+        UniformUpdater<PerInstance> { state ->
+            this@LightRenderPass.colourTextureUniform.value = state.instance.buffers.albedo
+        }
 
     @UniformUpdaterProperty
-    private val normalTextureUpdater = UniformUpdater<PerInstance> { state ->
-        this@LightRenderPass.normalTextureUniform.value = state.instance.buffers.normal
-    }
+    private val normalTextureUpdater =
+        UniformUpdater<PerInstance> { state ->
+            this@LightRenderPass.normalTextureUniform.value = state.instance.buffers.normal
+        }
 
     @UniformUpdaterProperty
-    private val depthTextureUpdater = UniformUpdater<PerInstance> { state ->
-        this@LightRenderPass.depthTextureUniform.value = state.instance.buffers.depth
-    }
+    private val depthTextureUpdater =
+        UniformUpdater<PerInstance> { state ->
+            this@LightRenderPass.depthTextureUniform.value = state.instance.buffers.depth
+        }
 
     @UniformProperty
     private val cameraWorldPositionUniform = object : Vec3Uniform() {
@@ -82,18 +90,20 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPas
     private val directionalLightsCountUniform = IntUniformValue("directionalLightsCount")
 
     @UniformUpdaterProperty
-    private val directionalLightsCountUpdater = UniformUpdater<PerInstance> { state ->
-        directionalLightsCountUniform.value = state.instance.directionalLights.size
-    }
+    private val directionalLightsCountUpdater =
+        UniformUpdater<PerInstance> { state ->
+            directionalLightsCountUniform.value = state.instance.directionalLights.size
+        }
 
     @UniformProperty
     private val directionalLightsUniform2 = WritableUniformArray<IDirectionalLight>("directionalLights", 1)
     { name, _ -> DirectionalLightUniformValue(name) }
 
     @UniformUpdaterProperty
-    private val directionalLightsUpdater = UniformUpdater<PerInstance> { state ->
-        this@LightRenderPass.directionalLightsUniform2.setValue(state.instance.directionalLights)
-    }
+    private val directionalLightsUpdater =
+        UniformUpdater<PerInstance> { state ->
+            this@LightRenderPass.directionalLightsUniform2.setValue(state.instance.directionalLights)
+        }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertexShader: Shader = Shader.createVertex(GlslVersion.V400,

@@ -1,4 +1,4 @@
-package org.saar.core.renderer;
+package org.saar.core.renderer.uniforms;
 
 import org.saar.core.util.reflection.FieldsLocator;
 import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
