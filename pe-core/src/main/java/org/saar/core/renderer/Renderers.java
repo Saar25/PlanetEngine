@@ -15,7 +15,7 @@ public final class Renderers {
         return new UniformPropertiesLocator(renderer).getUniforms();
     }
 
-    public static <T> List<UniformUpdater<T>> findInstanceUniformsUpdaters(Object renderer) {
-        return new UniformPropertiesLocator(renderer).getInstanceUniformUpdaters();
+    public static <T> List<UniformUpdater<T>> findUniformsUpdaters(Object renderer) {
+        return new UniformPropertiesLocator(renderer).getUniformUpdaters();
     }
 }

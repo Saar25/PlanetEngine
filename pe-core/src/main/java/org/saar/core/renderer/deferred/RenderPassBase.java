@@ -30,7 +30,7 @@ public abstract class RenderPassBase implements RenderPass {
 
     protected <T> UpdatersHelper<T> buildHelper(UpdatersHelper<T> helper) {
         final List<UniformUpdater<T>> instanceUniformsUpdaters =
-                Renderers.findInstanceUniformsUpdaters(this);
+                Renderers.findUniformsUpdaters(this);
 
         for (UniformUpdater<T> uniform : instanceUniformsUpdaters) {
             helper = helper.addUpdater(uniform);

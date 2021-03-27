@@ -19,7 +19,7 @@ public final class UniformPropertiesLocator {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public <T> List<UniformUpdater<T>> getInstanceUniformUpdaters() {
+    public <T> List<UniformUpdater<T>> getUniformUpdaters() {
         final List<UniformUpdater> values = this.fieldsLocator.getFilteredValues(
                 UniformUpdater.class, UniformUpdaterProperty.class);
         return values.stream().map(value -> (UniformUpdater<T>) value)
