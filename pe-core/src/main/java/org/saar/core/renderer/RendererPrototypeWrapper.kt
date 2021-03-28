@@ -7,7 +7,7 @@ import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-class RendererPrototypeWrapper<in T : Model>(
+open class RendererPrototypeWrapper<T : Model>(
     private val prototype: RendererPrototype<T>,
     private vararg val models: T) : Renderer {
 

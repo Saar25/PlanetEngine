@@ -1,11 +1,9 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.renderer.AbstractRenderer
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderState
-import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -14,9 +12,12 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class Renderer3D(private vararg val models: Model3D) : AbstractRenderer(), Renderer {
+class Renderer3D(vararg models: Model3D) : Renderer,
+    RendererPrototypeWrapper<Model3D>(RendererPrototype3D(), *models)
 
-    @UniformProperty
+private class RendererPrototype3D : RendererPrototype<Model3D> {
+
+    @UniformProperty(UniformTrigger.PER_INSTANCE)
     private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
@@ -27,41 +28,21 @@ class Renderer3D(private vararg val models: Model3D) : AbstractRenderer(), Rende
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/r3d/fragment.glsl"))
 
-    companion object {
-        private val matrix = Matrix4.create()
-    }
+    override fun vertexAttributes() = arrayOf(
+        "in_position", "in_colour", "in_transformation")
 
-    init {
-        init()
-        bindAttributes("in_position",
-            "in_colour", "in_transformation")
-    }
-
-    override fun preRender(context: RenderContext) {
+    override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
     }
 
-    override fun onRender(context: RenderContext) {
-        for (model in this.models) {
-            val state = RenderState(model)
+    override fun onInstanceDraw(context: RenderContext, state: RenderState<Model3D>) {
+        val v = context.camera.viewMatrix
+        val p = context.camera.projection.matrix
+        val m = state.instance.transform.transformationMatrix
 
-            val v = context.camera.viewMatrix
-            val p = context.camera.projection.matrix
-            val m = state.instance.transform.transformationMatrix
-
-            this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
-            this.mvpMatrixUniform.load()
-
-            model.draw()
-        }
-    }
-
-    override fun onDelete() {
-        for (model in this.models) {
-            model.delete()
-        }
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
     }
 }
