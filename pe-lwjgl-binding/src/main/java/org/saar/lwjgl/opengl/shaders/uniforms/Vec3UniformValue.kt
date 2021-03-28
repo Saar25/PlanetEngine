@@ -1,36 +1,19 @@
-package org.saar.lwjgl.opengl.shaders.uniforms;
+package org.saar.lwjgl.opengl.shaders.uniforms
 
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.saar.maths.utils.Vector3;
+import org.joml.Vector3fc
+import org.saar.maths.JomlDelegates
 
-public class Vec3UniformValue extends Vec3Uniform implements UniformValue<Vector3fc> {
+class Vec3UniformValue(private val name: String) : Vec3Uniform(), UniformValue<Vector3fc> {
 
-    private final String name;
+    private var vector: Vector3fc by JomlDelegates.CachedVector3f()
 
-    private final Vector3f value = Vector3.create();
+    override fun getUniformValue() = this.value
 
-    public Vec3UniformValue(String name) {
-        this.name = name;
-    }
+    override fun getName() = this.name
 
-    @Override
-    public final Vector3fc getUniformValue() {
-        return getValue();
-    }
+    override fun getValue() = this.vector
 
-    @Override
-    public final String getName() {
-        return this.name;
-    }
-
-    @Override
-    public final Vector3f getValue() {
-        return this.value;
-    }
-
-    @Override
-    public final void setValue(Vector3fc value) {
-        getValue().set(value);
+    override fun setValue(value: Vector3fc) {
+        this.vector = value
     }
 }

@@ -1,35 +1,19 @@
-package org.saar.lwjgl.opengl.shaders.uniforms;
+package org.saar.lwjgl.opengl.shaders.uniforms
 
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
+import org.joml.Vector2ic
+import org.saar.maths.JomlDelegates
 
-public class Vec2iUniformValue extends Vec2iUniform implements UniformValue<Vector2ic> {
+class Vec2iUniformValue(private val name: String) : Vec2iUniform(), UniformValue<Vector2ic> {
 
-    private final String name;
+    private var vector: Vector2ic by JomlDelegates.CachedVector2i()
 
-    private final Vector2i value = new Vector2i();
+    override fun getUniformValue() = this.value
 
-    public Vec2iUniformValue(String name) {
-        this.name = name;
-    }
+    override fun getName() = this.name
 
-    @Override
-    public final Vector2ic getUniformValue() {
-        return getValue();
-    }
+    override fun getValue() = this.vector
 
-    @Override
-    public final String getName() {
-        return this.name;
-    }
-
-    @Override
-    public final Vector2i getValue() {
-        return this.value;
-    }
-
-    @Override
-    public final void setValue(Vector2ic value) {
-        getValue().set(value);
+    override fun setValue(value: Vector2ic) {
+        this.vector = value
     }
 }

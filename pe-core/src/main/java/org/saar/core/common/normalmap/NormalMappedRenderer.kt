@@ -33,7 +33,7 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
 
     @UniformUpdaterProperty
     private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRendererPrototype.transformationUniform.setValue(state.instance.transform.transformationMatrix)
+        this@NormalMappedRendererPrototype.transformationUniform.value = state.instance.transform.transformationMatrix
     }
 
     @UniformUpdaterProperty

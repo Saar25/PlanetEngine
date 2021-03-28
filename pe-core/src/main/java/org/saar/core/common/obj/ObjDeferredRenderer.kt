@@ -36,7 +36,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformUpdaterProperty
     private val transformUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjDeferredRendererPrototype.transformUniform.setValue(state.instance.transform.transformationMatrix)
+        this@ObjDeferredRendererPrototype.transformUniform.value = state.instance.transform.transformationMatrix
     }
 
     @ShaderProperty(ShaderType.VERTEX)

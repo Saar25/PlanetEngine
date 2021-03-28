@@ -59,7 +59,7 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
     }
 
     override fun onInstanceDraw(context: RenderContext, state: RenderState<NormalMappedModel>) {
-        this.transformationUniform.setValue(state.instance.transform.transformationMatrix)
+        this.transformationUniform.value = state.instance.transform.transformationMatrix
         this.textureUniform.value = state.instance.texture
         this.normalMapUniform.value = state.instance.normalMap
     }

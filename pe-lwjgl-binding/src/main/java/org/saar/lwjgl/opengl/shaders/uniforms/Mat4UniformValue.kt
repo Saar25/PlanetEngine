@@ -1,36 +1,19 @@
-package org.saar.lwjgl.opengl.shaders.uniforms;
+package org.saar.lwjgl.opengl.shaders.uniforms
 
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.saar.maths.utils.Matrix4;
+import org.joml.Matrix4fc
+import org.saar.maths.JomlDelegates
 
-public class Mat4UniformValue extends Mat4Uniform implements UniformValue<Matrix4fc> {
+class Mat4UniformValue(private val name: String) : Mat4Uniform(), UniformValue<Matrix4fc> {
 
-    private final String name;
+    private var matrix: Matrix4fc by JomlDelegates.CachedMatrix4f()
 
-    private final Matrix4f value = Matrix4.create();
+    override fun getUniformValue() = this.value
 
-    public Mat4UniformValue(String name) {
-        this.name = name;
-    }
+    override fun getName() = this.name
 
-    @Override
-    public final Matrix4fc getUniformValue() {
-        return getValue();
-    }
+    override fun getValue() = this.matrix
 
-    @Override
-    public final String getName() {
-        return this.name;
-    }
-
-    @Override
-    public final Matrix4f getValue() {
-        return this.value;
-    }
-
-    @Override
-    public final void setValue(Matrix4fc value) {
-        getValue().set(value);
+    override fun setValue(value: Matrix4fc) {
+        this.matrix = value
     }
 }
