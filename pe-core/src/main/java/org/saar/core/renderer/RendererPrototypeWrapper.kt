@@ -45,6 +45,8 @@ class RendererPrototypeWrapper<in T : Model>(
     init {
         this.shadersProgram.bind()
         this.uniformsHelper.initialize(this.shadersProgram)
+        this.shadersProgram.bindAttributes(*this.prototype.vertexAttributes())
+        this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
     override fun render(context: RenderContext) {
