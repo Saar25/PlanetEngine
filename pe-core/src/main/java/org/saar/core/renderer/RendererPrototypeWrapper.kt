@@ -74,8 +74,12 @@ open class RendererPrototypeWrapper<T : Model>(
             this.updatersHelper.update(state)
             this.uniformsHelper.loadPerInstance()
 
-            model.draw()
+            doRenderModel(context, model)
         }
+    }
+
+    open fun doRenderModel(context: RenderContext, model: T) {
+        model.draw()
     }
 
     override fun delete() {
