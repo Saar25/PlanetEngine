@@ -56,7 +56,17 @@ open class RendererPrototypeWrapper<T : Model>(
 
         this.uniformsHelper.loadPerRenderCycle()
 
-        for (model in this.models) {
+        doRender(context)
+
+        this.shadersProgram.unbind()
+    }
+
+    open fun doRender(context: RenderContext) {
+        renderModels(context, *this.models)
+    }
+
+    protected fun renderModels(context: RenderContext, vararg models: T) {
+        for (model in models) {
             val state = RenderState(model)
 
             this.prototype.onInstanceDraw(context, state)
@@ -66,8 +76,6 @@ open class RendererPrototypeWrapper<T : Model>(
 
             model.draw()
         }
-
-        this.shadersProgram.unbind()
     }
 
     override fun delete() {
