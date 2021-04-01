@@ -43,6 +43,8 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
 
+    private static final boolean FLY_MODE = true;
+
     private static final WorldGenerator generator = WorldGenerationPipeline
             .pipe(new TerrainGenerator())
             .then(new WaterGenerator(80))
@@ -140,16 +142,32 @@ public class Minecraft {
             if (keyboard.isKeyPressed('D')) {
                 direction.add(+1, 0, 0);
             }
-//            if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-//                y--;
-//            }
-            if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-                player.jump(world);
-            }
-            direction.rotate(camera.getTransform().getRotation().getValue()).y = 0;
-            if (direction.lengthSquared() > 0) direction.normalize(SPEED);
 
-            player.move(world, direction, (float) fps.delta());
+            direction.rotate(camera.getTransform().getRotation().getValue()).y = 0;
+
+            final float speed = keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) ? SPEED * 5 : SPEED;
+
+            if (!FLY_MODE) {
+                if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+                    player.jump(world);
+                }
+                if (direction.lengthSquared() > 0) {
+                    direction.normalize(speed);
+                }
+                player.move(world, direction, (float) fps.delta());
+            } else {
+                if (direction.lengthSquared() > 0) {
+                    direction.normalize(speed);
+                }
+
+                if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+                    direction.add(0, -SPEED, 0);
+                }
+                if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+                    direction.add(0, +SPEED, 0);
+                }
+                player.fly(world, direction);
+            }
 
             final BlockFaceContainer rayCast = player.rayCast(world);
             if (rayCast != null && rayCast.getBlock().isCollideable()) {

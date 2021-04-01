@@ -51,6 +51,15 @@ public class Player {
         this.yVelocity -= .98f * delta;
     }
 
+    public void fly(World world, Vector3fc direction) {
+        final Position cameraPosition = getCamera().getTransform().getPosition();
+
+        final Vector3f ensured = HitBoxes.getPlayer()
+                .collideWithWorld(world, cameraPosition, direction);
+
+        getCamera().getTransform().getPosition().add(ensured);
+    }
+
     public BlockFaceContainer rayCast(World world) {
         return RayCasting.lookingAtFace(camera, world, 16);
     }
