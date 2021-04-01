@@ -83,7 +83,14 @@ public class World {
         final int lx = x - cx * 16;
         final int lz = z - cz * 16;
         chunk.setBlock(lx, y, lz, block);
-        chunk.updateMesh(this);
+
+        this.executorService.submit(() -> {
+            chunk.updateMesh(this);
+            if (lx == 0x0) getChunk(cx - 1, cz).updateMesh(this);
+            if (lx == 0xF) getChunk(cx + 1, cz).updateMesh(this);
+            if (lz == 0x0) getChunk(cx, cz - 1).updateMesh(this);
+            if (lz == 0xF) getChunk(cx, cz + 1).updateMesh(this);
+        });
     }
 
     public List<Chunk> getChunks() {
@@ -95,12 +102,6 @@ public class World {
             chunk.delete();
         }
         this.executorService.shutdown();
-    }
-
-    public void updateMesh() {
-        for (Chunk chunk : getChunks()) {
-            chunk.updateMesh(this);
-        }
     }
 
     public void generateAround(Position position, int radius) {
