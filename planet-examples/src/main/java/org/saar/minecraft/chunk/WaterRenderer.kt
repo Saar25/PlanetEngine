@@ -16,6 +16,8 @@ import org.saar.maths.utils.Matrix4
 import org.saar.minecraft.Chunk
 import org.saar.minecraft.World
 
+private const val TRANSITION_TIME: Int = 1000
+
 private val prototype = WaterRendererPrototype()
 
 class WaterRenderer(private val world: World, private val atlas: Texture2D) : Renderer,
@@ -104,9 +106,9 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
         val p = context.camera.projection.matrix
         projectionViewUniform.value = p.mul(v, Matrix4.create())
 
-        val time = System.currentTimeMillis() / 1000f
-        this.transitionCross.value = time - time.toInt()
-        this.transitionId.value = time.toInt() % 4
+        val time = System.currentTimeMillis()
+        this.transitionCross.value = (time % TRANSITION_TIME) / TRANSITION_TIME.toFloat()
+        this.transitionId.value = (time / TRANSITION_TIME % 4).toInt()
     }
 
     override fun onInstanceDraw(context: RenderContext, state: RenderState<Chunk>) {
