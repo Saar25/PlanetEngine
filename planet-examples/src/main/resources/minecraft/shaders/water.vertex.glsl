@@ -12,6 +12,8 @@ const int[] indexMap = {
 0, 1, 2, 0, 2, 3
 };
 
+const int TOP_DIR = 2;
+
 // Per Vertex attibutes
 layout (location = 0) in uint in_data;
 
@@ -45,11 +47,13 @@ void main(void) {
     v_id = g_id;
     v_dir = g_dir;
 
-    int id1 = g_id + u_transitionId % u_texturesCount;
+    int transitionId = v_dir == TOP_DIR ? u_transitionId : 0;
+
+    int id1 = g_id + transitionId % u_texturesCount;
     vec2 uvCoordsOffset1 = vec2(id1 % u_dimensions.x, g_id / u_dimensions.y);
     v_uvCoords1 = (uvCoordsOffset1 + uvCoords[indexMap[gl_VertexID % 6]]) / u_dimensions;
 
-    int id2 = g_id + (u_transitionId + 1) % u_texturesCount;
+    int id2 = g_id + (transitionId + 1) % u_texturesCount;
     vec2 uvCoordsOffset2 = vec2(id2 % u_dimensions.x, g_id / u_dimensions.y);
     v_uvCoords2 = (uvCoordsOffset2 + uvCoords[indexMap[gl_VertexID % 6]]) / u_dimensions;
 
