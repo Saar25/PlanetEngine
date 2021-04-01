@@ -3,6 +3,7 @@ package org.saar.minecraft;
 import org.joml.SimplexNoise;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.joml.Vector4i;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
@@ -149,8 +150,8 @@ public class Minecraft {
 
             final BlockFaceContainer rayCast = player.rayCast(world);
             if (rayCast != null && rayCast.getBlock().isSolid()) {
-                // renderer.getRayCastedFace().setValue(new Vector4i(rayCast.getX(),
-                //         rayCast.getY(), rayCast.getZ(), rayCast.getDirection()));
+                renderer.getRayCastedFace().setValue(new Vector4i(rayCast.getX(),
+                        rayCast.getY(), rayCast.getZ(), rayCast.getDirection()));
 
                 if (mouse.isButtonDown(MouseButton.PRIMARY)) {
                     world.setBlock(rayCast.getX(), rayCast.getY(), rayCast.getZ(), Blocks.AIR);
@@ -164,7 +165,7 @@ public class Minecraft {
                     world.setBlock(blockDirection.x, blockDirection.y, blockDirection.z, Blocks.STONE);
                 }
             } else {
-                // renderer.getRayCastedFace().setValue(new Vector4i(0, 0, 0, -1));
+                renderer.getRayCastedFace().setValue(new Vector4i(0, 0, 0, -1));
             }
 
             final float xChange = lastWorldUpdatePosition.getX() - camera.getTransform().getPosition().getX();

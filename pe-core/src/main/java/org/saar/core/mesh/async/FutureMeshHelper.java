@@ -74,7 +74,7 @@ abstract class FutureMeshHelper implements Mesh {
 
         @Override
         public void delete() {
-            this.task.cancel(true);
+            this.task.thenAccept(mesh -> mesh.load().delete());
         }
     }
 

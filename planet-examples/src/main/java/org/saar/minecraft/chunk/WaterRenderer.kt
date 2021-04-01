@@ -8,6 +8,7 @@ import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.textures.Texture
 import org.saar.lwjgl.opengl.textures.Texture2D
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -15,14 +16,18 @@ import org.saar.maths.utils.Matrix4
 import org.saar.minecraft.Chunk
 import org.saar.minecraft.World
 
-class WaterRenderer(private val world: World, atlas: Texture2D) : Renderer,
-    RendererPrototypeWrapper<Chunk>(WaterRendererPrototype(atlas)) {
+private val prototype = WaterRendererPrototype()
+
+class WaterRenderer(private val world: World, private val atlas: Texture2D) : Renderer,
+    RendererPrototypeWrapper<Chunk>(prototype) {
 
     override fun doRender(context: RenderContext) {
         val view = context.camera.viewMatrix
         val projection = context.camera.projection.matrix
         val frustumIntersection = FrustumIntersection(
             projection.mul(view, Matrix4.create()))
+
+        prototype.atlas = this.atlas
 
         for (chunk in this.world.chunks) {
             val intersect = frustumIntersection.testAab(
@@ -34,12 +39,14 @@ class WaterRenderer(private val world: World, atlas: Texture2D) : Renderer,
                 chunk.bounds.max.z().toFloat() + 1
             )
 
-            if (intersect) chunk.drawWater()
+            if (intersect) renderModel(context, chunk)
         }
     }
 }
 
-private class WaterRendererPrototype(private val atlas: ReadOnlyTexture) : RendererPrototype<Chunk> {
+private class WaterRendererPrototype : RendererPrototype<Chunk> {
+
+    var atlas: ReadOnlyTexture = Texture.NULL
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val projectionViewUniform = Mat4UniformValue("u_projectionView")

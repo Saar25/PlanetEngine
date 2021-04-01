@@ -7,6 +7,7 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.*
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.textures.Texture
 import org.saar.lwjgl.opengl.textures.Texture2D
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -14,14 +15,21 @@ import org.saar.maths.utils.Matrix4
 import org.saar.minecraft.Chunk
 import org.saar.minecraft.World
 
-class ChunkRenderer(private val world: World, atlas: Texture2D) : Renderer,
-    RendererPrototypeWrapper<Chunk>(ChunkRendererPrototype(atlas)) {
+private val prototype = ChunkRendererPrototype()
+
+class ChunkRenderer(private val world: World, private val atlas: Texture2D) : Renderer,
+    RendererPrototypeWrapper<Chunk>(prototype) {
+
+    val rayCastedFace: Vec4iUniformValue
+        get() = prototype.rayCastedFace
 
     override fun doRender(context: RenderContext) {
         val view = context.camera.viewMatrix
         val projection = context.camera.projection.matrix
         val frustumIntersection = FrustumIntersection(
             projection.mul(view, Matrix4.create()))
+
+        prototype.atlas = this.atlas
 
         for (chunk in this.world.chunks) {
             val intersect = frustumIntersection.testAab(
@@ -42,7 +50,9 @@ class ChunkRenderer(private val world: World, atlas: Texture2D) : Renderer,
     }
 }
 
-private class ChunkRendererPrototype(private val atlas: ReadOnlyTexture) : RendererPrototype<Chunk> {
+private class ChunkRendererPrototype : RendererPrototype<Chunk> {
+
+    var atlas: ReadOnlyTexture = Texture.NULL
 
     @UniformProperty
     val rayCastedFace = Vec4iUniformValue("u_rayCastedFace")

@@ -52,6 +52,6 @@ public class Player {
     }
 
     public BlockFaceContainer rayCast(World world) {
-        return RayCasting.lookingAtFace(camera, world, 10);
+        return RayCasting.lookingAtFace(camera, world, 16);
     }
 }

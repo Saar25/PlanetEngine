@@ -1,13 +1,11 @@
 package org.saar.minecraft.entity;
 
-import org.joml.RayAabIntersection;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
+import org.joml.Vector3fc;
 import org.saar.core.camera.ICamera;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.BlockContainer;
 import org.saar.minecraft.BlockFaceContainer;
-import org.saar.minecraft.Blocks;
 import org.saar.minecraft.World;
 
 public final class RayCasting {
@@ -15,73 +13,64 @@ public final class RayCasting {
     private RayCasting() {
     }
 
-    private static boolean testBlock(RayAabIntersection intersection, BlockContainer block) {
-        return intersection.test(block.getX(), block.getY(), block.getZ(),
-                block.getX() + 1, block.getY() + 1, block.getZ() + 1);
-    }
+    private static int enterFace(Vector3fc o, Vector3fc d, Vector3fc p) {
+        float tMinx = (p.x() - o.x()) / d.x();
+        float tMiny = (p.y() - o.y()) / d.y();
+        float tMinz = (p.z() - o.z()) / d.z();
 
-    private static boolean testFace(RayAabIntersection intersection, BlockContainer block, int x, int y, int z) {
-        return intersection.test(block.getX(), block.getY(), block.getZ(),
-                block.getX() + 1 - x, block.getY() + 1 - y, block.getZ() + 1 - z);
+        float tMaxx = (p.x() + 1 - o.x()) / d.x();
+        float tMaxy = (p.y() + 1 - o.y()) / d.y();
+        float tMaxz = (p.z() + 1 - o.z()) / d.z();
+
+        float t1x = Math.min(tMinx, tMaxx);
+        float t1y = Math.min(tMiny, tMaxy);
+        float t1z = Math.min(tMinz, tMaxz);
+
+        if (t1x >= t1y && t1x >= t1z)
+            return d.x() > 0 ? 0 : 1;
+
+        if (t1y >= t1z && t1y >= t1x)
+            return d.y() > 0 ? 2 : 3;
+
+        /*if (t1z >= t1x && t1z >= t1y)*/
+        return d.z() > 0 ? 4 : 5;
     }
 
     public static BlockFaceContainer lookingAtFace(ICamera camera, World world, int maxSteps) {
-        final Vector3f direction = Vector3.of(camera.getTransform().getRotation().getDirection()).mul(-1);
-        final Vector3f position = Vector3.of(camera.getTransform().getPosition().getValue());
+        float big = 1E30f;
 
-        final Vector3i step = new Vector3i(
-                (int) Math.signum(direction.x),
-                (int) Math.signum(direction.y),
-                (int) Math.signum(direction.z));
+        final Vector3f d = Vector3.of(camera.getTransform().getRotation().getDirection()).mul(-1).normalize();
+        final Vector3f o = Vector3.of(camera.getTransform().getPosition().getValue());
+
+        final Vector3fc di = Vector3.of(1).div(d);
+
+        final Vector3fc s = Vector3.of(
+                d.x() > 0 ? 1 : -1,
+                d.y() > 0 ? 1 : -1,
+                d.z() > 0 ? 1 : -1);
+
+        final Vector3fc dt = Vector3.of(
+                Math.min(di.x() * s.x(), big),
+                Math.min(di.y() * s.y(), big),
+                Math.min(di.z() * s.z(), big));
+
+        final Vector3f p = Vector3.of(o).floor();
+
+        final Vector3f t = Vector3.of(s).max(Vector3.ZERO)
+                .add(p).sub(o).mul(di).absolute();
 
         for (int i = 0; i < maxSteps; i++) {
-            final RayAabIntersection intersection = new RayAabIntersection(
-                    position.x, position.y, position.z,
-                    direction.x, direction.y, direction.z
-            );
+            final BlockContainer block = world.getBlockContainer(p.x, p.y, p.z);
 
-            final BlockContainer block = world.getBlockContainer(
-                    position.x, position.y, position.z);
-            if (block.getBlock() != Blocks.AIR && testBlock(intersection, block)) {
-                if (testFace(intersection, block, (1 - step.x) / 2, 0, 0)) {
-                    return new BlockFaceContainer(block.getX(), block.getY(),
-                            block.getZ(), block.getBlock(), (1 - step.x) / 2);
-                }
-                if (testFace(intersection, block, 0, (1 - step.y) / 2, 0)) {
-                    return new BlockFaceContainer(block.getX(), block.getY(),
-                            block.getZ(), block.getBlock(), 2 + (1 - step.y) / 2);
-                }
-                if (testFace(intersection, block, 0, 0, (1 - step.z) / 2)) {
-                    return new BlockFaceContainer(block.getX(), block.getY(),
-                            block.getZ(), block.getBlock(), 4 + (1 - step.z) / 2);
-                }
-                // ERROR
-                return new BlockFaceContainer(block.getX(), block.getY(),
-                        block.getZ(), block.getBlock(), (1 - step.x) / 2);
+            if (block.getBlock().isCollideable()) {
+                final int face = enterFace(o, d, p);
+                return new BlockFaceContainer((int) p.x, (int) p.y, (int) p.z, block.getBlock(), face);
             }
-
-            final BlockContainer xBlock = world.getBlockContainer(
-                    position.x + step.x, position.y, position.z);
-            if (xBlock.getBlock() != Blocks.AIR && testBlock(intersection, xBlock)) {
-                return new BlockFaceContainer(xBlock.getX(), xBlock.getY(),
-                        xBlock.getZ(), xBlock.getBlock(), (1 - step.x) / 2);
-            }
-
-            final BlockContainer yBlock = world.getBlockContainer(
-                    position.x, position.y + step.y, position.z);
-            if (yBlock.getBlock() != Blocks.AIR && testBlock(intersection, yBlock)) {
-                return new BlockFaceContainer(yBlock.getX(), yBlock.getY(),
-                        yBlock.getZ(), yBlock.getBlock(), 2 + (1 - step.y) / 2);
-            }
-
-            final BlockContainer zBlock = world.getBlockContainer(
-                    position.x, position.y, position.z + step.z);
-            if (zBlock.getBlock() != Blocks.AIR && testBlock(intersection, zBlock)) {
-                return new BlockFaceContainer(zBlock.getX(), zBlock.getY(),
-                        zBlock.getZ(), zBlock.getBlock(), 4 + (1 - step.z) / 2);
-            }
-
-            position.add(direction);
+            final int xCmp = t.z < t.x || t.y < t.x ? 0 : 1;
+            final int yCmp = t.x < t.y || t.z < t.y ? 0 : 1;
+            final int zCmp = t.y < t.z || t.x < t.z ? 0 : 1;
+            t.add(dt.x() * xCmp, dt.y() * yCmp, dt.z() * zCmp);
+            p.add(s.x() * xCmp, s.y() * yCmp, s.z() * zCmp);
         }
         return null;
     }
