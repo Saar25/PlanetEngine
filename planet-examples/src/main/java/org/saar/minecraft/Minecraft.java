@@ -175,12 +175,14 @@ public class Minecraft {
                         rayCast.getY(), rayCast.getZ(), rayCast.getDirection()));
 
                 if (lastBlockPlace + MOUSE_DELAY <= System.currentTimeMillis()) {
-                    lastBlockPlace = System.currentTimeMillis();
-
                     if (mouse.isButtonDown(MouseButton.PRIMARY)) {
+                        lastBlockPlace = System.currentTimeMillis();
+
                         world.setBlock(rayCast.getX(), rayCast.getY(), rayCast.getZ(), Blocks.AIR);
                     }
                     if (mouse.isButtonDown(MouseButton.SECONDARY)) {
+                        lastBlockPlace = System.currentTimeMillis();
+
                         final Vector3i blockDirection = new Vector3i[]{
                                 new Vector3i(-1, 0, 0), new Vector3i(+1, 0, 0),
                                 new Vector3i(0, -1, 0), new Vector3i(0, +1, 0),
