@@ -41,6 +41,7 @@ public class Minecraft {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 741;
     private static final float SPEED = .1f;
+    private static final int MOUSE_DELAY = 200;
 
     private static final WorldGenerator generator = WorldGenerationPipeline
             .pipe(new TerrainGenerator())
@@ -110,6 +111,8 @@ public class Minecraft {
 
         final Fps fps = new Fps();
 
+        long lastBlockPlace = System.currentTimeMillis();
+
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
@@ -149,20 +152,24 @@ public class Minecraft {
             player.move(world, direction, (float) fps.delta());
 
             final BlockFaceContainer rayCast = player.rayCast(world);
-            if (rayCast != null && rayCast.getBlock().isSolid()) {
+            if (rayCast != null && rayCast.getBlock().isCollideable()) {
                 renderer.getRayCastedFace().setValue(new Vector4i(rayCast.getX(),
                         rayCast.getY(), rayCast.getZ(), rayCast.getDirection()));
 
-                if (mouse.isButtonDown(MouseButton.PRIMARY)) {
-                    world.setBlock(rayCast.getX(), rayCast.getY(), rayCast.getZ(), Blocks.AIR);
-                }
-                if (mouse.isButtonDown(MouseButton.SECONDARY)) {
-                    final Vector3i blockDirection = new Vector3i[]{
-                            new Vector3i(-1, 0, 0), new Vector3i(+1, 0, 0),
-                            new Vector3i(0, -1, 0), new Vector3i(0, +1, 0),
-                            new Vector3i(0, 0, -1), new Vector3i(0, 0, +1)}[rayCast.getDirection()]
-                            .add(rayCast.getPosition());
-                    world.setBlock(blockDirection.x, blockDirection.y, blockDirection.z, Blocks.STONE);
+                if (lastBlockPlace + MOUSE_DELAY <= System.currentTimeMillis()) {
+                    lastBlockPlace = System.currentTimeMillis();
+
+                    if (mouse.isButtonDown(MouseButton.PRIMARY)) {
+                        world.setBlock(rayCast.getX(), rayCast.getY(), rayCast.getZ(), Blocks.AIR);
+                    }
+                    if (mouse.isButtonDown(MouseButton.SECONDARY)) {
+                        final Vector3i blockDirection = new Vector3i[]{
+                                new Vector3i(-1, 0, 0), new Vector3i(+1, 0, 0),
+                                new Vector3i(0, -1, 0), new Vector3i(0, +1, 0),
+                                new Vector3i(0, 0, -1), new Vector3i(0, 0, +1)}[rayCast.getDirection()]
+                                .add(rayCast.getPosition());
+                        world.setBlock(blockDirection.x, blockDirection.y, blockDirection.z, Blocks.STONE);
+                    }
                 }
             } else {
                 renderer.getRayCastedFace().setValue(new Vector4i(0, 0, 0, -1));
