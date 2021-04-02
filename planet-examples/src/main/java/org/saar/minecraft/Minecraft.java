@@ -48,7 +48,7 @@ public class Minecraft {
     private static final boolean FLY_MODE = true;
 
     private static final WorldGenerator generator = WorldGenerationPipeline
-            .pipe(new TerrainGenerator())
+            .pipe(new TerrainGenerator(80))
             .then(new WaterGenerator(80))
             .then(new TreesGenerator(SimplexNoise::noise))
             .then(new BedrockGenerator());
@@ -63,8 +63,6 @@ public class Minecraft {
         GlUtils.setClearColour(.0f, .5f, .7f);
 
         final TSquare square = new TSquare(12, 12);
-        square.getStyle().x.set(WIDTH / 2 - 6);
-        square.getStyle().y.set(HEIGHT / 2 - 6);
         square.getStyle().borderColour.set(Colours.DARK_GREY);
         square.getStyle().borders.set(2);
         final GuiRenderer guiRenderer = new GuiRenderer(square);
@@ -207,6 +205,9 @@ public class Minecraft {
             } else {
                 GlUtils.drawPolygonFill();
             }
+
+            square.getStyle().x.set(window.getWidth() / 2 - 6);
+            square.getStyle().y.set(window.getHeight() / 2 - 6);
 
             System.out.print("\r" + String.format("%.3f", fps.fps()));
             fps.update();

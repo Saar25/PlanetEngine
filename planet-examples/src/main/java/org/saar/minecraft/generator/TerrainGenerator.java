@@ -7,6 +7,12 @@ import org.saar.minecraft.Chunk;
 
 public class TerrainGenerator implements WorldGenerator {
 
+    private final int waterLevel;
+
+    public TerrainGenerator(int waterLevel) {
+        this.waterLevel = waterLevel;
+    }
+
     private static float smoothStep(float value, float edge0, float edge1) {
         final float t = Maths.clamp((value - edge0) / (edge1 - edge0), 0, 1);
         return t * t * (3 - 2 * t);
@@ -34,7 +40,7 @@ public class TerrainGenerator implements WorldGenerator {
                 for (int y = 53; y < 120; y++) {
                     final float noise = noise(wx, y, wz);
                     if (noise > .2f) {
-                        if (y > 60 && noise(wx, y + 1, wz) <= .2f) {
+                        if (y >= this.waterLevel - 1 && y > 60 && noise(wx, y + 1, wz) <= .2f) {
                             chunk.setBlock(x, y, z, Blocks.GRASS);
                         } else if (noise(wx, y + 7, wz) <= .2f) {
                             chunk.setBlock(x, y, z, Blocks.DIRT);
