@@ -11,13 +11,14 @@ import java.util.concurrent.Executors;
 
 public class World {
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private final ExecutorService executorService;
 
     private final List<Chunk> chunks = new ArrayList<>();
     private final WorldGenerator generator;
 
-    public World(WorldGenerator generator) {
+    public World(WorldGenerator generator, int threads) {
         this.generator = generator;
+        this.executorService = Executors.newFixedThreadPool(threads);
     }
 
     private static int worldToChunkCoordinate(int w) {

@@ -42,6 +42,8 @@ public class Minecraft {
     private static final int HEIGHT = 741;
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
+    private static final int WORLD_RADIUS = 8;
+    private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
 
@@ -51,9 +53,7 @@ public class Minecraft {
             .then(new TreesGenerator(SimplexNoise::noise))
             .then(new BedrockGenerator());
 
-    private static final World world = new World(generator);
-
-    private static final int worldRadius = 5;
+    private static final World world = new World(generator, THREAD_COUNT);
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
 
@@ -73,7 +73,7 @@ public class Minecraft {
         final Camera camera = new Camera(projection);
         final Player player = new Player(camera);
 
-        world.generateAround(camera.getTransform().getPosition(), worldRadius);
+        world.generateAround(camera.getTransform().getPosition(), WORLD_RADIUS);
 
         final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
         textureAtlas.setSettings(
@@ -197,9 +197,9 @@ public class Minecraft {
 
             final float xChange = lastWorldUpdatePosition.getX() - camera.getTransform().getPosition().getX();
             final float zChange = lastWorldUpdatePosition.getZ() - camera.getTransform().getPosition().getZ();
-            if (Math.abs(xChange) > worldRadius * 2 || Math.abs(zChange) > worldRadius * 2) {
+            if (Math.abs(xChange) > WORLD_RADIUS * 2 || Math.abs(zChange) > WORLD_RADIUS * 2) {
                 lastWorldUpdatePosition.set(camera.getTransform().getPosition());
-                world.generateAround(lastWorldUpdatePosition, worldRadius);
+                world.generateAround(lastWorldUpdatePosition, WORLD_RADIUS);
             }
 
             if (keyboard.isKeyPressed('R')) {
