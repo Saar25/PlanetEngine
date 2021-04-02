@@ -6,8 +6,10 @@ import org.saar.minecraft.generator.WorldGenerator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 public class World {
 
@@ -131,19 +133,22 @@ public class World {
 
         chunks.sort(Comparator.comparingInt(c -> (int) c.getPosition().distanceSquared(cx, cz)));
 
+        final List<CompletableFuture<Void>> futures = new ArrayList<>(chunks.size());
+
         for (Chunk chunk : chunks) {
             addChunk(chunk);
 
-            final int x = chunk.getPosition().x();
-            final int z = chunk.getPosition().y();
-            this.executorService.submit(() -> {
-                this.generator.generateChunk(chunk);
-                chunk.updateMesh(this);
-                getChunk(x + 1, z).updateMesh(this);
-                getChunk(x - 1, z).updateMesh(this);
-                getChunk(x, z + 1).updateMesh(this);
-                getChunk(x, z - 1).updateMesh(this);
-            });
+            futures.add(CompletableFuture.runAsync(
+                    () -> this.generator.generateChunk(chunk),
+                    this.executorService));
         }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() ->
+                chunks.stream().flatMap(c -> Stream.of(c,
+                        getChunk(c.getPosition().x(), c.getPosition().y() + 1),
+                        getChunk(c.getPosition().x(), c.getPosition().y() - 1),
+                        getChunk(c.getPosition().x() + 1, c.getPosition().y()),
+                        getChunk(c.getPosition().x() - 1, c.getPosition().y()))
+                ).distinct().forEach(c -> c.updateMesh(this)));
     }
 }
