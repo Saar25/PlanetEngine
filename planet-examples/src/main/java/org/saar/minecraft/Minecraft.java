@@ -114,6 +114,10 @@ public class Minecraft {
         long lastBlockPlace = System.currentTimeMillis();
 
         final Keyboard keyboard = window.getKeyboard();
+        keyboard.onKeyPress(GLFW.GLFW_KEY_ESCAPE).perform(e ->
+                mouse.setCursor(mouse.getCursor() == MouseCursor.DISABLED
+                        ? MouseCursor.NORMAL : MouseCursor.DISABLED));
+
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
 
