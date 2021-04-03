@@ -42,6 +42,7 @@ public class Minecraft {
     private static final int HEIGHT = 741;
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
+    private static final float MOUSE_SENSITIVITY = .2f;
     private static final int WORLD_RADIUS = 8;
     private static final int THREAD_COUNT = 5;
 
@@ -96,8 +97,8 @@ public class Minecraft {
             @Override
             public void onEvent(MoveEvent e) {
                 if (mouse.getCursor() == MouseCursor.DISABLED) {
-                    final float yRotate = (float) (this.xOld - mouse.getXPos());
-                    final float xRotate = (float) (this.yOld - mouse.getYPos());
+                    final float yRotate = (float) (this.xOld - mouse.getXPos()) * MOUSE_SENSITIVITY;
+                    final float xRotate = (float) (this.yOld - mouse.getYPos()) * MOUSE_SENSITIVITY;
                     camera.getTransform().getRotation().rotateDegrees(xRotate, yRotate, 0);
                 }
                 this.xOld = mouse.getXPos();
