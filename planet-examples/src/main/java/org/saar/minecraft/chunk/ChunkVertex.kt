@@ -7,6 +7,5 @@ interface ChunkVertex : Vertex {
     val y: Int
     val z: Int
     val blockId: Int
-    val direction: Int
     val vertexId: Int
 }

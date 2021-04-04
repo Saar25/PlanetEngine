@@ -9,14 +9,7 @@ public class ChunkMeshBuilder implements MeshBuilder {
 
     private static final Attribute dataAttribute = Attribute.ofInteger(0, 1, DataType.U_INT);
 
-    private static final int[][] facesOffsets = {
-            {1, 1, 0}, {1, 1, 1}, {1, 0, 1}, {1, 0, 0}, // x+
-            {0, 0, 1}, {0, 1, 1}, {0, 1, 0}, {0, 0, 0}, // x-
-            {0, 1, 0}, {0, 1, 1}, {1, 1, 1}, {1, 1, 0}, // y+
-            {1, 0, 0}, {1, 0, 1}, {0, 0, 1}, {0, 0, 0}, // y-
-            {1, 0, 1}, {1, 1, 1}, {0, 1, 1}, {0, 0, 1}, // z+
-            {0, 0, 0}, {0, 1, 0}, {1, 1, 0}, {1, 0, 0}, // z-
-    };
+    private static final int[] indices = {0, 1, 2, 0, 2, 3};
 
     private static final int[][] vertexIds = {
             {5, 7, 3, 1}, // x+
@@ -74,16 +67,11 @@ public class ChunkMeshBuilder implements MeshBuilder {
     }
 
     public void writeFace(int x, int y, int z, int id, int face) {
-        final int index = face * 4;
-        final int[] v0 = facesOffsets[index], v1 = facesOffsets[index + 1],
-                v2 = facesOffsets[index + 2], v3 = facesOffsets[index + 3];
-        final int[] faceIds = vertexIds[face];
-        getWriter().writeVertex(Chunks.vertex(x, y, z, id, face, faceIds[0]));
-        getWriter().writeVertex(Chunks.vertex(x, y, z, id, face, faceIds[1]));
-        getWriter().writeVertex(Chunks.vertex(x, y, z, id, face, faceIds[2]));
-        getWriter().writeVertex(Chunks.vertex(x, y, z, id, face, faceIds[0]));
-        getWriter().writeVertex(Chunks.vertex(x, y, z, id, face, faceIds[2]));
-        getWriter().writeVertex(Chunks.vertex(x, y, z, id, face, faceIds[3]));
+        final int[] faceIds = ChunkMeshBuilder.vertexIds[face];
+        for (int index : ChunkMeshBuilder.indices) {
+            getWriter().writeVertex(Chunks.vertex(
+                    x, y, z, id, faceIds[index]));
+        }
     }
 
     public ChunkMeshWriter getWriter() {
