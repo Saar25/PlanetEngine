@@ -18,6 +18,15 @@ public class ChunkMeshBuilder implements MeshBuilder {
             {0, 0, 0}, {0, 1, 0}, {1, 1, 0}, {1, 0, 0}, // z-
     };
 
+    private static final int[][] vertexIds = {
+            {5, 7, 3, 1}, // x+
+            {2, 6, 4, 0}, // x-
+            {4, 6, 7, 5}, // y+
+            {1, 3, 2, 0}, // y-
+            {3, 7, 6, 2}, // z+
+            {0, 4, 5, 1}, // z-
+    };
+
     private final ChunkMeshPrototype prototype;
     private final ChunkMeshWriter writer;
     private final int vertices;
@@ -68,12 +77,13 @@ public class ChunkMeshBuilder implements MeshBuilder {
         final int index = face * 4;
         final int[] v0 = facesOffsets[index], v1 = facesOffsets[index + 1],
                 v2 = facesOffsets[index + 2], v3 = facesOffsets[index + 3];
-        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face, 0));
-        getWriter().writeVertex(Chunks.vertex(x + v1[0], y + v1[1], z + v1[2], id, face, 0));
-        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face, 0));
-        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face, 0));
-        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face, 0));
-        getWriter().writeVertex(Chunks.vertex(x + v3[0], y + v3[1], z + v3[2], id, face, 0));
+        final int[] faceIds = vertexIds[face];
+        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face, faceIds[0]));
+        getWriter().writeVertex(Chunks.vertex(x + v1[0], y + v1[1], z + v1[2], id, face, faceIds[1]));
+        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face, faceIds[2]));
+        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face, faceIds[0]));
+        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face, faceIds[2]));
+        getWriter().writeVertex(Chunks.vertex(x + v3[0], y + v3[1], z + v3[2], id, face, faceIds[3]));
     }
 
     public ChunkMeshWriter getWriter() {
