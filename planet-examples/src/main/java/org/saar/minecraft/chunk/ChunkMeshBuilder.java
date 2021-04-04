@@ -68,12 +68,12 @@ public class ChunkMeshBuilder implements MeshBuilder {
         final int index = face * 4;
         final int[] v0 = facesOffsets[index], v1 = facesOffsets[index + 1],
                 v2 = facesOffsets[index + 2], v3 = facesOffsets[index + 3];
-        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face));
-        getWriter().writeVertex(Chunks.vertex(x + v1[0], y + v1[1], z + v1[2], id, face));
-        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face));
-        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face));
-        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face));
-        getWriter().writeVertex(Chunks.vertex(x + v3[0], y + v3[1], z + v3[2], id, face));
+        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face, 0));
+        getWriter().writeVertex(Chunks.vertex(x + v1[0], y + v1[1], z + v1[2], id, face, 0));
+        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face, 0));
+        getWriter().writeVertex(Chunks.vertex(x + v0[0], y + v0[1], z + v0[2], id, face, 0));
+        getWriter().writeVertex(Chunks.vertex(x + v2[0], y + v2[1], z + v2[2], id, face, 0));
+        getWriter().writeVertex(Chunks.vertex(x + v3[0], y + v3[1], z + v3[2], id, face, 0));
     }
 
     public ChunkMeshWriter getWriter() {
