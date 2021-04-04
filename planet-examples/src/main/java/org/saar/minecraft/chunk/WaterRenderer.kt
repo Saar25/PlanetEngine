@@ -100,6 +100,7 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
         GlUtils.setCullFace(GlCullFace.BACK)
         GlUtils.disableClipPlane(0)
         GlUtils.enableAlphaBlending()
+        GlUtils.setProvokingVertexFirst()
 
 
         val v = context.camera.viewMatrix

@@ -93,6 +93,7 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
         GlUtils.enableDepthTest()
         GlUtils.enableDepthMasking()
         GlUtils.setCullFace(GlCullFace.BACK)
+        GlUtils.setProvokingVertexFirst()
         GlUtils.disableClipPlane(0)
         GlUtils.disableBlending()
 
