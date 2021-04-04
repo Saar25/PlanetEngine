@@ -6,13 +6,14 @@ import org.saar.core.mesh.build.buffers.MeshVertexBuffer
 object Chunks {
 
     @JvmStatic
-    fun vertex(x: Int, y: Int, z: Int, blockId: Int, vertexId: Int): ChunkVertex {
+    fun vertex(x: Int, y: Int, z: Int, blockId: Int, vertexId: Int, textureInc: Boolean): ChunkVertex {
         return object : ChunkVertex {
             override val x = x
             override val y = y
             override val z = z
             override val blockId = blockId
             override val vertexId = vertexId
+            override val textureInc = textureInc
         }
     }
 

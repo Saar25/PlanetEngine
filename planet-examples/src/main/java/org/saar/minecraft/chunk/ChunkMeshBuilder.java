@@ -70,7 +70,7 @@ public class ChunkMeshBuilder implements MeshBuilder {
         final int[] faceIds = ChunkMeshBuilder.vertexIds[face];
         for (int index : ChunkMeshBuilder.indices) {
             getWriter().writeVertex(Chunks.vertex(
-                    x, y, z, id, faceIds[index]));
+                    x, y, z, id, faceIds[index], face == 0));
         }
     }
 

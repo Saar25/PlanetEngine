@@ -48,6 +48,7 @@ float g_y;
 float g_z;
 int g_id;
 int g_vId;
+int g_tex;
 
 // Methods declaration
 void init_globals(void);
@@ -60,7 +61,7 @@ void main(void) {
 
     int transitionId = v_dir == TOP_DIR ? u_transitionId : 0;
 
-    int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + (v_dir != 0 ? 0 : 1)) % 4);
+    int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + g_tex) % 4);
 
     int id1 = g_id + transitionId % u_texturesCount;
     vec2 uvCoordsOffset1 = vec2(id1 % u_dimensions.x, g_id / u_dimensions.y);
@@ -84,4 +85,5 @@ void init_globals(void) {
     g_y   = float(in_data >> 0x10u & 0xFFu);
     g_id  =   int(in_data >> 0x08u & 0xFFu);
     g_vId =   int(in_data >> 0x05u & 0x07u);
+    g_tex =   int(in_data >> 0x04u & 0x01u);
 }

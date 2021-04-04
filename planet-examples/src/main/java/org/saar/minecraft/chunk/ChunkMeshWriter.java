@@ -16,7 +16,8 @@ public class ChunkMeshWriter implements MeshVertexWriter<ChunkVertex> {
                 | (vertex.getZ() & 0b1111) << 24
                 | (vertex.getY() & 0xFF) << 16
                 | (vertex.getBlockId() & 0xFF) << 8
-                | (vertex.getVertexId() & 0b111) << 5;
+                | (vertex.getVertexId() & 0b111) << 5
+                | (vertex.getTextureInc() ? 1 : 0) << 4;
         this.prototype.getDataBuffer().getWriter().write(data);
     }
 }
