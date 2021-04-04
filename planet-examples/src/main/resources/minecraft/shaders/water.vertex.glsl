@@ -47,7 +47,6 @@ float g_x;
 float g_y;
 float g_z;
 int g_id;
-int g_dir;
 int g_vId;
 
 // Methods declaration
@@ -57,7 +56,7 @@ void main(void) {
     init_globals();
 
     v_id = g_id;
-    v_dir = g_dir;
+    v_dir = directionMap[g_vId];
 
     int transitionId = v_dir == TOP_DIR ? u_transitionId : 0;
 
@@ -85,5 +84,4 @@ void init_globals(void) {
     g_y   = float(in_data >> 0x10u & 0xFFu);
     g_id  =   int(in_data >> 0x08u & 0xFFu);
     g_vId =   int(in_data >> 0x05u & 0x07u);
-    g_dir = directionMap[g_vId];
 }

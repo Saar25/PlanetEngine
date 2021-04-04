@@ -42,7 +42,6 @@ float g_x;
 float g_y;
 float g_z;
 int g_id;
-int g_dir;
 int g_vId;
 
 // Methods declaration
@@ -52,7 +51,7 @@ void main(void) {
     init_globals();
 
     v_id = g_id;
-    v_dir = g_dir;
+    v_dir = directionMap[g_vId];
 
     vec2 uvCoordsOffset = vec2(g_id % u_dimensions.x, g_id / u_dimensions.y);
     int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + (v_dir != 0 ? 0 : 1)) % 4);
@@ -72,5 +71,4 @@ void init_globals(void) {
     g_y   = float(in_data >> 0x10u & 0xFFu);
     g_id  =   int(in_data >> 0x08u & 0xFFu);
     g_vId =   int(in_data >> 0x05u & 0x07u);
-    g_dir = directionMap[g_vId];
 }
