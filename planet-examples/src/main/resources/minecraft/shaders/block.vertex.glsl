@@ -12,6 +12,17 @@ const int[] indexMap = {
 0, 1, 2, 0, 2, 3
 };
 
+const vec3[] vertexMap = {
+vec3(0, 0, 0), vec3(1, 0, 0),
+vec3(0, 1, 0), vec3(1, 1, 0),
+vec3(0, 0, 1), vec3(1, 0, 1),
+vec3(0, 1, 1), vec3(1, 1, 1),
+};
+
+const int[] directionMap = {
+5, 3, 2, 0, 1, 4, -1, -1
+};
+
 // Per Vertex attibutes
 layout (location = 0) in uint in_data;
 
@@ -32,6 +43,7 @@ float g_y;
 float g_z;
 int g_id;
 int g_dir;
+int g_vertexId;
 
 // Methods declaration
 void init_globals(void);
@@ -43,7 +55,8 @@ void main(void) {
     v_dir = g_dir;
 
     vec2 uvCoordsOffset = vec2(g_id % u_dimensions.x, g_id / u_dimensions.y);
-    v_uvCoords = (uvCoordsOffset + uvCoords[indexMap[gl_VertexID % 6]]) / u_dimensions;
+    int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + (v_dir != 0 ? 0 : 1)) % 4);
+    v_uvCoords = (uvCoordsOffset + uvCoords[uvCoordIndex]) / u_dimensions;
 
     v_position = vec3(g_x, g_y, g_z);
     v_position.x += u_chunkCoordinate.x * 16;

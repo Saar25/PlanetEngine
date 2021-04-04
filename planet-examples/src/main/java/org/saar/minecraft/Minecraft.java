@@ -43,7 +43,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 8;
+    private static final int WORLD_RADIUS = 3;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;

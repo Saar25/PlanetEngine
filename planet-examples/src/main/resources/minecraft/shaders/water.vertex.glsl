@@ -49,13 +49,15 @@ void main(void) {
 
     int transitionId = v_dir == TOP_DIR ? u_transitionId : 0;
 
+    int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + (v_dir != 0 ? 0 : 1)) % 4);
+
     int id1 = g_id + transitionId % u_texturesCount;
     vec2 uvCoordsOffset1 = vec2(id1 % u_dimensions.x, g_id / u_dimensions.y);
-    v_uvCoords1 = (uvCoordsOffset1 + uvCoords[indexMap[gl_VertexID % 6]]) / u_dimensions;
+    v_uvCoords1 = (uvCoordsOffset1 + uvCoords[uvCoordIndex]) / u_dimensions;
 
     int id2 = g_id + (transitionId + 1) % u_texturesCount;
     vec2 uvCoordsOffset2 = vec2(id2 % u_dimensions.x, g_id / u_dimensions.y);
-    v_uvCoords2 = (uvCoordsOffset2 + uvCoords[indexMap[gl_VertexID % 6]]) / u_dimensions;
+    v_uvCoords2 = (uvCoordsOffset2 + uvCoords[uvCoordIndex]) / u_dimensions;
 
     vec3 position = vec3(g_x, g_y, g_z);
     position.x += u_chunkCoordinate.x * 16;

@@ -10,7 +10,7 @@ public class ChunkMeshBuilder implements MeshBuilder {
     private static final Attribute dataAttribute = Attribute.ofInteger(0, 1, DataType.U_INT);
 
     private static final int[][] facesOffsets = {
-            {1, 0, 0}, {1, 1, 0}, {1, 1, 1}, {1, 0, 1}, // x+
+            {1, 1, 0}, {1, 1, 1}, {1, 0, 1}, {1, 0, 0}, // x+
             {0, 0, 1}, {0, 1, 1}, {0, 1, 0}, {0, 0, 0}, // x-
             {0, 1, 0}, {0, 1, 1}, {1, 1, 1}, {1, 1, 0}, // y+
             {1, 0, 0}, {1, 0, 1}, {0, 0, 1}, {0, 0, 0}, // y-
