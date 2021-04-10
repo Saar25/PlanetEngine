@@ -4,15 +4,20 @@ import org.saar.core.camera.ICamera;
 import org.saar.core.renderer.*;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.Screens;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 
 public class ForwardRenderingPath implements RenderingPath {
 
+    private final ForwardScreenPrototype prototype;
     private final OffScreen screen;
     private final ICamera camera;
     private final RenderersHelper helper;
 
-    public ForwardRenderingPath(OffScreen screen, ICamera camera, Renderer... renderers) {
-        this.screen = screen;
+    public ForwardRenderingPath(ForwardScreenPrototype prototype, ICamera camera, Renderer... renderers) {
+        this.prototype = prototype;
+        this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
+
         this.camera = camera;
         this.helper = RenderersHelper.of(renderers);
     }
@@ -33,7 +38,7 @@ public class ForwardRenderingPath implements RenderingPath {
 
         this.helper.render(new RenderContextBase(this.camera));
 
-        return new ForwardRenderingOutput(this.screen);
+        return new ForwardRenderingOutput(this.screen, this.prototype.getColourTexture());
     }
 
     @Override

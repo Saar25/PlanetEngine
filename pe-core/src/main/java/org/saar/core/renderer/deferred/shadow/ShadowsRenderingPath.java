@@ -60,7 +60,7 @@ public class ShadowsRenderingPath implements RenderingPath {
 
     @Override
     public ShadowRenderingOutput render() {
-        return new ShadowRenderingOutput(this.screen);
+        return new ShadowRenderingOutput(this.screen, this.prototype.getDepthTexture());
     }
 
     @Override

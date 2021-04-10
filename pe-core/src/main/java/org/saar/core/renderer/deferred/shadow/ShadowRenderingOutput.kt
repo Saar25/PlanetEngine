@@ -1,24 +1,13 @@
-package org.saar.core.renderer.deferred.shadow;
+package org.saar.core.renderer.deferred.shadow
 
-import org.saar.core.renderer.RenderingOutput;
-import org.saar.core.screen.Screen;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.core.renderer.RenderingOutput
+import org.saar.core.screen.Screen
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
-public class ShadowRenderingOutput implements RenderingOutput {
+class ShadowRenderingOutput(private val screen: Screen, private val depthTexture: ReadOnlyTexture) : RenderingOutput {
 
-    private final Screen screen;
+    override fun to(screen: Screen) = this.screen.copyTo(screen)
 
-    public ShadowRenderingOutput(Screen screen) {
-        this.screen = screen;
-    }
-
-    @Override
-    public void to(Screen screen) {
-        this.screen.copyTo(screen);
-    }
-
-    public ReadOnlyTexture getShowMap() {
-        return null;
-    }
+    override fun toTexture() = this.depthTexture
 
 }

@@ -18,7 +18,7 @@ class PostProcessingPipeline(private vararg val processors: PostProcessor) {
             lastTexture = this.screenPrototype.colourTexture
         }
 
-        return PostProcessingOutput(this.screen)
+        return PostProcessingOutput(this.screen, lastTexture)
     }
 
     fun delete() {

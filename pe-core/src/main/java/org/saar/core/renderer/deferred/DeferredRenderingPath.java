@@ -49,7 +49,7 @@ public class DeferredRenderingPath implements RenderingPath {
 
         this.pipeline.render(this.buffers);
 
-        return new DeferredRenderingOutput(this.screen);
+        return new DeferredRenderingOutput(this.screen, this.buffers.getAlbedo());
     }
 
     @Override

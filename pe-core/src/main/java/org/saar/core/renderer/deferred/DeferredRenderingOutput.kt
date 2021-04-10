@@ -1,20 +1,13 @@
-package org.saar.core.renderer.deferred;
+package org.saar.core.renderer.deferred
 
-import org.saar.core.renderer.RenderingOutput;
-import org.saar.core.screen.Screen;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.core.renderer.RenderingOutput
+import org.saar.core.screen.Screen
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
-public class DeferredRenderingOutput implements RenderingOutput {
+class DeferredRenderingOutput(private val screen: Screen,
+                              private val colourTexture: ReadOnlyTexture) : RenderingOutput {
 
-    private final Screen screen;
+    override fun to(screen: Screen) = this.screen.copyTo(screen)
 
-    public DeferredRenderingOutput(Screen screen) {
-        this.screen = screen;
-    }
-
-    @Override
-    public void to(Screen screen) {
-        this.screen.copyTo(screen);
-    }
-
+    override fun toTexture() = this.colourTexture
 }
