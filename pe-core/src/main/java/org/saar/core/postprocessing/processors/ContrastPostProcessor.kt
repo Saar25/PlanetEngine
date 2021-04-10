@@ -11,12 +11,12 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 
-class ContrastPostProcessor : PostProcessor,
-    PostProcessorPrototypeWrapper(ContrastPostProcessorPrototype()) {
+class ContrastPostProcessor(contrast: Float) : PostProcessor,
+    PostProcessorPrototypeWrapper(ContrastPostProcessorPrototype(contrast)) {
 
 }
 
-private class ContrastPostProcessorPrototype : PostProcessorPrototype {
+private class ContrastPostProcessorPrototype(private val contrast: Float) : PostProcessorPrototype {
 
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
@@ -25,7 +25,7 @@ private class ContrastPostProcessorPrototype : PostProcessorPrototype {
     private val contrastUniform = object : FloatUniform() {
         override fun getName() = "u_contrast"
 
-        override fun getUniformValue() = .5f
+        override fun getUniformValue() = this@ContrastPostProcessorPrototype.contrast
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
