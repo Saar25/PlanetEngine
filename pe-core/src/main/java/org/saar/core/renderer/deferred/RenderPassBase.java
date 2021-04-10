@@ -66,10 +66,10 @@ public abstract class RenderPassBase implements RenderPass {
     }
 
     @Override
-    public void render(DeferredRenderingBuffers buffers) {
+    public void render(RenderPassContext context) {
         this.shadersProgram.bind();
 
-        onRender(buffers);
+        onRender(context);
 
         this.shadersProgram.unbind();
     }
@@ -79,5 +79,5 @@ public abstract class RenderPassBase implements RenderPass {
         this.shadersProgram.delete();
     }
 
-    protected abstract void onRender(DeferredRenderingBuffers buffers);
+    protected abstract void onRender(RenderPassContext context);
 }

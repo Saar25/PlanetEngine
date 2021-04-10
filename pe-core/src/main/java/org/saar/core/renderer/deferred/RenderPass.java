@@ -2,7 +2,7 @@ package org.saar.core.renderer.deferred;
 
 public interface RenderPass {
 
-    void render(DeferredRenderingBuffers buffers);
+    void render(RenderPassContext context);
 
     void delete();
 

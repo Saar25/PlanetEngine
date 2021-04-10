@@ -1,9 +1,6 @@
 package org.saar.core.renderer.deferred.light
 
 import org.joml.Matrix4f
-import org.joml.Matrix4fc
-import org.joml.Vector3fc
-import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniformValue
 import org.saar.core.light.PointLight
@@ -11,6 +8,7 @@ import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
+import org.saar.core.renderer.deferred.RenderPassContext
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.*
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -22,7 +20,7 @@ import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPass {
+class LightRenderPass : RenderPassBase(), RenderPass {
 
     private var uniformsHelper = UniformsHelper.empty()
     private var instanceUpdatersHelper = UpdatersHelper.empty<PerInstance>()
@@ -52,31 +50,13 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPas
     }
 
     @UniformProperty
-    private val cameraWorldPositionUniform = object : Vec3Uniform() {
-        override fun getName(): String = "cameraWorldPosition"
-
-        override fun getUniformValue(): Vector3fc {
-            return this@LightRenderPass.camera.transform.position.value
-        }
-    }
+    private val cameraWorldPositionUniform = Vec3UniformValue("cameraWorldPosition")
 
     @UniformProperty
-    private val projectionMatrixInvUniform = object : Mat4Uniform() {
-        override fun getName(): String = "projectionMatrixInv"
-
-        override fun getUniformValue(): Matrix4fc {
-            return this@LightRenderPass.camera.projection.matrix.invertPerspective(matrix)
-        }
-    }
+    private val projectionMatrixInvUniform = Mat4UniformValue("projectionMatrixInv")
 
     @UniformProperty
-    private val viewMatrixInvUniform = object : Mat4Uniform() {
-        override fun getName(): String = "viewMatrixInv"
-
-        override fun getUniformValue(): Matrix4fc {
-            return this@LightRenderPass.camera.viewMatrix.invert(matrix)
-        }
-    }
+    private val viewMatrixInvUniform = Mat4UniformValue("viewMatrixInv")
 
     @UniformProperty
     private val directionalLightsCountUniform = IntUniformValue("directionalLightsCount")
@@ -125,16 +105,20 @@ class LightRenderPass(private val camera: ICamera) : RenderPassBase(), RenderPas
         this.instanceUpdatersHelper = buildHelper(instanceUpdatersHelper)
     }
 
-    override fun onRender(buffers: DeferredRenderingBuffers) {
+    override fun onRender(context: RenderPassContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
 
         val light = DirectionalLight()
             .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
             .also { light -> light.direction.set(-50f, -50f, -50f) }
 
-        val instance = PerInstance(buffers, emptyArray(), arrayOf(light))
+        val instance = PerInstance(context.buffers, emptyArray(), arrayOf(light))
         val instanceState = RenderState(instance)
         this.instanceUpdatersHelper.update(instanceState)
+
+        this.cameraWorldPositionUniform.value = context.camera.transform.position.value
+        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
+        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
 
         this.uniformsHelper.load()
 

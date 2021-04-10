@@ -95,7 +95,7 @@ public class SmoothExample {
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype.asBuffers(), new LightRenderPass(camera));
+                camera, screenPrototype.asBuffers(), new LightRenderPass());
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);

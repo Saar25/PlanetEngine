@@ -104,8 +104,8 @@ public class NormalMappingExample {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype.asBuffers(),
-                new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype.asBuffers(),
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(

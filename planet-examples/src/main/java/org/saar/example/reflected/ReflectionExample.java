@@ -79,7 +79,7 @@ public class ReflectionExample {
 
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
         final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
-                reflectionScreenPrototype.asBuffers(), new LightRenderPass(camera));
+                camera, reflectionScreenPrototype.asBuffers(), new LightRenderPass());
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -117,8 +117,8 @@ public class ReflectionExample {
 
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype.asBuffers(),
-                new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype.asBuffers(),
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(

@@ -1,5 +1,6 @@
 package org.saar.core.renderer.deferred;
 
+import org.saar.core.camera.ICamera;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -16,13 +17,15 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class DeferredRenderingPath implements RenderingPath {
 
+    private final ICamera camera;
     private final DeferredRenderingPipeline pipeline;
     private final DeferredRenderingBuffers buffers;
     private final OffScreen screen;
 
     private final Texture colourTexture = Texture.create();
 
-    public DeferredRenderingPath(DeferredRenderingBuffers buffers, RenderPass... renderPasses) {
+    public DeferredRenderingPath(ICamera camera, DeferredRenderingBuffers buffers, RenderPass... renderPasses) {
+        this.camera = camera;
         this.pipeline = new DeferredRenderingPipeline(renderPasses);
         this.screen = screen(this.colourTexture);
         this.buffers = buffers;
@@ -49,7 +52,7 @@ public class DeferredRenderingPath implements RenderingPath {
         this.screen.setAsDraw();
         GlUtils.clear(GlBuffer.COLOUR);
 
-        this.pipeline.render(this.colourTexture, this.buffers);
+        this.pipeline.render(this.camera, this.colourTexture, this.buffers);
 
         return new DeferredRenderingOutput(this.screen, this.buffers.getAlbedo());
     }

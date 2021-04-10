@@ -2,7 +2,6 @@ package org.saar.core.renderer.deferred.shadow
 
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
-import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
@@ -10,6 +9,7 @@ import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.RenderPass
 import org.saar.core.renderer.deferred.RenderPassBase
+import org.saar.core.renderer.deferred.RenderPassContext
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.*
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -20,8 +20,7 @@ import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.maths.utils.Matrix4
 
-class ShadowsRenderPass(private val camera: ICamera,
-                        private val shadowCamera: ICamera,
+class ShadowsRenderPass(private val shadowCamera: ICamera,
                         private val shadowMap: ReadOnlyTexture,
                         private val light: DirectionalLight)
     : RenderPassBase(), RenderPass {
@@ -40,31 +39,13 @@ class ShadowsRenderPass(private val camera: ICamera,
     }
 
     @UniformProperty
-    private val projectionMatrixInvUniform = object : Mat4Uniform() {
-        override fun getName(): String = "projectionMatrixInv"
-
-        override fun getUniformValue(): Matrix4fc {
-            return this@ShadowsRenderPass.camera.projection.matrix.invertPerspective(matrix)
-        }
-    }
+    private val projectionMatrixInvUniform = Mat4UniformValue("projectionMatrixInv")
 
     @UniformProperty
-    private val viewMatrixInvUniform = object : Mat4Uniform() {
-        override fun getName(): String = "viewMatrixInv"
-
-        override fun getUniformValue(): Matrix4fc {
-            return this@ShadowsRenderPass.camera.viewMatrix.invert(matrix)
-        }
-    }
+    private val viewMatrixInvUniform = Mat4UniformValue("viewMatrixInv")
 
     @UniformProperty
-    private val cameraWorldPositionUniform = object : Vec3Uniform() {
-        override fun getName(): String = "cameraWorldPosition"
-
-        override fun getUniformValue(): Vector3fc {
-            return this@ShadowsRenderPass.camera.transform.position.value
-        }
-    }
+    private val cameraWorldPositionUniform = Vec3UniformValue("cameraWorldPosition")
 
     @UniformProperty
     private val pcfRadiusUniform = object : IntUniform() {
@@ -141,9 +122,13 @@ class ShadowsRenderPass(private val camera: ICamera,
         private val matrix: Matrix4f = Matrix4.create()
     }
 
-    override fun onRender(buffers: DeferredRenderingBuffers) {
-        val instance = RenderState(buffers)
+    override fun onRender(context: RenderPassContext) {
+        val instance = RenderState(context.buffers)
         this.instanceUpdatersHelper.update(instance)
+
+        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
+        this.cameraWorldPositionUniform.value = context.camera.transform.position.value
+        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
 
         this.uniformsHelper.load()
 
