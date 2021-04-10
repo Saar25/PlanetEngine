@@ -1,5 +1,8 @@
 package org.saar.core.postprocessing
 
+import org.saar.core.renderer.Renderers
+import org.saar.core.renderer.uniforms.UniformTrigger
+import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -20,8 +23,30 @@ open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPro
         Shader.createVertex(GlslVersion.V400, vertexShaderCode),
         this.prototype.fragmentShader())
 
+    private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
+        .let {
+            Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.ALWAYS)
+                .fold(it) { helper, uniform -> helper.addUniform(uniform) }
+        }
+        .let {
+            Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_INSTANCE)
+                .fold(it) { helper, uniform -> helper.addPerInstanceUniform(uniform) }
+        }
+        .let {
+            Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_RENDER_CYCLE)
+                .fold(it) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
+        }
+
+    init {
+        this.shadersProgram.bind()
+        this.uniformsHelper.initialize(this.shadersProgram)
+        this.shadersProgram.bindFragmentOutputs("f_colour")
+    }
+
     override fun process(image: ReadOnlyTexture) {
         this.shadersProgram.bind()
+
+        this.uniformsHelper.load()
 
         val context = PostProcessingContext(image)
 

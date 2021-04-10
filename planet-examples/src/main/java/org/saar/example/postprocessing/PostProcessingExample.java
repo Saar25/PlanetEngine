@@ -62,7 +62,7 @@ public class PostProcessingExample {
         screen.setReadImages(image);
 
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-                new ContrastPostProcessor(2.8f)
+                new ContrastPostProcessor(1.8f)
         );
 
         window.addResizeListener(e -> fbo.resize(
