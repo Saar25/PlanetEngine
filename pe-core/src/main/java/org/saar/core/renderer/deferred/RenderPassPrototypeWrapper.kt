@@ -1,8 +1,10 @@
 package org.saar.core.renderer.deferred
 
+import org.saar.core.renderer.RenderState
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
+import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -15,7 +17,7 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
 
     companion object {
         private val vertexShaderCode = ShaderCode.loadSource(
-            "/shaders/postprocessing/default.vertex.glsl")
+            "/shaders/deferred/quadVertex.glsl")
     }
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
@@ -36,6 +38,12 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
                 .fold(it) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
         }
 
+    private val updatersHelper: UpdatersHelper<RenderPassContext> = UpdatersHelper.empty<RenderPassContext>()
+        .let {
+            Renderers.findUniformsUpdaters<RenderPassContext>(this.prototype)
+                .fold(it) { helper, updater -> helper.addUpdater(updater) }
+        }
+
     init {
         this.shadersProgram.bind()
         this.uniformsHelper.initialize(this.shadersProgram)
@@ -52,6 +60,7 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
 
     protected open fun doRender(context: RenderPassContext) {
         this.prototype.onRender(context)
+        this.updatersHelper.update(RenderState(context))
         drawQuad()
     }
 
