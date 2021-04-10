@@ -14,7 +14,7 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RendererManager;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
@@ -91,14 +91,14 @@ public class NormalMappingExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final RendererManager shadowsRendererManager = new RendererManager(
+        final RenderersGroup shadowsRenderersGroup = new RenderersGroup(
                 normalMappedRenderer, renderer, renderer3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
 
-        final RendererManager rendererManager = new RendererManager(normalMappedRenderer, renderer3D, renderer);
+        final RenderersGroup renderersGroup = new RenderersGroup(normalMappedRenderer, renderer3D, renderer);
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype,
                 new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
@@ -107,7 +107,7 @@ public class NormalMappingExample {
         final RenderContextBase context = new RenderContextBase(
                 shadowsRenderingPath.getCamera());
         context.getHints().cullFace = GlCullFace.FRONT;
-        shadowsRendererManager.render(context);
+        shadowsRenderersGroup.render(context);
         shadowsRenderingPath.render();
 
         final Mouse mouse = window.getMouse();
@@ -121,7 +121,7 @@ public class NormalMappingExample {
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             deferredRenderer.bind();
-            rendererManager.render(new RenderContextBase(camera));
+            renderersGroup.render(new RenderContextBase(camera));
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
@@ -138,7 +138,7 @@ public class NormalMappingExample {
             current = System.currentTimeMillis();
         }
 
-        rendererManager.delete();
+        renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

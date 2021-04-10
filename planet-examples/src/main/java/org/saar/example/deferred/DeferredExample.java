@@ -8,7 +8,7 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RendererManager;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
@@ -56,7 +56,7 @@ public class DeferredExample {
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
-        final RendererManager rendererManager = new RendererManager(renderer3D, renderer);
+        final RenderersGroup renderersGroup = new RenderersGroup(renderer3D, renderer);
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
@@ -70,7 +70,7 @@ public class DeferredExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             deferredRenderer.bind();
-            rendererManager.render(new RenderContextBase(camera));
+            renderersGroup.render(new RenderContextBase(camera));
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
@@ -84,7 +84,7 @@ public class DeferredExample {
             );
         }
 
-        rendererManager.delete();
+        renderersGroup.delete();
         deferredRenderer.delete();
         window.destroy();
     }
