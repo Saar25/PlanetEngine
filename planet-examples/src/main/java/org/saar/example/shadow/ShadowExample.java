@@ -17,16 +17,20 @@ import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
+import org.saar.core.screen.Screen;
+import org.saar.core.screen.Screens;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlCullFace;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
@@ -68,8 +72,6 @@ public class ShadowExample {
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final Keyboard keyboard = window.getKeyboard();
 
         final DirectionalLight light = new DirectionalLight();
@@ -84,7 +86,10 @@ public class ShadowExample {
 
         final RenderersGroup renderersGroup = new RenderersGroup(renderer, renderer3D);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype,
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
+        final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype.asBuffers(),
                 new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
 
         shadowsRenderingPath.bind();
@@ -103,8 +108,10 @@ public class ShadowExample {
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            deferredRenderer.bind();
+            screen.setAsDraw();
+            GlUtils.clearColourAndDepthBuffer();
             renderersGroup.render(new RenderContextBase(camera));
+
             deferredRenderer.render().toMainScreen();
 
             window.update(true);

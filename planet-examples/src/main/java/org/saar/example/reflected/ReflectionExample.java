@@ -21,15 +21,19 @@ import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.screen.MainScreen;
+import org.saar.core.screen.Screen;
+import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlCullFace;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -43,6 +47,8 @@ public class ReflectionExample {
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+
+        GlUtils.setClearColour(.1f, .1f, .1f);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
@@ -73,7 +79,7 @@ public class ReflectionExample {
 
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
         final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
-                reflectionScreenPrototype, new LightRenderPass(camera));
+                reflectionScreenPrototype.asBuffers(), new LightRenderPass(camera));
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -109,7 +115,9 @@ public class ReflectionExample {
 
         final RenderersGroup renderersGroup = new RenderersGroup(flatReflectedDeferredRenderer, renderer3D, renderer);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype,
+        final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype.asBuffers(),
                 new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
 
         shadowsRenderingPath.bind();
@@ -131,8 +139,10 @@ public class ReflectionExample {
             reflectionRenderersGroup.render(new RenderContextBase(camera));
             reflection.updateReflectionMap();
 
-            deferredRenderer.bind();
+            screen.setAsDraw();
+            GlUtils.clearColourAndDepthBuffer();
             renderersGroup.render(new RenderContextBase(camera));
+
             deferredRenderer.render().toMainScreen();
 
             window.update(true);

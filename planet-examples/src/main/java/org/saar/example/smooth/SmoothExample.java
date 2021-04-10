@@ -11,11 +11,15 @@ import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
+import org.saar.core.screen.Screen;
+import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 
@@ -85,12 +89,13 @@ public class SmoothExample {
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final RenderersGroup renderersGroup = new RenderersGroup(renderer3D, renderer);
 
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
+        final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
+
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, new LightRenderPass(camera));
+                screenPrototype.asBuffers(), new LightRenderPass(camera));
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -98,8 +103,10 @@ public class SmoothExample {
         long current = System.currentTimeMillis();
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            deferredRenderer.bind();
+            screen.setAsDraw();
+            GlUtils.clearColourAndDepthBuffer();
             renderersGroup.render(new RenderContextBase(camera));
+
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
