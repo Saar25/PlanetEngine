@@ -9,6 +9,6 @@ uniform sampler2D u_contrast;
 layout (location = 0) out vec4 f_colour;
 
 void main(void) {
-    vec4 colour = texture(texture, v_position);
-    f_colour = (color - .5) * u_contrast + .5;
+    vec4 colour = texture(u_texture, v_position);
+    f_colour = texture(u_texture, v_position);
 }

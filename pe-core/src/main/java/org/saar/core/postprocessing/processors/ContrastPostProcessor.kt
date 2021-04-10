@@ -34,6 +34,7 @@ private class ContrastPostProcessorPrototype(private val contrast: Float) : Post
     override fun onRender(context: PostProcessingContext) {
         this.textureUniform.value = context.texture
         this.textureUniform.load()
+        this.contrastUniform.load()
     }
 
     override fun onDelete() {

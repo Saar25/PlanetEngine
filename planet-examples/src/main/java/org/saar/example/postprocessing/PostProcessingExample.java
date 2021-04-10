@@ -4,10 +4,17 @@ import org.saar.core.common.inference.weak.WeakInference;
 import org.saar.core.common.inference.weak.WeakMesh;
 import org.saar.core.common.inference.weak.WeakVertex;
 import org.saar.core.mesh.Mesh;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.screen.SimpleScreen;
+import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.fbos.IFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.primitive.GlFloat2;
 import org.saar.lwjgl.opengl.primitive.GlFloat3;
@@ -15,6 +22,7 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShaderCode;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class PostProcessingExample {
@@ -43,13 +51,19 @@ public class PostProcessingExample {
 
         shadersProgram.bindAttributes("in_position", "in_colour", "in_offset");
 
-        shadersProgram.bind();
+        final IFbo fbo = Fbo.create(WIDTH, HEIGHT);
+        final SimpleScreen screen = new SimpleScreen(fbo);
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
-        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        fbo.addAttachment(attachment);
-        fbo.setReadAttachment(attachment);
-        fbo.setDrawAttachments(attachment);
+        final Texture colourTexture = Texture.create();
+        final ColourScreenImage image = new ColourScreenImage(ColourAttachment.withTexture(
+                0, colourTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE));
+        screen.addScreenImage(image);
+        screen.setDrawImages(image);
+        screen.setReadImages(image);
+
+        final PostProcessingPipeline pipeline = new PostProcessingPipeline(
+                new ContrastPostProcessor(2.8f)
+        );
 
         window.addResizeListener(e -> fbo.resize(
                 e.getWidth().getAfter(), e.getHeight().getAfter()));
@@ -57,12 +71,13 @@ public class PostProcessingExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
-            fbo.bind();
+            screen.setAsDraw();
 
             GlUtils.clearColourAndDepthBuffer();
+            shadersProgram.bind();
             mesh.draw();
 
-            fbo.blitToScreen();
+            pipeline.process(colourTexture).toMainScreen();
 
             window.update(true);
             window.pollEvents();

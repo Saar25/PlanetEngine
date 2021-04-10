@@ -12,11 +12,11 @@ import org.saar.lwjgl.opengl.textures.Texture
 
 class PostProcessingScreenPrototype : ScreenPrototype {
 
-    private val colourTexture: Texture = Texture.create()
+    val colourTexture: Texture = Texture.create()
 
-    @ScreenImageProperty
+    @ScreenImageProperty(draw = true, read = true)
     private val colourImage: ScreenImage = ColourScreenImage(
         ColourAttachment.withTexture(0, this.colourTexture,
-            ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE)
+            ColourFormatType.RGBA16, FormatType.RGBA, DataType.U_BYTE)
     )
 }
