@@ -54,7 +54,7 @@ public class DeferredRenderingPath implements RenderingPath {
 
         this.pipeline.render(this.camera, this.colourTexture, this.buffers);
 
-        return new DeferredRenderingOutput(this.screen, this.buffers.getAlbedo());
+        return new DeferredRenderingOutput(this.screen, this.colourTexture);
     }
 
     @Override
