@@ -46,16 +46,21 @@ open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPro
     override fun process(image: ReadOnlyTexture) {
         this.shadersProgram.bind()
 
-        this.uniformsHelper.load()
+        doProcess(PostProcessingContext(image))
 
-        val context = PostProcessingContext(image)
+        this.shadersProgram.unbind()
+    }
 
+    protected open fun doProcess(context: PostProcessingContext) {
         this.prototype.onRender(context)
+        drawQuad()
+    }
+
+    protected fun drawQuad() {
+        this.uniformsHelper.load()
 
         Vao.EMPTY.bind()
         GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
-
-        this.shadersProgram.unbind()
     }
 
     override fun delete() {

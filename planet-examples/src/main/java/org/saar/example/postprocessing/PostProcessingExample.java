@@ -3,6 +3,7 @@ package org.saar.example.postprocessing;
 import org.saar.core.common.r2d.*;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.Renderer;
 import org.saar.core.screen.SimpleScreen;
@@ -29,7 +30,7 @@ public class PostProcessingExample {
 
         GlUtils.setClearColour(.2f, .2f, .2f);
 
-        final float s = 0.7f;
+        final float s = 1.0f;
         final Vertex2D[] vertices = {
                 R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
                 R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
@@ -53,7 +54,7 @@ public class PostProcessingExample {
 
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.8f),
-                new ContrastPostProcessor(1.8f)
+                new GaussianBlurPostProcessor(11, 2)
         );
 
         window.addResizeListener(e -> screen.resize(
