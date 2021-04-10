@@ -78,18 +78,18 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     private val depthTextureUniform = TextureUniformValue("depthTexture", 3)
 
     @UniformUpdaterProperty
-    private val colourTextureUpdater = UniformUpdater<RenderPassContext> { state ->
-        this@ShadowsRenderPassPrototype.colourTextureUniform.value = state.instance.buffers.albedo
+    private val colourTextureUpdater = UniformUpdater<RenderPassContext> { context ->
+        this@ShadowsRenderPassPrototype.colourTextureUniform.value = context.buffers.albedo
     }
 
     @UniformUpdaterProperty
-    private val normalTextureUpdater = UniformUpdater<RenderPassContext> { state ->
-        this@ShadowsRenderPassPrototype.normalTextureUniform.value = state.instance.buffers.normal
+    private val normalTextureUpdater = UniformUpdater<RenderPassContext> { context ->
+        this@ShadowsRenderPassPrototype.normalTextureUniform.value = context.buffers.normal
     }
 
     @UniformUpdaterProperty
-    private val depthTextureUpdater = UniformUpdater<RenderPassContext> { state ->
-        this@ShadowsRenderPassPrototype.depthTextureUniform.value = state.instance.buffers.depth
+    private val depthTextureUpdater = UniformUpdater<RenderPassContext> { context ->
+        this@ShadowsRenderPassPrototype.depthTextureUniform.value = context.buffers.depth
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

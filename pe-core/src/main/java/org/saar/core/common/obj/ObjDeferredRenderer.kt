@@ -27,16 +27,16 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
     private val textureUniform = TextureUniformValue("texture", 1)
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjDeferredRendererPrototype.textureUniform.value = state.instance.texture
+    private val textureUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjDeferredRendererPrototype.textureUniform.value = model.texture
     }
 
     @UniformProperty
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
     @UniformUpdaterProperty
-    private val transformUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjDeferredRendererPrototype.transformUniform.value = state.instance.transform.transformationMatrix
+    private val transformUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjDeferredRendererPrototype.transformUniform.value = model.transform.transformationMatrix
     }
 
     @ShaderProperty(ShaderType.VERTEX)
@@ -59,7 +59,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         GlUtils.enableDepthTest()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<ObjModel>) {
+    override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())

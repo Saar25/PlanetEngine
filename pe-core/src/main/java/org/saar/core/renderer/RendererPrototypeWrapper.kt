@@ -72,11 +72,9 @@ open class RendererPrototypeWrapper<T : Model>(
     }
 
     protected open fun renderModel(context: RenderContext, model: T) {
-        val state = RenderState(model)
+        this.prototype.onInstanceDraw(context, model)
 
-        this.prototype.onInstanceDraw(context, state)
-
-        this.updatersHelper.update(state)
+        this.updatersHelper.update(model)
         this.uniformsHelper.loadPerInstance()
 
         doRenderModel(context, model)

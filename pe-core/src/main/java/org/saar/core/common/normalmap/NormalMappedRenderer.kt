@@ -32,18 +32,18 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformUpdaterProperty
-    private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRendererPrototype.transformationUniform.value = state.instance.transform.transformationMatrix
+    private val transformationUpdater = UniformUpdater<NormalMappedModel> { model ->
+        this@NormalMappedRendererPrototype.transformationUniform.value = model.transform.transformationMatrix
     }
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRendererPrototype.textureUniform.value = state.instance.texture
+    private val textureUpdater = UniformUpdater<NormalMappedModel> { model ->
+        this@NormalMappedRendererPrototype.textureUniform.value = model.texture
     }
 
     @UniformUpdaterProperty
-    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRendererPrototype.normalMapUniform.value = state.instance.normalMap
+    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { model ->
+        this@NormalMappedRendererPrototype.normalMapUniform.value = model.normalMap
     }
 
     @ShaderProperty(ShaderType.VERTEX)
@@ -63,7 +63,7 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
         GlUtils.enableDepthTest()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<NormalMappedModel>) {
+    override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())

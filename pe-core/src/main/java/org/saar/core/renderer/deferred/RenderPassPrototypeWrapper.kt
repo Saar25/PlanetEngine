@@ -1,6 +1,5 @@
 package org.saar.core.renderer.deferred
 
-import org.saar.core.renderer.RenderState
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
@@ -60,7 +59,7 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
 
     protected open fun doRender(context: RenderPassContext) {
         this.prototype.onRender(context)
-        this.updatersHelper.update(RenderState(context))
+        this.updatersHelper.update(context)
         drawQuad()
     }
 

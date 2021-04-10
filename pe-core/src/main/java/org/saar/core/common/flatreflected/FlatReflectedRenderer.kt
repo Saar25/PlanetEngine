@@ -53,10 +53,10 @@ private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnly
         GlUtils.setProvokingVertexFirst()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<FlatReflectedModel>) {
+    override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
+        val m = model.transform.transformationMatrix
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
     }

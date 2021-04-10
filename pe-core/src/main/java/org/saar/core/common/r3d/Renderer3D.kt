@@ -1,6 +1,9 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
@@ -38,10 +41,10 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
         GlUtils.setProvokingVertexFirst()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<Model3D>) {
+    override fun onInstanceDraw(context: RenderContext, model: Model3D) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
+        val m = model.transform.transformationMatrix
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
     }

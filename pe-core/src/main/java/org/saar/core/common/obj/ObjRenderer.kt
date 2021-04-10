@@ -26,16 +26,16 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
     private val textureUniform = TextureUniformValue("texture", 0)
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjRendererPrototype.textureUniform.value = state.instance.texture
+    private val textureUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjRendererPrototype.textureUniform.value = model.texture
     }
 
     @UniformProperty
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
     @UniformUpdaterProperty
-    private val transformUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjRendererPrototype.transformUniform.value = state.instance.transform.transformationMatrix
+    private val transformUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjRendererPrototype.transformUniform.value = model.transform.transformationMatrix
     }
 
     @ShaderProperty(ShaderType.VERTEX)
@@ -55,7 +55,7 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
         GlUtils.enableDepthTest()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<ObjModel>) {
+    override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
