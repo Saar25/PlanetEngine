@@ -30,7 +30,7 @@ public class PostProcessingExample {
 
         GlUtils.setClearColour(.2f, .2f, .2f);
 
-        final float s = 1.0f;
+        final float s = 0.7f;
         final Vertex2D[] vertices = {
                 R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
                 R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),

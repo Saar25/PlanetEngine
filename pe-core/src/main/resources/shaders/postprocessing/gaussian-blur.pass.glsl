@@ -32,7 +32,7 @@ void main(void) {
 vec4 doBlur(vec2 xy) {
     vec4 colour = vec4(0);
     vec2 size = u_resolution * xy;
-    float step = 5.0 / (size.x + size.y);
+    float step = 1.0 / (size.x + size.y);
     for (int i = -hlevels; i <= hlevels; i++) {
         vec2 coord = v_position + vec2(i, i) * step * xy;
         coord.x = clamp(coord.x, .001, .999);
