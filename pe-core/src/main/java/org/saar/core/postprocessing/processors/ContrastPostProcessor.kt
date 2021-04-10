@@ -1,5 +1,6 @@
 package org.saar.core.postprocessing.processors
 
+import org.saar.core.postprocessing.PostProcessingContext
 import org.saar.core.postprocessing.PostProcessor
 import org.saar.core.postprocessing.PostProcessorPrototype
 import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
@@ -30,7 +31,9 @@ private class ContrastPostProcessorPrototype : PostProcessorPrototype {
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl"))
 
-    override fun onRender() {
+    override fun onRender(context: PostProcessingContext) {
+        this.textureUniform.value = context.texture
+        this.textureUniform.load()
     }
 
     override fun onDelete() {

@@ -9,7 +9,7 @@ import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlRendering
 
-class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPrototype) : PostProcessor {
+open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPrototype) : PostProcessor {
 
     companion object {
         private val vertexShaderCode = ShaderCode.loadSource(
@@ -23,7 +23,9 @@ class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPrototyp
     override fun process(image: ReadOnlyTexture) {
         this.shadersProgram.bind()
 
-        this.prototype.onRender()
+        val context = PostProcessingContext(image)
+
+        this.prototype.onRender(context)
 
         Vao.EMPTY.bind()
         GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
