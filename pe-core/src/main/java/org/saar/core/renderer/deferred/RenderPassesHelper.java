@@ -12,6 +12,14 @@ public abstract class RenderPassesHelper {
         return Empty.EMPTY;
     }
 
+    public static RenderPassesHelper of(RenderPass... renderPasses) {
+        RenderPassesHelper helper = empty();
+        for (RenderPass renderPass : renderPasses) {
+            helper = helper.addRenderPass(renderPass);
+        }
+        return helper;
+    }
+
     public abstract RenderPassesHelper addRenderPass(RenderPass renderPass);
 
     public abstract RenderPassesHelper removeRenderPass(RenderPass renderPass);

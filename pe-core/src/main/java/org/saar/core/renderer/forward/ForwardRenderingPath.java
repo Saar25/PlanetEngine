@@ -9,20 +9,12 @@ public class ForwardRenderingPath implements RenderingPath {
 
     private final OffScreen screen;
     private final ICamera camera;
+    private final RenderersHelper helper;
 
-    private RenderersHelper helper = RenderersHelper.empty();
-
-    public ForwardRenderingPath(OffScreen screen, ICamera camera) {
+    public ForwardRenderingPath(OffScreen screen, ICamera camera, Renderer... renderers) {
         this.screen = screen;
         this.camera = camera;
-    }
-
-    public void addRenderer(Renderer renderer) {
-        this.helper = this.helper.addRenderer(renderer);
-    }
-
-    public void removeRenderer(Renderer renderer) {
-        this.helper = this.helper.removeRenderer(renderer);
+        this.helper = RenderersHelper.of(renderers);
     }
 
     private void checkSize() {

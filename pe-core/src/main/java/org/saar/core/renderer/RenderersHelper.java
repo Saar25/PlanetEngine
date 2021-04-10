@@ -10,6 +10,14 @@ public abstract class RenderersHelper {
         return Empty.EMPTY;
     }
 
+    public static RenderersHelper of(Renderer... renderers) {
+        RenderersHelper helper = empty();
+        for (Renderer renderPass : renderers) {
+            helper = helper.addRenderer(renderPass);
+        }
+        return helper;
+    }
+
     public abstract RenderersHelper addRenderer(Renderer renderer);
 
     public abstract RenderersHelper removeRenderer(Renderer renderer);

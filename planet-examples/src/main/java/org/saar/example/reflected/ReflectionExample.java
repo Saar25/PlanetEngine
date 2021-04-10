@@ -12,6 +12,8 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RendererManager;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
@@ -27,6 +29,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlCullFace;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -65,11 +68,12 @@ public class ReflectionExample {
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
         final Camera reflectionCamera = new Camera(projection);
+
+        final RendererManager reflectionRendererManager = new RendererManager(renderer, renderer3D);
+
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
-        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(reflectionCamera, reflectionScreenPrototype);
-        reflectionRenderingPath.addRenderer(renderer);
-        reflectionRenderingPath.addRenderer(renderer3D);
-        reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
+        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
+                reflectionScreenPrototype, new LightRenderPass(camera));
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -96,20 +100,23 @@ public class ReflectionExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
+
+        final RendererManager shadowsRendererManager = new RendererManager(renderer, renderer3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
-        shadowsRenderingPath.addRenderer(renderer3D);
-        shadowsRenderingPath.addRenderer(renderer);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(flatReflectedDeferredRenderer);
-        deferredRenderer.addRenderer(renderer3D);
-        deferredRenderer.addRenderer(renderer);
+        final RendererManager rendererManager = new RendererManager(flatReflectedDeferredRenderer, renderer3D, renderer);
 
-        deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
-                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype,
+                new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+
+        shadowsRenderingPath.bind();
+        final RenderContextBase context = new RenderContextBase(
+                shadowsRenderingPath.getCamera());
+        context.getHints().cullFace = GlCullFace.FRONT;
+        shadowsRendererManager.render(context);
         shadowsRenderingPath.render();
 
         final Mouse mouse = window.getMouse();
@@ -121,8 +128,11 @@ public class ReflectionExample {
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            reflectionRendererManager.render(new RenderContextBase(camera));
             reflection.updateReflectionMap();
 
+            deferredRenderer.bind();
+            rendererManager.render(new RenderContextBase(camera));
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
@@ -138,8 +148,8 @@ public class ReflectionExample {
             current = System.currentTimeMillis();
         }
 
-        renderer.delete();
         reflection.delete();
+        rendererManager.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

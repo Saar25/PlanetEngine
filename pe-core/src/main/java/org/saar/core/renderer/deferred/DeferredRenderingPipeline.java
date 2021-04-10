@@ -15,11 +15,12 @@ public class DeferredRenderingPipeline {
 
     private final OffScreen screen;
     private final OffScreen output;
-    private RenderPassesHelper helper = RenderPassesHelper.empty();
+    private final RenderPassesHelper helper;
 
-    public DeferredRenderingPipeline(OffScreen output) {
+    public DeferredRenderingPipeline(OffScreen output, RenderPass... renderPasses) {
         this.output = output;
         this.screen = screen();
+        this.helper = RenderPassesHelper.of(renderPasses);
     }
 
     private static OffScreen screen() {
@@ -35,14 +36,6 @@ public class DeferredRenderingPipeline {
         screen.setDrawImages(image);
         screen.setReadImages(image);
         return screen;
-    }
-
-    public void addRenderPass(RenderPass renderPass) {
-        this.helper = this.helper.addRenderPass(renderPass);
-    }
-
-    public void removeRenderPass(RenderPass renderPass) {
-        this.helper = this.helper.removeRenderPass(renderPass);
     }
 
     public void resize(int width, int height) {

@@ -10,6 +10,8 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RendererManager;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
@@ -24,6 +26,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlCullFace;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
@@ -73,19 +76,22 @@ public class ShadowExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
+        final RendererManager shadowsRendererManager = new RendererManager(renderer, renderer3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
-        shadowsRenderingPath.addRenderer(renderer3D);
-        shadowsRenderingPath.addRenderer(renderer);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(renderer);
-        deferredRenderer.addRenderer(renderer3D);
+        final RendererManager rendererManager = new RendererManager(renderer, renderer3D);
 
-        deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
-                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(screenPrototype,
+                new ShadowsRenderPass(camera, shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+
+        shadowsRenderingPath.bind();
+        final RenderContextBase context = new RenderContextBase(
+                shadowsRenderingPath.getCamera());
+        context.getHints().cullFace = GlCullFace.FRONT;
+        shadowsRendererManager.render(context);
         shadowsRenderingPath.render();
 
         final Mouse mouse = window.getMouse();
@@ -97,6 +103,8 @@ public class ShadowExample {
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            deferredRenderer.bind();
+            rendererManager.render(new RenderContextBase(camera));
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
@@ -112,7 +120,7 @@ public class ShadowExample {
             fps.update();
         }
 
-        renderer.delete();
+        rendererManager.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
