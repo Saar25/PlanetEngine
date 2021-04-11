@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.textures.Texture
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class DeferredRenderingPipeline(private vararg val renderPasses: RenderPass) {
+class RenderPassesPipeline(private vararg val renderPasses: RenderPass) {
 
     private val prototype = RenderPassesScreenPrototype()
 

@@ -15,7 +15,7 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
@@ -80,10 +80,10 @@ public class ReflectionExample {
 
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
 
-        final DeferredRenderingPipeline reflectionRenderingPipeline = new DeferredRenderingPipeline(new LightRenderPass());
+        final RenderPassesPipeline reflectionRenderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
 
         final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
-                camera, reflectionScreenPrototype.asBuffers(), reflectionRenderingPipeline);
+                camera, reflectionScreenPrototype.asBuffers(), reflectionRenderPassesPipeline);
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -121,12 +121,12 @@ public class ReflectionExample {
 
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
-        final DeferredRenderingPipeline deferredRenderingPipeline = new DeferredRenderingPipeline(
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, screenPrototype.asBuffers(), deferredRenderingPipeline);
+                camera, screenPrototype.asBuffers(), renderPassesPipeline);
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(

@@ -6,10 +6,10 @@ import org.saar.core.renderer.RenderingPath;
 public class DeferredRenderingPath implements RenderingPath {
 
     private final ICamera camera;
-    private final DeferredRenderingPipeline pipeline;
+    private final RenderPassesPipeline pipeline;
     private final DeferredRenderingBuffers buffers;
 
-    public DeferredRenderingPath(ICamera camera, DeferredRenderingBuffers buffers, DeferredRenderingPipeline pipeline) {
+    public DeferredRenderingPath(ICamera camera, DeferredRenderingBuffers buffers, RenderPassesPipeline pipeline) {
         this.camera = camera;
         this.pipeline = pipeline;
         this.buffers = buffers;
