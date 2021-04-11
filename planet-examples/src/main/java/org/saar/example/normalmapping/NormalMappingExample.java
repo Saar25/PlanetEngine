@@ -15,7 +15,6 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -23,6 +22,7 @@ import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
+import org.saar.core.renderer.deferred.ssao.SsaoRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
@@ -105,7 +105,8 @@ public class NormalMappingExample {
         final RenderersGroup renderersGroup = new RenderersGroup(normalMappedRenderer, renderer3D, renderer);
 
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light),
+                new SsaoRenderPass()
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
@@ -127,8 +128,7 @@ public class NormalMappingExample {
         GlUtils.setClearColour(0, .7f, .9f);
 
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-                new ContrastPostProcessor(1.8f),
-                new GaussianBlurPostProcessor(19, 3)
+                new ContrastPostProcessor(1.3f)
         );
 
         long current = System.currentTimeMillis();
