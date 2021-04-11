@@ -22,14 +22,11 @@ import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.screen.MainScreen;
-import org.saar.core.screen.Screen;
-import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
@@ -76,14 +73,14 @@ public class ReflectionExample {
 
         final Camera reflectionCamera = new Camera(projection);
 
-        final RenderersGroup reflectionRenderersGroup = new RenderersGroup(renderer, renderer3D);
-
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
+
+        final RenderersGroup reflectionRenderersGroup = new RenderersGroup(renderer, renderer3D);
 
         final RenderPassesPipeline reflectionRenderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
 
         final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
-                camera, reflectionScreenPrototype.asBuffers(), reflectionRenderPassesPipeline);
+                reflectionScreenPrototype, camera, reflectionRenderersGroup, reflectionRenderPassesPipeline);
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -100,7 +97,6 @@ public class ReflectionExample {
         final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());
         final Reflection reflection = new Reflection(mirrorPlane, camera, reflectionCamera, reflectionRenderingPath);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
                 new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
 
@@ -117,16 +113,16 @@ public class ReflectionExample {
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
 
-        final RenderersGroup renderersGroup = new RenderersGroup(flatReflectedDeferredRenderer, renderer3D, renderer);
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
+        final RenderersGroup renderersGroup = new RenderersGroup(flatReflectedDeferredRenderer, renderer3D, renderer);
 
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, screenPrototype.asBuffers(), renderPassesPipeline);
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(
@@ -146,10 +142,6 @@ public class ReflectionExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             reflectionRenderersGroup.render(new RenderContextBase(camera));
             reflection.updateReflectionMap();
-
-            screen.setAsDraw();
-            GlUtils.clearColourAndDepthBuffer();
-            renderersGroup.render(new RenderContextBase(camera));
 
             deferredRenderer.render().toMainScreen();
 

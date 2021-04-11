@@ -18,20 +18,16 @@ import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
-import org.saar.core.screen.Screen;
-import org.saar.core.screen.Screens;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlCullFace;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
@@ -85,17 +81,16 @@ public class ShadowExample {
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light);
 
-        final RenderersGroup renderersGroup = new RenderersGroup(renderer, renderer3D);
-
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-        final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
+
+        final RenderersGroup renderersGroup = new RenderersGroup(renderer, renderer3D);
 
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, screenPrototype.asBuffers(), renderPassesPipeline);
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(
@@ -113,10 +108,6 @@ public class ShadowExample {
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            screen.setAsDraw();
-            GlUtils.clearColourAndDepthBuffer();
-            renderersGroup.render(new RenderContextBase(camera));
-
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
