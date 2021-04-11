@@ -8,9 +8,11 @@ class PostProcessingPipeline(private vararg val processors: PostProcessor) {
 
     private val screenPrototype = PostProcessingScreenPrototype()
 
-    private val screen = Screens.fromPrototype(this.screenPrototype, Fbo.create(1200, 700))
+    private val screen = Screens.fromPrototype(this.screenPrototype, Fbo.create(0, 0))
 
     fun process(texture: ReadOnlyTexture): PostProcessingOutput {
+        this.screen.resizeToMainScreen()
+
         var lastTexture = texture
         this.screen.setAsDraw()
         for (processor in this.processors) {

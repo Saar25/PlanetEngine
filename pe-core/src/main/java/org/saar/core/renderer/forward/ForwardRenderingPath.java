@@ -25,17 +25,9 @@ public class ForwardRenderingPath implements RenderingPath {
         this.renderers = renderers;
     }
 
-    private void checkSize() {
-        final int width = MainScreen.getInstance().getWidth();
-        final int height = MainScreen.getInstance().getHeight();
-        if (this.screen.getWidth() != width || this.screen.getHeight() != height) {
-            this.screen.resize(width, height);
-        }
-    }
-
     @Override
     public RenderingOutput render() {
-        checkSize();
+        this.screen.resizeToMainScreen();
 
         this.screen.setAsDraw();
 

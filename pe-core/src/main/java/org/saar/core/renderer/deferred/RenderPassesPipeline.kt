@@ -12,12 +12,14 @@ class RenderPassesPipeline(private vararg val renderPasses: RenderPass) {
 
     private val prototype = RenderPassesScreenPrototype()
 
-    private val screen: OffScreen = Screens.fromPrototype(this.prototype, Fbo.create(1200, 700))
+    private val screen: OffScreen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
     private val colourTexture: Texture
         get() = this.prototype.colourTexture
 
     fun process(camera: ICamera, buffers: DeferredRenderingBuffers): DeferredRenderingOutput {
+        this.screen.resizeToMainScreen();
+
         this.screen.setAsDraw()
         GlUtils.clear(GlBuffer.COLOUR)
 
