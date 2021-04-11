@@ -19,6 +19,7 @@ import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
@@ -107,8 +108,12 @@ public class NormalMappingExample {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype.asBuffers(),
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+        final DeferredRenderingPipeline deferredRenderingPipeline = new DeferredRenderingPipeline(
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
+        );
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                camera, screenPrototype.asBuffers(), deferredRenderingPipeline);
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(

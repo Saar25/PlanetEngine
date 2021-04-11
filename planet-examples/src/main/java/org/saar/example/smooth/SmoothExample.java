@@ -9,6 +9,7 @@ import org.saar.core.common.terrain.smooth.SmoothTerrain;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
@@ -94,8 +95,10 @@ public class SmoothExample {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
+        final DeferredRenderingPipeline deferredRenderingPipeline = new DeferredRenderingPipeline(new LightRenderPass());
+
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, screenPrototype.asBuffers(), new LightRenderPass());
+                camera, screenPrototype.asBuffers(), deferredRenderingPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);

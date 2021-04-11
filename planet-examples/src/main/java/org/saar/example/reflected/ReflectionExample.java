@@ -15,6 +15,7 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
@@ -78,8 +79,11 @@ public class ReflectionExample {
         final RenderersGroup reflectionRenderersGroup = new RenderersGroup(renderer, renderer3D);
 
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
+
+        final DeferredRenderingPipeline reflectionRenderingPipeline = new DeferredRenderingPipeline(new LightRenderPass());
+
         final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
-                camera, reflectionScreenPrototype.asBuffers(), new LightRenderPass());
+                camera, reflectionScreenPrototype.asBuffers(), reflectionRenderingPipeline);
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -117,8 +121,12 @@ public class ReflectionExample {
 
         final Screen screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT));
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype.asBuffers(),
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
+        final DeferredRenderingPipeline deferredRenderingPipeline = new DeferredRenderingPipeline(
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
+        );
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                camera, screenPrototype.asBuffers(), deferredRenderingPipeline);
 
         shadowsRenderingPath.bind();
         final RenderContextBase context = new RenderContextBase(

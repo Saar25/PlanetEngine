@@ -24,9 +24,9 @@ public class DeferredRenderingPath implements RenderingPath {
 
     private final Texture colourTexture = Texture.create();
 
-    public DeferredRenderingPath(ICamera camera, DeferredRenderingBuffers buffers, RenderPass... renderPasses) {
+    public DeferredRenderingPath(ICamera camera, DeferredRenderingBuffers buffers, DeferredRenderingPipeline pipeline) {
         this.camera = camera;
-        this.pipeline = new DeferredRenderingPipeline(renderPasses);
+        this.pipeline = pipeline;
         this.screen = screen(this.colourTexture);
         this.buffers = buffers;
     }
