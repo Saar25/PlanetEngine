@@ -12,7 +12,10 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
@@ -27,19 +30,22 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
 
 public class ReflectionExample {
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 500;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 700;
 
     private static float scrollSpeed = 50f;
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+
+        GlUtils.setClearColour(.1f, .1f, .1f);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
@@ -65,11 +71,15 @@ public class ReflectionExample {
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
         final Camera reflectionCamera = new Camera(projection);
+
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
-        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(reflectionCamera, reflectionScreenPrototype);
-        reflectionRenderingPath.addRenderer(renderer);
-        reflectionRenderingPath.addRenderer(renderer3D);
-        reflectionRenderingPath.addRenderPass(new LightRenderPass(camera));
+
+        final RenderersGroup reflectionRenderersGroup = new RenderersGroup(renderer, renderer3D);
+
+        final RenderPassesPipeline reflectionRenderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
+
+        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
+                reflectionScreenPrototype, camera, reflectionRenderersGroup, reflectionRenderPassesPipeline);
 
         final FlatReflectedVertex[] vertices = {
                 FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
@@ -86,7 +96,6 @@ public class ReflectionExample {
         final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());
         final Reflection reflection = new Reflection(mirrorPlane, camera, reflectionCamera, reflectionRenderingPath);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
                 new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
 
@@ -96,21 +105,24 @@ public class ReflectionExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
+
+        final RenderersGroup shadowsRenderersGroup = new RenderersGroup(renderer, renderer3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light);
-        shadowsRenderingPath.addRenderer(renderer3D);
-        shadowsRenderingPath.addRenderer(renderer);
+                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderersGroup);
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(flatReflectedDeferredRenderer);
-        deferredRenderer.addRenderer(renderer3D);
-        deferredRenderer.addRenderer(renderer);
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
-                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
-        shadowsRenderingPath.render();
+        final RenderersGroup renderersGroup = new RenderersGroup(flatReflectedDeferredRenderer, renderer3D, renderer);
+
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+        );
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -121,6 +133,7 @@ public class ReflectionExample {
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            reflectionRenderersGroup.render(new RenderContextBase(camera));
             reflection.updateReflectionMap();
 
             deferredRenderer.render().toMainScreen();
@@ -138,8 +151,8 @@ public class ReflectionExample {
             current = System.currentTimeMillis();
         }
 
-        renderer.delete();
         reflection.delete();
+        renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

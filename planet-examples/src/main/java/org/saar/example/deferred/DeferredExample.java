@@ -7,7 +7,9 @@ import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
@@ -16,6 +18,7 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 
 public class DeferredExample {
@@ -25,6 +28,8 @@ public class DeferredExample {
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+
+        GlUtils.setClearColour(.1f, .1f, .1f);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
@@ -56,10 +61,12 @@ public class DeferredExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(renderer3D);
-        deferredRenderer.addRenderer(renderer);
-        deferredRenderer.addRenderPass(new LightRenderPass(camera));
+        final RenderersGroup renderersGroup = new RenderersGroup(renderer3D, renderer);
+
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -67,7 +74,6 @@ public class DeferredExample {
         long current = System.currentTimeMillis();
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
@@ -81,7 +87,7 @@ public class DeferredExample {
             );
         }
 
-        renderer.delete();
+        renderersGroup.delete();
         deferredRenderer.delete();
         window.destroy();
     }

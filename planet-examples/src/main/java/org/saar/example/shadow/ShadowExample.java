@@ -10,7 +10,10 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
@@ -24,6 +27,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlCullFace;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
@@ -65,28 +69,29 @@ public class ShadowExample {
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final Keyboard keyboard = window.getKeyboard();
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
+        final RenderersGroup shadowsRenderersGroup = new RenderersGroup(renderer, renderer3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light);
-        shadowsRenderingPath.addRenderer(renderer3D);
-        shadowsRenderingPath.addRenderer(renderer);
+                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderersGroup);
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(renderer);
-        deferredRenderer.addRenderer(renderer3D);
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
-                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
-        shadowsRenderingPath.render();
+        final RenderersGroup renderersGroup = new RenderersGroup(renderer, renderer3D);
+
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+        );
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -112,7 +117,7 @@ public class ShadowExample {
             fps.update();
         }
 
-        renderer.delete();
+        renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

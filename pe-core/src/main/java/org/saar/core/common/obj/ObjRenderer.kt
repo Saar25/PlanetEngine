@@ -14,7 +14,10 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(), Renderer {
+class ObjRenderer(vararg models: ObjModel) : Renderer,
+    RendererPrototypeWrapper<ObjModel>(ObjRendererPrototype(), *models)
+
+private class ObjRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
@@ -23,16 +26,16 @@ class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(), Ren
     private val textureUniform = TextureUniformValue("texture", 0)
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjRenderer.textureUniform.value = state.instance.texture
+    private val textureUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjRendererPrototype.textureUniform.value = model.texture
     }
 
     @UniformProperty
     private val transformUniform = Mat4UniformValue("transformationMatrix")
 
     @UniformUpdaterProperty
-    private val transformUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjRenderer.transformUniform.setValue(state.instance.transform.transformationMatrix)
+    private val transformUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjRendererPrototype.transformUniform.value = model.transform.transformationMatrix
     }
 
     @ShaderProperty(ShaderType.VERTEX)
@@ -43,40 +46,18 @@ class ObjRenderer(private vararg val models: ObjModel) : AbstractRenderer(), Ren
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/obj/fragment.glsl"))
 
-    companion object {
-        private val matrix = Matrix4.create()
-    }
+    override fun vertexAttributes() = arrayOf(
+        "in_position", "in_uvCoord", "in_normal")
 
-    init {
-        init()
-        bindAttributes("in_position", "in_uvCoord", "in_normal")
-    }
-
-    override fun preRender(context: RenderContext) {
+    override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, matrix)
-        this.viewProjectionUniform.load()
-
-        for (model in this.models) {
-            val state = RenderState(model)
-            transformUpdater.update(state)
-            transformUniform.load()
-            textureUpdater.update(state)
-            textureUniform.load()
-            model.draw()
-        }
-    }
-
-    override fun onDelete() {
-        for (model in this.models) {
-            model.delete()
-        }
+        this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
     }
 }

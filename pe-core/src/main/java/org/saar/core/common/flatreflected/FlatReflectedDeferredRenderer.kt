@@ -1,8 +1,6 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.renderer.AbstractRenderer
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderState
+import org.saar.core.renderer.*
 import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -15,9 +13,12 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedModel,
-                                    private val reflectionMap: ReadOnlyTexture)
-    : AbstractRenderer(), DeferredRenderer {
+class FlatReflectedDeferredRenderer(vararg models: FlatReflectedModel,
+                                    reflectionMap: ReadOnlyTexture) : DeferredRenderer,
+    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDefeRendererPrototype(reflectionMap), *models)
+
+private class FlatReflectedDefeRendererPrototype(private val reflectionMap: ReadOnlyTexture) :
+    RendererPrototype<FlatReflectedModel> {
 
     @UniformProperty
     private val reflectionMapUniform = object : TextureUniform() {
@@ -26,7 +27,7 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
         override fun getName(): String = "u_reflectionMap"
 
         override fun getUniformValue(): ReadOnlyTexture {
-            return this@FlatReflectedDeferredRenderer.reflectionMap
+            return this@FlatReflectedDefeRendererPrototype.reflectionMap
         }
     }
 
@@ -44,45 +45,22 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.dfragment.glsl"))
 
-    companion object {
-        private val matrix = Matrix4.create()
-    }
+    override fun vertexAttributes() = arrayOf(
+        "in_position", "in_normal")
 
-    init {
-        init()
-        bindAttributes("in_position", "in_normal")
-    }
-
-    override fun preRender(context: RenderContext) {
+    override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
     }
 
-    override fun onRender(context: RenderContext) {
-        this.reflectionMapUniform.load()
+    override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
+        val v = context.camera.viewMatrix
+        val p = context.camera.projection.matrix
+        val m = model.transform.transformationMatrix
 
-        for (model in this.models) {
-            val state = RenderState(model)
-
-            val v = context.camera.viewMatrix
-            val p = context.camera.projection.matrix
-            val m = state.instance.transform.transformationMatrix
-
-            this.mvpMatrixUniform.value = p.mul(v, matrix).mul(m)
-            this.mvpMatrixUniform.load()
-
-            this.normalUniform.value = state.instance.normal
-            this.normalUniform.load()
-
-            model.draw()
-        }
-    }
-
-    override fun onDelete() {
-        for (model in this.models) {
-            model.delete()
-        }
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.normalUniform.value = model.normal
     }
 }

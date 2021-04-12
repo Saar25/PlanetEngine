@@ -6,7 +6,9 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.smooth.*;
 import org.saar.core.common.terrain.smooth.SmoothTerrain;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
@@ -85,10 +87,12 @@ public class SmoothExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(renderer3D);
-        deferredRenderer.addRenderer(renderer);
-        deferredRenderer.addRenderPass(new LightRenderPass(camera));
+        final RenderersGroup renderersGroup = new RenderersGroup(renderer3D, renderer);
+
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -96,7 +100,6 @@ public class SmoothExample {
         long current = System.currentTimeMillis();
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
@@ -116,7 +119,7 @@ public class SmoothExample {
             }
         }
 
-        renderer.delete();
+        renderersGroup.delete();
         deferredRenderer.delete();
         window.destroy();
     }

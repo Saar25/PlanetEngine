@@ -1,52 +1,44 @@
 package org.saar.core.renderer.forward;
 
 import org.saar.core.camera.ICamera;
-import org.saar.core.renderer.*;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.renderer.RenderingOutput;
+import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.Screens;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 
 public class ForwardRenderingPath implements RenderingPath {
 
+    private final ForwardScreenPrototype prototype;
     private final OffScreen screen;
     private final ICamera camera;
+    private final RenderersGroup renderers;
 
-    private RenderersHelper helper = RenderersHelper.empty();
+    public ForwardRenderingPath(ForwardScreenPrototype prototype, ICamera camera, RenderersGroup renderers) {
+        this.prototype = prototype;
+        this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
 
-    public ForwardRenderingPath(OffScreen screen, ICamera camera) {
-        this.screen = screen;
         this.camera = camera;
-    }
-
-    public void addRenderer(Renderer renderer) {
-        this.helper = this.helper.addRenderer(renderer);
-    }
-
-    public void removeRenderer(Renderer renderer) {
-        this.helper = this.helper.removeRenderer(renderer);
-    }
-
-    private void checkSize() {
-        final int width = MainScreen.getInstance().getWidth();
-        final int height = MainScreen.getInstance().getHeight();
-        if (this.screen.getWidth() != width || this.screen.getHeight() != height) {
-            this.screen.resize(width, height);
-        }
+        this.renderers = renderers;
     }
 
     @Override
     public RenderingOutput render() {
-        checkSize();
+        this.screen.resizeToMainScreen();
 
         this.screen.setAsDraw();
 
-        this.helper.render(new RenderContextBase(this.camera));
+        this.renderers.render(new RenderContextBase(this.camera));
 
-        return new ForwardRenderingOutput(this.screen);
+        return new ForwardRenderingOutput(this.screen, this.prototype.getColourTexture());
     }
 
     @Override
     public void delete() {
-        this.helper.delete();
+        this.renderers.delete();
         this.screen.delete();
     }
 }

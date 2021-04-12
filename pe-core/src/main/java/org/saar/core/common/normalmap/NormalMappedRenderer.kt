@@ -14,7 +14,10 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer(private vararg val models: NormalMappedModel) : AbstractRenderer(), Renderer {
+class NormalMappedRenderer(vararg models: NormalMappedModel) : Renderer,
+    RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype(), *models)
+
+private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedModel> {
 
     @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
@@ -29,18 +32,18 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformUpdaterProperty
-    private val transformationUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRenderer.transformationUniform.setValue(state.instance.transform.transformationMatrix)
+    private val transformationUpdater = UniformUpdater<NormalMappedModel> { model ->
+        this@NormalMappedRendererPrototype.transformationUniform.value = model.transform.transformationMatrix
     }
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRenderer.textureUniform.value = state.instance.texture
+    private val textureUpdater = UniformUpdater<NormalMappedModel> { model ->
+        this@NormalMappedRendererPrototype.textureUniform.value = model.texture
     }
 
     @UniformUpdaterProperty
-    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { state ->
-        this@NormalMappedRenderer.normalMapUniform.value = state.instance.normalMap
+    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { model ->
+        this@NormalMappedRendererPrototype.normalMapUniform.value = model.normalMap
     }
 
     @ShaderProperty(ShaderType.VERTEX)
@@ -51,48 +54,18 @@ class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Abstr
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/normal-map/normal-map.fragment.glsl"))
 
-    companion object {
-        private val matrix = Matrix4.create()
-    }
+    override fun vertexAttributes() = arrayOf(
+        "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent")
 
-    init {
-        init()
-        bindAttributes("in_position", "in_uvCoord",
-            "in_normal", "in_tangent", "in_biTangent")
-        bindFragmentOutputs("f_colour")
-    }
-
-    override fun preRender(context: RenderContext) {
+    override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
     }
 
-    override fun onRender(context: RenderContext) {
+    override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, matrix)
-        this.viewProjectionUniform.load()
-
-        for (model in this.models) {
-            val state = RenderState(model)
-
-            this.transformationUpdater.update(state)
-            this.transformationUniform.load()
-
-            this.textureUpdater.update(state)
-            this.textureUniform.load()
-
-            this.normalMapUpdater.update(state)
-            this.normalMapUniform.load()
-
-            model.draw()
-        }
-    }
-
-    override fun onDelete() {
-        for (model in this.models) {
-            model.delete()
-        }
+        this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
     }
 }
