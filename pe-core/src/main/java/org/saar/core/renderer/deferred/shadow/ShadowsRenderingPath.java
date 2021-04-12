@@ -3,11 +3,12 @@ package org.saar.core.renderer.deferred.shadow;
 import org.joml.Vector3fc;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.light.IDirectionalLight;
+import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
@@ -17,6 +18,7 @@ import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
 import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting;
 import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlCullFace;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ShadowsRenderingPath implements RenderingPath {
@@ -24,10 +26,12 @@ public class ShadowsRenderingPath implements RenderingPath {
     private final ShadowsScreenPrototype prototype = new ShadowsScreenPrototype();
     private final ShadowsCamera camera;
     private final OffScreen screen;
+    private final RenderersGroup renderers;
 
     public ShadowsRenderingPath(ShadowsQuality quality, OrthographicProjection projection,
-                                IDirectionalLight light) {
+                                IDirectionalLight light, RenderersGroup renderers) {
         this.camera = camera(projection, light.getDirection());
+        this.renderers = renderers;
 
         final Fbo fbo = Fbo.create(quality.getImageSize(), quality.getImageSize());
         this.screen = Screens.fromPrototype(this.prototype, fbo);
@@ -45,26 +49,25 @@ public class ShadowsRenderingPath implements RenderingPath {
         return shadowsCamera;
     }
 
-    public ReadOnlyTexture getShadowMap() {
-        return this.prototype.getDepthTexture();
-    }
-
     public ShadowsCamera getCamera() {
         return this.camera;
     }
 
-    public void bind() {
-        this.screen.setAsDraw();
-        GlUtils.clear(GlBuffer.DEPTH);
-    }
-
     @Override
     public ShadowRenderingOutput render() {
+        this.screen.setAsDraw();
+        GlUtils.clear(GlBuffer.DEPTH);
+
+        final RenderContextBase context = new RenderContextBase(this.camera);
+        context.getHints().cullFace = GlCullFace.FRONT;
+        this.renderers.render(context);
+
         return new ShadowRenderingOutput(this.screen, this.prototype.getDepthTexture());
     }
 
     @Override
     public void delete() {
+        this.renderers.delete();
         this.screen.delete();
     }
 }

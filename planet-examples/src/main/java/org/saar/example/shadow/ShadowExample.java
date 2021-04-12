@@ -79,25 +79,19 @@ public class ShadowExample {
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light);
+                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderersGroup);
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
         final RenderersGroup renderersGroup = new RenderersGroup(renderer, renderer3D);
 
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light)
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderersGroup, renderPassesPipeline);
-
-        shadowsRenderingPath.bind();
-        final RenderContextBase context = new RenderContextBase(
-                shadowsRenderingPath.getCamera());
-        context.getHints().cullFace = GlCullFace.FRONT;
-        shadowsRenderersGroup.render(context);
-        shadowsRenderingPath.render();
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
