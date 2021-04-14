@@ -5,7 +5,7 @@ layout (location = 2) in vec3 in_colour;
 layout (location = 3) in mat4 in_transformation;
 
 // Uniforms
-uniform mat4 mvpMatrix;
+uniform mat4 u_mvpMatrix;
 
 // Vertex outputs
 flat out vec3 v_colour;
@@ -16,5 +16,5 @@ void main(void) {
     v_normal = in_normal;
 
     vec4 world = in_transformation * vec4(in_position, 1.0);
-    gl_Position = mvpMatrix * world;
+    gl_Position = u_mvpMatrix * world;
 }

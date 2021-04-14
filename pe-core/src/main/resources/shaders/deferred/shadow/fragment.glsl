@@ -11,19 +11,19 @@ float SHADOW_BIAS = -0.0001f;
 in vec2 v_position;
 
 // Uniforms
-uniform sampler2D shadowMap;
-uniform sampler2D colourTexture;
-uniform sampler2D normalTexture;
-uniform sampler2D depthTexture;
+uniform sampler2D u_shadowMap;
+uniform sampler2D u_colourTexture;
+uniform sampler2D u_normalTexture;
+uniform sampler2D u_depthTexture;
 
-uniform mat4 shadowMatrix;
-uniform mat4 projectionMatrixInv;
-uniform mat4 viewMatrixInv;
-uniform vec3 cameraWorldPosition;
+uniform mat4 u_shadowMatrix;
+uniform mat4 u_projectionMatrixInv;
+uniform mat4 u_viewMatrixInv;
+uniform vec3 u_cameraWorldPosition;
 
-uniform int pcfRadius;
+uniform int u_pcfRadius;
 
-uniform DirectionalLight light;
+uniform DirectionalLight u_light;
 
 // Fragment outputs
 out vec4 f_colour;
@@ -75,52 +75,52 @@ void main(void) {
 }
 
 void initBufferValues(void) {
-    g_colour = texture(colourTexture, v_position).rgb;
-    g_normal = texture(normalTexture, v_position).xyz;
-    g_depth = texture(depthTexture, v_position).r;
+    g_colour = texture(u_colourTexture, v_position).rgb;
+    g_normal = texture(u_normalTexture, v_position).xyz;
+    g_depth = texture(u_depthTexture, v_position).r;
 }
 
 void initGlobals(void) {
     vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
-    g_viewSpace = clipSpaceToViewSpace(clipSpace, projectionMatrixInv);
-    g_worldSpace = viewSpaceToWorldSpace(g_viewSpace, viewMatrixInv);
-    g_viewDirection = calcViewDirection(cameraWorldPosition, g_worldSpace);
+    g_viewSpace = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
+    g_worldSpace = viewSpaceToWorldSpace(g_viewSpace, u_viewMatrixInv);
+    g_viewDirection = calcViewDirection(u_cameraWorldPosition, g_worldSpace);
 }
 
 void initShadowGlobals(void) {
-    vec4 shadowCoords = shadowMatrix * vec4(g_worldSpace, 1);
+    vec4 shadowCoords = u_shadowMatrix * vec4(g_worldSpace, 1);
     shadowCoords = shadowCoords / shadowCoords.w;
     shadowCoords = shadowCoords * 0.5f + 0.5f;
 
     g_shadowMapCoords = shadowCoords.xy;
-    g_shadowMapDepth = texture(shadowMap, shadowCoords.xy).r;
+    g_shadowMapDepth = texture(u_shadowMap, shadowCoords.xy).r;
     g_shadowDepth = shadowCoords.z;
 }
 
 float calcShadowFactor(void) {
     float shadowFactor = 0.0;
-    vec2 inc = 1.0 / textureSize(shadowMap, 0);
-    for (int row = -pcfRadius; row <= pcfRadius; row++){
-        for (int col = -pcfRadius; col <= pcfRadius; col++){
+    vec2 inc = 1.0 / textureSize(u_shadowMap, 0);
+    for (int row = -u_pcfRadius; row <= u_pcfRadius; row++){
+        for (int col = -u_pcfRadius; col <= u_pcfRadius; col++){
             vec2 offset = vec2(row, col) * inc;
             vec2 coords = g_shadowMapCoords + offset;
-            float depth = texture(shadowMap, coords).r;
+            float depth = texture(u_shadowMap, coords).r;
             if (g_shadowDepth + SHADOW_BIAS > depth) {
                 shadowFactor += 1.0;
             }
         }
     }
-    return 1 - shadowFactor / (pcfRadius * pcfRadius);
+    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius);
 }
 
 vec3 ambientColour(void) {
-    return ambientColour(light);
+    return ambientColour(u_light);
 }
 
 vec3 diffuseColour(void) {
-    return diffuseColour(g_normal, light);
+    return diffuseColour(g_normal, u_light);
 }
 
 vec3 specularColour(void) {
-    return specularColour(16, 2.5, g_viewDirection, g_normal, light);
+    return specularColour(16, 2.5, g_viewDirection, g_normal, u_light);
 }

@@ -21,7 +21,7 @@ class Renderer3D(vararg models: Model3D) : Renderer,
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 
     @UniformProperty(UniformTrigger.PER_INSTANCE)
-    private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
+    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,

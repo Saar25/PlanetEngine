@@ -14,6 +14,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.maths.utils.Matrix4
+import kotlin.math.max
 
 private val light = DirectionalLight()
     .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
@@ -28,41 +29,41 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
                                        private val directionalLights: Array<DirectionalLight>) : RenderPassPrototype {
 
     @UniformProperty
-    private val colourTextureUniform = TextureUniformValue("colourTexture", 0)
+    private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
 
     @UniformProperty
-    private val normalTextureUniform = TextureUniformValue("normalTexture", 1)
+    private val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
 
     @UniformProperty
-    private val depthTextureUniform = TextureUniformValue("depthTexture", 2)
+    private val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
 
     @UniformProperty
-    private val cameraWorldPositionUniform = Vec3UniformValue("cameraWorldPosition")
+    private val cameraWorldPositionUniform = Vec3UniformValue("u_cameraWorldPosition")
 
     @UniformProperty
-    private val projectionMatrixInvUniform = Mat4UniformValue("projectionMatrixInv")
+    private val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
 
     @UniformProperty
-    private val viewMatrixInvUniform = Mat4UniformValue("viewMatrixInv")
+    private val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
     @UniformProperty
     private val directionalLightsCountUniform = object : IntUniform() {
-        override fun getName() = "directionalLightsCount"
+        override fun getName() = "u_directionalLightsCount"
 
         override fun getUniformValue() = directionalLights.size
     }
 
     @UniformProperty
     private val directionalLightsUniform =
-        UniformArray("directionalLights", this.directionalLights.size) { name, index ->
+        UniformArray("u_directionalLights", this.directionalLights.size) { name, index ->
             object : DirectionalLightUniform(name) {
                 override fun getUniformValue() = directionalLights[index]
             }
         }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.define("MAX_POINT_LIGHTS", this.pointLights.size.toString()),
-        ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", this.directionalLights.size.toString()),
+        ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
+        ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
 
         ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
         ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
