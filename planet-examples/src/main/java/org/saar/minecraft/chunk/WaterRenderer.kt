@@ -112,7 +112,7 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
         this.transitionId.value = (time / TRANSITION_TIME % 4).toInt()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<Chunk>) {
-        this.chunkCoordinateUniform.value = state.instance.position
+    override fun onInstanceDraw(context: RenderContext, chunk: Chunk) {
+        this.chunkCoordinateUniform.value = chunk.position
     }
 }

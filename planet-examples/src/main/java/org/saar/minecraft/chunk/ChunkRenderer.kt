@@ -103,7 +103,7 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
         projectionViewUniform.value = p.mul(v, Matrix4.create())
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<Chunk>) {
-        this.chunkCoordinateUniform.value = state.instance.position
+    override fun onInstanceDraw(context: RenderContext, chunk: Chunk) {
+        this.chunkCoordinateUniform.value = chunk.position
     }
 }
