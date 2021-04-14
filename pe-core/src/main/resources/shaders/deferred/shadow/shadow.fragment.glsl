@@ -4,6 +4,9 @@
 *
 **/
 
+#include "/shaders/common/light/light"
+#include "/shaders/common/transform/transform"
+
 // Constants
 float SHADOW_BIAS = -0.0001f;
 

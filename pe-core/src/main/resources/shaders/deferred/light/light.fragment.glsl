@@ -4,6 +4,9 @@
 *
 **/
 
+#include "/shaders/common/light/light"
+#include "/shaders/common/transform/transform"
+
 // definitions
 #ifndef MAX_DIRECTIONAL_LIGHTS
     #define MAX_DIRECTIONAL_LIGHTS 10

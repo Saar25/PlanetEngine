@@ -94,14 +94,9 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
-        ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
-        ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
-        ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
 
-        ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl"),
-
-        ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
-        ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
+        ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
+    )
 
     override fun onRender(context: RenderPassContext) {
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)

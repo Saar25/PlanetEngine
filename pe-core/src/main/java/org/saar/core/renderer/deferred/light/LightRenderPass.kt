@@ -65,14 +65,8 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
         ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
 
-        ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
-        ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
-        ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
-
-        ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl"),
-
-        ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
-        ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
+        ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
+    )
 
     override fun onRender(context: RenderPassContext) {
         this.colourTextureUniform.value = context.buffers.albedo
