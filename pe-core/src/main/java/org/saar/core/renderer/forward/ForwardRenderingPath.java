@@ -5,10 +5,10 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingOutput;
 import org.saar.core.renderer.RenderingPath;
-import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ForwardRenderingPath implements RenderingPath {
 
@@ -30,6 +30,8 @@ public class ForwardRenderingPath implements RenderingPath {
         this.screen.resizeToMainScreen();
 
         this.screen.setAsDraw();
+
+        GlUtils.clearColourAndDepthBuffer();
 
         this.renderers.render(new RenderContextBase(this.camera));
 
