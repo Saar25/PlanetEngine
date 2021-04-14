@@ -69,7 +69,7 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
         ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
         ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
 
-        ShaderCode.loadSource("/shaders/deferred/light/fragment.glsl"),
+        ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl"),
 
         ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
         ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))

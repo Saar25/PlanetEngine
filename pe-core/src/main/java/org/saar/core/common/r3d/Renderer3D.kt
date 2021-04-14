@@ -25,11 +25,11 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/fragment.glsl"))
+        ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_colour", "in_transformation")

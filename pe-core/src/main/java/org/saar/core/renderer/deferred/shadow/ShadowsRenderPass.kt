@@ -98,7 +98,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
         ShaderCode.loadSource("/shaders/common/light/light.struct.glsl"),
         ShaderCode.loadSource("/shaders/common/light/light.header.glsl"),
 
-        ShaderCode.loadSource("/shaders/deferred/shadow/fragment.glsl"),
+        ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl"),
 
         ShaderCode.loadSource("/shaders/common/light/light.source.glsl"),
         ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))

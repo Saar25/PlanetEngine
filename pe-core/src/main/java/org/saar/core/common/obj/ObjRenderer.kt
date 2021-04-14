@@ -40,11 +40,11 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/fragment.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_uvCoord", "in_normal")
