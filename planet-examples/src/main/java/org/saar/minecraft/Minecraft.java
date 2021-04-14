@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
@@ -49,6 +50,7 @@ import org.saar.minecraft.chunk.ChunkRenderer;
 import org.saar.minecraft.chunk.WaterRenderer;
 import org.saar.minecraft.entity.Player;
 import org.saar.minecraft.generator.*;
+import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
 import org.saar.minecraft.threading.GlThreadQueue;
 
 public class Minecraft {
@@ -125,6 +127,10 @@ public class Minecraft {
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
 
+        final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
+                new UnderwaterPostProcessor()
+        );
+
         final RenderingPath renderingPath = new ForwardRenderingPath(new ForwardScreenPrototype() {
             private final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
 
@@ -154,7 +160,13 @@ public class Minecraft {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
 
-            renderingPath.render().toTexture();
+            if (world.getBlock(camera.getTransform().getPosition()) == Blocks.WATER) {
+                final ReadOnlyTexture rendererTexture =
+                        renderingPath.render().toTexture();
+                postProcessing.process(rendererTexture).toMainScreen();
+            } else {
+                renderingPath.render().toMainScreen();
+            }
 
             window.update(true);
             window.pollEvents();
@@ -248,9 +260,8 @@ public class Minecraft {
         textureAtlas.delete();
         world.delete();
 
-        guiRenderer.delete();
-        renderer.delete();
-        waterRenderer.delete();
+        postProcessing.delete();
+        renderingPath.delete();
         window.destroy();
     }
 
