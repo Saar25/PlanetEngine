@@ -8,9 +8,17 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.forward.ForwardRenderingPath;
+import org.saar.core.renderer.forward.ForwardScreenPrototype;
 import org.saar.core.screen.MainScreen;
+import org.saar.core.screen.annotations.ScreenImageProperty;
+import org.saar.core.screen.image.ColourScreenImage;
+import org.saar.core.screen.image.DepthScreenImage;
+import org.saar.core.screen.image.ScreenImage;
 import org.saar.core.util.Fps;
 import org.saar.gui.objects.TSquare;
 import org.saar.gui.render.GuiRenderer;
@@ -22,7 +30,16 @@ import org.saar.lwjgl.glfw.input.mouse.MouseButton;
 import org.saar.lwjgl.glfw.input.mouse.MouseCursor;
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.DepthFormatType;
+import org.saar.lwjgl.opengl.constants.FormatType;
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
@@ -110,6 +127,27 @@ public class Minecraft {
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
 
+        final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
+                new ContrastPostProcessor(1.3f)
+        );
+
+        final RenderingPath renderingPath = new ForwardRenderingPath(new ForwardScreenPrototype() {
+            private final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
+
+            @ScreenImageProperty
+            private final ScreenImage colourImage = new ColourScreenImage(ColourAttachment.withTexture(
+                    0, this.colourTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE));
+
+            @ScreenImageProperty
+            private final ScreenImage depthImage = new DepthScreenImage(
+                    DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT16));
+
+            @Override
+            public ReadOnlyTexture getColourTexture() {
+                return this.colourTexture;
+            }
+        }, camera, new RenderersGroup(renderer, waterRenderer, guiRenderer));
+
         final Fps fps = new Fps();
 
         long lastBlockPlace = System.currentTimeMillis();
@@ -122,12 +160,7 @@ public class Minecraft {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
 
-            GlUtils.clearColourAndDepthBuffer();
-
-            final RenderContext context = new RenderContextBase(camera);
-            renderer.render(context);
-            waterRenderer.render(context);
-            guiRenderer.render(context);
+            postProcessing.process(renderingPath.render().toTexture()).toMainScreen();
 
             window.update(true);
             window.pollEvents();
