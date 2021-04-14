@@ -65,24 +65,22 @@ open class RendererPrototypeWrapper<T : Model>(
         renderModels(context, *this.models)
     }
 
-    protected fun renderModels(context: RenderContext, vararg models: T) {
+    protected open fun renderModels(context: RenderContext, vararg models: T) {
         for (model in models) {
             renderModel(context, model)
         }
     }
 
-    protected fun renderModel(context: RenderContext, model: T) {
-        val state = RenderState(model)
+    protected open fun renderModel(context: RenderContext, model: T) {
+        this.prototype.onInstanceDraw(context, model)
 
-        this.prototype.onInstanceDraw(context, state)
-
-        this.updatersHelper.update(state)
+        this.updatersHelper.update(model)
         this.uniformsHelper.loadPerInstance()
 
         doRenderModel(context, model)
     }
 
-    open fun doRenderModel(context: RenderContext, model: T) {
+    protected open fun doRenderModel(context: RenderContext, model: T) {
         model.draw()
     }
 

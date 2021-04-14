@@ -13,10 +13,16 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FxaaPostProcessor;
+import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
+import org.saar.core.renderer.deferred.ssao.SsaoRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
@@ -33,8 +39,8 @@ import java.util.Objects;
 
 public class NormalMappingExample {
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 500;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 700;
 
     private static float scrollSpeed = 50f;
 
@@ -80,30 +86,31 @@ public class NormalMappingExample {
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final Keyboard keyboard = window.getKeyboard();
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
+        final RenderersGroup shadowsRenderersGroup = new RenderersGroup(
+                normalMappedRenderer, renderer, renderer3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light);
-        shadowsRenderingPath.addRenderer(normalMappedRenderer);
-        shadowsRenderingPath.addRenderer(renderer3D);
-        shadowsRenderingPath.addRenderer(renderer);
+                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderersGroup);
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, screenPrototype);
-        deferredRenderer.addRenderer(normalMappedRenderer);
-        deferredRenderer.addRenderer(renderer3D);
-        deferredRenderer.addRenderer(renderer);
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        deferredRenderer.addRenderPass(new ShadowsRenderPass(camera,
-                shadowsRenderingPath.getCamera(), shadowsRenderingPath.getShadowMap(), light));
-        shadowsRenderingPath.render();
+        final RenderersGroup renderersGroup = new RenderersGroup(normalMappedRenderer, renderer3D, renderer);
+
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
+                new SsaoRenderPass()
+        );
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                screenPrototype, camera, renderersGroup, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -113,9 +120,15 @@ public class NormalMappingExample {
         });
         GlUtils.setClearColour(0, .7f, .9f);
 
+        final PostProcessingPipeline pipeline = new PostProcessingPipeline(
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
+        );
+
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            deferredRenderer.render().toMainScreen();
+            final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
+            pipeline.process(texture).toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -131,6 +144,8 @@ public class NormalMappingExample {
             current = System.currentTimeMillis();
         }
 
+        pipeline.delete();
+        renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

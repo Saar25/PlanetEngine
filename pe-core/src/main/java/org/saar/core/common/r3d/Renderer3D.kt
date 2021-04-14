@@ -1,6 +1,9 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
@@ -18,15 +21,15 @@ class Renderer3D(vararg models: Model3D) : Renderer,
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 
     @UniformProperty(UniformTrigger.PER_INSTANCE)
-    private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
+    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/fragment.glsl"))
+        ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_colour", "in_transformation")
@@ -38,10 +41,10 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
         GlUtils.setProvokingVertexFirst()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<Model3D>) {
+    override fun onInstanceDraw(context: RenderContext, model: Model3D) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
+        val m = model.transform.transformationMatrix
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
     }

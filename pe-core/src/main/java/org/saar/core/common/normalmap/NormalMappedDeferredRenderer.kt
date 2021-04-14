@@ -1,7 +1,6 @@
 package org.saar.core.common.normalmap
 
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderState
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.deferred.DeferredRenderer
@@ -58,9 +57,9 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<NormalMappedModel>) {
-        this.transformationUniform.value = state.instance.transform.transformationMatrix
-        this.textureUniform.value = state.instance.texture
-        this.normalMapUniform.value = state.instance.normalMap
+    override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {
+        this.transformationUniform.value = model.transform.transformationMatrix
+        this.textureUniform.value = model.texture
+        this.normalMapUniform.value = model.normalMap
     }
 }

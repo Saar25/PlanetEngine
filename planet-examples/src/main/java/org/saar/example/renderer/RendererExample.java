@@ -17,43 +17,42 @@ public class RendererExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static ColourAttachment attachment;
-    private static MultisampledFbo fbo;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-
-        final float a = 0.7f, b = 0.3f;
+        final float s = 0.7f;
         final int[] indices = {0, 1, 2, 0, 2, 3};
         final Vertex2D[] vertices = {
-                R2D.vertex(Vector2.of(-a, -a + .1f), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                R2D.vertex(Vector2.of(-a, +a), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+a, +a), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+a, -a), Vector3.of(+1.0f, +0.0f, +0.5f))};
+                R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
+                R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
+                R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
         final Mesh2D mesh = Mesh2D.load(vertices, indices);
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = new Renderer2D(model);
 
-        fbo = createFbo(WIDTH, HEIGHT);
+        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
+        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+
+        fbo.addAttachment(attachment);
+        fbo.setDrawAttachments(attachment);
+        fbo.setReadAttachment(attachment);
+        fbo.ensureStatus();
 
         window.addResizeListener(e -> {
-            fbo.delete();
-            fbo = createFbo(e.getWidth().getAfter(),
+            fbo.bind();
+            fbo.resize(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
+            attachment.initMS(fbo, 16);
         });
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-
             fbo.bind();
+
             GlUtils.clear(GlBuffer.COLOUR);
 
-//            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).x += .001f;
-//            ((Vector2f) mesh.getVertices().getVertices().get(0).getPosition2f()).y += .001f;
-//            model.update();
             renderer.render(new RenderContextBase(null));
 
             fbo.blitToScreen();
@@ -68,14 +67,4 @@ public class RendererExample {
         attachment.delete();
         window.destroy();
     }
-
-    private static MultisampledFbo createFbo(int width, int height) {
-        final MultisampledFbo fbo = new MultisampledFbo(width, height, 16);
-        fbo.setDrawAttachments(attachment);
-        fbo.setReadAttachment(attachment);
-        fbo.addAttachment(attachment);
-        fbo.ensureStatus();
-        return fbo;
-    }
-
 }

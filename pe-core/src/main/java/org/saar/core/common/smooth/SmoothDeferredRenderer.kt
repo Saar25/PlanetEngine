@@ -3,7 +3,6 @@ package org.saar.core.common.smooth
 import org.jproperty.type.FloatProperty
 import org.jproperty.type.SimpleFloatProperty
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderState
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.deferred.DeferredRenderer
@@ -61,10 +60,10 @@ private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
         GlUtils.setProvokingVertexFirst()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<SmoothModel>) {
+    override fun onInstanceDraw(context: RenderContext, model: SmoothModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = state.instance.transform.transformationMatrix
+        val m = model.transform.transformationMatrix
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
     }

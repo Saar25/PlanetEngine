@@ -11,4 +11,11 @@ public interface DeferredScreenPrototype extends ScreenPrototype {
 
     ReadOnlyTexture getDepthTexture();
 
+    default DeferredRenderingBuffers asBuffers() {
+        return new DeferredRenderingBuffers(
+                getColourTexture(),
+                getNormalTexture(),
+                getDepthTexture()
+        );
+    }
 }

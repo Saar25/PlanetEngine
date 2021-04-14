@@ -4,6 +4,9 @@
 *
 **/
 
+#include "/shaders/common/light/light"
+#include "/shaders/common/transform/transform"
+
 // definitions
 #ifndef MAX_DIRECTIONAL_LIGHTS
     #define MAX_DIRECTIONAL_LIGHTS 10
@@ -16,19 +19,19 @@
 in vec2 v_position;
 
 // Uniforms
-uniform sampler2D colourTexture;
-uniform sampler2D normalTexture;
-uniform sampler2D depthTexture;
+uniform sampler2D u_colourTexture;
+uniform sampler2D u_normalTexture;
+uniform sampler2D u_depthTexture;
 
-uniform vec3 cameraWorldPosition;
-uniform mat4 projectionMatrixInv;
-uniform mat4 viewMatrixInv;
+uniform vec3 u_cameraWorldPosition;
+uniform mat4 u_projectionMatrixInv;
+uniform mat4 u_viewMatrixInv;
 
-uniform int directionalLightsCount;
-uniform DirectionalLight[MAX_DIRECTIONAL_LIGHTS] directionalLights;
+uniform int u_directionalLightsCount;
+uniform DirectionalLight[MAX_DIRECTIONAL_LIGHTS] u_directionalLights;
 
-uniform int pointLightsCount;
-uniform PointLight[MAX_POINT_LIGHTS] pointLights;
+uniform int u_pointLightsCount;
+uniform PointLight[MAX_POINT_LIGHTS] u_pointLights;
 
 // Fragment outputs
 out vec4 f_colour;
@@ -70,16 +73,16 @@ void main(void) {
 }
 
 void initBufferValues(void) {
-    g_colour = texture(colourTexture, v_position).rgb;
-    g_normal = texture(normalTexture, v_position).xyz;
-    g_depth = texture(depthTexture, v_position).r;
+    g_colour = texture(u_colourTexture, v_position).rgb;
+    g_normal = texture(u_normalTexture, v_position).xyz;
+    g_depth = texture(u_depthTexture, v_position).r;
 }
 
 void initGlobals(void) {
     vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
-    g_viewPosition = clipSpaceToViewSpace(clipSpace, projectionMatrixInv);
-    g_worldPosition = viewSpaceToWorldSpace(g_viewPosition, viewMatrixInv);
-    g_viewDirection = calcViewDirection(cameraWorldPosition, g_worldPosition);
+    g_viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
+    g_worldPosition = viewSpaceToWorldSpace(g_viewPosition, u_viewMatrixInv);
+    g_viewDirection = calcViewDirection(u_cameraWorldPosition, g_worldPosition);
 }
 
 vec3 findNormal(vec2 normal) {
@@ -90,13 +93,13 @@ vec3 findNormal(vec2 normal) {
 }
 
 vec3 finalAmbientColour(void) {
-    return totalAmbientColour(directionalLightsCount, directionalLights);
+    return totalAmbientColour(u_directionalLightsCount, u_directionalLights);
 }
 
 vec3 finalDiffuseColour(void) {
-    return totalDiffuseColour(g_normal, directionalLightsCount, directionalLights);
+    return totalDiffuseColour(g_normal, u_directionalLightsCount, u_directionalLights);
 }
 
 vec3 finalSpecularColour(void) {
-    return totalSpecularColour(16, 2.5, g_viewDirection, g_normal, directionalLightsCount, directionalLights);
+    return totalSpecularColour(16, 2.5, g_viewDirection, g_normal, u_directionalLightsCount, u_directionalLights);
 }

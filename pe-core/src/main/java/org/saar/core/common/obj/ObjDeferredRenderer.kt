@@ -21,31 +21,31 @@ class ObjDeferredRenderer(vararg models: ObjModel) : DeferredRenderer,
 private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
-    private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
+    private val viewProjectionUniform = Mat4UniformValue("u_viewProjectionMatrix")
 
     @UniformProperty
-    private val textureUniform = TextureUniformValue("texture", 1)
+    private val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjDeferredRendererPrototype.textureUniform.value = state.instance.texture
+    private val textureUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjDeferredRendererPrototype.textureUniform.value = model.texture
     }
 
     @UniformProperty
-    private val transformUniform = Mat4UniformValue("transformationMatrix")
+    private val transformUniform = Mat4UniformValue("u_transformationMatrix")
 
     @UniformUpdaterProperty
-    private val transformUpdater = UniformUpdater<ObjModel> { state ->
-        this@ObjDeferredRendererPrototype.transformUniform.value = state.instance.transform.transformationMatrix
+    private val transformUpdater = UniformUpdater<ObjModel> { model ->
+        this@ObjDeferredRendererPrototype.transformUniform.value = model.transform.transformationMatrix
     }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/fragmentDeferred.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_uvCoord", "in_normal")
@@ -59,7 +59,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         GlUtils.enableDepthTest()
     }
 
-    override fun onInstanceDraw(context: RenderContext, state: RenderState<ObjModel>) {
+    override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())

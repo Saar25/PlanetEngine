@@ -15,7 +15,7 @@ public interface RendererPrototype<T extends Model> {
     default void onRenderCycle(RenderContext context) {
     }
 
-    default void onInstanceDraw(RenderContext context, RenderState<T> state) {
+    default void onInstanceDraw(RenderContext context, T state) {
     }
 
 }

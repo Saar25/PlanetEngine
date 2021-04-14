@@ -21,9 +21,9 @@ public class Example {
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
         vbo.allocateFloat(18);
         vbo.storeFloat(0, new float[]{
-                -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
-                +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
-                +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
+                -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f,
+                +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+                +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f});
         vao.loadVbo(vbo,
                 Attribute.of(0, 2, DataType.FLOAT, false),
                 Attribute.of(1, 3, DataType.FLOAT, false),

@@ -1,23 +1,21 @@
 package org.saar.core.renderer.uniforms;
 
-import org.saar.core.renderer.RenderState;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class UpdatersHelper<T> {
-
-    public abstract UpdatersHelper<T> addUpdater(UniformUpdater<T> uniform);
-
-    public abstract UpdatersHelper<T> removeUpdaters(UniformUpdater<T> uniform);
-
-    public abstract void update(RenderState<T> state);
 
     public static <T> UpdatersHelper<T> empty() {
         @SuppressWarnings("unchecked") final UpdatersHelper<T> empty =
                 (UpdatersHelper<T>) Empty.EMPTY;
         return empty;
     }
+
+    public abstract UpdatersHelper<T> addUpdater(UniformUpdater<T> uniform);
+
+    public abstract UpdatersHelper<T> removeUpdaters(UniformUpdater<T> uniform);
+
+    public abstract void update(T state);
 
     private static class Empty<T> extends UpdatersHelper<T> {
 
@@ -33,7 +31,7 @@ public abstract class UpdatersHelper<T> {
         }
 
         @Override
-        public void update(RenderState<T> state) {
+        public void update(T state) {
         }
     }
 
@@ -58,7 +56,7 @@ public abstract class UpdatersHelper<T> {
         }
 
         @Override
-        public void update(RenderState<T> state) {
+        public void update(T state) {
             for (UniformUpdater<T> uniform : this.uniforms) {
                 uniform.update(state);
             }
