@@ -16,7 +16,7 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
 
     companion object {
         private val vertexShaderCode = ShaderCode.loadSource(
-            "/shaders/deferred/quadVertex.glsl")
+            "/shaders/common/quad/quad.vertex.glsl")
     }
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(

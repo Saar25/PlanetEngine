@@ -1,6 +1,6 @@
 /*
 *
-* Default postprocessing vertex shader
+* Simple full screen quad vertex shader
 *
 */
 

@@ -16,7 +16,7 @@ open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPro
 
     companion object {
         private val vertexShaderCode = ShaderCode.loadSource(
-            "/shaders/postprocessing/default.vertex.glsl")
+            "/shaders/common/quad/quad.vertex.glsl")
     }
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
