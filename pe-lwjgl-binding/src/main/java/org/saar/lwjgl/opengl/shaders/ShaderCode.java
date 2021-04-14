@@ -1,7 +1,5 @@
 package org.saar.lwjgl.opengl.shaders;
 
-import org.saar.utils.file.TextFileLoader;
-
 public class ShaderCode {
 
     private final String code;
@@ -15,7 +13,7 @@ public class ShaderCode {
     }
 
     public static ShaderCode loadSource(String file) throws Exception {
-        final String code = TextFileLoader.loadResource(file);
+        final String code = ShaderCodeLoader.loadSource(file);
         return new ShaderCode(code);
     }
 
