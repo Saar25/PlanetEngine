@@ -8,8 +8,6 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.postprocessing.PostProcessingPipeline;
-import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
@@ -127,10 +125,6 @@ public class Minecraft {
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
 
-        final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
-                new ContrastPostProcessor(1.3f)
-        );
-
         final RenderingPath renderingPath = new ForwardRenderingPath(new ForwardScreenPrototype() {
             private final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
 
@@ -160,7 +154,7 @@ public class Minecraft {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
 
-            postProcessing.process(renderingPath.render().toTexture()).toMainScreen();
+            renderingPath.render().toTexture();
 
             window.update(true);
             window.pollEvents();
