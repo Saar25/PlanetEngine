@@ -1,6 +1,5 @@
 package org.saar.gui;
 
-import org.jetbrains.annotations.NotNull;
 import org.saar.gui.event.MouseEvent;
 import org.saar.gui.position.Positioner;
 import org.saar.gui.style.Style;
@@ -14,7 +13,7 @@ import java.util.List;
  * This class represent a ui component, with out any logic
  * use this class to group UIObjects and render them as one
  */
-public class UIComponent implements UIElement {
+public class UIComponent implements UIChildElement {
 
     private final Positioner positioner;
     private final Style style;
@@ -43,12 +42,12 @@ public class UIComponent implements UIElement {
         return this.style;
     }
 
-    @NotNull
     @Override
     public Positioner getPositioner() {
         return this.positioner;
     }
 
+    @Override
     public UIElement getParent() {
         return this.parent;
     }

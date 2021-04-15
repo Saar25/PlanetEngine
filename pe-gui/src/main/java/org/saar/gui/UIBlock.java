@@ -18,22 +18,26 @@ import org.saar.maths.objects.Rectangle;
  * @version 1.2
  * @since 18.2.2018
  */
-public class UIBlock implements Model {
+public class UIBlock implements Model, UIChildElement {
 
     private final Style style;
     private final Positioner positioner;
 
     private final Texture2D texture;
 
+    private UIElement parent;
+
     public UIBlock(UIComponent uiComponent) {
         this.texture = null;
-        this.positioner = new Positioner(uiComponent);
+        this.parent = uiComponent;
+        this.positioner = new Positioner(this);
         this.style = new Style(this.positioner);
     }
 
     public UIBlock(UIComponent uiComponent, Texture2D texture) {
         this.texture = texture;
-        this.positioner = new Positioner(uiComponent);
+        this.parent = uiComponent;
+        this.positioner = new Positioner(this);
         this.style = new Style(this.positioner);
     }
 
@@ -81,8 +85,18 @@ public class UIBlock implements Model {
         return this.style;
     }
 
+    @Override
     public Positioner getPositioner() {
         return this.positioner;
+    }
+
+    @Override
+    public UIElement getParent() {
+        return this.parent;
+    }
+
+    public void setParent(UIElement parent) {
+        this.parent = parent;
     }
 
     @Override

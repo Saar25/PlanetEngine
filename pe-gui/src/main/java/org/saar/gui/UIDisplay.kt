@@ -14,6 +14,6 @@ class UIDisplay(private val window: Window) : UIElement {
 
     fun add(uiComponent: UIComponent) {
         this.uiComponents.add(uiComponent)
-        uiComponent.parent = this
+        uiComponent.setParent(this)
     }
 }

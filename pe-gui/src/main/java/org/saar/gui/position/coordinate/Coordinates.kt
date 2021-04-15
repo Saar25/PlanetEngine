@@ -1,10 +1,10 @@
 package org.saar.gui.position.coordinate
 
-import org.saar.gui.UIComponent
+import org.saar.gui.UIChildElement
 
 object Coordinates {
 
-    class X(private val container: UIComponent) : Coordinate() {
+    class X(private val container: UIChildElement) : Coordinate() {
 
         override fun get(): Int {
             val x = this.container.parent.positioner.x
@@ -13,7 +13,7 @@ object Coordinates {
         }
     }
 
-    class Y(private val container: UIComponent) : Coordinate() {
+    class Y(private val container: UIChildElement) : Coordinate() {
 
         override fun get(): Int {
             val y = this.container.parent.positioner.y

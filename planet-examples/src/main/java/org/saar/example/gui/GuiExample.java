@@ -28,8 +28,8 @@ public class GuiExample {
 
         object.getPositioner().getX().set(CoordinateValues.center());
         object.getPositioner().getY().set(CoordinateValues.center());
-        object.getPositioner().getWidth().set(LengthValues.pixels(50));
-        object.getPositioner().getHeight().set(LengthValues.pixels(50));
+        object.getPositioner().getWidth().set(LengthValues.percent(80));
+        object.getPositioner().getHeight().set(LengthValues.percent(80));
 
         object.getStyle().getBackgroundColour().set(Colours.CYAN);
         object.getStyle().getBorderColour().set(Colours.LIGHT_GREY);

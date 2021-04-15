@@ -3,9 +3,11 @@ package org.saar.gui.position.length
 import org.saar.gui.position.coordinate.ReadonlyCoordinate
 
 object LengthValues {
-
     @JvmStatic
     val zero = LengthValue { _: ReadonlyCoordinate, _: ReadonlyLength -> 0 }
+
+    @JvmStatic
+    val inherit = LengthValue { _: ReadonlyCoordinate, parentLength: ReadonlyLength -> parentLength.get() }
 
     @JvmStatic
     fun pixels(pixels: Int) = LengthValue { _: ReadonlyCoordinate, _: ReadonlyLength -> pixels }
@@ -15,9 +17,6 @@ object LengthValues {
         LengthValue { _: ReadonlyCoordinate, parentLength: ReadonlyLength ->
             (parentLength.get() * percents / 100).toInt()
         }
-
-    @JvmStatic
-    fun inherit() = LengthValue { _: ReadonlyCoordinate, parentLength: ReadonlyLength -> parentLength.get() }
 
     @JvmStatic
     fun add(a: LengthValue, b: LengthValue) =

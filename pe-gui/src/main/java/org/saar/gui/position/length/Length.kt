@@ -2,7 +2,7 @@ package org.saar.gui.position.length
 
 abstract class Length : ReadonlyLength {
 
-    var value: LengthValue = LengthValues.zero
+    var value: LengthValue = LengthValues.inherit
 
     fun set(value: LengthValue) {
         this.value = value
