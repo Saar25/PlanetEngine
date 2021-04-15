@@ -1,16 +1,14 @@
 package org.saar.core.renderer.deferred
 
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.core.renderer.uniforms.UpdatersHelper
-import org.saar.lwjgl.opengl.constants.RenderMode
-import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.utils.GlRendering
 
 open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : RenderPass {
 
@@ -66,8 +64,7 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
     protected fun drawQuad() {
         this.uniformsHelper.load()
 
-        Vao.EMPTY.bind()
-        GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
+        QuadMesh.draw()
     }
 
     override fun delete() {
