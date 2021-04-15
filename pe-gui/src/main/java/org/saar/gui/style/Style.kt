@@ -4,7 +4,7 @@ import org.joml.Vector4f
 import org.saar.gui.style.property.*
 import org.saar.maths.utils.Vector4
 
-class Style(private val parentStyle: IStyle = GenesisStyle) : IStyle {
+class Style(private val parentStyle: IStyle = WindowStyle) : IStyle {
 
     override val colourModifier: Vector4f = Vector4.of(1f)
 
