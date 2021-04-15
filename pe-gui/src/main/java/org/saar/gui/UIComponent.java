@@ -1,10 +1,11 @@
 package org.saar.gui;
 
+import org.jetbrains.annotations.NotNull;
 import org.saar.gui.event.MouseEvent;
+import org.saar.gui.position.Positioner;
 import org.saar.gui.style.Style;
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent;
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
-import org.saar.lwjgl.glfw.input.mouse.ScrollEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public abstract class UIComponent implements UIElement {
 
     private final Style style = new Style();
+    private final Positioner positioner = new Positioner(this);
 
     private final List<UIObject> uiObjects = new ArrayList<>();
 
@@ -36,8 +38,18 @@ public abstract class UIComponent implements UIElement {
         return this.style;
     }
 
+    @NotNull
+    @Override
+    public Positioner getPositioner() {
+        return this.positioner;
+    }
+
     public UIElement getParent() {
         return this.parent;
+    }
+
+    public void setParent(UIElement parent) {
+        this.parent = parent;
     }
 
     public final void onMouseMoveEvent(MoveEvent event) {
