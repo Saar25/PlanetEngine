@@ -72,17 +72,6 @@ public abstract class UIComponent implements UIElement {
         }
     }
 
-    public final void onMouseScrollEvent(ScrollEvent event) {
-        /*final int x = event.getMouse().getXPos();
-        final int y = event.getMouse().getYPos();
-
-        if (checkMouseInside(x, y)) {
-            final MouseEvent e = MouseEvent.create(event);
-            onMouseScroll(e);
-        }*/
-    }
-
-
     private void mousePress(MouseEvent event) {
         this.mousePressed = true;
         onMousePress(event);
