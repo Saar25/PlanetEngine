@@ -8,13 +8,11 @@ import org.saar.core.renderer.forward.ForwardScreenPrototype;
 import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.gui.UIBlock;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.position.coordinate.CoordinateValues;
 import org.saar.gui.position.length.LengthValues;
 import org.saar.gui.render.UIRenderer;
-import org.saar.gui.style.property.Colours;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
@@ -34,32 +32,8 @@ public class GuiExample {
 
         final UIDisplay display = new UIDisplay(window);
 
-        final UIComponent uiComponent = new UIComponent();
+        final UIComponent uiComponent = new MyUIComponent();
         display.add(uiComponent);
-
-        uiComponent.getPositioner().getX().set(CoordinateValues.center());
-        uiComponent.getPositioner().getY().set(CoordinateValues.center());
-        uiComponent.getPositioner().getWidth().set(LengthValues.percent(80));
-        uiComponent.getPositioner().getHeight().set(LengthValues.percent(80));
-
-        final UIBlock object1 = new UIBlock();
-        uiComponent.add(object1);
-
-        object1.getPositioner().getWidth().set(LengthValues.percent(48));
-        object1.getStyle().getBackgroundColour().set(Colours.CYAN);
-        object1.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
-        object1.getStyle().getBorders().set(2);
-        object1.getStyle().getRadiuses().set(100);
-
-        final UIBlock object2 = new UIBlock();
-        uiComponent.add(object2);
-
-        object2.getPositioner().getX().set(CoordinateValues.percent(52));
-        object2.getPositioner().getWidth().set(LengthValues.percent(48));
-        object2.getStyle().getBackgroundColour().set(Colours.CYAN);
-        object2.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
-        object2.getStyle().getBorders().set(2);
-        object2.getStyle().getRadiuses().set(100);
 
         final UIRenderer renderer = new UIRenderer(display);
 
@@ -94,7 +68,6 @@ public class GuiExample {
             window.pollEvents();
         }
 
-        object1.delete();
         renderer.delete();
         window.destroy();
     }
