@@ -8,15 +8,15 @@ class Style(private val parentStyle: IStyle = WindowStyle) : IStyle {
 
     override val colourModifier: Vector4f = Vector4.of(1f)
 
-    override val x: Coordinate = Coordinate.X(this.parentStyle, this)
+    override val x: Coordinate = Coordinate()
 
-    override val y: Coordinate = Coordinate.Y(this.parentStyle, this)
+    override val y: Coordinate = Coordinate()
 
     override val position: Position = Position(x, y)
 
-    override val width: Length = Length.Width(this.parentStyle, this)
+    override val width: Length = Length()
 
-    override val height: Length = Length.Height(this.parentStyle, this)
+    override val height: Length = Length()
 
     override val dimensions: Dimensions = Dimensions(width, height)
 

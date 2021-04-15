@@ -8,15 +8,15 @@ object WindowStyle : IStyle {
 
     override val colourModifier: Vector4f = Vector4.of(1f)
 
-    override val x: Coordinate = Coordinate.XGenesis()
+    override val x: Coordinate = Coordinate()
 
-    override val y: Coordinate = Coordinate.YGenesis()
+    override val y: Coordinate = Coordinate()
 
     override val position: Position = Position(x, y)
 
-    override val width: Length = Length.WidthGenesis()
+    override val width: Length = Length()
 
-    override val height: Length = Length.HeightGenesis()
+    override val height: Length = Length()
 
     override val dimensions: Dimensions = Dimensions(width, height)
 
