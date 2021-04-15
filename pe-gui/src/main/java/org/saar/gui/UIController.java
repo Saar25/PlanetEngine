@@ -10,7 +10,7 @@ import org.saar.utils.list.ObservableList;
 
 import java.util.List;
 
-public abstract class UIController extends UIElement implements Styleable {
+public abstract class UIController implements Styleable {
 
     private final Style style = new Style();
     private final ObservableList<UIObject> children;
