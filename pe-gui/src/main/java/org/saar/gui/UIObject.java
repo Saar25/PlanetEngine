@@ -20,7 +20,7 @@ import org.saar.maths.objects.Rectangle;
  */
 public class UIObject implements Model, Styleable {
 
-    private final Style style = new Style(null);
+    private final Style style = new Style();
 
     private final Texture2D texture;
 
@@ -33,16 +33,16 @@ public class UIObject implements Model, Styleable {
     }
 
     public boolean inTouch(float mx, float my) {
-        final Radiuses radiuses = this.style.radiuses;
+        final Radiuses radiuses = this.style.getRadiuses();
 
         if (radiuses.isZero()) {
-            return this.style.bounds.contains(mx, my);
+            return this.style.getBounds().contains(mx, my);
         }
 
-        final float x = this.style.position.x.get();
-        final float y = this.style.position.y.get();
-        final float w = this.style.dimensions.width.get();
-        final float h = this.style.dimensions.height.get();
+        final float x = this.style.getPosition().x.get();
+        final float y = this.style.getPosition().y.get();
+        final float w = this.style.getDimensions().width.get();
+        final float h = this.style.getDimensions().height.get();
 
         final float radius = radiuses.get(
                 mx > x + w / 2, my < y + h / 2).get();
@@ -57,8 +57,8 @@ public class UIObject implements Model, Styleable {
             return true;
         }
 
-        float cx = this.style.bounds.xCenter();
-        float cy = this.style.bounds.yCenter();
+        float cx = this.style.getBounds().xCenter();
+        float cy = this.style.getBounds().yCenter();
         cx = mx < cx ? x + radius : x + w - radius;
         cy = my < cy ? y + radius : y + h - radius;
 

@@ -17,14 +17,14 @@ public class GuiExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final UIObject object = new UIObject();
-        object.getStyle().x.set(20);
-        object.getStyle().y.set(20);
-        object.getStyle().width.set(500);
-        object.getStyle().height.set(200);
-        object.getStyle().backgroundColour.set(Colours.CYAN);
-        object.getStyle().borderColour.set(Colours.LIGHT_GREY);
-        object.getStyle().borders.set(3);
-        object.getStyle().radiuses.set(100);
+        object.getStyle().getX().set(20);
+        object.getStyle().getY().set(20);
+        object.getStyle().getWidth().set(500);
+        object.getStyle().getHeight().set(200);
+        object.getStyle().getBackgroundColour().set(Colours.CYAN);
+        object.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
+        object.getStyle().getBorders().set(3);
+        object.getStyle().getRadiuses().set(100);
 
         final UIRenderer renderer = new UIRenderer(object);
 

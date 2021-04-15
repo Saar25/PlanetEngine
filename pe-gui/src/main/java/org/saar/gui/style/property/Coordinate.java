@@ -1,15 +1,15 @@
 package org.saar.gui.style.property;
 
-import org.saar.gui.style.Style;
+import org.saar.gui.style.IStyle;
 
 public class Coordinate {
 
-    private final Style parent;
-    private final Style container;
+    private final IStyle parent;
+    private final IStyle container;
 
     private int value;
 
-    public Coordinate(Style parent, Style container) {
+    public Coordinate(IStyle parent, IStyle container) {
         this.parent = parent;
         this.container = container;
     }

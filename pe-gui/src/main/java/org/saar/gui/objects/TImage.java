@@ -7,6 +7,6 @@ public class TImage extends UIObject {
 
     public TImage(Texture2D texture) {
         super(texture);
-        getStyle().backgroundColour.set(0, 0, 0, 0);
+        getStyle().getBackgroundColour().set(0, 0, 0, 0);
     }
 }

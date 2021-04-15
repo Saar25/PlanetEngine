@@ -1,15 +1,15 @@
 package org.saar.gui.style.property;
 
-import org.saar.gui.style.Style;
+import org.saar.gui.style.IStyle;
 
 public class Length {
 
-    private final Style parent;
-    private final Style container;
+    private final IStyle parent;
+    private final IStyle container;
 
     private int value;
 
-    public Length(Style parent, Style container) {
+    public Length(IStyle parent, IStyle container) {
         this.parent = parent;
         this.container = container;
     }

@@ -35,9 +35,9 @@ public class UIButton extends UIComponent {
     public void onMousePress(MouseEvent event) {
         if (event.getButton().isPrimary()) {
             pressedProperty().set(true);
-            getStyle().colourModifier.set(1.5f, 1.5f, 1.5f, 1f);
+            getStyle().getColourModifier().set(1.5f, 1.5f, 1.5f, 1f);
             for (UIObject child : getUiObjects()) {
-                child.getStyle().colourModifier.set(getStyle().colourModifier);
+                child.getStyle().getColourModifier().set(getStyle().getColourModifier());
             }
         }
     }
@@ -49,9 +49,9 @@ public class UIButton extends UIComponent {
                 pressedProperty().set(false);
                 this.onAction.handle(event);
             }
-            getStyle().colourModifier.set(1);
+            getStyle().getColourModifier().set(1);
             for (UIObject child : getUiObjects()) {
-                child.getStyle().colourModifier.set(getStyle().colourModifier);
+                child.getStyle().getColourModifier().set(getStyle().getColourModifier());
             }
         }
     }
@@ -63,9 +63,9 @@ public class UIButton extends UIComponent {
     @Override
     public void onMouseExit(MouseEvent event) {
         pressedProperty().set(false);
-        getStyle().colourModifier.set(1f);
+        getStyle().getColourModifier().set(1f);
         for (UIObject child : getUiObjects()) {
-            child.getStyle().colourModifier.set(getStyle().colourModifier);
+            child.getStyle().getColourModifier().set(getStyle().getColourModifier());
         }
     }
 }

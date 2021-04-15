@@ -17,8 +17,8 @@ public abstract class TGraphical extends UIObject {
         super(new Texture2D(width, height));
         this.graphics = new BufferedGraphics(getTexture());
 
-        getStyle().dimensions.width.set(width);
-        getStyle().dimensions.height.set(height);
+        getStyle().getDimensions().width.set(width);
+        getStyle().getDimensions().height.set(height);
     }
 
     public void setBackground(IColour background) {
