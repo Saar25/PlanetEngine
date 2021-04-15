@@ -1,6 +1,14 @@
 package org.saar.gui.style.property;
 
+import org.saar.gui.style.Style;
+
 public class Length {
+
+    private final Style container;
+
+    public Length(Style container) {
+        this.container = container;
+    }
 
     private int value;
 

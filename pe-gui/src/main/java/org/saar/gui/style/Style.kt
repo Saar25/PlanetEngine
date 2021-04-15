@@ -10,19 +10,19 @@ class Style {
     val colourModifier: Vector4f = Vector4.of(1f)
 
     @JvmField
-    val x: Coordinate = Coordinate()
+    val x: Coordinate = Coordinate(this)
 
     @JvmField
-    val y: Coordinate = Coordinate()
+    val y: Coordinate = Coordinate(this)
 
     @JvmField
     val position: Position = Position(x, y)
 
     @JvmField
-    val width: Length = Length()
+    val width: Length = Length(this)
 
     @JvmField
-    val height: Length = Length()
+    val height: Length = Length(this)
 
     @JvmField
     val dimensions: Dimensions = Dimensions(width, height)
@@ -31,13 +31,13 @@ class Style {
     val bounds: Bounds = Bounds(position, dimensions)
 
     @JvmField
-    val borders: Borders = Borders()
+    val borders: Borders = Borders(this)
 
     @JvmField
     val borderColour: Colour = Colour()
 
     @JvmField
-    val radiuses: Radiuses = Radiuses()
+    val radiuses: Radiuses = Radiuses(this)
 
     @JvmField
     val backgroundColour: CornersColours = CornersColours()

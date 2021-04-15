@@ -1,8 +1,15 @@
 package org.saar.gui.style.property;
 
+import org.saar.gui.style.Style;
+
 public class Coordinate {
 
+    private final Style container;
     private int value;
+
+    public Coordinate(Style container) {
+        this.container = container;
+    }
 
     public void add(int value) {
         set(get() + value);

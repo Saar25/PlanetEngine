@@ -2,27 +2,23 @@ package org.saar.gui.style.property;
 
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
+import org.saar.gui.style.Style;
 import org.saar.gui.style.StyleProperty;
 
 public class Radiuses implements StyleProperty {
 
-    public final Length topLeft = new Length();
-    public final Length topRight = new Length();
-    public final Length bottomRight = new Length();
-    public final Length bottomLeft = new Length();
+    public final Length topLeft;
+    public final Length topRight;
+    public final Length bottomRight;
+    public final Length bottomLeft;
 
     private final Vector4i vector = new Vector4i();
 
-    public Radiuses() {
-
-    }
-
-    public Radiuses(int all) {
-        set(all);
-    }
-
-    public Radiuses(int topLeft, int topRight, int bottomRight, int bottomLeft) {
-        set(topLeft, topRight, bottomRight, bottomLeft);
+    public Radiuses(Style container) {
+        this.topLeft = new Length(container);
+        this.topRight = new Length(container);
+        this.bottomRight = new Length(container);
+        this.bottomLeft = new Length(container);
     }
 
     public Length get(boolean right, boolean top) {

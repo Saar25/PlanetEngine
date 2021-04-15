@@ -2,27 +2,23 @@ package org.saar.gui.style.property;
 
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
+import org.saar.gui.style.Style;
 import org.saar.gui.style.StyleProperty;
 
 public class Borders implements StyleProperty {
 
-    public final Length top = new Length();
-    public final Length right = new Length();
-    public final Length bottom = new Length();
-    public final Length left = new Length();
+    public final Length top;
+    public final Length right;
+    public final Length bottom;
+    public final Length left;
 
     private final Vector4i vector = new Vector4i();
 
-    public Borders() {
-
-    }
-
-    public Borders(int all) {
-        set(all);
-    }
-
-    public Borders(int top, int right, int bottom, int left) {
-        set(top, right, bottom, left);
+    public Borders(Style container) {
+        this.top = new Length(container);
+        this.right = new Length(container);
+        this.bottom = new Length(container);
+        this.left = new Length(container);
     }
 
     public void set(int top, int right, int bottom, int left) {
