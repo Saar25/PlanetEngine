@@ -1,0 +1,18 @@
+package org.saar.gui.position.coordinate
+
+abstract class Coordinate : ReadonlyCoordinate {
+
+    var value: CoordinateValue = CoordinateValues.zero
+
+    fun set(pixels: Int) {
+        this.value = CoordinateValues.pixels(pixels)
+    }
+
+    fun add(value: CoordinateValue) {
+        this.value = CoordinateValues.add(this.value, value)
+    }
+
+    fun sub(value: CoordinateValue) {
+        this.value = CoordinateValues.sub(this.value, value)
+    }
+}

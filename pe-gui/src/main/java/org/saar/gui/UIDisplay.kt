@@ -4,7 +4,7 @@ import org.saar.gui.render.UIRenderer
 import org.saar.gui.style.WindowStyle
 import org.saar.lwjgl.glfw.window.Window
 
-class UIDisplay(private val window: Window) {
+class UIDisplay(private val window: Window) : UIElement {
 
     private val style: WindowStyle = WindowStyle
 
@@ -16,5 +16,5 @@ class UIDisplay(private val window: Window) {
         this.uiComponents.add(uiComponent)
     }
 
-
+    override fun getStyle() = this.style
 }

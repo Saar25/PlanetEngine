@@ -13,11 +13,13 @@ import java.util.List;
  * This class represent a ui component, with out any logic
  * use this class to group UIObjects and render them as one
  */
-public abstract class UIComponent {
+public abstract class UIComponent implements UIElement {
 
-    private final Style style = new Style(null);
+    private final Style style = new Style();
 
     private final List<UIObject> uiObjects = new ArrayList<>();
+
+    private UIElement parent;
 
     private boolean mouseHover;
     private boolean mousePressed;
@@ -32,6 +34,10 @@ public abstract class UIComponent {
 
     public Style getStyle() {
         return this.style;
+    }
+
+    public UIElement getParent() {
+        return this.parent;
     }
 
     public final void onMouseMoveEvent(MoveEvent event) {
