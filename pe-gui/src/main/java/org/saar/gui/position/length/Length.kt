@@ -4,6 +4,10 @@ abstract class Length : ReadonlyLength {
 
     var value: LengthValue = LengthValues.zero
 
+    fun set(value: LengthValue) {
+        this.value = value
+    }
+
     fun set(pixels: Int) {
         this.value = LengthValues.pixels(pixels)
     }

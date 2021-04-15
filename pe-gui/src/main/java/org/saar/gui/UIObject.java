@@ -3,8 +3,8 @@ package org.saar.gui;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.common.QuadMesh;
+import org.saar.gui.position.Positioner;
 import org.saar.gui.style.Style;
-import org.saar.gui.style.Styleable;
 import org.saar.gui.style.property.Radiuses;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.maths.objects.Rectangle;
@@ -18,31 +18,36 @@ import org.saar.maths.objects.Rectangle;
  * @version 1.2
  * @since 18.2.2018
  */
-public class UIObject implements Model, Styleable {
+public class UIObject implements Model {
 
-    private final Style style = new Style();
+    private final Style style;
+    private final Positioner positioner;
 
     private final Texture2D texture;
 
-    public UIObject() {
+    public UIObject(UIComponent uiComponent) {
         this.texture = null;
+        this.positioner = new Positioner(uiComponent);
+        this.style = new Style(this.positioner);
     }
 
-    public UIObject(Texture2D texture) {
+    public UIObject(UIComponent uiComponent, Texture2D texture) {
         this.texture = texture;
+        this.positioner = new Positioner(uiComponent);
+        this.style = new Style(this.positioner);
     }
 
     public boolean inTouch(float mx, float my) {
         final Radiuses radiuses = this.style.getRadiuses();
 
         if (radiuses.isZero()) {
-            return this.style.getBounds().contains(mx, my);
+            return this.positioner.getBounds().contains(mx, my);
         }
 
-        final float x = this.style.getPosition().x.get();
-        final float y = this.style.getPosition().y.get();
-        final float w = this.style.getDimensions().width.get();
-        final float h = this.style.getDimensions().height.get();
+        final float x = this.positioner.getX().get();
+        final float y = this.positioner.getY().get();
+        final float w = this.positioner.getWidth().get();
+        final float h = this.positioner.getHeight().get();
 
         final float radius = radiuses.get(
                 mx > x + w / 2, my < y + h / 2);
@@ -57,10 +62,11 @@ public class UIObject implements Model, Styleable {
             return true;
         }
 
-        float cx = this.style.getBounds().xCenter();
-        float cy = this.style.getBounds().yCenter();
-        cx = mx < cx ? x + radius : x + w - radius;
-        cy = my < cy ? y + radius : y + h - radius;
+        final float cx = mx < x + w / 2
+                ? x + radius : x + w - radius;
+
+        final float cy = my < y + h / 2
+                ? y + radius : y + h - radius;
 
         final float dx = (cx - mx);
         final float dy = (cy - my);
@@ -71,9 +77,12 @@ public class UIObject implements Model, Styleable {
         return this.texture;
     }
 
-    @Override
     public Style getStyle() {
         return this.style;
+    }
+
+    public Positioner getPositioner() {
+        return this.positioner;
     }
 
     @Override

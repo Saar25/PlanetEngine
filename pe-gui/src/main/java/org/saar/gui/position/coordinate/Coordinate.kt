@@ -4,6 +4,10 @@ abstract class Coordinate : ReadonlyCoordinate {
 
     var value: CoordinateValue = CoordinateValues.zero
 
+    fun set(value: CoordinateValue) {
+        this.value = value
+    }
+
     fun set(pixels: Int) {
         this.value = CoordinateValues.pixels(pixels)
     }

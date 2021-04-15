@@ -1,7 +1,11 @@
 package org.saar.example.gui;
 
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.gui.UIComponent;
+import org.saar.gui.UIDisplay;
 import org.saar.gui.UIObject;
+import org.saar.gui.position.coordinate.CoordinateValues;
+import org.saar.gui.position.length.LengthValues;
 import org.saar.gui.render.UIRenderer;
 import org.saar.gui.style.property.Colours;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -16,11 +20,17 @@ public class GuiExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final UIObject object = new UIObject();
-        object.getStyle().getX().set(50);
-        object.getStyle().getY().set(50);
-        object.getStyle().getWidth().set(100);
-        object.getStyle().getHeight().set(70);
+        final UIDisplay display = new UIDisplay(window);
+        final UIComponent uiComponent = new UIComponent();
+        display.add(uiComponent);
+
+        final UIObject object = new UIObject(uiComponent);
+
+        object.getPositioner().getX().set(CoordinateValues.center());
+        object.getPositioner().getY().set(CoordinateValues.center());
+        object.getPositioner().getWidth().set(LengthValues.pixels(50));
+        object.getPositioner().getHeight().set(LengthValues.pixels(50));
+
         object.getStyle().getBackgroundColour().set(Colours.CYAN);
         object.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
         object.getStyle().getBorders().set(3);

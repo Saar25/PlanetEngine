@@ -75,7 +75,7 @@ private class UIRendererPrototype : RendererPrototype<UIObject> {
     override fun onInstanceDraw(context: RenderContext, guiObject: UIObject) {
         hasTextureUniform.value = guiObject.texture != null
 
-        boundsUniform.value = Vector4f(guiObject.style.bounds.asVector4i()) // TODO: make these ivec4
+        boundsUniform.value = Vector4f(guiObject.positioner.bounds.asVector4i()) // TODO: make these ivec4
         bordersUniform.value = Vector4f(guiObject.style.borders.asVector4i())
         radiusesUniform.value = Vector4f(guiObject.style.radiuses.asVector4i())
 

@@ -1,5 +1,6 @@
 package org.saar.gui.objects;
 
+import org.saar.gui.UIComponent;
 import org.saar.gui.UIObject;
 import org.saar.gui.graphics.BufferedGraphics;
 import org.saar.gui.graphics.Graphics;
@@ -13,12 +14,12 @@ public abstract class TGraphical extends UIObject {
 
     private IColour background = null;
 
-    public TGraphical(int width, int height) {
-        super(new Texture2D(width, height));
+    public TGraphical(UIComponent uiComponent, int width, int height) {
+        super(uiComponent, new Texture2D(width, height));
         this.graphics = new BufferedGraphics(getTexture());
 
-        getStyle().getDimensions().width.set(width);
-        getStyle().getDimensions().height.set(height);
+        getPositioner().getWidth().set(width);
+        getPositioner().getHeight().set(height);
     }
 
     public void setBackground(IColour background) {

@@ -14,10 +14,10 @@ import java.util.List;
  * This class represent a ui component, with out any logic
  * use this class to group UIObjects and render them as one
  */
-public abstract class UIComponent implements UIElement {
+public class UIComponent implements UIElement {
 
-    private final Style style = new Style();
-    private final Positioner positioner = new Positioner(this);
+    private final Positioner positioner;
+    private final Style style;
 
     private final List<UIObject> uiObjects = new ArrayList<>();
 
@@ -25,6 +25,11 @@ public abstract class UIComponent implements UIElement {
 
     private boolean mouseHover;
     private boolean mousePressed;
+
+    public UIComponent() {
+        this.positioner = new Positioner(this);
+        this.style = new Style(this.positioner);
+    }
 
     protected void add(UIObject uiObject) {
         this.uiObjects.add(uiObject);

@@ -15,4 +15,6 @@ class Positioner(container: UIComponent) : IPositioner {
     override val width: Length = Lengths.Width(container)
 
     override val height: Length = Lengths.Height(container)
+
+    val bounds: Bounds = Bounds(this)
 }

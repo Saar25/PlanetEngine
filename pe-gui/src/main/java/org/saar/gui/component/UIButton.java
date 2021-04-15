@@ -11,7 +11,7 @@ public class UIButton extends UIComponent {
 
     private final BooleanProperty pressedProperty = new SimpleBooleanProperty();
 
-    private final UIObject uiObject = new UIObject();
+    private final UIObject uiObject = new UIObject(this);
 
     private EventHandler<MouseEvent> onAction = e -> {};
 
