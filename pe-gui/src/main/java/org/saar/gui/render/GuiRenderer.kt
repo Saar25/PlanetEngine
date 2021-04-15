@@ -24,8 +24,8 @@ class GuiRenderer(vararg guiObjects: GuiObject) : Renderer,
 private class GuiRendererPrototype : RendererPrototype<GuiObject> {
 
     @UniformProperty
-    private val windowSizeUniform = object : Vec2iUniform() {
-        override fun getName(): String = "u_windowSize"
+    private val resolutionUniform = object : Vec2iUniform() {
+        override fun getName(): String = "u_resolution"
 
         override fun getUniformValue() = Vector2i(
             MainScreen.getInstance().width,
