@@ -4,6 +4,8 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.gui.UIObject;
 import org.saar.gui.render.UIRenderer;
 import org.saar.gui.style.property.Colours;
+import org.saar.gui.style.value.StyleCoordinates;
+import org.saar.gui.style.value.StyleLengths;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -17,10 +19,10 @@ public class GuiExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final UIObject object = new UIObject();
-        object.getStyle().getX().set(20);
-        object.getStyle().getY().set(20);
-        object.getStyle().getWidth().set(500);
-        object.getStyle().getHeight().set(200);
+        object.getStyle().getX().set(StyleCoordinates.center());
+        object.getStyle().getY().set(StyleCoordinates.center());
+        object.getStyle().getWidth().set(StyleLengths.percent(50));
+        object.getStyle().getHeight().set(StyleLengths.percent(50));
         object.getStyle().getBackgroundColour().set(Colours.CYAN);
         object.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
         object.getStyle().getBorders().set(3);

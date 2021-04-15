@@ -2,38 +2,25 @@ package org.saar.gui.style.property;
 
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
-import org.saar.gui.style.IStyle;
 import org.saar.gui.style.StyleProperty;
 
 public class Radiuses implements StyleProperty {
 
-    public final Length topLeft;
-    public final Length topRight;
-    public final Length bottomRight;
-    public final Length bottomLeft;
-
     private final Vector4i vector = new Vector4i();
 
-    public Radiuses(IStyle parent, IStyle container) {
-        this.topLeft = new Length(parent, container);
-        this.topRight = new Length(parent, container);
-        this.bottomRight = new Length(parent, container);
-        this.bottomLeft = new Length(parent, container);
-    }
+    public int topLeft = 0;
+    public int topRight = 0;
+    public int bottomRight = 0;
+    public int bottomLeft = 0;
 
-    public Length get(boolean right, boolean top) {
-        final Length[] values = {
-                topRight, topLeft,
-                bottomRight, bottomLeft
-        };
-        return values[(top ? 0 : 2) + (right ? 0 : 1)];
+    public int get(boolean right, boolean top) {
+        if (top) return right ? this.topRight : this.topLeft;
+        return right ? this.bottomRight : this.bottomLeft;
     }
 
     public boolean isZero() {
-        return this.topRight.get() == 0 &&
-                this.topLeft.get() == 0 &&
-                this.bottomRight.get() == 0 &&
-                this.bottomLeft.get() == 0;
+        return this.topRight == 0 && this.topLeft == 0 &&
+                this.bottomRight == 0 && this.bottomLeft == 0;
     }
 
     public void set(int all) {
@@ -41,30 +28,28 @@ public class Radiuses implements StyleProperty {
     }
 
     public void set(int top, int right, int bottom, int left) {
-        this.topLeft.set(top);
-        this.topRight.set(right);
-        this.bottomRight.set(bottom);
-        this.bottomLeft.set(left);
+        this.topLeft = top;
+        this.topRight = right;
+        this.bottomRight = bottom;
+        this.bottomLeft = left;
     }
 
     public void set(Radiuses borders) {
-        this.topLeft.set(borders.topLeft);
-        this.topRight.set(borders.topRight);
-        this.bottomRight.set(borders.bottomRight);
-        this.bottomLeft.set(borders.bottomLeft);
+        this.topLeft = borders.topLeft;
+        this.topRight = borders.topRight;
+        this.bottomRight = borders.bottomRight;
+        this.bottomLeft = borders.bottomLeft;
     }
 
     public Vector4ic asVector4i() {
         return this.vector.set(
-                this.topLeft.get(),
-                this.topRight.get(),
-                this.bottomRight.get(),
-                this.bottomLeft.get());
+                this.topLeft, this.topRight,
+                this.bottomRight, this.bottomLeft);
     }
 
     @Override
     public String toString() {
         return String.format("[Radiuses: top=%d, right=%d, bottom=%d, left=%d]",
-                this.topLeft.get(), this.topRight.get(), this.bottomRight.get(), this.bottomLeft.get());
+                this.topLeft, this.topRight, this.bottomRight, this.bottomLeft);
     }
 }

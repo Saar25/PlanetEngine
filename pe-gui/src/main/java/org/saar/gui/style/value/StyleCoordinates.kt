@@ -8,8 +8,8 @@ object StyleCoordinates {
 
     @JvmStatic
     fun pixels(pixels: Int) =
-        StyleCoordinate { parentCoordinate: Coordinate, parentLength: Length, _: Length ->
-            parentCoordinate.get() + parentLength.get() + pixels
+        StyleCoordinate { parentCoordinate: Coordinate, _: Length, _: Length ->
+            parentCoordinate.get() + pixels
         }
 
     @JvmStatic

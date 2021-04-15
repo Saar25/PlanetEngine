@@ -45,7 +45,7 @@ public class UIObject implements Model, Styleable {
         final float h = this.style.getDimensions().height.get();
 
         final float radius = radiuses.get(
-                mx > x + w / 2, my < y + h / 2).get();
+                mx > x + w / 2, my < y + h / 2);
 
         final Rectangle bordersV = new Rectangle(
                 x + radius, y, w - radius * 2, h);
