@@ -2,20 +2,27 @@ package org.saar.gui.style.property;
 
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
+import org.saar.gui.style.IStyle;
 import org.saar.gui.style.StyleProperty;
 
 public class Radiuses implements StyleProperty {
 
     private final Vector4i vector = new Vector4i();
 
+    private final IStyle container;
+
     public int topLeft = 0;
     public int topRight = 0;
     public int bottomRight = 0;
     public int bottomLeft = 0;
 
+    public Radiuses(IStyle container) {
+        this.container = container;
+    }
+
     public int get(boolean right, boolean top) {
-        if (top) return right ? this.topRight : this.topLeft;
-        return right ? this.bottomRight : this.bottomLeft;
+        if (top) return clamp(right ? this.topRight : this.topLeft);
+        return clamp(right ? this.bottomRight : this.bottomLeft);
     }
 
     public boolean isZero() {
@@ -43,8 +50,18 @@ public class Radiuses implements StyleProperty {
 
     public Vector4ic asVector4i() {
         return this.vector.set(
-                this.topLeft, this.topRight,
-                this.bottomRight, this.bottomLeft);
+                clamp(this.topLeft),
+                clamp(this.topRight),
+                clamp(this.bottomRight),
+                clamp(this.bottomLeft));
+    }
+
+    private int clamp(int value) {
+        final int w = this.container.getWidth().get();
+        final int h = this.container.getHeight().get();
+        final int max = Math.min(w, h) / 2;
+
+        return Math.max(0, Math.min(max, value));
     }
 
     @Override

@@ -26,7 +26,7 @@ object GenesisStyle : IStyle {
 
     override val borderColour: Colour = Colour()
 
-    override val radiuses: Radiuses = Radiuses()
+    override val radiuses: Radiuses = Radiuses(this)
 
     override val backgroundColour: CornersColours = CornersColours()
 
