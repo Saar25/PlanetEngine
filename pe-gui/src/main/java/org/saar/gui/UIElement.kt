@@ -1,9 +1,9 @@
 package org.saar.gui
 
-import org.saar.gui.position.Positioner
+import org.saar.gui.position.IPositioner
 
 interface UIElement {
 
-    val positioner: Positioner
+    val positioner: IPositioner
 
 }

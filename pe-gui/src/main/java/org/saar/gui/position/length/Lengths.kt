@@ -1,6 +1,7 @@
 package org.saar.gui.position.length
 
 import org.saar.gui.UIComponent
+import org.saar.lwjgl.glfw.window.Window
 
 object Lengths {
 
@@ -20,5 +21,15 @@ object Lengths {
             val h = this.container.parent.positioner.height
             return this.value.compute(y, h)
         }
+    }
+
+    class WindowWidth(private val window: Window) : Length() {
+
+        override fun get() = this.window.width
+    }
+
+    class WindowHeight(private val window: Window) : Length() {
+
+        override fun get() = this.window.height
     }
 }
