@@ -19,7 +19,7 @@ public class UIComponent implements UIElement {
     private final Positioner positioner;
     private final Style style;
 
-    private final List<UIObject> uiObjects = new ArrayList<>();
+    private final List<UIBlock> uiBlocks = new ArrayList<>();
 
     private UIElement parent;
 
@@ -31,12 +31,12 @@ public class UIComponent implements UIElement {
         this.style = new Style(this.positioner);
     }
 
-    protected void add(UIObject uiObject) {
-        this.uiObjects.add(uiObject);
+    protected void add(UIBlock uiBlock) {
+        this.uiBlocks.add(uiBlock);
     }
 
-    public List<UIObject> getUiObjects() {
-        return this.uiObjects;
+    public List<UIBlock> getUiObjects() {
+        return this.uiBlocks;
     }
 
     public Style getStyle() {

@@ -18,20 +18,20 @@ import org.saar.maths.objects.Rectangle;
  * @version 1.2
  * @since 18.2.2018
  */
-public class UIObject implements Model {
+public class UIBlock implements Model {
 
     private final Style style;
     private final Positioner positioner;
 
     private final Texture2D texture;
 
-    public UIObject(UIComponent uiComponent) {
+    public UIBlock(UIComponent uiComponent) {
         this.texture = null;
         this.positioner = new Positioner(uiComponent);
         this.style = new Style(this.positioner);
     }
 
-    public UIObject(UIComponent uiComponent, Texture2D texture) {
+    public UIBlock(UIComponent uiComponent, Texture2D texture) {
         this.texture = texture;
         this.positioner = new Positioner(uiComponent);
         this.style = new Style(this.positioner);

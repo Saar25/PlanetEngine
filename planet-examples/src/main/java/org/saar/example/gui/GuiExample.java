@@ -3,7 +3,7 @@ package org.saar.example.gui;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
-import org.saar.gui.UIObject;
+import org.saar.gui.UIBlock;
 import org.saar.gui.position.coordinate.CoordinateValues;
 import org.saar.gui.position.length.LengthValues;
 import org.saar.gui.render.UIRenderer;
@@ -24,7 +24,7 @@ public class GuiExample {
         final UIComponent uiComponent = new UIComponent();
         display.add(uiComponent);
 
-        final UIObject object = new UIObject(uiComponent);
+        final UIBlock object = new UIBlock(uiComponent);
 
         object.getPositioner().getX().set(CoordinateValues.center());
         object.getPositioner().getY().set(CoordinateValues.center());

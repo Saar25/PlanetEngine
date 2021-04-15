@@ -9,7 +9,7 @@ import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UIObject
+import org.saar.gui.UIBlock
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -18,10 +18,10 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class UIRenderer(vararg guiObjects: UIObject) : Renderer,
-    RendererPrototypeWrapper<UIObject>(UIRendererPrototype(), *guiObjects)
+class UIRenderer(vararg uiBlocks: UIBlock) : Renderer,
+    RendererPrototypeWrapper<UIBlock>(UIRendererPrototype(), *uiBlocks)
 
-private class UIRendererPrototype : RendererPrototype<UIObject> {
+private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
@@ -72,16 +72,16 @@ private class UIRendererPrototype : RendererPrototype<UIObject> {
         GlUtils.setCullFace(GlCullFace.NONE)
     }
 
-    override fun onInstanceDraw(context: RenderContext, guiObject: UIObject) {
-        hasTextureUniform.value = guiObject.texture != null
+    override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
+        hasTextureUniform.value = uiBlock.texture != null
 
-        boundsUniform.value = Vector4f(guiObject.positioner.bounds.asVector4i()) // TODO: make these ivec4
-        bordersUniform.value = Vector4f(guiObject.style.borders.asVector4i())
-        radiusesUniform.value = Vector4f(guiObject.style.radiuses.asVector4i())
+        boundsUniform.value = Vector4f(uiBlock.positioner.bounds.asVector4i()) // TODO: make these ivec4
+        bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i())
+        radiusesUniform.value = Vector4f(uiBlock.style.radiuses.asVector4i())
 
-        borderColourUniform.value = guiObject.style.borderColour.asInt()
-        colourModifierUniform.value = guiObject.style.colourModifier
-        cornersColoursUniform.value = guiObject.style.backgroundColour.asVector4i()
-        textureUniform.value = guiObject.texture
+        borderColourUniform.value = uiBlock.style.borderColour.asInt()
+        colourModifierUniform.value = uiBlock.style.colourModifier
+        cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i()
+        textureUniform.value = uiBlock.texture
     }
 }

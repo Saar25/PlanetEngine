@@ -3,7 +3,7 @@ package org.saar.gui.component;
 import org.jproperty.type.BooleanProperty;
 import org.jproperty.type.SimpleBooleanProperty;
 import org.saar.gui.UIComponent;
-import org.saar.gui.UIObject;
+import org.saar.gui.UIBlock;
 import org.saar.gui.event.EventHandler;
 import org.saar.gui.event.MouseEvent;
 
@@ -11,7 +11,7 @@ public class UIButton extends UIComponent {
 
     private final BooleanProperty pressedProperty = new SimpleBooleanProperty();
 
-    private final UIObject uiObject = new UIObject(this);
+    private final UIBlock uiBlock = new UIBlock(this);
 
     private EventHandler<MouseEvent> onAction = e -> {};
 
@@ -20,7 +20,7 @@ public class UIButton extends UIComponent {
     }
 
     private void initUiObject() {
-        add(this.uiObject);
+        add(this.uiBlock);
     }
 
     public BooleanProperty pressedProperty() {
@@ -36,7 +36,7 @@ public class UIButton extends UIComponent {
         if (event.getButton().isPrimary()) {
             pressedProperty().set(true);
             getStyle().getColourModifier().set(1.5f, 1.5f, 1.5f, 1f);
-            for (UIObject child : getUiObjects()) {
+            for (UIBlock child : getUiObjects()) {
                 child.getStyle().getColourModifier().set(getStyle().getColourModifier());
             }
         }
@@ -50,7 +50,7 @@ public class UIButton extends UIComponent {
                 this.onAction.handle(event);
             }
             getStyle().getColourModifier().set(1);
-            for (UIObject child : getUiObjects()) {
+            for (UIBlock child : getUiObjects()) {
                 child.getStyle().getColourModifier().set(getStyle().getColourModifier());
             }
         }
@@ -64,7 +64,7 @@ public class UIButton extends UIComponent {
     public void onMouseExit(MouseEvent event) {
         pressedProperty().set(false);
         getStyle().getColourModifier().set(1f);
-        for (UIObject child : getUiObjects()) {
+        for (UIBlock child : getUiObjects()) {
             child.getStyle().getColourModifier().set(getStyle().getColourModifier());
         }
     }
