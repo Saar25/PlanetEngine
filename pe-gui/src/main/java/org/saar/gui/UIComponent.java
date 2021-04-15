@@ -30,8 +30,9 @@ public class UIComponent implements UIChildElement {
         this.style = new Style(this.positioner);
     }
 
-    protected void add(UIBlock uiBlock) {
+    public void add(UIBlock uiBlock) {
         this.uiBlocks.add(uiBlock);
+        uiBlock.setParent(this);
     }
 
     public List<UIBlock> getUiObjects() {

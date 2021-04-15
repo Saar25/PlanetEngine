@@ -10,6 +10,7 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIBlock
+import org.saar.gui.UIDisplay
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -18,8 +19,15 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class UIRenderer(vararg uiBlocks: UIBlock) : Renderer,
-    RendererPrototypeWrapper<UIBlock>(UIRendererPrototype(), *uiBlocks)
+class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
+    RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
+
+    override fun doRender(context: RenderContext) {
+        for (uiComponent in this.uiDisplay.uiComponents) {
+            renderModels(context, *uiComponent.uiObjects.toTypedArray())
+        }
+    }
+}
 
 private class UIRendererPrototype : RendererPrototype<UIBlock> {
 

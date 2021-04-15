@@ -27,16 +27,14 @@ public class UIBlock implements Model, UIChildElement {
 
     private UIElement parent;
 
-    public UIBlock(UIComponent uiComponent) {
+    public UIBlock() {
         this.texture = null;
-        this.parent = uiComponent;
         this.positioner = new Positioner(this);
         this.style = new Style(this.positioner);
     }
 
-    public UIBlock(UIComponent uiComponent, Texture2D texture) {
+    public UIBlock(Texture2D texture) {
         this.texture = texture;
-        this.parent = uiComponent;
         this.positioner = new Positioner(this);
         this.style = new Style(this.positioner);
     }

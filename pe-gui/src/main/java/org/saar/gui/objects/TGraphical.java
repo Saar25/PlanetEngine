@@ -1,6 +1,5 @@
 package org.saar.gui.objects;
 
-import org.saar.gui.UIComponent;
 import org.saar.gui.UIBlock;
 import org.saar.gui.graphics.BufferedGraphics;
 import org.saar.gui.graphics.Graphics;
@@ -14,8 +13,8 @@ public abstract class TGraphical extends UIBlock {
 
     private IColour background = null;
 
-    public TGraphical(UIComponent uiComponent, int width, int height) {
-        super(uiComponent, new Texture2D(width, height));
+    public TGraphical(int width, int height) {
+        super(new Texture2D(width, height));
         this.graphics = new BufferedGraphics(getTexture());
 
         getPositioner().getWidth().set(width);

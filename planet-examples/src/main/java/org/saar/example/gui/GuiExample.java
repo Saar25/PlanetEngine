@@ -33,10 +33,12 @@ public class GuiExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final UIDisplay display = new UIDisplay(window);
+
         final UIComponent uiComponent = new UIComponent();
         display.add(uiComponent);
 
-        final UIBlock object = new UIBlock(uiComponent);
+        final UIBlock object = new UIBlock();
+        uiComponent.add(object);
 
         object.getPositioner().getX().set(CoordinateValues.center());
         object.getPositioner().getY().set(CoordinateValues.center());
@@ -45,10 +47,10 @@ public class GuiExample {
 
         object.getStyle().getBackgroundColour().set(Colours.CYAN);
         object.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
-        object.getStyle().getBorders().set(1);
+        object.getStyle().getBorders().set(2);
         object.getStyle().getRadiuses().set(100);
 
-        final UIRenderer renderer = new UIRenderer(object);
+        final UIRenderer renderer = new UIRenderer(display);
 
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(new ForwardScreenPrototype() {
             private final Texture colourTexture = Texture.create();

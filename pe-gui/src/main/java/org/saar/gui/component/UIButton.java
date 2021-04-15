@@ -2,8 +2,8 @@ package org.saar.gui.component;
 
 import org.jproperty.type.BooleanProperty;
 import org.jproperty.type.SimpleBooleanProperty;
-import org.saar.gui.UIComponent;
 import org.saar.gui.UIBlock;
+import org.saar.gui.UIComponent;
 import org.saar.gui.event.EventHandler;
 import org.saar.gui.event.MouseEvent;
 
@@ -11,7 +11,7 @@ public class UIButton extends UIComponent {
 
     private final BooleanProperty pressedProperty = new SimpleBooleanProperty();
 
-    private final UIBlock uiBlock = new UIBlock(this);
+    private final UIBlock uiBlock = new UIBlock();
 
     private EventHandler<MouseEvent> onAction = e -> {};
 

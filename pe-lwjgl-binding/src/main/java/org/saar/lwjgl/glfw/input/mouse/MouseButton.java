@@ -4,6 +4,8 @@ import org.lwjgl.glfw.GLFW;
 
 public enum MouseButton {
 
+    NONE(0), // PRIMARY
+
     BTN_1(GLFW.GLFW_MOUSE_BUTTON_1), // PRIMARY
     BTN_2(GLFW.GLFW_MOUSE_BUTTON_2), // SECONDARY
     BTN_3(GLFW.GLFW_MOUSE_BUTTON_3), // MIDDLE

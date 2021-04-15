@@ -1,16 +1,26 @@
 package org.saar.gui
 
 import org.saar.gui.position.WindowPositioner
-import org.saar.gui.render.UIRenderer
 import org.saar.lwjgl.glfw.window.Window
 
 class UIDisplay(private val window: Window) : UIElement {
 
     override val positioner = WindowPositioner(this.window)
 
-    private val uiComponents = mutableListOf<UIComponent>()
+    val uiComponents = mutableListOf<UIComponent>()
 
-    private val renderer = UIRenderer()
+    init {
+        this.window.mouse.addClickListener { event ->
+            for (uiComponent in this.uiComponents) {
+                uiComponent.onMouseClickEvent(event)
+            }
+        }
+        this.window.mouse.addMoveListener { event ->
+            for (uiComponent in this.uiComponents) {
+                uiComponent.onMouseMoveEvent(event)
+            }
+        }
+    }
 
     fun add(uiComponent: UIComponent) {
         this.uiComponents.add(uiComponent)
