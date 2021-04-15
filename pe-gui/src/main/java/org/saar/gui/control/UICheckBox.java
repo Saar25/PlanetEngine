@@ -2,21 +2,21 @@ package org.saar.gui.control;
 
 import org.jproperty.type.BooleanProperty;
 import org.jproperty.type.SimpleBooleanProperty;
-import org.saar.gui.GuiController;
-import org.saar.gui.GuiObject;
+import org.saar.gui.UIController;
+import org.saar.gui.UIObject;
 import org.saar.gui.event.MouseEvent;
 import org.saar.gui.objects.TImage;
 import org.saar.gui.objects.TRectangle;
 
-public class GuiCheckBox extends GuiController {
+public class UICheckBox extends UIController {
 
     private final BooleanProperty checkedProperty = new SimpleBooleanProperty();
 
-    private final GuiObject box = new TRectangle();
+    private final UIObject box = new TRectangle();
     private final int space = 5;
-    private GuiObject check = new TRectangle();
+    private UIObject check = new TRectangle();
 
-    public GuiCheckBox() {
+    public UICheckBox() {
         getChildren().add(box);
 
         check.getStyle().borders.set(0);

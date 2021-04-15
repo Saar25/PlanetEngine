@@ -2,7 +2,7 @@ package org.saar.gui;
 
 import org.saar.core.node.ParentNode;
 
-public abstract class GuiParent extends GuiElement implements ParentNode {
+public abstract class UIParent extends UIElement implements ParentNode {
 
     public void process() {
 //        getChildren().forEach(Spatial::process);

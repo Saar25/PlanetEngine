@@ -14,7 +14,7 @@ import org.saar.gui.style.property.Colours;
  * @version 1.2
  * @since 17.2.2019
  */
-public class GuiPanel extends GuiContainer implements Styleable {
+public class UIPanel extends UIContainer implements Styleable {
 
     private static final int HEADER = 20;
     private static final int BORDERS = 3;
@@ -25,7 +25,7 @@ public class GuiPanel extends GuiContainer implements Styleable {
 
     private final BooleanProperty draggableProperty = new SimpleBooleanProperty(true);
 
-    public GuiPanel() {
+    public UIPanel() {
         final PanelHeader panelHeader = new PanelHeader();
         getChildren().add(panelHeader);
         panelHeader.getStyle().width.set(500);
@@ -51,9 +51,9 @@ public class GuiPanel extends GuiContainer implements Styleable {
         return draggableProperty;
     }
 
-    private static class PanelBackground extends GuiController {
+    private static class PanelBackground extends UIController {
         private PanelBackground() {
-            getChildren().add(new GuiObject());
+            getChildren().add(new UIObject());
             setSelectable(false);
         }
     }
@@ -65,15 +65,15 @@ public class GuiPanel extends GuiContainer implements Styleable {
 
         @Override
         public void onMousePress(MouseEvent event) {
-            this.xStart = event.getX() - GuiPanel.this.getStyle().x.get();
-            this.yStart = event.getY() - GuiPanel.this.getStyle().y.get();
+            this.xStart = event.getX() - UIPanel.this.getStyle().x.get();
+            this.yStart = event.getY() - UIPanel.this.getStyle().y.get();
         }
 
         @Override
         public void onMouseDrag(MouseEvent event) {
             if (!panelBackground.isMousePressed() && draggableProperty().get() && getSelected() == null) {
-                GuiPanel.this.getStyle().x.set(event.getX() - xStart);
-                GuiPanel.this.getStyle().y.set(event.getY() - yStart);
+                UIPanel.this.getStyle().x.set(event.getX() - xStart);
+                UIPanel.this.getStyle().y.set(event.getY() - yStart);
             }
         }
     }

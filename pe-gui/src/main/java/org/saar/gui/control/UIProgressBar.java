@@ -2,22 +2,22 @@ package org.saar.gui.control;
 
 import org.jproperty.type.FloatProperty;
 import org.jproperty.type.SimpleFloatProperty;
-import org.saar.gui.GuiController;
-import org.saar.gui.GuiObject;
+import org.saar.gui.UIController;
+import org.saar.gui.UIObject;
 import org.saar.gui.driver.FloatDriver;
 import org.saar.gui.objects.TRectangle;
 import org.saar.gui.style.property.Colours;
 
-public class GuiProgressBar extends GuiController {
+public class UIProgressBar extends UIController {
 
     private final FloatProperty progressProperty = new SimpleFloatProperty();
 
-    private final GuiObject bar = createBar();
-    private final GuiObject border = createBorder();
+    private final UIObject bar = createBar();
+    private final UIObject border = createBorder();
 
     private FloatDriver progressDriver = null;
 
-    public GuiProgressBar() {
+    public UIProgressBar() {
         getChildren().add(bar);
         getChildren().add(border);
 
@@ -31,11 +31,11 @@ public class GuiProgressBar extends GuiController {
                 bar.getStyle().width.set(20));
     }
 
-    private static GuiObject createBar() {
+    private static UIObject createBar() {
         return new TRectangle();
     }
 
-    private static GuiObject createBorder() {
+    private static UIObject createBorder() {
         final TRectangle border = new TRectangle();
         border.getStyle().backgroundColour.set(0, 0, 0, 0);
         border.getStyle().borderColour.set(Colours.BLACK);

@@ -2,8 +2,8 @@ package org.saar.gui.control;
 
 import org.jproperty.type.FloatProperty;
 import org.jproperty.type.SimpleFloatProperty;
-import org.saar.gui.GuiController;
-import org.saar.gui.GuiObject;
+import org.saar.gui.UIController;
+import org.saar.gui.UIObject;
 import org.saar.gui.event.MouseEvent;
 import org.saar.gui.objects.TRectangle;
 import org.saar.gui.style.property.Colours;
@@ -11,7 +11,7 @@ import org.saar.gui.style.property.Dimensions;
 import org.saar.gui.style.property.Position;
 import org.saar.maths.utils.Maths;
 
-public class GuiSlider extends GuiController {
+public class UISlider extends UIController {
 
     private final FloatProperty value = new SimpleFloatProperty(0);
     private final FloatProperty dynamicValue = new SimpleFloatProperty(0);
@@ -19,16 +19,16 @@ public class GuiSlider extends GuiController {
     private final FloatProperty min = new SimpleFloatProperty(0);
     private final FloatProperty max = new SimpleFloatProperty(100);
 
-    private final GuiObject bar;
-    private final GuiObject slider;
+    private final UIObject bar;
+    private final UIObject slider;
 
-    public GuiSlider(int x, int y) {
+    public UISlider(int x, int y) {
         this();
         getStyle().x.set(x);
         getStyle().y.set(y);
     }
 
-    public GuiSlider() {
+    public UISlider() {
         getChildren().add(this.bar = createBar());
         getChildren().add(this.slider = createSlider());
 
@@ -36,11 +36,11 @@ public class GuiSlider extends GuiController {
                 dynamicValueProperty().setValue(e.getNewValue()));
     }
 
-    private GuiObject createBar() {
+    private UIObject createBar() {
         return new TRectangle();
     }
 
-    private GuiObject createSlider() {
+    private UIObject createSlider() {
         final TRectangle rectangle = new TRectangle();
         rectangle.getStyle().backgroundColour.set(Colours.WHITE);
         rectangle.getStyle().width.set(20);
@@ -99,11 +99,11 @@ public class GuiSlider extends GuiController {
                 getSlider().getStyle().dimensions.width.get() / 2 + center);
     }
 
-    public GuiObject getBar() {
+    public UIObject getBar() {
         return bar;
     }
 
-    public GuiObject getSlider() {
+    public UIObject getSlider() {
         return slider;
     }
 

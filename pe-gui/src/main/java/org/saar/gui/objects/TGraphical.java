@@ -1,13 +1,13 @@
 package org.saar.gui.objects;
 
-import org.saar.gui.GuiObject;
+import org.saar.gui.UIObject;
 import org.saar.gui.graphics.BufferedGraphics;
 import org.saar.gui.graphics.Graphics;
 import org.saar.gui.style.property.Colours;
 import org.saar.gui.style.property.IColour;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 
-public abstract class TGraphical extends GuiObject {
+public abstract class TGraphical extends UIObject {
 
     private final Graphics graphics;
 

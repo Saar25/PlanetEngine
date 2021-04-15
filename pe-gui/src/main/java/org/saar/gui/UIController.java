@@ -10,17 +10,17 @@ import org.saar.utils.list.ObservableList;
 
 import java.util.List;
 
-public abstract class GuiController extends GuiElement implements Styleable {
+public abstract class UIController extends UIElement implements Styleable {
 
     private final Style style = new Style();
-    private final ObservableList<GuiObject> children;
+    private final ObservableList<UIObject> children;
 
     private boolean selectable = true;
     private boolean selected;
     private boolean mouseHover;
     private boolean mousePressed;
 
-    protected GuiController() {
+    protected UIController() {
         this.children = ObservableList.observableArrayList();
     }
 
@@ -87,10 +87,10 @@ public abstract class GuiController extends GuiElement implements Styleable {
     }
 
     public void delete() {
-        getChildren().forEach(GuiObject::delete);
+        getChildren().forEach(UIObject::delete);
     }
 
-    protected List<GuiObject> getChildren() {
+    protected List<UIObject> getChildren() {
         return children;
     }
 

@@ -9,7 +9,7 @@ import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.GuiObject
+import org.saar.gui.UIObject
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -18,10 +18,10 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class GuiRenderer(vararg guiObjects: GuiObject) : Renderer,
-    RendererPrototypeWrapper<GuiObject>(GuiRendererPrototype(), *guiObjects)
+class UIRenderer(vararg guiObjects: UIObject) : Renderer,
+    RendererPrototypeWrapper<UIObject>(UIRendererPrototype(), *guiObjects)
 
-private class GuiRendererPrototype : RendererPrototype<GuiObject> {
+private class UIRendererPrototype : RendererPrototype<UIObject> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
@@ -72,7 +72,7 @@ private class GuiRendererPrototype : RendererPrototype<GuiObject> {
         GlUtils.setCullFace(GlCullFace.NONE)
     }
 
-    override fun onInstanceDraw(context: RenderContext, guiObject: GuiObject) {
+    override fun onInstanceDraw(context: RenderContext, guiObject: UIObject) {
         hasTextureUniform.value = guiObject.texture != null
 
         boundsUniform.value = Vector4f(guiObject.style.bounds.asVector4i()) // TODO: make these ivec4

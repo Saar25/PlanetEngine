@@ -1,8 +1,8 @@
 package org.saar.gui.objects;
 
-import org.saar.gui.GuiObject;
+import org.saar.gui.UIObject;
 
-public class TRectangle extends GuiObject {
+public class TRectangle extends UIObject {
 
 
 

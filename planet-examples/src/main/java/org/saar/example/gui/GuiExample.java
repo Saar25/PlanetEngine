@@ -1,8 +1,8 @@
 package org.saar.example.gui;
 
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.gui.GuiObject;
-import org.saar.gui.render.GuiRenderer;
+import org.saar.gui.UIObject;
+import org.saar.gui.render.UIRenderer;
 import org.saar.gui.style.property.Colours;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -16,7 +16,7 @@ public class GuiExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final GuiObject object = new GuiObject();
+        final UIObject object = new UIObject();
         object.getStyle().x.set(20);
         object.getStyle().y.set(20);
         object.getStyle().width.set(500);
@@ -26,7 +26,7 @@ public class GuiExample {
         object.getStyle().borders.set(3);
         object.getStyle().radiuses.set(100);
 
-        final GuiRenderer renderer = new GuiRenderer(object);
+        final UIRenderer renderer = new UIRenderer(object);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {

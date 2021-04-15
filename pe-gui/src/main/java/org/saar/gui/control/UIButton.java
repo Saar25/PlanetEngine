@@ -2,14 +2,14 @@ package org.saar.gui.control;
 
 import org.jproperty.type.BooleanProperty;
 import org.jproperty.type.SimpleBooleanProperty;
-import org.saar.gui.GuiController;
-import org.saar.gui.GuiObject;
+import org.saar.gui.UIController;
+import org.saar.gui.UIObject;
 import org.saar.gui.event.EventHandler;
 import org.saar.gui.event.MouseEvent;
 import org.saar.gui.objects.TImage;
 import org.saar.gui.objects.TRectangle;
 
-public class GuiButton extends GuiController {
+public class UIButton extends UIController {
 
     private static final int g = 5;
 
@@ -18,9 +18,9 @@ public class GuiButton extends GuiController {
     private EventHandler<MouseEvent> onAction = e -> {
     };
 
-    private GuiObject guiObject = new TRectangle();
+    private UIObject guiObject = new TRectangle();
 
-    public GuiButton() {
+    public UIButton() {
         getChildren().add(guiObject);
     }
 
@@ -43,7 +43,7 @@ public class GuiButton extends GuiController {
         if (event.getButton().isPrimary()) {
             pressedProperty().set(true);
             getStyle().colourModifier.set(1.5f, 1.5f, 1.5f, 1f);
-            for (GuiObject child : getChildren()) {
+            for (UIObject child : getChildren()) {
                 child.getStyle().colourModifier.set(getStyle().colourModifier);
             }
         }
@@ -57,7 +57,7 @@ public class GuiButton extends GuiController {
                 onAction.handle(event);
             }
             getStyle().colourModifier.set(1);
-            for (GuiObject child : getChildren()) {
+            for (UIObject child : getChildren()) {
                 child.getStyle().colourModifier.set(getStyle().colourModifier);
             }
         }
@@ -75,7 +75,7 @@ public class GuiButton extends GuiController {
         //getStyle().position.add(g, g);
         //getStyle().dimensions.add(-2 * g, -2 * g);
         getStyle().colourModifier.set(1f);
-        for (GuiObject child : getChildren()) {
+        for (UIObject child : getChildren()) {
             child.getStyle().colourModifier.set(getStyle().colourModifier);
         }
     }

@@ -10,25 +10,25 @@ import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.maths.objects.Rectangle;
 
 /**
- * This class represent an object inside a GuiComponent.
- * Every GuiComponent is composed by at least one GuiObject which
+ * This class represent an object inside a UIComponent.
+ * Every UIComponent is composed by at least one UIObject which
  * will be rendered by the renderer.
  *
  * @author Saar ----
  * @version 1.2
  * @since 18.2.2018
  */
-public class GuiObject implements Model, Styleable {
+public class UIObject implements Model, Styleable {
 
     private final Style style = new Style();
 
     private final Texture2D texture;
 
-    public GuiObject() {
+    public UIObject() {
         this.texture = null;
     }
 
-    public GuiObject(Texture2D texture) {
+    public UIObject(Texture2D texture) {
         this.texture = texture;
     }
 

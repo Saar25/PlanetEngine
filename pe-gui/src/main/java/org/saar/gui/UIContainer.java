@@ -7,11 +7,11 @@ import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
 import org.saar.lwjgl.glfw.input.mouse.ScrollEvent;
 import org.saar.utils.list.ObservableList;
 
-public class GuiContainer extends GuiParent {
+public class UIContainer extends UIParent {
 
-    private final ObservableList<GuiController> children = ObservableList.observableArrayList();
+    private final ObservableList<UIController> children = ObservableList.observableArrayList();
 
-    public GuiContainer() {
+    public UIContainer() {
 
     }
 
@@ -41,8 +41,8 @@ public class GuiContainer extends GuiParent {
 
     @Override
     public void process() {
-        /*GuiController selected = null;
-        for (GuiController child : getChildren()) {
+        /*UIController selected = null;
+        for (UIController child : getChildren()) {
             if (child.isSelected()) {
                 selected = child;
             } else {
@@ -55,12 +55,12 @@ public class GuiContainer extends GuiParent {
     }
 
     @Override
-    public ObservableList<GuiController> getChildren() {
+    public ObservableList<UIController> getChildren() {
         return children;
     }
 
-    public GuiController getSelected() {
-        for (GuiController child : getChildren()) {
+    public UIController getSelected() {
+        for (UIController child : getChildren()) {
             if (child.isSelected()) {
                 return child;
             }
@@ -76,7 +76,7 @@ public class GuiContainer extends GuiParent {
     protected final void invokeMousePress(MouseEvent event) {
         boolean found = false;
         for (int i = 0; i < getChildren().size(); i++) {
-            final GuiController component = getChildren().get(i);
+            final UIController component = getChildren().get(i);
             if (component.isMouseHover()) {
                 component.onMousePressImpl(event);
                 component.onMousePress(event);
@@ -108,7 +108,7 @@ public class GuiContainer extends GuiParent {
      * @param event the mouse event
      */
     protected final void invokeMouseEnter(MouseEvent event) {
-        for (GuiController component : getChildren()) {
+        for (UIController component : getChildren()) {
             if (!component.isMouseHover() && component.inTouch(event.getX(), event.getY())) {
                 component.onMouseEnterImpl(event);
                 component.onMouseEnter(event);
@@ -122,7 +122,7 @@ public class GuiContainer extends GuiParent {
      * @param event the mouse event
      */
     protected final void invokeMouseExit(MouseEvent event) {
-        for (GuiController component : getChildren()) {
+        for (UIController component : getChildren()) {
             if (component.isMouseHover() && !component.inTouch(event.getX(), event.getY())) {
                 component.onMouseExitImpl(event);
                 component.onMouseExit(event);
@@ -136,7 +136,7 @@ public class GuiContainer extends GuiParent {
      * @param event the mouse event
      */
     protected final void invokeMouseMove(MouseEvent event) {
-        for (GuiController component : getChildren()) {
+        for (UIController component : getChildren()) {
             if (component.isMouseHover()) {
                 component.onMouseMoveImpl(event);
                 component.onMouseMove(event);
@@ -150,7 +150,7 @@ public class GuiContainer extends GuiParent {
      * @param event the mouse event
      */
     protected final void invokeMouseDrag(MouseEvent event) {
-        for (GuiController component : getChildren()) {
+        for (UIController component : getChildren()) {
             if (component.isMousePressed() && event.getButton() != null) {
                 component.onMouseDragImpl(event);
                 component.onMouseDrag(event);
@@ -158,7 +158,7 @@ public class GuiContainer extends GuiParent {
         }
     }
 
-    public void attachChild(GuiController child) {
+    public void attachChild(UIController child) {
         getChildren().add(child);
     }
 }
