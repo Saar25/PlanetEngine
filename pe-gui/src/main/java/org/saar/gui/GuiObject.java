@@ -1,5 +1,8 @@
 package org.saar.gui;
 
+import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.Model;
+import org.saar.core.mesh.common.QuadMesh;
 import org.saar.gui.style.Style;
 import org.saar.gui.style.Styleable;
 import org.saar.gui.style.property.Radiuses;
@@ -15,7 +18,7 @@ import org.saar.maths.objects.Rectangle;
  * @version 1.2
  * @since 18.2.2018
  */
-public class GuiObject implements Styleable {
+public class GuiObject implements Model, Styleable {
 
     private final Style style = new Style();
 
@@ -23,7 +26,6 @@ public class GuiObject implements Styleable {
 
     public GuiObject() {
         this.texture = null;
-//        this.texture = new Texture2D(Texture.NULL);
     }
 
     public GuiObject(Texture2D texture) {
@@ -74,9 +76,20 @@ public class GuiObject implements Styleable {
         return this.style;
     }
 
+    @Override
     public void delete() {
         if (this.texture != null) {
             this.texture.delete();
         }
+    }
+
+    @Override
+    public void draw() {
+        getMesh().draw();
+    }
+
+    @Override
+    public Mesh getMesh() {
+        return QuadMesh.INSTANCE;
     }
 }

@@ -1,36 +1,35 @@
 package org.saar.gui.render
 
 import org.joml.Vector2i
-import org.joml.Vector2ic
 import org.joml.Vector4f
-import org.saar.core.renderer.AbstractRenderer
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.MainScreen
 import org.saar.gui.GuiObject
-import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.constants.RenderMode
-import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlRendering
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer() {
+class GuiRenderer(vararg guiObjects: GuiObject) : Renderer,
+    RendererPrototypeWrapper<GuiObject>(GuiRendererPrototype(), *guiObjects)
+
+private class GuiRendererPrototype : RendererPrototype<GuiObject> {
 
     @UniformProperty
     private val windowSizeUniform = object : Vec2iUniform() {
         override fun getName(): String = "u_windowSize"
 
-        override fun getUniformValue(): Vector2ic {
-            val w = Window.current().width
-            val h = Window.current().height
-            return Vector2i(w, h)
-        }
+        override fun getUniformValue() = Vector2i(
+            MainScreen.getInstance().width,
+            MainScreen.getInstance().height)
     }
 
     @UniformProperty
@@ -65,53 +64,24 @@ class GuiRenderer(private vararg val renderList: GuiObject) : AbstractRenderer()
     private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
 
-    init {
-        init()
-    }
+    override fun fragmentOutputs() = arrayOf("fragColour")
 
-    override fun preRender(context: RenderContext) {
+    override fun onRenderCycle(context: RenderContext) {
         GlUtils.enableAlphaBlending()
         GlUtils.disableDepthTest()
         GlUtils.setCullFace(GlCullFace.NONE)
     }
 
-    override fun onRender(context: RenderContext?) {
-        Vao.EMPTY.bind()
+    override fun onInstanceDraw(context: RenderContext, guiObject: GuiObject) {
+        hasTextureUniform.value = guiObject.texture != null
 
-        for (guiObject in this.renderList) {
-            windowSizeUniform.load()
+        boundsUniform.value = Vector4f(guiObject.style.bounds.asVector4i()) // TODO: make these ivec4
+        bordersUniform.value = Vector4f(guiObject.style.borders.asVector4i())
+        radiusesUniform.value = Vector4f(guiObject.style.radiuses.asVector4i())
 
-            hasTextureUniform.value = guiObject.texture != null
-            hasTextureUniform.load()
-
-            boundsUniform.value = Vector4f(guiObject.style.bounds.asVector4i())
-            boundsUniform.load()
-
-            bordersUniform.value = Vector4f(guiObject.style.borders.asVector4i())
-            bordersUniform.load()
-
-            radiusesUniform.value = Vector4f(guiObject.style.radiuses.asVector4i())
-            radiusesUniform.load()
-
-            borderColourUniform.value = guiObject.style.borderColour.asInt()
-            borderColourUniform.load()
-
-            colourModifierUniform.value = guiObject.style.colourModifier
-            colourModifierUniform.load()
-
-            cornersColoursUniform.setValue(guiObject.style.backgroundColour.asVector4i())
-            cornersColoursUniform.load()
-
-            textureUniform.value = guiObject.texture
-            textureUniform.load()
-
-            GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
-        }
-    }
-
-    override fun onDelete() {
-        for (guiObject in renderList) {
-            guiObject.delete()
-        }
+        borderColourUniform.value = guiObject.style.borderColour.asInt()
+        colourModifierUniform.value = guiObject.style.colourModifier
+        cornersColoursUniform.value = guiObject.style.backgroundColour.asVector4i()
+        textureUniform.value = guiObject.texture
     }
 }
