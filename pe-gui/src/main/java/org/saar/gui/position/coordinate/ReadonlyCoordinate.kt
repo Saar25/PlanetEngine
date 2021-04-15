@@ -1,7 +1,6 @@
 package org.saar.gui.position.coordinate
 
-interface ReadonlyCoordinate {
+fun interface ReadonlyCoordinate {
 
     fun get(): Int
-
 }

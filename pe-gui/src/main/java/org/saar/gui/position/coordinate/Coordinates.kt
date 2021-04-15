@@ -21,8 +21,4 @@ object Coordinates {
             return this.value.compute(y, h, this.container.positioner.height)
         }
     }
-
-    object Zero : Coordinate() {
-        override fun get() = 0
-    }
 }
