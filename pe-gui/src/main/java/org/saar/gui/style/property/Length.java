@@ -4,13 +4,15 @@ import org.saar.gui.style.Style;
 
 public class Length {
 
+    private final Style parent;
     private final Style container;
 
-    public Length(Style container) {
+    private int value;
+
+    public Length(Style parent, Style container) {
+        this.parent = parent;
         this.container = container;
     }
-
-    private int value;
 
     public void add(int value) {
         set(get() + value);

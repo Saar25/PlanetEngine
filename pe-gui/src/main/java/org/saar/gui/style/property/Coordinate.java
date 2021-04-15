@@ -4,10 +4,13 @@ import org.saar.gui.style.Style;
 
 public class Coordinate {
 
+    private final Style parent;
     private final Style container;
+
     private int value;
 
-    public Coordinate(Style container) {
+    public Coordinate(Style parent, Style container) {
+        this.parent = parent;
         this.container = container;
     }
 

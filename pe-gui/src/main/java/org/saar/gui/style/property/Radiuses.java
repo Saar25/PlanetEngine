@@ -14,11 +14,11 @@ public class Radiuses implements StyleProperty {
 
     private final Vector4i vector = new Vector4i();
 
-    public Radiuses(Style container) {
-        this.topLeft = new Length(container);
-        this.topRight = new Length(container);
-        this.bottomRight = new Length(container);
-        this.bottomLeft = new Length(container);
+    public Radiuses(Style parent, Style container) {
+        this.topLeft = new Length(parent, container);
+        this.topRight = new Length(parent, container);
+        this.bottomRight = new Length(parent, container);
+        this.bottomLeft = new Length(parent, container);
     }
 
     public Length get(boolean right, boolean top) {

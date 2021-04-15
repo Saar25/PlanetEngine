@@ -12,7 +12,7 @@ import java.util.List;
 
 public abstract class UIController implements Styleable {
 
-    private final Style style = new Style();
+    private final Style style = new Style(null);
     private final ObservableList<UIObject> children;
 
     private boolean selectable = true;

@@ -20,7 +20,7 @@ import org.saar.maths.objects.Rectangle;
  */
 public class UIObject implements Model, Styleable {
 
-    private final Style style = new Style();
+    private final Style style = new Style(null);
 
     private final Texture2D texture;
 

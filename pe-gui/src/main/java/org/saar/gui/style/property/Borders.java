@@ -14,11 +14,11 @@ public class Borders implements StyleProperty {
 
     private final Vector4i vector = new Vector4i();
 
-    public Borders(Style container) {
-        this.top = new Length(container);
-        this.right = new Length(container);
-        this.bottom = new Length(container);
-        this.left = new Length(container);
+    public Borders(Style parent, Style container) {
+        this.top = new Length(parent, container);
+        this.right = new Length(parent, container);
+        this.bottom = new Length(parent, container);
+        this.left = new Length(parent, container);
     }
 
     public void set(int top, int right, int bottom, int left) {
