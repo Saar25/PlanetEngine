@@ -37,18 +37,29 @@ public class GuiExample {
         final UIComponent uiComponent = new UIComponent();
         display.add(uiComponent);
 
-        final UIBlock object = new UIBlock();
-        uiComponent.add(object);
+        uiComponent.getPositioner().getX().set(CoordinateValues.center());
+        uiComponent.getPositioner().getY().set(CoordinateValues.center());
+        uiComponent.getPositioner().getWidth().set(LengthValues.percent(80));
+        uiComponent.getPositioner().getHeight().set(LengthValues.percent(80));
 
-        object.getPositioner().getX().set(CoordinateValues.center());
-        object.getPositioner().getY().set(CoordinateValues.center());
-        object.getPositioner().getWidth().set(LengthValues.percent(80));
-        object.getPositioner().getHeight().set(LengthValues.percent(80));
+        final UIBlock object1 = new UIBlock();
+        uiComponent.add(object1);
 
-        object.getStyle().getBackgroundColour().set(Colours.CYAN);
-        object.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
-        object.getStyle().getBorders().set(2);
-        object.getStyle().getRadiuses().set(100);
+        object1.getPositioner().getWidth().set(LengthValues.percent(48));
+        object1.getStyle().getBackgroundColour().set(Colours.CYAN);
+        object1.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
+        object1.getStyle().getBorders().set(2);
+        object1.getStyle().getRadiuses().set(100);
+
+        final UIBlock object2 = new UIBlock();
+        uiComponent.add(object2);
+
+        object2.getPositioner().getX().set(CoordinateValues.percent(52));
+        object2.getPositioner().getWidth().set(LengthValues.percent(48));
+        object2.getStyle().getBackgroundColour().set(Colours.CYAN);
+        object2.getStyle().getBorderColour().set(Colours.LIGHT_GREY);
+        object2.getStyle().getBorders().set(2);
+        object2.getStyle().getRadiuses().set(100);
 
         final UIRenderer renderer = new UIRenderer(display);
 
@@ -83,7 +94,7 @@ public class GuiExample {
             window.pollEvents();
         }
 
-        object.delete();
+        object1.delete();
         renderer.delete();
         window.destroy();
     }

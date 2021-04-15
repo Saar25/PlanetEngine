@@ -5,7 +5,11 @@ import org.saar.gui.position.length.ReadonlyLength
 object CoordinateValues {
 
     @JvmStatic
-    val zero = CoordinateValue { _: ReadonlyCoordinate, _: ReadonlyLength, _: ReadonlyLength -> 0 }
+    val zero = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
+                                 _: ReadonlyLength,
+                                 _: ReadonlyLength ->
+        parentCoordinate.get()
+    }
 
     @JvmStatic
     fun pixels(pixels: Int) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
