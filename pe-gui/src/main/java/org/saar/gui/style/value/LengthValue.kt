@@ -6,6 +6,7 @@ import org.saar.gui.style.length.ReadonlyLength
 fun interface LengthValue {
 
     fun compute(parentCoordinate: ReadonlyCoordinate,
-                parentLength: ReadonlyLength): Int
+                parentLength: ReadonlyLength,
+                thisOtherLength: ReadonlyLength): Int
 
 }

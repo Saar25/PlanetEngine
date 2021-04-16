@@ -9,7 +9,8 @@ object Lengths {
         override fun get(): Int {
             val x = this.container.parent.style.x
             val w = this.container.parent.style.width
-            return this.value.compute(x, w)
+            val h = this.container.style.height
+            return this.value.compute(x, w, h)
         }
     }
 
@@ -18,7 +19,8 @@ object Lengths {
         override fun get(): Int {
             val y = this.container.parent.style.y
             val h = this.container.parent.style.height
-            return this.value.compute(y, h)
+            val w = this.container.style.width
+            return this.value.compute(y, h, w)
         }
     }
 }

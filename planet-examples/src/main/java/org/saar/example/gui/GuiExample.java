@@ -41,7 +41,7 @@ public class GuiExample {
         uiButton.getStyle().getX().set(CoordinateValues.center());
         uiButton.getStyle().getY().set(CoordinateValues.center());
         uiButton.getStyle().getWidth().set(LengthValues.percent(10));
-        uiButton.getStyle().getHeight().set(LengthValues.percent(10));
+        uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
         uiButton.setOnAction(e -> System.out.println("Clicked!"));
         display.add(uiButton);
 
@@ -52,7 +52,7 @@ public class GuiExample {
         uiSlider.getStyle().getHeight().set(20);
 
         uiSlider.dynamicValueProperty().addListener(e -> {
-            final float percents = e.getNewValue().floatValue() / 4;
+            final float percents = e.getNewValue().floatValue() / 2;
             uiButton.getStyle().getWidth().set(LengthValues.percent(percents));
         });
 
