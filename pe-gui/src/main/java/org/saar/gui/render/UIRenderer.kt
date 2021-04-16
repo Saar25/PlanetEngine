@@ -92,7 +92,7 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
 
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
-        colourModifierUniform.value = uiBlock.style.colourModifier
+        colourModifierUniform.value = uiBlock.style.colourModifier.multiply
         textureUniform.value = uiBlock.texture
     }
 }
