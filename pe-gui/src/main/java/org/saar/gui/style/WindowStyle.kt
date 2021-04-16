@@ -3,7 +3,8 @@ package org.saar.gui.style
 import org.joml.Vector4fc
 import org.saar.gui.style.border.ReadonlyStyleBorders
 import org.saar.gui.style.border.WindowStyleBorders
-import org.saar.gui.style.property.Colour
+import org.saar.gui.style.colour.ReadonlyColour
+import org.saar.gui.style.colour.WindowColour
 import org.saar.gui.style.property.CornersColours
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 import org.saar.gui.style.redius.WindowStyleRadiuses
@@ -15,7 +16,7 @@ object WindowStyle : IStyle {
 
     override val borders: ReadonlyStyleBorders = WindowStyleBorders
 
-    override val borderColour: Colour = Colour()
+    override val borderColour: ReadonlyColour = WindowColour
 
     override val radiuses: ReadonlyStyleRadiuses = WindowStyleRadiuses
 

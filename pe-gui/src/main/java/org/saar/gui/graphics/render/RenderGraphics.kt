@@ -6,7 +6,7 @@ import org.saar.core.mesh.Model
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.gui.graphics.Graphics
 import org.saar.gui.style.property.Colours
-import org.saar.gui.style.property.IColour
+import org.saar.gui.style.colour.ReadonlyColour
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -24,7 +24,7 @@ class RenderGraphics : Graphics {
 
     private val renderList = ArrayList<Model>()
 
-    private var colour: IColour = Colours.BLACK
+    private var colour: ReadonlyColour = Colours.BLACK
 
     @UniformProperty
     private val windowSizeUniform = object : Vec2iUniform() {
@@ -52,7 +52,7 @@ class RenderGraphics : Graphics {
         private val shadersProgram = ShadersProgram.create(vertex, fragment)
     }
 
-    override fun setColour(colour: IColour) {
+    override fun setColour(colour: ReadonlyColour) {
         this.colour = colour
     }
 
@@ -82,7 +82,7 @@ class RenderGraphics : Graphics {
 
     }
 
-    override fun clear(clearColour: IColour) {
+    override fun clear(clearColour: ReadonlyColour) {
         GlUtils.setClearColour(clearColour.red, clearColour.green, clearColour.blue, 1f)
     }
 

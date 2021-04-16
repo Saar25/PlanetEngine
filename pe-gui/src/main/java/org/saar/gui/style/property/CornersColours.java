@@ -1,11 +1,10 @@
 package org.saar.gui.style.property;
 
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.saar.gui.style.StyleProperty;
-import org.saar.maths.utils.Matrix4;
+import org.saar.gui.style.colour.Colour;
+import org.saar.gui.style.colour.ReadonlyColour;
 
 public class CornersColours implements StyleProperty {
 
@@ -14,7 +13,6 @@ public class CornersColours implements StyleProperty {
     public final Colour bottomRight = new Colour();
     public final Colour bottomLeft = new Colour();
 
-    private final Matrix4f matrix = Matrix4.create();
     private final Vector4i vector = new Vector4i();
 
     public CornersColours() {
@@ -25,28 +23,28 @@ public class CornersColours implements StyleProperty {
         set(all);
     }
 
-    public CornersColours(IColour topLeft, IColour topRight,
-                          IColour bottomRight, IColour bottomLeft) {
+    public CornersColours(ReadonlyColour topLeft, ReadonlyColour topRight,
+                          ReadonlyColour bottomRight, ReadonlyColour bottomLeft) {
         set(topLeft, topRight, bottomRight, bottomLeft);
     }
 
-    public void set(IColour topLeft, IColour topRight,
-                    IColour bottomRight, IColour bottomLeft) {
+    public void set(ReadonlyColour topLeft, ReadonlyColour topRight,
+                    ReadonlyColour bottomRight, ReadonlyColour bottomLeft) {
         this.topLeft.set(topLeft);
         this.topRight.set(topRight);
         this.bottomRight.set(bottomRight);
         this.bottomLeft.set(bottomLeft);
     }
 
-    public void set(IColour topLeft, IColour sides, IColour bottomRight) {
+    public void set(ReadonlyColour topLeft, ReadonlyColour sides, ReadonlyColour bottomRight) {
         set(topLeft, sides, bottomRight, sides);
     }
 
-    public void set(IColour topLeftBottomRight, IColour topRightBottomLeft) {
+    public void set(ReadonlyColour topLeftBottomRight, ReadonlyColour topRightBottomLeft) {
         set(topLeftBottomRight, topRightBottomLeft, topLeftBottomRight, topRightBottomLeft);
     }
 
-    public void set(IColour a, IColour b, Orientation orientation) {
+    public void set(ReadonlyColour a, ReadonlyColour b, Orientation orientation) {
         switch (orientation) {
             case VERTICAL:
                 set(a, a, b, b);
@@ -57,7 +55,7 @@ public class CornersColours implements StyleProperty {
         }
     }
 
-    public void set(IColour all) {
+    public void set(ReadonlyColour all) {
         set(all, all, all, all);
     }
 
@@ -121,14 +119,6 @@ public class CornersColours implements StyleProperty {
         this.topRight.setNormalized(r, g, b, a);
         this.bottomRight.setNormalized(r, g, b, a);
         this.bottomLeft.setNormalized(r, g, b, a);
-    }
-
-    public Matrix4fc asMatrix4f() {
-        return this.matrix.set(
-                this.bottomLeft.asVector4f(),
-                this.topLeft.asVector4f(),
-                this.bottomRight.asVector4f(),
-                this.topRight.asVector4f());
     }
 
     public Vector4ic asVector4i() {

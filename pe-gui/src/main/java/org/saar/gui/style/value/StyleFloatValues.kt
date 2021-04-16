@@ -6,6 +6,12 @@ object StyleFloatValues {
     val inherit: StyleFloatValue = StyleFloatValue { it }
 
     @JvmStatic
-    fun pixels(value: Float): StyleFloatValue = StyleFloatValue { value }
+    val zero: StyleFloatValue = StyleFloatValue { 0f }
+
+    @JvmStatic
+    val one: StyleFloatValue = StyleFloatValue { 1f }
+
+    @JvmStatic
+    fun of(value: Float): StyleFloatValue = StyleFloatValue { value }
 
 }
