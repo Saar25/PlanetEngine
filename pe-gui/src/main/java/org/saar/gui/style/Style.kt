@@ -2,9 +2,9 @@ package org.saar.gui.style
 
 import org.joml.Vector4f
 import org.saar.gui.UIChildElement
+import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.StyleBorders
 import org.saar.gui.style.bordercolour.BorderColour
-import org.saar.gui.style.property.CornersColours
 import org.saar.gui.style.redius.StyleRadiuses
 import org.saar.maths.utils.Vector4
 
@@ -18,6 +18,6 @@ class Style(container: UIChildElement) : IStyle {
 
     override val radiuses: StyleRadiuses = StyleRadiuses(container)
 
-    override val backgroundColour: CornersColours = CornersColours()
+    override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
 }

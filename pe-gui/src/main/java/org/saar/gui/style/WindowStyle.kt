@@ -1,11 +1,12 @@
 package org.saar.gui.style
 
 import org.joml.Vector4fc
+import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundcolour.WindowBackgroundColour
 import org.saar.gui.style.border.ReadonlyStyleBorders
 import org.saar.gui.style.border.WindowStyleBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.bordercolour.WindowBorderColour
-import org.saar.gui.style.property.CornersColours
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 import org.saar.gui.style.redius.WindowStyleRadiuses
 import org.saar.maths.utils.Vector4
@@ -20,6 +21,6 @@ object WindowStyle : IStyle {
 
     override val radiuses: ReadonlyStyleRadiuses = WindowStyleRadiuses
 
-    override val backgroundColour: CornersColours = CornersColours()
+    override val backgroundColour: ReadonlyBackgroundColour = WindowBackgroundColour
 
 }

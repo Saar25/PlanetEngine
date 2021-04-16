@@ -84,14 +84,15 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
         hasTextureUniform.value = uiBlock.texture != null
 
-        val vector4i = Vector4i()
         boundsUniform.value = Vector4f(uiBlock.positioner.bounds.asVector4i()) // TODO: make these ivec4
+
+        val vector4i = Vector4i()
         bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i(vector4i))
         radiusesUniform.value = Vector4f(uiBlock.style.radiuses.asVector4i(vector4i))
+        cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
 
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
         colourModifierUniform.value = uiBlock.style.colourModifier
-        cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i()
         textureUniform.value = uiBlock.texture
     }
 }
