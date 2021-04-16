@@ -206,7 +206,7 @@ vec4 getBorderColour(void) {
 /*================ */
 
 void main(void) {
-    if (getDiscardMapValue() == 0) {
+    if (getDiscardMapValue() < .1) {
         discard;
     }
     else if (isInside(v_bounds)){

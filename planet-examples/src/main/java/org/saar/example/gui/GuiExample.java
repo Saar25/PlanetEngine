@@ -11,8 +11,10 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.component.UIButton;
+import org.saar.gui.component.UICheckbox;
 import org.saar.gui.component.UISlider;
 import org.saar.gui.render.UIRenderer;
+import org.saar.gui.style.Colour;
 import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -57,6 +59,14 @@ public class GuiExample {
         });
 
         display.add(uiSlider);
+
+        final UICheckbox uiCheckbox = new UICheckbox();
+        uiCheckbox.getStyle().getY().set(50);
+        uiCheckbox.getStyle().getX().set(CoordinateValues.percentCenter(20));
+        uiCheckbox.getStyle().getWidth().set(LengthValues.pixels(20));
+        uiCheckbox.getStyle().getBackgroundColour().set(new Colour(48, 63, 159, 1f));
+        uiCheckbox.getStyle().getRadiuses().set(3);
+        display.add(uiCheckbox);
 
         final UIRenderer renderer = new UIRenderer(display);
 
