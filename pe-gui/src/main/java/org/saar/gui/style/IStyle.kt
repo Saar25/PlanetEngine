@@ -2,7 +2,7 @@ package org.saar.gui.style
 
 import org.joml.Vector4fc
 import org.saar.gui.style.border.ReadonlyStyleBorders
-import org.saar.gui.style.colour.ReadonlyColour
+import org.saar.gui.style.bordercolours.ReadonlyBordersColours
 import org.saar.gui.style.property.CornersColours
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 
@@ -12,7 +12,7 @@ interface IStyle {
 
     val borders: ReadonlyStyleBorders
 
-    val borderColour: ReadonlyColour
+    val borderColour: ReadonlyBordersColours
 
     val radiuses: ReadonlyStyleRadiuses
 

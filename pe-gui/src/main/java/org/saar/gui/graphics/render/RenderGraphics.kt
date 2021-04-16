@@ -6,7 +6,6 @@ import org.saar.core.mesh.Model
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.gui.graphics.Graphics
 import org.saar.gui.style.property.Colours
-import org.saar.gui.style.colour.ReadonlyColour
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader

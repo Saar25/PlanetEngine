@@ -3,7 +3,7 @@ package org.saar.gui.style.property;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.saar.gui.style.StyleProperty;
-import org.saar.gui.style.colour.Colour;
+import org.saar.gui.style.Colour;
 import org.saar.gui.style.colour.ReadonlyColour;
 
 public class CornersColours implements StyleProperty {
