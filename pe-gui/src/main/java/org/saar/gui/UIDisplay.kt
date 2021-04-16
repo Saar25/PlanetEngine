@@ -11,8 +11,8 @@ class UIDisplay(private val window: Window) : UIElement {
 
     init {
         this.window.mouse.addClickListener { event ->
-            for (uiComponent in this.uiComponents) {
-                uiComponent.onMouseClickEvent(event)
+            for (uiComponent in this.uiComponents.reversed()) {
+                if (uiComponent.onMouseClickEvent(event)) break
             }
         }
         this.window.mouse.addMoveListener { event ->

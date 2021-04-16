@@ -66,16 +66,19 @@ public class UIComponent implements UIChildElement {
         }
     }
 
-    public final void onMouseClickEvent(ClickEvent event) {
+    public final boolean onMouseClickEvent(ClickEvent event) {
         final MouseEvent e = MouseEvent.create(event);
         final int x = event.getMouse().getXPos();
         final int y = event.getMouse().getYPos();
 
         if (event.isDown() && checkMouseInside(x, y)) {
             mousePress(e);
+            return true;
         } else if (isMousePressed()) {
             mouseRelease(e);
+            return true;
         }
+        return false;
     }
 
     private void mousePress(MouseEvent event) {
