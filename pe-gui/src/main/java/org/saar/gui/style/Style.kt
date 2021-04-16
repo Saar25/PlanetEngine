@@ -5,7 +5,7 @@ import org.saar.gui.UIChildElement
 import org.saar.gui.style.border.StyleBorders
 import org.saar.gui.style.property.Colour
 import org.saar.gui.style.property.CornersColours
-import org.saar.gui.style.property.Radiuses
+import org.saar.gui.style.redius.StyleRadiuses
 import org.saar.maths.utils.Vector4
 
 class Style(container: UIChildElement) : IStyle {
@@ -16,7 +16,7 @@ class Style(container: UIChildElement) : IStyle {
 
     override val borderColour: Colour = Colour()
 
-    override val radiuses: Radiuses = Radiuses(container.positioner)
+    override val radiuses: StyleRadiuses = StyleRadiuses(container)
 
     override val backgroundColour: CornersColours = CornersColours()
 

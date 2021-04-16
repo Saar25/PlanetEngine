@@ -5,7 +5,7 @@ import org.saar.core.mesh.Model;
 import org.saar.core.mesh.common.QuadMesh;
 import org.saar.gui.position.Positioner;
 import org.saar.gui.style.Style;
-import org.saar.gui.style.property.Radiuses;
+import org.saar.gui.style.redius.StyleRadiuses;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.maths.objects.Rectangle;
 
@@ -40,7 +40,7 @@ public class UIBlock implements Model, UIChildElement {
     }
 
     public boolean inTouch(float mx, float my) {
-        final Radiuses radiuses = this.style.getRadiuses();
+        final StyleRadiuses radiuses = this.style.getRadiuses();
 
         if (radiuses.isZero()) {
             return this.positioner.getBounds().contains(mx, my);

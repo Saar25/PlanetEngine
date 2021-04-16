@@ -6,7 +6,7 @@ import org.saar.lwjgl.glfw.window.Window
 
 class UIDisplay(private val window: Window) : UIElement {
 
-    override val style = WindowStyle(this)
+    override val style = WindowStyle
 
     override val positioner = WindowPositioner(this.window)
 
