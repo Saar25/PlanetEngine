@@ -1,6 +1,6 @@
 package org.saar.gui.graphics;
 
-import org.saar.gui.style.colour.ReadonlyColour;
+import org.saar.gui.style.Colour;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.textures.Texture2D;
@@ -12,7 +12,7 @@ public class BufferedGraphics implements Graphics {
     private final Texture2D texture;
     private final LwjglByteBuffer buffer;
 
-    private ReadonlyColour colour;
+    private Colour colour;
 
     public BufferedGraphics(Texture2D texture) {
         final int capacity = 4 * texture.getWidth() * texture.getHeight();
@@ -29,7 +29,7 @@ public class BufferedGraphics implements Graphics {
         return colour;
     }
 
-    private void setPixel(int x, int y, ReadonlyColour colour) {
+    private void setPixel(int x, int y, Colour colour) {
         if (x >= 0 && x < texture.getWidth() && y >= 0 && y < texture.getHeight()) {
             buffer.position(x + y * texture.getWidth());
             buffer.putInt(colour.asInt());
@@ -37,7 +37,7 @@ public class BufferedGraphics implements Graphics {
     }
 
     @Override
-    public void setColour(ReadonlyColour colour) {
+    public void setColour(Colour colour) {
         this.colour = colour;
     }
 
@@ -119,7 +119,7 @@ public class BufferedGraphics implements Graphics {
     }
 
     @Override
-    public void clear(ReadonlyColour clearColour) {
+    public void clear(Colour clearColour) {
         buffer.clear();
         final int colour = clearColour.asInt();
         for (int i = 0; i < buffer.limit(); i++) {

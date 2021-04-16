@@ -6,7 +6,7 @@ import org.saar.gui.event.MouseEvent
 import org.saar.gui.position.coordinate.CoordinateValues
 import org.saar.gui.position.coordinate.CoordinateValues.center
 import org.saar.gui.position.length.LengthValues.percent
-import org.saar.gui.style.property.Colours
+import org.saar.gui.style.Colours
 
 class MyUIComponent : UIComponent() {
 

@@ -2,49 +2,36 @@ package org.saar.gui.style.property;
 
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
-import org.saar.gui.style.StyleProperty;
 import org.saar.gui.style.Colour;
-import org.saar.gui.style.colour.ReadonlyColour;
+import org.saar.gui.style.Colours;
+import org.saar.gui.style.StyleProperty;
 
 public class CornersColours implements StyleProperty {
 
-    public final Colour topLeft = new Colour();
-    public final Colour topRight = new Colour();
-    public final Colour bottomRight = new Colour();
-    public final Colour bottomLeft = new Colour();
-
     private final Vector4i vector = new Vector4i();
 
-    public CornersColours() {
+    public Colour topLeft = Colours.BLACK;
+    public Colour topRight = Colours.BLACK;
+    public Colour bottomRight = Colours.BLACK;
+    public Colour bottomLeft = Colours.BLACK;
 
+    public void set(Colour topLeft, Colour topRight,
+                    Colour bottomRight, Colour bottomLeft) {
+        this.topLeft = topLeft;
+        this.topRight = topRight;
+        this.bottomRight = bottomRight;
+        this.bottomLeft = bottomLeft;
     }
 
-    public CornersColours(Colour all) {
-        set(all);
-    }
-
-    public CornersColours(ReadonlyColour topLeft, ReadonlyColour topRight,
-                          ReadonlyColour bottomRight, ReadonlyColour bottomLeft) {
-        set(topLeft, topRight, bottomRight, bottomLeft);
-    }
-
-    public void set(ReadonlyColour topLeft, ReadonlyColour topRight,
-                    ReadonlyColour bottomRight, ReadonlyColour bottomLeft) {
-        this.topLeft.set(topLeft);
-        this.topRight.set(topRight);
-        this.bottomRight.set(bottomRight);
-        this.bottomLeft.set(bottomLeft);
-    }
-
-    public void set(ReadonlyColour topLeft, ReadonlyColour sides, ReadonlyColour bottomRight) {
+    public void set(Colour topLeft, Colour sides, Colour bottomRight) {
         set(topLeft, sides, bottomRight, sides);
     }
 
-    public void set(ReadonlyColour topLeftBottomRight, ReadonlyColour topRightBottomLeft) {
+    public void set(Colour topLeftBottomRight, Colour topRightBottomLeft) {
         set(topLeftBottomRight, topRightBottomLeft, topLeftBottomRight, topRightBottomLeft);
     }
 
-    public void set(ReadonlyColour a, ReadonlyColour b, Orientation orientation) {
+    public void set(Colour a, Colour b, Orientation orientation) {
         switch (orientation) {
             case VERTICAL:
                 set(a, a, b, b);
@@ -55,7 +42,7 @@ public class CornersColours implements StyleProperty {
         }
     }
 
-    public void set(ReadonlyColour all) {
+    public void set(Colour all) {
         set(all, all, all, all);
     }
 
@@ -84,41 +71,8 @@ public class CornersColours implements StyleProperty {
         return this.bottomLeft;
     }
 
-    public void setPackedRGB(int rgb) {
-        float r = ((rgb >> 16) & 255) / 255f;
-        float g = ((rgb >> 8) & 255) / 255f;
-        float b = ((rgb) & 255) / 255f;
-        setNormalized(r, g, b, 1);
-    }
-
-    public void setPackedRGBA(int rgba) {
-        float r = ((rgba >> 24) & 255) / 255f;
-        float g = ((rgba >> 16) & 255) / 255f;
-        float b = ((rgba >> 8) & 255) / 255f;
-        float a = ((rgba) & 255) / 255f;
-        setNormalized(r, g, b, a);
-    }
-
-    public void set(int r, int g, int b) {
-        set(r, g, b, 255);
-    }
-
     public void set(int r, int g, int b, int a) {
-        this.topLeft.set(r, g, b, a);
-        this.topRight.set(r, g, b, a);
-        this.bottomRight.set(r, g, b, a);
-        this.bottomLeft.set(r, g, b, a);
-    }
-
-    public void setNormalized(float r, float g, float b) {
-        setNormalized(r, g, b, 1);
-    }
-
-    public void setNormalized(float r, float g, float b, float a) {
-        this.topLeft.setNormalized(r, g, b, a);
-        this.topRight.setNormalized(r, g, b, a);
-        this.bottomRight.setNormalized(r, g, b, a);
-        this.bottomLeft.setNormalized(r, g, b, a);
+        set(new Colour(r, g, b, a));
     }
 
     public Vector4ic asVector4i() {
