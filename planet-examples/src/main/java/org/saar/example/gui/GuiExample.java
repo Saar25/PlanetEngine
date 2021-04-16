@@ -9,7 +9,9 @@ import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.gui.UIComponent;
+import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
+import org.saar.gui.UIGroup;
 import org.saar.gui.component.UIButton;
 import org.saar.gui.component.UICheckbox;
 import org.saar.gui.component.UISlider;
@@ -36,8 +38,11 @@ public class GuiExample {
 
         final UIDisplay display = new UIDisplay(window);
 
+        final UIGroup uiGroup = new UIGroup(display);
+        display.add(uiGroup);
+
         final UIComponent uiComponent = new MyUIComponent();
-        display.add(uiComponent);
+        uiGroup.add(uiComponent);
 
         final UIButton uiButton = new UIButton();
         uiButton.getStyle().getX().set(CoordinateValues.center());
@@ -45,7 +50,7 @@ public class GuiExample {
         uiButton.getStyle().getWidth().set(LengthValues.percent(10));
         uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
         uiButton.setOnAction(e -> System.out.println("Clicked!"));
-        display.add(uiButton);
+        uiGroup.add(uiButton);
 
         final UISlider uiSlider = new UISlider();
         uiSlider.getStyle().getY().set(20);
@@ -58,7 +63,7 @@ public class GuiExample {
             uiButton.getStyle().getWidth().set(LengthValues.percent(percents));
         });
 
-        display.add(uiSlider);
+        uiGroup.add(uiSlider);
 
         final UICheckbox uiCheckbox = new UICheckbox();
         uiCheckbox.getStyle().getY().set(50);
@@ -66,7 +71,7 @@ public class GuiExample {
         uiCheckbox.getStyle().getWidth().set(LengthValues.pixels(20));
         uiCheckbox.getStyle().getBackgroundColour().set(new Colour(48, 63, 159, 1f));
         uiCheckbox.getStyle().getRadiuses().set(3);
-        display.add(uiCheckbox);
+        uiGroup.add(uiCheckbox);
 
         final UIRenderer renderer = new UIRenderer(display);
 

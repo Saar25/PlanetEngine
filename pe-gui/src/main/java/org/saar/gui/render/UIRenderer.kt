@@ -11,6 +11,7 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIBlock
+import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -24,8 +25,15 @@ class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
     RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
 
     override fun doRender(context: RenderContext) {
-        for (uiComponent in this.uiDisplay.uiComponents) {
-            renderModels(context, *uiComponent.uiObjects.toTypedArray())
+        renderContainer(context, this.uiDisplay)
+    }
+
+    private fun renderContainer(context: RenderContext, uiContainer: UIContainer) {
+        for (childComponent in uiContainer.uiComponents) {
+            renderModels(context, *childComponent.uiObjects.toTypedArray())
+        }
+        for (childContainer in uiContainer.uiContainers) {
+            renderContainer(context, childContainer)
         }
     }
 }
