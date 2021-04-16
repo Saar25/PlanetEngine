@@ -1,8 +1,6 @@
 package org.saar.gui
 
 import org.saar.gui.style.WindowStyle
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 import org.saar.lwjgl.glfw.window.Window
 
 class UIDisplay(private val window: Window) : UIContainer {
@@ -14,26 +12,22 @@ class UIDisplay(private val window: Window) : UIContainer {
     override val uiContainers = mutableListOf<UIContainer>()
 
     init {
-        this.window.mouse.addClickListener { event -> fireEvent(this, event) }
-
-        this.window.mouse.addMoveListener { event -> fireEvent(this, event) }
-    }
-
-    private fun fireEvent(container: UIContainer, event: ClickEvent) {
-        for (childComponent in container.uiComponents.asReversed()) {
-            if (childComponent.onMouseClickEvent(event)) break
+        this.window.mouse.addClickListener { event ->
+            for (childUiComponent in this.uiComponents.asReversed()) {
+                if (childUiComponent.onMouseClickEvent(event)) break
+            }
+            for (childUiContainer in this.uiContainers) {
+                childUiContainer.onMouseClickEvent(event)
+            }
         }
-        for (childContainer in container.uiContainers) {
-            fireEvent(childContainer, event)
-        }
-    }
 
-    private fun fireEvent(container: UIContainer, event: MoveEvent) {
-        for (childComponent in container.uiComponents.asReversed()) {
-            childComponent.onMouseMoveEvent(event)
-        }
-        for (childContainer in container.uiContainers) {
-            fireEvent(childContainer, event)
+        this.window.mouse.addMoveListener { event ->
+            for (childUiComponent in this.uiComponents.asReversed()) {
+                childUiComponent.onMouseMoveEvent(event)
+            }
+            for (childUiContainer in this.uiContainers) {
+                childUiContainer.onMouseMoveEvent(event)
+            }
         }
     }
 

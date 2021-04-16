@@ -9,7 +9,6 @@ import org.saar.core.screen.annotations.ScreenImageProperty;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.gui.UIComponent;
-import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.UIGroup;
 import org.saar.gui.component.UIButton;
