@@ -37,7 +37,7 @@ object Colours {
 
     @JvmField
     @Suppress("unused")
-    val WHITE: Colour = Colour(256, 256, 256, 1f)
+    val WHITE: Colour = Colour(255, 255, 255, 1f)
 
     @JvmField
     @Suppress("unused")
@@ -57,31 +57,31 @@ object Colours {
 
     @JvmField
     @Suppress("unused")
-    val RED: Colour = Colour(256, 0, 0, 1f)
+    val RED: Colour = Colour(255, 0, 0, 1f)
 
     @JvmField
     @Suppress("unused")
-    val GREEN: Colour = Colour(0, 256, 0, 1f)
+    val GREEN: Colour = Colour(0, 255, 0, 1f)
 
     @JvmField
     @Suppress("unused")
-    val BLUE: Colour = Colour(0, 0, 256, 1f)
+    val BLUE: Colour = Colour(0, 0, 255, 1f)
 
     @JvmField
     @Suppress("unused")
-    val PURPLE: Colour = Colour(256, 0, 256, 1f)
+    val PURPLE: Colour = Colour(255, 0, 255, 1f)
 
     @JvmField
     @Suppress("unused")
-    val CYAN: Colour = Colour(0, 256, 256, 1f)
+    val CYAN: Colour = Colour(0, 255, 255, 1f)
 
     @JvmField
     @Suppress("unused")
-    val YELLOW: Colour = Colour(256, 256, 0, 1f)
+    val YELLOW: Colour = Colour(255, 255, 0, 1f)
 
     @JvmField
     @Suppress("unused")
-    val ORANGE: Colour = Colour(256, 127, 0, 1f)
+    val ORANGE: Colour = Colour(255, 127, 0, 1f)
 
     @JvmField
     @Suppress("unused")
