@@ -20,8 +20,8 @@ import org.saar.maths.objects.Rectangle;
  */
 public class UIBlock implements Model, UIChildElement {
 
-    private final Style style;
-    private final Positioner positioner;
+    private final Style style = new Style(this);
+    private final Positioner positioner = new Positioner(this);
 
     private final Texture2D texture;
 
@@ -29,14 +29,10 @@ public class UIBlock implements Model, UIChildElement {
 
     public UIBlock() {
         this.texture = null;
-        this.positioner = new Positioner(this);
-        this.style = new Style(this);
     }
 
     public UIBlock(Texture2D texture) {
         this.texture = texture;
-        this.positioner = new Positioner(this);
-        this.style = new Style(this);
     }
 
     public boolean inTouch(float mx, float my) {

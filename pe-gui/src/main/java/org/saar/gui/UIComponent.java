@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represent a ui component, with out any logic
- * use this class to group UIObjects and render them as one
+ * This class represent a ui component
+ * it contains multiple UIBlock object and handles user events
  */
 public class UIComponent implements UIChildElement {
 
-    private final Positioner positioner;
-    private final Style style;
+    private final Style style = new Style(this);
+    private final Positioner positioner = new Positioner(this);
 
     private final List<UIBlock> uiBlocks = new ArrayList<>();
 
@@ -24,11 +24,6 @@ public class UIComponent implements UIChildElement {
 
     private boolean mouseHover;
     private boolean mousePressed;
-
-    public UIComponent() {
-        this.positioner = new Positioner(this);
-        this.style = new Style(this);
-    }
 
     public void add(UIBlock uiBlock) {
         this.uiBlocks.add(uiBlock);
