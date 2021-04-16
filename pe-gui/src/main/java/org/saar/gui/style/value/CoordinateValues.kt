@@ -1,6 +1,7 @@
-package org.saar.gui.position.coordinate
+package org.saar.gui.style.value
 
-import org.saar.gui.position.length.ReadonlyLength
+import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.length.ReadonlyLength
 
 object CoordinateValues {
 

@@ -56,8 +56,8 @@ class StyleRadiuses(private val container: UIChildElement) : ReadonlyStyleRadius
     }
 
     private fun clampRadius(value: Int): Int {
-        val w: Int = this.container.positioner.width.get()
-        val h: Int = this.container.positioner.height.get()
+        val w: Int = this.container.style.width.get()
+        val h: Int = this.container.style.height.get()
 
         return clamp(value, 0, min(w, h) / 2)
     }

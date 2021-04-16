@@ -1,4 +1,7 @@
-package org.saar.gui.position.coordinate
+package org.saar.gui.style.coordinate
+
+import org.saar.gui.style.value.CoordinateValue
+import org.saar.gui.style.value.CoordinateValues
 
 abstract class Coordinate : ReadonlyCoordinate {
 

@@ -17,8 +17,8 @@ public abstract class TGraphical extends UIBlock {
         super(new Texture2D(width, height));
         this.graphics = new BufferedGraphics(getTexture());
 
-        getPositioner().getWidth().set(width);
-        getPositioner().getHeight().set(height);
+        getStyle().getWidth().set(width);
+        getStyle().getHeight().set(height);
     }
 
     public void setBackground(Colour background) {

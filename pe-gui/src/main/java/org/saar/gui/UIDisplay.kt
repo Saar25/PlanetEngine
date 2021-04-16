@@ -1,14 +1,11 @@
 package org.saar.gui
 
-import org.saar.gui.position.WindowPositioner
 import org.saar.gui.style.WindowStyle
 import org.saar.lwjgl.glfw.window.Window
 
 class UIDisplay(private val window: Window) : UIElement {
 
-    override val style = WindowStyle
-
-    override val positioner = WindowPositioner(this.window)
+    override val style = WindowStyle(this.window)
 
     val uiComponents = mutableListOf<UIComponent>()
 

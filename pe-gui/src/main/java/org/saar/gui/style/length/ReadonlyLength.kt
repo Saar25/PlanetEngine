@@ -1,4 +1,4 @@
-package org.saar.gui.position.length
+package org.saar.gui.style.length
 
 fun interface ReadonlyLength {
 

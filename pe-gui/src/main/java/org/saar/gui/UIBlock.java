@@ -3,7 +3,6 @@ package org.saar.gui;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.common.QuadMesh;
-import org.saar.gui.position.Positioner;
 import org.saar.gui.style.Style;
 import org.saar.gui.style.redius.StyleRadiuses;
 import org.saar.lwjgl.opengl.textures.Texture2D;
@@ -21,7 +20,6 @@ import org.saar.maths.objects.Rectangle;
 public class UIBlock implements Model, UIChildElement {
 
     private final Style style = new Style(this);
-    private final Positioner positioner = new Positioner(this);
 
     private final Texture2D texture;
 
@@ -39,13 +37,13 @@ public class UIBlock implements Model, UIChildElement {
         final StyleRadiuses radiuses = this.style.getRadiuses();
 
         if (radiuses.isZero()) {
-            return this.positioner.getBounds().contains(mx, my);
+            return this.style.getBounds().contains(mx, my);
         }
 
-        final float x = this.positioner.getX().get();
-        final float y = this.positioner.getY().get();
-        final float w = this.positioner.getWidth().get();
-        final float h = this.positioner.getHeight().get();
+        final float x = this.style.getX().get();
+        final float y = this.style.getY().get();
+        final float w = this.style.getWidth().get();
+        final float h = this.style.getHeight().get();
 
         final float radius = radiuses.get(
                 mx > x + w / 2, my < y + h / 2);
@@ -78,11 +76,6 @@ public class UIBlock implements Model, UIChildElement {
     @Override
     public Style getStyle() {
         return this.style;
-    }
-
-    @Override
-    public Positioner getPositioner() {
-        return this.positioner;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.saar.gui.position.coordinate
+package org.saar.gui.style.coordinate
 
 fun interface ReadonlyCoordinate {
 

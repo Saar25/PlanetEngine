@@ -1,7 +1,6 @@
 package org.saar.gui;
 
 import org.saar.gui.event.MouseEvent;
-import org.saar.gui.position.Positioner;
 import org.saar.gui.style.Style;
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent;
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
@@ -16,7 +15,6 @@ import java.util.List;
 public class UIComponent implements UIChildElement {
 
     private final Style style = new Style(this);
-    private final Positioner positioner = new Positioner(this);
 
     private final List<UIBlock> uiBlocks = new ArrayList<>();
 
@@ -37,11 +35,6 @@ public class UIComponent implements UIChildElement {
     @Override
     public Style getStyle() {
         return this.style;
-    }
-
-    @Override
-    public Positioner getPositioner() {
-        return this.positioner;
     }
 
     @Override

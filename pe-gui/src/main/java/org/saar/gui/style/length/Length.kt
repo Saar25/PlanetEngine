@@ -1,4 +1,7 @@
-package org.saar.gui.position.length
+package org.saar.gui.style.length
+
+import org.saar.gui.style.value.LengthValue
+import org.saar.gui.style.value.LengthValues
 
 abstract class Length : ReadonlyLength {
 

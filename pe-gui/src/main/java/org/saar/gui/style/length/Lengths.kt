@@ -1,4 +1,4 @@
-package org.saar.gui.position.length
+package org.saar.gui.style.length
 
 import org.saar.gui.UIChildElement
 
@@ -7,8 +7,8 @@ object Lengths {
     class Width(private val container: UIChildElement) : Length() {
 
         override fun get(): Int {
-            val x = this.container.parent.positioner.x
-            val w = this.container.parent.positioner.width
+            val x = this.container.parent.style.x
+            val w = this.container.parent.style.width
             return this.value.compute(x, w)
         }
     }
@@ -16,8 +16,8 @@ object Lengths {
     class Height(private val container: UIChildElement) : Length() {
 
         override fun get(): Int {
-            val y = this.container.parent.positioner.y
-            val h = this.container.parent.positioner.height
+            val y = this.container.parent.style.y
+            val h = this.container.parent.style.height
             return this.value.compute(y, h)
         }
     }

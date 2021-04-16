@@ -84,7 +84,7 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
         hasTextureUniform.value = uiBlock.texture != null
 
-        boundsUniform.value = Vector4f(uiBlock.positioner.bounds.asVector4i()) // TODO: make these ivec4
+        boundsUniform.value = Vector4f(uiBlock.style.bounds.asVector4i()) // TODO: make these ivec4
 
         val vector4i = Vector4i()
         bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i(vector4i))

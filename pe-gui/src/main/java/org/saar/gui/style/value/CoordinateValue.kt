@@ -1,7 +1,8 @@
-package org.saar.gui.position.coordinate
+package org.saar.gui.style.value
 
-import org.saar.gui.position.PositionerValue
-import org.saar.gui.position.length.ReadonlyLength
+import org.saar.gui.style.PositionerValue
+import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.length.ReadonlyLength
 
 fun interface CoordinateValue : PositionerValue {
 
