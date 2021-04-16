@@ -42,9 +42,6 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     }
 
     @UniformProperty
-    private val hasTextureUniform = BooleanUniformValue("u_hasTexture")
-
-    @UniformProperty
     private val boundsUniform = Vec4UniformValue("u_bounds")
 
     @UniformProperty
@@ -63,7 +60,16 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     private val cornersColoursUniform = Vec4iUniformValue("u_cornersColours")
 
     @UniformProperty
+    private val hasTextureUniform = BooleanUniformValue("u_hasTexture")
+
+    @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
+
+    @UniformProperty
+    private val hasDiscardMapUniform = BooleanUniformValue("u_hasDiscardMap")
+
+    @UniformProperty
+    private val discardMapUniform = TextureUniformValue("u_discardMap", 1)
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
@@ -83,6 +89,10 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
         hasTextureUniform.value = uiBlock.texture != null
+        textureUniform.value = uiBlock.texture
+
+        hasDiscardMapUniform.value = uiBlock.discardMap != null
+        discardMapUniform.value = uiBlock.discardMap
 
         boundsUniform.value = Vector4f(uiBlock.style.bounds.asVector4i()) // TODO: make these ivec4
 
@@ -93,6 +103,5 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
         colourModifierUniform.value = uiBlock.style.colourModifier.multiply
-        textureUniform.value = uiBlock.texture
     }
 }

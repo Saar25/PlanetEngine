@@ -21,17 +21,10 @@ public class UIBlock implements Model, UIChildElement {
 
     private final Style style = new Style(this);
 
-    private final Texture2D texture;
+    private Texture2D texture = null;
+    private Texture2D discardMap = null;
 
     private UIElement parent;
-
-    public UIBlock() {
-        this.texture = null;
-    }
-
-    public UIBlock(Texture2D texture) {
-        this.texture = texture;
-    }
 
     public boolean inTouch(float mx, float my) {
         final StyleRadiuses radiuses = this.style.getRadiuses();
@@ -73,6 +66,18 @@ public class UIBlock implements Model, UIChildElement {
         return this.texture;
     }
 
+    public void setTexture(Texture2D texture) {
+        this.texture = texture;
+    }
+
+    public Texture2D getDiscardMap() {
+        return this.discardMap;
+    }
+
+    public void setDiscardMap(Texture2D discardMap) {
+        this.discardMap = discardMap;
+    }
+
     @Override
     public Style getStyle() {
         return this.style;
@@ -91,6 +96,9 @@ public class UIBlock implements Model, UIChildElement {
     public void delete() {
         if (this.texture != null) {
             this.texture.delete();
+        }
+        if (this.discardMap != null) {
+            this.discardMap.delete();
         }
     }
 

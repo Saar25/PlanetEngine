@@ -7,6 +7,7 @@ import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
+import org.saar.lwjgl.opengl.textures.Texture2D
 
 class MyUIComponent : UIComponent() {
 
@@ -22,6 +23,7 @@ class MyUIComponent : UIComponent() {
         this.style.borderColour.set(Colours.LIGHT_GREY)
 
         val object1 = UIBlock()
+        object1.discardMap = Texture2D.of("/assets/barrel/barrel.diffuse.png")
         add(object1)
 
         object1.style.width.set(percent(48f))
