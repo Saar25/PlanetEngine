@@ -2,6 +2,7 @@ package org.saar.gui.render
 
 import org.joml.Vector2i
 import org.joml.Vector4f
+import org.joml.Vector4i
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
@@ -83,8 +84,9 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
         hasTextureUniform.value = uiBlock.texture != null
 
+        val vector4i = Vector4i()
         boundsUniform.value = Vector4f(uiBlock.positioner.bounds.asVector4i()) // TODO: make these ivec4
-        bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i())
+        bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i(vector4i))
         radiusesUniform.value = Vector4f(uiBlock.style.radiuses.asVector4i())
 
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
