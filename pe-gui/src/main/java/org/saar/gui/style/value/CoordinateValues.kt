@@ -34,6 +34,20 @@ object CoordinateValues {
     }
 
     @JvmStatic
+    fun pixelsCenter(pixels: Int) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
+                                                      _: ReadonlyLength,
+                                                      thisLength: ReadonlyLength ->
+        parentCoordinate.get() + pixels - thisLength.get() / 2
+    }
+
+    @JvmStatic
+    fun percentCenter(percents: Float) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
+                                                           parentLength: ReadonlyLength,
+                                                           thisLength: ReadonlyLength ->
+        parentCoordinate.get() + (parentLength.get() * percents / 100).toInt() - thisLength.get() / 2
+    }
+
+    @JvmStatic
     fun add(a: CoordinateValue, b: CoordinateValue) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
                                                                         parentLength: ReadonlyLength,
                                                                         thisLength: ReadonlyLength ->

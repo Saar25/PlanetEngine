@@ -11,9 +11,8 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.component.UIButton;
+import org.saar.gui.component.UISlider;
 import org.saar.gui.render.UIRenderer;
-import org.saar.gui.style.Colours;
-import org.saar.gui.style.value.CoordinateValue;
 import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -45,6 +44,19 @@ public class GuiExample {
         uiButton.getStyle().getHeight().set(LengthValues.percent(10));
         uiButton.setOnAction(e -> System.out.println("Clicked!"));
         display.add(uiButton);
+
+        final UISlider uiSlider = new UISlider();
+        uiSlider.getStyle().getY().set(20);
+        uiSlider.getStyle().getX().set(CoordinateValues.center());
+        uiSlider.getStyle().getWidth().set(LengthValues.percent(90));
+        uiSlider.getStyle().getHeight().set(20);
+
+        uiSlider.dynamicValueProperty().addListener(e -> {
+            final float percents = e.getNewValue().floatValue() / 4;
+            uiButton.getStyle().getWidth().set(LengthValues.percent(percents));
+        });
+
+        display.add(uiSlider);
 
         final UIRenderer renderer = new UIRenderer(display);
 
