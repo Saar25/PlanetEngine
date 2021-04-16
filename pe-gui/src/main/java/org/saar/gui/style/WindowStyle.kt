@@ -1,6 +1,6 @@
 package org.saar.gui.style
 
-import org.joml.Vector4f
+import org.joml.Vector4fc
 import org.saar.gui.UIElement
 import org.saar.gui.style.property.Borders
 import org.saar.gui.style.property.Colour
@@ -8,9 +8,9 @@ import org.saar.gui.style.property.CornersColours
 import org.saar.gui.style.property.Radiuses
 import org.saar.maths.utils.Vector4
 
-class Style(uiElement: UIElement) : IStyle {
+class WindowStyle(uiElement: UIElement) : IStyle {
 
-    override val colourModifier: Vector4f = Vector4.of(1f)
+    override val colourModifier: Vector4fc = Vector4.of(1f)
 
     override val borders: Borders = Borders()
 

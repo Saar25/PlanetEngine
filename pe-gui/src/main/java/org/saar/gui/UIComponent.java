@@ -27,7 +27,7 @@ public class UIComponent implements UIChildElement {
 
     public UIComponent() {
         this.positioner = new Positioner(this);
-        this.style = new Style(this.positioner);
+        this.style = new Style(this);
     }
 
     public void add(UIBlock uiBlock) {
@@ -39,6 +39,7 @@ public class UIComponent implements UIChildElement {
         return this.uiBlocks;
     }
 
+    @Override
     public Style getStyle() {
         return this.style;
     }

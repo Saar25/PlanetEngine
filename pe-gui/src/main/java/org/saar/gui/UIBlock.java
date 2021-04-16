@@ -30,13 +30,13 @@ public class UIBlock implements Model, UIChildElement {
     public UIBlock() {
         this.texture = null;
         this.positioner = new Positioner(this);
-        this.style = new Style(this.positioner);
+        this.style = new Style(this);
     }
 
     public UIBlock(Texture2D texture) {
         this.texture = texture;
         this.positioner = new Positioner(this);
-        this.style = new Style(this.positioner);
+        this.style = new Style(this);
     }
 
     public boolean inTouch(float mx, float my) {
@@ -79,6 +79,7 @@ public class UIBlock implements Model, UIChildElement {
         return this.texture;
     }
 
+    @Override
     public Style getStyle() {
         return this.style;
     }
