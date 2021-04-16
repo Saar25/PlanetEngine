@@ -8,15 +8,16 @@ class UIDisplay(private val window: Window) : UIElement {
     override val style = WindowStyle(this.window)
 
     val uiComponents = mutableListOf<UIComponent>()
+    private val uiComponentsReversed = this.uiComponents.asReversed()
 
     init {
         this.window.mouse.addClickListener { event ->
-            for (uiComponent in this.uiComponents.reversed()) {
+            for (uiComponent in this.uiComponentsReversed) {
                 if (uiComponent.onMouseClickEvent(event)) break
             }
         }
         this.window.mouse.addMoveListener { event ->
-            for (uiComponent in this.uiComponents) {
+            for (uiComponent in this.uiComponentsReversed) {
                 uiComponent.onMouseMoveEvent(event)
             }
         }
