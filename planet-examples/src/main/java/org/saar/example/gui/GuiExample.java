@@ -10,7 +10,12 @@ import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
+import org.saar.gui.component.UIButton;
 import org.saar.gui.render.UIRenderer;
+import org.saar.gui.style.Colours;
+import org.saar.gui.style.value.CoordinateValue;
+import org.saar.gui.style.value.CoordinateValues;
+import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
@@ -32,6 +37,14 @@ public class GuiExample {
 
         final UIComponent uiComponent = new MyUIComponent();
         display.add(uiComponent);
+
+        final UIButton uiButton = new UIButton();
+        uiButton.getStyle().getX().set(CoordinateValues.center());
+        uiButton.getStyle().getY().set(CoordinateValues.center());
+        uiButton.getStyle().getWidth().set(LengthValues.percent(10));
+        uiButton.getStyle().getHeight().set(LengthValues.percent(10));
+        uiButton.setOnAction(e -> System.out.println("Clicked!"));
+        display.add(uiButton);
 
         final UIRenderer renderer = new UIRenderer(display);
 

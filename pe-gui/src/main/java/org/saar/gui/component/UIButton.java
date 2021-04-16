@@ -6,6 +6,7 @@ import org.saar.gui.UIBlock;
 import org.saar.gui.UIComponent;
 import org.saar.gui.event.EventHandler;
 import org.saar.gui.event.MouseEvent;
+import org.saar.gui.style.Colours;
 
 public class UIButton extends UIComponent {
 
@@ -20,6 +21,9 @@ public class UIButton extends UIComponent {
     }
 
     private void initUiObject() {
+        this.uiBlock.getStyle().getBackgroundColour().set(Colours.GREY);
+        this.uiBlock.getStyle().getBorderColour().set(Colours.DARK_GREY);
+        this.uiBlock.getStyle().getBorders().set(2);
         add(this.uiBlock);
     }
 
