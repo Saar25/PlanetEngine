@@ -12,7 +12,7 @@ class MyUIComponent : UIComponent() {
 
     init {
         this.style.x.set(center())
-        this.style.y.set(center())
+        this.style.y.set(50)
         this.style.width.set(percent(80f))
         this.style.height.set(percent(80f))
 

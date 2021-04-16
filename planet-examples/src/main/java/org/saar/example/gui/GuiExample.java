@@ -38,6 +38,24 @@ public class GuiExample {
         final UIDisplay display = new UIDisplay(window);
 
         final UIGroup uiGroup = new UIGroup(display);
+
+        final UISlider sizeUiSlider = new UISlider();
+        sizeUiSlider.getStyle().getY().set(450);
+        sizeUiSlider.getStyle().getX().set(CoordinateValues.center());
+        sizeUiSlider.getStyle().getWidth().set(LengthValues.percent(90));
+        sizeUiSlider.getStyle().getHeight().set(20);
+
+        sizeUiSlider.dynamicValueProperty().addListener(e -> {
+            final float percents = (e.getNewValue().floatValue() / 100) * 50 + 20;
+            uiGroup.getStyle().getWidth().set(LengthValues.percent(percents));
+        });
+
+        display.add(sizeUiSlider);
+
+
+        uiGroup.getStyle().getWidth().set(LengthValues.percent(50));
+        uiGroup.getStyle().getHeight().set(LengthValues.ratio(1));
+        uiGroup.getStyle().getX().set(CoordinateValues.center());
         display.add(uiGroup);
 
         final UIComponent uiComponent = new MyUIComponent();
