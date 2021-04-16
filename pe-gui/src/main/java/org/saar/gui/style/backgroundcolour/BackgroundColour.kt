@@ -35,4 +35,11 @@ class BackgroundColour(private val container: UIChildElement) : ReadonlyBackgrou
         set(value) {
             this.bottomLeftValue = StyleColourValues.of(value)
         }
+
+    fun set(colour: Colour) {
+        this.topRight = colour
+        this.topLeft = colour
+        this.bottomRight = colour
+        this.bottomLeft = colour
+    }
 }
