@@ -16,24 +16,21 @@ class MyUIComponent : UIComponent() {
         this.positioner.width.set(percent(80f))
         this.positioner.height.set(percent(80f))
 
+        this.style.radiuses.set(100)
+        this.style.borders.set(2)
+        this.style.backgroundColour.set(Colours.CYAN)
+        this.style.borderColour.set(Colours.LIGHT_GREY)
+
         val object1 = UIBlock()
         add(object1)
 
         object1.positioner.width.set(percent(48f))
-        object1.style.backgroundColour.set(Colours.CYAN)
-        object1.style.borderColour.set(Colours.LIGHT_GREY)
-        object1.style.borders.set(2)
-        object1.style.radiuses.set(100)
 
         val object2 = UIBlock()
         add(object2)
 
         object2.positioner.x.set(CoordinateValues.percent(52f))
         object2.positioner.width.set(percent(48f))
-        object2.style.backgroundColour.set(Colours.CYAN)
-        object2.style.borderColour.set(Colours.LIGHT_GREY)
-        object2.style.borders.set(2)
-        object2.style.radiuses.set(100)
     }
 
     override fun onMousePress(event: MouseEvent) {
