@@ -12,6 +12,7 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.Renderer;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
@@ -26,6 +27,12 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
+import org.saar.gui.UIBlock;
+import org.saar.gui.UIComponent;
+import org.saar.gui.UIDisplay;
+import org.saar.gui.render.UIRenderer;
+import org.saar.gui.style.Colours;
+import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -50,6 +57,24 @@ public class ReflectionExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         GlUtils.setClearColour(.1f, .1f, .1f);
+
+        final UIDisplay uiDisplay = new UIDisplay(window);
+
+        final UIBlock reflectionUiBlock = new UIBlock();
+        reflectionUiBlock.getStyle().getX().set(30);
+        reflectionUiBlock.getStyle().getY().set(30);
+        reflectionUiBlock.getStyle().getWidth().set(300);
+        reflectionUiBlock.getStyle().getHeight().set(
+                LengthValues.ratio((float) HEIGHT / WIDTH));
+        reflectionUiBlock.getStyle().getBorders().set(1);
+        reflectionUiBlock.getStyle().getBorderColour().set(Colours.PURPLE);
+
+        final UIComponent uiComponent = new UIComponent();
+        uiComponent.add(reflectionUiBlock);
+
+        uiDisplay.add(uiComponent);
+
+        final UIRenderer uiRenderer = new UIRenderer(uiDisplay);
 
         final Camera camera = buildCamera();
 
@@ -98,6 +123,9 @@ public class ReflectionExample {
 
             mirror.setReflectionMap(reflection.getReflectionMap());
             deferredRenderer.render().toMainScreen();
+
+            reflectionUiBlock.setTexture(reflection.getReflectionMap());
+            uiRenderer.render(new RenderContextBase(camera));
 
             window.update(true);
             window.pollEvents();
