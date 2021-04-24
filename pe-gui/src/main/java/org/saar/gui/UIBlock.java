@@ -5,7 +5,7 @@ import org.saar.core.mesh.Model;
 import org.saar.core.mesh.common.QuadMesh;
 import org.saar.gui.style.Style;
 import org.saar.gui.style.redius.StyleRadiuses;
-import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.maths.objects.Rectangle;
 
 /**
@@ -21,8 +21,8 @@ public class UIBlock implements Model, UIChildElement {
 
     private final Style style = new Style(this);
 
-    private Texture2D texture = null;
-    private Texture2D discardMap = null;
+    private ReadOnlyTexture texture = null;
+    private ReadOnlyTexture discardMap = null;
 
     private UIElement parent;
 
@@ -62,19 +62,19 @@ public class UIBlock implements Model, UIChildElement {
         return radius * radius > dx * dx + dy * dy;
     }
 
-    public Texture2D getTexture() {
+    public ReadOnlyTexture getTexture() {
         return this.texture;
     }
 
-    public void setTexture(Texture2D texture) {
+    public void setTexture(ReadOnlyTexture texture) {
         this.texture = texture;
     }
 
-    public Texture2D getDiscardMap() {
+    public ReadOnlyTexture getDiscardMap() {
         return this.discardMap;
     }
 
-    public void setDiscardMap(Texture2D discardMap) {
+    public void setDiscardMap(ReadOnlyTexture discardMap) {
         this.discardMap = discardMap;
     }
 
