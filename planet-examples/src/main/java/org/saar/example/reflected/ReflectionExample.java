@@ -62,10 +62,12 @@ public class ReflectionExample {
 
         final RenderersGroup baseRenderersGroup = new RenderersGroup(objRenderer, renderer3D);
 
-        final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(camera, baseRenderersGroup);
+        final Camera reflectionCamera = new Camera(camera.getProjection());
+        final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
+                reflectionCamera, baseRenderersGroup);
 
         final Reflection reflection = new Reflection(mirror.toPlane(), camera,
-                new Camera(camera.getProjection()), reflectionRenderingPath);
+                reflectionCamera, reflectionRenderingPath);
 
         final DirectionalLight light = buildDirectionalLight();
 
@@ -100,13 +102,15 @@ public class ReflectionExample {
             window.update(true);
             window.pollEvents();
 
-            final long delta = (long) fps.delta();
+            final long delta = (long) (fps.delta() * 1000);
             ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
             System.out.print("\r --> " +
                     "Speed: " + String.format("%.2f", scrollSpeed) +
                     ", Fps: " + String.format("%.2f", fps.fps()) +
                     ", Delta: " + delta);
+
+            fps.update();
         }
 
         reflection.delete();
