@@ -1,7 +1,7 @@
 package org.saar.example.reflected;
 
-import org.joml.Planef;
 import org.saar.core.camera.Camera;
+import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
@@ -12,8 +12,13 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.Renderer;
 import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
@@ -22,8 +27,15 @@ import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.screen.MainScreen;
+import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;
+import org.saar.gui.UIBlock;
+import org.saar.gui.UIComponent;
+import org.saar.gui.UIDisplay;
+import org.saar.gui.render.UIRenderer;
+import org.saar.gui.style.Colours;
+import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -31,6 +43,8 @@ import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.maths.Angle;
+import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -47,82 +61,55 @@ public class ReflectionExample {
 
         GlUtils.setClearColour(.1f, .1f, .1f);
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+        final UIDisplay uiDisplay = new UIDisplay(window);
 
-        final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
+        final UIBlock reflectionUiBlock = new UIBlock();
+        reflectionUiBlock.getStyle().getX().set(30);
+        reflectionUiBlock.getStyle().getY().set(30);
+        reflectionUiBlock.getStyle().getWidth().set(300);
+        reflectionUiBlock.getStyle().getHeight().set(
+                LengthValues.ratio((float) HEIGHT / WIDTH));
+        reflectionUiBlock.getStyle().getBorders().set(1);
+        reflectionUiBlock.getStyle().getBorderColour().set(Colours.PURPLE);
 
-        final ObjModel dragonNode = Objects.requireNonNull(loadDragon());
-        dragonNode.getTransform().getPosition().set(50, 0, 0);
+        final UIComponent uiComponent = new UIComponent();
+        uiComponent.add(reflectionUiBlock);
 
-        final ObjModel stallNode = Objects.requireNonNull(loadStall());
-        stallNode.getTransform().getPosition().set(-50, 0, 0);
-        stallNode.getTransform().getRotation().rotateDegrees(0, 180, 0);
+        uiDisplay.add(uiComponent);
 
-        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
+        final UIRenderer uiRenderer = new UIRenderer(uiDisplay);
 
-        final Instance3D cube = R3D.instance();
-        cube.getTransform().getScale().set(10, 10, 10);
-        cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
-        final Model3D cubeModel = new Model3D(cubeMesh);
+        final Camera camera = buildCamera();
 
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
+        final Renderer objRenderer = new ObjDeferredRenderer(
+                buildCottageModel(), buildDragonModel(), buildStallModel());
 
-        final Camera reflectionCamera = new Camera(projection);
+        final Renderer renderer3D = new DeferredRenderer3D(buildCubeModel());
 
-        final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
+        final FlatReflectedModel mirror = buildMirrorModel();
 
-        final RenderersGroup reflectionRenderersGroup = new RenderersGroup(renderer, renderer3D);
+        final RenderersGroup baseRenderersGroup = new RenderersGroup(objRenderer, renderer3D);
 
-        final RenderPassesPipeline reflectionRenderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
+        final Camera reflectionCamera = new Camera(camera.getProjection());
+        final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
+                reflectionCamera, baseRenderersGroup);
 
-        final DeferredRenderingPath reflectionRenderingPath = new DeferredRenderingPath(
-                reflectionScreenPrototype, camera, reflectionRenderersGroup, reflectionRenderPassesPipeline);
+        final Reflection reflection = new Reflection(mirror.toPlane(), camera,
+                reflectionCamera, reflectionRenderingPath);
 
-        final FlatReflectedVertex[] vertices = {
-                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
-                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f)), // 1
-                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
-                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
-        };
-        final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
-        final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
+        final DirectionalLight light = buildDirectionalLight();
 
-        mirror.getTransform().getPosition().set(0, .1f, 30);
-        mirror.getTransform().getScale().scale(10);
+        final ShadowsRenderingPath shadowsRenderingPath =
+                buildShadowsRenderingPath(baseRenderersGroup, light);
 
-        final Planef mirrorPlane = new Planef(mirror.getTransform().getPosition().getValue(), mirror.getNormal());
-        final Reflection reflection = new Reflection(mirrorPlane, camera, reflectionCamera, reflectionRenderingPath);
+        final Renderer flatReflectedDeferredRenderer =
+                new FlatReflectedDeferredRenderer(mirror);
 
-        final FlatReflectedDeferredRenderer flatReflectedDeferredRenderer = new FlatReflectedDeferredRenderer(
-                new FlatReflectedModel[]{mirror}, reflectionScreenPrototype.getColourTexture());
+        final RenderersGroup renderersGroup = new RenderersGroup(
+                flatReflectedDeferredRenderer, renderer3D, objRenderer);
 
-        final Keyboard keyboard = window.getKeyboard();
-
-        final DirectionalLight light = new DirectionalLight();
-        light.getDirection().set(-1, -1, -1);
-        light.getColour().set(1, 1, 1);
-
-
-        final RenderersGroup shadowsRenderersGroup = new RenderersGroup(renderer, renderer3D);
-        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-                -100, 100, -100, 100, -100, 100);
-        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderersGroup);
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
-
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
-        final RenderersGroup renderersGroup = new RenderersGroup(flatReflectedDeferredRenderer, renderer3D, renderer);
-
-        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
-        );
-
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderersGroup, renderPassesPipeline);
+        final RenderingPath deferredRenderer = buildRenderingPath(
+                camera, renderersGroup, shadowsRenderingPath, light);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -131,31 +118,132 @@ public class ReflectionExample {
             scrollSpeed = Math.max(scrollSpeed, 1);
         });
 
-        long current = System.currentTimeMillis();
+        final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
+        );
+
+        final Keyboard keyboard = window.getKeyboard();
+
+        final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            reflectionRenderersGroup.render(new RenderContextBase(camera));
             reflection.updateReflectionMap();
 
-            deferredRenderer.render().toMainScreen();
+            mirror.setReflectionMap(reflection.getReflectionMap());
+            final ReadOnlyTexture output = deferredRenderer.render().toTexture();
+            postProcessingPipeline.process(output).toMainScreen();
+
+            reflectionUiBlock.setTexture(reflection.getReflectionMap());
+            uiRenderer.render(new RenderContextBase(camera));
 
             window.update(true);
             window.pollEvents();
-            final long delta = System.currentTimeMillis() - current;
+
+            final long delta = (long) (fps.delta() * 1000);
             ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
-            final float fps = 1000f / delta;
             System.out.print("\r --> " +
                     "Speed: " + String.format("%.2f", scrollSpeed) +
-                    ", Fps: " + String.format("%.2f", fps) +
+                    ", Fps: " + String.format("%.2f", fps.fps()) +
                     ", Delta: " + delta);
-            current = System.currentTimeMillis();
+
+            fps.update();
         }
 
+        postProcessingPipeline.delete();
         reflection.delete();
         renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
+    }
+
+    private static RenderingPath buildReflectionRenderingPath(Camera camera, RenderersGroup renderersGroup) {
+        final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
+
+        final RenderPassesPipeline renderPassesPipeline =
+                new RenderPassesPipeline(new LightRenderPass());
+
+        return new DeferredRenderingPath(reflectionScreenPrototype,
+                camera, renderersGroup, renderPassesPipeline);
+    }
+
+    private static FlatReflectedModel buildMirrorModel() {
+        final FlatReflectedVertex[] vertices = {
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
+                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f)), // 1
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
+                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
+        };
+        final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
+
+        final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
+        mirror.getTransform().getPosition().set(0, .1f, 0);
+        mirror.getTransform().getScale().scale(100, 0, 100);
+        return mirror;
+    }
+
+    private static Camera buildCamera() {
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+
+        final Camera camera = new Camera(projection);
+        camera.getTransform().getPosition().set(-50, 25, 50);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        return camera;
+    }
+
+    private static ObjModel buildDragonModel() {
+        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
+        dragonModel.getTransform().getPosition().set(50, 0, 0);
+        return dragonModel;
+    }
+
+    private static ObjModel buildCottageModel() {
+        return Objects.requireNonNull(loadCottage());
+    }
+
+    private static ObjModel buildStallModel() {
+        final ObjModel stallModel = Objects.requireNonNull(loadStall());
+        stallModel.getTransform().getPosition().set(-50, 0, 0);
+        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
+        return stallModel;
+    }
+
+    private static Model3D buildCubeModel() {
+        final Instance3D cubeInstance = R3D.instance();
+        cubeInstance.getTransform().getScale().set(10, 10, 10);
+        cubeInstance.getTransform().getPosition().set(0, 0, 50);
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
+                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        return new Model3D(cubeMesh);
+    }
+
+    private static DirectionalLight buildDirectionalLight() {
+        final DirectionalLight light = new DirectionalLight();
+        light.getDirection().set(-1, -1, -1);
+        light.getColour().set(1, 1, 1);
+        return light;
+    }
+
+    private static ShadowsRenderingPath buildShadowsRenderingPath(RenderersGroup shadowsRenderersGroup, DirectionalLight light) {
+        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
+                -100, 100, -100, 100, -100, 100);
+        return new ShadowsRenderingPath(ShadowsQuality.HIGH,
+                shadowProjection, light, shadowsRenderersGroup);
+    }
+
+    private static RenderingPath buildRenderingPath(ICamera camera, RenderersGroup renderersGroup,
+                                                    ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+
+        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
+
+        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+        );
+
+        return new DeferredRenderingPath(screenPrototype, camera, renderersGroup, renderPassesPipeline);
     }
 
     private static ObjModel loadCottage() {

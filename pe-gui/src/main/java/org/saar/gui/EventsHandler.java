@@ -11,16 +11,10 @@ public final class EventsHandler {
      *
      * @param event the mouse event
      */
-    protected void fireMousePressEvent(List<GuiController> components, MouseEvent event) {
-        boolean found = false;
-        for (GuiController component : components) {
+    protected void fireMousePressEvent(List<UIComponent> components, MouseEvent event) {
+        for (UIComponent component : components) {
             if (component.isMouseHover()) {
-                component.onMousePressImpl(event);
                 component.onMousePress(event);
-                component.setSelected(!found);
-                found = true;
-            } else {
-                component.setSelected(false);
             }
         }
     }
@@ -30,13 +24,12 @@ public final class EventsHandler {
      *
      * @param event the mouse event
      */
-    protected void fireMouseReleaseEvent(List<GuiController> components, MouseEvent event) {
-        components.forEach(component -> {
+    protected void fireMouseReleaseEvent(List<UIComponent> components, MouseEvent event) {
+        for (UIComponent component : components) {
             if (component.isMousePressed()) {
-                component.onMouseReleaseImpl(event);
                 component.onMouseRelease(event);
             }
-        });
+        }
     }
 
     /**
@@ -44,13 +37,12 @@ public final class EventsHandler {
      *
      * @param event the mouse event
      */
-    protected void fireMouseEnterEvent(List<GuiController> components, MouseEvent event) {
-        components.forEach(component -> {
-            if (!component.isMouseHover() && component.inTouch(event.getX(), event.getY())) {
-                component.onMouseEnterImpl(event);
+    protected void fireMouseEnterEvent(List<UIComponent> components, MouseEvent event) {
+        for (UIComponent component : components) {
+            if (!component.isMouseHover() && component.checkMouseInside(event.getX(), event.getY())) {
                 component.onMouseEnter(event);
             }
-        });
+        }
     }
 
     /**
@@ -58,14 +50,13 @@ public final class EventsHandler {
      *
      * @param event the mouse event
      */
-    protected void fireMouseExitEvent(List<GuiController> components, MouseEvent event) {
-        components.forEach(component -> {
+    protected void fireMouseExitEvent(List<UIComponent> components, MouseEvent event) {
+        for (UIComponent component : components) {
             if (component.isMouseHover() &&
-                    !component.inTouch(event.getX(), event.getY())) {
-                component.onMouseExitImpl(event);
+                    !component.checkMouseInside(event.getX(), event.getY())) {
                 component.onMouseExit(event);
             }
-        });
+        }
     }
 
     /**
@@ -73,13 +64,12 @@ public final class EventsHandler {
      *
      * @param event the mouse event
      */
-    protected void fireMouseMoveEvent(List<GuiController> components, MouseEvent event) {
-        components.forEach(component -> {
+    protected void fireMouseMoveEvent(List<UIComponent> components, MouseEvent event) {
+        for (UIComponent component : components) {
             if (component.isMouseHover()) {
-                component.onMouseMoveImpl(event);
                 component.onMouseMove(event);
             }
-        });
+        }
     }
 
     /**
@@ -87,13 +77,12 @@ public final class EventsHandler {
      *
      * @param event the mouse event
      */
-    protected void fireMouseDragEvent(List<GuiController> components, MouseEvent event) {
-        components.forEach(component -> {
+    protected void fireMouseDragEvent(List<UIComponent> components, MouseEvent event) {
+        for (UIComponent component : components) {
             if (component.isMousePressed() && event.getButton() != null) {
-                component.onMouseDragImpl(event);
                 component.onMouseDrag(event);
             }
-        });
+        }
     }
 
 }

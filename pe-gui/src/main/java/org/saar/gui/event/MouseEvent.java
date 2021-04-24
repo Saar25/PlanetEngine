@@ -47,7 +47,8 @@ public class MouseEvent {
         return MouseEvent.builder()
                 .setX((int) event.getX())
                 .setY((int) event.getY())
-                .setButton(event.getMouse().isButtonDown(MouseButton.PRIMARY) ? MouseButton.PRIMARY : null)
+                .setButton(event.getMouse().isButtonDown(MouseButton.PRIMARY)
+                        ? MouseButton.PRIMARY : MouseButton.NONE)
                 .create();
     }
 

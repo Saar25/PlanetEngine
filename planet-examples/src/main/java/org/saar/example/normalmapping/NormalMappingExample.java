@@ -15,6 +15,7 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
@@ -120,7 +121,8 @@ public class NormalMappingExample {
         GlUtils.setClearColour(0, .7f, .9f);
 
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-                new ContrastPostProcessor(1.3f)
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
         );
 
         long current = System.currentTimeMillis();

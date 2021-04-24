@@ -1,45 +1,36 @@
 package org.saar.gui.style
 
-import org.joml.Vector4f
-import org.saar.gui.style.property.*
-import org.saar.maths.utils.Vector4
+import org.saar.gui.UIChildElement
+import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.border.StyleBorders
+import org.saar.gui.style.bordercolour.BorderColour
+import org.saar.gui.style.colourmodifier.ColourModifier
+import org.saar.gui.style.coordinate.Coordinate
+import org.saar.gui.style.coordinate.Coordinates
+import org.saar.gui.style.length.Length
+import org.saar.gui.style.length.Lengths
+import org.saar.gui.style.redius.StyleRadiuses
 
-class Style {
+class Style(container: UIChildElement) : IStyle {
 
-    @JvmField
-    val colourModifier: Vector4f = Vector4.of(1f)
+    override val x: Coordinate = Coordinates.X(container)
 
-    @JvmField
-    val x: Coordinate = Coordinate()
+    override val y: Coordinate = Coordinates.Y(container)
 
-    @JvmField
-    val y: Coordinate = Coordinate()
+    override val width: Length = Lengths.Width(container)
 
-    @JvmField
-    val position: Position = Position(x, y)
+    override val height: Length = Lengths.Height(container)
 
-    @JvmField
-    val width: Length = Length()
+    val bounds: Bounds = Bounds(this)
 
-    @JvmField
-    val height: Length = Length()
+    override val colourModifier: ColourModifier = ColourModifier(container)
 
-    @JvmField
-    val dimensions: Dimensions = Dimensions(width, height)
+    override val borders: StyleBorders = StyleBorders(container)
 
-    @JvmField
-    val bounds: Bounds = Bounds(position, dimensions)
+    override val borderColour: BorderColour = BorderColour(container)
 
-    @JvmField
-    val borders: Borders = Borders()
+    override val radiuses: StyleRadiuses = StyleRadiuses(container)
 
-    @JvmField
-    val borderColour: Colour = Colour()
-
-    @JvmField
-    val radiuses: Radiuses = Radiuses()
-
-    @JvmField
-    val backgroundColour: CornersColours = CornersColours()
+    override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
 }

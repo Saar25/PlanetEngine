@@ -20,10 +20,10 @@ class ObjRenderer(vararg models: ObjModel) : Renderer,
 private class ObjRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
-    private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
+    private val viewProjectionUniform = Mat4UniformValue("u_viewProjectionMatrix")
 
     @UniformProperty
-    private val textureUniform = TextureUniformValue("texture", 0)
+    private val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformUpdaterProperty
     private val textureUpdater = UniformUpdater<ObjModel> { model ->
@@ -31,7 +31,7 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
     }
 
     @UniformProperty
-    private val transformUniform = Mat4UniformValue("transformationMatrix")
+    private val transformUniform = Mat4UniformValue("u_transformationMatrix")
 
     @UniformUpdaterProperty
     private val transformUpdater = UniformUpdater<ObjModel> { model ->
@@ -40,11 +40,11 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/fragment.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_uvCoord", "in_normal")

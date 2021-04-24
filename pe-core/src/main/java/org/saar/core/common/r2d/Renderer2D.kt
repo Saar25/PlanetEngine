@@ -15,11 +15,11 @@ private class RendererPrototype2D : RendererPrototype<Model2D> {
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r2d/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/r2d/r2d.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r2d/fragment.glsl"))
+        ShaderCode.loadSource("/shaders/r2d/r2d.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf("in_position", "in_colour")
 }

@@ -6,7 +6,7 @@ vec2(1, 1), vec2(1, 0)
 // Uniforms
 uniform vec4 u_bounds;
 uniform vec4 u_borders;
-uniform ivec2 u_windowSize;
+uniform ivec2 u_resolution;
 uniform ivec4 u_cornersColours;
 
 // Vertex outputs
@@ -17,11 +17,11 @@ out vec4 v_backgroundColour;
 
 // Methods
 vec2 toNdc(vec2 v) {
-    return v / u_windowSize;
+    return v / u_resolution;
 }
 
 vec4 toNdc(vec4 v) {
-    return v / vec4(u_windowSize, u_windowSize);
+    return v / vec4(u_resolution, u_resolution);
 }
 
 vec2 currentPosition() {

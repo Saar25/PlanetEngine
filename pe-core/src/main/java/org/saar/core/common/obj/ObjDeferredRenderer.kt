@@ -21,10 +21,10 @@ class ObjDeferredRenderer(vararg models: ObjModel) : DeferredRenderer,
 private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
-    private val viewProjectionUniform = Mat4UniformValue("viewProjectionMatrix")
+    private val viewProjectionUniform = Mat4UniformValue("u_viewProjectionMatrix")
 
     @UniformProperty
-    private val textureUniform = TextureUniformValue("texture", 1)
+    private val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformUpdaterProperty
     private val textureUpdater = UniformUpdater<ObjModel> { model ->
@@ -32,7 +32,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
     }
 
     @UniformProperty
-    private val transformUniform = Mat4UniformValue("transformationMatrix")
+    private val transformUniform = Mat4UniformValue("u_transformationMatrix")
 
     @UniformUpdaterProperty
     private val transformUpdater = UniformUpdater<ObjModel> { model ->
@@ -41,11 +41,11 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/fragmentDeferred.glsl"))
+        ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_uvCoord", "in_normal")

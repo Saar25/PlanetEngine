@@ -7,7 +7,9 @@ in vec4 v_backgroundColour;
 // Uniforms
 uniform bool u_hasTexture;
 uniform sampler2D u_texture;
-uniform ivec2 u_windowSize;
+uniform bool u_hasDiscardMap;
+uniform sampler2D u_discardMap;
+uniform ivec2 u_resolution;
 uniform vec4 u_radiuses;
 uniform uint u_borderColour;
 uniform vec4 u_colourModifier;
@@ -35,7 +37,7 @@ bool contains(vec4 rectangle, vec2 position) {
 * @return the normalized device coordinates
 */
 vec2 toNdc(vec2 v) {
-    return v / u_windowSize;
+    return v / u_resolution;
 }
 
 /**
@@ -45,7 +47,7 @@ vec2 toNdc(vec2 v) {
 * @return the normalized device coordinates
 */
 vec4 toNdc(vec4 rectangle) {
-    return rectangle / vec4(u_windowSize, u_windowSize);
+    return rectangle / vec4(u_resolution, u_resolution);
 }
 
 /**
@@ -55,7 +57,7 @@ vec4 toNdc(vec4 rectangle) {
 * @return the screen coordinates
 */
 vec2 fromNdc(vec2 v) {
-    return v * u_windowSize;
+    return v * u_resolution;
 }
 
 /**
@@ -65,7 +67,7 @@ vec2 fromNdc(vec2 v) {
 * @return the screen coordinates
 */
 vec4 fromNdc(vec4 v) {
-    return v * vec4(u_windowSize, u_windowSize);
+    return v * vec4(u_resolution, u_resolution);
 }
 
 /**
@@ -172,6 +174,18 @@ vec4 getColour(void) {
 }
 
 /**
+* Returns the discard map value of the fragment
+*
+* @return the discard map value of the fragment
+*/
+float getDiscardMapValue(void) {
+    if (u_hasDiscardMap) {
+        return texture(u_discardMap, v_position).r;
+    }
+    return 1;
+}
+
+/**
 * Returns the border colour of the fragment
 *
 * @return the border colour of the fragment
@@ -192,7 +206,10 @@ vec4 getBorderColour(void) {
 /*================ */
 
 void main(void) {
-    if (isInside(v_bounds)){
+    if (getDiscardMapValue() < .1) {
+        discard;
+    }
+    else if (isInside(v_bounds)){
         fragColour = getColour();
     }
     else if (isInside(v_borders)){

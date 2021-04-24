@@ -1,22 +1,20 @@
 package org.saar.core.postprocessing
 
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.lwjgl.opengl.constants.RenderMode
-import org.saar.lwjgl.opengl.objects.vaos.Vao
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
-import org.saar.lwjgl.opengl.utils.GlRendering
 
 open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPrototype) : PostProcessor {
 
     companion object {
         private val vertexShaderCode = ShaderCode.loadSource(
-            "/shaders/postprocessing/default.vertex.glsl")
+            "/shaders/common/quad/quad.vertex.glsl")
     }
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
@@ -59,8 +57,7 @@ open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPro
     protected fun drawQuad() {
         this.uniformsHelper.load()
 
-        Vao.EMPTY.bind()
-        GlRendering.drawArrays(RenderMode.TRIANGLE_STRIP, 0, 4)
+        QuadMesh.draw()
     }
 
     override fun delete() {

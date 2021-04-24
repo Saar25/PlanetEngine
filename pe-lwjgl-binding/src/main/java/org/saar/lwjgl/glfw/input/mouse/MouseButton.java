@@ -12,6 +12,8 @@ public enum MouseButton {
     BTN_6(GLFW.GLFW_MOUSE_BUTTON_6),
     BTN_7(GLFW.GLFW_MOUSE_BUTTON_7),
     BTN_8(GLFW.GLFW_MOUSE_BUTTON_8), // LAST
+
+    NONE(0),
     ;
 
     private static final MouseButton[] values = values();

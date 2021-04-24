@@ -21,15 +21,15 @@ class Renderer3D(vararg models: Model3D) : Renderer,
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 
     @UniformProperty(UniformTrigger.PER_INSTANCE)
-    private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
+    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
+        ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl"))
 
     @ShaderProperty(ShaderType.FRAGMENT)
     private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/fragment.glsl"))
+        ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_colour", "in_transformation")

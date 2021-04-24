@@ -1,11 +1,11 @@
 package org.saar.gui.graphics;
 
-import org.saar.gui.style.property.IColour;
+import org.saar.gui.style.Colour;
 import org.saar.maths.objects.Polygon;
 
 public interface Graphics {
 
-    void setColour(IColour colour);
+    void setColour(Colour colour);
 
     void drawLine(int x1, int y1, int x2, int y2);
 
@@ -19,7 +19,7 @@ public interface Graphics {
 
     void fillPolygon(Polygon polygon);
 
-    void clear(IColour clearColour);
+    void clear(Colour clearColour);
 
     void process();
 

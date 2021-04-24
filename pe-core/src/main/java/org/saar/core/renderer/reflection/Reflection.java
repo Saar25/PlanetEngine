@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.core.camera.Camera;
 import org.saar.core.renderer.RenderingPath;
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.maths.transform.Rotation;
 import org.saar.maths.utils.Vector3;
 
@@ -14,6 +16,8 @@ public class Reflection {
     private final Camera camera;
     private final Camera reflectionCamera;
     private final RenderingPath renderingPath;
+
+    private ReadOnlyTexture reflectionMap = Texture.NULL;
 
     public Reflection(Planef plane, Camera camera, Camera reflectionCamera, RenderingPath renderingPath) {
         this.plane = plane;
@@ -31,14 +35,18 @@ public class Reflection {
         this.reflectionCamera.getTransform().getPosition().set(p.sub(ptc, ptc));
 
         final Rotation rotation = this.camera.getTransform().getRotation();
-        final Vector3fc reflect = rotation.getDirection().reflect(normal);
+        final Vector3fc reflect = rotation.getDirection().reflect(normal).negate();
         this.reflectionCamera.getTransform().getRotation().lookAlong(reflect);
     }
 
     public void updateReflectionMap() {
         reflect();
 
-        this.renderingPath.render();
+        this.reflectionMap = this.renderingPath.render().toTexture();
+    }
+
+    public ReadOnlyTexture getReflectionMap() {
+        return this.reflectionMap;
     }
 
     public Planef getPlane() {

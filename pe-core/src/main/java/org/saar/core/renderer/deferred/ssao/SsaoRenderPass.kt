@@ -39,11 +39,9 @@ private class SsaoRenderPassPrototype : RenderPassPrototype {
     private val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/common/transform/transform.header.glsl"),
 
-        ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl"),
-
-        ShaderCode.loadSource("/shaders/common/transform/transform.source.glsl"))
+        ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
+    )
 
     override fun onRender(context: RenderPassContext) {
         this.colourTextureUniform.value = context.buffers.albedo
