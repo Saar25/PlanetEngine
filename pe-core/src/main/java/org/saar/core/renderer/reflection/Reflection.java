@@ -35,7 +35,7 @@ public class Reflection {
         this.reflectionCamera.getTransform().getPosition().set(p.sub(ptc, ptc));
 
         final Rotation rotation = this.camera.getTransform().getRotation();
-        final Vector3fc reflect = rotation.getDirection().reflect(normal);
+        final Vector3fc reflect = rotation.getDirection().reflect(normal).negate();
         this.reflectionCamera.getTransform().getRotation().lookAlong(reflect);
     }
 
