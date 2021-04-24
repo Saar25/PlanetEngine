@@ -12,6 +12,9 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.Renderer;
 import org.saar.core.renderer.RenderersGroup;
@@ -115,6 +118,11 @@ public class ReflectionExample {
             scrollSpeed = Math.max(scrollSpeed, 1);
         });
 
+        final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
+        );
+
         final Keyboard keyboard = window.getKeyboard();
 
         final Fps fps = new Fps();
@@ -122,7 +130,8 @@ public class ReflectionExample {
             reflection.updateReflectionMap();
 
             mirror.setReflectionMap(reflection.getReflectionMap());
-            deferredRenderer.render().toMainScreen();
+            final ReadOnlyTexture output = deferredRenderer.render().toTexture();
+            postProcessingPipeline.process(output).toMainScreen();
 
             reflectionUiBlock.setTexture(reflection.getReflectionMap());
             uiRenderer.render(new RenderContextBase(camera));
@@ -141,6 +150,7 @@ public class ReflectionExample {
             fps.update();
         }
 
+        postProcessingPipeline.delete();
         reflection.delete();
         renderersGroup.delete();
         shadowsRenderingPath.delete();
@@ -168,8 +178,8 @@ public class ReflectionExample {
         final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
 
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
-        mirror.getTransform().getPosition().set(0, .1f, 30);
-        mirror.getTransform().getScale().scale(10);
+        mirror.getTransform().getPosition().set(0, .1f, 0);
+        mirror.getTransform().getScale().scale(100, 0, 100);
         return mirror;
     }
 
