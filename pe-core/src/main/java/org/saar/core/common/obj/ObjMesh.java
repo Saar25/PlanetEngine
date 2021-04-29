@@ -13,32 +13,14 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class ObjMesh implements Mesh {
-
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
-    private static final Attribute uvCoordAttribute = Attribute.of(1, 2, DataType.FLOAT, false);
-    private static final Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
     public ObjMesh(Mesh mesh) {
         this.mesh = mesh;
-    }
-
-    private static void addAttributes(ObjMeshPrototype prototype) {
-        prototype.getPositionBuffer().addAttribute(positionAttribute);
-        prototype.getUvCoordBuffer().addAttribute(uvCoordAttribute);
-        prototype.getNormalBuffer().addAttribute(normalAttribute);
-    }
-
-    static void initPrototype(ObjMeshPrototype prototype, int vertices, int indices) {
-        addAttributes(prototype);
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        helper.allocateVertices(vertices);
-        helper.allocateIndices(indices);
     }
 
     static ObjMesh create(ObjMeshPrototype prototype, int indices) {
@@ -64,7 +46,7 @@ public class ObjMesh implements Mesh {
 
     public static ObjMesh load(String objFile) throws Exception {
         final ObjMeshPrototype prototype = Obj.mesh();
-        addAttributes(prototype);
+        ObjMeshBuilder.addAttributes(prototype);
 
         try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
             assimpMesh.writeDataBuffer(

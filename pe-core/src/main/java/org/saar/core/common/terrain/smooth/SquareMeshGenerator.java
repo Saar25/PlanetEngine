@@ -3,10 +3,11 @@ package org.saar.core.common.terrain.smooth;
 import org.joml.Vector2ic;
 import org.joml.Vector3f;
 import org.saar.core.common.smooth.Smooth;
-import org.saar.core.common.smooth.SmoothMeshWriter;
 import org.saar.core.common.smooth.SmoothVertex;
 import org.saar.core.common.terrain.colour.ColourGenerator;
 import org.saar.core.common.terrain.height.HeightGenerator;
+import org.saar.core.mesh.build.writers.MeshIndexWriter;
+import org.saar.core.mesh.build.writers.MeshVertexWriter;
 import org.saar.maths.utils.Vector3;
 
 public class SquareMeshGenerator extends MeshGeneratorBase {
@@ -43,7 +44,7 @@ public class SquareMeshGenerator extends MeshGeneratorBase {
     }
 
     @Override
-    public void generateVertices(SmoothMeshWriter writer) {
+    public void generateVertices(MeshVertexWriter<SmoothVertex> writer) {
         for (int x = 0; x < this.vertices; x++) {
             final float vx = x * this.space - .5f;
             for (int z = 0; z < this.vertices; z++) {
@@ -54,7 +55,7 @@ public class SquareMeshGenerator extends MeshGeneratorBase {
     }
 
     @Override
-    public void generateIndices(SmoothMeshWriter writer) {
+    public void generateIndices(MeshIndexWriter writer) {
         for (int x0 = 0; x0 < this.vertices - 1; x0++) {
             for (int z0 = 0; z0 < this.vertices - 1; z0++) {
                 final int x1 = x0 + 1;

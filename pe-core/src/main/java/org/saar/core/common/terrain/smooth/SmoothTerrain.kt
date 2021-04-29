@@ -14,16 +14,16 @@ import kotlin.random.Random
 object SmoothTerrain {
 
     private val generator: MeshGenerator = TriangleMeshGenerator(
-            32,
-            FlatHeightGenerator(0f),
+        32,
+        FlatHeightGenerator(0f),
 //            { x, z -> SimplexNoise.noise(x, z) },
-            ColourGenerator { x, y, z ->
-                Vector3.of(
-                        Random.nextFloat(),
-                        Random.nextFloat(),
-                        Random.nextFloat())
-            },
-            Vector2i(0, 0)
+        ColourGenerator { x, y, z ->
+            Vector3.of(
+                Random.nextFloat(),
+                Random.nextFloat(),
+                Random.nextFloat())
+        },
+        Vector2i(0, 0)
     )
 
     @JvmStatic
@@ -47,10 +47,10 @@ object SmoothTerrain {
 
     private fun builder(prototype: SmoothMeshPrototype, generator: MeshGenerator): SmoothMeshBuilder {
         val builder = SmoothMeshBuilder.create(prototype,
-                generator.totalVertexCount,
-                generator.totalIndexCount)
-        generator.generateVertices(builder.writer)
-        generator.generateIndices(builder.writer)
+            generator.totalVertexCount,
+            generator.totalIndexCount)
+        generator.generateVertices(builder)
+        generator.generateIndices(builder)
         return builder
     }
 
