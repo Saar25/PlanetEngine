@@ -3,37 +3,23 @@ package org.saar.core.common.obj;
 
 import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.build.MeshPrototypeHelper;
+import org.saar.core.mesh.Meshes;
 import org.saar.lwjgl.assimp.AssimpMesh;
 import org.saar.lwjgl.assimp.AssimpUtil;
 import org.saar.lwjgl.assimp.component.AssimpNormalComponent;
 import org.saar.lwjgl.assimp.component.AssimpPositionComponent;
 import org.saar.lwjgl.assimp.component.AssimpTexCoordComponent;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class ObjMesh implements Mesh {
 
-    private final Mesh mesh;
+    private final DrawCallMesh mesh;
 
-    public ObjMesh(Mesh mesh) {
+    public ObjMesh(DrawCallMesh mesh) {
         this.mesh = mesh;
     }
 
     static ObjMesh create(ObjMeshPrototype prototype, int indices) {
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.store();
-
-        final DrawCall drawCall = new ElementsDrawCall(
-                RenderMode.TRIANGLES, indices, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new ObjMesh(mesh);
+        return new ObjMesh(Meshes.toElementsDrawCallMesh(prototype, indices));
     }
 
     public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
