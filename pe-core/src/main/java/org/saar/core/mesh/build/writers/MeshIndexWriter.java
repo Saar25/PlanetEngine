@@ -10,4 +10,10 @@ public interface MeshIndexWriter {
         }
     }
 
+    default void writeIndices(Iterable<Integer> indices) {
+        for (int index : indices) {
+            writeIndex(index);
+        }
+    }
+
 }

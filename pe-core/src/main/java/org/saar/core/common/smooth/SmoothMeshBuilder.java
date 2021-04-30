@@ -114,8 +114,8 @@ public abstract class SmoothMeshBuilder implements MeshBuilder, MeshVertexWriter
             initPrototype(this.prototype, this.vertices.size(), this.indices.size());
             final SmoothMeshWriter writer = new SmoothMeshWriter(this.prototype);
 
-            writer.writeIndices(this.indices.stream().mapToInt(i -> i).toArray());
-            writer.writeVertices(this.vertices.toArray(new SmoothVertex[0]));
+            writer.writeIndices(this.indices);
+            writer.writeVertices(this.vertices);
 
             return SmoothMesh.create(this.prototype, this.indices.size());
         }

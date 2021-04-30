@@ -109,8 +109,8 @@ public abstract class ObjMeshBuilder implements MeshBuilder, MeshVertexWriter<Ob
             initPrototype(this.prototype, this.vertices.size(), this.indices.size());
             final ObjMeshWriter writer = new ObjMeshWriter(this.prototype);
 
-            writer.writeIndices(this.indices.stream().mapToInt(i -> i).toArray());
-            writer.writeVertices(this.vertices.toArray(new ObjVertex[0]));
+            writer.writeIndices(this.indices);
+            writer.writeVertices(this.vertices);
 
             return ObjMesh.create(this.prototype, this.indices.size());
         }

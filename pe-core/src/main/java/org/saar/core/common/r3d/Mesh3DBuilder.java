@@ -136,9 +136,9 @@ public abstract class Mesh3DBuilder implements MeshBuilder,
             initPrototype(this.prototype, this.vertices.size(), this.indices.size(), this.instances.size());
             final Mesh3DWriter writer = new Mesh3DWriter(this.prototype);
 
-            writer.writeIndices(this.indices.stream().mapToInt(i -> i).toArray());
-            writer.writeVertices(this.vertices.toArray(new Vertex3D[0]));
-            writer.writeInstances(this.instances.toArray(new Instance3D[0]));
+            writer.writeIndices(this.indices);
+            writer.writeVertices(this.vertices);
+            writer.writeInstances(this.instances);
 
             return Mesh3D.create(this.prototype, this.indices.size(), this.instances.size());
         }

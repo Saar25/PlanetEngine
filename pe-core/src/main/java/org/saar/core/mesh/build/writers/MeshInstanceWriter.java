@@ -12,4 +12,10 @@ public interface MeshInstanceWriter<T extends Instance> {
         }
     }
 
+    default void writeInstances(Iterable<T> instances) {
+        for (T instance : instances) {
+            writeInstance(instance);
+        }
+    }
+
 }
