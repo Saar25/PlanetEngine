@@ -3,7 +3,7 @@ package org.saar.core.light;
 import org.joml.Vector3f;
 import org.saar.maths.utils.Vector3;
 
-public class PointLight extends LightNodeBase implements IPointLight {
+public class PointLight implements IPointLight {
 
     private final Vector3f position = Vector3.create();
     private final Vector3f radiuses = Vector3.create();
