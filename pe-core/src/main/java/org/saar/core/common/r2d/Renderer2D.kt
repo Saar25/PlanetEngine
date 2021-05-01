@@ -21,7 +21,7 @@ class Renderer2D(private vararg val models: Model2D) : Renderer,
         super.render(context, *this.models)
     }
 
-    override fun delete() {
+    override fun doDelete() {
         this.models.forEach { it.delete() }
     }
 }

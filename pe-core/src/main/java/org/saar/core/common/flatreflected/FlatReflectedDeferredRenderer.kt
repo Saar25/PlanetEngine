@@ -28,7 +28,7 @@ class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedMode
         super.render(context, *this.models)
     }
 
-    override fun delete() {
+    override fun doDelete() {
         this.models.forEach { it.delete() }
     }
 }

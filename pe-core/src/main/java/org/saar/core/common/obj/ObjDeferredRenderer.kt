@@ -26,7 +26,7 @@ class ObjDeferredRenderer(private vararg val models: ObjModel) : DeferredRendere
         super.render(context, *this.models)
     }
 
-    override fun delete() {
+    override fun doDelete() {
         this.models.forEach { it.delete() }
     }
 }

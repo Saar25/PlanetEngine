@@ -41,7 +41,7 @@ class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
         }
     }
 
-    override fun delete() {
+    override fun doDelete() {
         this.uiDisplay.delete()
     }
 

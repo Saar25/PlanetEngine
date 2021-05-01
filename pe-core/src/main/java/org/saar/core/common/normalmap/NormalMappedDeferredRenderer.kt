@@ -27,7 +27,7 @@ class NormalMappedDeferredRenderer(private vararg val models: NormalMappedModel)
         super.render(context, *this.models)
     }
 
-    override fun delete() {
+    override fun doDelete() {
         this.models.forEach { it.delete() }
     }
 }

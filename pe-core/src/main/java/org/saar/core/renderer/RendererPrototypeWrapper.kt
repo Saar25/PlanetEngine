@@ -83,4 +83,12 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
     protected open fun doRenderModel(context: RenderContext, model: T) {
         model.draw()
     }
+
+    final override fun delete() {
+        this.shadersProgram.delete()
+        doDelete()
+    }
+
+    protected open fun doDelete() {
+    }
 }

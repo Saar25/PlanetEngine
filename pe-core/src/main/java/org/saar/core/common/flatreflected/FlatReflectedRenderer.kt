@@ -23,7 +23,7 @@ class FlatReflectedRenderer(private vararg val models: FlatReflectedModel, refle
         render(context, *this.models)
     }
 
-    override fun delete() {
+    override fun doDelete() {
         this.models.forEach { it.delete() }
     }
 }
