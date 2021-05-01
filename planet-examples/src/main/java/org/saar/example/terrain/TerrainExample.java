@@ -14,7 +14,9 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
+import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.common.terrain.mesh.SquareMeshGenerator;
+import org.saar.core.common.terrain.mesh.TriangleMeshGenerator;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
@@ -62,7 +64,7 @@ public class TerrainExample {
                 buildStallModel());
 
         final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
-                new SquareMeshGenerator(64),
+                new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
                 (x, y, z) -> Vector3.of(.3f + (float) Math.random() * .2f, .8f + (float) Math.random() * .2f, 0)
         ));

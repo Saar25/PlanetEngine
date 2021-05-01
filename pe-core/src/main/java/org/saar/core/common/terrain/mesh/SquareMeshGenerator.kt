@@ -7,8 +7,8 @@ class SquareMeshGenerator(private val vertices: Int) : MeshGenerator {
 
     private val space: Float = 1f / (this.vertices - 1)
 
-    override fun generateVertices(): List<Vector2f> {
-        val vertices: MutableList<Vector2f> = mutableListOf()
+    override fun generateVertices(): Collection<Vector2f> {
+        val vertices: MutableCollection<Vector2f> = mutableListOf()
         for (x in 0 until this.vertices) {
             val vx = x * this.space - .5f
             for (z in 0 until this.vertices) {
@@ -20,7 +20,7 @@ class SquareMeshGenerator(private val vertices: Int) : MeshGenerator {
     }
 
     override fun generateIndices(): Collection<Int> {
-        val indices: MutableList<Int> = mutableListOf()
+        val indices: MutableCollection<Int> = mutableListOf()
         for (x0 in 0 until this.vertices - 1) {
             for (z0 in 0 until this.vertices - 1) {
                 val x1 = x0 + 1
