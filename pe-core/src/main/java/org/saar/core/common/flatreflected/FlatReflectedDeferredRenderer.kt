@@ -17,11 +17,23 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedDeferredRenderer(vararg models: FlatReflectedModel) : DeferredRenderer,
-    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype(), *models)
+class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedModel) : DeferredRenderer,
+    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype()) {
 
-private class FlatReflectedDeferredRendererPrototype :
-    RendererPrototype<FlatReflectedModel> {
+    override fun render(context: RenderContext, vararg models: FlatReflectedModel) {
+        super.render(context, *this.models, *models)
+    }
+
+    override fun render(context: RenderContext) {
+        super.render(context, *this.models)
+    }
+
+    override fun delete() {
+        this.models.forEach { it.delete() }
+    }
+}
+
+private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {
 
     @UniformProperty
     private val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 0)

@@ -24,18 +24,25 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
     RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
 
-    override fun doRender(context: RenderContext) {
+    override fun render(context: RenderContext) {
         renderContainer(context, this.uiDisplay)
     }
 
     private fun renderContainer(context: RenderContext, uiContainer: UIContainer) {
         for (childComponent in uiContainer.uiComponents) {
-            renderModels(context, *childComponent.uiObjects.toTypedArray())
+            renderModels(context, childComponent.uiObjects.toTypedArray())
         }
         for (childContainer in uiContainer.uiContainers) {
             renderContainer(context, childContainer)
         }
     }
+
+    override fun delete() {
+        this.uiDisplay.uiComponents.forEach { component ->
+            component.uiObjects.forEach { block -> block.delete() }
+        }
+    }
+
 }
 
 private class UIRendererPrototype : RendererPrototype<UIBlock> {

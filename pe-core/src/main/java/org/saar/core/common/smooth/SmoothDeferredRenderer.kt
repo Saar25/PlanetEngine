@@ -19,11 +19,23 @@ import org.saar.maths.utils.Matrix4
 
 private val prototype: SmoothRendererPrototype = SmoothRendererPrototype()
 
-class SmoothDeferredRenderer(vararg models: SmoothModel) : DeferredRenderer,
-    RendererPrototypeWrapper<SmoothModel>(prototype, *models) {
+class SmoothDeferredRenderer(private vararg val models: SmoothModel) : DeferredRenderer,
+    RendererPrototypeWrapper<SmoothModel>(prototype) {
 
-    val targetScalar: FloatProperty
-        get() = prototype.targetScalar
+    val targetScalar: FloatProperty get() = prototype.targetScalar
+
+    override fun render(context: RenderContext, vararg models: SmoothModel) {
+        super.render(context, *this.models, *models)
+    }
+
+    override fun render(context: RenderContext) {
+        super.render(context, *this.models)
+    }
+
+    override fun delete() {
+        this.models.forEach { it.delete() }
+    }
+
 }
 
 private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {

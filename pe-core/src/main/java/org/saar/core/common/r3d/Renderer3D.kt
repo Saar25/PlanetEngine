@@ -15,8 +15,21 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class Renderer3D(vararg models: Model3D) : Renderer,
-    RendererPrototypeWrapper<Model3D>(RendererPrototype3D(), *models)
+class Renderer3D(private vararg val models: Model3D) : Renderer,
+    RendererPrototypeWrapper<Model3D>(RendererPrototype3D()) {
+
+    override fun render(context: RenderContext, vararg models: Model3D) {
+        super.render(context, *this.models, *models)
+    }
+
+    override fun render(context: RenderContext) {
+        super.render(context, *this.models)
+    }
+
+    override fun delete() {
+        this.models.forEach { it.delete() }
+    }
+}
 
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 

@@ -7,9 +7,7 @@ import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-open class RendererPrototypeWrapper<T : Model>(
-    private val prototype: RendererPrototype<T>,
-    private vararg val models: T) : Renderer {
+abstract class RendererPrototypeWrapper<T : Model>(private val prototype: RendererPrototype<T>) : Renderer {
 
     private val shadersProgram: ShadersProgram = ShadersHelper.empty()
         .let {
@@ -49,29 +47,28 @@ open class RendererPrototypeWrapper<T : Model>(
         this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    override fun render(context: RenderContext) {
+    protected open fun render(context: RenderContext, vararg models: T) {
         this.shadersProgram.bind()
 
         this.prototype.onRenderCycle(context)
 
         this.uniformsHelper.loadPerRenderCycle()
 
-        doRender(context)
+        doRender(context, models)
 
         this.shadersProgram.unbind()
     }
 
-    open fun doRender(context: RenderContext) {
-        renderModels(context, *this.models)
+    open fun doRender(context: RenderContext, models: Array<out T>) {
+        renderModels(context, models)
     }
 
-    protected open fun renderModels(context: RenderContext, vararg models: T) {
-        for (model in models) {
-            renderModel(context, model)
-        }
+    protected open fun renderModels(context: RenderContext, models: Array<out T>) {
+        models.forEach { renderModel(context, it) }
     }
 
     protected open fun renderModel(context: RenderContext, model: T) {
+
         this.prototype.onInstanceDraw(context, model)
 
         this.updatersHelper.update(model)
@@ -82,9 +79,5 @@ open class RendererPrototypeWrapper<T : Model>(
 
     protected open fun doRenderModel(context: RenderContext, model: T) {
         model.draw()
-    }
-
-    override fun delete() {
-        this.models.forEach { it.delete() }
     }
 }

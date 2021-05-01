@@ -1,5 +1,6 @@
 package org.saar.core.common.r2d
 
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
@@ -9,7 +10,21 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 
-class Renderer2D(model: Model2D) : Renderer, RendererPrototypeWrapper<Model2D>(RendererPrototype2D(), model)
+class Renderer2D(private vararg val models: Model2D) : Renderer,
+    RendererPrototypeWrapper<Model2D>(RendererPrototype2D()) {
+
+    override fun render(context: RenderContext, vararg models: Model2D) {
+        super.render(context, *this.models, *models)
+    }
+
+    override fun render(context: RenderContext) {
+        super.render(context, *this.models)
+    }
+
+    override fun delete() {
+        this.models.forEach { it.delete() }
+    }
+}
 
 private class RendererPrototype2D : RendererPrototype<Model2D> {
 
