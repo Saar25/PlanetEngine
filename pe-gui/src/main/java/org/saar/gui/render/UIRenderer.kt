@@ -25,6 +25,10 @@ class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
     RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
 
     override fun render(context: RenderContext) {
+        super.render(context)
+    }
+
+    override fun doRender(context: RenderContext, models: Array<out UIBlock>) {
         renderContainer(context, this.uiDisplay)
     }
 
