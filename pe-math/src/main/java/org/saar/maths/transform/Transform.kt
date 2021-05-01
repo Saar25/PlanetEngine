@@ -1,15 +1,10 @@
-package org.saar.maths.transform;
+package org.saar.maths.transform
 
-import org.joml.Matrix4fc;
+import org.joml.Matrix4fc
 
-public interface Transform {
-
-    Matrix4fc getTransformationMatrix();
-
-    Position getPosition();
-
-    Rotation getRotation();
-
-    Scale getScale();
-
+interface Transform : ReadonlyTransform {
+    override val transformationMatrix: Matrix4fc
+    override val position: Position
+    override val rotation: Rotation
+    override val scale: Scale
 }
