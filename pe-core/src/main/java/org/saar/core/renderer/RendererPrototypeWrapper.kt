@@ -59,7 +59,7 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         this.shadersProgram.unbind()
     }
 
-    open fun doRender(context: RenderContext, models: Array<out T>) {
+    protected open fun doRender(context: RenderContext, models: Array<out T>) {
         renderModels(context, models)
     }
 
@@ -67,8 +67,11 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         models.forEach { renderModel(context, it) }
     }
 
-    protected open fun renderModel(context: RenderContext, model: T) {
+    protected open fun renderModels(context: RenderContext, models: Iterable<T>) {
+        models.forEach { renderModel(context, it) }
+    }
 
+    protected open fun renderModel(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
         this.updatersHelper.update(model)

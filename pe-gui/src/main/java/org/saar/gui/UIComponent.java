@@ -28,7 +28,7 @@ public class UIComponent implements UIChildElement {
         uiBlock.setParent(this);
     }
 
-    public List<UIBlock> getUiObjects() {
+    public List<UIBlock> getUiBlocks() {
         return this.uiBlocks;
     }
 
@@ -44,6 +44,12 @@ public class UIComponent implements UIChildElement {
 
     public void setParent(UIElement parent) {
         this.parent = parent;
+    }
+
+    public void delete() {
+        for (UIBlock uiBlock : getUiBlocks()) {
+            uiBlock.delete();
+        }
     }
 
     public final void onMouseMoveEvent(MoveEvent event) {
@@ -117,7 +123,7 @@ public class UIComponent implements UIChildElement {
      * @return true if the point is in touch, false otherwise
      */
     public boolean checkMouseInside(int x, int y) {
-        return getUiObjects().stream().anyMatch(o -> o.inTouch(x, y));
+        return getUiBlocks().stream().anyMatch(o -> o.inTouch(x, y));
     }
 
     /**

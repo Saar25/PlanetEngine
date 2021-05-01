@@ -34,7 +34,7 @@ class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
 
     private fun renderContainer(context: RenderContext, uiContainer: UIContainer) {
         for (childComponent in uiContainer.uiComponents) {
-            renderModels(context, childComponent.uiObjects.toTypedArray())
+            renderModels(context, childComponent.uiBlocks)
         }
         for (childContainer in uiContainer.uiContainers) {
             renderContainer(context, childContainer)
@@ -42,9 +42,7 @@ class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
     }
 
     override fun delete() {
-        this.uiDisplay.uiComponents.forEach { component ->
-            component.uiObjects.forEach { block -> block.delete() }
-        }
+        this.uiDisplay.delete()
     }
 
 }
