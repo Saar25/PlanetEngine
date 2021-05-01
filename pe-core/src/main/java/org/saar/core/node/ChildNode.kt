@@ -1,7 +1,5 @@
-package org.saar.core.node;
+package org.saar.core.node
 
-public interface ChildNode extends Node {
-
-    Node getParent();
-
+interface ChildNode : Node {
+    val parent: Node
 }

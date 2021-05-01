@@ -1,5 +1,3 @@
-package org.saar.core.node;
+package org.saar.core.node
 
-public interface Node {
-
-}
+interface Node
