@@ -1,5 +1,6 @@
 package org.saar.example.terrain;
 
+import org.joml.SimplexNoise;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -10,7 +11,14 @@ import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.r3d.*;
+import org.saar.core.common.terrain.height.NoiseHeightGenerator;
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
+import org.saar.core.common.terrain.mesh.SquareMeshGenerator;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -28,8 +36,10 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
+import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
 
@@ -43,13 +53,24 @@ public class TerrainExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
+        GlUtils.setClearColour(.15f, .15f, .15f);
+
         final Camera camera = buildCamera();
 
         final ObjDeferredRenderer objRenderer = new ObjDeferredRenderer(
                 buildDragonModel(),
                 buildStallModel());
 
+        final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
+                new SquareMeshGenerator(64),
+                new NoiseHeightGenerator(SimplexNoise::noise),
+                (x, y, z) -> Vector3.of(.3f + (float) Math.random() * .2f, .8f + (float) Math.random() * .2f, 0)
+        ));
+        lowPolyTerrain.getModel().getTransform().getScale().scale(256, 10, 256);
+        lowPolyTerrain.getModel().getTransform().getPosition().set(0, -10, 0);
+
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(
+                lowPolyTerrain.getModel(),
                 buildCubeModel());
 
         final DirectionalLight light = buildDirectionalLight();
@@ -58,6 +79,11 @@ public class TerrainExample {
         final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(renderersGroup, light);
 
         final RenderingPath renderingPath = buildRenderingPath(camera, renderersGroup, shadowsRenderingPath, light);
+
+        final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
+        );
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -70,7 +96,10 @@ public class TerrainExample {
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            renderingPath.render().toMainScreen();
+
+            final ReadOnlyTexture texture =
+                    renderingPath.render().toTexture();
+            postProcessing.process(texture).toMainScreen();
 
             window.update(true);
             window.pollEvents();
