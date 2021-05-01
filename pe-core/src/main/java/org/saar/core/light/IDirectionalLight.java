@@ -2,7 +2,7 @@ package org.saar.core.light;
 
 import org.joml.Vector3fc;
 
-public interface IDirectionalLight extends LightNode {
+public interface IDirectionalLight {
 
     Vector3fc getDirection();
 
