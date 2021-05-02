@@ -47,7 +47,7 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    protected open fun render(context: RenderContext, vararg models: T) {
+    open fun render(context: RenderContext, vararg models: T) {
         this.shadersProgram.bind()
 
         this.prototype.onRenderCycle(context)
