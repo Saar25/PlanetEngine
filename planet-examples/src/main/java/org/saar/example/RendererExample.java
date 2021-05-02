@@ -1,4 +1,4 @@
-package org.saar.example.renderer;
+package org.saar.example;
 
 import org.saar.core.common.r2d.*;
 import org.saar.core.renderer.RenderContextBase;
