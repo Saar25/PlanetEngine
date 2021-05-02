@@ -29,17 +29,7 @@ public class PostProcessingExample {
 
         GlUtils.setClearColour(.2f, .2f, .2f);
 
-        final float s = 0.7f;
-        final Vertex2D[] vertices = {
-                R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))
-        };
-        final int[] indices = {0, 1, 2, 0, 2, 3};
-
-        final Mesh2D mesh = Mesh2D.load(vertices, indices);
-        final Model2D model = new Model2D(mesh);
+        final Model2D model = buildModel2D();
         final Renderer2D renderer = new Renderer2D();
 
         final SimpleScreen screen = new SimpleScreen(Fbo.create(WIDTH, HEIGHT));
@@ -61,7 +51,6 @@ public class PostProcessingExample {
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-
             screen.setAsDraw();
 
             GlUtils.clearColourAndDepthBuffer();
@@ -75,8 +64,22 @@ public class PostProcessingExample {
 
         pipeline.delete();
         screen.delete();
-        mesh.delete();
+        model.delete();
         window.destroy();
+    }
+
+    private static Model2D buildModel2D() {
+        final float s = 0.7f;
+        final Vertex2D[] vertices = {
+                R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
+                R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
+                R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
+                R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))
+        };
+        final int[] indices = {0, 1, 2, 0, 2, 3};
+
+        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        return new Model2D(mesh);
     }
 
 }

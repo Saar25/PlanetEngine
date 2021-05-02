@@ -77,21 +77,9 @@ public class ReflectionExample {
 
         final Camera camera = buildCamera();
 
-        final ObjModel cottageModel = buildCottageModel();
-        final ObjNode cottage = new ObjNode(cottageModel);
+        final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
-        final ObjModel dragonModel = buildDragonModel();
-        final ObjNode dragon = new ObjNode(dragonModel);
-
-        final ObjModel stallModel = buildStallModel();
-        final ObjNode stall = new ObjNode(stallModel);
-
-        final ObjNodeBatch objNodeBatch = new ObjNodeBatch(cottage, dragon, stall);
-
-        final Model3D cubeModel = buildCubeModel();
-        final Node3D cube = new Node3D(cubeModel);
-
-        final NodeBatch3D nodeBatch3D = new NodeBatch3D(cube);
+        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
 
         final FlatReflectedModel mirrorModel = buildMirrorModel();
         final FlatReflectedNode mirror = new FlatReflectedNode(mirrorModel);
@@ -105,8 +93,8 @@ public class ReflectionExample {
         final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
                 reflectionCamera, reflectionRenderNode);
 
-        final Reflection reflection = new Reflection(mirrorModel.toPlane(), camera,
-                reflectionCamera, reflectionRenderingPath);
+        final Reflection reflection = new Reflection(mirrorModel.toPlane(),
+                camera, reflectionCamera, reflectionRenderingPath);
 
         final DirectionalLight light = buildDirectionalLight();
 
@@ -164,6 +152,26 @@ public class ReflectionExample {
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
+    }
+
+    private static NodeBatch3D buildNodeBatch3D() {
+        final Model3D cubeModel = buildCubeModel();
+        final Node3D cube = new Node3D(cubeModel);
+
+        return new NodeBatch3D(cube);
+    }
+
+    private static ObjNodeBatch buildObjNodeBatch() {
+        final ObjModel cottageModel = buildCottageModel();
+        final ObjNode cottage = new ObjNode(cottageModel);
+
+        final ObjModel dragonModel = buildDragonModel();
+        final ObjNode dragon = new ObjNode(dragonModel);
+
+        final ObjModel stallModel = buildStallModel();
+        final ObjNode stall = new ObjNode(stallModel);
+
+        return new ObjNodeBatch(cottage, dragon, stall);
     }
 
     private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode) {

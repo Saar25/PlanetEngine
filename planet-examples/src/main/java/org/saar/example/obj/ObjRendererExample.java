@@ -36,22 +36,9 @@ public class ObjRendererExample {
         colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+        final Camera camera = buildCamera();
 
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-
-        ObjModel model = null;
-        try {
-            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
-            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            model = new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        final ObjModel cottageModel = loadCottage();
 
         final ObjRenderer renderer = new ObjRenderer();
 
@@ -70,7 +57,7 @@ public class ObjRendererExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render(new RenderContextBase(camera), model);
+            renderer.render(new RenderContextBase(camera), cottageModel);
 
             fbo.blitToScreen();
 
@@ -86,6 +73,27 @@ public class ObjRendererExample {
         fbo.delete();
         colorAttachment.delete();
         window.destroy();
+    }
+
+    private static Camera buildCamera() {
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+        final Camera camera = new Camera(projection);
+
+        camera.getTransform().getPosition().set(0, 0, 200);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        return camera;
+    }
+
+    private static ObjModel loadCottage() {
+        try {
+            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
+            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
+            return new ObjModel(mesh, texture);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static MultisampledFbo createFbo(int width, int height) {

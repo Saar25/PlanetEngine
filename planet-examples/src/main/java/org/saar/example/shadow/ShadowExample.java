@@ -41,35 +41,14 @@ public class ShadowExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+        final Camera camera = buildCamera();
 
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
 
-        final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
-        final ObjNode cottage = new ObjNode(cottageModel);
+        final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
-        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
-        dragonModel.getTransform().getPosition().set(50, 0, 0);
-        final ObjNode dragon = new ObjNode(dragonModel);
-
-        final ObjModel stallModel = Objects.requireNonNull(loadStall());
-        stallModel.getTransform().getPosition().set(-50, 0, 0);
-        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
-        final ObjNode stall = new ObjNode(stallModel);
-
-        final ObjNodeBatch objNodeBatch = new ObjNodeBatch(cottage, dragon, stall);
-
-        final Instance3D cubeInstance = R3D.instance();
-        cubeInstance.getTransform().getScale().set(10, 10, 10);
-        cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
-        final Model3D cubeModel = new Model3D(cubeMesh);
-        final Node3D cube = new Node3D(cubeModel);
-
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(cube, objNodeBatch);
+        final ShadowsRenderNode shadowsRenderNode =
+                new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-1, -1, -1);
@@ -87,7 +66,7 @@ public class ShadowExample {
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(cube, objNodeBatch);
+        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderNode, renderPassesPipeline);
 
@@ -119,6 +98,44 @@ public class ShadowExample {
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
+    }
+
+    private static Camera buildCamera() {
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+        final Camera camera = new Camera(projection);
+
+        camera.getTransform().getPosition().set(0, 0, 200);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        return camera;
+    }
+
+    private static NodeBatch3D buildNodeBatch3D() {
+        final Instance3D cubeInstance = R3D.instance();
+        cubeInstance.getTransform().getScale().set(10, 10, 10);
+        cubeInstance.getTransform().getPosition().set(0, 0, 50);
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
+                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Model3D cubeModel = new Model3D(cubeMesh);
+        final Node3D cube = new Node3D(cubeModel);
+
+        return new NodeBatch3D(cube);
+    }
+
+    private static ObjNodeBatch buildObjNodeBatch() {
+        final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
+        final ObjNode cottage = new ObjNode(cottageModel);
+
+        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
+        dragonModel.getTransform().getPosition().set(50, 0, 0);
+        final ObjNode dragon = new ObjNode(dragonModel);
+
+        final ObjModel stallModel = Objects.requireNonNull(loadStall());
+        stallModel.getTransform().getPosition().set(-50, 0, 0);
+        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
+        final ObjNode stall = new ObjNode(stallModel);
+
+        return new ObjNodeBatch(cottage, dragon, stall);
     }
 
     private static ObjModel loadCottage() {

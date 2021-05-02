@@ -1,6 +1,5 @@
 package org.saar.example.normalmapping;
 
-import org.jetbrains.annotations.NotNull;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
@@ -125,19 +124,18 @@ public class NormalMappingExample {
         window.destroy();
     }
 
-    @NotNull
     private static NodeBatch3D buildNodeBatch3D() {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
+                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 
         return new NodeBatch3D(cube);
     }
 
-    @NotNull
     private static NormalMappedNodeBatch buildNormalMappedNodeBatch() {
         final NormalMappedModel boulderModel = Objects.requireNonNull(loadBoulder());
         boulderModel.getTransform().getPosition().set(0, 20, 0);
@@ -155,7 +153,6 @@ public class NormalMappingExample {
         return new NormalMappedNodeBatch(boulder, barrel, crate);
     }
 
-    @NotNull
     private static ObjNodeBatch buildObjNodeBatch() {
         final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
         final ObjNode cottage = new ObjNode(cottageModel);
