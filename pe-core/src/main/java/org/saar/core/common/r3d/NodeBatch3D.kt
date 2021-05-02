@@ -5,7 +5,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderParentNode
 import org.saar.core.renderer.forward.ForwardRenderParentNode
 
-class NodeGroup3D(vararg nodes: Node3D) : ParentNode, ForwardRenderParentNode, DeferredRenderParentNode {
+class NodeBatch3D(vararg nodes: Node3D) : ParentNode, ForwardRenderParentNode, DeferredRenderParentNode {
 
     override val children: MutableList<Node3D> = nodes.toMutableList()
 
