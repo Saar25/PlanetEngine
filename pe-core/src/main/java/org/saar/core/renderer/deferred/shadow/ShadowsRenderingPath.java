@@ -4,7 +4,6 @@ import org.joml.Vector3fc;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.light.IDirectionalLight;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -26,12 +25,13 @@ public class ShadowsRenderingPath implements RenderingPath {
     private final ShadowsScreenPrototype prototype = new ShadowsScreenPrototype();
     private final ShadowsCamera camera;
     private final OffScreen screen;
-    private final RenderersGroup renderers;
+
+    private final ShadowsRenderNode renderNode;
 
     public ShadowsRenderingPath(ShadowsQuality quality, OrthographicProjection projection,
-                                IDirectionalLight light, RenderersGroup renderers) {
+                                IDirectionalLight light, ShadowsRenderNode renderNode) {
         this.camera = camera(projection, light.getDirection());
-        this.renderers = renderers;
+        this.renderNode = renderNode;
 
         final Fbo fbo = Fbo.create(quality.getImageSize(), quality.getImageSize());
         this.screen = Screens.fromPrototype(this.prototype, fbo);
@@ -60,14 +60,14 @@ public class ShadowsRenderingPath implements RenderingPath {
 
         final RenderContextBase context = new RenderContextBase(this.camera);
         context.getHints().cullFace = GlCullFace.FRONT;
-        this.renderers.render(context);
+        this.renderNode.renderShadows(context);
 
         return new ShadowRenderingOutput(this.screen, this.prototype.getDepthTexture());
     }
 
     @Override
     public void delete() {
-        this.renderers.delete();
+        this.renderNode.delete();
         this.screen.delete();
     }
 }

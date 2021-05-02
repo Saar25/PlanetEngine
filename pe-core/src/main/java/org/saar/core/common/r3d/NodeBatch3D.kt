@@ -3,9 +3,11 @@ package org.saar.core.common.r3d
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderParentNode
+import org.saar.core.renderer.deferred.shadow.ShadowsRenderNode
 import org.saar.core.renderer.forward.ForwardRenderParentNode
 
-class NodeBatch3D(vararg nodes: Node3D) : ParentNode, ForwardRenderParentNode, DeferredRenderParentNode {
+class NodeBatch3D(vararg nodes: Node3D) : ParentNode,
+    ForwardRenderParentNode, DeferredRenderParentNode, ShadowsRenderNode {
 
     override val children: MutableList<Node3D> = nodes.toMutableList()
 
@@ -22,6 +24,11 @@ class NodeBatch3D(vararg nodes: Node3D) : ParentNode, ForwardRenderParentNode, D
     }
 
     override fun renderDeferred(context: RenderContext) {
+        val models = this.children.map { it.model }.toTypedArray()
+        this.deferredRenderer.value.render(context, *models)
+    }
+
+    override fun renderShadows(context: RenderContext) {
         val models = this.children.map { it.model }.toTypedArray()
         this.deferredRenderer.value.render(context, *models)
     }

@@ -3,10 +3,11 @@ package org.saar.core.common.flatreflected
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderParentNode
+import org.saar.core.renderer.deferred.shadow.ShadowsRenderNode
 import org.saar.core.renderer.forward.ForwardRenderParentNode
 
-class FlatReflectedNodeBatch(vararg nodes: FlatReflectedNode) : ParentNode, ForwardRenderParentNode,
-    DeferredRenderParentNode {
+class FlatReflectedNodeBatch(vararg nodes: FlatReflectedNode) : ParentNode,
+    ForwardRenderParentNode, DeferredRenderParentNode, ShadowsRenderNode {
 
     override val children: MutableList<FlatReflectedNode> = nodes.toMutableList()
 
@@ -23,6 +24,11 @@ class FlatReflectedNodeBatch(vararg nodes: FlatReflectedNode) : ParentNode, Forw
     }
 
     override fun renderDeferred(context: RenderContext) {
+        val models = this.children.map { it.model }.toTypedArray()
+        this.deferredRenderer.value.render(context, *models)
+    }
+
+    override fun renderShadows(context: RenderContext) {
         val models = this.children.map { it.model }.toTypedArray()
         this.deferredRenderer.value.render(context, *models)
     }

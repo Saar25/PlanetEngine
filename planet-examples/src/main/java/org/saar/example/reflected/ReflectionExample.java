@@ -7,24 +7,23 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.obj.ObjMesh;
+import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
+import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.Renderer;
-import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
-import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
+import org.saar.core.renderer.deferred.shadow.*;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -90,14 +89,11 @@ public class ReflectionExample {
         final ObjModel stallModel = buildStallModel();
         final ObjNode stall = new ObjNode(stallModel);
 
-        final Renderer objRenderer = new ObjDeferredRenderer(
-                cottageModel, dragonModel, stallModel);
         final ObjNodeBatch objNodeBatch = new ObjNodeBatch(cottage, dragon, stall);
 
         final Model3D cubeModel = buildCubeModel();
         final Node3D cube = new Node3D(cubeModel);
 
-        final Renderer renderer3D = new DeferredRenderer3D(cubeModel);
         final NodeBatch3D nodeBatch3D = new NodeBatch3D(cube);
 
         final FlatReflectedModel mirrorModel = buildMirrorModel();
@@ -105,8 +101,8 @@ public class ReflectionExample {
 
         final FlatReflectedNodeBatch flatReflectedNodeBatch = new FlatReflectedNodeBatch(mirror);
 
-        final RenderersGroup baseRenderersGroup = new RenderersGroup(objRenderer, renderer3D);
         final DeferredRenderNodeGroup reflectionRenderNode = new DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(objNodeBatch, nodeBatch3D);
 
         final Camera reflectionCamera = new Camera(camera.getProjection());
         final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
@@ -118,7 +114,7 @@ public class ReflectionExample {
         final DirectionalLight light = buildDirectionalLight();
 
         final ShadowsRenderingPath shadowsRenderingPath =
-                buildShadowsRenderingPath(baseRenderersGroup, light);
+                buildShadowsRenderingPath(shadowsRenderNode, light);
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
@@ -240,11 +236,11 @@ public class ReflectionExample {
         return light;
     }
 
-    private static ShadowsRenderingPath buildShadowsRenderingPath(RenderersGroup shadowsRenderersGroup, DirectionalLight light) {
+    private static ShadowsRenderingPath buildShadowsRenderingPath(ShadowsRenderNode renderNode, DirectionalLight light) {
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         return new ShadowsRenderingPath(ShadowsQuality.HIGH,
-                shadowProjection, light, shadowsRenderersGroup);
+                shadowProjection, light, renderNode);
     }
 
     private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,

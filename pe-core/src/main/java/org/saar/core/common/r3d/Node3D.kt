@@ -3,9 +3,10 @@ package org.saar.core.common.r3d
 import org.saar.core.node.Node
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
+import org.saar.core.renderer.deferred.shadow.ShadowsRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 
-class Node3D(val model: Model3D) : Node, ForwardRenderNode, DeferredRenderNode {
+class Node3D(val model: Model3D) : Node, ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode {
 
     private val forwardRenderer = lazy { Renderer3D() }
     private val deferredRenderer = lazy { DeferredRenderer3D() }
@@ -15,6 +16,10 @@ class Node3D(val model: Model3D) : Node, ForwardRenderNode, DeferredRenderNode {
     }
 
     override fun renderDeferred(context: RenderContext) {
+        this.deferredRenderer.value.render(context, this.model)
+    }
+
+    override fun renderShadows(context: RenderContext) {
         this.deferredRenderer.value.render(context, this.model)
     }
 
