@@ -1,8 +1,8 @@
 package org.saar.core.renderer.forward
 
-class ForwardRenderNodeGroup : ForwardRenderParentNode {
+class ForwardRenderNodeGroup(vararg nodes: ForwardRenderNode) : ForwardRenderParentNode {
 
-    private val childrenList: MutableList<ForwardRenderNode> = mutableListOf()
+    private val childrenList: MutableList<ForwardRenderNode> = nodes.toMutableList()
 
     override val children: List<ForwardRenderNode> get() = this.childrenList
 
