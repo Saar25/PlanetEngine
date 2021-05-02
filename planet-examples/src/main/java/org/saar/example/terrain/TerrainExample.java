@@ -10,19 +10,20 @@ import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
-import org.saar.core.common.terrain.mesh.SquareMeshGenerator;
-import org.saar.core.common.terrain.mesh.TriangleMeshGenerator;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderNode;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
@@ -59,9 +60,13 @@ public class TerrainExample {
 
         final Camera camera = buildCamera();
 
-        final ObjDeferredRenderer objRenderer = new ObjDeferredRenderer(
-                buildDragonModel(),
-                buildStallModel());
+        final ObjModel dragonModel = buildDragonModel();
+        final ObjNode dragon = new ObjNode(dragonModel);
+
+        final ObjModel stallModel = buildStallModel();
+        final ObjNode stall = new ObjNode(stallModel);
+
+        final ObjDeferredRenderer objRenderer = new ObjDeferredRenderer(dragonModel, stallModel);
 
         final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
@@ -70,17 +75,23 @@ public class TerrainExample {
         ));
         lowPolyTerrain.getModel().getTransform().getScale().scale(256, 10, 256);
         lowPolyTerrain.getModel().getTransform().getPosition().set(0, -10, 0);
+        final Node3D terrain = new Node3D(lowPolyTerrain.getModel());
+
+        final Model3D cubeModel = buildCubeModel();
+        final Node3D cube = new Node3D(cubeModel);
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(
-                lowPolyTerrain.getModel(),
-                buildCubeModel());
+                lowPolyTerrain.getModel(), cubeModel);
 
         final DirectionalLight light = buildDirectionalLight();
 
         final RenderersGroup renderersGroup = new RenderersGroup(objRenderer, renderer3D);
         final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(renderersGroup, light);
 
-        final RenderingPath renderingPath = buildRenderingPath(camera, renderersGroup, shadowsRenderingPath, light);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, terrain);
+
+        final RenderingPath renderingPath = buildRenderingPath(
+                camera, renderNode, shadowsRenderingPath, light);
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
@@ -167,7 +178,7 @@ public class TerrainExample {
                 shadowProjection, light, shadowsRenderersGroup);
     }
 
-    private static RenderingPath buildRenderingPath(ICamera camera, RenderersGroup renderersGroup,
+    private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                     ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
@@ -177,7 +188,7 @@ public class TerrainExample {
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        return new DeferredRenderingPath(screenPrototype, camera, renderersGroup, renderPassesPipeline);
+        return new DeferredRenderingPath(screenPrototype, camera, renderNode, renderPassesPipeline);
     }
 
     private static ObjModel loadStall() {

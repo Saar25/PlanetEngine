@@ -5,12 +5,9 @@ import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.obj.ObjDeferredRenderer;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
@@ -27,7 +24,6 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlCullFace;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
@@ -50,16 +46,20 @@ public class ShadowExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
+        final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
+        final ObjNode cottage = new ObjNode(cottageModel);
 
-        final ObjModel dragonNode = Objects.requireNonNull(loadDragon());
-        dragonNode.getTransform().getPosition().set(50, 0, 0);
+        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
+        dragonModel.getTransform().getPosition().set(50, 0, 0);
+        final ObjNode dragon = new ObjNode(dragonModel);
 
-        final ObjModel stallNode = Objects.requireNonNull(loadStall());
-        stallNode.getTransform().getPosition().set(-50, 0, 0);
-        stallNode.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
+        final ObjModel stallModel = Objects.requireNonNull(loadStall());
+        stallModel.getTransform().getPosition().set(-50, 0, 0);
+        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
+        final ObjNode stall = new ObjNode(stallModel);
 
-        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
+        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageModel, dragonModel, stallModel);
+        final ObjNodeBatch objNodeBatch = new ObjNodeBatch(cottage, dragon, stall);
 
         final Instance3D cube = R3D.instance();
         cube.getTransform().getScale().set(10, 10, 10);
@@ -91,7 +91,7 @@ public class ShadowExample {
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderersGroup, renderPassesPipeline);
+                screenPrototype, camera, objNodeBatch, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);

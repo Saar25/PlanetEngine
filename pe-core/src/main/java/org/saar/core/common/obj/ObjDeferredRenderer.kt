@@ -18,7 +18,7 @@ import org.saar.maths.utils.Matrix4
 class ObjDeferredRenderer(private vararg val models: ObjModel) : DeferredRenderer,
     RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype()) {
 
-    override fun render(context: RenderContext, vararg models: ObjModel) {
+    public override fun render(context: RenderContext, vararg models: ObjModel) {
         super.render(context, *this.models, *models)
     }
 

@@ -5,14 +5,13 @@ import org.joml.Vector3fc
 import org.saar.core.common.r3d.Mesh3D
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.R3D
-import org.saar.core.node.Node
 import org.saar.maths.utils.Maths
 import org.saar.maths.utils.Vector3
 
 private val v1 = Vector3.create()
 private val v2 = Vector3.create()
 
-class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) : Node {
+class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) {
     val model: Model3D = buildModel(configuration)
 
     private fun vertexPosition(x: Float, z: Float, dest: Vector3f): Vector3fc {

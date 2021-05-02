@@ -6,7 +6,7 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.smooth.*;
 import org.saar.core.common.terrain.smooth.SmoothTerrain;
-import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
@@ -70,29 +70,30 @@ public class SmoothExample {
         final SmoothModel model = new SmoothModel(mesh);
         model.getTransform().getScale().set(10, 10, 10);
         model.getTransform().getPosition().set(0, 15, 50);
+        final SmoothNode node = new SmoothNode(model);
 
         final SmoothMesh terrainMesh = SmoothTerrain.generateMeshAsync();
         final SmoothModel terrainModel = new SmoothModel(terrainMesh);
         terrainModel.getTransform().getScale().scale(50);
+        final SmoothNode terrain = new SmoothNode(terrainModel);
 
-        final SmoothDeferredRenderer renderer = new SmoothDeferredRenderer(model, terrainModel);
+        final SmoothNodeBatch smoothNodeBatch = new SmoothNodeBatch(node, terrain);
 
-        final Instance3D cube = R3D.instance();
-        cube.getTransform().getScale().set(10, 10, 10);
-        cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
+        final Instance3D cubeInstance = R3D.instance();
+        cubeInstance.getTransform().getScale().set(10, 10, 10);
+        cubeInstance.getTransform().getPosition().set(0, 0, 50);
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
         final Model3D cubeModel = new Model3D(cubeMesh);
-
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
+        final Node3D cube = new Node3D(cubeModel);
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderersGroup renderersGroup = new RenderersGroup(renderer3D, renderer);
-
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(new LightRenderPass());
 
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(smoothNodeBatch, cube);
+
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderersGroup, renderPassesPipeline);
+                screenPrototype, camera, renderNode, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -111,15 +112,14 @@ public class SmoothExample {
             System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))
             );
-
+/*
             if (keyboard.isKeyPressed('I')) {
                 renderer.getTargetScalar().set(renderer.getTargetScalar().get() + 0.01f);
             } else if (keyboard.isKeyPressed('K')) {
                 renderer.getTargetScalar().set(renderer.getTargetScalar().get() - 0.01f);
-            }
+            }*/
         }
 
-        renderersGroup.delete();
         deferredRenderer.delete();
         window.destroy();
     }

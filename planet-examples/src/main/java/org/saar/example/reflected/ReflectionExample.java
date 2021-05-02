@@ -7,9 +7,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.ObjDeferredRenderer;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
@@ -19,6 +17,8 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.Renderer;
 import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderNode;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
@@ -81,20 +81,38 @@ public class ReflectionExample {
 
         final Camera camera = buildCamera();
 
+        final ObjModel cottageModel = buildCottageModel();
+        final ObjNode cottage = new ObjNode(cottageModel);
+
+        final ObjModel dragonModel = buildDragonModel();
+        final ObjNode dragon = new ObjNode(dragonModel);
+
+        final ObjModel stallModel = buildStallModel();
+        final ObjNode stall = new ObjNode(stallModel);
+
         final Renderer objRenderer = new ObjDeferredRenderer(
-                buildCottageModel(), buildDragonModel(), buildStallModel());
+                cottageModel, dragonModel, stallModel);
+        final ObjNodeBatch objNodeBatch = new ObjNodeBatch(cottage, dragon, stall);
 
-        final Renderer renderer3D = new DeferredRenderer3D(buildCubeModel());
+        final Model3D cubeModel = buildCubeModel();
+        final Node3D cube = new Node3D(cubeModel);
 
-        final FlatReflectedModel mirror = buildMirrorModel();
+        final Renderer renderer3D = new DeferredRenderer3D(cubeModel);
+        final NodeBatch3D nodeBatch3D = new NodeBatch3D(cube);
+
+        final FlatReflectedModel mirrorModel = buildMirrorModel();
+        final FlatReflectedNode mirror = new FlatReflectedNode(mirrorModel);
+
+        final FlatReflectedNodeBatch flatReflectedNodeBatch = new FlatReflectedNodeBatch(mirror);
 
         final RenderersGroup baseRenderersGroup = new RenderersGroup(objRenderer, renderer3D);
+        final DeferredRenderNodeGroup reflectionRenderNode = new DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D);
 
         final Camera reflectionCamera = new Camera(camera.getProjection());
         final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
-                reflectionCamera, baseRenderersGroup);
+                reflectionCamera, reflectionRenderNode);
 
-        final Reflection reflection = new Reflection(mirror.toPlane(), camera,
+        final Reflection reflection = new Reflection(mirrorModel.toPlane(), camera,
                 reflectionCamera, reflectionRenderingPath);
 
         final DirectionalLight light = buildDirectionalLight();
@@ -102,14 +120,11 @@ public class ReflectionExample {
         final ShadowsRenderingPath shadowsRenderingPath =
                 buildShadowsRenderingPath(baseRenderersGroup, light);
 
-        final Renderer flatReflectedDeferredRenderer =
-                new FlatReflectedDeferredRenderer(mirror);
-
-        final RenderersGroup renderersGroup = new RenderersGroup(
-                flatReflectedDeferredRenderer, renderer3D, objRenderer);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
+                objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
 
         final RenderingPath deferredRenderer = buildRenderingPath(
-                camera, renderersGroup, shadowsRenderingPath, light);
+                camera, renderNode, shadowsRenderingPath, light);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -129,7 +144,7 @@ public class ReflectionExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             reflection.updateReflectionMap();
 
-            mirror.setReflectionMap(reflection.getReflectionMap());
+            mirrorModel.setReflectionMap(reflection.getReflectionMap());
             final ReadOnlyTexture output = deferredRenderer.render().toTexture();
             postProcessingPipeline.process(output).toMainScreen();
 
@@ -152,20 +167,19 @@ public class ReflectionExample {
 
         postProcessingPipeline.delete();
         reflection.delete();
-        renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
     }
 
-    private static RenderingPath buildReflectionRenderingPath(Camera camera, RenderersGroup renderersGroup) {
+    private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode) {
         final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
 
         final RenderPassesPipeline renderPassesPipeline =
                 new RenderPassesPipeline(new LightRenderPass());
 
         return new DeferredRenderingPath(reflectionScreenPrototype,
-                camera, renderersGroup, renderPassesPipeline);
+                camera, renderNode, renderPassesPipeline);
     }
 
     private static FlatReflectedModel buildMirrorModel() {
@@ -233,7 +247,7 @@ public class ReflectionExample {
                 shadowProjection, light, shadowsRenderersGroup);
     }
 
-    private static RenderingPath buildRenderingPath(ICamera camera, RenderersGroup renderersGroup,
+    private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                     ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
@@ -243,7 +257,7 @@ public class ReflectionExample {
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        return new DeferredRenderingPath(screenPrototype, camera, renderersGroup, renderPassesPipeline);
+        return new DeferredRenderingPath(screenPrototype, camera, renderNode, renderPassesPipeline);
     }
 
     private static ObjModel loadCottage() {

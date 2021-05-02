@@ -1,19 +1,24 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.shaders.*
+import org.saar.lwjgl.opengl.shaders.GlslVersion
+import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
+import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
+import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedRenderer(private vararg val models: FlatReflectedModel, reflectionMap: ReadOnlyTexture) : Renderer,
-    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype(reflectionMap)) {
+class FlatReflectedRenderer(private vararg val models: FlatReflectedModel) : Renderer,
+    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype()) {
 
     override fun render(context: RenderContext, vararg models: FlatReflectedModel) {
         render(context, *this.models, *models)
@@ -28,19 +33,10 @@ class FlatReflectedRenderer(private vararg val models: FlatReflectedModel, refle
     }
 }
 
-private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnlyTexture) :
-    RendererPrototype<FlatReflectedModel> {
+private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflectedModel> {
 
     @UniformProperty
-    private val reflectionMapUniform = object : TextureUniform() {
-        override fun getUnit(): Int = 1
-
-        override fun getName(): String = "u_reflectionMap"
-
-        override fun getUniformValue(): ReadOnlyTexture {
-            return this@FlatReflectedRendererPrototype.reflectionMap
-        }
-    }
+    private val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 1)
 
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
@@ -72,5 +68,7 @@ private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnly
         val m = model.transform.transformationMatrix
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.reflectionMapUniform.value = model.reflectionMap
+        this.normalUniform.value = model.normal
     }
 }

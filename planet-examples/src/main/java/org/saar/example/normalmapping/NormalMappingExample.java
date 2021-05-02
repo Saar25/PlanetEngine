@@ -5,18 +5,15 @@ import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.normalmap.NormalMappedDeferredRenderer;
-import org.saar.core.common.normalmap.NormalMappedMesh;
-import org.saar.core.common.normalmap.NormalMappedModel;
-import org.saar.core.common.obj.ObjDeferredRenderer;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.normalmap.*;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.RenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
@@ -54,37 +51,51 @@ public class NormalMappingExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
+        final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
+        final ObjNode cottage = new ObjNode(cottageModel);
 
-        final ObjModel dragonNode = Objects.requireNonNull(loadDragon());
-        dragonNode.getTransform().getPosition().set(50, 0, 0);
+        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
+        dragonModel.getTransform().getPosition().set(50, 0, 0);
+        final ObjNode dragon = new ObjNode(dragonModel);
 
-        final ObjModel stallNode = Objects.requireNonNull(loadStall());
-        stallNode.getTransform().getRotation().rotateDegrees(0, 180, 0);
-        stallNode.getTransform().getPosition().set(-50, 0, 0);
+        final ObjModel stallModel = Objects.requireNonNull(loadStall());
+        stallModel.getTransform().getRotation().rotateDegrees(0, 180, 0);
+        stallModel.getTransform().getPosition().set(-50, 0, 0);
+        final ObjNode stall = new ObjNode(stallModel);
 
-        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
+        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageModel, dragonModel, stallModel);
 
-        final NormalMappedModel boulder = Objects.requireNonNull(loadBoulder());
-        boulder.getTransform().getPosition().set(0, 20, 0);
+        final ObjNodeBatch objNodeBatch = new ObjNodeBatch(cottage, dragon, stall);
 
-        final NormalMappedModel barrel = Objects.requireNonNull(loadBarrel());
-        barrel.getTransform().getPosition().set(-20, 20, 0);
+        final NormalMappedModel boulderModel = Objects.requireNonNull(loadBoulder());
+        boulderModel.getTransform().getPosition().set(0, 20, 0);
+        final NormalMappedNode boulder = new NormalMappedNode(boulderModel);
 
-        final NormalMappedModel crate = Objects.requireNonNull(loadCrate());
-        crate.getTransform().getPosition().set(+20, 20, 0);
-        crate.getTransform().getScale().scale(.05f);
+        final NormalMappedModel barrelModel = Objects.requireNonNull(loadBarrel());
+        barrelModel.getTransform().getPosition().set(-20, 20, 0);
+        final NormalMappedNode barrel = new NormalMappedNode(barrelModel);
+
+        final NormalMappedModel crateModel = Objects.requireNonNull(loadCrate());
+        crateModel.getTransform().getPosition().set(+20, 20, 0);
+        crateModel.getTransform().getScale().scale(.05f);
+        final NormalMappedNode crate = new NormalMappedNode(crateModel);
 
         final NormalMappedDeferredRenderer normalMappedRenderer =
-                new NormalMappedDeferredRenderer(boulder, barrel, crate);
+                new NormalMappedDeferredRenderer(boulderModel, barrelModel, crateModel);
 
-        final Instance3D cube = R3D.instance();
-        cube.getTransform().getScale().set(10, 10, 10);
-        cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
+        final NormalMappedNodeBatch normalMappedNodeBatch =
+                new NormalMappedNodeBatch(boulder, barrel, crate);
+
+        final Instance3D cubeInstance = R3D.instance();
+        cubeInstance.getTransform().getScale().set(10, 10, 10);
+        cubeInstance.getTransform().getPosition().set(0, 0, 50);
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
         final Model3D cubeModel = new Model3D(cubeMesh);
+        final Node3D cube = new Node3D(cubeModel);
 
         final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
+
+        final NodeBatch3D nodeBatch3D = new NodeBatch3D(cube);
 
         final Keyboard keyboard = window.getKeyboard();
 
@@ -102,15 +113,16 @@ public class NormalMappingExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderersGroup renderersGroup = new RenderersGroup(normalMappedRenderer, renderer3D, renderer);
-
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new SsaoRenderPass()
         );
 
+        final DeferredRenderNodeGroup renderNode =
+                new DeferredRenderNodeGroup(cube, normalMappedNodeBatch, objNodeBatch);
+
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderersGroup, renderPassesPipeline);
+                screenPrototype, camera, renderNode, renderPassesPipeline);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -145,7 +157,6 @@ public class NormalMappingExample {
         }
 
         pipeline.delete();
-        renderersGroup.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

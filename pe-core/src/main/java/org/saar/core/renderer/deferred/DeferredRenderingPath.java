@@ -2,7 +2,6 @@ package org.saar.core.renderer.deferred;
 
 import org.saar.core.camera.ICamera;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -15,16 +14,16 @@ public class DeferredRenderingPath implements RenderingPath {
     private final DeferredScreenPrototype prototype;
 
     private final ICamera camera;
-    private final RenderersGroup renderers;
+    private final DeferredRenderNode renderNode;
     private final RenderPassesPipeline pipeline;
 
     public DeferredRenderingPath(DeferredScreenPrototype prototype, ICamera camera,
-                                 RenderersGroup renderers, RenderPassesPipeline pipeline) {
+                                 DeferredRenderNode renderNode, RenderPassesPipeline pipeline) {
         this.prototype = prototype;
         this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
 
         this.camera = camera;
-        this.renderers = renderers;
+        this.renderNode = renderNode;
         this.pipeline = pipeline;
     }
 
@@ -34,7 +33,8 @@ public class DeferredRenderingPath implements RenderingPath {
         this.screen.resizeToMainScreen();
 
         GlUtils.clearColourAndDepthBuffer();
-        this.renderers.render(new RenderContextBase(this.camera));
+
+        this.renderNode.renderDeferred(new RenderContextBase(this.camera));
 
         return this.pipeline.process(this.camera, this.prototype.asBuffers());
     }
@@ -42,7 +42,7 @@ public class DeferredRenderingPath implements RenderingPath {
     @Override
     public void delete() {
         this.screen.delete();
-        this.renderers.delete();
+        this.renderNode.delete();
         this.pipeline.delete();
     }
 }
