@@ -32,7 +32,6 @@ import org.saar.example.MyScreenPrototype;
 import org.saar.gui.UIBlock;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
-import org.saar.gui.render.UIRenderer;
 import org.saar.gui.style.Colours;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -75,8 +74,6 @@ public class ReflectionExample {
         uiComponent.add(reflectionUiBlock);
 
         uiDisplay.add(uiComponent);
-
-        final UIRenderer uiRenderer = new UIRenderer(uiDisplay);
 
         final Camera camera = buildCamera();
 
@@ -145,7 +142,7 @@ public class ReflectionExample {
             postProcessingPipeline.process(output).toMainScreen();
 
             reflectionUiBlock.setTexture(reflection.getReflectionMap());
-            uiRenderer.render(new RenderContextBase(camera));
+            uiDisplay.renderForward(new RenderContextBase(null));
 
             window.update(true);
             window.pollEvents();
@@ -161,6 +158,7 @@ public class ReflectionExample {
             fps.update();
         }
 
+        uiDisplay.delete();
         postProcessingPipeline.delete();
         reflection.delete();
         shadowsRenderingPath.delete();

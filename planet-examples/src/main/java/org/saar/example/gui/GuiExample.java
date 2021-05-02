@@ -2,7 +2,6 @@ package org.saar.example.gui;
 
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.RenderersGroup;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
 import org.saar.core.renderer.forward.ForwardScreenPrototype;
 import org.saar.core.screen.annotations.ScreenImageProperty;
@@ -14,7 +13,6 @@ import org.saar.gui.UIGroup;
 import org.saar.gui.component.UIButton;
 import org.saar.gui.component.UICheckbox;
 import org.saar.gui.component.UISlider;
-import org.saar.gui.render.UIRenderer;
 import org.saar.gui.style.Colour;
 import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
@@ -90,8 +88,6 @@ public class GuiExample {
         uiCheckbox.getStyle().getRadiuses().set(3);
         uiGroup.add(uiCheckbox);
 
-        final UIRenderer renderer = new UIRenderer(display);
-
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(new ForwardScreenPrototype() {
             private final Texture colourTexture = Texture.create();
 
@@ -103,7 +99,7 @@ public class GuiExample {
             public ReadOnlyTexture getColourTexture() {
                 return this.colourTexture;
             }
-        }, null, new RenderersGroup(renderer));
+        }, null, display);
 
         final PostProcessingPipeline fxaaPipeline = new PostProcessingPipeline(
                 new FxaaPostProcessor()
@@ -123,7 +119,8 @@ public class GuiExample {
             window.pollEvents();
         }
 
-        renderer.delete();
+        renderingPath.delete();
+        display.delete();
         window.destroy();
     }
 
