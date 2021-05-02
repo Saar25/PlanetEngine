@@ -5,7 +5,6 @@ import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.Renderer;
 import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -41,7 +40,7 @@ public class PostProcessingExample {
 
         final Mesh2D mesh = Mesh2D.load(vertices, indices);
         final Model2D model = new Model2D(mesh);
-        final Renderer renderer = new Renderer2D(model);
+        final Renderer2D renderer = new Renderer2D();
 
         final SimpleScreen screen = new SimpleScreen(Fbo.create(WIDTH, HEIGHT));
 
@@ -66,7 +65,7 @@ public class PostProcessingExample {
             screen.setAsDraw();
 
             GlUtils.clearColourAndDepthBuffer();
-            renderer.render(new RenderContextBase(null));
+            renderer.render(new RenderContextBase(null), model);
 
             pipeline.process(colourTexture).toMainScreen();
 

@@ -30,7 +30,7 @@ public class RendererExample {
 
         final Mesh2D mesh = Mesh2D.load(vertices, indices);
         final Model2D model = new Model2D(mesh);
-        final Renderer2D renderer = new Renderer2D(model);
+        final Renderer2D renderer = new Renderer2D();
 
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
@@ -53,7 +53,7 @@ public class RendererExample {
 
             GlUtils.clear(GlBuffer.COLOUR);
 
-            renderer.render(new RenderContextBase(null));
+            renderer.render(new RenderContextBase(null), model);
 
             fbo.blitToScreen();
 

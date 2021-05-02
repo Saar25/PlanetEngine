@@ -17,26 +17,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-private val prototype: SmoothRendererPrototype = SmoothRendererPrototype()
-
-class SmoothDeferredRenderer(private vararg val models: SmoothModel) : DeferredRenderer,
-    RendererPrototypeWrapper<SmoothModel>(prototype) {
-
-    val targetScalar: FloatProperty get() = prototype.targetScalar
-
-    override fun render(context: RenderContext, vararg models: SmoothModel) {
-        super.render(context, *this.models, *models)
-    }
-
-    override fun render(context: RenderContext) {
-        super.render(context, *this.models)
-    }
-
-    override fun doDelete() {
-        this.models.forEach { it.delete() }
-    }
-
-}
+class SmoothDeferredRenderer : DeferredRenderer, RendererPrototypeWrapper<SmoothModel>(SmoothRendererPrototype())
 
 private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
 

@@ -45,7 +45,7 @@ public class ScreenExample {
             System.exit(1);
         }
 
-        final ObjRenderer renderer = new ObjRenderer(model);
+        final ObjRenderer renderer = new ObjRenderer();
 
         final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
@@ -64,7 +64,7 @@ public class ScreenExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render(new RenderContextBase(camera));
+            renderer.render(new RenderContextBase(camera), model);
 
             screen.copyTo(MainScreen.getInstance());
 

@@ -41,7 +41,7 @@ public class ManyCubesExample {
         final Camera camera = new Camera(projection);
 
         final Model3D model = model();
-        final Renderer3D renderer = new Renderer3D(model);
+        final Renderer3D renderer = new Renderer3D();
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
@@ -56,7 +56,7 @@ public class ManyCubesExample {
                 for (int j = 0; j < COLS; j++) {
                     model.getTransform().getPosition().set(
                             i * size - size / 2f, 0, j * size - size / 2f);
-                    renderer.render(new RenderContextBase(camera));
+                    renderer.render(new RenderContextBase(camera), model);
                 }
             }
 

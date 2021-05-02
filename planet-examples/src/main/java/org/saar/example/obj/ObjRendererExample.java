@@ -53,7 +53,7 @@ public class ObjRendererExample {
             System.exit(1);
         }
 
-        final ObjRenderer renderer = new ObjRenderer(model);
+        final ObjRenderer renderer = new ObjRenderer();
 
         fbo = createFbo(WIDTH, HEIGHT);
 
@@ -70,7 +70,7 @@ public class ObjRendererExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render(new RenderContextBase(camera));
+            renderer.render(new RenderContextBase(camera), model);
 
             fbo.blitToScreen();
 

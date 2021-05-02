@@ -14,21 +14,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer(private vararg val models: NormalMappedModel) : Renderer,
-    RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype()) {
-
-    override fun render(context: RenderContext, vararg models: NormalMappedModel) {
-        super.render(context, *this.models, *models)
-    }
-
-    override fun render(context: RenderContext) {
-        super.render(context, *this.models)
-    }
-
-    override fun doDelete() {
-        this.models.forEach { it.delete() }
-    }
-}
+class NormalMappedRenderer : Renderer, RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype())
 
 private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedModel> {
 

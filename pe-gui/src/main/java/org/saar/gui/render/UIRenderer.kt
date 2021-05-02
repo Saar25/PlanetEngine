@@ -23,9 +23,6 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 
 class UIRenderer : Renderer, RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
 
-    override fun render(context: RenderContext) {
-    }
-
     fun render(context: RenderContext, uiContainer: UIContainer) {
         renderContainer(context, uiContainer)
     }

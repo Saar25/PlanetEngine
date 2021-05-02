@@ -17,21 +17,8 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedDeferredRenderer(private vararg val models: FlatReflectedModel) : DeferredRenderer,
-    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype()) {
-
-    override fun render(context: RenderContext, vararg models: FlatReflectedModel) {
-        super.render(context, *this.models, *models)
-    }
-
-    override fun render(context: RenderContext) {
-        super.render(context, *this.models)
-    }
-
-    override fun doDelete() {
-        this.models.forEach { it.delete() }
-    }
-}
+class FlatReflectedDeferredRenderer : DeferredRenderer,
+    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype())
 
 private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {
 

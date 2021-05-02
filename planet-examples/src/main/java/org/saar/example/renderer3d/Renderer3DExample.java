@@ -37,7 +37,8 @@ public class Renderer3DExample {
         camera.getTransform().getPosition().set(0, 0, -1000);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final Renderer3D renderer = new Renderer3D(models());
+        final Model3D[] models = models();
+        final Renderer3D renderer = new Renderer3D();
 
         final Keyboard keyboard = window.getKeyboard();
         final Fps fps = new Fps();
@@ -45,7 +46,7 @@ public class Renderer3DExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render(new RenderContextBase(camera));
+            renderer.render(new RenderContextBase(camera), models);
 
             window.pollEvents();
             window.update(true);
