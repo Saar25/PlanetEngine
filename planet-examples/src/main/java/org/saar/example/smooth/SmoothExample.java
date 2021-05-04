@@ -31,7 +31,16 @@ public class SmoothExample {
 
         final Camera camera = buildCamera();
 
-        final RenderingPath renderingPath = buildRenderingPath(camera);
+        final SmoothNode node = buildSmoothNode();
+        final SmoothNode terrain = buildSmoothTerrain();
+        final SmoothNodeBatch smoothNodeBatch = new SmoothNodeBatch(node, terrain);
+
+        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
+
+        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, smoothNodeBatch);
+
+
+        final RenderingPath renderingPath = buildRenderingPath(camera, renderNode);
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -50,21 +59,22 @@ public class SmoothExample {
             System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))
             );
-/*
+
+            final float old = node.getModel().getTarget();
             if (keyboard.isKeyPressed('I')) {
-                renderer.getTargetScalar().set(renderer.getTargetScalar().get() + 0.01f);
+                node.getModel().setTarget(old + 0.01f);
+                terrain.getModel().setTarget(old + 0.01f);
             } else if (keyboard.isKeyPressed('K')) {
-                renderer.getTargetScalar().set(renderer.getTargetScalar().get() - 0.01f);
-            }*/
+                node.getModel().setTarget(old - 0.01f);
+                terrain.getModel().setTarget(old - 0.01f);
+            }
         }
 
         renderingPath.delete();
         window.destroy();
     }
 
-    private static RenderingPath buildRenderingPath(Camera camera) {
-        final DeferredRenderNode renderNode = buildRenderNode();
-
+    private static RenderingPath buildRenderingPath(Camera camera, DeferredRenderNode renderNode) {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
         final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
@@ -74,15 +84,14 @@ public class SmoothExample {
                 camera, renderNode, renderPassesPipeline);
     }
 
-    private static DeferredRenderNodeGroup buildRenderNode() {
-        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
-
-        final SmoothNodeBatch smoothNodeBatch = buildSmoothNodeBatch();
-
-        return new DeferredRenderNodeGroup(nodeBatch3D, smoothNodeBatch);
+    private static SmoothNode buildSmoothTerrain() {
+        final SmoothMesh terrainMesh = SmoothTerrain.generateMeshAsync();
+        final SmoothModel terrainModel = new SmoothModel(terrainMesh);
+        terrainModel.getTransform().getScale().scale(50);
+        return new SmoothNode(terrainModel);
     }
 
-    private static SmoothNodeBatch buildSmoothNodeBatch() {
+    private static SmoothNode buildSmoothNode() {
         final SmoothMesh mesh = SmoothMesh.load(new SmoothVertex[]{
                 Smooth.vertex(
                         Vector3.of(-0.5f, -0.5f, -0.5f), Vector3.of(+0, +0, -1), Vector3.of(0.5f, 0.5f, 0.0f),
@@ -119,14 +128,7 @@ public class SmoothExample {
         final SmoothModel model = new SmoothModel(mesh);
         model.getTransform().getScale().set(10, 10, 10);
         model.getTransform().getPosition().set(0, 15, 50);
-        final SmoothNode node = new SmoothNode(model);
-
-        final SmoothMesh terrainMesh = SmoothTerrain.generateMeshAsync();
-        final SmoothModel terrainModel = new SmoothModel(terrainMesh);
-        terrainModel.getTransform().getScale().scale(50);
-        final SmoothNode terrain = new SmoothNode(terrainModel);
-
-        return new SmoothNodeBatch(node, terrain);
+        return new SmoothNode(model);
     }
 
     private static NodeBatch3D buildNodeBatch3D() {
