@@ -3,7 +3,7 @@ package org.saar.core.common.flatreflected
 import org.saar.core.node.Node
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderNode
+import org.saar.core.renderer.shadow.ShadowsRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 
 class FlatReflectedNode(val model: FlatReflectedModel) : Node,

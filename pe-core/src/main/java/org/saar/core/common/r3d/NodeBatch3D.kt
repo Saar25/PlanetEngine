@@ -3,7 +3,7 @@ package org.saar.core.common.r3d
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderParentNode
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderNode
+import org.saar.core.renderer.shadow.ShadowsRenderNode
 import org.saar.core.renderer.forward.ForwardRenderParentNode
 
 class NodeBatch3D(vararg nodes: Node3D) : ParentNode,

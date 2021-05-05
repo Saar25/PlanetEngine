@@ -3,7 +3,7 @@ package org.saar.core.common.obj
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderParentNode
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderNode
+import org.saar.core.renderer.shadow.ShadowsRenderNode
 import org.saar.core.renderer.forward.ForwardRenderParentNode
 
 class ObjNodeBatch(vararg nodes: ObjNode) : ParentNode,

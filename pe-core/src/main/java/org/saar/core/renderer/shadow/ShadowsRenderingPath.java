@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.shadow;
+package org.saar.core.renderer.shadow;
 
 import org.joml.Vector3fc;
 import org.saar.core.camera.projection.OrthographicProjection;

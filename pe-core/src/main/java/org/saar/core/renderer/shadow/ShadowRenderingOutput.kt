@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.shadow
+package org.saar.core.renderer.shadow
 
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.screen.Screen

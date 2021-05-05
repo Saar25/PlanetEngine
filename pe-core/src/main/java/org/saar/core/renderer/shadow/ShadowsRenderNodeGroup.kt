@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.shadow
+package org.saar.core.renderer.shadow
 
 class ShadowsRenderNodeGroup(vararg children: ShadowsRenderNode) : ShadowsRenderParentNode {
 

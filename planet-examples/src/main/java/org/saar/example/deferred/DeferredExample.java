@@ -11,7 +11,7 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.deferred.light.LightRenderPass;
+import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.example.MyScreenPrototype;

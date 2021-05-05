@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.shadow
+package org.saar.core.renderer.renderpass.shadow
 
 import org.saar.core.renderer.renderpass.RenderPassRenderingBuffers
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture

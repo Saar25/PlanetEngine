@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.shadow;
+package org.saar.core.renderer.shadow;
 
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
