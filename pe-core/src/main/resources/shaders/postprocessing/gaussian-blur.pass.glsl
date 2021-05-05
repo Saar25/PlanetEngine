@@ -5,7 +5,7 @@
 // Consts
 const int hlevels = LEVELS / 2;
 
-const vec2[] blurXy = { vec2(1, 0), vec2(0, 1) };
+const vec2[] blurXy = vec2[](vec2(1, 0), vec2(0, 1));
 
 // Uniforms
 uniform sampler2D     u_texture;
