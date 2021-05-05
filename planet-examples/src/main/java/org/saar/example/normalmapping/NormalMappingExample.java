@@ -20,7 +20,7 @@ import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.RenderPassesPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.*;
 import org.saar.core.renderer.deferred.ssao.SsaoRenderPass;
 import org.saar.core.screen.MainScreen;
@@ -74,7 +74,7 @@ public class NormalMappingExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new SsaoRenderPass()
         );

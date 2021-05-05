@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
 open class RenderPassPrototypeWrapper<T : RenderPassRenderingBuffers>(
-    private val prototype: RenderPassPrototype<T>) : RenderPass<T> {
+    private val prototype: RenderPassPrototype<T>) : RenderPass {
 
     companion object {
         private val vertexShaderCode = ShaderCode.loadSource(
@@ -41,7 +41,7 @@ open class RenderPassPrototypeWrapper<T : RenderPassRenderingBuffers>(
         this.shadersProgram.bindFragmentOutputs("f_colour")
     }
 
-    final override fun render(context: RenderPassContext, buffers: T) {
+    protected fun render(context: RenderPassContext, buffers: T) {
         this.shadersProgram.bind()
 
         this.prototype.onRender(context, buffers)

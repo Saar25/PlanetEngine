@@ -14,7 +14,7 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.RenderPassesPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.shadow.*;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -62,7 +62,7 @@ public class ShadowExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 

@@ -4,10 +4,11 @@ import org.joml.Matrix4f
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.light.PointLight
-import org.saar.core.renderer.deferred.RenderPass
-import org.saar.core.renderer.deferred.RenderPassContext
-import org.saar.core.renderer.deferred.RenderPassPrototype
-import org.saar.core.renderer.deferred.RenderPassPrototypeWrapper
+import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -22,11 +23,17 @@ private val light = DirectionalLight()
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class LightRenderPass : RenderPass, RenderPassPrototypeWrapper(
-    LightRenderPassPrototype(emptyArray(), arrayOf(light)))
+class LightRenderPass : DeferredRenderPass,
+    RenderPassPrototypeWrapper<LightRenderingBuffers>(LightRenderPassPrototype(emptyArray(), arrayOf(light))) {
+
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
+    }
+}
 
 private class LightRenderPassPrototype(private val pointLights: Array<PointLight>,
-                                       private val directionalLights: Array<DirectionalLight>) : RenderPassPrototype {
+                                       private val directionalLights: Array<DirectionalLight>)
+    : RenderPassPrototype<LightRenderingBuffers> {
 
     @UniformProperty
     private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -68,10 +75,10 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
         ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext) {
-        this.colourTextureUniform.value = context.buffers.albedo
-        this.normalTextureUniform.value = context.buffers.normal
-        this.depthTextureUniform.value = context.buffers.depth
+    override fun onRender(context: RenderPassContext, buffers: LightRenderingBuffers) {
+        this.colourTextureUniform.value = buffers.albedo
+        this.normalTextureUniform.value = buffers.normal
+        this.depthTextureUniform.value = buffers.depth
 
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)

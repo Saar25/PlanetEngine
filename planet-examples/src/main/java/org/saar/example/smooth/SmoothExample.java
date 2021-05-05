@@ -10,7 +10,7 @@ import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.RenderPassesPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
@@ -77,7 +77,7 @@ public class SmoothExample {
     private static RenderingPath buildRenderingPath(Camera camera, DeferredRenderNode renderNode) {
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass());
 
         return new DeferredRenderingPath(screenPrototype,

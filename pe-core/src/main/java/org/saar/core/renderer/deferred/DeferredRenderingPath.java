@@ -15,10 +15,10 @@ public class DeferredRenderingPath implements RenderingPath {
 
     private final ICamera camera;
     private final DeferredRenderNode renderNode;
-    private final RenderPassesPipeline pipeline;
+    private final DeferredRenderPassesPipeline pipeline;
 
     public DeferredRenderingPath(DeferredScreenPrototype prototype, ICamera camera,
-                                 DeferredRenderNode renderNode, RenderPassesPipeline pipeline) {
+                                 DeferredRenderNode renderNode, DeferredRenderPassesPipeline pipeline) {
         this.prototype = prototype;
         this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
 

@@ -10,7 +10,7 @@ import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.RenderPassesPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
@@ -40,8 +40,8 @@ public class DeferredExample {
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderPassesPipeline renderPassesPipeline =
-                new RenderPassesPipeline(new LightRenderPass());
+        final DeferredRenderPassesPipeline renderPassesPipeline =
+                new DeferredRenderPassesPipeline(new LightRenderPass());
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderNode, renderPassesPipeline);

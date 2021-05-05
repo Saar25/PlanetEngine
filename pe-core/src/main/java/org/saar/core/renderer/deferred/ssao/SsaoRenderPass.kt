@@ -1,10 +1,11 @@
 package org.saar.core.renderer.deferred.ssao
 
 import org.joml.Matrix4f
-import org.saar.core.renderer.deferred.RenderPass
-import org.saar.core.renderer.deferred.RenderPassContext
-import org.saar.core.renderer.deferred.RenderPassPrototype
-import org.saar.core.renderer.deferred.RenderPassPrototypeWrapper
+import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -16,9 +17,13 @@ import org.saar.maths.utils.Matrix4
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class SsaoRenderPass : RenderPass, RenderPassPrototypeWrapper(SsaoRenderPassPrototype())
+class SsaoRenderPass : DeferredRenderPass, RenderPassPrototypeWrapper<SsaoRenderingBuffers>(SsaoRenderPassPrototype()) {
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        super.render(context, SsaoRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
+    }
+}
 
-private class SsaoRenderPassPrototype : RenderPassPrototype {
+private class SsaoRenderPassPrototype : RenderPassPrototype<SsaoRenderingBuffers> {
 
     @UniformProperty
     private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -43,10 +48,10 @@ private class SsaoRenderPassPrototype : RenderPassPrototype {
         ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext) {
-        this.colourTextureUniform.value = context.buffers.albedo
-        this.normalTextureUniform.value = context.buffers.normal
-        this.depthTextureUniform.value = context.buffers.depth
+    override fun onRender(context: RenderPassContext, buffers: SsaoRenderingBuffers) {
+        this.colourTextureUniform.value = buffers.albedo
+        this.normalTextureUniform.value = buffers.normal
+        this.depthTextureUniform.value = buffers.depth
 
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)

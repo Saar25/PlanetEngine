@@ -5,10 +5,11 @@ import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
-import org.saar.core.renderer.deferred.RenderPass
-import org.saar.core.renderer.deferred.RenderPassContext
-import org.saar.core.renderer.deferred.RenderPassPrototype
-import org.saar.core.renderer.deferred.RenderPassPrototypeWrapper
+import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -17,16 +18,21 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.maths.utils.Matrix4
 
-class ShadowsRenderPass(shadowCamera: ICamera,
-                        shadowMap: ReadOnlyTexture,
-                        light: DirectionalLight) : RenderPass,
-    RenderPassPrototypeWrapper(ShadowsRenderPassPrototype(shadowCamera, shadowMap, light))
+class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) :
+    DeferredRenderPass,
+    RenderPassPrototypeWrapper<ShadowsRenderingBuffers>(ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)) {
+
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        super.render(context, ShadowsRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
+    }
+}
 
 private val matrix: Matrix4f = Matrix4.create()
 
 private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
                                          private val shadowMap: ReadOnlyTexture,
-                                         private val light: DirectionalLight) : RenderPassPrototype {
+                                         private val light: DirectionalLight)
+    : RenderPassPrototype<ShadowsRenderingBuffers> {
 
     @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
@@ -87,13 +93,13 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext) {
+    override fun onRender(context: RenderPassContext, buffers: ShadowsRenderingBuffers) {
+        this.colourTextureUniform.value = buffers.albedo
+        this.normalTextureUniform.value = buffers.normal
+        this.depthTextureUniform.value = buffers.depth
+
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value
         this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
-
-        this.colourTextureUniform.value = context.buffers.albedo
-        this.normalTextureUniform.value = context.buffers.normal
-        this.depthTextureUniform.value = context.buffers.depth
     }
 }
