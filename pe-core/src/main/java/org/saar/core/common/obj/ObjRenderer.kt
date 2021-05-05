@@ -1,10 +1,11 @@
 package org.saar.core.common.obj
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformUpdater
-import org.saar.core.renderer.uniforms.UniformUpdaterProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -24,18 +25,8 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
 
-    @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<ObjModel> { model ->
-        this@ObjRendererPrototype.textureUniform.value = model.texture
-    }
-
     @UniformProperty
     private val transformUniform = Mat4UniformValue("u_transformationMatrix")
-
-    @UniformUpdaterProperty
-    private val transformUpdater = UniformUpdater<ObjModel> { model ->
-        this@ObjRendererPrototype.transformUniform.value = model.transform.transformationMatrix
-    }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -58,5 +49,8 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+
+        this.textureUniform.value = model.texture
+        this.transformUniform.value = model.transform.transformationMatrix
     }
 }

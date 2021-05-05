@@ -5,10 +5,14 @@ import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
-import org.saar.core.renderer.*
-import org.saar.core.renderer.deferred.*
-import org.saar.core.renderer.uniforms.*
-import org.saar.lwjgl.opengl.shaders.*
+import org.saar.core.renderer.deferred.RenderPass
+import org.saar.core.renderer.deferred.RenderPassContext
+import org.saar.core.renderer.deferred.RenderPassPrototype
+import org.saar.core.renderer.deferred.RenderPassPrototypeWrapper
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.shaders.GlslVersion
+import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.maths.utils.Matrix4
@@ -77,21 +81,6 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     @UniformProperty
     private val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
-    @UniformUpdaterProperty
-    private val colourTextureUpdater = UniformUpdater<RenderPassContext> { context ->
-        this@ShadowsRenderPassPrototype.colourTextureUniform.value = context.buffers.albedo
-    }
-
-    @UniformUpdaterProperty
-    private val normalTextureUpdater = UniformUpdater<RenderPassContext> { context ->
-        this@ShadowsRenderPassPrototype.normalTextureUniform.value = context.buffers.normal
-    }
-
-    @UniformUpdaterProperty
-    private val depthTextureUpdater = UniformUpdater<RenderPassContext> { context ->
-        this@ShadowsRenderPassPrototype.depthTextureUniform.value = context.buffers.depth
-    }
-
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
 
@@ -102,5 +91,9 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value
         this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
+
+        this.colourTextureUniform.value = context.buffers.albedo
+        this.normalTextureUniform.value = context.buffers.normal
+        this.depthTextureUniform.value = context.buffers.depth
     }
 }

@@ -4,7 +4,6 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -35,12 +34,6 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
                 .fold(it) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
         }
 
-    private val updatersHelper: UpdatersHelper<RenderPassContext> = UpdatersHelper.empty<RenderPassContext>()
-        .let {
-            Renderers.findUniformsUpdaters<RenderPassContext>(this.prototype)
-                .fold(it) { helper, updater -> helper.addUpdater(updater) }
-        }
-
     init {
         this.shadersProgram.bind()
         this.uniformsHelper.initialize(this.shadersProgram)
@@ -57,7 +50,6 @@ open class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype
 
     protected open fun doRender(context: RenderPassContext) {
         this.prototype.onRender(context)
-        this.updatersHelper.update(context)
         drawQuad()
     }
 

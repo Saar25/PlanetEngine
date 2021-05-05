@@ -4,7 +4,6 @@ import org.saar.core.mesh.Model
 import org.saar.core.renderer.shaders.ShadersHelper
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.core.renderer.uniforms.UpdatersHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
 abstract class RendererPrototypeWrapper<T : Model>(private val prototype: RendererPrototype<T>) : Renderer {
@@ -32,12 +31,6 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         .let {
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_RENDER_CYCLE)
                 .fold(it) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
-        }
-
-    private val updatersHelper: UpdatersHelper<T> = UpdatersHelper.empty<T>()
-        .let {
-            Renderers.findUniformsUpdaters<T>(this.prototype)
-                .fold(it) { helper, updater -> helper.addUpdater(updater) }
         }
 
     init {
@@ -74,7 +67,6 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
     protected open fun renderModel(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
-        this.updatersHelper.update(model)
         this.uniformsHelper.loadPerInstance()
 
         doRenderModel(context, model)
