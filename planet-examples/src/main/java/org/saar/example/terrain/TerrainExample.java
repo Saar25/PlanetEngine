@@ -42,6 +42,7 @@ import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
+import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class TerrainExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        GlUtils.setClearColour(.15f, .15f, .15f);
+        GlUtils.setClearColour(.2f, .2f, .2f);
 
         final Camera camera = buildCamera();
 
@@ -69,10 +70,10 @@ public class TerrainExample {
         final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
-                (x, y, z) -> Vector3.of(.3f + (float) Math.random() * .2f, .8f + (float) Math.random() * .2f, 0)
+                (x, y, z) -> Vector3.of(.3f + (float) Math.random() * .2f, .8f + (float) Math.random() * .2f, 0),
+                Vector2.of(256, 256),
+                10
         ));
-        lowPolyTerrain.getModel().getTransform().getScale().scale(256, 10, 256);
-        lowPolyTerrain.getModel().getTransform().getPosition().set(0, -10, 0);
         final Node3D terrain = new Node3D(lowPolyTerrain.getModel());
 
         final Model3D cubeModel = buildCubeModel();
