@@ -38,7 +38,7 @@ class NormalMappedMeshLoader(private val objFile: String) : AutoCloseable {
         val assimpIndex = AssimpIndexComponent.of(
             this@NormalMappedMeshLoader.assimpMesh.aiMesh)
 
-        for (i in 0 until assimpMesh.vertexCount()) {
+        for (i in 0 until assimpMesh.indexCount()) {
             yield(assimpIndex.next())
         }
     }

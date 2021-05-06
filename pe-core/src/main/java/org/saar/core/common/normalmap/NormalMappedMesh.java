@@ -1,15 +1,13 @@
 package org.saar.core.common.normalmap;
 
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Meshes;
 import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+
+import java.io.IOException;
+import java.util.Collection;
 
 public class NormalMappedMesh implements Mesh {
 
@@ -33,7 +31,7 @@ public class NormalMappedMesh implements Mesh {
         prototype.getBiTangentBuffer().addAttribute(biTangentAttribute);
     }
 
-    static NormalMappedMesh create(NormalMappedMeshPrototype prototype, int indices) {
+    private static NormalMappedMesh create(NormalMappedMeshPrototype prototype, int indices) {
         return new NormalMappedMesh(Meshes.toElementsDrawCallMesh(prototype, indices));
     }
 
@@ -41,43 +39,48 @@ public class NormalMappedMesh implements Mesh {
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.allocateIndices(indices);
-        helper.allocateVertices(vertices);
+        helper.allocateVertices(vertices.length);
+        helper.allocateIndices(indices.length);
 
         final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
         writer.writeVertices(vertices);
         writer.writeIndices(indices);
 
-        helper.store();
-
-        final DrawCall drawCall = new ElementsDrawCall(
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new NormalMappedMesh(mesh);
+        return NormalMappedMesh.create(prototype, indices.length);
     }
 
     public static NormalMappedMesh load(NormalMappedVertex[] vertices, int[] indices) {
         return NormalMappedMesh.load(NormalMapped.mesh(), vertices, indices);
     }
 
-    public static NormalMappedMesh load(String objFile) throws Exception {
-        final NormalMappedMeshPrototype prototype = NormalMapped.mesh();
+    public static NormalMappedMesh load(NormalMappedMeshPrototype prototype,
+                                        Collection<NormalMappedVertex> vertices,
+                                        Collection<Integer> indices) {
         setUpPrototype(prototype);
 
+        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        helper.allocateVertices(vertices.size());
+        helper.allocateIndices(indices.size());
+
+        final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
+
+        return NormalMappedMesh.create(prototype, indices.size());
+    }
+
+    public static NormalMappedMesh load(Collection<NormalMappedVertex> vertices, Collection<Integer> indices) {
+        return load(NormalMapped.mesh(), vertices, indices);
+    }
+
+    public static NormalMappedMesh load(NormalMappedMeshPrototype prototype, String objFile) throws IOException {
         try (final NormalMappedMeshLoader loader = new NormalMappedMeshLoader(objFile)) {
-            final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-            helper.allocateVertices(loader.vertexCount());
-            helper.allocateIndices(loader.indexCount());
-
-            final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
-            writer.writeVertices(loader.loadVertices());
-            writer.writeIndices(loader.loadIndices());
-
-            return NormalMappedMesh.create(prototype, loader.indexCount());
+            return load(prototype, loader.loadVertices(), loader.loadIndices());
         }
+    }
+
+    public static NormalMappedMesh load(String objFile) throws Exception {
+        return NormalMappedMesh.load(NormalMapped.mesh(), objFile);
     }
 
     @Override

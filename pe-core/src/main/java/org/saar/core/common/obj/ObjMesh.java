@@ -1,10 +1,10 @@
 package org.saar.core.common.obj;
 
-
 import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Meshes;
-import org.saar.core.mesh.build.MeshPrototypeHelper;
+
+import java.util.Collection;
 
 public class ObjMesh implements Mesh {
 
@@ -26,21 +26,26 @@ public class ObjMesh implements Mesh {
         return ObjMeshBuilder.build(Obj.mesh(), vertices, indices).load();
     }
 
-    public static ObjMesh load(String objFile) throws Exception {
-        final ObjMeshPrototype prototype = Obj.mesh();
-        ObjMeshBuilder.addAttributes(prototype);
+    private static ObjMesh load(ObjMeshPrototype prototype, Collection<ObjVertex> vertices, Collection<Integer> indices) {
+        final ObjMeshBuilder builder = ObjMeshBuilder.create(
+                prototype, vertices.size(), indices.size());
+        builder.writeVertices(vertices);
+        builder.writeIndices(indices);
+        return builder.load();
+    }
 
+    private static ObjMesh load(Collection<ObjVertex> vertices, Collection<Integer> indices) {
+        return load(Obj.mesh(), vertices, indices);
+    }
+
+    public static ObjMesh load(ObjMeshPrototype prototype, String objFile) throws Exception {
         try (final ObjMeshLoader loader = new ObjMeshLoader(objFile)) {
-            final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-            helper.allocateVertices(loader.vertexCount());
-            helper.allocateIndices(loader.indexCount());
-
-            final ObjMeshWriter writer = new ObjMeshWriter(prototype);
-            writer.writeVertices(loader.loadVertices());
-            writer.writeIndices(loader.loadIndices());
-
-            return ObjMesh.create(prototype, loader.indexCount());
+            return load(prototype, loader.loadVertices(), loader.loadIndices());
         }
+    }
+
+    public static ObjMesh load(String objFile) throws Exception {
+        return load(Obj.mesh(), objFile);
     }
 
     @Override
