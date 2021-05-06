@@ -2,10 +2,8 @@ package org.saar.core.common.normalmap;
 
 import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.Meshes;
 import org.saar.core.mesh.build.MeshPrototypeHelper;
-import org.saar.lwjgl.assimp.AssimpMesh;
-import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.assimp.component.*;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
@@ -33,6 +31,10 @@ public class NormalMappedMesh implements Mesh {
         prototype.getNormalBuffer().addAttribute(normalAttribute);
         prototype.getTangentBuffer().addAttribute(tangentAttribute);
         prototype.getBiTangentBuffer().addAttribute(biTangentAttribute);
+    }
+
+    static NormalMappedMesh create(NormalMappedMeshPrototype prototype, int indices) {
+        return new NormalMappedMesh(Meshes.toElementsDrawCallMesh(prototype, indices));
     }
 
     public static NormalMappedMesh load(NormalMappedMeshPrototype prototype, NormalMappedVertex[] vertices, int[] indices) {
@@ -65,27 +67,16 @@ public class NormalMappedMesh implements Mesh {
         final NormalMappedMeshPrototype prototype = NormalMapped.mesh();
         setUpPrototype(prototype);
 
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        try (final NormalMappedMeshLoader loader = new NormalMappedMeshLoader(objFile)) {
+            final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+            helper.allocateVertices(loader.vertexCount());
+            helper.allocateIndices(loader.indexCount());
 
-        final Vao vao = Vao.create();
+            final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
+            writer.writeVertices(loader.loadVertices());
+            writer.writeIndices(loader.loadIndices());
 
-        try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
-            assimpMesh.writeDataBuffer(
-                    new AssimpPositionComponent(prototype.getPositionBuffer().getWrapper()),
-                    new AssimpTexCoordComponent(0, prototype.getUvCoordBuffer().getWrapper()),
-                    new AssimpNormalComponent(prototype.getNormalBuffer().getWrapper()),
-                    new AssimpTangentComponent(prototype.getTangentBuffer().getWrapper()),
-                    new AssimpBiTangentComponent(prototype.getBiTangentBuffer().getWrapper()));
-
-            assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
-
-            helper.store();
-            helper.loadToVao(vao);
-
-            final DrawCall drawCall = new ElementsDrawCall(
-                    RenderMode.TRIANGLES, assimpMesh.indexCount(), DataType.U_INT);
-            final Mesh mesh = new DrawCallMesh(vao, drawCall);
-            return new NormalMappedMesh(mesh);
+            return NormalMappedMesh.create(prototype, loader.indexCount());
         }
     }
 

@@ -1,10 +1,8 @@
 package org.saar.lwjgl.assimp;
 
-import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.Assimp;
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 
 public class AssimpMesh implements AutoCloseable {
 
@@ -16,30 +14,16 @@ public class AssimpMesh implements AutoCloseable {
         this.aiMesh = aiMesh;
     }
 
-    public void writeDataBuffer(AssimpComponent... components) throws AssimpException {
-        final int vertices = this.aiMesh.mVertices().limit();
-
-        for (AssimpComponent component : components) {
-            component.init(this.aiMesh);
-        }
-        for (int i = 0; i < vertices; i++) {
-            for (AssimpComponent component : components) {
-                component.next();
-            }
-        }
+    public AIMesh getAiMesh() {
+        return this.aiMesh;
     }
 
-    public void writeIndexBuffer(BufferObjectWrapper vbo) throws AssimpException {
-        final AIFace.Buffer faceBuffer = this.aiMesh.mFaces();
-
-        vbo.allocate(faceBuffer.limit() * 4 * 3);
-
-        AssimpUtil.requiredNotNull(faceBuffer, "Indices data not found");
-        AssimpUtil.writeIndexBuffer(vbo.getWriter(), faceBuffer);
+    public int vertexCount() {
+        return getAiMesh().mVertices().limit();
     }
 
     public int indexCount() {
-        return this.aiMesh.mFaces().limit() * 4 * 3;
+        return getAiMesh().mFaces().limit() * 3;
     }
 
     @Override

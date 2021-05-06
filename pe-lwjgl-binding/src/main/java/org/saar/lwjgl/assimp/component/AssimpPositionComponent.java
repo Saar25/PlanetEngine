@@ -1,22 +1,34 @@
 package org.saar.lwjgl.assimp.component;
 
+import org.joml.Vector3fc;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
+import org.saar.lwjgl.assimp.AssimpComponent;
+import org.saar.lwjgl.assimp.AssimpUtil;
+import org.saar.maths.utils.Vector3;
 
-public class AssimpPositionComponent extends AssimpComponent3D {
+public class AssimpPositionComponent implements AssimpComponent {
 
-    public AssimpPositionComponent(BufferObjectWrapper writer) {
-        super(writer);
+    private final AIVector3D.Buffer buffer;
+
+    public AssimpPositionComponent(AIVector3D.Buffer buffer) {
+        this.buffer = buffer;
+    }
+
+    public static AssimpPositionComponent of(AIMesh aiMesh) {
+        final AIVector3D.Buffer buffer = aiMesh.mVertices();
+        AssimpUtil.requiredNotNull(buffer, "Position data not found");
+
+        return new AssimpPositionComponent(buffer);
+    }
+
+    public Vector3fc next() {
+        final AIVector3D current = this.buffer.get();
+        return Vector3.of(current.x(), current.y(), current.z());
     }
 
     @Override
-    public AIVector3D.Buffer getBuffer(AIMesh aiMesh) {
-        return aiMesh.mVertices();
-    }
-
-    @Override
-    public String exceptionMessage() {
-        return "Positions data not found";
+    public int count() {
+        return this.buffer.limit();
     }
 }
