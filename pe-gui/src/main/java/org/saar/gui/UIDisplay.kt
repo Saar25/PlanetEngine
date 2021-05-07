@@ -51,7 +51,7 @@ class UIDisplay(private val window: Window) : ForwardRenderNode, UIContainer {
     }
 
     override fun delete() {
-        super.delete()
+        super<UIContainer>.delete()
         if (this.renderer.isInitialized()) {
             this.renderer.value.delete()
         }

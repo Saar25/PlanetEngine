@@ -1,7 +1,9 @@
 package org.saar.core.behavior
 
-interface BehaviorNode {
+import org.saar.core.node.Node
 
-    fun update()
+interface BehaviorNode : Node {
+
+    val behaviors: BehaviorGroup
 
 }

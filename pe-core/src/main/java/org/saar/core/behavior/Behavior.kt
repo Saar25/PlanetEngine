@@ -18,4 +18,13 @@ interface Behavior {
     fun update(node: BehaviorNode) {
 
     }
+
+    /**
+     * Deleta the behavior
+     *
+     * @param node the node that is influenced by the behavior
+     */
+    fun delete(node: BehaviorNode) {
+
+    }
 }
