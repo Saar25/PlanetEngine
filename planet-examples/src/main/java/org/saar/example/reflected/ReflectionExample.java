@@ -170,7 +170,7 @@ public class ReflectionExample {
         final Model3D cubeModel = buildCubeModel();
 
         final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, .1f, .1f, .1f));
+                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f));
 
         final Node3D cube = new Node3D(cubeModel, behaviors);
 
@@ -220,7 +220,7 @@ public class ReflectionExample {
                 MainScreen.getInstance(), 70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, .1f, .1f, .1f));
+                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f));
 
         final Camera camera = new Camera(projection, behaviors);
         camera.getTransform().getPosition().set(0, 25, -20);
