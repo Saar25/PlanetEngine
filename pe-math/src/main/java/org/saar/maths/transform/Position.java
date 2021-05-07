@@ -40,9 +40,21 @@ public class Position implements ReadonlyPosition {
         onChange(old);
     }
 
+    public void add(float x, float y, float z) {
+        final Vector3fc old = copyValue();
+        this.value.add(x, y, z);
+        onChange(old);
+    }
+
     public void sub(Vector3fc direction) {
         final Vector3fc old = copyValue();
         this.value.sub(direction);
+        onChange(old);
+    }
+
+    public void sub(float x, float y, float z) {
+        final Vector3fc old = copyValue();
+        this.value.sub(x, y, z);
         onChange(old);
     }
 
@@ -91,12 +103,24 @@ public class Position implements ReadonlyPosition {
         return this.value.x;
     }
 
+    public void setX(float x) {
+        set(x, getY(), getZ());
+    }
+
     public float getY() {
         return this.value.y;
     }
 
+    public void setY(float y) {
+        set(getX(), y, getZ());
+    }
+
     public float getZ() {
         return this.value.z;
+    }
+
+    public void setZ(float z) {
+        set(getX(), getY(), z);
     }
 
     @Override
