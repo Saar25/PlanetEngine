@@ -7,6 +7,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.normalmap.NormalMappedMesh;
 import org.saar.core.common.normalmap.NormalMappedModel;
@@ -49,10 +50,10 @@ public class NormalMappingExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    private static float scrollSpeed = 50f;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+
+        GlUtils.setClearColour(0, .7f, .9f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -61,8 +62,9 @@ public class NormalMappingExample {
                 MainScreen.getInstance(), 70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
-                new KeyboardMovementBehavior(keyboard, scrollSpeed, scrollSpeed, scrollSpeed);
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
         final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new KeyboardMovementScrollVelocityBehavior(mouse),
                 new MouseRotationBehavior(mouse, -.3f));
 
         final Camera camera = new Camera(projection, behaviors);
@@ -101,13 +103,6 @@ public class NormalMappingExample {
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderNode, renderPassesPipeline);
 
-        mouse.addScrollListener(e -> {
-            scrollSpeed += e.getOffset();
-            scrollSpeed = Math.max(scrollSpeed, 1);
-            cameraMovementBehavior.getVelocity().set(scrollSpeed);
-        });
-        GlUtils.setClearColour(0, .7f, .9f);
-
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
@@ -127,7 +122,7 @@ public class NormalMappingExample {
 
             final float fps = 1000f / delta;
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps) +
                     ", Delta: " + delta);
             current = System.currentTimeMillis();

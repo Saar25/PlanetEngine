@@ -8,6 +8,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.flatreflected.*;
 import org.saar.core.common.obj.ObjMesh;
@@ -59,8 +60,6 @@ public class ReflectionExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    private static float scrollSpeed = 50f;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
@@ -89,8 +88,9 @@ public class ReflectionExample {
                 MainScreen.getInstance(), 70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
-                new KeyboardMovementBehavior(keyboard, scrollSpeed, scrollSpeed, scrollSpeed);
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
         final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new KeyboardMovementScrollVelocityBehavior(mouse),
                 new MouseRotationBehavior(mouse, -.3f));
 
         final Camera camera = new Camera(projection, behaviors);
@@ -127,12 +127,6 @@ public class ReflectionExample {
         final RenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
 
-        mouse.addScrollListener(e -> {
-            scrollSpeed += e.getOffset();
-            scrollSpeed = Math.max(scrollSpeed, 1);
-            cameraMovementBehavior.getVelocity().set(scrollSpeed);
-        });
-
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
@@ -159,7 +153,7 @@ public class ReflectionExample {
             final long delta = (long) (fps.delta() * 1000);
 
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps.fps()) +
                     ", Delta: " + delta);
 
