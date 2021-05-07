@@ -11,8 +11,8 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIBlock
+import org.saar.gui.UIComponent
 import org.saar.gui.UIContainer
-import org.saar.gui.UIDisplay
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -21,16 +21,19 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class UIRenderer(private val uiDisplay: UIDisplay) : Renderer,
-    RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
+class UIRenderer : Renderer, RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
 
-    override fun doRender(context: RenderContext) {
-        renderContainer(context, this.uiDisplay)
+    fun render(context: RenderContext, uiContainer: UIContainer) {
+        renderContainer(context, uiContainer)
+    }
+
+    fun render(context: RenderContext, uiComponent: UIComponent) {
+        super.render(context, *uiComponent.uiBlocks.toTypedArray())
     }
 
     private fun renderContainer(context: RenderContext, uiContainer: UIContainer) {
         for (childComponent in uiContainer.uiComponents) {
-            renderModels(context, *childComponent.uiObjects.toTypedArray())
+            super.render(context, *childComponent.uiBlocks.toTypedArray())
         }
         for (childContainer in uiContainer.uiContainers) {
             renderContainer(context, childContainer)

@@ -2,7 +2,7 @@ package org.saar.core.light;
 
 import org.joml.Vector3fc;
 
-public interface IPointLight extends LightNode {
+public interface IPointLight {
 
     Vector3fc getPosition();
 

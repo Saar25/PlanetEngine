@@ -1,11 +1,7 @@
 package org.saar.lwjgl.assimp;
 
-import org.lwjgl.assimp.AIMesh;
+public interface AssimpComponent {
 
-public abstract class AssimpComponent {
-
-    public abstract void init(AIMesh aiMesh);
-
-    public abstract void next();
+    int count();
 
 }

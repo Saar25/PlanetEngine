@@ -26,4 +26,9 @@ interface UIContainer : UIElement {
             childUiContainer.onMouseMoveEvent(event)
         }
     }
+
+    fun delete() {
+        this.uiContainers.forEach { it.delete() }
+        this.uiComponents.forEach { it.delete() }
+    }
 }

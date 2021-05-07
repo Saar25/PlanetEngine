@@ -28,24 +28,11 @@ public class ScreenExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+        final Camera camera = buildCamera();
 
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        final ObjModel cottageModel = loadCottage();
 
-        ObjModel model = null;
-        try {
-            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
-            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            model = new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        final ObjRenderer renderer = new ObjRenderer(model);
+        final ObjRenderer renderer = new ObjRenderer();
 
         final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
@@ -64,7 +51,7 @@ public class ScreenExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render(new RenderContextBase(camera));
+            renderer.render(new RenderContextBase(camera), cottageModel);
 
             screen.copyTo(MainScreen.getInstance());
 
@@ -75,5 +62,26 @@ public class ScreenExample {
         renderer.delete();
         screen.delete();
         window.destroy();
+    }
+
+    private static Camera buildCamera() {
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+        final Camera camera = new Camera(projection);
+
+        camera.getTransform().getPosition().set(0, 0, 200);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        return camera;
+    }
+
+    private static ObjModel loadCottage() {
+        try {
+            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
+            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
+            return new ObjModel(mesh, texture);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

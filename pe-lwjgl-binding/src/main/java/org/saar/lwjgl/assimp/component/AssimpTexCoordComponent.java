@@ -1,36 +1,34 @@
 package org.saar.lwjgl.assimp.component;
 
+import org.joml.Vector2fc;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
 import org.saar.lwjgl.assimp.AssimpComponent;
 import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
+import org.saar.maths.utils.Vector2;
 
-public class AssimpTexCoordComponent extends AssimpComponent {
+public class AssimpTexCoordComponent implements AssimpComponent {
 
-    private final int index;
-    private final BufferObjectWrapper vbo;
+    private final AIVector3D.Buffer buffer;
 
-    private AIVector3D.Buffer buffer;
+    public AssimpTexCoordComponent(AIVector3D.Buffer buffer) {
+        this.buffer = buffer;
+    }
 
-    public AssimpTexCoordComponent(int index, BufferObjectWrapper vbo) {
-        this.index = index;
-        this.vbo = vbo;
+    public static AssimpTexCoordComponent of(AIMesh aiMesh) {
+        final AIVector3D.Buffer buffer = aiMesh.mTextureCoords(0);
+        AssimpUtil.requiredNotNull(buffer, "Texture coords data not found");
+
+        return new AssimpTexCoordComponent(buffer);
+    }
+
+    public Vector2fc next() {
+        final AIVector3D current = this.buffer.get();
+        return Vector2.of(current.x(), 1 - current.y());
     }
 
     @Override
-    public void init(AIMesh aiMesh) {
-        this.buffer = aiMesh.mTextureCoords(this.index);
-        AssimpUtil.requiredNotNull(this.buffer, "Tex coords data not found");
-
-        final int bytes = 2 * Float.BYTES;
-        this.vbo.allocateMore(bytes * aiMesh.mVertices().limit());
-    }
-
-    @Override
-    public void next() {
-        final AIVector3D value = this.buffer.get();
-        this.vbo.getWriter().write(value.x());
-        this.vbo.getWriter().write(1 - value.y());
+    public int count() {
+        return this.buffer.limit();
     }
 }

@@ -1,9 +1,11 @@
 package org.saar.core.renderer.deferred
 
+import org.saar.core.renderer.renderpass.RenderPassRenderingBuffers
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
 data class DeferredRenderingBuffers(
-        val albedo: ReadOnlyTexture,
-        val normal: ReadOnlyTexture,
-        val depth: ReadOnlyTexture
-)
+    override val albedo: ReadOnlyTexture,
+    val normal: ReadOnlyTexture,
+
+    override val depth: ReadOnlyTexture
+) : RenderPassRenderingBuffers

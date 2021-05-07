@@ -1,12 +1,16 @@
 package org.saar.gui.style.value
 
-import org.saar.gui.style.coordinate.ReadonlyCoordinate
-import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.IStyle
 
-fun interface LengthValue {
+interface LengthValue {
+    fun computeAxisX(parent: IStyle, style: IStyle): Int
 
-    fun compute(parentCoordinate: ReadonlyCoordinate,
-                parentLength: ReadonlyLength,
-                thisOtherLength: ReadonlyLength): Int
+    fun computeAxisY(parent: IStyle, style: IStyle): Int
+}
 
+fun interface SimpleLengthValue : LengthValue {
+    fun compute(parent: IStyle, style: IStyle): Int
+
+    override fun computeAxisX(parent: IStyle, style: IStyle) = compute(parent, style)
+    override fun computeAxisY(parent: IStyle, style: IStyle) = compute(parent, style)
 }

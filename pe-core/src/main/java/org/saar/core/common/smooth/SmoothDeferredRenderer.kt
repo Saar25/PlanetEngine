@@ -1,7 +1,5 @@
 package org.saar.core.common.smooth
 
-import org.jproperty.type.FloatProperty
-import org.jproperty.type.SimpleFloatProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
@@ -12,35 +10,20 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
-import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
+import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-private val prototype: SmoothRendererPrototype = SmoothRendererPrototype()
-
-class SmoothDeferredRenderer(vararg models: SmoothModel) : DeferredRenderer,
-    RendererPrototypeWrapper<SmoothModel>(prototype, *models) {
-
-    val targetScalar: FloatProperty
-        get() = prototype.targetScalar
-}
+class SmoothDeferredRenderer : DeferredRenderer, RendererPrototypeWrapper<SmoothModel>(SmoothRendererPrototype())
 
 private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
-
-    val targetScalar: FloatProperty = SimpleFloatProperty(.5f).also {
-        it.addListener { _ -> it.value.coerceIn(0.0f, 1.0f) }
-    }
 
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
     @UniformProperty
-    private val targetScalarUniform = object : FloatUniform() {
-        override fun getName(): String = "u_targetScalar"
-
-        override fun getUniformValue(): Float = targetScalar.get()
-    }
+    private val targetScalarUniform = FloatUniformValue("u_targetScalar")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -66,5 +49,7 @@ private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
         val m = model.transform.transformationMatrix
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+
+        this.targetScalarUniform.value = model.target
     }
 }

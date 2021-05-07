@@ -3,10 +3,10 @@
 * Flat reflected vertex shader
 *
 **/
-const vec2 uvCoords[] = {
+const vec2 uvCoords[] = vec2[](
     vec2(0, 0), vec2(0, 1),
     vec2(1, 1), vec2(1, 0)
-};
+);
 
 // Per Vertex attibutes
 layout (location = 0) in vec3 in_position;

@@ -1,15 +1,20 @@
 package org.saar.gui
 
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.forward.ForwardRenderNode
+import org.saar.gui.render.UIRenderer
 import org.saar.gui.style.WindowStyle
 import org.saar.lwjgl.glfw.window.Window
 
-class UIDisplay(private val window: Window) : UIContainer {
+class UIDisplay(private val window: Window) : ForwardRenderNode, UIContainer {
 
     override val style = WindowStyle(this.window)
 
     override val uiComponents = mutableListOf<UIComponent>()
 
     override val uiContainers = mutableListOf<UIContainer>()
+
+    private val renderer = lazy { UIRenderer() }
 
     init {
         this.window.mouse.addClickListener { event ->
@@ -39,5 +44,16 @@ class UIDisplay(private val window: Window) : UIContainer {
     fun add(uiContainer: UIChildContainer) {
         this.uiContainers.add(uiContainer)
         uiContainer.parent = this
+    }
+
+    override fun renderForward(context: RenderContext) {
+        this.renderer.value.render(context, this)
+    }
+
+    override fun delete() {
+        super.delete()
+        if (this.renderer.isInitialized()) {
+            this.renderer.value.delete()
+        }
     }
 }

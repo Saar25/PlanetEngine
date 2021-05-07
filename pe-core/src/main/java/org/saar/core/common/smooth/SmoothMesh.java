@@ -1,14 +1,8 @@
 package org.saar.core.common.smooth;
 
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.Meshes;
 import org.saar.core.mesh.async.FutureMesh;
-import org.saar.core.mesh.build.MeshPrototypeHelper;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -21,16 +15,7 @@ public class SmoothMesh implements Mesh {
     }
 
     static SmoothMesh create(SmoothMeshPrototype prototype, int indices) {
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.store();
-
-        final DrawCall drawCall = new ElementsDrawCall(
-                RenderMode.TRIANGLES, indices, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new SmoothMesh(mesh);
+        return new SmoothMesh(Meshes.toElementsDrawCallMesh(prototype, indices));
     }
 
     public static SmoothMesh load(SmoothMeshPrototype prototype, SmoothVertex[] vertices, int[] indices) {

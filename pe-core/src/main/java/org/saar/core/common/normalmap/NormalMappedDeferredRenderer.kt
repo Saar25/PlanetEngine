@@ -16,8 +16,8 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedDeferredRenderer(vararg models: NormalMappedModel) : DeferredRenderer,
-    RendererPrototypeWrapper<NormalMappedModel>(NormalMappedPrototype(), *models)
+class NormalMappedDeferredRenderer : DeferredRenderer,
+    RendererPrototypeWrapper<NormalMappedModel>(NormalMappedPrototype())
 
 private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 

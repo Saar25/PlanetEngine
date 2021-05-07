@@ -1,23 +1,34 @@
 package org.saar.example.terrain;
 
+import org.joml.SimplexNoise;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.obj.ObjDeferredRenderer;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.r3d.*;
+import org.saar.core.common.terrain.height.NoiseHeightGenerator;
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
+import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.postprocessing.PostProcessingPipeline;
+import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderNode;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.RenderPassesPipeline;
-import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
+import org.saar.core.renderer.renderpass.shadow.*;
+import org.saar.core.renderer.shadow.ShadowsQuality;
+import org.saar.core.renderer.shadow.ShadowsRenderNode;
+import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
+import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
@@ -28,8 +39,11 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
+import org.saar.maths.utils.Vector2;
+import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
 
@@ -43,21 +57,40 @@ public class TerrainExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
+        GlUtils.setClearColour(.2f, .2f, .2f);
+
         final Camera camera = buildCamera();
 
-        final ObjDeferredRenderer objRenderer = new ObjDeferredRenderer(
-                buildDragonModel(),
-                buildStallModel());
+        final ObjModel dragonModel = buildDragonModel();
+        final ObjNode dragon = new ObjNode(dragonModel);
 
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(
-                buildCubeModel());
+        final ObjModel stallModel = buildStallModel();
+        final ObjNode stall = new ObjNode(stallModel);
+
+        final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
+                new DiamondMeshGenerator(64),
+                new NoiseHeightGenerator(SimplexNoise::noise),
+                (x, y, z) -> Vector3.of(.3f + (float) Math.random() * .2f, .8f + (float) Math.random() * .2f, 0),
+                Vector2.of(256, 256),
+                10
+        ));
+        final Node3D terrain = new Node3D(lowPolyTerrain.getModel());
+
+        final Model3D cubeModel = buildCubeModel();
+        final Node3D cube = new Node3D(cubeModel);
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final RenderersGroup renderersGroup = new RenderersGroup(objRenderer, renderer3D);
-        final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(renderersGroup, light);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(dragon, stall, cube, terrain);
+        final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(shadowsRenderNode, light);
 
-        final RenderingPath renderingPath = buildRenderingPath(camera, renderersGroup, shadowsRenderingPath, light);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, terrain);
+        final RenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
+
+        final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
+        );
 
         final Mouse mouse = window.getMouse();
         ExamplesUtils.addRotationListener(camera, mouse);
@@ -70,7 +103,10 @@ public class TerrainExample {
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            renderingPath.render().toMainScreen();
+
+            final ReadOnlyTexture texture =
+                    renderingPath.render().toTexture();
+            postProcessing.process(texture).toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -129,24 +165,24 @@ public class TerrainExample {
         return light;
     }
 
-    private static ShadowsRenderingPath buildShadowsRenderingPath(RenderersGroup shadowsRenderersGroup, DirectionalLight light) {
+    private static ShadowsRenderingPath buildShadowsRenderingPath(ShadowsRenderNode renderNode, DirectionalLight light) {
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         return new ShadowsRenderingPath(ShadowsQuality.HIGH,
-                shadowProjection, light, shadowsRenderersGroup);
+                shadowProjection, light, renderNode);
     }
 
-    private static RenderingPath buildRenderingPath(ICamera camera, RenderersGroup renderersGroup,
+    private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                     ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
-        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        return new DeferredRenderingPath(screenPrototype, camera, renderersGroup, renderPassesPipeline);
+        return new DeferredRenderingPath(screenPrototype, camera, renderNode, renderPassesPipeline);
     }
 
     private static ObjModel loadStall() {

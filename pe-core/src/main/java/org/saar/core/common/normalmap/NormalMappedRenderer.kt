@@ -1,10 +1,11 @@
 package org.saar.core.common.normalmap
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformUpdater
-import org.saar.core.renderer.uniforms.UniformUpdaterProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -14,8 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer(vararg models: NormalMappedModel) : Renderer,
-    RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype(), *models)
+class NormalMappedRenderer : Renderer, RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype())
 
 private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedModel> {
 
@@ -30,21 +30,6 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
 
     @UniformProperty
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
-
-    @UniformUpdaterProperty
-    private val transformationUpdater = UniformUpdater<NormalMappedModel> { model ->
-        this@NormalMappedRendererPrototype.transformationUniform.value = model.transform.transformationMatrix
-    }
-
-    @UniformUpdaterProperty
-    private val textureUpdater = UniformUpdater<NormalMappedModel> { model ->
-        this@NormalMappedRendererPrototype.textureUniform.value = model.texture
-    }
-
-    @UniformUpdaterProperty
-    private val normalMapUpdater = UniformUpdater<NormalMappedModel> { model ->
-        this@NormalMappedRendererPrototype.normalMapUniform.value = model.normalMap
-    }
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -67,5 +52,9 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+
+        this.transformationUniform.value = model.transform.transformationMatrix
+        this.textureUniform.value = model.texture
+        this.normalMapUniform.value = model.normalMap
     }
 }

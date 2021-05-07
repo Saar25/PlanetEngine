@@ -6,21 +6,13 @@ object Lengths {
 
     class Width(private val container: UIChildElement) : Length() {
 
-        override fun get(): Int {
-            val x = this.container.parent.style.x
-            val w = this.container.parent.style.width
-            val h = this.container.style.height
-            return this.value.compute(x, w, h)
-        }
+        override fun get(): Int = this.value.computeAxisX(
+            this.container.parent.style, this.container.style)
     }
 
     class Height(private val container: UIChildElement) : Length() {
 
-        override fun get(): Int {
-            val y = this.container.parent.style.y
-            val h = this.container.parent.style.height
-            val w = this.container.style.width
-            return this.value.compute(y, h, w)
-        }
+        override fun get(): Int = this.value.computeAxisY(
+            this.container.parent.style, this.container.style)
     }
 }

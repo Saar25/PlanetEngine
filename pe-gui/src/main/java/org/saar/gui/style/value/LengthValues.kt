@@ -1,56 +1,66 @@
 package org.saar.gui.style.value
 
-import org.saar.gui.style.coordinate.ReadonlyCoordinate
-import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.IStyle
 
 object LengthValues {
-    @JvmStatic
-    val zero = LengthValue { _: ReadonlyCoordinate, _: ReadonlyLength, _: ReadonlyLength -> 0 }
 
     @JvmStatic
-    val inherit =
-        LengthValue { _: ReadonlyCoordinate, parentLength: ReadonlyLength, _: ReadonlyLength -> parentLength.get() }
+    val zero = SimpleLengthValue { _: IStyle, _: IStyle -> 0 }
 
     @JvmStatic
-    fun pixels(pixels: Int) = LengthValue { _: ReadonlyCoordinate, _: ReadonlyLength, _: ReadonlyLength -> pixels }
+    val inherit = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) = parent.width.get()
+        override fun computeAxisY(parent: IStyle, style: IStyle) = parent.height.get()
+    }
 
     @JvmStatic
-    fun percent(percents: Float) =
-        LengthValue { _: ReadonlyCoordinate, parentLength: ReadonlyLength, _: ReadonlyLength ->
-            (parentLength.get() * percents / 100).toInt()
-        }
+    fun pixels(pixels: Int) = SimpleLengthValue { _: IStyle, _: IStyle -> pixels }
 
     @JvmStatic
-    fun ratio(ratio: Float) =
-        LengthValue { _: ReadonlyCoordinate, _: ReadonlyLength, thisOtherLength: ReadonlyLength ->
-            (thisOtherLength.get() * ratio).toInt()
-        }
+    fun percent(percents: Float) = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) = (parent.width.get() * percents / 100).toInt()
+        override fun computeAxisY(parent: IStyle, style: IStyle) = (parent.height.get() * percents / 100).toInt()
+    }
 
     @JvmStatic
-    fun add(a: LengthValue, b: LengthValue) =
-        LengthValue { parentCoordinate: ReadonlyCoordinate, parentLength: ReadonlyLength, thisOtherLength: ReadonlyLength ->
-            val aCompute = a.compute(parentCoordinate, parentLength, thisOtherLength)
-            val bCompute = b.compute(parentCoordinate, parentLength, thisOtherLength)
-            aCompute + bCompute
-        }
+    fun ratio(ratio: Float) = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) = (style.height.get() * ratio).toInt()
+        override fun computeAxisY(parent: IStyle, style: IStyle) = (style.width.get() * ratio).toInt()
+    }
 
     @JvmStatic
-    fun sub(a: LengthValue, b: LengthValue) =
-        LengthValue { parentCoordinate: ReadonlyCoordinate, parentLength: ReadonlyLength, thisOtherLength: ReadonlyLength ->
-            val aCompute = a.compute(parentCoordinate, parentLength, thisOtherLength)
-            val bCompute = b.compute(parentCoordinate, parentLength, thisOtherLength)
-            aCompute - bCompute
-        }
+    fun add(a: LengthValue, b: LengthValue) = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) =
+            a.computeAxisX(parent, style) + b.computeAxisX(parent, style)
+
+        override fun computeAxisY(parent: IStyle, style: IStyle) =
+            a.computeAxisY(parent, style) + b.computeAxisY(parent, style)
+    }
 
     @JvmStatic
-    fun add(a: LengthValue, b: Int) =
-        LengthValue { parentCoordinate: ReadonlyCoordinate, parentLength: ReadonlyLength, thisOtherLength: ReadonlyLength ->
-            a.compute(parentCoordinate, parentLength, thisOtherLength) + b
-        }
+    fun sub(a: LengthValue, b: LengthValue) = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) =
+            a.computeAxisX(parent, style) - b.computeAxisX(parent, style)
+
+        override fun computeAxisY(parent: IStyle, style: IStyle) =
+            a.computeAxisY(parent, style) - b.computeAxisY(parent, style)
+    }
 
     @JvmStatic
-    fun sub(a: LengthValue, b: Int) =
-        LengthValue { parentCoordinate: ReadonlyCoordinate, parentLength: ReadonlyLength, thisOtherLength: ReadonlyLength ->
-            a.compute(parentCoordinate, parentLength, thisOtherLength) - b
-        }
+    fun add(a: LengthValue, b: Int) = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) =
+            a.computeAxisX(parent, style) + b
+
+        override fun computeAxisY(parent: IStyle, style: IStyle) =
+            a.computeAxisY(parent, style) + b
+    }
+
+    @JvmStatic
+    fun sub(a: LengthValue, b: Int) = object : LengthValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) =
+            a.computeAxisX(parent, style) - b
+
+        override fun computeAxisY(parent: IStyle, style: IStyle) =
+            a.computeAxisY(parent, style) - b
+    }
 }

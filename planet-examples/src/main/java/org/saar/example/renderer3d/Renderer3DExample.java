@@ -30,14 +30,10 @@ public class Renderer3DExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+        final Camera camera = buildCamera();
 
-        camera.getTransform().getPosition().set(0, 0, -1000);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-
-        final Renderer3D renderer = new Renderer3D(models());
+        final Model3D[] models = models();
+        final Renderer3D renderer = new Renderer3D();
 
         final Keyboard keyboard = window.getKeyboard();
         final Fps fps = new Fps();
@@ -45,7 +41,7 @@ public class Renderer3DExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
             ExamplesUtils.move(camera, keyboard);
-            renderer.render(new RenderContextBase(camera));
+            renderer.render(new RenderContextBase(camera), models);
 
             window.pollEvents();
             window.update(true);
@@ -57,6 +53,16 @@ public class Renderer3DExample {
 
         renderer.delete();
         window.destroy();
+    }
+
+    private static Camera buildCamera() {
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+        final Camera camera = new Camera(projection);
+
+        camera.getTransform().getPosition().set(0, 0, -1000);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        return camera;
     }
 
     private static Model3D[] models() {

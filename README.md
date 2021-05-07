@@ -77,10 +77,10 @@ final Vertex2D[] vertices = {
 // Create the mesh, model, and renderer
 final Mesh2D mesh = Mesh2D.load(vertices, indices);
 final Model2D model = new Model2D(mesh);
-final Renderer2D renderer = new Renderer2D(model);
+final Renderer2D renderer = new Renderer2D();
 
 // Render the model
-renderer.render(new RenderContextBase(null));
+renderer.render(new RenderContextBase(camera), model);
 ```
 
 the rendering pipeline consists of some primary interfaces
@@ -126,6 +126,18 @@ holds the mesh with some attributes, like texture or transform
 class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model {
     constructor(mesh: Mesh3D) : this(mesh, SimpleTransform())
 }
+```
+
+### Node
+
+base class for complex objects in the scene
+usually holds the model and a renderer, and has at least one render method
+
+```java
+final Model3D cubeModel = buildCubeModel();
+final Node3D cube = new Node3D(cubeModel);
+
+cube.render(new RenderContextBase(camera))
 ```
 
 ### Renderer
@@ -185,18 +197,18 @@ Render passes like LightRenderPass and ShadowsRenderPass are implemented
 as well as unique renderers like ObjDeferredRenderer and NormalMappedDeferredRenderer  
 and DeferredRenderingPath to wrap it all
 
-### Post processing
+### Post-processing
 
-Post processing is extremely simple using this engine  
-all that it takes is to create your own PostProcessor and create your PostProcessingPipeline  
+Post-processing is extremely simple using this engine  
+all that it takes is to create your own PostProcessor and create your PostProcessingPipeline
 
 ```java
 // org.saar.example.normalmapping.NormalMappingExample.java
 
 // Create the pipeline
 final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-        new ContrastPostProcessor(1.8f),
-        new GaussianBlurPostProcessor(11, 2)
+    new ContrastPostProcessor(1.8f),
+    new GaussianBlurPostProcessor(11, 2)
 );
 
 // Render to texture using deferred renderer
@@ -204,6 +216,27 @@ final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
 
 // Post process the texture and output to the screen
 pipeline.process(texture).toMainScreen();
+```
+
+### Gui
+
+The Gui architecture is already implemented  
+with some useful ui components like UISlider and UIButton
+
+```java
+// org.saar.example.gui.UIButtonExample.java
+
+final UIDisplay display = new UIDisplay(window);
+
+final UIButton uiButton = new UIButton();
+uiButton.getStyle().getX().set(CoordinateValues.center());
+uiButton.getStyle().getY().set(CoordinateValues.center());
+uiButton.getStyle().getWidth().set(LengthValues.percent(50));
+uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
+uiButton.setOnAction(e -> System.out.println("Clicked!"));
+display.add(uiButton);
+
+display.renderForward(new RenderContextBase(null));
 ```
 
 ### Example classes
@@ -214,3 +247,4 @@ for example:
 MultisamplingExample.java  
 NormalMappingExample.java  
 ManyCubesExample.java
+GuiExample.java

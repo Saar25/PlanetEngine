@@ -19,10 +19,13 @@ vec3 diffuseColour(const vec3 normal, const DirectionalLight light) {
 
 vec3 specularColour(const float power, const float scalar, const vec3 viewDirection,
                     const vec3 normal, const DirectionalLight light) {
-    vec3 reflect = reflect(light.direction, normal);
-    float specular = dot(reflect, viewDirection);
-    specular = pow(max(specular, 0), power) * scalar;
-    return specular * light.colour;
+    if (dot(-light.direction, normal) > 0) {
+        vec3 reflect = reflect(light.direction, normal);
+        float specular = dot(reflect, viewDirection);
+        specular = pow(max(specular, 0), power) * scalar;
+        return specular * light.colour;
+    }
+    return vec3(0);
 }
 
 vec3 totalAmbientColour(const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights) {

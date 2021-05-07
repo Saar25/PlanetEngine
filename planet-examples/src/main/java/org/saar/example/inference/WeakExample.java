@@ -21,18 +21,7 @@ public class WeakExample {
     public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final WeakVertex[] vertices = {
-                WeakInference.vertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
-                WeakInference.vertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
-                WeakInference.vertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
-        };
-        final WeakInstance[] nodes = {
-                WeakInference.instance(GlFloat.of(+0.5f)),
-                WeakInference.instance(GlFloat.of(+0.1f)),
-                WeakInference.instance(GlFloat.of(+0.2f))
-        };
-
-        final Mesh mesh = WeakMesh.load(vertices, nodes);
+        final Mesh mesh = buildMesh();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -54,4 +43,18 @@ public class WeakExample {
         window.destroy();
     }
 
+    private static Mesh buildMesh() {
+        final WeakVertex[] vertices = {
+                WeakInference.vertex(GlFloat2.of(-0.5f, -0.5f), GlFloat3.of(+0.0f, +0.0f, +0.5f)),
+                WeakInference.vertex(GlFloat2.of(+0.0f, +0.5f), GlFloat3.of(+0.5f, +1.0f, +0.5f)),
+                WeakInference.vertex(GlFloat2.of(+0.5f, -0.5f), GlFloat3.of(+1.0f, +0.0f, +0.5f))
+        };
+        final WeakInstance[] nodes = {
+                WeakInference.instance(GlFloat.of(+0.5f)),
+                WeakInference.instance(GlFloat.of(+0.1f)),
+                WeakInference.instance(GlFloat.of(+0.2f))
+        };
+
+        return WeakMesh.load(vertices, nodes);
+    }
 }
