@@ -29,10 +29,12 @@ class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) : N
     private fun buildModel(configuration: LowPolyTerrainConfiguration): Model3D {
         val indices = configuration.meshGenerator.generateIndices()
         val vertices = configuration.meshGenerator.generateVertices().map {
-            val height = configuration.heightGenerator.generateHeight(it.x, it.y)
+            val height = configuration.heightGenerator.generateHeight(
+                it.x + configuration.position.x, it.y + configuration.position.y)
 
             val position = Vector3.of(it.x, height, it.y)
-            val normal = vertexNormal(position, .1f, .1f)
+            val normal = vertexNormal(Vector3.of(position).add(
+                configuration.position.x, 0f, configuration.position.y), .1f, .1f)
 
             position.mul(configuration.dimensions.x, configuration.amplitude, configuration.dimensions.y)
 
@@ -43,7 +45,12 @@ class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) : N
 
         val mesh = Mesh3D.load(vertices.toTypedArray(),
             indices.toIntArray(), arrayOf(R3D.instance()))
-        return Model3D(mesh)
+
+        return Model3D(mesh).also {
+            it.transform.position.set(
+                configuration.position.x * configuration.dimensions.x, 0f,
+                configuration.position.y * configuration.dimensions.y)
+        }
     }
 
     override fun delete() {

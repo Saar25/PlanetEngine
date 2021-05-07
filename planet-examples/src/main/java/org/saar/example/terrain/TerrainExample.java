@@ -91,19 +91,29 @@ public class TerrainExample {
                 new NormalColourGenerator(Vector3.of(1),
                         new NormalColour(0.8f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(256, 256), 100
+                Vector2.of(0, 0), Vector2.of(256, 256), 100
         ));
         final Node3D terrain = new Node3D(lowPolyTerrain.getModel());
+
+        final LowPolyTerrain lowPolyTerrain2 = new LowPolyTerrain(new LowPolyTerrainConfiguration(
+                new DiamondMeshGenerator(64),
+                new NoiseHeightGenerator(SimplexNoise::noise),
+                new NormalColourGenerator(Vector3.of(1),
+                        new NormalColour(0.8f, Vector3.of(.41f, .41f, .41f)),
+                        new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
+                Vector2.of(1, 0), Vector2.of(256, 256), 100
+        ));
+        final Node3D terrain2 = new Node3D(lowPolyTerrain2.getModel());
 
         final Model3D cubeModel = buildCubeModel();
         final Node3D cube = new Node3D(cubeModel);
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(dragon, stall, cube, terrain);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(dragon, stall, cube);
         final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(shadowsRenderNode, light);
 
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, terrain);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, terrain, terrain2);
         final RenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
