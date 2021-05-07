@@ -4,7 +4,7 @@ import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.common.behaviors.FollowTransformBehavior;
+import org.saar.core.common.behaviors.ThirdPersonViewBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
@@ -76,7 +76,7 @@ public class DeferredExample {
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new MouseRotationBehavior(mouse, -.3f),
-                new FollowTransformBehavior(new SimpleTransform(), 80));
+                new ThirdPersonViewBehavior(new SimpleTransform(), 80));
 
         final Camera camera = new Camera(projection, behaviors);
 
