@@ -1,11 +1,14 @@
 package org.saar.example.reflected;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
+import org.saar.core.common.behaviors.TransformBehavior;
+import org.saar.core.common.behaviors.VelocityBehavior;
 import org.saar.core.common.flatreflected.*;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
@@ -20,11 +23,11 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.renderpass.light.LightRenderPass;
-import org.saar.core.renderer.renderpass.shadow.*;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.reflection.Reflection;
+import org.saar.core.renderer.renderpass.light.LightRenderPass;
+import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -127,6 +130,9 @@ public class ReflectionExample {
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            renderNode.update();
+
+            shadowsRenderingPath.render();
             reflection.updateReflectionMap();
 
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
@@ -160,7 +166,11 @@ public class ReflectionExample {
 
     private static NodeBatch3D buildNodeBatch3D() {
         final Model3D cubeModel = buildCubeModel();
-        final Node3D cube = new Node3D(cubeModel);
+
+        final BehaviorGroup behaviors = new BehaviorGroup(
+                new TransformBehavior(), new VelocityBehavior());
+
+        final Node3D cube = new Node3D(cubeModel, behaviors);
 
         return new NodeBatch3D(cube);
     }
