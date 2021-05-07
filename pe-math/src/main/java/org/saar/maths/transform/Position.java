@@ -40,9 +40,21 @@ public class Position implements ReadonlyPosition {
         onChange(old);
     }
 
+    public void add(float x, float y, float z) {
+        final Vector3fc old = copyValue();
+        this.value.add(x, y, z);
+        onChange(old);
+    }
+
     public void sub(Vector3fc direction) {
         final Vector3fc old = copyValue();
         this.value.sub(direction);
+        onChange(old);
+    }
+
+    public void sub(float x, float y, float z) {
+        final Vector3fc old = copyValue();
+        this.value.sub(x, y, z);
         onChange(old);
     }
 
@@ -72,6 +84,54 @@ public class Position implements ReadonlyPosition {
         }
     }
 
+    public float getX() {
+        return this.value.x;
+    }
+
+    public void setX(float x) {
+        set(x, getY(), getZ());
+    }
+
+    public void addX(float x) {
+        setX(getX() + x);
+    }
+
+    public void subX(float x) {
+        setX(getX() - x);
+    }
+
+    public float getY() {
+        return this.value.y;
+    }
+
+    public void setY(float y) {
+        set(getX(), y, getZ());
+    }
+
+    public void addY(float y) {
+        setY(getY() + y);
+    }
+
+    public void subY(float y) {
+        setY(getY() - y);
+    }
+
+    public float getZ() {
+        return this.value.z;
+    }
+
+    public void setZ(float z) {
+        set(getX(), getY(), z);
+    }
+
+    public void addZ(float z) {
+        setZ(getZ() + z);
+    }
+
+    public void subZ(float z) {
+        setZ(getZ() - z);
+    }
+
     @Override
     public void addListener(ChangeListener<? super Vector3fc> changeListener) {
         this.helper = this.helper.addListener(changeListener);
@@ -85,18 +145,6 @@ public class Position implements ReadonlyPosition {
     @Override
     public Vector3fc getValue() {
         return this.value;
-    }
-
-    public float getX() {
-        return this.value.x;
-    }
-
-    public float getY() {
-        return this.value.y;
-    }
-
-    public float getZ() {
-        return this.value.z;
     }
 
     @Override

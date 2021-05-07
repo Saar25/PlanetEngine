@@ -9,7 +9,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 
-class Renderer2D : Renderer, RendererPrototypeWrapper<Model2D>(RendererPrototype2D())
+object Renderer2D : Renderer, RendererPrototypeWrapper<Model2D>(RendererPrototype2D())
 
 private class RendererPrototype2D : RendererPrototype<Model2D> {
 

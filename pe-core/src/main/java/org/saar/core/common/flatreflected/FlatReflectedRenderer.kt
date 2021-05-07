@@ -17,7 +17,7 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedRenderer : Renderer, RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype())
+object FlatReflectedRenderer : Renderer, RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype())
 
 private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflectedModel> {
 

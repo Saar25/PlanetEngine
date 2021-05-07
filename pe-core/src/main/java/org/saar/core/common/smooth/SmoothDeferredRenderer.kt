@@ -15,7 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class SmoothDeferredRenderer : DeferredRenderer, RendererPrototypeWrapper<SmoothModel>(SmoothRendererPrototype())
+object SmoothDeferredRenderer : DeferredRenderer, RendererPrototypeWrapper<SmoothModel>(SmoothRendererPrototype())
 
 private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
 

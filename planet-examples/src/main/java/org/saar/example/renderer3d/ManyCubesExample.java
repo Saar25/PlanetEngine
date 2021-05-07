@@ -1,8 +1,11 @@
 package org.saar.example.renderer3d;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardRotationBehavior;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.screen.MainScreen;
@@ -36,19 +39,25 @@ public class ManyCubesExample {
         colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
 
+        final Keyboard keyboard = window.getKeyboard();
+
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+
+        final BehaviorGroup behaviors = new BehaviorGroup(
+                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f),
+                new KeyboardRotationBehavior(keyboard, 50f));
+
+        final Camera camera = new Camera(projection, behaviors);
 
         final Model3D model = model();
-        final Renderer3D renderer = new Renderer3D();
+        final Renderer3D renderer = Renderer3D.INSTANCE;
 
-        final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
-            ExamplesUtils.move(camera, keyboard);
+            camera.update();
 
             final int size = (int) Math.ceil(Math.pow(CUBES, 1 / 3.0) * SPACE);
 
@@ -68,6 +77,7 @@ public class ManyCubesExample {
             );
         }
 
+        camera.delete();
         renderer.delete();
         colorAttachment.delete();
         depthAttachment.delete();

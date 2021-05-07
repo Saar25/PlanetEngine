@@ -15,7 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class ObjRenderer : Renderer, RendererPrototypeWrapper<ObjModel>(ObjRendererPrototype())
+object ObjRenderer : Renderer, RendererPrototypeWrapper<ObjModel>(ObjRendererPrototype())
 
 private class ObjRendererPrototype : RendererPrototype<ObjModel> {
 

@@ -15,7 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class Renderer3D : Renderer, RendererPrototypeWrapper<Model3D>(RendererPrototype3D())
+object Renderer3D : Renderer, RendererPrototypeWrapper<Model3D>(RendererPrototype3D())
 
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 

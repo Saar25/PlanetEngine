@@ -1,81 +1,106 @@
 package org.saar.gui.style.value
 
-import org.saar.gui.style.coordinate.ReadonlyCoordinate
-import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.IStyle
 
 object CoordinateValues {
 
     @JvmStatic
-    val zero = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                 _: ReadonlyLength,
-                                 _: ReadonlyLength ->
-        parentCoordinate.get()
+    val zero = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) = parent.x.get()
+        override fun computeAxisY(parent: IStyle, style: IStyle) = parent.y.get()
     }
 
     @JvmStatic
-    fun pixels(pixels: Int) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                _: ReadonlyLength,
-                                                _: ReadonlyLength ->
-        parentCoordinate.get() + pixels
+    fun pixels(pixels: Int) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle) = parent.x.get() + pixels
+        override fun computeAxisY(parent: IStyle, style: IStyle) = parent.y.get() + pixels
     }
 
     @JvmStatic
-    fun percent(percents: Float) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                     parentLength: ReadonlyLength,
-                                                     _: ReadonlyLength ->
-        parentCoordinate.get() + (parentLength.get() * percents / 100).toInt()
+    fun percent(percents: Float) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return parent.x.get() + (parent.width.get() * percents / 100).toInt()
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return parent.y.get() + (parent.height.get() * percents / 100).toInt()
+        }
     }
 
     @JvmStatic
-    fun center() = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                     parentLength: ReadonlyLength,
-                                     thisLength: ReadonlyLength ->
-        parentCoordinate.get() + (parentLength.get() - thisLength.get()) / 2
+    fun center() = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return parent.x.get() + (parent.width.get() - style.width.get()) / 2
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return parent.y.get() + (parent.height.get() - style.height.get()) / 2
+        }
     }
 
     @JvmStatic
-    fun pixelsCenter(pixels: Int) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                      _: ReadonlyLength,
-                                                      thisLength: ReadonlyLength ->
-        parentCoordinate.get() + pixels - thisLength.get() / 2
+    fun pixelsCenter(pixels: Int) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return parent.x.get() + pixels - style.width.get() / 2
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return parent.y.get() + pixels - style.height.get() / 2
+        }
     }
 
     @JvmStatic
-    fun percentCenter(percents: Float) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                           parentLength: ReadonlyLength,
-                                                           thisLength: ReadonlyLength ->
-        parentCoordinate.get() + (parentLength.get() * percents / 100).toInt() - thisLength.get() / 2
+    fun percentCenter(percents: Float) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return parent.x.get() + (parent.width.get() * percents / 100).toInt() - style.width.get() / 2
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return parent.y.get() + (parent.height.get() * percents / 100).toInt() - style.height.get() / 2
+        }
     }
 
     @JvmStatic
-    fun add(a: CoordinateValue, b: CoordinateValue) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                                        parentLength: ReadonlyLength,
-                                                                        thisLength: ReadonlyLength ->
-        val aCompute = a.compute(parentCoordinate, parentLength, thisLength)
-        val bCompute = b.compute(parentCoordinate, parentLength, thisLength)
-        aCompute + bCompute
+    fun add(a: CoordinateValue, b: CoordinateValue) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisX(parent, style) + b.computeAxisX(parent, style)
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisY(parent, style) + b.computeAxisY(parent, style)
+        }
     }
 
     @JvmStatic
-    fun sub(a: CoordinateValue, b: CoordinateValue) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                                        parentLength: ReadonlyLength,
-                                                                        thisLength: ReadonlyLength ->
-        val aCompute = a.compute(parentCoordinate, parentLength, thisLength)
-        val bCompute = b.compute(parentCoordinate, parentLength, thisLength)
-        aCompute - bCompute
+    fun sub(a: CoordinateValue, b: CoordinateValue) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisX(parent, style) - b.computeAxisX(parent, style)
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisY(parent, style) - b.computeAxisY(parent, style)
+        }
     }
 
     @JvmStatic
-    fun add(a: CoordinateValue, b: Int) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                            parentLength: ReadonlyLength,
-                                                            thisLength: ReadonlyLength ->
-        a.compute(parentCoordinate, parentLength, thisLength) + b
+    fun add(a: CoordinateValue, b: Int) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisX(parent, style) + b
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisY(parent, style) + b
+        }
     }
 
     @JvmStatic
-    fun sub(a: CoordinateValue, b: Int) = CoordinateValue { parentCoordinate: ReadonlyCoordinate,
-                                                            parentLength: ReadonlyLength,
-                                                            thisLength: ReadonlyLength ->
-        a.compute(parentCoordinate, parentLength, thisLength) - b
+    fun sub(a: CoordinateValue, b: Int) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisX(parent, style) - b
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return a.computeAxisY(parent, style) - b
+        }
     }
 }

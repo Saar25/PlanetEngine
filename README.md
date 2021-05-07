@@ -229,14 +229,56 @@ with some useful ui components like UISlider and UIButton
 final UIDisplay display = new UIDisplay(window);
 
 final UIButton uiButton = new UIButton();
-uiButton.getStyle().getX().set(CoordinateValues.center());
-uiButton.getStyle().getY().set(CoordinateValues.center());
-uiButton.getStyle().getWidth().set(LengthValues.percent(50));
-uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
-uiButton.setOnAction(e -> System.out.println("Clicked!"));
-display.add(uiButton);
+        uiButton.getStyle().getX().set(CoordinateValues.center());
+        uiButton.getStyle().getY().set(CoordinateValues.center());
+        uiButton.getStyle().getWidth().set(LengthValues.percent(50));
+        uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
+        uiButton.setOnAction(e -> System.out.println("Clicked!"));
+        display.add(uiButton);
 
-display.renderForward(new RenderContextBase(null));
+        display.renderForward(new RenderContextBase(null));
+```
+
+### Behaviors
+
+Behaviors are the implementation of the ECS (Entity Component System) design pattern  
+any Behavior is attachable to every BehaviorNode  
+allowing better composition and reusable code
+
+```java
+final BehaviorGroup behaviors = new BehaviorGroup(
+        // Move with WASD at 50 units per second
+        new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
+        // Change movement velocity by the mouse scroll
+        new KeyboardMovementScrollVelocityBehavior(mouse),
+        // Rotate by the mouse movement
+        new MouseRotationBehavior(mouse, -.3f));
+
+final Camera camera = new Camera(projection, behaviors);
+```
+
+Behaviors are very easy to create and handle  
+this behavior implements third person view
+
+```kotlin
+// org.saar.core.common.behaviors.ThirdPersonViewBehavior.kt
+
+class ThirdPersonViewBehavior(private val toFollow: Transform, private val distance: Float) : Behavior {
+
+    private lateinit var transformBehavior: TransformBehavior
+
+    override fun start(node: BehaviorNode) {
+        // Get dependent behaviors at initialization
+        this.transformBehavior = node.behaviors.get()
+    }
+
+    override fun update(node: BehaviorNode) {
+        // Update node position every update
+        val position = this.transformBehavior.transform.rotation.direction
+            .normalize(this.distance).add(this.toFollow.position.value)
+        this.transformBehavior.transform.position.set(position)
+    }
+}
 ```
 
 ### Example classes
@@ -246,5 +288,6 @@ You can try some examples that are under planet-examples module
 for example:  
 MultisamplingExample.java  
 NormalMappingExample.java  
+ReflectionExample.java  
 ManyCubesExample.java
 GuiExample.java

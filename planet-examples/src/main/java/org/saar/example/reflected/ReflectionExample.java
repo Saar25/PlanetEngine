@@ -1,11 +1,15 @@
 package org.saar.example.reflected;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.flatreflected.*;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
@@ -20,11 +24,11 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.renderpass.light.LightRenderPass;
-import org.saar.core.renderer.renderpass.shadow.*;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.reflection.Reflection;
+import org.saar.core.renderer.renderpass.light.LightRenderPass;
+import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -56,12 +60,13 @@ public class ReflectionExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    private static float scrollSpeed = 50f;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        GlUtils.setClearColour(.1f, .1f, .1f);
+        final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
+
+        GlUtils.setClearColour(.2f, .2f, .2f);
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
@@ -79,7 +84,18 @@ public class ReflectionExample {
 
         uiDisplay.add(uiComponent);
 
-        final Camera camera = buildCamera();
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+
+        final KeyboardMovementBehavior cameraMovementBehavior =
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new KeyboardMovementScrollVelocityBehavior(mouse),
+                new MouseRotationBehavior(mouse, -.3f));
+
+        final Camera camera = new Camera(projection, behaviors);
+        camera.getTransform().getPosition().set(0, 25, 100);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
@@ -111,22 +127,17 @@ public class ReflectionExample {
         final RenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
 
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
-        mouse.addScrollListener(e -> {
-            scrollSpeed += e.getOffset();
-            scrollSpeed = Math.max(scrollSpeed, 1);
-        });
-
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
         );
 
-        final Keyboard keyboard = window.getKeyboard();
-
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            renderNode.update();
+            camera.update();
+
+            shadowsRenderingPath.render();
             reflection.updateReflectionMap();
 
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
@@ -140,16 +151,16 @@ public class ReflectionExample {
             window.pollEvents();
 
             final long delta = (long) (fps.delta() * 1000);
-            ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps.fps()) +
                     ", Delta: " + delta);
 
             fps.update();
         }
 
+        camera.delete();
         uiDisplay.delete();
         postProcessingPipeline.delete();
         reflection.delete();
@@ -201,16 +212,6 @@ public class ReflectionExample {
         mirror.getTransform().getPosition().set(0, .1f, 0);
         mirror.getTransform().getScale().scale(100, 0, 100);
         return mirror;
-    }
-
-    private static Camera buildCamera() {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-
-        final Camera camera = new Camera(projection);
-        camera.getTransform().getPosition().set(-50, 25, 50);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-        return camera;
     }
 
     private static ObjModel buildDragonModel() {

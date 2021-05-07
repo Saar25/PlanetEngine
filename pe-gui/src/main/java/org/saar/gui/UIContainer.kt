@@ -1,34 +1,32 @@
 package org.saar.gui
 
+import org.saar.core.renderer.RenderContext
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 
-interface UIContainer : UIElement {
+interface UIContainer : UINode {
 
-    val uiComponents: List<UIComponent>
+    val children: List<UINode>
 
-    val uiContainers: List<UIContainer>
-
-    fun onMouseClickEvent(event: ClickEvent) {
-        for (childUiComponent in this.uiComponents.asReversed()) {
-            if (childUiComponent.onMouseClickEvent(event)) break
-        }
-        for (childUiContainer in this.uiContainers) {
-            childUiContainer.onMouseClickEvent(event)
-        }
+    override fun onMouseClickEvent(event: ClickEvent): Boolean {
+        return this.children.asReversed().any { it.onMouseClickEvent(event) }
     }
 
-    fun onMouseMoveEvent(event: MoveEvent) {
-        for (childUiComponent in this.uiComponents.asReversed()) {
-            childUiComponent.onMouseMoveEvent(event)
-        }
-        for (childUiContainer in this.uiContainers) {
+    override fun onMouseMoveEvent(event: MoveEvent) {
+        for (childUiContainer in this.children.asReversed()) {
             childUiContainer.onMouseMoveEvent(event)
         }
     }
 
-    fun delete() {
-        this.uiContainers.forEach { it.delete() }
-        this.uiComponents.forEach { it.delete() }
+    override fun render(context: RenderContext) {
+        super.render(context)
+
+        this.children.forEach { it.render(context) }
+    }
+
+    override fun delete() {
+        super.delete()
+
+        this.children.forEach { it.delete() }
     }
 }

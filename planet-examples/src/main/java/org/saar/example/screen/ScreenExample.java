@@ -1,8 +1,11 @@
 package org.saar.example.screen;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardRotationBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
@@ -28,11 +31,13 @@ public class ScreenExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        final Camera camera = buildCamera();
+        final Keyboard keyboard = window.getKeyboard();
+
+        final Camera camera = buildCamera(keyboard);
 
         final ObjModel cottageModel = loadCottage();
 
-        final ObjRenderer renderer = new ObjRenderer();
+        final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
         final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
@@ -44,13 +49,13 @@ public class ScreenExample {
             screen.resize(w, h);
         });
 
-        final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             screen.setAsDraw();
 
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
-            ExamplesUtils.move(camera, keyboard);
+            camera.update();
+
             renderer.render(new RenderContextBase(camera), cottageModel);
 
             screen.copyTo(MainScreen.getInstance());
@@ -59,15 +64,21 @@ public class ScreenExample {
             window.pollEvents();
         }
 
+        camera.delete();
         renderer.delete();
         screen.delete();
         window.destroy();
     }
 
-    private static Camera buildCamera() {
+    private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+
+        final BehaviorGroup behaviors = new BehaviorGroup(
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
+                new KeyboardRotationBehavior(keyboard, 50f));
+
+        final Camera camera = new Camera(projection, behaviors);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));

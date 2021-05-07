@@ -30,7 +30,7 @@ public class RendererExample {
 
         final Mesh2D mesh = Mesh2D.load(vertices, indices);
         final Model2D model = new Model2D(mesh);
-        final Renderer2D renderer = new Renderer2D();
+        final Renderer2D renderer = Renderer2D.INSTANCE;
 
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);

@@ -1,10 +1,14 @@
 package org.saar.example.normalmapping;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.normalmap.NormalMappedMesh;
 import org.saar.core.common.normalmap.NormalMappedModel;
 import org.saar.core.common.normalmap.NormalMappedNode;
@@ -19,9 +23,9 @@ import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.renderpass.shadow.*;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.renderpass.ssao.SsaoRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
@@ -46,14 +50,24 @@ public class NormalMappingExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    private static float scrollSpeed = 50f;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
+        GlUtils.setClearColour(0, .7f, .9f);
+
+        final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
+
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+
+        final KeyboardMovementBehavior cameraMovementBehavior =
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new KeyboardMovementScrollVelocityBehavior(mouse),
+                new MouseRotationBehavior(mouse, -.3f));
+
+        final Camera camera = new Camera(projection, behaviors);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
@@ -89,22 +103,15 @@ public class NormalMappingExample {
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderNode, renderPassesPipeline);
 
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
-        mouse.addScrollListener(e -> {
-            scrollSpeed += e.getOffset();
-            scrollSpeed = Math.max(scrollSpeed, 1);
-        });
-        GlUtils.setClearColour(0, .7f, .9f);
-
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
         );
 
         long current = System.currentTimeMillis();
-        final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            camera.update();
+
             final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
             pipeline.process(texture).toMainScreen();
 
@@ -112,16 +119,16 @@ public class NormalMappingExample {
             window.pollEvents();
 
             final long delta = System.currentTimeMillis() - current;
-            ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
             final float fps = 1000f / delta;
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps) +
                     ", Delta: " + delta);
             current = System.currentTimeMillis();
         }
 
+        camera.delete();
         pipeline.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();

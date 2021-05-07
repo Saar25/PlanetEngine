@@ -1,6 +1,8 @@
 package org.saar.gui;
 
+import org.saar.core.renderer.RenderContext;
 import org.saar.gui.event.MouseEvent;
+import org.saar.gui.render.UIRenderer;
 import org.saar.gui.style.Style;
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent;
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
@@ -12,7 +14,7 @@ import java.util.List;
  * This class represent a ui component
  * it contains multiple UIBlock object and handles user events
  */
-public class UIComponent implements UIChildElement {
+public class UIComponent implements UIChildNode {
 
     private final Style style = new Style(this);
 
@@ -28,6 +30,17 @@ public class UIComponent implements UIChildElement {
         uiBlock.setParent(this);
     }
 
+    @Override
+    public void render(RenderContext context) {
+        UIRenderer.INSTANCE.render(context, this.uiBlocks.toArray(new UIBlock[0]));
+    }
+
+    @Override
+    public void renderForward(RenderContext context) {
+        render(context);
+    }
+
+    @Override
     public List<UIBlock> getUiBlocks() {
         return this.uiBlocks;
     }
@@ -46,12 +59,17 @@ public class UIComponent implements UIChildElement {
         this.parent = parent;
     }
 
+    @Override
+    public void update() { }
+
+    @Override
     public void delete() {
         for (UIBlock uiBlock : getUiBlocks()) {
             uiBlock.delete();
         }
     }
 
+    @Override
     public final void onMouseMoveEvent(MoveEvent event) {
         final MouseEvent e = MouseEvent.create(event);
         final int x = event.getMouse().getXPos();
@@ -72,12 +90,11 @@ public class UIComponent implements UIChildElement {
         }
     }
 
+    @Override
     public final boolean onMouseClickEvent(ClickEvent event) {
         final MouseEvent e = MouseEvent.create(event);
-        final int x = event.getMouse().getXPos();
-        final int y = event.getMouse().getYPos();
 
-        if (event.isDown() && checkMouseInside(x, y)) {
+        if (event.isDown() && isMouseHover()) {
             mousePress(e);
             return true;
         } else if (isMousePressed()) {

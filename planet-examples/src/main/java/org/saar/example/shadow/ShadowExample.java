@@ -1,10 +1,14 @@
 package org.saar.example.shadow;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
@@ -13,9 +17,9 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.renderpass.shadow.*;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -40,12 +44,25 @@ public class ShadowExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    private static float scrollSpeed = 50f;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        final Camera camera = buildCamera();
+        final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
+
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+
+        final KeyboardMovementBehavior cameraMovementBehavior =
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new KeyboardMovementScrollVelocityBehavior(mouse),
+                new MouseRotationBehavior(mouse, -.3f));
+
+        final Camera camera = new Camera(projection, behaviors);
+
+        camera.getTransform().getPosition().set(0, 0, 200);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
 
@@ -74,44 +91,28 @@ public class ShadowExample {
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderNode, renderPassesPipeline);
 
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
-        mouse.addScrollListener(e -> {
-            scrollSpeed += e.getOffset();
-            scrollSpeed = Math.max(scrollSpeed, 1);
-        });
-
         final Fps fps = new Fps();
-        final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            camera.update();
+
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
 
             final double delta = fps.delta() * 1000;
-            ExamplesUtils.move(camera, keyboard, (long) delta, scrollSpeed);
 
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps.fps()) +
                     ", Delta: " + delta);
             fps.update();
         }
 
+        camera.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
-    }
-
-    private static Camera buildCamera() {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
-
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-        return camera;
     }
 
     private static NodeBatch3D buildNodeBatch3D() {

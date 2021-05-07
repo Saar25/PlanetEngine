@@ -1,13 +1,10 @@
 package org.saar.lwjgl.glfw.input.mouse;
 
-import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryStack;
 import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
+import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.event.OnAction;
-
-import java.nio.DoubleBuffer;
 
 public class Mouse {
 
@@ -19,7 +16,9 @@ public class Mouse {
 
     private MouseCursor cursor = MouseCursor.NORMAL;
 
-    private final Vector2i position = new Vector2i();
+    private int x;
+    private int y;
+    private double scroll;
 
     public Mouse(long window) {
         this.window = window;
@@ -34,7 +33,13 @@ public class Mouse {
             this.helperClick.fireEvent(event);
         });
         GLFW.glfwSetCursorPosCallback(this.window, (window, xPos, yPos) -> {
-            final MoveEvent event = new MoveEvent(this, xPos, yPos);
+            final MoveEvent event = new MoveEvent(this,
+                    new IntValueChange(this.x, (int) xPos),
+                    new IntValueChange(this.y, (int) yPos));
+
+            this.x = (int) xPos;
+            this.y = (int) yPos;
+
             this.helperMove.fireEvent(event);
         });
         GLFW.glfwSetScrollCallback(this.window, (window, xOffset, yOffset) -> {
@@ -51,6 +56,10 @@ public class Mouse {
         setCursor(MouseCursor.DISABLED);
     }
 
+    public MouseCursor getCursor() {
+        return this.cursor;
+    }
+
     public void setCursor(MouseCursor cursor) {
         if (this.cursor != cursor) {
             GLFW.glfwSetInputMode(this.window,
@@ -59,27 +68,12 @@ public class Mouse {
         }
     }
 
-    public MouseCursor getCursor() {
-        return this.cursor;
-    }
-
     public int getXPos() {
-        updateMousePosition();
-        return this.position.x;
+        return this.x;
     }
 
     public int getYPos() {
-        updateMousePosition();
-        return this.position.y;
-    }
-
-    private void updateMousePosition() {
-        try (final MemoryStack stack = MemoryStack.stackPush()) {
-            final DoubleBuffer x = stack.mallocDouble(1);
-            final DoubleBuffer y = stack.mallocDouble(1);
-            GLFW.glfwGetCursorPos(this.window, x, y);
-            this.position.set((int) x.get(), (int) y.get());
-        }
+        return this.y;
     }
 
     public boolean isButtonDown(MouseButton button) {
