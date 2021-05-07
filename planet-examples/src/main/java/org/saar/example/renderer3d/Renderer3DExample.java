@@ -33,7 +33,7 @@ public class Renderer3DExample {
         final Camera camera = buildCamera();
 
         final Model3D[] models = models();
-        final Renderer3D renderer = new Renderer3D();
+        final Renderer3D renderer = Renderer3D.INSTANCE;
 
         final Keyboard keyboard = window.getKeyboard();
         final Fps fps = new Fps();

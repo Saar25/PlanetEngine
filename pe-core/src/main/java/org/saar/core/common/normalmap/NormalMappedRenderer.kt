@@ -15,7 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class NormalMappedRenderer : Renderer, RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype())
+object NormalMappedRenderer : Renderer, RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype())
 
 private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedModel> {
 

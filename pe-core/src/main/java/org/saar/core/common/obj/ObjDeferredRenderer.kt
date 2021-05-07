@@ -15,7 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class ObjDeferredRenderer : DeferredRenderer, RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
+object ObjDeferredRenderer : DeferredRenderer, RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
 
 private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 

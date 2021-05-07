@@ -30,7 +30,7 @@ public class PostProcessingExample {
         GlUtils.setClearColour(.2f, .2f, .2f);
 
         final Model2D model = buildModel2D();
-        final Renderer2D renderer = new Renderer2D();
+        final Renderer2D renderer = Renderer2D.INSTANCE;
 
         final SimpleScreen screen = new SimpleScreen(Fbo.create(WIDTH, HEIGHT));
 

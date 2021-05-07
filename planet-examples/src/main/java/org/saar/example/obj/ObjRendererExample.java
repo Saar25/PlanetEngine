@@ -40,7 +40,7 @@ public class ObjRendererExample {
 
         final ObjModel cottageModel = loadCottage();
 
-        final ObjRenderer renderer = new ObjRenderer();
+        final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
         fbo = createFbo(WIDTH, HEIGHT);
 

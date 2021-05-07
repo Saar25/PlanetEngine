@@ -41,7 +41,7 @@ public class ManyCubesExample {
         final Camera camera = new Camera(projection);
 
         final Model3D model = model();
-        final Renderer3D renderer = new Renderer3D();
+        final Renderer3D renderer = Renderer3D.INSTANCE;
 
         final Keyboard keyboard = window.getKeyboard();
         long current = System.currentTimeMillis();

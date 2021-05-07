@@ -32,7 +32,7 @@ public class ScreenExample {
 
         final ObjModel cottageModel = loadCottage();
 
-        final ObjRenderer renderer = new ObjRenderer();
+        final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
         final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
