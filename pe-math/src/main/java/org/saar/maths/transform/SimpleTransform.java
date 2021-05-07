@@ -6,9 +6,6 @@ import org.joml.Vector3f;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Vector3;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class SimpleTransform implements Transform {
 
     private final Matrix4f transformation = Matrix4.create();
@@ -16,8 +13,6 @@ public final class SimpleTransform implements Transform {
     private final Position position = Position.create();
     private final Rotation rotation = Rotation.create();
     private final Scale scale = Scale.create();
-
-    private final List<Transform> transforms = new ArrayList<>();
 
     public SimpleTransform() {
         getPosition().addListener(e -> updateTransformationMatrix());
@@ -31,19 +26,6 @@ public final class SimpleTransform implements Transform {
                 getRotation().getValue(),
                 getScale().getValue(),
                 this.transformation);
-
-        for (Transform transform : this.transforms) {
-            this.transformation.mul(transform
-                    .getTransformationMatrix());
-        }
-    }
-
-    public void addTransform(Transform transform) {
-        this.transforms.add(transform);
-        updateTransformationMatrix();
-        transform.getPosition().addListener(e -> updateTransformationMatrix());
-        transform.getRotation().addListener(e -> updateTransformationMatrix());
-        transform.getScale().addListener(e -> updateTransformationMatrix());
     }
 
     @Override
