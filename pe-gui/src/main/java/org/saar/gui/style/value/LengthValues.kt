@@ -5,7 +5,7 @@ import org.saar.gui.style.IStyle
 object LengthValues {
 
     @JvmStatic
-    val zero = SimpleLengthValue { _: IStyle, _: IStyle -> 0 }
+    val zero = LengthValue.Simple { _: IStyle, _: IStyle -> 0 }
 
     @JvmStatic
     val inherit = object : LengthValue {
@@ -14,7 +14,7 @@ object LengthValues {
     }
 
     @JvmStatic
-    fun pixels(pixels: Int) = SimpleLengthValue { _: IStyle, _: IStyle -> pixels }
+    fun pixels(pixels: Int) = LengthValue.Simple { _: IStyle, _: IStyle -> pixels }
 
     @JvmStatic
     fun percent(percents: Float) = object : LengthValue {
