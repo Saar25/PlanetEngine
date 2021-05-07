@@ -30,6 +30,5 @@ class HeightColourGenerator(vararg heightColors: HeightColour) : ColourGenerator
 
         // Unreachable code
         return Vector3.ZERO
-
     }
 }
