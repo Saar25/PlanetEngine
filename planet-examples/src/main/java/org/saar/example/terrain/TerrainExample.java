@@ -15,6 +15,8 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.r3d.*;
+import org.saar.core.common.terrain.colour.HeightColour;
+import org.saar.core.common.terrain.colour.HeightColourGenerator;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
@@ -86,9 +88,11 @@ public class TerrainExample {
         final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
-                (x, y, z) -> Vector3.of(.3f + (float) Math.random() * .2f, .8f + (float) Math.random() * .2f, 0),
+                new HeightColourGenerator(
+                        new HeightColour(-20, Vector3.of(.76f, .69f, .50f)),
+                        new HeightColour(+20, Vector3.of(.07f, .52f, .06f))),
                 Vector2.of(256, 256),
-                10
+                100
         ));
         final Node3D terrain = new Node3D(lowPolyTerrain.getModel());
 

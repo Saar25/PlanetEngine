@@ -30,12 +30,15 @@ class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) : N
         val indices = configuration.meshGenerator.generateIndices()
         val vertices = configuration.meshGenerator.generateVertices().map {
             val height = configuration.heightGenerator.generateHeight(it.x, it.y)
-            val colour = configuration.colourGenerator.generateColour(it.x, height, it.y)
+
             val position = Vector3.of(it.x, height, it.y)
             val normal = vertexNormal(position, .1f, .1f)
 
             position.mul(configuration.dimensions.x,
                 configuration.amplitude, configuration.dimensions.y)
+
+            val colour = configuration.colourGenerator.generateColour(
+                position.x, position.y, position.z)
 
             R3D.vertex(position, normal, colour)
         }
