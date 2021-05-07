@@ -85,7 +85,7 @@ public class ReflectionExample {
 
         uiDisplay.add(uiComponent);
 
-        final Camera camera = buildCamera();
+        final Camera camera = buildCamera(keyboard);
 
         final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
@@ -132,6 +132,7 @@ public class ReflectionExample {
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             renderNode.update();
+            camera.update();
 
             shadowsRenderingPath.render();
             reflection.updateReflectionMap();
@@ -156,6 +157,7 @@ public class ReflectionExample {
             fps.update();
         }
 
+        camera.delete();
         uiDisplay.delete();
         postProcessingPipeline.delete();
         reflection.delete();
@@ -168,7 +170,6 @@ public class ReflectionExample {
         final Model3D cubeModel = buildCubeModel();
 
         final BehaviorGroup behaviors = new BehaviorGroup(
-                new TransformBehavior(), new VelocityBehavior(),
                 new KeyboardMovementBehavior(keyboard, .1f, .1f, .1f));
 
         final Node3D cube = new Node3D(cubeModel, behaviors);
@@ -214,11 +215,14 @@ public class ReflectionExample {
         return mirror;
     }
 
-    private static Camera buildCamera() {
+    private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
 
-        final Camera camera = new Camera(projection);
+        final BehaviorGroup behaviors = new BehaviorGroup(
+                new KeyboardMovementBehavior(keyboard, .1f, .1f, .1f));
+
+        final Camera camera = new Camera(projection, behaviors);
         camera.getTransform().getPosition().set(0, 25, -20);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
         return camera;

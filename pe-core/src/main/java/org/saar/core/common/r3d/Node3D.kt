@@ -9,18 +9,16 @@ import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
-class Node3D(val model: Model3D, override val behaviors: BehaviorGroup) :
+class Node3D(val model: Model3D, behaviors: BehaviorGroup) :
     Node, ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode, BehaviorNode {
 
     constructor(model: Model3D) : this(model, BehaviorGroup())
 
+    override val behaviors: BehaviorGroup = BehaviorGroup(
+        behaviors, TransformBehavior(model.transform))
+
     init {
         this.behaviors.start(this)
-
-        val transformBehavior = this.behaviors.getNullable<TransformBehavior>()
-        if (transformBehavior != null) {
-            this.model.transform.addTransform(transformBehavior.transform)
-        }
     }
 
     override fun renderForward(context: RenderContext) {
