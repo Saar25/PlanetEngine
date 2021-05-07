@@ -1,21 +1,30 @@
 package org.saar.lwjgl.glfw.input.mouse;
 
-public class MoveEvent extends MouseEvent {
+import org.saar.lwjgl.glfw.event.Event;
+import org.saar.lwjgl.glfw.event.IntValueChange;
 
-    private final double x;
-    private final double y;
+public class MoveEvent extends Event {
 
-    public MoveEvent(Mouse mouse, double x, double y) {
-        super(mouse);
+    private final Mouse mouse;
+
+    private final IntValueChange x;
+    private final IntValueChange y;
+
+    public MoveEvent(Mouse mouse, IntValueChange x, IntValueChange y) {
+        this.mouse = mouse;
         this.x = x;
         this.y = y;
     }
 
-    public double getX() {
-        return x;
+    public IntValueChange getX() {
+        return this.x;
     }
 
-    public double getY() {
-        return y;
+    public IntValueChange getY() {
+        return this.y;
+    }
+
+    public Mouse getMouse() {
+        return this.mouse;
     }
 }

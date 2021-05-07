@@ -5,11 +5,9 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.common.r3d.R3D;
 import org.saar.core.common.r3d.Vertex3D;
-import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.input.mouse.MouseButton;
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
 import org.saar.maths.Angle;
 import org.saar.maths.utils.Vector3;
 
@@ -85,24 +83,16 @@ public final class ExamplesUtils {
     }
 
     public static void addRotationListener(Camera camera, Mouse mouse) {
-        mouse.addMoveListener(new EventListener<MoveEvent>() {
-            private int lastX = mouse.getXPos();
-            private int lastY = mouse.getYPos();
-
-            @Override
-            public void onEvent(MoveEvent e) {
-                if (mouse.isButtonDown(MouseButton.PRIMARY)) {
-                    final Vector3f toRotate = Vector3.zero();
-                    toRotate.y += this.lastX - e.getX();
-                    toRotate.x += this.lastY - e.getY();
-                    toRotate.mul(.3f);
-                    camera.getTransform().getRotation().rotate(
-                            Angle.degrees(toRotate.x),
-                            Angle.degrees(toRotate.y),
-                            Angle.degrees(toRotate.z));
-                }
-                lastX = (int) e.getX();
-                lastY = (int) e.getY();
+        mouse.addMoveListener(e -> {
+            if (mouse.isButtonDown(MouseButton.PRIMARY)) {
+                final Vector3f toRotate = Vector3.zero();
+                toRotate.y += e.getX().getDifference();
+                toRotate.x += e.getY().getDifference();
+                toRotate.mul(.3f);
+                camera.getTransform().getRotation().rotate(
+                        Angle.degrees(toRotate.x),
+                        Angle.degrees(toRotate.y),
+                        Angle.degrees(toRotate.z));
             }
         });
     }

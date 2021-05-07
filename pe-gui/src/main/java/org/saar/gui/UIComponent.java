@@ -93,10 +93,8 @@ public class UIComponent implements UIChildNode {
     @Override
     public final boolean onMouseClickEvent(ClickEvent event) {
         final MouseEvent e = MouseEvent.create(event);
-        final int x = event.getMouse().getXPos();
-        final int y = event.getMouse().getYPos();
 
-        if (event.isDown() && checkMouseInside(x, y)) {
+        if (event.isDown() && isMouseHover()) {
             mousePress(e);
             return true;
         } else if (isMousePressed()) {
