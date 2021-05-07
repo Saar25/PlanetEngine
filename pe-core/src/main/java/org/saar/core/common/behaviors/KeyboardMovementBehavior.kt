@@ -1,5 +1,6 @@
 package org.saar.core.common.behaviors
 
+import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.lwjgl.glfw.GLFW
 import org.saar.core.behavior.Behavior
@@ -21,24 +22,33 @@ class KeyboardMovementBehavior(private val keyboard: Keyboard, private val veloc
     }
 
     override fun update(node: BehaviorNode) {
+        val delta = this.time.delta().toMillis() / 1000f
+
+        val direction: Vector3f = Vector3.create()
+
         if (this.keyboard.isKeyPressed('W'.toInt())) {
-            this.transformBehavior.transform.position.addZ(this.velocity.z() * this.time.delta().toMillis() / 1000f)
+            direction.z += this.velocity.z() * delta
         }
         if (this.keyboard.isKeyPressed('A'.toInt())) {
-            this.transformBehavior.transform.position.addX(this.velocity.x() * this.time.delta().toMillis() / 1000f)
+            direction.x += this.velocity.x() * delta
         }
         if (this.keyboard.isKeyPressed('S'.toInt())) {
-            this.transformBehavior.transform.position.subZ(this.velocity.z() * this.time.delta().toMillis() / 1000f)
+            direction.z -= this.velocity.z() * delta
         }
         if (this.keyboard.isKeyPressed('D'.toInt())) {
-            this.transformBehavior.transform.position.subX(this.velocity.x() * this.time.delta().toMillis() / 1000f)
+            direction.x -= this.velocity.x() * delta
         }
+
+        direction.rotate(this.transformBehavior.transform.rotation.value).mul(-1f)
+
         if (this.keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            this.transformBehavior.transform.position.addY(this.velocity.y() * this.time.delta().toMillis() / 1000f)
+            direction.y += this.velocity.y() * delta
         }
         if (this.keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            this.transformBehavior.transform.position.subY(this.velocity.y() * this.time.delta().toMillis() / 1000f)
+            direction.y -= this.velocity.y() * delta
         }
+
+        this.transformBehavior.transform.position.add(direction)
 
         this.time.update()
     }
