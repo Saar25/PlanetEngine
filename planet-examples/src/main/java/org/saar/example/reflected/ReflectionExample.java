@@ -85,11 +85,21 @@ public class ReflectionExample {
 
         uiDisplay.add(uiComponent);
 
-        final Camera camera = buildCamera(keyboard, mouse);
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+
+        final KeyboardMovementBehavior cameraMovementBehavior =
+                new KeyboardMovementBehavior(keyboard, scrollSpeed, scrollSpeed, scrollSpeed);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new MouseRotationBehavior(mouse, -.3f));
+
+        final Camera camera = new Camera(projection, behaviors);
+        camera.getTransform().getPosition().set(0, 25, 100);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
-        final NodeBatch3D nodeBatch3D = buildNodeBatch3D(keyboard);
+        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
 
         final FlatReflectedModel mirrorModel = buildMirrorModel();
         final FlatReflectedNode mirror = new FlatReflectedNode(mirrorModel);
@@ -120,6 +130,7 @@ public class ReflectionExample {
         mouse.addScrollListener(e -> {
             scrollSpeed += e.getOffset();
             scrollSpeed = Math.max(scrollSpeed, 1);
+            cameraMovementBehavior.getVelocity().set(scrollSpeed);
         });
 
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
@@ -164,13 +175,9 @@ public class ReflectionExample {
         window.destroy();
     }
 
-    private static NodeBatch3D buildNodeBatch3D(Keyboard keyboard) {
+    private static NodeBatch3D buildNodeBatch3D() {
         final Model3D cubeModel = buildCubeModel();
-
-        final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f));
-
-        final Node3D cube = new Node3D(cubeModel, behaviors);
+        final Node3D cube = new Node3D(cubeModel);
 
         return new NodeBatch3D(cube);
     }
@@ -211,20 +218,6 @@ public class ReflectionExample {
         mirror.getTransform().getPosition().set(0, .1f, 0);
         mirror.getTransform().getScale().scale(100, 0, 100);
         return mirror;
-    }
-
-    private static Camera buildCamera(Keyboard keyboard, Mouse mouse) {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-
-        final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f),
-                new MouseRotationBehavior(mouse, -.3f));
-
-        final Camera camera = new Camera(projection, behaviors);
-        camera.getTransform().getPosition().set(0, 25, -20);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-        return camera;
     }
 
     private static ObjModel buildDragonModel() {
