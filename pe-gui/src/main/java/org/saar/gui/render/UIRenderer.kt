@@ -11,8 +11,6 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIBlock
-import org.saar.gui.UIComponent
-import org.saar.gui.UIContainer
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -21,25 +19,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class UIRenderer : Renderer, RendererPrototypeWrapper<UIBlock>(UIRendererPrototype()) {
-
-    fun render(context: RenderContext, uiContainer: UIContainer) {
-        renderContainer(context, uiContainer)
-    }
-
-    fun render(context: RenderContext, uiComponent: UIComponent) {
-        super.render(context, *uiComponent.uiBlocks.toTypedArray())
-    }
-
-    private fun renderContainer(context: RenderContext, uiContainer: UIContainer) {
-        for (childComponent in uiContainer.uiComponents) {
-            super.render(context, *childComponent.uiBlocks.toTypedArray())
-        }
-        for (childContainer in uiContainer.uiContainers) {
-            renderContainer(context, childContainer)
-        }
-    }
-}
+object UIRenderer : Renderer, RendererPrototypeWrapper<UIBlock>(UIRendererPrototype())
 
 private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
