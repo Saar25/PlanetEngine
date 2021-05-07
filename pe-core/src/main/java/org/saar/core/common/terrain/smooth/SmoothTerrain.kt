@@ -19,7 +19,7 @@ object SmoothTerrain {
 
     private val heightGenerator: HeightGenerator = FlatHeightGenerator(0f)
 
-    private val colourGenerator: ColourGenerator = ColourGenerator { x, y, z ->
+    private val colourGenerator: ColourGenerator = ColourGenerator { _, normal ->
         Vector3.of(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
     }
 
@@ -57,15 +57,12 @@ object SmoothTerrain {
         return Maths.calculateNormal(position, p2, p3)
     }
 
-    private fun vertexColour(v: Vector3fc): Vector3fc {
-        return this.colourGenerator.generateColour(v.x(), v.y(), v.z())
-    }
-
     private fun generateVertex(vertex: Vector2fc): SmoothVertex {
         val position: Vector3fc = vertexPosition(vertex.x(), vertex.y(), Vector3.create())
-        return vertex(position,
-            vertexNormal(position, .1f, .1f),
-            vertexColour(position),
-            Vector3.of(0f, Math.random().toFloat() * 0.1f, 0f))
+        val normal = vertexNormal(position, .1f, .1f)
+        val colour = this.colourGenerator.generateColour(position, normal)
+        val target = Vector3.of(0f, Math.random().toFloat() * 0.1f, 0f)
+
+        return vertex(position, normal, colour, target)
     }
 }

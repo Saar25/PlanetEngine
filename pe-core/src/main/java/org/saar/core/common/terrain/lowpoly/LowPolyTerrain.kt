@@ -34,11 +34,9 @@ class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) : N
             val position = Vector3.of(it.x, height, it.y)
             val normal = vertexNormal(position, .1f, .1f)
 
-            position.mul(configuration.dimensions.x,
-                configuration.amplitude, configuration.dimensions.y)
+            position.mul(configuration.dimensions.x, configuration.amplitude, configuration.dimensions.y)
 
-            val colour = configuration.colourGenerator.generateColour(
-                position.x, position.y, position.z)
+            val colour = configuration.colourGenerator.generateColour(position, normal)
 
             R3D.vertex(position, normal, colour)
         }
