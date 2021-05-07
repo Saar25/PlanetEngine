@@ -1,12 +1,14 @@
 package org.saar.example.terrain;
 
 import org.joml.SimplexNoise;
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
@@ -22,9 +24,9 @@ import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.renderpass.shadow.*;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -59,7 +61,18 @@ public class TerrainExample {
 
         GlUtils.setClearColour(.2f, .2f, .2f);
 
-        final Camera camera = buildCamera();
+        final Keyboard keyboard = window.getKeyboard();
+
+        final Projection projection = new ScreenPerspectiveProjection(
+                MainScreen.getInstance(), 70f, 1, 1000);
+
+        final KeyboardMovementBehavior cameraMovementBehavior =
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior);
+
+        final Camera camera = new Camera(projection, behaviors);
+        camera.getTransform().getPosition().set(0, 0, 200);
+        camera.getTransform().lookAt(Position.of(0, 0, 0));
 
         final ObjModel dragonModel = buildDragonModel();
         final ObjNode dragon = new ObjNode(dragonModel);
@@ -97,12 +110,12 @@ public class TerrainExample {
         mouse.addScrollListener(e -> {
             scrollSpeed += e.getOffset();
             scrollSpeed = Math.max(scrollSpeed, 1);
+            cameraMovementBehavior.getVelocity().set(scrollSpeed);
         });
 
         final Fps fps = new Fps();
-
-        final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            camera.update();
 
             final ReadOnlyTexture texture =
                     renderingPath.render().toTexture();
@@ -112,7 +125,6 @@ public class TerrainExample {
             window.pollEvents();
 
             final double delta = fps.delta() * 1000;
-            ExamplesUtils.move(camera, keyboard, (long) delta, scrollSpeed);
 
             System.out.print("\r --> " +
                     "Speed: " + String.format("%.2f", scrollSpeed) +
@@ -121,19 +133,10 @@ public class TerrainExample {
             fps.update();
         }
 
+        camera.delete();
         shadowsRenderingPath.delete();
         renderingPath.delete();
         window.destroy();
-    }
-
-    private static Camera buildCamera() {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-
-        final Camera camera = new Camera(projection);
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-        return camera;
     }
 
     private static ObjModel buildDragonModel() {

@@ -9,11 +9,13 @@ import org.saar.core.util.Time
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.maths.utils.Vector3
 
-class KeyboardMovementBehavior(private val keyboard: Keyboard, private val velocity: Vector3fc) : Behavior {
+class KeyboardMovementBehavior(private val keyboard: Keyboard, velocity: Vector3fc) : Behavior {
 
     constructor(keyboard: Keyboard, x: Float, y: Float, z: Float) : this(keyboard, Vector3.of(x, y, z))
 
     private lateinit var transformBehavior: TransformBehavior
+
+    val velocity: Vector3f = Vector3.of(velocity)
 
     private val time = Time()
 

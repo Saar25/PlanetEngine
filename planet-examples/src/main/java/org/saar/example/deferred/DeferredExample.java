@@ -1,16 +1,18 @@
 package org.saar.example.deferred;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
@@ -34,7 +36,9 @@ public class DeferredExample {
 
         GlUtils.setClearColour(.1f, .1f, .1f);
 
-        final Camera camera = buildCamera();
+        final Keyboard keyboard = window.getKeyboard();
+
+        final Camera camera = buildCamera(keyboard);
 
         final DeferredRenderNodeGroup renderNode = buildRenderNode();
 
@@ -50,29 +54,27 @@ public class DeferredExample {
         ExamplesUtils.addRotationListener(camera, mouse);
 
         long current = System.currentTimeMillis();
-        final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
 
-            final long delta = System.currentTimeMillis() - current;
-            ExamplesUtils.move(camera, keyboard, delta, 50f);
-
-            System.out.print("\rFps: " +
-                    1000f / (-current + (current = System.currentTimeMillis()))
-            );
+            System.out.print("\rFps: " + 1000f / (-current + (current = System.currentTimeMillis())));
         }
 
         deferredRenderer.delete();
         window.destroy();
     }
 
-    private static Camera buildCamera() {
+    private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+
+        final BehaviorGroup behaviors = new BehaviorGroup(
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f));
+
+        final Camera camera = new Camera(projection, behaviors);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
