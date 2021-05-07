@@ -12,7 +12,7 @@ class AccelerationBehavior : Behavior {
     val direction: Vector3f = Vector3.create()
 
     override fun start(node: BehaviorNode) {
-        this.velocityBehavior = node.behaviors.get(VelocityBehavior::class.java)
+        this.velocityBehavior = node.behaviors.get()
     }
 
     override fun update(node: BehaviorNode) {
