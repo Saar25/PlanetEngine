@@ -7,6 +7,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.normalmap.NormalMappedMesh;
 import org.saar.core.common.normalmap.NormalMappedModel;
 import org.saar.core.common.normalmap.NormalMappedNode;
@@ -54,13 +55,15 @@ public class NormalMappingExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, scrollSpeed, scrollSpeed, scrollSpeed);
-        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new MouseRotationBehavior(mouse, -.3f));
 
         final Camera camera = new Camera(projection, behaviors);
 
@@ -98,8 +101,6 @@ public class NormalMappingExample {
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 screenPrototype, camera, renderNode, renderPassesPipeline);
 
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
         mouse.addScrollListener(e -> {
             scrollSpeed += e.getOffset();
             scrollSpeed = Math.max(scrollSpeed, 1);

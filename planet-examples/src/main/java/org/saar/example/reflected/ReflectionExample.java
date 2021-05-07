@@ -8,8 +8,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
-import org.saar.core.common.behaviors.TransformBehavior;
-import org.saar.core.common.behaviors.VelocityBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.flatreflected.*;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
@@ -66,6 +65,7 @@ public class ReflectionExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
 
         GlUtils.setClearColour(.2f, .2f, .2f);
 
@@ -85,7 +85,7 @@ public class ReflectionExample {
 
         uiDisplay.add(uiComponent);
 
-        final Camera camera = buildCamera(keyboard);
+        final Camera camera = buildCamera(keyboard, mouse);
 
         final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
@@ -117,8 +117,6 @@ public class ReflectionExample {
         final RenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
 
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
         mouse.addScrollListener(e -> {
             scrollSpeed += e.getOffset();
             scrollSpeed = Math.max(scrollSpeed, 1);
@@ -215,12 +213,13 @@ public class ReflectionExample {
         return mirror;
     }
 
-    private static Camera buildCamera(Keyboard keyboard) {
+    private static Camera buildCamera(Keyboard keyboard, Mouse mouse) {
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f));
+                new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f),
+                new MouseRotationBehavior(mouse, -.3f));
 
         final Camera camera = new Camera(projection, behaviors);
         camera.getTransform().getPosition().set(0, 25, -20);

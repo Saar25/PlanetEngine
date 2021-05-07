@@ -1,12 +1,7 @@
 package org.saar.example;
 
-import org.joml.Vector3f;
-import org.saar.core.camera.Camera;
 import org.saar.core.common.r3d.R3D;
 import org.saar.core.common.r3d.Vertex3D;
-import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.glfw.input.mouse.MouseButton;
-import org.saar.maths.Angle;
 import org.saar.maths.utils.Vector3;
 
 public final class ExamplesUtils {
@@ -34,20 +29,5 @@ public final class ExamplesUtils {
     private ExamplesUtils() {
         throw new AssertionError("Cannot create instance of class "
                 + getClass().getSimpleName());
-    }
-
-    public static void addRotationListener(Camera camera, Mouse mouse) {
-        mouse.addMoveListener(e -> {
-            if (mouse.isButtonDown(MouseButton.PRIMARY)) {
-                final Vector3f toRotate = Vector3.zero();
-                toRotate.y += e.getX().getDifference();
-                toRotate.x += e.getY().getDifference();
-                toRotate.mul(.3f);
-                camera.getTransform().getRotation().rotate(
-                        Angle.degrees(toRotate.x),
-                        Angle.degrees(toRotate.y),
-                        Angle.degrees(toRotate.z));
-            }
-        });
     }
 }

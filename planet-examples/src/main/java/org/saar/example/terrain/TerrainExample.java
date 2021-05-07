@@ -9,6 +9,7 @@ import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
@@ -62,13 +63,15 @@ public class TerrainExample {
         GlUtils.setClearColour(.2f, .2f, .2f);
 
         final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
-        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new MouseRotationBehavior(mouse, -.3f));
 
         final Camera camera = new Camera(projection, behaviors);
         camera.getTransform().getPosition().set(0, 0, 200);
@@ -105,8 +108,6 @@ public class TerrainExample {
                 new FxaaPostProcessor()
         );
 
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
         mouse.addScrollListener(e -> {
             scrollSpeed += e.getOffset();
             scrollSpeed = Math.max(scrollSpeed, 1);
