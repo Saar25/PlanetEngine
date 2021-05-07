@@ -6,12 +6,10 @@ class BehaviorGroup(private val behaviors: List<Behavior>) {
 
     constructor(vararg behaviors: Behavior) : this(listOf(*behaviors))
 
-    @SuppressWarnings("unchecked")
     fun <T : Behavior> getNullable(behaviorClass: Class<T>): T? {
         return behaviorClass.cast(this.behaviors.find(behaviorClass::isInstance))
     }
 
-    @SuppressWarnings("unchecked")
     fun <T : Behavior> getNullable(behaviorClass: KClass<T>): T? {
         return getNullable(behaviorClass.java)
     }
