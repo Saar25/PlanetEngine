@@ -2,7 +2,6 @@ package org.saar.core.common.terrain.colour
 
 import org.joml.Vector3fc
 import org.saar.maths.utils.Maths
-import org.saar.maths.utils.Vector3
 
 class NormalColourGenerator(private val normal: Vector3fc, vararg normalColours: NormalColour) : ColourGenerator {
 
@@ -11,11 +10,8 @@ class NormalColourGenerator(private val normal: Vector3fc, vararg normalColours:
     override fun generateColour(position: Vector3fc, normal: Vector3fc): Vector3fc {
         val product = this.normal.dot(normal)
 
-        if (product <= this.normalColours.first().product) {
+        if (this.normalColours.first().product >= product) {
             return this.normalColours.first().colour
-        }
-        if (product >= this.normalColours.last().product) {
-            return this.normalColours.last().colour
         }
 
         for (i in 0 until this.normalColours.size - 1) {
@@ -30,7 +26,6 @@ class NormalColourGenerator(private val normal: Vector3fc, vararg normalColours:
             }
         }
 
-        // Unreachable code
-        return Vector3.ZERO
+        return this.normalColours.last().colour
     }
 }

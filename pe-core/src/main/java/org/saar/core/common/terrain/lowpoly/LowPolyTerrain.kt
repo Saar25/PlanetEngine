@@ -34,7 +34,7 @@ class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) : N
 
             val position = Vector3.of(it.x, height, it.y)
             val normal = vertexNormal(Vector3.of(position).add(
-                configuration.position.x, 0f, configuration.position.y), .1f, .1f)
+                configuration.position.x, 0f, configuration.position.y), .01f, .01f)
 
             position.mul(configuration.dimensions.x, configuration.amplitude, configuration.dimensions.y)
 

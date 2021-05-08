@@ -88,8 +88,8 @@ public class TerrainExample {
         final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
-                new NormalColourGenerator(Vector3.of(1),
-                        new NormalColour(0.8f, Vector3.of(.41f, .41f, .41f)),
+                new NormalColourGenerator(Vector3.upward(),
+                        new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
                 Vector2.of(0, 0), Vector2.of(256, 256), 100
         ));
@@ -98,8 +98,8 @@ public class TerrainExample {
         final LowPolyTerrain lowPolyTerrain2 = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
-                new NormalColourGenerator(Vector3.of(1),
-                        new NormalColour(0.8f, Vector3.of(.41f, .41f, .41f)),
+                new NormalColourGenerator(Vector3.upward(),
+                        new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
                 Vector2.of(1, 0), Vector2.of(256, 256), 100
         ));
