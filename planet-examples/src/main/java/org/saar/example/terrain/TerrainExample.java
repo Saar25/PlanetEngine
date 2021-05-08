@@ -85,7 +85,7 @@ public class TerrainExample {
         final ObjModel stallModel = buildStallModel();
         final ObjNode stall = new ObjNode(stallModel);
 
-        final LowPolyTerrain lowPolyTerrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
+        final LowPolyTerrain terrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
                 new NormalColourGenerator(Vector3.upward(),
@@ -93,9 +93,8 @@ public class TerrainExample {
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
                 Vector2.of(0, 0), Vector2.of(256, 256), 100
         ));
-        final Node3D terrain = new Node3D(lowPolyTerrain.getModel());
 
-        final LowPolyTerrain lowPolyTerrain2 = new LowPolyTerrain(new LowPolyTerrainConfiguration(
+        final LowPolyTerrain terrain2 = new LowPolyTerrain(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
                 new NormalColourGenerator(Vector3.upward(),
@@ -103,7 +102,6 @@ public class TerrainExample {
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
                 Vector2.of(1, 0), Vector2.of(256, 256), 100
         ));
-        final Node3D terrain2 = new Node3D(lowPolyTerrain2.getModel());
 
         final Model3D cubeModel = buildCubeModel();
         final Node3D cube = new Node3D(cubeModel);

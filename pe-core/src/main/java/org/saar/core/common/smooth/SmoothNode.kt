@@ -5,17 +5,17 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
-class SmoothNode(val model: SmoothModel) : Node, DeferredRenderNode, ShadowsRenderNode {
+open class SmoothNode(val model: SmoothModel) : Node, DeferredRenderNode, ShadowsRenderNode {
 
-    override fun renderDeferred(context: RenderContext) {
+    final override fun renderDeferred(context: RenderContext) {
         SmoothDeferredRenderer.render(context, this.model)
     }
 
-    override fun renderShadows(context: RenderContext) {
+    final override fun renderShadows(context: RenderContext) {
         SmoothDeferredRenderer.render(context, this.model)
     }
 
-    override fun delete() {
+    final override fun delete() {
         this.model.delete()
     }
 }
