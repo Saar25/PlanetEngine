@@ -40,47 +40,27 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    public open fun render(context: RenderContext, vararg models: T) {
+    fun render(context: RenderContext, vararg models: T) {
         this.shadersProgram.bind()
 
         this.prototype.onRenderCycle(context)
 
         this.uniformsHelper.loadPerRenderCycle()
 
-        doRender(context, models)
+        models.forEach { renderModel(context, it) }
 
         this.shadersProgram.unbind()
     }
 
-    protected open fun doRender(context: RenderContext, models: Array<out T>) {
-        renderModels(context, models)
-    }
-
-    protected open fun renderModels(context: RenderContext, models: Array<out T>) {
-        models.forEach { renderModel(context, it) }
-    }
-
-    protected open fun renderModels(context: RenderContext, models: Iterable<T>) {
-        models.forEach { renderModel(context, it) }
-    }
-
-    protected open fun renderModel(context: RenderContext, model: T) {
+    private fun renderModel(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
         this.uniformsHelper.loadPerInstance()
 
-        doRenderModel(context, model)
-    }
-
-    protected open fun doRenderModel(context: RenderContext, model: T) {
         model.draw()
     }
 
     final override fun delete() {
         this.shadersProgram.delete()
-        doDelete()
-    }
-
-    protected open fun doDelete() {
     }
 }
