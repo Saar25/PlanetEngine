@@ -22,7 +22,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ShadowsRenderingPath implements RenderingPath {
 
-    private final ShadowsScreenPrototype prototype = new ShadowsScreenPrototype();
+    private final ShadowsScreenPrototype prototype;
     private final ShadowsCamera camera;
     private final OffScreen screen;
 
@@ -30,6 +30,13 @@ public class ShadowsRenderingPath implements RenderingPath {
 
     public ShadowsRenderingPath(ShadowsQuality quality, OrthographicProjection projection,
                                 IDirectionalLight light, ShadowsRenderNode renderNode) {
+        this(new ShadowsScreenPrototypeDefault(), quality, projection, light, renderNode);
+    }
+
+    public ShadowsRenderingPath(ShadowsScreenPrototype prototype, ShadowsQuality quality,
+                                OrthographicProjection projection, IDirectionalLight light,
+                                ShadowsRenderNode renderNode) {
+        this.prototype = prototype;
         this.camera = camera(projection, light.getDirection());
         this.renderNode = renderNode;
 

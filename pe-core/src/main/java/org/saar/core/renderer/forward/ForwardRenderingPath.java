@@ -16,6 +16,10 @@ public class ForwardRenderingPath implements RenderingPath {
     private final ICamera camera;
     private final ForwardRenderNode renderNode;
 
+    public ForwardRenderingPath(ICamera camera, ForwardRenderNode renderNode) {
+        this(new ForwardScreenPrototypeDefault(), camera, renderNode);
+    }
+
     public ForwardRenderingPath(ForwardScreenPrototype prototype, ICamera camera, ForwardRenderNode renderNode) {
         this.prototype = prototype;
         this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));

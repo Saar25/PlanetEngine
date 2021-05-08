@@ -17,6 +17,11 @@ public class DeferredRenderingPath implements RenderingPath {
     private final DeferredRenderNode renderNode;
     private final DeferredRenderPassesPipeline pipeline;
 
+    public DeferredRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                 DeferredRenderPassesPipeline pipeline) {
+        this(new DeferredScreenPrototypeDefault(), camera, renderNode, pipeline);
+    }
+
     public DeferredRenderingPath(DeferredScreenPrototype prototype, ICamera camera,
                                  DeferredRenderNode renderNode, DeferredRenderPassesPipeline pipeline) {
         this.prototype = prototype;

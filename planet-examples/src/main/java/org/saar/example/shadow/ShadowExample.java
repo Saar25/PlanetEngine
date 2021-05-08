@@ -27,7 +27,6 @@ import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -81,15 +80,13 @@ public class ShadowExample {
                 ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
         final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderNode, renderPassesPipeline);
+                camera, renderNode, renderPassesPipeline);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

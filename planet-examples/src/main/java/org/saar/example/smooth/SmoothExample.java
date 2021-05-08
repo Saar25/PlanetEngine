@@ -20,7 +20,6 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
-import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -77,13 +76,10 @@ public class SmoothExample {
     }
 
     private static RenderingPath buildRenderingPath(Camera camera, DeferredRenderNode renderNode) {
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass());
 
-        return new DeferredRenderingPath(screenPrototype,
-                camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
     private static SmoothTerrain buildSmoothTerrain() {
