@@ -13,10 +13,17 @@ import org.saar.lwjgl.opengl.textures.Texture
 class ForwardScreenPrototypeDefault : ForwardScreenPrototype {
 
     private val colourTexture = Texture.create()
+    private val depthTexture = Texture.create()
 
     @ScreenImageProperty
     private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
         0, colourTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE))
 
+    @ScreenImageProperty
+    private val depthImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
+        0, depthTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE))
+
     override fun getColourTexture(): ReadOnlyTexture = this.colourTexture
+
+    override fun getDepthTexture(): ReadOnlyTexture = this.depthTexture
 }
