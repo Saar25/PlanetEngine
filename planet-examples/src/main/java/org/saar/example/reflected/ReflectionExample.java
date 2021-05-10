@@ -17,6 +17,7 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
@@ -123,7 +124,7 @@ public class ReflectionExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
 
-        final RenderingPath deferredRenderer = buildRenderingPath(
+        final DeferredRenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
 
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
@@ -140,8 +141,10 @@ public class ReflectionExample {
             reflection.updateReflectionMap();
 
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
-            final ReadOnlyTexture output = deferredRenderer.render().toTexture();
-            postProcessingPipeline.process(output).toMainScreen();
+
+            final PostProcessingBuffers buffers =
+                    deferredRenderer.render().asPostProcessingInput();
+            postProcessingPipeline.process(buffers).toMainScreen();
 
             reflectionUiBlock.setTexture(reflection.getReflectionMap());
             uiDisplay.renderForward(new RenderContextBase(null));
@@ -250,8 +253,8 @@ public class ReflectionExample {
                 shadowProjection, light, renderNode);
     }
 
-    private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                    ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(

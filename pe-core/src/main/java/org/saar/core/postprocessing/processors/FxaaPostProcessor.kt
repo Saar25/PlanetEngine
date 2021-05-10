@@ -37,7 +37,7 @@ private class FxaaPostProcessorPrototype : PostProcessorPrototype {
         ShaderCode.loadSource("/shaders/postprocessing/fxaa.pass.glsl"))
 
     override fun onRender(context: PostProcessingContext) {
-        this.textureUniform.value = context.texture
+        this.textureUniform.value = context.buffers.colour
     }
 
     override fun onDelete() {

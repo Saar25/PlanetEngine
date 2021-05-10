@@ -2,7 +2,6 @@ package org.saar.core.renderer.forward;
 
 import org.saar.core.camera.ICamera;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderingOutput;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -29,7 +28,7 @@ public class ForwardRenderingPath implements RenderingPath {
     }
 
     @Override
-    public RenderingOutput render() {
+    public ForwardRenderingOutput render() {
         this.screen.resizeToMainScreen();
 
         this.screen.setAsDraw();
@@ -38,7 +37,9 @@ public class ForwardRenderingPath implements RenderingPath {
 
         this.renderNode.renderForward(new RenderContextBase(this.camera));
 
-        return new ForwardRenderingOutput(this.screen, this.prototype.getColourTexture());
+        return new ForwardRenderingOutput(this.screen,
+                this.prototype.getColourTexture(),
+                this.prototype.getDepthTexture());
     }
 
     @Override

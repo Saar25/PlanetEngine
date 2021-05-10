@@ -22,10 +22,10 @@ import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
@@ -111,7 +111,7 @@ public class TerrainExample {
         final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(shadowsRenderNode, light);
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, terrain, terrain2);
-        final RenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
+        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
@@ -122,9 +122,9 @@ public class TerrainExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final ReadOnlyTexture texture =
-                    renderingPath.render().toTexture();
-            postProcessing.process(texture).toMainScreen();
+            final PostProcessingBuffers buffers =
+                    renderingPath.render().asPostProcessingInput();
+            postProcessing.process(buffers).toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -180,8 +180,8 @@ public class TerrainExample {
                 shadowProjection, light, renderNode);
     }
 
-    private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                    ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(

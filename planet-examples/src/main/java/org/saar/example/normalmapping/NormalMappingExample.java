@@ -19,6 +19,7 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
@@ -109,8 +110,9 @@ public class NormalMappingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
-            pipeline.process(texture).toMainScreen();
+            final PostProcessingBuffers buffers =
+                    deferredRenderer.render().asPostProcessingInput();
+            pipeline.process(buffers).toMainScreen();
 
             window.update(true);
             window.pollEvents();

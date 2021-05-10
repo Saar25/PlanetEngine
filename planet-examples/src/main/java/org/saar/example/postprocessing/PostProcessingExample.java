@@ -1,6 +1,7 @@
 package org.saar.example.postprocessing;
 
 import org.saar.core.common.r2d.*;
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
@@ -56,7 +57,7 @@ public class PostProcessingExample {
             GlUtils.clearColourAndDepthBuffer();
             renderer.render(new RenderContextBase(null), model);
 
-            pipeline.process(colourTexture).toMainScreen();
+            pipeline.process(new PostProcessingBuffers(colourTexture)).toMainScreen();
 
             window.update(true);
             window.pollEvents();

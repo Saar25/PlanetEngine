@@ -10,17 +10,23 @@ class PostProcessingPipeline(private vararg val processors: PostProcessor) {
 
     private val screen = Screens.fromPrototype(this.screenPrototype, Fbo.create(0, 0))
 
-    fun process(texture: ReadOnlyTexture): PostProcessingOutput {
+    private val colourTexture: ReadOnlyTexture
+        get() = this.screenPrototype.colourTexture
+
+    fun process(buffers: PostProcessingBuffers): PostProcessingOutput {
         this.screen.resizeToMainScreen()
 
-        var lastTexture = texture
         this.screen.setAsDraw()
+
+        var currentBuffers = buffers
         for (processor in this.processors) {
-            processor.process(lastTexture)
-            lastTexture = this.screenPrototype.colourTexture
+            processor.process(currentBuffers)
+
+            currentBuffers = PostProcessingBuffers(
+                this.colourTexture, currentBuffers.depth)
         }
 
-        return PostProcessingOutput(this.screen, lastTexture)
+        return PostProcessingOutput(this.screen, currentBuffers.colour, buffers.depth)
     }
 
     fun delete() {

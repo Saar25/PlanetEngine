@@ -8,7 +8,6 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
 open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPrototype) : PostProcessor {
 
@@ -41,10 +40,10 @@ open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPro
         this.shadersProgram.bindFragmentOutputs("f_colour")
     }
 
-    override fun process(image: ReadOnlyTexture) {
+    override fun process(buffers: PostProcessingBuffers) {
         this.shadersProgram.bind()
 
-        doProcess(PostProcessingContext(image))
+        doProcess(PostProcessingContext(buffers))
 
         this.shadersProgram.unbind()
     }

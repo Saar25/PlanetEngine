@@ -1,5 +1,6 @@
 package org.saar.example.gui;
 
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
@@ -14,7 +15,6 @@ import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 
 public class GuiExample {
 
@@ -90,9 +90,9 @@ public class GuiExample {
             if (keyboard.isKeyPressed('R')) {
                 renderingPath.render().toMainScreen();
             } else {
-                final ReadOnlyTexture texture =
-                        renderingPath.render().toTexture();
-                fxaaPipeline.process(texture).toMainScreen();
+                final PostProcessingBuffers buffers =
+                        renderingPath.render().asPostProcessingInput();
+                fxaaPipeline.process(buffers).toMainScreen();
             }
 
             window.update(true);
