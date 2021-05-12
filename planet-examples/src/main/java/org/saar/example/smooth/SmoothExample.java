@@ -8,7 +8,10 @@ import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.smooth.*;
+import org.saar.core.common.terrain.height.FlatHeightGenerator;
+import org.saar.core.common.terrain.mesh.TriangleMeshGenerator;
 import org.saar.core.common.terrain.smooth.SmoothTerrain;
+import org.saar.core.common.terrain.smooth.SmoothTerrainConfiguration;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
@@ -17,7 +20,6 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
-import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -38,7 +40,7 @@ public class SmoothExample {
         final Camera camera = buildCamera(keyboard, mouse);
 
         final SmoothNode node = buildSmoothNode();
-        final SmoothNode terrain = buildSmoothTerrain();
+        final SmoothTerrain terrain = buildSmoothTerrain();
         final SmoothNodeBatch smoothNodeBatch = new SmoothNodeBatch(node, terrain);
 
         final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
@@ -74,20 +76,19 @@ public class SmoothExample {
     }
 
     private static RenderingPath buildRenderingPath(Camera camera, DeferredRenderNode renderNode) {
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass());
 
-        return new DeferredRenderingPath(screenPrototype,
-                camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
-    private static SmoothNode buildSmoothTerrain() {
-        final SmoothMesh terrainMesh = SmoothTerrain.generateMeshAsync();
-        final SmoothModel terrainModel = new SmoothModel(terrainMesh);
-        terrainModel.getTransform().getScale().scale(50);
-        return new SmoothNode(terrainModel);
+    private static SmoothTerrain buildSmoothTerrain() {
+        final SmoothTerrain terrain = SmoothTerrain.generateAsync(new SmoothTerrainConfiguration(
+                new TriangleMeshGenerator(32), new FlatHeightGenerator(0f),
+                (position, normal) -> Vector3.randomize(Vector3.create())
+        ));
+        terrain.getModel().getTransform().getScale().scale(50);
+        return terrain;
     }
 
     private static SmoothNode buildSmoothNode() {

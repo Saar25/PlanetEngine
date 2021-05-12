@@ -3,7 +3,6 @@ package org.saar.core.common.flatreflected
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -17,7 +16,7 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-object FlatReflectedDeferredRenderer : DeferredRenderer,
+object FlatReflectedDeferredRenderer :
     RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype())
 
 private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {

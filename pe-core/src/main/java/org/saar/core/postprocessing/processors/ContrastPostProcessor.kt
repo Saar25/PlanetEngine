@@ -32,7 +32,7 @@ private class ContrastPostProcessorPrototype(private val contrast: Float) : Post
         ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl"))
 
     override fun onRender(context: PostProcessingContext) {
-        this.textureUniform.value = context.texture
+        this.textureUniform.value = context.buffers.colour
     }
 
     override fun onDelete() {

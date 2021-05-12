@@ -34,7 +34,7 @@ class DeferredRenderPassesPipeline(private vararg val renderPasses: DeferredRend
                 currentBuffers.normal, currentBuffers.depth)
         }
 
-        return DeferredRenderingOutput(this.screen, this.colourTexture)
+        return DeferredRenderingOutput(this.screen, this.colourTexture, buffers.depth)
     }
 
     fun delete() {

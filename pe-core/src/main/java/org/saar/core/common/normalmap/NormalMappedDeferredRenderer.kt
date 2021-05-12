@@ -3,7 +3,6 @@ package org.saar.core.common.normalmap
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.deferred.DeferredRenderer
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
@@ -16,8 +15,7 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-object NormalMappedDeferredRenderer : DeferredRenderer,
-    RendererPrototypeWrapper<NormalMappedModel>(NormalMappedPrototype())
+object NormalMappedDeferredRenderer : RendererPrototypeWrapper<NormalMappedModel>(NormalMappedPrototype())
 
 private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 

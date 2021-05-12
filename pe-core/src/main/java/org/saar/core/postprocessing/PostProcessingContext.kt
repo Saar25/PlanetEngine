@@ -1,5 +1,8 @@
 package org.saar.core.postprocessing
 
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.core.camera.ICamera
 
-class PostProcessingContext(val texture: ReadOnlyTexture)
+class PostProcessingContext(
+    val camera: ICamera?,
+    val buffers: PostProcessingBuffers
+)

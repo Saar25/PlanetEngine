@@ -19,6 +19,7 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
@@ -33,7 +34,6 @@ import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
-import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -90,8 +90,6 @@ public class NormalMappingExample {
                 ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new SsaoRenderPass()
@@ -101,7 +99,7 @@ public class NormalMappingExample {
                 nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderNode, renderPassesPipeline);
+                camera, renderNode, renderPassesPipeline);
 
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
@@ -112,8 +110,9 @@ public class NormalMappingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
-            pipeline.process(texture).toMainScreen();
+            final PostProcessingBuffers buffers =
+                    deferredRenderer.render().asPostProcessingInput();
+            pipeline.process(buffers).toMainScreen();
 
             window.update(true);
             window.pollEvents();

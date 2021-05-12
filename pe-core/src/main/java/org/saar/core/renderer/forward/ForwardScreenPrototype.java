@@ -7,4 +7,6 @@ public interface ForwardScreenPrototype extends ScreenPrototype {
 
     ReadOnlyTexture getColourTexture();
 
+    ReadOnlyTexture getDepthTexture();
+
 }

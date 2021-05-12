@@ -76,7 +76,7 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
         ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl"))
 
     override fun onRender(context: PostProcessingContext) {
-        this.textureUniform.value = context.texture
+        this.textureUniform.value = context.buffers.colour
 
         val vertical = 1 - this.verticalBlurUniform.value
         this.verticalBlurUniform.value = vertical

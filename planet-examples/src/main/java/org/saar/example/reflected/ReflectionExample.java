@@ -16,9 +16,12 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
+import org.saar.core.fog.Fog;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
@@ -36,7 +39,6 @@ import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.example.MyScreenPrototype;
 import org.saar.gui.UIBlock;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
@@ -124,11 +126,14 @@ public class ReflectionExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
 
-        final RenderingPath deferredRenderer = buildRenderingPath(
+        final DeferredRenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
+
+        final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
+                new FogPostProcessor(fog, true),
                 new FxaaPostProcessor()
         );
 
@@ -141,8 +146,10 @@ public class ReflectionExample {
             reflection.updateReflectionMap();
 
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
-            final ReadOnlyTexture output = deferredRenderer.render().toTexture();
-            postProcessingPipeline.process(output).toMainScreen();
+
+            final PostProcessingBuffers buffers =
+                    deferredRenderer.render().asPostProcessingInput();
+            postProcessingPipeline.process(camera, buffers).toMainScreen();
 
             reflectionUiBlock.setTexture(reflection.getReflectionMap());
             uiDisplay.renderForward(new RenderContextBase(null));
@@ -190,13 +197,10 @@ public class ReflectionExample {
     }
 
     private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode) {
-        final MyScreenPrototype reflectionScreenPrototype = new MyScreenPrototype();
-
         final DeferredRenderPassesPipeline renderPassesPipeline =
                 new DeferredRenderPassesPipeline(new LightRenderPass());
 
-        return new DeferredRenderingPath(reflectionScreenPrototype,
-                camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
     private static FlatReflectedModel buildMirrorModel() {
@@ -254,17 +258,15 @@ public class ReflectionExample {
                 shadowProjection, light, renderNode);
     }
 
-    private static RenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                    ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
-
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        return new DeferredRenderingPath(screenPrototype, camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
     private static ObjModel loadCottage() {
