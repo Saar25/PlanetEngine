@@ -2,7 +2,7 @@ package org.saar.core.postprocessing
 
 interface PostProcessor {
 
-    fun process(buffers: PostProcessingBuffers)
+    fun process(context: PostProcessingContext)
 
     fun delete()
 

@@ -40,10 +40,10 @@ open class PostProcessorPrototypeWrapper(private val prototype: PostProcessorPro
         this.shadersProgram.bindFragmentOutputs("f_colour")
     }
 
-    override fun process(buffers: PostProcessingBuffers) {
+    override fun process(context: PostProcessingContext) {
         this.shadersProgram.bind()
 
-        doProcess(PostProcessingContext(buffers))
+        doProcess(context)
 
         this.shadersProgram.unbind()
     }

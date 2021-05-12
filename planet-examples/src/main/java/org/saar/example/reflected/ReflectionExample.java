@@ -16,10 +16,12 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
+import org.saar.core.fog.Fog;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
@@ -127,8 +129,11 @@ public class ReflectionExample {
         final DeferredRenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
 
+        final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
+
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
+                new FogPostProcessor(fog, true),
                 new FxaaPostProcessor()
         );
 
@@ -144,7 +149,7 @@ public class ReflectionExample {
 
             final PostProcessingBuffers buffers =
                     deferredRenderer.render().asPostProcessingInput();
-            postProcessingPipeline.process(buffers).toMainScreen();
+            postProcessingPipeline.process(camera, buffers).toMainScreen();
 
             reflectionUiBlock.setTexture(reflection.getReflectionMap());
             uiDisplay.renderForward(new RenderContextBase(null));

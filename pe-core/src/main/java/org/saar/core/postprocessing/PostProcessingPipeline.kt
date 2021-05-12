@@ -1,5 +1,6 @@
 package org.saar.core.postprocessing
 
+import org.saar.core.camera.ICamera
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
@@ -14,13 +15,17 @@ class PostProcessingPipeline(private vararg val processors: PostProcessor) {
         get() = this.screenPrototype.colourTexture
 
     fun process(buffers: PostProcessingBuffers): PostProcessingOutput {
+        return process(null, buffers)
+    }
+
+    fun process(camera: ICamera?, buffers: PostProcessingBuffers): PostProcessingOutput {
         this.screen.resizeToMainScreen()
 
         this.screen.setAsDraw()
 
         var currentBuffers = buffers
         for (processor in this.processors) {
-            processor.process(currentBuffers)
+            processor.process(PostProcessingContext(camera, currentBuffers))
 
             currentBuffers = PostProcessingBuffers(
                 this.colourTexture, currentBuffers.depth)
