@@ -18,8 +18,8 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrain;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
+import org.saar.core.common.terrain.lowpoly.LowPolyWorld;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingBuffers;
@@ -84,23 +84,20 @@ public class TerrainExample {
         final ObjModel stallModel = buildStallModel();
         final ObjNode stall = new ObjNode(stallModel);
 
-        final LowPolyTerrain terrain = new LowPolyTerrain(new LowPolyTerrainConfiguration(
+        final LowPolyWorld world = new LowPolyWorld(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
                 new NormalColourGenerator(Vector3.upward(),
                         new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(0, 0), Vector2.of(256, 256), 100
+                Vector2.of(256, 256), 50
         ));
 
-        final LowPolyTerrain terrain2 = new LowPolyTerrain(new LowPolyTerrainConfiguration(
-                new DiamondMeshGenerator(64),
-                new NoiseHeightGenerator(SimplexNoise::noise),
-                new NormalColourGenerator(Vector3.upward(),
-                        new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-                        new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(1, 0), Vector2.of(256, 256), 100
-        ));
+        for (int x = -5; x <= 5; x++) {
+            for (int z = -5; z <= 5; z++) {
+                world.createTerrain(Vector2.of(x, z));
+            }
+        }
 
         final Model3D cubeModel = buildCubeModel();
         final Node3D cube = new Node3D(cubeModel);
@@ -110,7 +107,7 @@ public class TerrainExample {
         final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(dragon, stall, cube);
         final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(shadowsRenderNode, light);
 
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, terrain, terrain2);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, world);
         final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(

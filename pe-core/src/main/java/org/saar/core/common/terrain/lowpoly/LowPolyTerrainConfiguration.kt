@@ -9,7 +9,6 @@ data class LowPolyTerrainConfiguration(
     val meshGenerator: MeshGenerator,
     val heightGenerator: HeightGenerator,
     val colourGenerator: ColourGenerator,
-    val position: Vector2f,
     val dimensions: Vector2f,
     val amplitude: Float,
 )

@@ -1,5 +1,6 @@
 package org.saar.core.common.terrain.lowpoly
 
+import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.saar.core.common.r3d.Mesh3D
@@ -13,8 +14,8 @@ import org.saar.maths.utils.Vector3
 private val v1 = Vector3.create()
 private val v2 = Vector3.create()
 
-class LowPolyTerrain(private val configuration: LowPolyTerrainConfiguration) :
-    Node3D(buildModel(configuration)), Terrain {
+class LowPolyTerrain(private val position: Vector2fc, private val configuration: LowPolyTerrainConfiguration) :
+    Node3D(buildModel(position, configuration)), Terrain {
 
     override fun getHeight(x: Float, z: Float): Float {
         return this.configuration.heightGenerator.generateHeight(x, z)
@@ -34,21 +35,21 @@ private fun vertexNormal(configuration: LowPolyTerrainConfiguration,
     return Maths.calculateNormal(position, p2, p3)
 }
 
-private fun buildModel(configuration: LowPolyTerrainConfiguration): Model3D {
+private fun buildModel(position: Vector2fc, configuration: LowPolyTerrainConfiguration): Model3D {
     val indices = configuration.meshGenerator.generateIndices()
     val vertices = configuration.meshGenerator.generateVertices().map {
         val height = configuration.heightGenerator.generateHeight(
-            it.x + configuration.position.x, it.y + configuration.position.y)
+            it.x + position.x(), it.y + position.y())
 
-        val position = Vector3.of(it.x, height, it.y)
-        val normal = vertexNormal(configuration, Vector3.of(position).add(
-            configuration.position.x, 0f, configuration.position.y), .01f, .01f)
+        val tPosition = Vector3.of(it.x, height, it.y)
+        val normal = vertexNormal(configuration, Vector3.of(tPosition).add(
+            position.x(), 0f, position.y()), .01f, .01f)
 
-        position.mul(configuration.dimensions.x, configuration.amplitude, configuration.dimensions.y)
+        tPosition.mul(configuration.dimensions.x, configuration.amplitude, configuration.dimensions.y)
 
-        val colour = configuration.colourGenerator.generateColour(position, normal)
+        val colour = configuration.colourGenerator.generateColour(tPosition, normal)
 
-        R3D.vertex(position, normal, colour)
+        R3D.vertex(tPosition, normal, colour)
     }
 
     val mesh = Mesh3D.load(vertices.toTypedArray(),
@@ -56,7 +57,7 @@ private fun buildModel(configuration: LowPolyTerrainConfiguration): Model3D {
 
     return Model3D(mesh).also {
         it.transform.position.set(
-            configuration.position.x * configuration.dimensions.x, 0f,
-            configuration.position.y * configuration.dimensions.y)
+            position.x() * configuration.dimensions.x, 0f,
+            position.y() * configuration.dimensions.y)
     }
 }
