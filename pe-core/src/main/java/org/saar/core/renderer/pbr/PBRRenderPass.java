@@ -5,6 +5,6 @@ import org.saar.core.renderer.renderpass.RenderPassContext;
 
 public interface PBRRenderPass extends RenderPass {
 
-    void renderPBR(RenderPassContext context, PBRRenderingBuffers buffers);
+    void render(RenderPassContext context, PBRRenderingBuffers buffers);
 
 }

@@ -41,7 +41,7 @@ open class RenderPassPrototypeWrapper<T : RenderPassRenderingBuffers>(
         this.shadersProgram.bindFragmentOutputs("f_colour")
     }
 
-    protected fun render(context: RenderPassContext, buffers: T) {
+    protected open fun render(context: RenderPassContext, buffers: T) {
         this.shadersProgram.bind()
 
         this.prototype.onRender(context, buffers)

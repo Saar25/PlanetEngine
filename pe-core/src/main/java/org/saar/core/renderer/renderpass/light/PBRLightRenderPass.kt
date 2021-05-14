@@ -4,8 +4,6 @@ import org.joml.Matrix4f
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.light.PointLight
-import org.saar.core.renderer.deferred.DeferredRenderPass
-import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.pbr.PBRRenderPass
 import org.saar.core.renderer.pbr.PBRRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
@@ -25,21 +23,17 @@ private val light = DirectionalLight()
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class LightRenderPass : DeferredRenderPass, PBRRenderPass,
-    RenderPassPrototypeWrapper<LightRenderingBuffers>(LightRenderPassPrototype(emptyArray(), arrayOf(light))) {
-
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
-    }
+class PBRLightRenderPass : PBRRenderPass,
+    RenderPassPrototypeWrapper<PBRRenderingBuffers>(PBRLightRenderPassPrototype(emptyArray(), arrayOf(light))) {
 
     override fun render(context: RenderPassContext, buffers: PBRRenderingBuffers) {
-        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
+        super.render(context, buffers)
     }
 }
 
-private class LightRenderPassPrototype(private val pointLights: Array<PointLight>,
-                                       private val directionalLights: Array<DirectionalLight>)
-    : RenderPassPrototype<LightRenderingBuffers> {
+private class PBRLightRenderPassPrototype(private val pointLights: Array<PointLight>,
+                                          private val directionalLights: Array<DirectionalLight>)
+    : RenderPassPrototype<PBRRenderingBuffers> {
 
     @UniformProperty
     private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -48,7 +42,10 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
     private val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
 
     @UniformProperty
-    private val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
+    private val reflectivityTextureUniform = TextureUniformValue("u_reflectivityTexture", 2)
+
+    @UniformProperty
+    private val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
     @UniformProperty
     private val cameraWorldPositionUniform = Vec3UniformValue("u_cameraWorldPosition")
@@ -78,12 +75,13 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
         ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
 
-        ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
+        ShaderCode.loadSource("/shaders/deferred/light/pbr-light.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext, buffers: LightRenderingBuffers) {
+    override fun onRender(context: RenderPassContext, buffers: PBRRenderingBuffers) {
         this.colourTextureUniform.value = buffers.albedo
         this.normalTextureUniform.value = buffers.normal
+        this.reflectivityTextureUniform.value = buffers.reflectivity
         this.depthTextureUniform.value = buffers.depth
 
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value

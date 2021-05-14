@@ -28,7 +28,7 @@ class PBRRenderPassesPipeline(private vararg val renderPasses: PBRRenderPass) {
 
         var currentBuffers = buffers
         for (renderPass in this.renderPasses) {
-            renderPass.renderPBR(context, currentBuffers)
+            renderPass.render(context, currentBuffers)
 
             currentBuffers = PBRRenderingBuffers(this.colourTexture,
                 currentBuffers.normal, currentBuffers.reflectivity, currentBuffers.depth)
