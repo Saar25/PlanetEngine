@@ -1,9 +1,8 @@
 package org.saar.core.common.terrain.lowpoly
 
 import org.joml.Vector2fc
-import org.saar.core.common.r3d.DeferredRenderer3D
 import org.saar.core.common.r3d.Node3D
-import org.saar.core.common.r3d.Renderer3D
+import org.saar.core.common.r3d.NodeBatch3D
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderParentNode
@@ -13,28 +12,27 @@ import org.saar.core.renderer.shadow.ShadowsRenderNode
 class LowPolyWorld(private val configuration: LowPolyTerrainConfiguration) : ParentNode,
     ForwardRenderParentNode, DeferredRenderParentNode, ShadowsRenderNode {
 
-    override val children = mutableListOf<Node3D>()
+    private val batch = NodeBatch3D()
+
+    override val children: List<Node3D> = batch.children
 
     fun createTerrain(position: Vector2fc) {
-        this.children.add(LowPolyTerrain(position, this.configuration))
+        this.batch.add(LowPolyTerrain(position, this.configuration))
     }
 
     override fun renderForward(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        Renderer3D.render(context, *models)
+        this.batch.renderForward(context)
     }
 
     override fun renderDeferred(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        DeferredRenderer3D.render(context, *models)
+        this.batch.renderDeferred(context)
     }
 
     override fun renderShadows(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        DeferredRenderer3D.render(context, *models)
+        this.batch.renderShadows(context)
     }
 
     override fun delete() {
-        this.children.forEach { it.delete() }
+        this.batch.delete()
     }
 }
