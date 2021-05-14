@@ -11,7 +11,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 
 class DeferredRenderPassesPipeline(private vararg val renderPasses: DeferredRenderPass) {
 
-    private val prototype = RenderPassesScreenPrototype()
+    private val prototype = DeferredRenderPassesScreenPrototype()
 
     private val screen: OffScreen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 

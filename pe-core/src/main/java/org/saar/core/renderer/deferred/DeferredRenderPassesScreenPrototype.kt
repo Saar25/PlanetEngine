@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.textures.Texture
 
-class RenderPassesScreenPrototype : ScreenPrototype {
+class DeferredRenderPassesScreenPrototype : ScreenPrototype {
 
     val colourTexture: Texture = Texture.create()
 
