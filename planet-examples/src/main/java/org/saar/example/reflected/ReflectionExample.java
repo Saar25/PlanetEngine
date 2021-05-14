@@ -17,6 +17,7 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.fog.Fog;
+import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
@@ -133,7 +134,7 @@ public class ReflectionExample {
 
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, true),
+                new FogPostProcessor(fog, true, FogDistance.XYZ),
                 new FxaaPostProcessor()
         );
 

@@ -21,10 +21,13 @@ import org.saar.core.common.terrain.height.NoiseHeightGenerator;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
+import org.saar.core.fog.Fog;
+import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
@@ -90,7 +93,7 @@ public class TerrainExample {
                 new NormalColourGenerator(Vector3.upward(),
                         new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(256, 256), 50
+                Vector2.of(256, 256), 100
         ));
 
         for (int x = -5; x <= 5; x++) {
@@ -110,8 +113,11 @@ public class TerrainExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, world);
         final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
 
+        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 450);
+
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
+                new FogPostProcessor(fog, true, FogDistance.XZ),
                 new FxaaPostProcessor()
         );
 
@@ -121,7 +127,7 @@ public class TerrainExample {
 
             final PostProcessingBuffers buffers =
                     renderingPath.render().asPostProcessingInput();
-            postProcessing.process(buffers).toMainScreen();
+            postProcessing.process(camera, buffers).toMainScreen();
 
             window.update(true);
             window.pollEvents();
