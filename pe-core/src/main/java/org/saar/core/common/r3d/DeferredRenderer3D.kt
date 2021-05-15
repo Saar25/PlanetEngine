@@ -10,6 +10,7 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
+import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
@@ -17,6 +18,9 @@ import org.saar.maths.utils.Matrix4
 object DeferredRenderer3D : RendererPrototypeWrapper<Model3D>(DeferredRendererPrototype3D())
 
 private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
+
+    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    private val specularUniform = FloatUniformValue("u_specular")
 
     @UniformProperty(UniformTrigger.PER_INSTANCE)
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
@@ -40,6 +44,8 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Model3D) {
+        this.specularUniform.value = model.specular
+
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix

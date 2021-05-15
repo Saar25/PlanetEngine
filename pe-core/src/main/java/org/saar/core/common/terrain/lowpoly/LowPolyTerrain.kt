@@ -56,6 +56,7 @@ private fun buildModel(position: Vector2fc, configuration: LowPolyTerrainConfigu
         indices.toIntArray(), arrayOf(R3D.instance()))
 
     return Model3D(mesh).also {
+        it.specular = 0f
         it.transform.position.set(
             position.x() * configuration.dimensions.x, 0f,
             position.y() * configuration.dimensions.y)

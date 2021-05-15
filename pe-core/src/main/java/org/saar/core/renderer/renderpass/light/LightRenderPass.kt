@@ -6,8 +6,6 @@ import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.light.PointLight
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.core.renderer.pbr.PBRRenderPass
-import org.saar.core.renderer.pbr.PBRRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
@@ -25,15 +23,11 @@ private val light = DirectionalLight()
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class LightRenderPass : DeferredRenderPass, PBRRenderPass,
+class LightRenderPass : DeferredRenderPass,
     RenderPassPrototypeWrapper<LightRenderingBuffers>(LightRenderPassPrototype(emptyArray(), arrayOf(light))) {
 
     override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
-    }
-
-    override fun render(context: RenderPassContext, buffers: PBRRenderingBuffers) {
-        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
+        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.specular, buffers.depth))
     }
 }
 
@@ -48,7 +42,10 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
     private val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
 
     @UniformProperty
-    private val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
+    private val specularTextureUniform = TextureUniformValue("u_specularTexture", 2)
+
+    @UniformProperty
+    private val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
     @UniformProperty
     private val cameraWorldPositionUniform = Vec3UniformValue("u_cameraWorldPosition")
@@ -84,6 +81,7 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
     override fun onRender(context: RenderPassContext, buffers: LightRenderingBuffers) {
         this.colourTextureUniform.value = buffers.albedo
         this.normalTextureUniform.value = buffers.normal
+        this.specularTextureUniform.value = buffers.specular
         this.depthTextureUniform.value = buffers.depth
 
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value

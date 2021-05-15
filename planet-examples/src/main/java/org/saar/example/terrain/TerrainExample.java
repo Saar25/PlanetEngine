@@ -30,6 +30,7 @@ import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
@@ -161,7 +162,7 @@ public class TerrainExample {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+                new LightRenderPass()
         );
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);

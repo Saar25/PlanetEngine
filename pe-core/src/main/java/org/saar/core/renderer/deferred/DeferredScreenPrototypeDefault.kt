@@ -20,6 +20,8 @@ class DeferredScreenPrototypeDefault : DeferredScreenPrototype {
 
     private val normalTexture = Texture.create(TextureTarget.TEXTURE_2D)
 
+    private val specularTexture = Texture.create(TextureTarget.TEXTURE_2D)
+
     private val depthTexture = Texture.create(TextureTarget.TEXTURE_2D)
 
     @ScreenImageProperty(draw = true, read = true)
@@ -30,6 +32,10 @@ class DeferredScreenPrototypeDefault : DeferredScreenPrototype {
     private val normalImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
         1, this.normalTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE))
 
+    @ScreenImageProperty(draw = true)
+    private val specularImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
+        2, this.specularTexture, ColourFormatType.R16F, FormatType.RED, DataType.FLOAT))
+
     @ScreenImageProperty
     private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment.withTexture(
         this.depthTexture, DepthFormatType.COMPONENT24, DataType.U_BYTE))
@@ -37,6 +43,8 @@ class DeferredScreenPrototypeDefault : DeferredScreenPrototype {
     override fun getColourTexture(): ReadOnlyTexture = this.colourTexture
 
     override fun getNormalTexture(): ReadOnlyTexture = this.normalTexture
+
+    override fun getSpecularTexture(): ReadOnlyTexture = this.specularTexture
 
     override fun getDepthTexture(): ReadOnlyTexture = this.depthTexture
 }

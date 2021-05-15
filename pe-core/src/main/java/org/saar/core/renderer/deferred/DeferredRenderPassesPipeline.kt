@@ -31,7 +31,7 @@ class DeferredRenderPassesPipeline(private vararg val renderPasses: DeferredRend
             renderPass.render(context, currentBuffers)
 
             currentBuffers = DeferredRenderingBuffers(this.colourTexture,
-                currentBuffers.normal, currentBuffers.depth)
+                currentBuffers.normal, currentBuffers.specular, currentBuffers.depth)
         }
 
         return DeferredRenderingOutput(this.screen, this.colourTexture, buffers.depth)

@@ -34,7 +34,7 @@ class PBRScreenPrototypeDefault : PBRScreenPrototype {
 
     @ScreenImageProperty(draw = true)
     private val reflectivityImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
-        1, this.normalTexture, ColourFormatType.R16, FormatType.RED, DataType.U_BYTE))
+        2, this.normalTexture, ColourFormatType.R16, FormatType.RED, DataType.U_BYTE))
 
     @ScreenImageProperty
     private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment.withTexture(

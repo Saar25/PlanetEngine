@@ -21,6 +21,7 @@ in vec2 v_position;
 // Uniforms
 uniform sampler2D u_colourTexture;
 uniform sampler2D u_normalTexture;
+uniform sampler2D u_specularTexture;
 uniform sampler2D u_depthTexture;
 
 uniform vec3 u_cameraWorldPosition;
@@ -39,6 +40,7 @@ out vec4 f_colour;
 // Global variables
 vec3 g_colour;
 vec3 g_normal;
+float g_specular;
 float g_depth;
 vec3 g_viewPosition;
 vec3 g_worldPosition;
@@ -74,7 +76,8 @@ void main(void) {
 
 void initBufferValues(void) {
     g_colour = texture(u_colourTexture, v_position).rgb;
-    g_normal = texture(u_normalTexture, v_position).xyz;
+    g_normal = texture(u_normalTexture, v_position).rgb;
+    g_specular = texture(u_specularTexture, v_position).r;
     g_depth = texture(u_depthTexture, v_position).r;
 }
 
@@ -101,5 +104,6 @@ vec3 finalDiffuseColour(void) {
 }
 
 vec3 finalSpecularColour(void) {
-    return totalSpecularColour(16, 2.5, g_viewDirection, g_normal, u_directionalLightsCount, u_directionalLights);
+    return totalSpecularColour(16, g_specular, g_viewDirection,
+            g_normal, u_directionalLightsCount, u_directionalLights);
 }

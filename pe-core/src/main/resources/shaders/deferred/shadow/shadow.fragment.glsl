@@ -17,6 +17,7 @@ in vec2 v_position;
 uniform sampler2D u_shadowMap;
 uniform sampler2D u_colourTexture;
 uniform sampler2D u_normalTexture;
+uniform sampler2D u_specularTexture;
 uniform sampler2D u_depthTexture;
 
 uniform mat4 u_shadowMatrix;
@@ -34,7 +35,9 @@ out vec4 f_colour;
 // Global variables
 vec3 g_colour;
 vec3 g_normal;
+float g_specular;
 float g_depth;
+
 vec3 g_viewSpace;
 vec3 g_worldSpace;
 vec3 g_viewDirection;
@@ -83,7 +86,8 @@ void main(void) {
 
 void initBufferValues(void) {
     g_colour = texture(u_colourTexture, v_position).rgb;
-    g_normal = texture(u_normalTexture, v_position).xyz;
+    g_normal = texture(u_normalTexture, v_position).rgb;
+    g_specular = texture(u_specularTexture, v_position).r;
     g_depth = texture(u_depthTexture, v_position).r;
 }
 
@@ -129,5 +133,5 @@ vec3 diffuseColour(void) {
 }
 
 vec3 specularColour(void) {
-    return specularColour(16, 2.5, g_viewDirection, g_normal, u_light);
+    return specularColour(16, g_specular, g_viewDirection, g_normal, u_light);
 }
