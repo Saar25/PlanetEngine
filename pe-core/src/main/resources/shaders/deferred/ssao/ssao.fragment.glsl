@@ -54,7 +54,7 @@ void main(void) {
 
 void initBufferValues(void) {
     g_colour = texture(u_colourTexture, v_position).rgb;
-    g_normal = texture(u_normalTexture, v_position).xyz;
+    g_normal = texture(u_normalTexture, v_position).rgb;
     g_depth = texture(u_depthTexture, v_position).r;
 }
 

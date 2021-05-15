@@ -51,8 +51,6 @@ vec3 g_viewDirection;
 void initBufferValues(void);
 void initGlobals(void);
 
-vec3 findNormal(vec2 normal);
-
 vec3 finalAmbientColour(void);
 vec3 finalDiffuseColour(void);
 vec3 finalSpecularColour(void);
@@ -86,13 +84,6 @@ void initGlobals(void) {
     g_viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
     g_worldPosition = viewSpaceToWorldSpace(g_viewPosition, u_viewMatrixInv);
     g_viewDirection = calcViewDirection(u_cameraWorldPosition, g_worldPosition);
-}
-
-vec3 findNormal(vec2 normal) {
-    float x2 = pow(normal.x, 2);
-    float y2 = pow(normal.y, 2);
-    float z = sqrt(1 - x2 - y2);
-    return vec3(normal, z);
 }
 
 vec3 finalAmbientColour(void) {
