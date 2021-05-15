@@ -5,9 +5,7 @@ import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
-import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
@@ -31,18 +29,12 @@ import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
-import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
-import org.saar.core.renderer.shadow.ShadowsQuality;
-import org.saar.core.renderer.shadow.ShadowsRenderNode;
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
-import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
@@ -94,11 +86,8 @@ public class TerrainExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(cube);
-        final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(shadowsRenderNode, light);
-
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
-        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
+        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light);
 
         final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 450);
 
@@ -129,7 +118,6 @@ public class TerrainExample {
         }
 
         camera.delete();
-        shadowsRenderingPath.delete();
         renderingPath.delete();
         window.destroy();
     }
@@ -150,17 +138,7 @@ public class TerrainExample {
         return light;
     }
 
-    private static ShadowsRenderingPath buildShadowsRenderingPath(ShadowsRenderNode renderNode, DirectionalLight light) {
-        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-                -100, 100, -100, 100, -100, 100);
-        return new ShadowsRenderingPath(ShadowsQuality.HIGH,
-                shadowProjection, light, renderNode);
-    }
-
-    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
-
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass()
         );
