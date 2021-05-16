@@ -24,9 +24,7 @@ uniform sampler2D u_normalTexture;
 uniform sampler2D u_specularTexture;
 uniform sampler2D u_depthTexture;
 
-uniform vec3 u_cameraWorldPosition;
 uniform mat4 u_projectionMatrixInv;
-uniform mat4 u_viewMatrixInv;
 
 uniform int u_directionalLightsCount;
 uniform DirectionalLight[MAX_DIRECTIONAL_LIGHTS] u_directionalLights;
@@ -38,16 +36,13 @@ uniform PointLight[MAX_POINT_LIGHTS] u_pointLights;
 out vec4 f_colour;
 
 // Global variables
-vec3 g_colour;
-vec3 g_normal;
+vec3  g_colour;
+vec3  g_normal;
 float g_specular;
 float g_depth;
-vec3 g_viewPosition;
-vec3 g_worldPosition;
-vec3 g_viewDirection;
+vec3  g_viewDirection;
 
 // Methods declaration
-
 void initBufferValues(void);
 void initGlobals(void);
 
@@ -81,9 +76,8 @@ void initBufferValues(void) {
 
 void initGlobals(void) {
     vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
-    g_viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
-    g_worldPosition = viewSpaceToWorldSpace(g_viewPosition, u_viewMatrixInv);
-    g_viewDirection = calcViewDirection(u_cameraWorldPosition, g_worldPosition);
+    vec3 viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
+    g_viewDirection = normalize(-viewPosition);
 }
 
 vec3 finalAmbientColour(void) {

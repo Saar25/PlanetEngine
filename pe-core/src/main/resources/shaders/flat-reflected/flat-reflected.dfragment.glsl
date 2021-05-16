@@ -8,7 +8,6 @@
 
 flat in vec3 v_normal;
 in vec4 v_clipSpace;
-in vec2 cors;
 
 // Uniforms
 uniform sampler2D u_reflectionMap;

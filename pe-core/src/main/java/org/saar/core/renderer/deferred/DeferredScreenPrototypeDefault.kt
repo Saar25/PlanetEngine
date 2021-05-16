@@ -30,7 +30,7 @@ class DeferredScreenPrototypeDefault : DeferredScreenPrototype {
 
     @ScreenImageProperty(draw = true)
     private val normalImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
-        1, this.normalTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE))
+        1, this.normalTexture, ColourFormatType.RGB16F, FormatType.RGB, DataType.U_BYTE))
 
     @ScreenImageProperty(draw = true)
     private val specularImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(

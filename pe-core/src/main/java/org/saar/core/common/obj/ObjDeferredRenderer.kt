@@ -17,6 +17,8 @@ import org.saar.maths.utils.Matrix4
 
 object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
 
+private val matrix = Matrix4.create()
+
 private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
@@ -34,6 +36,9 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
         override fun getUniformValue() = 2.5f
     }
+
+    @UniformProperty
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -53,6 +58,8 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         GlUtils.setCullFace(context.hints.cullFace)
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: ObjModel) {

@@ -18,6 +18,8 @@ import org.saar.maths.utils.Matrix4
 
 object NormalMappedDeferredRenderer : RendererPrototypeWrapper<NormalMappedModel>(NormalMappedPrototype())
 
+private val matrix = Matrix4.create()
+
 private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
@@ -38,6 +40,9 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
         override fun getUniformValue() = 2.5f
     }
+
+    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -61,6 +66,8 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {

@@ -23,7 +23,6 @@ uniform sampler2D u_depthTexture;
 uniform mat4 u_shadowMatrix;
 uniform mat4 u_projectionMatrixInv;
 uniform mat4 u_viewMatrixInv;
-uniform vec3 u_cameraWorldPosition;
 
 uniform int u_pcfRadius;
 
@@ -38,7 +37,6 @@ vec3 g_normal;
 float g_specular;
 float g_depth;
 
-vec3 g_viewSpace;
 vec3 g_worldSpace;
 vec3 g_viewDirection;
 
@@ -93,9 +91,9 @@ void initBufferValues(void) {
 
 void initGlobals(void) {
     vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
-    g_viewSpace = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
-    g_worldSpace = viewSpaceToWorldSpace(g_viewSpace, u_viewMatrixInv);
-    g_viewDirection = calcViewDirection(u_cameraWorldPosition, g_worldSpace);
+    vec3 viewSpace = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
+    g_worldSpace = viewSpaceToWorldSpace(viewSpace, u_viewMatrixInv);
+    g_viewDirection = normalize(-viewSpace);
 }
 
 void initShadowGlobals(void) {

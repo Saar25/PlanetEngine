@@ -6,6 +6,7 @@ layout (location = 2) in vec3 in_normal;
 // Uniforms
 uniform mat4 u_viewProjectionMatrix;
 uniform mat4 u_transformationMatrix;
+uniform mat4 u_normalMatrix;
 
 // Vertex outputs
 out vec2 v_uvCoord;
@@ -16,7 +17,7 @@ vec4 calculatePosition() {
 }
 
 vec3 calculateNormal() {
-    return normalize((u_transformationMatrix * vec4(in_normal, 0.0)).xyz);
+    return (u_normalMatrix * u_transformationMatrix * vec4(in_normal, 0.0)).xyz;
 }
 
 void main(void) {

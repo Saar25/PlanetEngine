@@ -16,6 +16,8 @@ import org.saar.maths.utils.Matrix4
 
 object SmoothDeferredRenderer : RendererPrototypeWrapper<SmoothModel>(SmoothRendererPrototype())
 
+private val matrix = Matrix4.create()
+
 private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
 
     @UniformProperty
@@ -23,6 +25,9 @@ private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
 
     @UniformProperty
     private val targetScalarUniform = FloatUniformValue("u_targetScalar")
+
+    @UniformProperty
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -40,6 +45,8 @@ private class SmoothRendererPrototype : RendererPrototype<SmoothModel> {
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: SmoothModel) {

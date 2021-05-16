@@ -4,7 +4,7 @@ import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
-import org.saar.core.light.DirectionalLightUniform
+import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
@@ -51,9 +51,6 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     private val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
     @UniformProperty
-    private val cameraWorldPositionUniform = Vec3UniformValue("u_cameraWorldPosition")
-
-    @UniformProperty
     private val pcfRadiusUniform = object : IntUniform() {
         override fun getName(): String = "u_pcfRadius"
 
@@ -61,10 +58,8 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     }
 
     @UniformProperty
-    private val lightUniform = object : DirectionalLightUniform("u_light") {
-        override fun getUniformValue(): DirectionalLight {
-            return this@ShadowsRenderPassPrototype.light
-        }
+    private val lightUniform = object : ViewSpaceDirectionalLightUniform("u_light") {
+        override fun getUniformValue() = this@ShadowsRenderPassPrototype.light
     }
 
     @UniformProperty
@@ -103,7 +98,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
         this.depthTextureUniform.value = buffers.depth
 
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
-        this.cameraWorldPositionUniform.value = context.camera.transform.position.value
         this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
+        this.lightUniform.camera = context.camera
     }
 }

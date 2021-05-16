@@ -20,6 +20,8 @@ import org.saar.maths.utils.Matrix4
 object FlatReflectedDeferredRenderer :
     RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype())
 
+private val matrix = Matrix4.create()
+
 private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {
 
     @UniformProperty
@@ -38,6 +40,9 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         override fun getUniformValue() = 1f
     }
 
+    @UniformProperty
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
@@ -54,6 +59,8 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
