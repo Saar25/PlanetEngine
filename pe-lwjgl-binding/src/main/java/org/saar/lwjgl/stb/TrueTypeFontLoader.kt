@@ -8,14 +8,14 @@ import java.nio.ByteBuffer
 
 object TrueTypeFontLoader {
 
-    fun bakeFontBitmap(buffer: ByteBuffer, fontHeight: Float, width: Int,
-                       height: Int, start: Char, count: Int): TrueTypeBitmap {
+    fun bakeFontBitmap(buffer: ByteBuffer, fontHeight: Float, bitmapWidth: Int,
+                       bitmapHeight: Int, start: Char, count: Int): TrueTypeBitmap {
         MemoryStack.stackPush().use { stack ->
             val cdata = STBTTBakedChar.mallocStack(count, stack)
-            val bitmap = LwjglByteBuffer.allocate(width * height)
+            val bitmap = LwjglByteBuffer.allocate(bitmapWidth * bitmapHeight)
 
             STBTruetype.stbtt_BakeFontBitmap(buffer, fontHeight,
-                bitmap.asByteBuffer(), width, height, start.toInt(), cdata)
+                bitmap.asByteBuffer(), bitmapWidth, bitmapHeight, start.toInt(), cdata)
 
             val characters = sequence {
                 for (i in 0 until cdata.limit()) {
@@ -31,12 +31,6 @@ object TrueTypeFontLoader {
                        bitmapHeight: Int, charSequence: CharSequence): TrueTypeBitmap {
         TrueTypeFontInfo.create(buffer.asByteBuffer(), fontHeight).use { font ->
             return font.createCodepointBitmapSubpixel(bitmapWidth, bitmapHeight, charSequence)
-        }
-    }
-
-    fun bakeCharBitmap(buffer: LwjglByteBuffer, char: Char): TrueTypeCharacterBitmap {
-        TrueTypeFontInfo.create(buffer.asByteBuffer(), 96f).use { font ->
-            return font.getCodePointBitmap(char)
         }
     }
 }

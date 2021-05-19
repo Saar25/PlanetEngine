@@ -8,7 +8,7 @@ import org.saar.lwjgl.stb.exceptions.STBInitializationException
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
 import java.nio.ByteBuffer
 
-class TrueTypeFontInfo(private val info: STBTTFontinfo, private val scale: Float) : AutoCloseable {
+class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, private val scale: Float) : AutoCloseable {
 
     private fun Float.fraction() = this - this.toInt()
 
@@ -133,8 +133,8 @@ class TrueTypeFontInfo(private val info: STBTTFontinfo, private val scale: Float
             val box = getCodepointBitmapBoxSubpixel(char, x.fraction(), 0f)
             makeCodepointBitmapSubpixel(bitmap.asByteBuffer(), width, x, y, box, char)
 
-            characters.add(TrueTypeCharacter(char, box.x0.toShort(), box.y0.toShort(),
-                box.x1.toShort(), box.y1.toShort(), 0f, 0f, toAdvance))
+            characters.add(TrueTypeCharacter(char, box.x0.toShort(),
+                box.y0.toShort(), box.x1.toShort(), box.y1.toShort(), toAdvance))
 
             x += toAdvance
         }
