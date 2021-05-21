@@ -31,7 +31,7 @@ open class UIComponent : UIChildNode {
     }
 
     override fun render(context: RenderContext) {
-        UIRenderer.render(context, *this.uiBlocks.toTypedArray())
+        UIRenderer.render(context, this.uiBlocks)
     }
 
     override fun renderForward(context: RenderContext) {

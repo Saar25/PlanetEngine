@@ -13,8 +13,8 @@ class NodeBatch2D(vararg nodes: Node2D) : ParentNode, ForwardRenderParentNode {
     }
 
     override fun renderForward(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        Renderer2D.render(context, *models)
+        val models = this.children.map { it.model }
+        Renderer2D.render(context, models)
     }
 
     override fun delete() {

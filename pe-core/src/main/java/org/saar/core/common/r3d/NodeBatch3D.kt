@@ -16,18 +16,18 @@ class NodeBatch3D(vararg nodes: Node3D) : ParentNode,
     }
 
     override fun renderForward(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        Renderer3D.render(context, *models)
+        val models = this.children.map { it.model }
+        Renderer3D.render(context, models)
     }
 
     override fun renderDeferred(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        DeferredRenderer3D.render(context, *models)
+        val models = this.children.map { it.model }
+        DeferredRenderer3D.render(context, models)
     }
 
     override fun renderShadows(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        DeferredRenderer3D.render(context, *models)
+        val models = this.children.map { it.model }
+        DeferredRenderer3D.render(context, models)
     }
 
     override fun delete() {
