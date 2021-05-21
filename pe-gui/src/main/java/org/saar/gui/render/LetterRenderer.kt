@@ -1,7 +1,7 @@
 package org.saar.gui.render
 
 import org.joml.Vector2i
-import org.joml.Vector4f
+import org.joml.Vector4i
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
@@ -17,7 +17,7 @@ import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec4UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec4iUniformValue
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -35,7 +35,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     }
 
     @UniformProperty
-    private val boundsUniform = Vec4UniformValue("u_bounds")
+    private val boundsUniform = Vec4iUniformValue("u_bounds")
 
     @UniformProperty
     private val bitmapUniform = TextureUniformValue("u_bitmap", 0)
@@ -44,7 +44,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     private val bitmapDimensionsUniform = Vec2iUniformValue("u_bitmapDimensions")
 
     @UniformProperty
-    private val bitmapBoundsUniform = Vec4UniformValue("u_bitmapBounds")
+    private val bitmapBoundsUniform = Vec4iUniformValue("u_bitmapBounds")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
@@ -69,17 +69,17 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             uiLetter.font.bitmap.width,
             uiLetter.font.bitmap.height)
 
-        this.bitmapBoundsUniform.value = Vector4f(
-            uiLetter.character.bitmapBox.x0.toFloat(),
-            uiLetter.character.bitmapBox.y0.toFloat(),
-            uiLetter.character.bitmapBox.width.toFloat(),
-            uiLetter.character.bitmapBox.height.toFloat())
+        this.bitmapBoundsUniform.value = Vector4i(
+            uiLetter.character.bitmapBox.x0,
+            uiLetter.character.bitmapBox.y0,
+            uiLetter.character.bitmapBox.width,
+            uiLetter.character.bitmapBox.height)
 
         val localBox = uiLetter.character.localBox
-        this.boundsUniform.value = Vector4f(
-            uiLetter.style.x.get() + localBox.x0 + uiLetter.xAdvance,
-            uiLetter.style.y.get() + localBox.y0 + uiLetter.font.lineHeight,
-            localBox.width.toFloat(),
-            localBox.height.toFloat())
+        this.boundsUniform.value = Vector4i(
+            uiLetter.style.x.get() + localBox.x0 + uiLetter.xAdvance.toInt(),
+            uiLetter.style.y.get() + localBox.y0 + uiLetter.font.lineHeight.toInt(),
+            localBox.width,
+            localBox.height)
     }
 }

@@ -5,9 +5,9 @@ vec2(1, 1), vec2(1, 0)
 );
 
 // Uniforms
-uniform vec4  u_bounds;
+uniform ivec4 u_bounds;
 uniform ivec2 u_bitmapDimensions;
-uniform vec4  u_bitmapBounds;
+uniform ivec4 u_bitmapBounds;
 uniform ivec2 u_resolution;
 
 // Vertex outputs
@@ -37,14 +37,14 @@ vec2 calculatePosition(vec2 p, vec2 s) {
 
 // Main
 void main(void) {
-    vec2 p = toNdc(u_bounds.xy);
-    vec2 s = toNdc(u_bounds.zw);
+    vec2 p = toNdc(vec2(u_bounds.xy));
+    vec2 s = toNdc(vec2(u_bounds.zw));
     vec2 pos = calculatePosition(p, s);
 
     gl_Position = vec4(pos, 0, 1);
     gl_ClipDistance[0] = 0;
 
-    vec2 p1 = u_bitmapBounds.xy / u_bitmapDimensions.xy;
-    vec2 s1 = u_bitmapBounds.zw / u_bitmapDimensions.xy;
+    vec2 p1 = vec2(u_bitmapBounds.xy) / u_bitmapDimensions.xy;
+    vec2 s1 = vec2(u_bitmapBounds.zw) / u_bitmapDimensions.xy;
     v_uvCoords = positionByBounds(p1, s1);
 }
