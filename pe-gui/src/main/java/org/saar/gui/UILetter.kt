@@ -9,13 +9,14 @@ import org.saar.gui.font.FontCharacter
 import org.saar.gui.render.LetterRenderer
 import org.saar.gui.style.Style
 
-class UILetter(override val parent: UIText, val font: Font, character: Char) : UIChildElement, Model {
+class UILetter(override val parent: UIText, val font: Font,
+               char: Char, val xAdvance: Float) : UIChildElement, Model {
 
     override val style: Style = Style(this)
 
     override val mesh: Mesh = QuadMesh
 
-    val character: FontCharacter = this.font.getCharacterOrDefault(character)
+    val character: FontCharacter = this.font.getCharacterOrDefault(char)
 
     fun render(context: RenderContext) {
         LetterRenderer.render(context, this)
