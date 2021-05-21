@@ -38,6 +38,8 @@ object FontLoader {
                 buffer, fontHeight, bitmapWidth, bitmapHeight, charSequence)
 
             return object : Font {
+                override val size = fontHeight
+
                 override val bitmap = bitmapToTexture(bitmap, bitmapWidth, bitmapHeight)
 
                 override val characters = characters.map {

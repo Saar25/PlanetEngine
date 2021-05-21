@@ -34,7 +34,8 @@ object TrueTypeFontLoader {
     fun bakeFontBitmap(buffer: ReadonlyLwjglBuffer, fontHeight: Float, bitmapWidth: Int,
                        bitmapHeight: Int, charSequence: CharSequence): TrueTypeBitmap {
         TrueTypeFontInfo.create(buffer.asByteBuffer(), fontHeight).use { font ->
-            return font.createCodepointBitmapSubpixel(bitmapWidth, bitmapHeight, charSequence)
+            val noDistinctChars = charSequence.toSet().joinToString("")
+            return font.createCodepointBitmapSubpixel(bitmapWidth, bitmapHeight, noDistinctChars)
         }
     }
 }
