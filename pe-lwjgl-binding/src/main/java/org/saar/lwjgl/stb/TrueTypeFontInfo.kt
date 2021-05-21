@@ -14,7 +14,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
 
     companion object {
         fun create(buffer: ByteBuffer, fontHeight: Float): TrueTypeFontInfo {
-            val info = STBTTFontinfo.create()
+            val info = STBTTFontinfo.malloc()
 
             if (!STBTruetype.stbtt_InitFont(info, buffer, 0)) {
                 throw STBInitializationException("Failed to initialize font information")

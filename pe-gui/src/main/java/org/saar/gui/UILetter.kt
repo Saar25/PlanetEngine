@@ -6,7 +6,6 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.Font
 import org.saar.gui.font.FontCharacter
-import org.saar.gui.font.getCharacterOrDefault
 import org.saar.gui.render.LetterRenderer
 import org.saar.gui.style.Style
 
