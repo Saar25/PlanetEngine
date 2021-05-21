@@ -1,6 +1,5 @@
 package org.saar.gui.font
 
-import org.lwjgl.stb.STBImageWrite
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.textures.Texture2D
@@ -34,7 +33,7 @@ object FontLoader {
     @JvmStatic
     fun loadFont(fontFile: String, fontHeight: Float, bitmapWidth: Int,
                  bitmapHeight: Int, charSequence: CharSequence): Font {
-        val (bitmap, characters) = File(fontFile).readToLwjglBuffer().use { buffer ->
+        val (bitmap, characters, lineGap) = File(fontFile).readToLwjglBuffer().use { buffer ->
             TrueTypeFontLoader.bakeFontBitmap(buffer, fontHeight, bitmapWidth, bitmapHeight, charSequence)
         }
 
@@ -46,6 +45,8 @@ object FontLoader {
             override val characters = characters.map {
                 FontCharacter(it.char, it.x0, it.y0, it.x1, it.y1, it.xAdvance)
             }
+
+            override val lineGap = lineGap
         }
     }
 

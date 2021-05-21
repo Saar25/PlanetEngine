@@ -139,7 +139,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             x += toAdvance
         }
 
-        return TrueTypeBitmap(bitmap.clear(), characters)
+        return TrueTypeBitmap(bitmap.clear(), characters, lineGap * this.scale)
     }
 
     override fun close() = this.info.free()

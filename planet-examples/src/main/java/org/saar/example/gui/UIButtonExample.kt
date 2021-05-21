@@ -4,7 +4,7 @@ import org.saar.core.renderer.RenderContextBase
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
-import org.saar.gui.font.FontLoader.loadFont
+import org.saar.gui.font.FontLoader
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.ratio
@@ -31,7 +31,7 @@ object UIButtonExample {
         }
         display.add(uiButton)
 
-        val font = loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
             (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
         )
 

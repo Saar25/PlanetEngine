@@ -27,7 +27,7 @@ object TrueTypeFontLoader {
                 }
             }.toList()
 
-            return TrueTypeBitmap(bitmap, characters)
+            return TrueTypeBitmap(bitmap, characters, 0f)
         }
     }
 

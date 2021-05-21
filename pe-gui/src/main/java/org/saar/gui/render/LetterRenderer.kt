@@ -75,7 +75,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
                 advance.x += current.xAdvance
                 if (advance.x > uiLetter.font.bitmap.width) {
                     advance.x = current.xAdvance
-                    advance.y += uiLetter.font.size
+                    advance.y += uiLetter.font.lineHeight
                 }
 
                 advance
@@ -83,7 +83,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
 
         if (advanceCoords.x + uiLetter.character.xAdvance > uiLetter.font.bitmap.width) {
             advanceCoords.x = 0f
-            advanceCoords.y += uiLetter.font.size
+            advanceCoords.y += uiLetter.font.lineHeight
         }
 
         val advanceText = uiLetter.parent.children.takeWhile { it != uiLetter }
@@ -91,13 +91,13 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
 
         this.bitmapBoundsUniform.value = Vector4f(
             uiLetter.character.x0 + advanceCoords.x,
-            uiLetter.character.y0 + advanceCoords.y + uiLetter.font.size,
+            uiLetter.character.y0 + advanceCoords.y + uiLetter.font.lineHeight,
             uiLetter.character.width.toFloat(),
             uiLetter.character.height.toFloat())
 
         this.boundsUniform.value = Vector4f(
             uiLetter.style.x.get() + uiLetter.character.x0 + advanceText,
-            uiLetter.style.y.get() + uiLetter.character.y0 + uiLetter.font.size,
+            uiLetter.style.y.get() + uiLetter.character.y0 + uiLetter.font.lineHeight,
             uiLetter.character.width.toFloat(),
             uiLetter.character.height.toFloat())
     }

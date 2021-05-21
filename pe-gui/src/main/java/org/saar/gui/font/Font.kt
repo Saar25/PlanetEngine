@@ -6,6 +6,9 @@ interface Font {
     val size: Float
     val bitmap: Texture2D
     val characters: List<FontCharacter>
+    val lineGap: Float
+
+    val lineHeight: Float get() = this.size + this.lineGap
 
     fun delete() = this.bitmap.delete()
 
