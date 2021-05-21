@@ -6,7 +6,7 @@ import org.lwjgl.system.MemoryStack
 import org.saar.lwjgl.stb.exceptions.STBBufferOverflowException
 import org.saar.lwjgl.stb.exceptions.STBInitializationException
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
-import org.saar.utils.Box2D
+import org.saar.utils.Box2i
 import java.nio.ByteBuffer
 
 class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, private val scale: Float) : AutoCloseable {
@@ -53,7 +53,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
         }
     }
 
-    fun getCodepointBitmapBox(char: Char): Box2D {
+    fun getCodepointBitmapBox(char: Char): Box2i {
         MemoryStack.stackPush().use { stack ->
             val x0Buffer = stack.mallocInt(1)
             val y0Buffer = stack.mallocInt(1)
@@ -63,11 +63,11 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             STBTruetype.stbtt_GetCodepointBitmapBox(this.info, char.toInt(),
                 this.scale, this.scale, x0Buffer, y0Buffer, x1Buffer, y1Buffer)
 
-            return Box2D(x0Buffer.get(), y0Buffer.get(), x1Buffer.get(), y1Buffer.get())
+            return Box2i(x0Buffer.get(), y0Buffer.get(), x1Buffer.get(), y1Buffer.get())
         }
     }
 
-    fun getCodepointBitmapBoxSubpixel(char: Char, xShift: Float, yShift: Float): Box2D {
+    fun getCodepointBitmapBoxSubpixel(char: Char, xShift: Float, yShift: Float): Box2i {
         MemoryStack.stackPush().use { stack ->
             val x0Buffer = stack.mallocInt(1)
             val y0Buffer = stack.mallocInt(1)
@@ -77,7 +77,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             STBTruetype.stbtt_GetCodepointBitmapBoxSubpixel(this.info, char.toInt(),
                 this.scale, this.scale, xShift, yShift, x0Buffer, y0Buffer, x1Buffer, y1Buffer)
 
-            return Box2D(x0Buffer.get(), y0Buffer.get(), x1Buffer.get(), y1Buffer.get())
+            return Box2i(x0Buffer.get(), y0Buffer.get(), x1Buffer.get(), y1Buffer.get())
         }
     }
 
@@ -97,7 +97,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
     }
 
     fun makeCodepointBitmapSubpixel(bitmap: ByteBuffer, bitmapWidth: Int,
-                                    x: Float, y: Float, box: Box2D, char: Char) {
+                                    x: Float, y: Float, box: Box2i, char: Char) {
         val position = (y.toInt() + box.y0) * bitmapWidth + x.toInt() + box.x0
 
         if (position >= bitmap.limit()) {
@@ -124,7 +124,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
         for (char in charSequence) {
             val (advance) = getCodepointHMetrics(char)
 
-            val toAdvance = (advance) * this.scale
+            val toAdvance = advance * this.scale
 
             if (x + toAdvance > width) {
                 y += fontHeight
@@ -134,8 +134,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             val box = getCodepointBitmapBoxSubpixel(char, x.fraction(), 0f)
             makeCodepointBitmapSubpixel(bitmap.asByteBuffer(), width, x, y, box, char)
 
-            characters.add(TrueTypeCharacter(char, box.x0.toShort(),
-                box.y0.toShort(), box.x1.toShort(), box.y1.toShort(), toAdvance))
+            characters.add(TrueTypeCharacter(char, box.offset(x.toInt(), y.toInt()), box, toAdvance))
 
             x += toAdvance
         }

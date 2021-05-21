@@ -1,6 +1,5 @@
 package org.saar.gui.render
 
-import org.joml.Vector2f
 import org.joml.Vector2i
 import org.joml.Vector4f
 import org.saar.core.renderer.RenderContext
@@ -70,35 +69,20 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             uiLetter.font.bitmap.width,
             uiLetter.font.bitmap.height)
 
-        val advanceCoords = uiLetter.font.characters.takeWhile { it != uiLetter.character }
-            .fold(Vector2f()) { advance, current ->
-                advance.x += current.xAdvance
-                if (advance.x > uiLetter.font.bitmap.width) {
-                    advance.x = current.xAdvance
-                    advance.y += uiLetter.font.lineHeight
-                }
-
-                advance
-            }
-
-        if (advanceCoords.x + uiLetter.character.xAdvance > uiLetter.font.bitmap.width) {
-            advanceCoords.x = 0f
-            advanceCoords.y += uiLetter.font.lineHeight
-        }
-
         val advanceText = uiLetter.parent.children.takeWhile { it != uiLetter }
             .sumByDouble { it.character.xAdvance.toDouble() }.toFloat()
 
         this.bitmapBoundsUniform.value = Vector4f(
-            uiLetter.character.x0 + advanceCoords.x,
-            uiLetter.character.y0 + advanceCoords.y + uiLetter.font.lineHeight,
-            uiLetter.character.width.toFloat(),
-            uiLetter.character.height.toFloat())
+            uiLetter.character.bitmapBox.x0.toFloat(),
+            uiLetter.character.bitmapBox.y0.toFloat(),
+            uiLetter.character.bitmapBox.width.toFloat(),
+            uiLetter.character.bitmapBox.height.toFloat())
 
+        val localBox = uiLetter.character.localBox
         this.boundsUniform.value = Vector4f(
-            uiLetter.style.x.get() + uiLetter.character.x0 + advanceText,
-            uiLetter.style.y.get() + uiLetter.character.y0 + uiLetter.font.lineHeight,
-            uiLetter.character.width.toFloat(),
-            uiLetter.character.height.toFloat())
+            uiLetter.style.x.get() + localBox.x0 + advanceText,
+            uiLetter.style.y.get() + localBox.y0 + uiLetter.font.lineHeight,
+            localBox.width.toFloat(),
+            localBox.height.toFloat())
     }
 }

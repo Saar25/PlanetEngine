@@ -43,7 +43,7 @@ object FontLoader {
             override val bitmap = bitmapToTexture(bitmap, bitmapWidth, bitmapHeight)
 
             override val characters = characters.map {
-                FontCharacter(it.char, it.x0, it.y0, it.x1, it.y1, it.xAdvance)
+                FontCharacter(it.char, it.bitmapBox, it.localBox, it.xAdvance)
             }
 
             override val lineGap = lineGap
