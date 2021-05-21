@@ -123,7 +123,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
         for (char in charSequence) {
             val (advance) = getCodepointHMetrics(char)
 
-            val toAdvance = advance * this.scale
+            val toAdvance = (advance) * this.scale
 
             if (x + toAdvance > width) {
                 y += fontHeight

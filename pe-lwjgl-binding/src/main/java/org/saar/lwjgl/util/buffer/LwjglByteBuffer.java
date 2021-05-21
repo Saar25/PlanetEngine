@@ -158,6 +158,18 @@ public class LwjglByteBuffer implements LwjglBuffer {
     }
 
     @Override
+    public LwjglByteBuffer put(byte[] b) {
+        this.buffer.put(b);
+        return this;
+    }
+
+    @Override
+    public LwjglByteBuffer put(byte[] b, int offset, int length) {
+        this.buffer.put(b, offset, length);
+        return this;
+    }
+
+    @Override
     public int capacity() {
         return this.buffer.capacity();
     }

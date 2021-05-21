@@ -11,9 +11,13 @@ interface UINode : Node, UIElement, ForwardRenderNode {
 
     val uiBlocks: MutableList<UIBlock>
 
-    fun onMouseClickEvent(event: ClickEvent): Boolean
+    fun onMouseClickEvent(event: ClickEvent): Boolean {
+        return false
+    }
 
-    fun onMouseMoveEvent(event: MoveEvent)
+    fun onMouseMoveEvent(event: MoveEvent) {
+
+    }
 
     fun render(context: RenderContext) {
         UIRenderer.render(context, *this.uiBlocks.toTypedArray())
