@@ -6,7 +6,6 @@ import org.saar.lwjgl.glfw.window.Window
 class UIDisplay(private val window: Window) : UIContainer {
 
     override val children = mutableListOf<UINode>()
-    override val uiBlocks = mutableListOf<UIBlock>()
 
     override val style = WindowStyle(this.window)
 

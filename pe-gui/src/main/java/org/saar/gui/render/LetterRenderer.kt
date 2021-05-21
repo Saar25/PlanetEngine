@@ -86,7 +86,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             advanceCoords.y += uiLetter.font.size
         }
 
-        val advanceText = uiLetter.text.children.takeWhile { it != uiLetter }
+        val advanceText = uiLetter.parent.children.takeWhile { it != uiLetter }
             .sumByDouble { it.character.xAdvance.toDouble() }.toFloat()
 
         this.bitmapBoundsUniform.value = Vector4f(

@@ -10,24 +10,15 @@ import org.saar.gui.font.getCharacterOrDefault
 import org.saar.gui.render.LetterRenderer
 import org.saar.gui.style.Style
 
-class UILetter(parent: UIText, val font: Font, character: Char) : UIChildNode, Model {
-
-    override var parent: UIElement = parent
-    val text = parent
+class UILetter(override val parent: UIText, val font: Font, character: Char) : UIChildElement, Model {
 
     override val style: Style = Style(this)
 
     override val mesh: Mesh = QuadMesh
 
-    override val uiBlocks = mutableListOf<UIBlock>()
-
     val character: FontCharacter = this.font.getCharacterOrDefault(character)
 
-    override fun render(context: RenderContext) {
+    fun render(context: RenderContext) {
         LetterRenderer.render(context, this)
-    }
-
-    override fun delete() {
-        super<UIChildNode>.delete()
     }
 }

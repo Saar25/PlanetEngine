@@ -19,14 +19,10 @@ interface UIContainer : UINode {
     }
 
     override fun render(context: RenderContext) {
-        super.render(context)
-
         this.children.forEach { it.render(context) }
     }
 
     override fun delete() {
-        super.delete()
-
         this.children.forEach { it.delete() }
     }
 }

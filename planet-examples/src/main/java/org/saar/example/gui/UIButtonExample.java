@@ -31,12 +31,12 @@ public class UIButtonExample {
         final Font font = FontLoader.loadFont("C:/Windows/Fonts/comic.ttf",
                 48f, 512, 512, "Lwjgl!!, some symbols?5! = 1 * 2 * 3 * 4 * 5 = 120.");
 
-        final UIText uiText = new UIText(display, font, "Lwjgl!!, some symbols?");
+        final UIText uiText = new UIText(font, "Lwjgl!!, some symbols?");
         uiText.getStyle().getX().set(0);
         uiText.getStyle().getY().set(0);
         display.add(uiText);
 
-        final UIText uiText2 = new UIText(display, font, "5! = 1 * 2 * 3 * 4 * 5 = 120.");
+        final UIText uiText2 = new UIText(font, "5! = 1 * 2 * 3 * 4 * 5 = 120.");
         uiText2.getStyle().getX().set(0);
         uiText2.getStyle().getY().set((int) font.getSize());
         display.add(uiText2);
