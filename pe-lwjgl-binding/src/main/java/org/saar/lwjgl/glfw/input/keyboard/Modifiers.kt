@@ -6,7 +6,7 @@ class Modifiers(private val modifiers: Int) {
 
     fun isShift(): Boolean = checkBit(GLFW.GLFW_MOD_SHIFT)
 
-    fun isCtrl(): Boolean = checkBit(GLFW.GLFW_MOD_SHIFT)
+    fun isCtrl(): Boolean = checkBit(GLFW.GLFW_MOD_CONTROL)
 
     fun isAlt(): Boolean = checkBit(GLFW.GLFW_MOD_ALT)
 
