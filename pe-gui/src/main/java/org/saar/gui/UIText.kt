@@ -15,14 +15,12 @@ class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
     override val style = Style(this)
 
     var text: String by Delegates.observable(text) { _, _, newValue ->
-        this.letters = stringToUiLetters(newValue, this.maxWidth)
+        this.letters = stringToUiLetters(newValue, this.style.width.get())
     }
 
-    var maxWidth: Int by Delegates.observable(0) { _, _, newValue ->
-        this.letters = stringToUiLetters(this.text, newValue)
-    }
+    private var textWidth = 0
 
-    private var letters = stringToUiLetters(this.text, this.maxWidth)
+    private var letters = stringToUiLetters(this.text, this.textWidth)
 
     private fun stringToUiLetters(text: String, maxWidth: Int): List<Letter> {
         val advance = Vector2.of(0f, this.font.lineHeight)
@@ -44,6 +42,18 @@ class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
                 }
             }
         }
+    }
+
+    private fun validate() {
+        val maxWidth = this.style.width.get()
+        if (this.textWidth != maxWidth) {
+            this.letters = stringToUiLetters(this.text, maxWidth)
+            this.textWidth = maxWidth
+        }
+    }
+
+    override fun update() {
+        validate()
     }
 
     override fun render(context: RenderContext) {

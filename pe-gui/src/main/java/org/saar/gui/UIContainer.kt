@@ -18,6 +18,10 @@ interface UIContainer : UINode {
         }
     }
 
+    override fun update() {
+        this.children.forEach { it.update() }
+    }
+
     override fun render(context: RenderContext) {
         this.children.forEach { it.render(context) }
     }

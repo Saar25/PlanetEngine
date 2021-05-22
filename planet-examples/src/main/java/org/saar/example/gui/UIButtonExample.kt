@@ -2,6 +2,7 @@ package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContextBase
+import org.saar.core.util.Fps
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
@@ -57,14 +58,13 @@ object UIButtonExample {
         """.trimIndent()
 
         val writeable = UIText(font, text).apply {
-            style.x.set(0)
-
-            maxWidth = window.width
-            window.addResizeListener { e ->
-                maxWidth = e.width.after
-            }
+            style.x.set(center())
+            style.width.set(percent(50f))
         }
         display.add(writeable)
+
+        val uiFps = UIText(font, "Fps: ?")
+        display.add(uiFps)
 
         val keyboard = window.keyboard
 
@@ -76,11 +76,19 @@ object UIButtonExample {
             writeable.text = changeTextByKeyboard(font, writeable.text, e)
         }
 
+        val fps = Fps()
+
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            display.update()
+
             GlUtils.clearColourAndDepthBuffer()
-            display.renderForward(RenderContextBase(null))
+            display.render(RenderContextBase(null))
+
             window.update(true)
             window.pollEvents()
+
+            uiFps.text = "Fps: ${String.format("%.3f", fps.fps())}"
+            fps.update()
         }
 
         println(writeable.text)
