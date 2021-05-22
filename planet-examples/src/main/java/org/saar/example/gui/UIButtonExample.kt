@@ -63,7 +63,9 @@ object UIButtonExample {
         }
         display.add(writeable)
 
-        val uiFps = UIText(font, "Fps: ?")
+        val uiFps = UIText(font, "").apply {
+            fontSize = 22f
+        }
         display.add(uiFps)
 
         val keyboard = window.keyboard

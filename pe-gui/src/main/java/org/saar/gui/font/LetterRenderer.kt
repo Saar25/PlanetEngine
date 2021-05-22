@@ -75,16 +75,16 @@ private class LetterRendererPrototype : RendererPrototype<Letter> {
             letter.font.bitmap.width,
             letter.font.bitmap.height)
 
-        this.bitmapBoundsUniform.value = Vector4i(
-            letter.character.bitmapBox.x0,
-            letter.character.bitmapBox.y0,
-            letter.character.bitmapBox.width,
-            letter.character.bitmapBox.height)
+        this.bitmapBoundsUniform.value = letter.character.bitmapBox.toVector4i()
+
+        val bounds = letter.character.localBox.toVector4f()
+            .mul(letter.parent.fontScale)
+            .add(letter.advance.x(), letter.advance.y(), 0f, 0f)
 
         this.boundsUniform.value = Vector4i(
-            letter.character.localBox.x0 + letter.style.x.get() + letter.advance.x().toInt(),
-            letter.character.localBox.y0 + letter.style.y.get() + letter.advance.y().toInt(),
-            letter.character.localBox.width,
-            letter.character.localBox.height)
+            bounds.x().toInt() + letter.style.x.get(),
+            bounds.y().toInt() + letter.style.y.get(),
+            bounds.z().toInt(),
+            bounds.w().toInt())
     }
 }

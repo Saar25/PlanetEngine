@@ -1,6 +1,5 @@
 package org.saar.gui.font
 
-import org.saar.utils.Box2f
 import org.saar.utils.Box2i
 
 data class FontCharacter(
