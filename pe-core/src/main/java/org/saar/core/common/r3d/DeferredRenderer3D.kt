@@ -10,16 +10,25 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
+import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object DeferredRenderer3D : RendererPrototypeWrapper<Model3D>(DeferredRendererPrototype3D())
 
+private val matrix = Matrix4.create()
+
 private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
 
     @UniformProperty(UniformTrigger.PER_INSTANCE)
+    private val specularUniform = FloatUniformValue("u_specular")
+
+    @UniformProperty(UniformTrigger.PER_INSTANCE)
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -37,9 +46,13 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Model3D) {
+        this.specularUniform.value = model.specular
+
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix

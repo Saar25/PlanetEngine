@@ -40,7 +40,7 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    fun render(context: RenderContext, vararg models: T) {
+    fun render(context: RenderContext, models: Iterable<T>) {
         this.shadersProgram.bind()
 
         this.prototype.onRenderCycle(context)
@@ -50,6 +50,10 @@ abstract class RendererPrototypeWrapper<T : Model>(private val prototype: Render
         models.forEach { renderModel(context, it) }
 
         this.shadersProgram.unbind()
+    }
+
+    fun render(context: RenderContext, vararg models: T) {
+        this.render(context, models.asIterable())
     }
 
     private fun renderModel(context: RenderContext, model: T) {

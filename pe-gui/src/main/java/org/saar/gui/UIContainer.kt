@@ -18,15 +18,15 @@ interface UIContainer : UINode {
         }
     }
 
-    override fun render(context: RenderContext) {
-        super.render(context)
+    override fun update() {
+        this.children.forEach { it.update() }
+    }
 
+    override fun render(context: RenderContext) {
         this.children.forEach { it.render(context) }
     }
 
     override fun delete() {
-        super.delete()
-
         this.children.forEach { it.delete() }
     }
 }

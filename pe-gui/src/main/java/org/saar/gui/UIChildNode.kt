@@ -1,3 +1,7 @@
 package org.saar.gui
 
-interface UIChildNode : UINode, UIChildElement
+interface UIChildNode : UINode, UIChildElement {
+
+    override var parent: UIElement
+
+}

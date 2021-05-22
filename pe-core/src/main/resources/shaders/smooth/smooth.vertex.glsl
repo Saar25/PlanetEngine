@@ -11,6 +11,7 @@ layout (location = 3) in vec3 in_target;
 // Uniforms
 uniform mat4 u_mvpMatrix;
 uniform float u_targetScalar;
+uniform float u_normalMatrix;
 
 // Vertex outputs
 #if FLAT_SHADING
@@ -28,7 +29,7 @@ void main(void) {
     vec3 normal = in_normal + target;
 
     v_colour = in_colour;
-    v_normal = normalize(normal);
+    v_normal = (u_normalMatrix * vec4(normalize(normal)), 0).xyz;
 
     vec4 world = vec4(position, 1.0);
     gl_Position = u_mvpMatrix * world;

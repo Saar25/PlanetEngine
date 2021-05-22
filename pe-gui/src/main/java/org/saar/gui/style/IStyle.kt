@@ -1,6 +1,5 @@
 package org.saar.gui.style
 
-import org.joml.Vector4fc
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.ReadonlyStyleBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour

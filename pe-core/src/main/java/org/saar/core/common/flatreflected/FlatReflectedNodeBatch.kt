@@ -16,18 +16,18 @@ class FlatReflectedNodeBatch(vararg nodes: FlatReflectedNode) : ParentNode,
     }
 
     override fun renderForward(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        FlatReflectedRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        FlatReflectedRenderer.render(context, models)
     }
 
     override fun renderDeferred(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        FlatReflectedDeferredRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        FlatReflectedDeferredRenderer.render(context, models)
     }
 
     override fun renderShadows(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        FlatReflectedDeferredRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        FlatReflectedDeferredRenderer.render(context, models)
     }
 
     override fun delete() {

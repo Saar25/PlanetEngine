@@ -26,7 +26,7 @@ public class GuiExample {
 
         final UIDisplay display = new UIDisplay(window);
 
-        final UIGroup uiGroup = new UIGroup(display);
+        final UIGroup uiGroup = new UIGroup();
 
         final UISlider sizeUiSlider = new UISlider();
         sizeUiSlider.getStyle().getY().set(450);

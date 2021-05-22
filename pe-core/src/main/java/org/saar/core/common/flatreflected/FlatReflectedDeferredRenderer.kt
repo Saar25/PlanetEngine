@@ -9,6 +9,7 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
+import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
@@ -18,6 +19,8 @@ import org.saar.maths.utils.Matrix4
 
 object FlatReflectedDeferredRenderer :
     RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype())
+
+private val matrix = Matrix4.create()
 
 private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {
 
@@ -29,6 +32,16 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
 
     @UniformProperty
     private val normalUniform = Vec3UniformValue("u_normal")
+
+    @UniformProperty
+    private val specularUniform = object : FloatUniform() {
+        override fun getName() = "u_specular"
+
+        override fun getUniformValue() = 1f
+    }
+
+    @UniformProperty
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     @ShaderProperty(ShaderType.VERTEX)
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -46,6 +59,8 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         GlUtils.enableAlphaBlending()
         GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {

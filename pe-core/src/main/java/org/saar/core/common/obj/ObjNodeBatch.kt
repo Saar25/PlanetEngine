@@ -16,18 +16,18 @@ class ObjNodeBatch(vararg nodes: ObjNode) : ParentNode,
     }
 
     override fun renderForward(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        ObjRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        ObjRenderer.render(context, models)
     }
 
     override fun renderDeferred(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        ObjDeferredRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        ObjDeferredRenderer.render(context, models)
     }
 
     override fun renderShadows(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        ObjDeferredRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        ObjDeferredRenderer.render(context, models)
     }
 
     override fun delete() {

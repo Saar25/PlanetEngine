@@ -21,3 +21,10 @@ vec3 viewSpaceToWorldSpace(const vec3 viewSpace, const mat4 viewInv) {
 vec3 calcViewDirection(const vec3 cameraWorldSpace, const vec3 fragWorldSpace) {
     return normalize(cameraWorldSpace - fragWorldSpace);
 }
+
+vec3 calculateNormal(const vec2 normal) {
+    float x2 = pow(normal.x, 2);
+    float y2 = pow(normal.y, 2);
+    float z = sqrt(1 - x2 - y2);
+    return vec3(normal, z);
+}

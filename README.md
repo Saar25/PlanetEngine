@@ -137,7 +137,7 @@ usually holds the model and a renderer, and has at least one render method
 final Model3D cubeModel = buildCubeModel();
 final Node3D cube = new Node3D(cubeModel);
 
-cube.render(new RenderContextBase(camera))
+cube.renderForward(new RenderContextBase(camera))
 ```
 
 ### Renderer
@@ -149,7 +149,7 @@ Prototype objects are used in order to write a unique rendering pipeline
 
 // Connect uniforms in the shaders to our code
 @UniformProperty(UniformTrigger.PER_INSTANCE)
-private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
+private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
 // Use vertex and fragment shaders in the shaders program
 @ShaderProperty(ShaderType.VERTEX)
@@ -223,20 +223,38 @@ pipeline.process(texture).toMainScreen();
 The Gui architecture is already implemented  
 with some useful ui components like UISlider and UIButton
 
-```java
-// org.saar.example.gui.UIButtonExample.java
+```kotlin
+// org.saar.example.gui.UIButtonExample.kt
 
-final UIDisplay display = new UIDisplay(window);
+val display = UIDisplay(window)
 
-final UIButton uiButton = new UIButton();
-        uiButton.getStyle().getX().set(CoordinateValues.center());
-        uiButton.getStyle().getY().set(CoordinateValues.center());
-        uiButton.getStyle().getWidth().set(LengthValues.percent(50));
-        uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
-        uiButton.setOnAction(e -> System.out.println("Clicked!"));
-        display.add(uiButton);
+val uiButton = UIButton().apply {
+    style.x.value = center()
+    style.y.value = center()
+    style.width.value = percent(50f)
+    style.height.value = ratio(.5f)
+    setOnAction { println("Clicked!") }
+}
+display.add(uiButton)
 
-        display.renderForward(new RenderContextBase(null));
+display.render(RenderContextBase(null))
+```
+
+### Text rendering
+
+Together with the gui, text components are also included  
+allowing you to load ttf fonts and render text using simple operations
+
+```kotlin
+val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
+val uiText = UIText(font, "The quick brown fox jumps over the lazy dog").apply {
+    style.width.value = fitContent()
+    style.x.value = center()
+    style.y.value = center()
+}
+display.add(uiText)
 ```
 
 ### Behaviors
@@ -247,12 +265,15 @@ allowing better composition and reusable code
 
 ```java
 final BehaviorGroup behaviors = new BehaviorGroup(
-        // Move with WASD at 50 units per second
-        new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
-        // Change movement velocity by the mouse scroll
-        new KeyboardMovementScrollVelocityBehavior(mouse),
-        // Rotate by the mouse movement
-        new MouseRotationBehavior(mouse, -.3f));
+    // Move with WASD at 50 units per second
+    new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
+    
+    // Change movement velocity by the mouse scroll
+    new KeyboardMovementScrollVelocityBehavior(mouse),
+    
+    // Rotate by the mouse movement
+    new MouseRotationBehavior(mouse, -.3f)
+);
 
 final Camera camera = new Camera(projection, behaviors);
 ```

@@ -4,16 +4,9 @@ import org.joml.Vector4i
 import org.joml.Vector4ic
 import org.saar.maths.utils.Maths
 
-class Bounds(private val style: Style) : StyleProperty {
+class Bounds(private val style: IStyle) : StyleProperty {
 
     private val vector = Vector4i()
-
-    fun set(bounds: Bounds) {
-        this.style.x.value = bounds.style.x.value
-        this.style.y.value = bounds.style.y.value
-        this.style.width.value = bounds.style.width.value
-        this.style.height.value = bounds.style.height.value
-    }
 
     fun xMax(): Int {
         val x = this.style.x.get()

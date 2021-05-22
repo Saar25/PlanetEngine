@@ -9,9 +9,11 @@ public class Keyboard {
 
     private final long window;
 
-    private EventListenersHelper<KeyPressEvent> helperKeyPress = EventListenersHelper.empty();
+    private EventListenersHelper<KeyEvent> helperKeyPress = EventListenersHelper.empty();
 
-    private EventListenersHelper<KeyReleaseEvent> helperKeyRelease = EventListenersHelper.empty();
+    private EventListenersHelper<KeyEvent> helperKeyRelease = EventListenersHelper.empty();
+
+    private EventListenersHelper<KeyEvent> helperKeyRepeat = EventListenersHelper.empty();
 
     public Keyboard(long window) {
         this.window = window;
@@ -21,11 +23,14 @@ public class Keyboard {
     public void init() {
         GLFW.glfwSetKeyCallback(window, (window, key, scanCode, action, mods) -> {
             if (action == KeyState.PRESS.get()) {
-                final KeyPressEvent event = new KeyPressEvent(key);
+                final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
                 this.helperKeyPress.fireEvent(event);
             } else if (action == KeyState.RELEASE.get()) {
-                final KeyReleaseEvent event = new KeyReleaseEvent(key);
+                final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
                 this.helperKeyRelease.fireEvent(event);
+            } else if (action == KeyState.REPEAT.get()) {
+                final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
+                this.helperKeyRepeat.fireEvent(event);
             }
         });
     }
@@ -66,27 +71,35 @@ public class Keyboard {
         return false;
     }
 
-    public void addKeyPressListener(EventListener<KeyPressEvent> listener) {
+    public void addKeyPressListener(EventListener<KeyEvent> listener) {
         this.helperKeyPress = this.helperKeyPress.addListener(listener);
     }
 
-    public void addKeyReleaseListener(EventListener<KeyReleaseEvent> listener) {
+    public void addKeyReleaseListener(EventListener<KeyEvent> listener) {
         this.helperKeyRelease = this.helperKeyRelease.addListener(listener);
     }
 
-    public void removeKeyPressListener(EventListener<KeyPressEvent> listener) {
+    public void addKeyRepeatListener(EventListener<KeyEvent> listener) {
+        this.helperKeyRepeat = this.helperKeyRepeat.addListener(listener);
+    }
+
+    public void removeKeyPressListener(EventListener<KeyEvent> listener) {
         this.helperKeyPress = this.helperKeyPress.removeListener(listener);
     }
 
-    public void removeKeyReleaseListener(EventListener<KeyReleaseEvent> listener) {
+    public void removeKeyReleaseListener(EventListener<KeyEvent> listener) {
         this.helperKeyRelease = this.helperKeyRelease.removeListener(listener);
     }
 
-    public OnAction<KeyPressEvent> onKeyPress(char keyChar) {
+    public void removeKeyRepeatListener(EventListener<KeyEvent> listener) {
+        this.helperKeyRepeat = this.helperKeyRepeat.removeListener(listener);
+    }
+
+    public OnAction<KeyEvent> onKeyPress(char keyChar) {
         return onKeyPress((int) keyChar);
     }
 
-    public OnAction<KeyPressEvent> onKeyPress(int keyCode) {
+    public OnAction<KeyEvent> onKeyPress(int keyCode) {
         return listener -> addKeyPressListener(e -> {
             if (e.getKeyCode() == keyCode) {
                 listener.onEvent(e);
@@ -94,7 +107,7 @@ public class Keyboard {
         });
     }
 
-    public OnAction<KeyReleaseEvent> onKeyRelease(int keyCode) {
+    public OnAction<KeyEvent> onKeyRelease(int keyCode) {
         return listener -> addKeyReleaseListener(e -> {
             if (e.getKeyCode() == keyCode) {
                 listener.onEvent(e);

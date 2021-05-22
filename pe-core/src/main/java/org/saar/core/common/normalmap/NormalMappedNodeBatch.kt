@@ -16,18 +16,18 @@ class NormalMappedNodeBatch(vararg nodes: NormalMappedNode) : ParentNode,
     }
 
     override fun renderForward(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        NormalMappedRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        NormalMappedRenderer.render(context, models)
     }
 
     override fun renderDeferred(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        NormalMappedDeferredRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        NormalMappedDeferredRenderer.render(context, models)
     }
 
     override fun renderShadows(context: RenderContext) {
-        val models = this.children.map { it.model }.toTypedArray()
-        NormalMappedDeferredRenderer.render(context, *models)
+        val models = this.children.map { it.model }
+        NormalMappedDeferredRenderer.render(context, models)
     }
 
     override fun delete() {

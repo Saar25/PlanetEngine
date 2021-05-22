@@ -11,7 +11,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 
 class DeferredRenderPassesPipeline(private vararg val renderPasses: DeferredRenderPass) {
 
-    private val prototype = RenderPassesScreenPrototype()
+    private val prototype = DeferredRenderPassesScreenPrototype()
 
     private val screen: OffScreen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
@@ -31,7 +31,7 @@ class DeferredRenderPassesPipeline(private vararg val renderPasses: DeferredRend
             renderPass.render(context, currentBuffers)
 
             currentBuffers = DeferredRenderingBuffers(this.colourTexture,
-                currentBuffers.normal, currentBuffers.depth)
+                currentBuffers.normal, currentBuffers.specular, currentBuffers.depth)
         }
 
         return DeferredRenderingOutput(this.screen, this.colourTexture, buffers.depth)

@@ -5,15 +5,10 @@ import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
-import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
@@ -21,36 +16,29 @@ import org.saar.core.common.terrain.height.NoiseHeightGenerator;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
+import org.saar.core.fog.Fog;
+import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
+import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
-import org.saar.core.renderer.shadow.ShadowsQuality;
-import org.saar.core.renderer.shadow.ShadowsRenderNode;
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
-import org.saar.core.renderer.shadow.ShadowsRenderingPath;
+import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.textures.ColourTexture;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlUtils;
-import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
-
-import java.util.Objects;
 
 public class TerrainExample {
 
@@ -78,19 +66,13 @@ public class TerrainExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final ObjModel dragonModel = buildDragonModel();
-        final ObjNode dragon = new ObjNode(dragonModel);
-
-        final ObjModel stallModel = buildStallModel();
-        final ObjNode stall = new ObjNode(stallModel);
-
         final LowPolyWorld world = new LowPolyWorld(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
                 new NoiseHeightGenerator(SimplexNoise::noise),
                 new NormalColourGenerator(Vector3.upward(),
                         new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(256, 256), 50
+                Vector2.of(256, 256), 100
         ));
 
         for (int x = -5; x <= 5; x++) {
@@ -104,14 +86,14 @@ public class TerrainExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(dragon, stall, cube);
-        final ShadowsRenderingPath shadowsRenderingPath = buildShadowsRenderingPath(shadowsRenderNode, light);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
+        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light);
 
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(dragon, stall, cube, world);
-        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, shadowsRenderingPath, light);
+        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 450);
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
+                new FogPostProcessor(fog, true, FogDistance.XZ),
                 new FxaaPostProcessor()
         );
 
@@ -121,7 +103,7 @@ public class TerrainExample {
 
             final PostProcessingBuffers buffers =
                     renderingPath.render().asPostProcessingInput();
-            postProcessing.process(buffers).toMainScreen();
+            postProcessing.process(camera, buffers).toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -136,22 +118,8 @@ public class TerrainExample {
         }
 
         camera.delete();
-        shadowsRenderingPath.delete();
         renderingPath.delete();
         window.destroy();
-    }
-
-    private static ObjModel buildDragonModel() {
-        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
-        dragonModel.getTransform().getPosition().set(50, 0, 0);
-        return dragonModel;
-    }
-
-    private static ObjModel buildStallModel() {
-        final ObjModel stallModel = Objects.requireNonNull(loadStall());
-        stallModel.getTransform().getPosition().set(-50, 0, 0);
-        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
-        return stallModel;
     }
 
     private static Model3D buildCubeModel() {
@@ -170,44 +138,12 @@ public class TerrainExample {
         return light;
     }
 
-    private static ShadowsRenderingPath buildShadowsRenderingPath(ShadowsRenderNode renderNode, DirectionalLight light) {
-        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-                -100, 100, -100, 100, -100, 100);
-        return new ShadowsRenderingPath(ShadowsQuality.HIGH,
-                shadowProjection, light, renderNode);
-    }
-
-    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
-
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+                new LightRenderPass()
         );
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
-    }
-
-    private static ObjModel loadStall() {
-        try {
-            final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
-            final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static ObjModel loadDragon() {
-        try {
-            final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
-            final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }
