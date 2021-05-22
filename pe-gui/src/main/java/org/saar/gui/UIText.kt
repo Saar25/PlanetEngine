@@ -2,6 +2,7 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.Font
+import org.saar.gui.render.LetterRenderer
 import org.saar.gui.style.Style
 import kotlin.properties.Delegates
 
@@ -27,7 +28,7 @@ class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
     }
 
     override fun render(context: RenderContext) {
-        this.letters.forEach { it.render(context) }
+        LetterRenderer.render(context, this.letters)
     }
 
     override fun delete() = this.letters.forEach { it.delete() }

@@ -2,10 +2,7 @@ package org.saar.gui.render
 
 import org.joml.Vector2i
 import org.joml.Vector4i
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
@@ -21,7 +18,17 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Vec4iUniformValue
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-object LetterRenderer : Renderer, RendererPrototypeWrapper<UILetter>(LetterRendererPrototype())
+object LetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter> {
+
+    private val prototype = LetterRendererPrototype()
+    private val helper = RendererPrototypeHelper(this.prototype)
+
+    override fun render(context: RenderContext, models: Iterable<UILetter>) {
+        this.helper.render(context, models)
+    }
+
+    override fun delete() = this.helper.delete()
+}
 
 private class LetterRendererPrototype : RendererPrototype<UILetter> {
 
