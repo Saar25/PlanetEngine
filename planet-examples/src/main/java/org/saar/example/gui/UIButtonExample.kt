@@ -39,10 +39,10 @@ object UIButtonExample {
         val display = UIDisplay(window)
 
         val uiButton = UIButton().apply {
-            style.x.set(center())
-            style.y.set(center())
-            style.width.set(percent(50f))
-            style.height.set(ratio(.5f))
+            style.x.value = center()
+            style.y.value = center()
+            style.width.value = percent(50f)
+            style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         }
         display.add(uiButton)
