@@ -5,7 +5,7 @@ import org.saar.gui.style.value.TextLengthValues
 
 abstract class TextLength : ReadonlyTextLength {
 
-    var value: TextLengthValue = TextLengthValues.inherit
+    var value: TextLengthValue = TextLengthValues.fitContent()
 
     fun set(value: TextLengthValue) {
         this.value = value

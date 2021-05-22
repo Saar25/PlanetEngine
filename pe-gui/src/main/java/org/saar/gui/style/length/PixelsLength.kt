@@ -1,14 +1,14 @@
 package org.saar.gui.style.length
 
-import org.saar.gui.style.value.LengthValue
-import org.saar.gui.style.value.LengthValues
+import org.saar.gui.UIText
 
-abstract class PixelsLength : ReadonlyLength {
+class PixelsLength(var value: Int = 0) : ReadonlyLength {
 
-    var value: LengthValue.Simple = LengthValues.zero
-        private set
+    constructor(uiText: UIText) : this(uiText.font.size.toInt())
 
     fun set(pixels: Int) {
-        this.value = LengthValues.pixels(pixels)
+        this.value = pixels
     }
+
+    override fun get() = this.value
 }

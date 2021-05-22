@@ -59,13 +59,13 @@ object UIButtonExample {
         """.trimIndent()
 
         val writeable = UIText(font, text).apply {
-            style.x.set(center())
-            style.width.set(fitContent())
+            style.x.value = center()
+            style.width.value = fitContent()
         }
         display.add(writeable)
 
         val uiFps = UIText(font, "").apply {
-            style.fontSize.set(22)
+            style.fontSize.value = 22
         }
         display.add(uiFps)
 

@@ -20,8 +20,7 @@ class TextStyle(container: UIText) : ITextStyle {
 
     override val height: TextLength = TextLengths.Height(container)
 
-    override val fontSize: PixelsLength = Lengths.Pixels(container)
-        .apply { set(container.font.size.toInt()) }
+    override val fontSize: PixelsLength = PixelsLength(container)
 
     override val contentWidth: Length = Lengths.Width(container)
 

@@ -15,10 +15,4 @@ object Lengths {
         override fun get(): Int = this.value.computeAxisY(
             this.container.parent.style, this.container.style)
     }
-
-    class Pixels(private val container: UIChildElement) : PixelsLength() {
-
-        override fun get(): Int = this.value.compute(
-            this.container.parent.style, this.container.style)
-    }
 }
