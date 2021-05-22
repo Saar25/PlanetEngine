@@ -8,15 +8,15 @@ import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
 
-class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
-
-    override var parent: UIElement = UINullElement
+class UIText(val font: Font, text: String) : UIChildNode, UIElement {
 
     override val style = TextStyle(this)
 
-    var fontSize: Float = this.font.size
+    val fontScale: Float get() = this.style.fontSize.get() / this.font.size
 
-    val fontScale: Float get() = this.fontSize / this.font.size
+    override var parent: UIElement by Delegates.observable(UINullElement) { _, _, _ ->
+        this.letters = stringToUiLetters(this.text, this.style.width.get())
+    }
 
     var text: String by Delegates.observable(text) { _, _, newValue ->
         this.letters = stringToUiLetters(newValue, this.style.width.get())
@@ -24,7 +24,7 @@ class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
 
     private var textWidth = 0
 
-    private var letters = stringToUiLetters(this.text, this.textWidth)
+    private var letters = emptyList<Letter>()
 
     private fun stringToUiLetters(text: String, maxWidth: Int): List<Letter> {
         val advance = Vector2.of(0f, this.font.lineHeight * this.fontScale)

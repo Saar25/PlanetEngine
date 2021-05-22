@@ -65,7 +65,7 @@ object UIButtonExample {
         display.add(writeable)
 
         val uiFps = UIText(font, "").apply {
-            fontSize = 22f
+            style.fontSize.set(22)
         }
         display.add(uiFps)
 

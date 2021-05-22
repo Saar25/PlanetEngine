@@ -21,12 +21,11 @@ class TextStyle(container: UIText) : ITextStyle {
     override val height: TextLength = TextLengths.Height(container)
 
     override val fontSize: PixelsLength = Lengths.Pixels(container)
+        .apply { set(container.font.size.toInt()) }
 
     override val contentWidth: Length = Lengths.Width(container)
 
     override val contentHeight: Length = Lengths.Height(container)
-
-    val bounds: Bounds = Bounds(this)
 
     override val colourModifier: ColourModifier = ColourModifier(container)
 
