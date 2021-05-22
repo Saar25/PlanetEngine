@@ -49,27 +49,20 @@ object UIButtonExample {
             (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
         )
 
-        val uiText = UIText(font, "Lwjgl!!, some symbols?").apply {
-            style.x.set(0)
-            style.y.set(0)
-        }
-        display.add(uiText)
+        val text = """
+            Lwjgl!!, some symbols?
+            5! = 1 * 2 * 3 * 4 * 5 = 120.
+            ${"משפט זה עשוי להכיל תוכן מגניב".reversed()}
+            write here
+        """.trimIndent()
 
-        val uiText2 = UIText(font, "5! = 1 * 2 * 3 * 4 * 5 = 120.").apply {
+        val writeable = UIText(font, text).apply {
             style.x.set(0)
-            style.y.set(font.size.toInt())
-        }
-        display.add(uiText2)
 
-        val uiText3 = UIText(font, "משפט זה עשוי להכיל תוכן מגניב".reversed()).apply {
-            style.x.set(0)
-            style.y.set(font.size.toInt() * 2)
-        }
-        display.add(uiText3)
-
-        val writeable = UIText(font, "write here").apply {
-            style.x.set(0)
-            style.y.set(font.size.toInt() * 3)
+            maxWidth = window.width
+            window.addResizeListener { e ->
+                maxWidth = e.width.after
+            }
         }
         display.add(writeable)
 
@@ -90,6 +83,8 @@ object UIButtonExample {
             window.pollEvents()
         }
 
+        println(writeable.text)
+
         font.delete()
         display.delete()
         window.destroy()
@@ -99,10 +94,13 @@ object UIButtonExample {
         return when {
             e.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
                 if (e.modifiers.isCtrl()) {
-                    text.dropLast(text.length - text.lastIndexOf(' '))
+                    text.dropLast(text.length - text.lastIndexOfAny(charArrayOf(' ', '\n')))
                 } else {
                     text.dropLast(1)
                 }
+            }
+            e.keyCode == GLFW.GLFW_KEY_ENTER -> {
+                text + '\n'
             }
             font.characters.any { it.char == e.keyCode.toChar() } -> {
                 text + when {

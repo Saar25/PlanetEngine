@@ -81,11 +81,10 @@ private class LetterRendererPrototype : RendererPrototype<Letter> {
             letter.character.bitmapBox.width,
             letter.character.bitmapBox.height)
 
-        val localBox = letter.character.localBox
         this.boundsUniform.value = Vector4i(
-            letter.style.x.get() + localBox.x0 + letter.xAdvance.toInt(),
-            letter.style.y.get() + localBox.y0 + letter.font.lineHeight.toInt(),
-            localBox.width,
-            localBox.height)
+            letter.character.localBox.x0 + letter.style.x.get() + letter.advance.x().toInt(),
+            letter.character.localBox.y0 + letter.style.y.get() + letter.advance.y().toInt(),
+            letter.character.localBox.width,
+            letter.character.localBox.height)
     }
 }
