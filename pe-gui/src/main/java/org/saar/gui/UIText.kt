@@ -37,11 +37,11 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
             val xAdvance = character.xAdvance * this.fontScale
             val yAdvance = this.font.lineHeight * this.fontScale
 
-            contentWidth = contentWidth.coerceAtLeast(advance.x + xAdvance)
-
             if (maxWidth > 0 && advance.x + xAdvance > maxWidth) {
                 advance.y += yAdvance
                 advance.x = 0f
+            } else if (char != '\n') {
+                contentWidth = contentWidth.coerceAtLeast(advance.x + xAdvance)
             }
 
             Letter(this, this.font, character, Vector2.of(advance)).also {
@@ -61,7 +61,7 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
     private var textWidth = 0
 
     private fun validate() {
-        val maxWidth = this.style.width.get()
+        val maxWidth = this.style.width.getMax()
         if (this.textWidth != maxWidth) {
             this.textWidth = maxWidth
             updateLetters()
