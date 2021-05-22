@@ -40,10 +40,11 @@ import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.gui.UIBlock;
-import org.saar.gui.UIComponent;
-import org.saar.gui.UIDisplay;
+import org.saar.gui.*;
+import org.saar.gui.font.Font;
+import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;
+import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -74,7 +75,7 @@ public class ReflectionExample {
         final UIDisplay uiDisplay = new UIDisplay(window);
 
         final UIBlock reflectionUiBlock = new UIBlock();
-        reflectionUiBlock.getStyle().getX().set(30);
+        reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
         reflectionUiBlock.getStyle().getY().set(30);
         reflectionUiBlock.getStyle().getWidth().set(300);
         reflectionUiBlock.getStyle().getHeight().set(
@@ -86,6 +87,27 @@ public class ReflectionExample {
         uiComponent.add(reflectionUiBlock);
 
         uiDisplay.add(uiComponent);
+
+        final Font font = FontLoader.loadFont(
+                "C:/Windows/Fonts/arial.ttf",
+                22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
+
+        final UIGroup uiTextGroup = new UIGroup();
+        uiTextGroup.getStyle().getX().set(30);
+        uiTextGroup.getStyle().getY().set(30);
+
+        final UIText uiFps = new UIText(font, "Fps: ???");
+        uiTextGroup.add(uiFps);
+
+        final UIText uiSpeed = new UIText(font, "Speed: ???");
+        uiSpeed.getStyle().getY().set((int) font.getSize());
+        uiTextGroup.add(uiSpeed);
+
+        final UIText uiDelta = new UIText(font, "Delta: ???");
+        uiDelta.getStyle().getY().set((int) font.getSize() * 2);
+        uiTextGroup.add(uiDelta);
+
+        uiDisplay.add(uiTextGroup);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);
@@ -142,6 +164,7 @@ public class ReflectionExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             renderNode.update();
             camera.update();
+            uiDisplay.update();
 
             shadowsRenderingPath.render();
             reflection.updateReflectionMap();
@@ -153,17 +176,14 @@ public class ReflectionExample {
             postProcessingPipeline.process(camera, buffers).toMainScreen();
 
             reflectionUiBlock.setTexture(reflection.getReflectionMap());
-            uiDisplay.renderForward(new RenderContextBase(null));
+            uiDisplay.render(new RenderContextBase(null));
 
             window.update(true);
             window.pollEvents();
 
-            final long delta = (long) (fps.delta() * 1000);
-
-            System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
-                    ", Fps: " + String.format("%.2f", fps.fps()) +
-                    ", Delta: " + delta);
+            uiFps.setText(String.format("Fps: %.2f", fps.fps()));
+            uiSpeed.setText(String.format("Speed: %.2f", cameraMovementBehavior.getVelocity().x()));
+            uiDelta.setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
 
             fps.update();
         }

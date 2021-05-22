@@ -61,6 +61,28 @@ object CoordinateValues {
     }
 
     @JvmStatic
+    fun pixelsEnd(pixels: Int) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return parent.x.get() + parent.width.get() - pixels - style.width.get()
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return parent.y.get() + parent.height.get() - pixels - style.height.get()
+        }
+    }
+
+    @JvmStatic
+    fun percentEnd(percents: Float) = object : CoordinateValue {
+        override fun computeAxisX(parent: IStyle, style: IStyle): Int {
+            return parent.x.get() + (parent.width.get() * percents / 100).toInt() - style.width.get()
+        }
+
+        override fun computeAxisY(parent: IStyle, style: IStyle): Int {
+            return parent.y.get() + (parent.height.get() * percents / 100).toInt() - style.height.get()
+        }
+    }
+
+    @JvmStatic
     fun add(a: CoordinateValue, b: CoordinateValue) = object : CoordinateValue {
         override fun computeAxisX(parent: IStyle, style: IStyle): Int {
             return a.computeAxisX(parent, style) + b.computeAxisX(parent, style)
