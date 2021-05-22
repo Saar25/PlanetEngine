@@ -30,5 +30,8 @@ object TextLengthValues {
     fun fitContent() = object : TextLengthValue {
         override fun computeAxisX(parent: IStyle, style: ITextStyle) = style.contentWidth.get()
         override fun computeAxisY(parent: IStyle, style: ITextStyle) = style.contentHeight.get()
+
+        override fun computeMaxAxisX(parent: IStyle, style: ITextStyle) = parent.width.get()
+        override fun computeMaxAxisY(parent: IStyle, style: ITextStyle) = parent.height.get()
     }
 }

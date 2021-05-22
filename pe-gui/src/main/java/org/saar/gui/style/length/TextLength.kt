@@ -14,4 +14,6 @@ abstract class TextLength : ReadonlyTextLength {
     fun set(pixels: Int) {
         this.value = TextLengthValues.pixels(pixels)
     }
+
+    abstract fun getMax(): Int
 }
