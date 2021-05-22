@@ -8,9 +8,9 @@ interface TextLengthValue {
 
     fun computeAxisY(parent: IStyle, style: ITextStyle): Int
 
-    fun computeMaxAxisX(parent: IStyle, style: ITextStyle): Int = computeMaxAxisX(parent, style)
+    fun computeMaxAxisX(parent: IStyle, style: ITextStyle): Int = computeAxisX(parent, style)
 
-    fun computeMaxAxisY(parent: IStyle, style: ITextStyle): Int = computeMaxAxisY(parent, style)
+    fun computeMaxAxisY(parent: IStyle, style: ITextStyle): Int = computeAxisY(parent, style)
 
     fun interface Simple : TextLengthValue {
         fun compute(parent: IStyle, style: ITextStyle): Int

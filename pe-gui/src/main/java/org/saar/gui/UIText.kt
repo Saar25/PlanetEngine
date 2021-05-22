@@ -15,25 +15,29 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
     val fontScale: Float get() = this.style.fontSize.get() / this.font.size
 
     override var parent: UIElement by Delegates.observable(UINullElement) { _, _, _ ->
-        this.letters = stringToUiLetters(this.text, this.style.width.get())
+        updateLetters()
     }
 
-    var text: String by Delegates.observable(text) { _, _, newValue ->
-        this.letters = stringToUiLetters(newValue, this.style.width.get())
+    var text: String by Delegates.observable(text) { _, _, _ ->
+        updateLetters()
     }
-
-    private var textWidth = 0
 
     private var letters = emptyList<Letter>()
 
-    private fun stringToUiLetters(text: String, maxWidth: Int): List<Letter> {
+    private fun updateLetters() {
+        val maxWidth = this.style.width.getMax()
+
         val advance = Vector2.of(0f, this.font.lineHeight * this.fontScale)
 
-        return text.map { char ->
+        var contentWidth = 0f
+
+        this.letters = this.text.mapNotNull { char ->
             val character = this.font.getCharacterOrDefault(char)
 
             val xAdvance = character.xAdvance * this.fontScale
             val yAdvance = this.font.lineHeight * this.fontScale
+
+            contentWidth = contentWidth.coerceAtLeast(advance.x + xAdvance)
 
             if (maxWidth > 0 && advance.x + xAdvance > maxWidth) {
                 advance.y += yAdvance
@@ -49,13 +53,18 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
                 }
             }
         }
+
+        this.style.contentWidth.set(contentWidth.toInt())
+        this.style.contentHeight.set(advance.y.toInt())
     }
+
+    private var textWidth = 0
 
     private fun validate() {
         val maxWidth = this.style.width.get()
         if (this.textWidth != maxWidth) {
-            this.letters = stringToUiLetters(this.text, maxWidth)
             this.textWidth = maxWidth
+            updateLetters()
         }
     }
 
