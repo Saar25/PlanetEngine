@@ -4,7 +4,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.Font
 import org.saar.gui.font.Letter
 import org.saar.gui.font.LetterRenderer
-import org.saar.gui.style.Style
+import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
 
@@ -12,7 +12,7 @@ class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
 
     override var parent: UIElement = UINullElement
 
-    override val style = Style(this)
+    override val style = TextStyle(this)
 
     var fontSize: Float = this.font.size
 
