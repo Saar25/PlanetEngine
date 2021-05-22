@@ -2,7 +2,8 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.Font
-import org.saar.gui.render.LetterRenderer
+import org.saar.gui.font.LetterRenderer
+import org.saar.gui.font.Letter
 import org.saar.gui.style.Style
 import kotlin.properties.Delegates
 
@@ -18,10 +19,10 @@ class UIText(private val font: Font, text: String) : UIChildNode, UIElement {
 
     private var letters = stringToUiLetters(text)
 
-    private fun stringToUiLetters(text: String): List<UILetter> {
+    private fun stringToUiLetters(text: String): List<Letter> {
         var xAdvance = 0f
         return text.map { char ->
-            UILetter(this, this.font, char, xAdvance).also { letter ->
+            Letter(this, this.font, char, xAdvance).also { letter ->
                 xAdvance += letter.character.xAdvance
             }
         }

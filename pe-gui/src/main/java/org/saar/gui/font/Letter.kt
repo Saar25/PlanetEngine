@@ -1,14 +1,14 @@
-package org.saar.gui
+package org.saar.gui.font
 
 import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.Model
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.gui.font.Font
-import org.saar.gui.font.FontCharacter
+import org.saar.gui.UIChildElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Style
 
-class UILetter(override val parent: UIText, val font: Font,
-               char: Char, val xAdvance: Float) : UIChildElement, Model {
+class Letter(override val parent: UIText, val font: Font,
+             char: Char, val xAdvance: Float) : UIChildElement, Model {
 
     override val style: Style = Style(this)
 

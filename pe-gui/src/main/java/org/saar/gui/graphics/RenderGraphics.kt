@@ -1,10 +1,9 @@
-package org.saar.gui.graphics.render
+package org.saar.gui.graphics
 
 import org.joml.Vector2i
 import org.joml.Vector2ic
 import org.saar.core.mesh.Model
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.gui.graphics.Graphics
 import org.saar.gui.style.Colour
 import org.saar.gui.style.Colours
 import org.saar.lwjgl.glfw.window.Window
