@@ -2,13 +2,20 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.Font
+import org.saar.gui.font.FontLoader
 import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer
 import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
 
-class UIText(val font: Font, text: String) : UIChildNode, UIElement {
+class UIText(val font: Font = FontLoader.DEFAULT_FONT, text: String = "") : UIChildNode, UIElement {
+
+    constructor() : this(FontLoader.DEFAULT_FONT, "")
+
+    constructor(font: Font) : this(font, "")
+
+    constructor(text: String) : this(FontLoader.DEFAULT_FONT, text)
 
     override val style = TextStyle(this)
 
@@ -19,7 +26,7 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
     }
 
     var text: String by Delegates.observable(text) { _, _, _ ->
-        updateLetters()
+        if (this.parent != UINullElement) updateLetters()
     }
 
     private var letters = emptyList<UILetter>()

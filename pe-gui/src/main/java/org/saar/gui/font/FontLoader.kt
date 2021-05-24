@@ -15,6 +15,8 @@ import java.io.File
 
 object FontLoader {
 
+    val DEFAULT_FONT: Font by lazy { loadFont("C:/Windows/Fonts/segoeui.ttf", 48f, 512, 512) }
+
     private val DEFAULT_CHAR_SEQUENCE = (0x20.toChar()..0x7e.toChar()).joinToString("")
 
     private fun File.readToLwjglBuffer(): ReadonlyLwjglBuffer {

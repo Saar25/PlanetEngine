@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContextBase
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIText
-import org.saar.gui.font.FontLoader
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.TextLengthValues.fitContent
 import org.saar.lwjgl.glfw.window.Window
@@ -21,9 +20,7 @@ object HelloWorldExample {
 
         val display = UIDisplay(window)
 
-        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512)
-
-        val writeable = UIText(font, "Hello World!").apply {
+        val writeable = UIText("Hello World!").apply {
             style.x.value = center()
             style.y.value = center()
             style.width.value = fitContent()
@@ -43,7 +40,6 @@ object HelloWorldExample {
             window.pollEvents()
         }
 
-        font.delete()
         display.delete()
         window.destroy()
     }
