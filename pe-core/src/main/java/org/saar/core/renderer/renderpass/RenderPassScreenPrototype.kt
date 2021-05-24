@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred
+package org.saar.core.renderer.renderpass
 
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.textures.Texture
 
-class DeferredRenderPassesScreenPrototype : ScreenPrototype {
+class RenderPassScreenPrototype : ScreenPrototype {
 
     val colourTexture: Texture = Texture.create()
 

@@ -2,6 +2,7 @@ package org.saar.core.renderer.deferred
 
 import org.saar.core.camera.ICamera
 import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassScreenPrototype
 import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
@@ -11,7 +12,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 
 class DeferredRenderPassesPipeline(private vararg val renderPasses: DeferredRenderPass) {
 
-    private val prototype = DeferredRenderPassesScreenPrototype()
+    private val prototype = RenderPassScreenPrototype()
 
     private val screen: OffScreen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
