@@ -2,13 +2,13 @@ package org.saar.gui.component;
 
 import org.jproperty.type.BooleanProperty;
 import org.jproperty.type.SimpleBooleanProperty;
+import org.saar.gui.UILabeledComponent;
 import org.saar.gui.block.UIBlock;
-import org.saar.gui.UIComponent;
 import org.saar.gui.event.EventHandler;
 import org.saar.gui.event.MouseEvent;
 import org.saar.gui.style.Colours;
 
-public class UIButton extends UIComponent {
+public class UIButton extends UILabeledComponent {
 
     private final BooleanProperty pressedProperty = new SimpleBooleanProperty();
 
@@ -18,6 +18,7 @@ public class UIButton extends UIComponent {
 
     public UIButton() {
         initUiObject();
+        getLabel().setText("Button");
     }
 
     private void initUiObject() {
