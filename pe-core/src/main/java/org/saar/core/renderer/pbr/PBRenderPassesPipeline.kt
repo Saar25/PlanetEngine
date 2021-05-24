@@ -35,7 +35,7 @@ class PBRenderPassesPipeline(private vararg val renderPasses: PBRenderPass) {
                 currentBuffers.normal, currentBuffers.reflectivity, currentBuffers.depth)
         }
 
-        return PBRenderingOutput(this.screen, this.colourTexture, buffers.depth)
+        return PBRenderingOutput(this.screen, currentBuffers)
     }
 
     fun delete() {
