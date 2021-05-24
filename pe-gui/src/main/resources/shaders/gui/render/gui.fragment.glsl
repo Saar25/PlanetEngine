@@ -17,6 +17,10 @@ uniform vec4 u_colourModifier;
 // Output
 out vec4 fragColour;
 
+// Global variables
+float g_radius;
+float g_radiusAlpha = 1;
+
 /**
 * Returns whether the rectangle contains the position
 *
@@ -126,7 +130,7 @@ vec2 edgeCenter(vec4 bounds, vec2 position) {
     float w = bounds.z;
     float h = bounds.w;
 
-    float r = getRadius(bounds, position);
+    float r = g_radius;
     vec2 center = center(bounds);
 
     vec2 edgeCenter = vec2(0, 0);
@@ -146,7 +150,7 @@ bool isInside(vec4 bounds) {
     vec2 position = (mapInRectangle(fromNdc(v_bounds), v_position));
 
     vec4 boundsNdc = fromNdc(bounds);
-    float r = getRadius(bounds, position);
+    float r = g_radius;
 
     vec4 boundsVertical = boundsNdc + vec4(r, 0, -r * 2, 0);
     vec4 boundsHorizontal = boundsNdc + vec4(0, r, 0, -r * 2);
@@ -157,7 +161,9 @@ bool isInside(vec4 bounds) {
 
     vec2 mapped = mapInRectangle(bounds, v_position);
     vec2 coords = position - edgeCenter(bounds, mapped);
-    return pow(coords.x, 2) + pow(coords.y, 2) < r * r;
+    float distance = r * r - (pow(coords.x, 2) + pow(coords.y, 2));
+    g_radiusAlpha = smoothstep(distance, -g_radius / 2, 0);
+    return distance > -g_radius / 2;
 }
 
 /**
@@ -206,14 +212,23 @@ vec4 getBorderColour(void) {
 /*================ */
 
 void main(void) {
+    g_radius = getRadius(v_bounds, v_position);
+
     if (getDiscardMapValue() < .1) {
         discard;
     }
     else if (isInside(v_bounds)){
-        fragColour = getColour();
+        vec4 colour = getColour();
+        vec4 borderColour = getBorderColour();
+        float blendFactor = g_radiusAlpha * g_radiusAlpha;
+
+        fragColour = mix(borderColour, colour, blendFactor);
     }
     else if (isInside(v_borders)){
-        fragColour = getBorderColour();
+        vec4 borderColour = getBorderColour();
+        float blendFactor = g_radiusAlpha * g_radiusAlpha;
+
+        fragColour = borderColour * vec4(1, 1, 1, blendFactor);
     }
     else {
         discard;

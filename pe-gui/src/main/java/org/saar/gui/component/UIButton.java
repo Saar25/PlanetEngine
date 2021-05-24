@@ -19,12 +19,12 @@ public class UIButton extends UILabeledComponent {
     public UIButton() {
         initUiObject();
         getLabel().setText("Button");
+        getStyle().getBorderColour().set(Colours.DARK_GREY);
+        getStyle().getBorders().set(2);
     }
 
     private void initUiObject() {
         this.uiBlock.getStyle().getBackgroundColour().set(Colours.GREY);
-        this.uiBlock.getStyle().getBorderColour().set(Colours.DARK_GREY);
-        this.uiBlock.getStyle().getBorders().set(2);
         add(this.uiBlock);
     }
 

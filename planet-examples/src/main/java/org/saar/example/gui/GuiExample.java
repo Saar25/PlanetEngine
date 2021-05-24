@@ -1,8 +1,5 @@
 package org.saar.example.gui;
 
-import org.saar.core.postprocessing.PostProcessingBuffers;
-import org.saar.core.postprocessing.PostProcessingPipeline;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIDisplay;
@@ -81,19 +78,9 @@ public class GuiExample {
 
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(null, display);
 
-        final PostProcessingPipeline fxaaPipeline = new PostProcessingPipeline(
-                new FxaaPostProcessor()
-        );
-
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-            if (keyboard.isKeyPressed('R')) {
-                renderingPath.render().toMainScreen();
-            } else {
-                final PostProcessingBuffers buffers =
-                        renderingPath.render().asPostProcessingInput();
-                fxaaPipeline.process(buffers).toMainScreen();
-            }
+            renderingPath.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
