@@ -2,8 +2,8 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.Font
-import org.saar.gui.font.Letter
-import org.saar.gui.font.LetterRenderer
+import org.saar.gui.font.UILetter
+import org.saar.gui.font.UILetterRenderer
 import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
@@ -22,7 +22,7 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
         updateLetters()
     }
 
-    private var letters = emptyList<Letter>()
+    private var letters = emptyList<UILetter>()
 
     private fun updateLetters() {
         val maxWidth = this.style.width.getMax()
@@ -44,7 +44,7 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
                 contentWidth = contentWidth.coerceAtLeast(advance.x + xAdvance)
             }
 
-            Letter(this, this.font, character, Vector2.of(advance)).also {
+            UILetter(this, this.font, character, Vector2.of(advance)).also {
                 advance.add(xAdvance, 0f)
 
                 if (char == '\n') {
@@ -73,7 +73,7 @@ class UIText(val font: Font, text: String) : UIChildNode, UIElement {
     }
 
     override fun render(context: RenderContext) {
-        LetterRenderer.render(context, this.letters)
+        UILetterRenderer.render(context, this.letters)
     }
 
     override fun delete() = this.letters.forEach { it.delete() }

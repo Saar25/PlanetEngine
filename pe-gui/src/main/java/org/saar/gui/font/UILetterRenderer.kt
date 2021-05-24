@@ -17,19 +17,19 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Vec4iUniformValue
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-object LetterRenderer : Renderer, RendererMethodsBase<RenderContext, Letter> {
+object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter> {
 
     private val prototype = LetterRendererPrototype()
     private val helper = RendererPrototypeHelper(this.prototype)
 
-    override fun render(context: RenderContext, models: Iterable<Letter>) {
+    override fun render(context: RenderContext, models: Iterable<UILetter>) {
         this.helper.render(context, models)
     }
 
     override fun delete() = this.helper.delete()
 }
 
-private class LetterRendererPrototype : RendererPrototype<Letter> {
+private class LetterRendererPrototype : RendererPrototype<UILetter> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
@@ -68,22 +68,22 @@ private class LetterRendererPrototype : RendererPrototype<Letter> {
         GlUtils.setCullFace(GlCullFace.NONE)
     }
 
-    override fun onInstanceDraw(context: RenderContext, letter: Letter) {
-        this.bitmapUniform.value = letter.font.bitmap
+    override fun onInstanceDraw(context: RenderContext, UILetter: UILetter) {
+        this.bitmapUniform.value = UILetter.font.bitmap
 
         this.bitmapDimensionsUniform.value = Vector2i(
-            letter.font.bitmap.width,
-            letter.font.bitmap.height)
+            UILetter.font.bitmap.width,
+            UILetter.font.bitmap.height)
 
-        this.bitmapBoundsUniform.value = letter.character.bitmapBox.toVector4i()
+        this.bitmapBoundsUniform.value = UILetter.character.bitmapBox.toVector4i()
 
-        val bounds = letter.character.localBox.toVector4f()
-            .mul(letter.parent.fontScale)
-            .add(letter.advance.x(), letter.advance.y(), 0f, 0f)
+        val bounds = UILetter.character.localBox.toVector4f()
+            .mul(UILetter.parent.fontScale)
+            .add(UILetter.advance.x(), UILetter.advance.y(), 0f, 0f)
 
         this.boundsUniform.value = Vector4i(
-            bounds.x().toInt() + letter.style.x.get(),
-            bounds.y().toInt() + letter.style.y.get(),
+            bounds.x().toInt() + UILetter.style.x.get(),
+            bounds.y().toInt() + UILetter.style.y.get(),
             bounds.z().toInt(),
             bounds.w().toInt())
     }

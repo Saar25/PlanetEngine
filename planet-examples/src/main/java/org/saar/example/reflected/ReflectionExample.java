@@ -41,6 +41,7 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.gui.*;
+import org.saar.gui.block.UIBlock;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;

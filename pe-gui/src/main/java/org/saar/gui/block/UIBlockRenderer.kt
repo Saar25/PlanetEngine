@@ -1,16 +1,12 @@
-package org.saar.gui.render
+package org.saar.gui.block
 
 import org.joml.Vector2i
 import org.joml.Vector4f
 import org.joml.Vector4i
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UIBlock
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -19,7 +15,17 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-object UIRenderer : Renderer, RendererPrototypeWrapper<UIBlock>(UIRendererPrototype())
+object UIBlockRenderer : Renderer, RendererMethodsBase<RenderContext, UIBlock> {
+
+    private val prototype = UIRendererPrototype()
+    private val helper = RendererPrototypeHelper(this.prototype)
+
+    override fun render(context: RenderContext, models: Iterable<UIBlock>) {
+        this.helper.render(context, models)
+    }
+
+    override fun delete() = this.helper.delete()
+}
 
 private class UIRendererPrototype : RendererPrototype<UIBlock> {
 

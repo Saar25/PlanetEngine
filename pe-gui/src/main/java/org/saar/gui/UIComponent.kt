@@ -1,8 +1,9 @@
 package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
+import org.saar.gui.block.UIBlock
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.event.MouseEvent
-import org.saar.gui.render.UIRenderer
 import org.saar.gui.style.Style
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent
@@ -15,7 +16,7 @@ open class UIComponent : UIChildNode {
 
     override val style = Style(this)
 
-    override lateinit var parent: UIElement
+    override var parent: UIElement = UINullElement
 
     private val uiBlocks = mutableListOf<UIBlock>()
 
@@ -27,11 +28,11 @@ open class UIComponent : UIChildNode {
 
     fun add(uiBlock: UIBlock) {
         this.uiBlocks.add(uiBlock)
-        uiBlock.setParent(this)
+        uiBlock.parent = this
     }
 
     override fun render(context: RenderContext) {
-        UIRenderer.render(context, this.uiBlocks)
+        UIBlockRenderer.render(context, this.uiBlocks)
     }
 
     override fun renderForward(context: RenderContext) {

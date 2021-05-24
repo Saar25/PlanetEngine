@@ -9,8 +9,8 @@ import org.saar.gui.UIText
 import org.saar.gui.style.IStyle
 import org.saar.gui.style.Style
 
-class Letter(override val parent: UIText, val font: Font,
-             val character: FontCharacter, val advance: Vector2fc) : UIChildElement, Model {
+class UILetter(override val parent: UIText, val font: Font,
+               val character: FontCharacter, val advance: Vector2fc) : UIChildElement, Model {
 
     override val style: IStyle = Style(this)
 
