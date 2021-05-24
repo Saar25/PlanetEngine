@@ -8,32 +8,24 @@ import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
-public class PBRRenderingPath implements RenderingPath {
+public class PBRenderingPath implements RenderingPath {
 
-    private final OffScreen screen;
-    private final PBRScreenPrototype prototype;
+    private final PBScreenPrototype prototype = new PBScreenPrototype();
+
+    private final OffScreen screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0));
 
     private final ICamera camera;
-    private final PBRRenderNode renderNode;
-    private final PBRRenderPassesPipeline pipeline;
+    private final PBRenderNode renderNode;
+    private final PBRenderPassesPipeline pipeline;
 
-    public PBRRenderingPath(ICamera camera, PBRRenderNode renderNode,
-                            PBRRenderPassesPipeline pipeline) {
-        this(new PBRScreenPrototypeDefault(), camera, renderNode, pipeline);
-    }
-
-    public PBRRenderingPath(PBRScreenPrototype prototype, ICamera camera,
-                            PBRRenderNode renderNode, PBRRenderPassesPipeline pipeline) {
-        this.prototype = prototype;
-        this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
-
+    public PBRenderingPath(ICamera camera, PBRenderNode renderNode, PBRenderPassesPipeline pipeline) {
         this.camera = camera;
         this.renderNode = renderNode;
         this.pipeline = pipeline;
     }
 
     @Override
-    public PBRRenderingOutput render() {
+    public PBRenderingOutput render() {
         this.screen.setAsDraw();
         this.screen.resizeToMainScreen();
 

@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.textures.Texture
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class PBRRenderPassesPipeline(private vararg val renderPasses: PBRRenderPass) {
+class PBRenderPassesPipeline(private vararg val renderPasses: PBRenderPass) {
 
     private val prototype = RenderPassScreenPrototype()
 
@@ -19,7 +19,7 @@ class PBRRenderPassesPipeline(private vararg val renderPasses: PBRRenderPass) {
     private val colourTexture: Texture
         get() = this.prototype.colourTexture
 
-    fun process(camera: ICamera, buffers: PBRRenderingBuffers): PBRRenderingOutput {
+    fun process(camera: ICamera, buffers: PBRenderingBuffers): PBRenderingOutput {
         this.screen.resizeToMainScreen()
 
         this.screen.setAsDraw()
@@ -31,11 +31,11 @@ class PBRRenderPassesPipeline(private vararg val renderPasses: PBRRenderPass) {
         for (renderPass in this.renderPasses) {
             renderPass.render(context, currentBuffers)
 
-            currentBuffers = PBRRenderingBuffers(this.colourTexture,
+            currentBuffers = PBRenderingBuffers(this.colourTexture,
                 currentBuffers.normal, currentBuffers.reflectivity, currentBuffers.depth)
         }
 
-        return PBRRenderingOutput(this.screen, this.colourTexture, buffers.depth)
+        return PBRenderingOutput(this.screen, this.colourTexture, buffers.depth)
     }
 
     fun delete() {

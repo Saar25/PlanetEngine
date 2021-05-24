@@ -10,19 +10,14 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ForwardRenderingPath implements RenderingPath {
 
-    private final ForwardScreenPrototype prototype;
-    private final OffScreen screen;
+    private final ForwardScreenPrototype prototype = new ForwardScreenPrototype();
+
+    private final OffScreen screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0));
+
     private final ICamera camera;
     private final ForwardRenderNode renderNode;
 
     public ForwardRenderingPath(ICamera camera, ForwardRenderNode renderNode) {
-        this(new ForwardScreenPrototypeDefault(), camera, renderNode);
-    }
-
-    public ForwardRenderingPath(ForwardScreenPrototype prototype, ICamera camera, ForwardRenderNode renderNode) {
-        this.prototype = prototype;
-        this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
-
         this.camera = camera;
         this.renderNode = renderNode;
     }
@@ -37,9 +32,7 @@ public class ForwardRenderingPath implements RenderingPath {
 
         this.renderNode.renderForward(new RenderContextBase(this.camera));
 
-        return new ForwardRenderingOutput(this.screen,
-                this.prototype.getColourTexture(),
-                this.prototype.getDepthTexture());
+        return new ForwardRenderingOutput(this.screen, this.prototype.asBuffers());
     }
 
     @Override

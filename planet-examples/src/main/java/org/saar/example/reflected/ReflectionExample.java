@@ -96,6 +96,7 @@ public class ReflectionExample {
         final UIGroup uiTextGroup = new UIGroup();
         uiTextGroup.getStyle().getX().set(30);
         uiTextGroup.getStyle().getY().set(30);
+        uiDisplay.add(uiTextGroup);
 
         final UIText uiFps = new UIText(font, "Fps: ???");
         uiTextGroup.add(uiFps);
@@ -107,8 +108,6 @@ public class ReflectionExample {
         final UIText uiDelta = new UIText(font, "Delta: ???");
         uiDelta.getStyle().getY().set((int) font.getSize() * 2);
         uiTextGroup.add(uiDelta);
-
-        uiDisplay.add(uiTextGroup);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);

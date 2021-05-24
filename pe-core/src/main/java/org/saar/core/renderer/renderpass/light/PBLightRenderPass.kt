@@ -4,8 +4,8 @@ import org.joml.Matrix4f
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.light.PointLight
-import org.saar.core.renderer.pbr.PBRRenderPass
-import org.saar.core.renderer.pbr.PBRRenderingBuffers
+import org.saar.core.renderer.pbr.PBRenderPass
+import org.saar.core.renderer.pbr.PBRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
@@ -23,17 +23,17 @@ private val light = DirectionalLight()
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class PBRLightRenderPass : PBRRenderPass,
-    RenderPassPrototypeWrapper<PBRRenderingBuffers>(PBRLightRenderPassPrototype(emptyArray(), arrayOf(light))) {
+class PBLightRenderPass : PBRenderPass,
+    RenderPassPrototypeWrapper<PBRenderingBuffers>(PBRLightRenderPassPrototype(emptyArray(), arrayOf(light))) {
 
-    override fun render(context: RenderPassContext, buffers: PBRRenderingBuffers) {
+    override fun render(context: RenderPassContext, buffers: PBRenderingBuffers) {
         super.render(context, buffers)
     }
 }
 
 private class PBRLightRenderPassPrototype(private val pointLights: Array<PointLight>,
                                           private val directionalLights: Array<DirectionalLight>)
-    : RenderPassPrototype<PBRRenderingBuffers> {
+    : RenderPassPrototype<PBRenderingBuffers> {
 
     @UniformProperty
     private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -78,7 +78,7 @@ private class PBRLightRenderPassPrototype(private val pointLights: Array<PointLi
         ShaderCode.loadSource("/shaders/deferred/light/pbr-light.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext, buffers: PBRRenderingBuffers) {
+    override fun onRender(context: RenderPassContext, buffers: PBRenderingBuffers) {
         this.colourTextureUniform.value = buffers.albedo
         this.normalTextureUniform.value = buffers.normal
         this.reflectivityTextureUniform.value = buffers.reflectivity

@@ -1,5 +1,6 @@
 package org.saar.core.renderer.pbr
 
+import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.core.screen.image.DepthScreenImage
@@ -10,11 +11,10 @@ import org.saar.lwjgl.opengl.constants.DepthFormatType
 import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.textures.Texture
 import org.saar.lwjgl.opengl.textures.TextureTarget
 
-class PBRScreenPrototypeDefault : PBRScreenPrototype {
+class PBScreenPrototype : ScreenPrototype {
 
     private val colourTexture = Texture.create(TextureTarget.TEXTURE_2D)
 
@@ -40,11 +40,7 @@ class PBRScreenPrototypeDefault : PBRScreenPrototype {
     private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment.withTexture(
         this.depthTexture, DepthFormatType.COMPONENT24, DataType.U_BYTE))
 
-    override fun getColourTexture(): ReadOnlyTexture = this.colourTexture
-
-    override fun getNormalTexture(): ReadOnlyTexture = this.normalTexture
-
-    override fun getReflectivityTexture(): ReadOnlyTexture = this.reflectivityTexture
-
-    override fun getDepthTexture(): ReadOnlyTexture = this.depthTexture
+    fun asBuffers() = PBRenderingBuffers(
+        this.colourTexture, this.normalTexture,
+        this.reflectivityTexture, this.depthTexture)
 }

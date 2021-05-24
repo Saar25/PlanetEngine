@@ -5,9 +5,9 @@ import org.saar.core.renderer.RenderingOutput
 import org.saar.core.screen.Screen
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
-class PBRRenderingOutput(private val screen: Screen,
-                         private val colourTexture: ReadOnlyTexture,
-                         private val depthTexture: ReadOnlyTexture) : RenderingOutput {
+class PBRenderingOutput(private val screen: Screen,
+                        private val colourTexture: ReadOnlyTexture,
+                        private val depthTexture: ReadOnlyTexture) : RenderingOutput {
 
     override fun to(screen: Screen) = this.screen.copyTo(screen)
 
