@@ -68,22 +68,22 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
         GlUtils.setCullFace(GlCullFace.NONE)
     }
 
-    override fun onInstanceDraw(context: RenderContext, UILetter: UILetter) {
-        this.bitmapUniform.value = UILetter.font.bitmap
+    override fun onInstanceDraw(context: RenderContext, uiLetter: UILetter) {
+        this.bitmapUniform.value = uiLetter.font.bitmap
 
         this.bitmapDimensionsUniform.value = Vector2i(
-            UILetter.font.bitmap.width,
-            UILetter.font.bitmap.height)
+            uiLetter.font.bitmap.width,
+            uiLetter.font.bitmap.height)
 
-        this.bitmapBoundsUniform.value = UILetter.character.bitmapBox.toVector4i()
+        this.bitmapBoundsUniform.value = uiLetter.character.bitmapBox.toVector4i()
 
-        val bounds = UILetter.character.localBox.toVector4f()
-            .mul(UILetter.parent.fontScale)
-            .add(UILetter.advance.x(), UILetter.advance.y(), 0f, 0f)
+        val bounds = uiLetter.character.localBox.toVector4f()
+            .mul(uiLetter.parent.fontScale)
+            .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
 
         this.boundsUniform.value = Vector4i(
-            bounds.x().toInt() + UILetter.style.x.get(),
-            bounds.y().toInt() + UILetter.style.y.get(),
+            bounds.x().toInt() + uiLetter.style.x.get(),
+            bounds.y().toInt() + uiLetter.style.y.get(),
             bounds.z().toInt(),
             bounds.w().toInt())
     }

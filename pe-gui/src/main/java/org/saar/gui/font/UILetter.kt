@@ -10,7 +10,7 @@ import org.saar.gui.style.IStyle
 import org.saar.gui.style.Style
 
 class UILetter(override val parent: UIText, val font: Font,
-               val character: FontCharacter, val advance: Vector2fc) : UIChildElement, Model {
+               val character: FontCharacter, val offset: Vector2fc) : UIChildElement, Model {
 
     override val style: IStyle = Style(this)
 

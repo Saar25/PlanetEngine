@@ -34,7 +34,7 @@ class UIText(val font: Font = FontLoader.DEFAULT_FONT, text: String = "") : UICh
     private fun updateLetters() {
         val maxWidth = this.style.width.getMax()
 
-        val advance = Vector2.of(0f, this.font.lineHeight * this.fontScale)
+        val offset = Vector2.of(0f, this.font.lineHeight * this.fontScale)
 
         var contentWidth = 0f
 
@@ -44,25 +44,25 @@ class UIText(val font: Font = FontLoader.DEFAULT_FONT, text: String = "") : UICh
             val xAdvance = character.xAdvance * this.fontScale
             val yAdvance = this.font.lineHeight * this.fontScale
 
-            if (maxWidth > 0 && advance.x + xAdvance > maxWidth) {
-                advance.y += yAdvance
-                advance.x = 0f
+            if (maxWidth > 0 && offset.x + xAdvance > maxWidth) {
+                offset.y += yAdvance
+                offset.x = 0f
             } else if (char != '\n') {
-                contentWidth = contentWidth.coerceAtLeast(advance.x + xAdvance)
+                contentWidth = contentWidth.coerceAtLeast(offset.x + xAdvance)
             }
 
-            UILetter(this, this.font, character, Vector2.of(advance)).also {
-                advance.add(xAdvance, 0f)
+            UILetter(this, this.font, character, Vector2.of(offset)).also {
+                offset.add(xAdvance, 0f)
 
                 if (char == '\n') {
-                    advance.y += yAdvance
-                    advance.x = 0f
+                    offset.y += yAdvance
+                    offset.x = 0f
                 }
             }
         }
 
         this.style.contentWidth.set(contentWidth.toInt())
-        this.style.contentHeight.set(advance.y.toInt())
+        this.style.contentHeight.set(offset.y.toInt())
     }
 
     private var textWidth = 0
