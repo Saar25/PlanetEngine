@@ -9,7 +9,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-open class RenderPassPrototypeWrapper<T : RenderPassRenderingBuffers>(
+open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
     private val prototype: RenderPassPrototype<T>) : RenderPass {
 
     companion object {
