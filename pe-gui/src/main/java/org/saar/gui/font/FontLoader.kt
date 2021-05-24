@@ -15,6 +15,8 @@ import java.io.File
 
 object FontLoader {
 
+    private val DEFAULT_CHAR_SEQUENCE = (0x20.toChar()..0x7e.toChar()).joinToString("")
+
     private fun File.readToLwjglBuffer(): ReadonlyLwjglBuffer {
         return readBytes().let { LwjglByteBuffer.allocate(it.size).put(it).flip() }
     }
@@ -54,12 +56,15 @@ object FontLoader {
     }
 
     @JvmStatic
+    fun loadFont(fontFile: String, fontHeight: Float, bitmapWidth: Int, bitmapHeight: Int): Font {
+        return loadFont(fontFile, fontHeight, bitmapWidth, bitmapHeight, DEFAULT_CHAR_SEQUENCE)
+    }
+
+    @JvmStatic
     fun loadFont(fontFile: String, fontHeight: Float, bitmapWidth: Int,
                  bitmapHeight: Int, start: Char, count: Int): Font {
-        val trueTypeBitmap = File(fontFile).readToLwjglBuffer().use { buffer ->
-            TrueTypeFontLoader.bakeFontBitmap(buffer, fontHeight, bitmapWidth, bitmapHeight, start, count)
-        }
-        return toFont(trueTypeBitmap, bitmapWidth, bitmapHeight, fontHeight)
+        val charSequence = (start..start + count).joinToString("")
+        return loadFont(fontFile, fontHeight, bitmapWidth, bitmapHeight, charSequence)
     }
 
 }
