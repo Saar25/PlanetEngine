@@ -40,7 +40,10 @@ import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.gui.*;
+import org.saar.gui.UIComponent;
+import org.saar.gui.UIDisplay;
+import org.saar.gui.UIGroup;
+import org.saar.gui.UIText;
 import org.saar.gui.block.UIBlock;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
@@ -96,7 +99,6 @@ public class ReflectionExample {
         final UIGroup uiTextGroup = new UIGroup();
         uiTextGroup.getStyle().getX().set(30);
         uiTextGroup.getStyle().getY().set(30);
-        uiDisplay.add(uiTextGroup);
 
         final UIText uiFps = new UIText(font, "Fps: ???");
         uiTextGroup.add(uiFps);
@@ -108,6 +110,8 @@ public class ReflectionExample {
         final UIText uiDelta = new UIText(font, "Delta: ???");
         uiDelta.getStyle().getY().set((int) font.getSize() * 2);
         uiTextGroup.add(uiDelta);
+
+        uiDisplay.add(uiTextGroup);
 
         final Projection projection = new ScreenPerspectiveProjection(
                 MainScreen.getInstance(), 70f, 1, 1000);

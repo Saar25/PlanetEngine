@@ -26,7 +26,7 @@ class UIText(val font: Font = FontLoader.DEFAULT_FONT, text: String = "") : UICh
     }
 
     var text: String by Delegates.observable(text) { _, _, _ ->
-        if (this.parent != UINullElement) updateLetters()
+        updateLetters()
     }
 
     private var letters = emptyList<UILetter>()

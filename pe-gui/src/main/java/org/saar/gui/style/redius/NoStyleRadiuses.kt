@@ -1,6 +1,6 @@
 package org.saar.gui.style.redius
 
-object WindowStyleRadiuses : ReadonlyStyleRadiuses {
+object NoStyleRadiuses : ReadonlyStyleRadiuses {
     override val topRight: Int = 0
     override val topLeft: Int = 0
     override val bottomRight: Int = 0
