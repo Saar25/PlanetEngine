@@ -1,32 +1,36 @@
 package org.saar.core.mesh.build;
 
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
-import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
+import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
+import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.util.buffer.LwjglBuffer;
+import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
 
 public abstract class MeshBuffer {
 
-    private final BufferObjectWrapper wrapper;
+    protected final IVbo vbo;
 
-    public MeshBuffer(BufferObjectWrapper wrapper) {
-        this.wrapper = wrapper;
+    private LwjglBuffer buffer = null;
+
+    public MeshBuffer(IVbo vbo) {
+        this.vbo = vbo;
     }
 
-    public abstract void loadInVao(WriteableVao vao);
+    public abstract void loadInVao(WritableVao vao);
 
     protected void allocate(int capacity) {
-        getWrapper().allocate(capacity);
+        if (this.buffer != null) {
+            this.buffer.close();
+        }
+        this.buffer = LwjglByteBuffer.allocate(capacity);
     }
 
     public void store(long offset) {
-        getWrapper().store(offset);
+        this.vbo.allocate(this.buffer.flip().limit());
+        this.vbo.store(offset, this.buffer.asByteBuffer());
     }
 
     public BufferWriter getWriter() {
-        return getWrapper().getWriter();
-    }
-
-    public BufferObjectWrapper getWrapper() {
-        return this.wrapper;
+        return this.buffer.getWriter();
     }
 }

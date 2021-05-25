@@ -6,11 +6,11 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.*;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.Vbo;
 import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
+import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
 
 public class WeakMesh implements Mesh {
 
@@ -98,39 +98,46 @@ public class WeakMesh implements Mesh {
 
     private static void loadIndices(Vao vao, int[] indices) {
         final Vbo vbo = Vbo.create(VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-        final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
-        wrapper.allocate(indices.length * DataType.INT.getBytes());
+        final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
+                indices.length * DataType.INT.getBytes());
+
         for (int index : indices) {
-            wrapper.getWriter().write(index);
+            buffer.getWriter().write(index);
         }
-        wrapper.store(0);
+
+        vbo.allocate(buffer.flip().limit());
+        vbo.store(0, buffer.asByteBuffer());
         vao.loadVbo(vbo);
     }
 
     private static void loadVertices(Vao vao, WeakVertex[] vertices, Attribute[] attributes) {
         final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-        final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
-        wrapper.allocate(vertices.length * Attribute.sumBytes(attributes));
+        final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
+                vertices.length * Attribute.sumBytes(attributes));
+
         for (WeakVertex vertex : vertices) {
-            vertex.write(wrapper.getWriter());
+            vertex.write(buffer.getWriter());
         }
-        wrapper.store(0);
 
+        vbo.allocate(buffer.flip().limit());
+        vbo.store(0, buffer.asByteBuffer());
         vao.loadVbo(vbo, attributes);
     }
 
     private static void loadInstances(Vao vao, WeakInstance[] instances, Attribute[] attributes) {
         final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-        final BufferObjectWrapper wrapper = new BufferObjectWrapper(vbo);
 
-        wrapper.allocate(instances.length * Attribute.sumBytes(attributes));
+        final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
+                instances.length * Attribute.sumBytes(attributes));
+
         for (WeakInstance instance : instances) {
-            instance.write(wrapper.getWriter());
+            instance.write(buffer.getWriter());
         }
-        wrapper.store(0);
 
+        vbo.allocate(buffer.flip().limit());
+        vbo.store(0, buffer.asByteBuffer());
         vao.loadVbo(vbo, attributes);
     }
 

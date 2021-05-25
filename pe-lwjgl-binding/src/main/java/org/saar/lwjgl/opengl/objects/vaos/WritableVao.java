@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.objects.vaos;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 
-public interface WriteableVao extends IVao {
+public interface WritableVao extends ReadOnlyVao {
 
     /**
      * Loads a vbo and linking the given attributes to it

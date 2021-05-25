@@ -8,9 +8,9 @@ import org.saar.lwjgl.opengl.utils.GlConfigs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vao implements WriteableVao {
+public class Vao implements IVao {
 
-    private static final ReadOnlyVao NULL = new Vao(0);
+    public static final ReadOnlyVao NULL = new Vao(0);
     public static final ReadOnlyVao EMPTY = Vao.create();
 
     private final int id;
