@@ -70,4 +70,6 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         this.transformUniform.value = model.transform.transformationMatrix
         this.textureUniform.value = model.texture
     }
+
+    override fun doInstanceDraw(context: RenderContext, model: ObjModel) = model.draw()
 }

@@ -83,5 +83,6 @@ class UIText(val font: Font = FontLoader.DEFAULT_FONT, text: String = "") : UICh
         UILetterRenderer.render(context, this.letters)
     }
 
-    override fun delete() = this.letters.forEach { it.delete() }
+    override fun delete() {
+    }
 }

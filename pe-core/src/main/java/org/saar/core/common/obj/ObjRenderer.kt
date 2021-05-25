@@ -53,4 +53,6 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
         this.textureUniform.value = model.texture
         this.transformUniform.value = model.transform.transformationMatrix
     }
+
+    override fun doInstanceDraw(context: RenderContext, model: ObjModel) = model.draw()
 }

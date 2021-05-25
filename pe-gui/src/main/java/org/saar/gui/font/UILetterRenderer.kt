@@ -2,6 +2,7 @@ package org.saar.gui.font
 
 import org.joml.Vector2i
 import org.joml.Vector4i
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -87,4 +88,6 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             bounds.z().toInt(),
             bounds.w().toInt())
     }
+
+    override fun doInstanceDraw(context: RenderContext, uiLetter: UILetter) = QuadMesh.draw()
 }

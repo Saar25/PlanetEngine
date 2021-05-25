@@ -1,8 +1,5 @@
 package org.saar.gui.block
 
-import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.Model
-import org.saar.core.mesh.common.QuadMesh
 import org.saar.gui.UIChildElement
 import org.saar.gui.UIElement
 import org.saar.gui.UINullElement
@@ -19,7 +16,7 @@ import org.saar.maths.objects.Rectangle
  * @version 1.2
  * @since 18.2.2018
  */
-class UIBlock : Model, UIChildElement {
+class UIBlock : UIChildElement {
 
     override val style = Style(this)
 
@@ -31,7 +28,7 @@ class UIBlock : Model, UIChildElement {
 
     fun inTouch(mx: Float, my: Float): Boolean {
         val radiuses = style.radiuses
-        
+
         if (radiuses.isZero()) {
             return style.bounds.contains(mx, my)
         }
@@ -58,10 +55,8 @@ class UIBlock : Model, UIChildElement {
         return radius * radius > dx * dx + dy * dy
     }
 
-    override fun delete() {
+    fun delete() {
         this.texture?.delete()
         this.discardMap?.delete()
     }
-
-    override val mesh: Mesh get() = QuadMesh
 }

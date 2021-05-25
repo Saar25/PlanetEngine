@@ -3,6 +3,7 @@ package org.saar.gui.block
 import org.joml.Vector2i
 import org.joml.Vector4f
 import org.joml.Vector4i
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -101,4 +102,6 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
         colourModifierUniform.value = uiBlock.style.colourModifier.multiply
     }
+
+    override fun doInstanceDraw(context: RenderContext, uiBlock: UIBlock) = QuadMesh.draw()
 }

@@ -57,4 +57,6 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
         this.reflectionMapUniform.value = model.reflectionMap
         this.normalUniform.value = model.normal
     }
+
+    override fun doInstanceDraw(context: RenderContext, model: FlatReflectedModel) = model.draw()
 }

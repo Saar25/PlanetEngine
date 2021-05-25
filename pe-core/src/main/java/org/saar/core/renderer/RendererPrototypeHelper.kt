@@ -1,12 +1,11 @@
 package org.saar.core.renderer
 
-import org.saar.core.mesh.Model
 import org.saar.core.renderer.shaders.ShadersHelper
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-class RendererPrototypeHelper<T : Model>(private val prototype: RendererPrototype<T>) : Renderer {
+class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : Renderer {
 
     private val shadersProgram: ShadersProgram = ShadersHelper.empty()
         .let {
@@ -56,12 +55,12 @@ class RendererPrototypeHelper<T : Model>(private val prototype: RendererPrototyp
         this.render(context, models.asIterable())
     }
 
-    fun render(context: RenderContext, model: T) {
+    private fun render(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
         this.uniformsHelper.loadPerInstance()
 
-        model.draw()
+        this.prototype.doInstanceDraw(context, model)
     }
 
     override fun delete() {
