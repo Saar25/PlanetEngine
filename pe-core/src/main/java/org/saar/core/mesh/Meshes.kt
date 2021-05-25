@@ -16,8 +16,8 @@ object Meshes {
     private fun toVao(prototype: MeshPrototype): IVao {
         val vao = Vao.create()
         with(MeshPrototypeHelper(prototype)) {
-            loadToVao(vao)
             store()
+            loadToVao(vao)
         }
         return vao
     }

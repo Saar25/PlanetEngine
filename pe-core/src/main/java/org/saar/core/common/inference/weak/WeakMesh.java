@@ -109,6 +109,7 @@ public class WeakMesh implements Mesh {
         vbo.allocate(buffer.flip().limit());
         vbo.store(0, buffer.asByteBuffer());
         vao.loadVbo(vbo);
+        vbo.delete();
     }
 
     private static void loadVertices(Vao vao, WeakVertex[] vertices, Attribute[] attributes) {
@@ -124,6 +125,7 @@ public class WeakMesh implements Mesh {
         vbo.allocate(buffer.flip().limit());
         vbo.store(0, buffer.asByteBuffer());
         vao.loadVbo(vbo, attributes);
+        vbo.delete();
     }
 
     private static void loadInstances(Vao vao, WeakInstance[] instances, Attribute[] attributes) {
@@ -139,6 +141,7 @@ public class WeakMesh implements Mesh {
         vbo.allocate(buffer.flip().limit());
         vbo.store(0, buffer.asByteBuffer());
         vao.loadVbo(vbo, attributes);
+        vbo.delete();
     }
 
     @Override

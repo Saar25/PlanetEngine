@@ -26,6 +26,7 @@ public class MeshDataBuffer extends MeshBuffer {
     @Override
     public void loadInVao(WritableVao vao) {
         vao.loadVbo(this.vbo, attributesArray());
+        this.vbo.delete();
     }
 
     public void addAttribute(Attribute attribute) {

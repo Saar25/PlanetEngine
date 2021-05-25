@@ -28,17 +28,16 @@ public class FlatReflectedMesh implements Mesh {
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
         helper.allocateIndices(indices);
         helper.allocateVertices(vertices);
 
         final FlatReflectedMeshWriter writer = new FlatReflectedMeshWriter(prototype);
         writer.writeVertices(vertices);
         writer.writeIndices(indices);
-
         helper.store();
+
+        final Vao vao = Vao.create();
+        helper.loadToVao(vao);
 
         final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);

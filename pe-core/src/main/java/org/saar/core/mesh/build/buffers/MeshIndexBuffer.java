@@ -37,5 +37,6 @@ public class MeshIndexBuffer extends MeshBuffer {
     @Override
     public void loadInVao(WritableVao vao) {
         vao.loadVbo(this.vbo);
+        this.vbo.delete();
     }
 }
