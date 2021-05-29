@@ -5,7 +5,7 @@ import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.util.DataWriter;
 
 public class GlInt2 extends GlPrimitiveBase implements GlPrimitive {
 
@@ -37,9 +37,8 @@ public class GlInt2 extends GlPrimitiveBase implements GlPrimitive {
     }
 
     @Override
-    public void write(BufferWriter buffer) {
-        buffer.write(getValue().x());
-        buffer.write(getValue().y());
+    public void write(DataWriter writer) {
+        writer.write2i(getValue());
     }
 
     @Override

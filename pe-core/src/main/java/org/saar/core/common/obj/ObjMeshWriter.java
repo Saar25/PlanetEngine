@@ -13,14 +13,14 @@ public class ObjMeshWriter implements MeshVertexWriter<ObjVertex>, MeshIndexWrit
 
     @Override
     public void writeVertex(ObjVertex vertex) {
-        this.prototype.getPositionBuffer().getWriter().write(vertex.getPosition3f());
-        this.prototype.getUvCoordBuffer().getWriter().write(vertex.getUvCoord2f());
-        this.prototype.getNormalBuffer().getWriter().write(vertex.getNormal3f());
+        this.prototype.getPositionBuffer().getWriter().write3f(vertex.getPosition3f());
+        this.prototype.getUvCoordBuffer().getWriter().write2f(vertex.getUvCoord2f());
+        this.prototype.getNormalBuffer().getWriter().write3f(vertex.getNormal3f());
     }
 
     @Override
     public void writeIndex(int index) {
-        this.prototype.getIndexBuffer().getWriter().write(index);
+        this.prototype.getIndexBuffer().getWriter().writeInt(index);
     }
 
 }

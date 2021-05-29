@@ -1,10 +1,11 @@
 package org.saar.lwjgl.util.buffer;
 
 import org.joml.*;
+import org.saar.lwjgl.util.DataWriter;
 
 import java.nio.ByteBuffer;
 
-public class BufferWriter {
+public class BufferWriter implements DataWriter {
 
     private final ByteBuffer buffer;
 
@@ -12,65 +13,79 @@ public class BufferWriter {
         this.buffer = buffer;
     }
 
-    public void write(byte value) {
+    @Override
+    public void writeByte(byte value) {
         this.buffer.put(value);
     }
 
-    public void write(short value) {
+    @Override
+    public void writeShort(short value) {
         this.buffer.putShort(value);
     }
 
-    public void write(char value) {
+    @Override
+    public void writeChar(char value) {
         this.buffer.putChar(value);
     }
 
-    public void write(int value) {
+    @Override
+    public void writeInt(int value) {
         this.buffer.putInt(value);
     }
 
-    public void write(float value) {
+    @Override
+    public void writeFloat(float value) {
         this.buffer.putFloat(value);
     }
 
-    public void write(double value) {
-        this.buffer.putDouble(value);
-    }
-
-    public void write(long value) {
+    @Override
+    public void writeLong(long value) {
         this.buffer.putLong(value);
     }
 
-    public void write(Vector2fc value) {
+    @Override
+    public void writeDouble(double value) {
+        this.buffer.putDouble(value);
+    }
+
+    @Override
+    public void write2f(Vector2fc value) {
         final int position = this.buffer.position() + 4 * 2;
         value.get(this.buffer).position(position);
     }
 
-    public void write(Vector3fc value) {
+    @Override
+    public void write3f(Vector3fc value) {
         final int position = this.buffer.position() + 4 * 3;
         value.get(this.buffer).position(position);
     }
 
-    public void write(Vector4fc value) {
+    @Override
+    public void write4f(Vector4fc value) {
         final int position = this.buffer.position() + 4 * 4;
         value.get(this.buffer).position(position);
     }
 
-    public void write(Matrix4fc value) {
+    @Override
+    public void write4x4f(Matrix4fc value) {
         final int position = this.buffer.position() + 4 * 16;
         value.get(this.buffer).position(position);
     }
 
-    public void write(Vector2ic value) {
+    @Override
+    public void write2i(Vector2ic value) {
         final int position = this.buffer.position() + 4 * 2;
         value.get(this.buffer).position(position);
     }
 
-    public void write(Vector3ic value) {
+    @Override
+    public void write3i(Vector3ic value) {
         final int position = this.buffer.position() + 4 * 3;
         value.get(this.buffer).position(position);
     }
 
-    public void write(Vector4ic value) {
+    @Override
+    public void write4i(Vector4ic value) {
         final int position = this.buffer.position() + 4 * 4;
         value.get(this.buffer).position(position);
     }

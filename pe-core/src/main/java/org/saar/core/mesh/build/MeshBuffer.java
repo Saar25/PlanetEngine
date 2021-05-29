@@ -2,7 +2,7 @@ package org.saar.core.mesh.build;
 
 import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.util.DataWriter;
 import org.saar.lwjgl.util.buffer.LwjglBuffer;
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
 
@@ -30,7 +30,7 @@ public abstract class MeshBuffer {
         this.vbo.store(offset, this.buffer.asByteBuffer());
     }
 
-    public BufferWriter getWriter() {
+    public DataWriter getWriter() {
         return this.buffer.getWriter();
     }
 }

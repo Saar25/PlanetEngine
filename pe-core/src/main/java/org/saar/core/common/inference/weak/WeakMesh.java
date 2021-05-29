@@ -103,7 +103,7 @@ public class WeakMesh implements Mesh {
                 indices.length * DataType.INT.getBytes());
 
         for (int index : indices) {
-            buffer.getWriter().write(index);
+            buffer.getWriter().writeInt(index);
         }
 
         vbo.allocate(buffer.flip().limit());

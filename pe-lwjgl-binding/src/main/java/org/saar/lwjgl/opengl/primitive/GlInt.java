@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.primitive;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.util.DataWriter;
 
 public class GlInt extends GlPrimitiveBase implements GlPrimitive {
 
@@ -31,8 +31,8 @@ public class GlInt extends GlPrimitiveBase implements GlPrimitive {
     }
 
     @Override
-    public void write(BufferWriter buffer) {
-        buffer.write(getValue());
+    public void write(DataWriter writer) {
+        writer.writeInt(getValue());
     }
 
     @Override
