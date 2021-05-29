@@ -10,7 +10,8 @@ import java.util.List;
 
 public class Vao implements IVao {
 
-    public static final ReadOnlyVao NULL = new Vao(0);
+    public static final IVao NULL = new Vao(0);
+
     public static final ReadOnlyVao EMPTY = Vao.create();
 
     private final int id;
