@@ -56,6 +56,10 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
 
     private var textWidth = 0
 
+    init {
+        updateLetters()
+    }
+
     private fun validate() {
         val maxWidth = this.style.width.getMax()
         if (this.textWidth != maxWidth) {

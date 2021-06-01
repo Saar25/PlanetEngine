@@ -15,7 +15,10 @@ interface UIElement {
 
     val children: List<UIElement> get() = emptyList()
 
-    fun render(context: RenderContext) = UIBlockRenderer.render(context, this)
+    fun render(context: RenderContext) {
+        UIBlockRenderer.render(context, this)
+        this.children.forEach { it.render(context) }
+    }
 
     fun onMouseClickEvent(event: ClickEvent) = false
 

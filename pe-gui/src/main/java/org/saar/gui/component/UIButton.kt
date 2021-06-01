@@ -2,7 +2,10 @@ package org.saar.gui.component
 
 import org.jproperty.type.BooleanProperty
 import org.jproperty.type.SimpleBooleanProperty
+import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIComponent
+import org.saar.gui.UITextElement
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
@@ -13,12 +16,20 @@ class UIButton : UIComponent() {
 
     private var onAction: EventHandler<MouseEvent>? = null
 
+    override val children = listOf(
+        UITextElement("Button").also { it.parent = this }
+    )
+
     fun setOnAction(onAction: EventHandler<MouseEvent>) {
         this.onAction = onAction
     }
 
+    override fun render(context: RenderContext) {
+        UIBlockRenderer.render(context, this)
+        children.forEach { it.render(context) }
+    }
+
     override fun onMousePress(event: MouseEvent) {
-        println(event)
         if (event.button.isPrimary) {
             this.pressedProperty.set(true)
             this.style.colourModifier.set(1.5f)

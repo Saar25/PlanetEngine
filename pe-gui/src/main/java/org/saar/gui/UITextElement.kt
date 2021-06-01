@@ -2,6 +2,7 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlock
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.font.Font
 import org.saar.gui.font.FontLoader
 import org.saar.gui.style.TextStyle
@@ -25,7 +26,7 @@ class UITextElement(val font: Font = FontLoader.DEFAULT_FONT, text: String = "")
     override fun update() = this.uiText.update()
 
     override fun render(context: RenderContext) {
-        super.render(context)
+        UIBlockRenderer.render(context, this)
         this.uiText.render(context)
     }
 }
