@@ -21,8 +21,6 @@ class Style(container: UIChildElement) : IStyle {
 
     override val height: Length = Lengths.Height(container)
 
-    val bounds: Bounds = Bounds(this)
-
     override val colourModifier: ColourModifier = ColourModifier(container)
 
     override val borders: StyleBorders = StyleBorders(container)

@@ -1,10 +1,10 @@
 package org.saar.gui.style.length
 
-import org.saar.gui.UIText
+import org.saar.gui.UITextElement
 
 object TextLengths {
 
-    class Width(private val container: UIText) : TextLength() {
+    class Width(private val container: UITextElement) : TextLength() {
         override fun get(): Int = this.value.computeAxisX(
             this.container.parent.style, this.container.style)
 
@@ -12,7 +12,7 @@ object TextLengths {
             this.container.parent.style, this.container.style)
     }
 
-    class Height(private val container: UIText) : TextLength() {
+    class Height(private val container: UITextElement) : TextLength() {
         override fun get(): Int = this.value.computeAxisY(
             this.container.parent.style, this.container.style)
 

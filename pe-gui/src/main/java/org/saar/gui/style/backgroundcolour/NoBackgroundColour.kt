@@ -5,9 +5,9 @@ import org.saar.gui.style.Colours
 
 object NoBackgroundColour : ReadonlyBackgroundColour {
 
-    override val topRight: Colour = Colours.BLACK
-    override val topLeft: Colour = Colours.BLACK
-    override val bottomRight: Colour = Colours.BLACK
-    override val bottomLeft: Colour = Colours.BLACK
+    override val topRight: Colour = Colours.TRANSPARENT
+    override val topLeft: Colour = Colours.TRANSPARENT
+    override val bottomRight: Colour = Colours.TRANSPARENT
+    override val bottomLeft: Colour = Colours.TRANSPARENT
 
 }

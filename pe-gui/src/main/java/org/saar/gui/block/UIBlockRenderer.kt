@@ -8,6 +8,7 @@ import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
+import org.saar.gui.UIElement
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -23,6 +24,15 @@ object UIBlockRenderer : Renderer, RendererMethodsBase<RenderContext, UIBlock> {
 
     override fun render(context: RenderContext, models: Iterable<UIBlock>) {
         this.helper.render(context, models)
+    }
+
+    fun render(context: RenderContext, uiElement: UIElement) {
+        this.helper.render(context) { doRender(context, uiElement) }
+    }
+
+    private fun doRender(context: RenderContext, uiElement: UIElement) {
+        render(context, uiElement.uiBlock)
+        uiElement.children.forEach { doRender(context, it) }
     }
 
     override fun delete() = this.helper.delete()
@@ -92,7 +102,13 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         hasDiscardMapUniform.value = uiBlock.discardMap != null
         discardMapUniform.value = uiBlock.discardMap
 
-        boundsUniform.value = Vector4f(uiBlock.style.bounds.asVector4i()) // TODO: make these ivec4
+        // TODO: make these ivec4
+        boundsUniform.value = Vector4f(
+            uiBlock.style.x.get().toFloat(),
+            uiBlock.style.y.get().toFloat(),
+            uiBlock.style.width.get().toFloat(),
+            uiBlock.style.height.get().toFloat()
+        )
 
         val vector4i = Vector4i()
         bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i(vector4i))

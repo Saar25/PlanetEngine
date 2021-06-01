@@ -1,6 +1,6 @@
 package org.saar.gui.style
 
-import org.saar.gui.UIText
+import org.saar.gui.UITextElement
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.StyleBorders
 import org.saar.gui.style.bordercolour.BorderColour
@@ -10,7 +10,7 @@ import org.saar.gui.style.coordinate.Coordinates
 import org.saar.gui.style.length.*
 import org.saar.gui.style.redius.StyleRadiuses
 
-class TextStyle(container: UIText) : ITextStyle {
+class TextStyle(container: UITextElement) : ITextStyle {
 
     override val x: Coordinate = Coordinates.X(container)
 

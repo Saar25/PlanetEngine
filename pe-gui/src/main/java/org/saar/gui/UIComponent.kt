@@ -1,8 +1,6 @@
 package org.saar.gui
 
-import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlock
-import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Style
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
@@ -12,13 +10,13 @@ import org.saar.lwjgl.glfw.input.mouse.MoveEvent
  * This class represent a ui component
  * it contains multiple UIBlock object and handles user events
  */
-open class UIComponent : UIChildNode {
+abstract class UIComponent : UIChildElement {
 
-    override val style = Style(this)
+    final override var parent: UIElement = UINullElement
 
-    override var parent: UIElement = UINullElement
+    final override val style = Style(this)
 
-    private val uiBlocks = mutableListOf<UIBlock>()
+    final override val uiBlock = UIBlock(this.style)
 
     var isMouseHover = false
         private set
@@ -26,20 +24,9 @@ open class UIComponent : UIChildNode {
     var isMousePressed = false
         private set
 
-    fun add(uiBlock: UIBlock) {
-        this.uiBlocks.add(uiBlock)
-        uiBlock.parent = this
-    }
+    override fun update() = this.children.forEach { it.update() }
 
-    override fun render(context: RenderContext) {
-        UIBlockRenderer.render(context, this.uiBlocks)
-    }
-
-    override fun renderForward(context: RenderContext) {
-        render(context)
-    }
-
-    override fun delete() = this.uiBlocks.forEach { it.delete() }
+    override fun delete() = this.children.forEach { it.delete() }
 
     override fun onMouseMoveEvent(event: MoveEvent) {
         val e = MouseEvent.create(event)
@@ -97,15 +84,10 @@ open class UIComponent : UIChildNode {
 
     private fun mouseDrag(event: MouseEvent) = onMouseDrag(event)
 
-    /**
-     * Returns whether the  the component contains the given point
-     *
-     * @param x the mouse x coordinate
-     * @param y the mouse y coordinate
-     * @return true if the point is in touch, false otherwise
-     */
     fun checkMouseInside(x: Int, y: Int): Boolean {
-        return this.uiBlocks.any { it.inTouch(x.toFloat(), y.toFloat()) }
+        return if (this.children.isNotEmpty()) {
+            this.children.any { it.contains(x, y) }
+        } else this.uiBlock.inTouch(x, y)
     }
 
     /**

@@ -1,76 +1,63 @@
-package org.saar.gui.component;
+package org.saar.gui.component
 
-import org.jproperty.type.FloatProperty;
-import org.jproperty.type.SimpleFloatProperty;
-import org.saar.gui.block.UIBlock;
-import org.saar.gui.UIComponent;
-import org.saar.gui.event.MouseEvent;
-import org.saar.gui.style.Colours;
-import org.saar.gui.style.value.CoordinateValues;
-import org.saar.maths.utils.Maths;
+import org.jproperty.type.FloatProperty
+import org.jproperty.type.SimpleFloatProperty
+import org.saar.gui.UIBlockElement
+import org.saar.gui.UIComponent
+import org.saar.gui.event.MouseEvent
+import org.saar.gui.style.Colours
+import org.saar.gui.style.value.CoordinateValues.percentCenter
+import org.saar.maths.utils.Maths
 
-public class UISlider extends UIComponent {
+class UISlider : UIComponent() {
 
-    private final FloatProperty valueProperty = new SimpleFloatProperty(0);
-    private final FloatProperty dynamicValueProperty = new SimpleFloatProperty(0);
+    val valueProperty: FloatProperty = SimpleFloatProperty(0f)
 
-    private final FloatProperty min = new SimpleFloatProperty(0);
-    private final FloatProperty max = new SimpleFloatProperty(100);
+    val dynamicValueProperty: FloatProperty = SimpleFloatProperty(0f)
 
-    private final UIBlock uiTruck = new UIBlock();
-    private final UIBlock uiThumb = new UIBlock();
+    private val min: FloatProperty = SimpleFloatProperty(0f)
 
-    public UISlider() {
-        initUiTruck();
-        initUiThumb();
+    private val max: FloatProperty = SimpleFloatProperty(100f)
+
+    private val uiTruck = UIBlockElement().also { it.parent = this }
+    private val uiThumb = UIBlockElement().also { it.parent = this }
+
+    override val children = listOf(this.uiTruck, this.uiThumb)
+
+    init {
+        initUiTruck()
+        initUiThumb()
     }
 
-    private void initUiTruck() {
-        this.uiTruck.getStyle().getBackgroundColour().set(Colours.GREY);
-        this.uiTruck.getStyle().getBorderColour().set(Colours.DARK_GREY);
-        this.uiTruck.getStyle().getBorders().set(2);
-        add(this.uiTruck);
+    private fun initUiTruck() {
+        this.uiTruck.style.backgroundColour.set(Colours.GREY)
+        this.uiTruck.style.borderColour.set(Colours.DARK_GREY)
+        this.uiTruck.style.borders.set(2)
     }
 
-    private void initUiThumb() {
-        this.uiThumb.getStyle().getBackgroundColour().set(Colours.DARK_GREY);
-        this.uiThumb.getStyle().getWidth().set(20);
-        add(this.uiThumb);
+    private fun initUiThumb() {
+        this.uiThumb.style.backgroundColour.set(Colours.DARK_GREY)
+        this.uiThumb.style.width.set(20)
     }
 
-    public FloatProperty valueProperty() {
-        return this.valueProperty;
+    override fun onMousePress(event: MouseEvent) {
+        onMouseDrag(event)
     }
 
-    public FloatProperty dynamicValueProperty() {
-        return this.dynamicValueProperty;
+    override fun onMouseRelease(event: MouseEvent) {
+        val value = dynamicValueProperty.get()
+        this.valueProperty.set(value)
     }
 
-    @Override
-    public void onMousePress(MouseEvent event) {
-        onMouseDrag(event);
-    }
-
-    @Override
-    public void onMouseRelease(MouseEvent event) {
-        final float value = dynamicValueProperty().get();
-        valueProperty().set(value);
-    }
-
-    @Override
-    public void onMouseDrag(MouseEvent event) {
-        final int x1 = this.uiTruck.getStyle().getX().get();
-        final int w1 = this.uiTruck.getStyle().getWidth().get();
-        final int w2 = this.uiThumb.getStyle().getWidth().get();
-        final int x2 = Maths.clamp(event.getX(), x1 + w2 / 2, x1 + w1 - w2 / 2);
-
-        final int xMax = x1 + w1;
-
-        float normalized = (float) (x2 - x1) / (xMax - x1);
-
-        this.uiThumb.getStyle().getX().set(
-                CoordinateValues.percentCenter(normalized * 100));
-
-        dynamicValueProperty().set(normalized * this.max.get() + this.min.get());
+    override fun onMouseDrag(event: MouseEvent) {
+        val x1 = uiTruck.style.x.get()
+        val w1 = uiTruck.style.width.get()
+        val w2 = uiThumb.style.width.get()
+        val x2 = Maths.clamp(event.x, x1 + w2 / 2, x1 + w1 - w2 / 2)
+        val xMax = x1 + w1
+        val normalized = (x2 - x1).toFloat() / (xMax - x1)
+        uiThumb.style.x.set(
+            percentCenter(normalized * 100))
+        dynamicValueProperty.set(normalized * max.get() + min.get())
     }
 }

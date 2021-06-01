@@ -40,11 +40,10 @@ import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.gui.UIComponent;
+import org.saar.gui.UIBlockElement;
+import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
-import org.saar.gui.UIGroup;
-import org.saar.gui.UIText;
-import org.saar.gui.block.UIBlock;
+import org.saar.gui.UITextElement;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;
@@ -78,36 +77,33 @@ public class ReflectionExample {
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
-        final UIBlock reflectionUiBlock = new UIBlock();
-        reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
-        reflectionUiBlock.getStyle().getY().set(30);
-        reflectionUiBlock.getStyle().getWidth().set(300);
-        reflectionUiBlock.getStyle().getHeight().set(
+        final UIBlockElement reflectionUiElement = new UIBlockElement();
+        reflectionUiElement.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
+        reflectionUiElement.getStyle().getY().set(30);
+        reflectionUiElement.getStyle().getWidth().set(300);
+        reflectionUiElement.getStyle().getHeight().set(
                 LengthValues.ratio((float) HEIGHT / WIDTH));
-        reflectionUiBlock.getStyle().getBorders().set(1);
-        reflectionUiBlock.getStyle().getBorderColour().set(Colours.PURPLE);
+        reflectionUiElement.getStyle().getBorders().set(1);
+        reflectionUiElement.getStyle().getBorderColour().set(Colours.PURPLE);
 
-        final UIComponent uiComponent = new UIComponent();
-        uiComponent.add(reflectionUiBlock);
-
-        uiDisplay.add(uiComponent);
+        uiDisplay.add(reflectionUiElement);
 
         final Font font = FontLoader.loadFont(
                 "C:/Windows/Fonts/arial.ttf",
                 22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
 
-        final UIGroup uiTextGroup = new UIGroup();
+        final UIContainer uiTextGroup = new UIContainer();
         uiTextGroup.getStyle().getX().set(30);
         uiTextGroup.getStyle().getY().set(30);
 
-        final UIText uiFps = new UIText(font, "Fps: ???");
+        final UITextElement uiFps = new UITextElement(font, "Fps: ???");
         uiTextGroup.add(uiFps);
 
-        final UIText uiSpeed = new UIText(font, "Speed: ???");
+        final UITextElement uiSpeed = new UITextElement(font, "Speed: ???");
         uiSpeed.getStyle().getY().set((int) font.getSize());
         uiTextGroup.add(uiSpeed);
 
-        final UIText uiDelta = new UIText(font, "Delta: ???");
+        final UITextElement uiDelta = new UITextElement(font, "Delta: ???");
         uiDelta.getStyle().getY().set((int) font.getSize() * 2);
         uiTextGroup.add(uiDelta);
 
@@ -179,15 +175,15 @@ public class ReflectionExample {
                     deferredRenderer.render().asPostProcessingInput();
             postProcessingPipeline.process(camera, buffers).toMainScreen();
 
-            reflectionUiBlock.setTexture(reflection.getReflectionMap());
+            reflectionUiElement.setTexture(reflection.getReflectionMap());
             uiDisplay.render(new RenderContextBase(null));
 
             window.update(true);
             window.pollEvents();
 
-            uiFps.setText(String.format("Fps: %.2f", fps.fps()));
-            uiSpeed.setText(String.format("Speed: %.2f", cameraMovementBehavior.getVelocity().x()));
-            uiDelta.setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
+            uiFps.getUiText().setText(String.format("Fps: %.2f", fps.fps()));
+            uiSpeed.getUiText().setText(String.format("Speed: %.2f", cameraMovementBehavior.getVelocity().x()));
+            uiDelta.getUiText().setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
 
             fps.update();
         }

@@ -3,7 +3,7 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContextBase
 import org.saar.gui.UIDisplay
-import org.saar.gui.UIText
+import org.saar.gui.UITextElement
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.TextLengthValues.fitContent
 import org.saar.lwjgl.glfw.window.Window
@@ -20,7 +20,7 @@ object HelloWorldExample {
 
         val display = UIDisplay(window)
 
-        val writeable = UIText("Hello World!").apply {
+        val writeable = UITextElement("Hello World!").apply {
             style.x.value = center()
             style.y.value = center()
             style.width.value = fitContent()

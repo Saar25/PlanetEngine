@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContextBase
 import org.saar.core.util.Fps
 import org.saar.gui.UIDisplay
-import org.saar.gui.UIText
+import org.saar.gui.UITextElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.font.Font
 import org.saar.gui.font.FontLoader
@@ -58,13 +58,13 @@ object UIButtonExample {
             write here
         """.trimIndent()
 
-        val writeable = UIText(font, text).apply {
+        val writeable = UITextElement(font, text).apply {
             style.x.value = center()
             style.width.value = fitContent()
         }
         display.add(writeable)
 
-        val uiFps = UIText(font, "").apply {
+        val uiFps = UITextElement(font, "").apply {
             style.fontSize.value = 22
         }
         display.add(uiFps)
@@ -72,11 +72,11 @@ object UIButtonExample {
         val keyboard = window.keyboard
 
         keyboard.addKeyPressListener { e ->
-            writeable.text = changeTextByKeyboard(font, writeable.text, e)
+            writeable.uiText.text = changeTextByKeyboard(font, writeable.uiText.text, e)
         }
 
         keyboard.addKeyRepeatListener { e ->
-            writeable.text = changeTextByKeyboard(font, writeable.text, e)
+            writeable.uiText.text = changeTextByKeyboard(font, writeable.uiText.text, e)
         }
 
         val fps = Fps()
@@ -90,11 +90,11 @@ object UIButtonExample {
             window.update(true)
             window.pollEvents()
 
-            uiFps.text = "Fps: ${String.format("%.3f", fps.fps())}"
+            uiFps.uiText.text = "Fps: ${String.format("%.3f", fps.fps())}"
             fps.update()
         }
 
-        println(writeable.text)
+        println(writeable.uiText.text)
 
         font.delete()
         display.delete()

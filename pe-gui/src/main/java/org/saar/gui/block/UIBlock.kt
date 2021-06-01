@@ -1,11 +1,9 @@
 package org.saar.gui.block
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.UIElement
-import org.saar.gui.UINullElement
-import org.saar.gui.style.Style
+import org.saar.gui.style.IStyle
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.maths.objects.Rectangle
+import org.saar.maths.utils.Maths
 
 /**
  * This class represent an object inside a UIComponent.
@@ -16,34 +14,32 @@ import org.saar.maths.objects.Rectangle
  * @version 1.2
  * @since 18.2.2018
  */
-class UIBlock : UIChildElement {
-
-    override val style = Style(this)
-
-    override var parent: UIElement = UINullElement
+class UIBlock(val style: IStyle) {
 
     var texture: ReadOnlyTexture? = null
 
     var discardMap: ReadOnlyTexture? = null
 
-    fun inTouch(mx: Float, my: Float): Boolean {
+    fun inTouch(mx: Int, my: Int): Boolean {
         val radiuses = style.radiuses
-
-        if (radiuses.isZero()) {
-            return style.bounds.contains(mx, my)
-        }
 
         val x = style.x.get().toFloat()
         val y = style.y.get().toFloat()
         val w = style.width.get().toFloat()
         val h = style.height.get().toFloat()
 
+        if (radiuses.isZero()) {
+            return Maths.isBetween(mx.toFloat(), x, x + w) &&
+                    Maths.isBetween(my.toFloat(), y, y + h)
+        }
+
         val radius = radiuses.get(mx > x + w / 2, my < y + h / 2).toFloat()
 
         val bordersV = Rectangle(x + radius, y, w - radius * 2, h)
         val bordersH = Rectangle(x, y + radius, w, h - radius * 2)
 
-        if (bordersV.contains(mx, my) || bordersH.contains(mx, my)) {
+        if (bordersV.contains(mx.toFloat(), my.toFloat()) ||
+            bordersH.contains(mx.toFloat(), my.toFloat())) {
             return true
         }
         val cx = if (mx < x + w / 2) x + radius else x + w - radius

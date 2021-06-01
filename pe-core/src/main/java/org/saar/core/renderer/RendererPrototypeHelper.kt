@@ -39,23 +39,31 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
         this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    fun render(context: RenderContext, models: Iterable<T>) {
+    fun beforeRender(context: RenderContext) {
         this.shadersProgram.bind()
-
         this.prototype.onRenderCycle(context)
-
         this.uniformsHelper.loadPerRenderCycle()
+    }
 
-        models.forEach { render(context, it) }
-
+    fun afterRender() {
         this.shadersProgram.unbind()
     }
 
-    fun render(context: RenderContext, vararg models: T) {
-        this.render(context, models.asIterable())
+    inline fun render(context: RenderContext, renderCallback: () -> Unit) {
+        beforeRender(context)
+        renderCallback()
+        afterRender()
     }
 
-    private fun render(context: RenderContext, model: T) {
+    fun render(context: RenderContext, models: Iterable<T>) = render(context) {
+        models.forEach { render(context, it) }
+    }
+
+    fun render(context: RenderContext, vararg models: T) = render(context) {
+        models.forEach { render(context, it) }
+    }
+
+    fun render(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
         this.uniformsHelper.loadPerInstance()

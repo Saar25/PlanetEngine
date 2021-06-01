@@ -1,67 +1,50 @@
-package org.saar.gui.component;
+package org.saar.gui.component
 
-import org.jproperty.type.BooleanProperty;
-import org.jproperty.type.SimpleBooleanProperty;
-import org.saar.gui.UILabeledComponent;
-import org.saar.gui.block.UIBlock;
-import org.saar.gui.event.EventHandler;
-import org.saar.gui.event.MouseEvent;
-import org.saar.gui.style.Colours;
+import org.jproperty.type.BooleanProperty
+import org.jproperty.type.SimpleBooleanProperty
+import org.saar.gui.UIComponent
+import org.saar.gui.event.EventHandler
+import org.saar.gui.event.MouseEvent
+import org.saar.gui.style.Colours
 
-public class UIButton extends UILabeledComponent {
+class UIButton : UIComponent() {
 
-    private final BooleanProperty pressedProperty = new SimpleBooleanProperty();
+    private val pressedProperty: BooleanProperty = SimpleBooleanProperty()
 
-    private final UIBlock uiBlock = new UIBlock();
+    private var onAction: EventHandler<MouseEvent>? = null
 
-    private EventHandler<MouseEvent> onAction = e -> {};
-
-    public UIButton() {
-        initUiObject();
-        getLabel().setText("Button");
-        getStyle().getBorderColour().set(Colours.DARK_GREY);
-        getStyle().getBorders().set(2);
+    fun setOnAction(onAction: EventHandler<MouseEvent>) {
+        this.onAction = onAction
     }
 
-    private void initUiObject() {
-        this.uiBlock.getStyle().getBackgroundColour().set(Colours.GREY);
-        add(this.uiBlock);
-    }
-
-    public BooleanProperty pressedProperty() {
-        return this.pressedProperty;
-    }
-
-    public void setOnAction(EventHandler<MouseEvent> onAction) {
-        this.onAction = onAction;
-    }
-
-    @Override
-    public void onMousePress(MouseEvent event) {
-        if (event.getButton().isPrimary()) {
-            pressedProperty().set(true);
-            getStyle().getColourModifier().set(1.5f);
+    override fun onMousePress(event: MouseEvent) {
+        println(event)
+        if (event.button.isPrimary) {
+            this.pressedProperty.set(true)
+            this.style.colourModifier.set(1.5f)
         }
     }
 
-    @Override
-    public void onMouseRelease(MouseEvent event) {
-        if (event.getButton().isPrimary()) {
-            if (pressedProperty().get()) {
-                pressedProperty().set(false);
-                this.onAction.handle(event);
+    override fun onMouseRelease(event: MouseEvent) {
+        if (event.button.isPrimary) {
+            if (this.pressedProperty.get()) {
+                this.pressedProperty.set(false)
+                this.onAction?.handle(event)
             }
-            getStyle().getColourModifier().set(1);
+            this.style.colourModifier.set(1f)
         }
     }
 
-    @Override
-    public void onMouseEnter(MouseEvent event) {
+    override fun onMouseEnter(event: MouseEvent) = Unit
+
+    override fun onMouseExit(event: MouseEvent) {
+        this.pressedProperty.set(false)
+        this.style.colourModifier.set(1f)
     }
 
-    @Override
-    public void onMouseExit(MouseEvent event) {
-        pressedProperty().set(false);
-        getStyle().getColourModifier().set(1);
+    init {
+        this.style.backgroundColour.set(Colours.GREY)
+        this.style.borderColour.set(Colours.DARK_GREY)
+        this.style.borders.set(2)
     }
 }
