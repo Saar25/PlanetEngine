@@ -14,6 +14,12 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
 
     val fontScale: Float get() = this.style.fontSize.get() / this.font.size
 
+    var contentWidth: Int = 0
+        private set
+
+    var contentHeight: Int = 0
+        private set
+
     var text: String by Delegates.observable(text) { _, _, _ ->
         updateLetters()
     }
@@ -50,8 +56,8 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
             }
         }
 
-        this.style.contentWidth.set(contentWidth.toInt())
-        this.style.contentHeight.set(offset.y.toInt())
+        this.contentWidth = contentWidth.toInt()
+        this.contentHeight = offset.y.toInt()
     }
 
     private var textWidth = 0

@@ -22,10 +22,6 @@ class TextStyle(container: UITextElement) : ITextStyle {
 
     override val fontSize: PixelsLength = PixelsLength(container)
 
-    override val contentWidth: Length = Lengths.Width(container)
-
-    override val contentHeight: Length = Lengths.Height(container)
-
     override val colourModifier: ColourModifier = ColourModifier(container)
 
     override val borders: StyleBorders = StyleBorders(container)

@@ -11,8 +11,4 @@ interface ITextStyle : IStyle {
 
     val fontSize: ReadonlyLength
 
-    val contentWidth: ReadonlyLength
-
-    val contentHeight: ReadonlyLength
-
 }
