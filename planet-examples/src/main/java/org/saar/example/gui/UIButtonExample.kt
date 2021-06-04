@@ -11,7 +11,6 @@ import org.saar.gui.font.FontLoader
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.ratio
-import org.saar.gui.style.value.TextLengthValues.fitContent
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -60,7 +59,6 @@ object UIButtonExample {
 
         val writeable = UITextElement(font, text).apply {
             style.x.value = center()
-            style.width.value = fitContent()
         }
         display.add(writeable)
 

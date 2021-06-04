@@ -8,8 +8,7 @@ import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.CoordinateValues.sub
-import org.saar.gui.style.value.LengthValues
-import org.saar.gui.style.value.TextLengthValues.fitContent
+import org.saar.gui.style.value.LengthValues.pixels
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -27,7 +26,6 @@ object UISliderExample {
         val writeable = UITextElement("Hello World!").apply {
             style.x.value = center()
             style.y.value = center()
-            style.width.value = fitContent()
             style.fontSize.value = 48
             style.borderColour.set(Colours.PURPLE)
         }
@@ -43,8 +41,8 @@ object UISliderExample {
         val scrollbar = UISlider().apply {
             style.x.value = center()
             style.y.value = sub(center(), 300)
-            style.width.value = LengthValues.pixels(500)
-            style.height.value = LengthValues.pixels(50)
+            style.width.value = pixels(500)
+            style.height.value = pixels(50)
             dynamicValueProperty.addListener { e ->
                 writeable.style.borders.set(e.newValue.toInt())
                 borderSize.uiText.text = "Border size: " + e.newValue.toInt()

@@ -10,6 +10,8 @@ import kotlin.properties.Delegates
 
 class UIText(val parent: UITextElement, val font: Font, text: String) {
 
+    private var isValid: Boolean = false
+
     val style: TextStyle get() = this.parent.style
 
     val fontScale: Float get() = this.style.fontSize.get() / this.font.size
@@ -21,13 +23,13 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
         private set
 
     var text: String by Delegates.observable(text) { _, _, _ ->
-        updateLetters()
+        this.isValid = false
     }
 
     private var letters = emptyList<UILetter>()
 
     private fun updateLetters() {
-        val maxWidth = this.style.width.getMax()
+        val maxWidth = this.parent.parent.style.width.get()
 
         val offset = Vector2.of(0f, this.font.lineHeight * this.fontScale)
 
@@ -60,22 +62,15 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
         this.contentHeight = offset.y.toInt()
     }
 
-    private var textWidth = 0
-
-    init {
-        updateLetters()
-    }
-
-    private fun validate() {
-        val maxWidth = this.style.width.getMax()
-        if (this.textWidth != maxWidth) {
-            this.textWidth = maxWidth
-            updateLetters()
-        }
-    }
-
     fun update() {
-        validate()
+        if (this.contentWidth > this.parent.parent.style.width.get()) {
+            this.isValid = false
+        }
+
+        if (!this.isValid) {
+            updateLetters()
+            this.isValid = true
+        }
     }
 
     fun render(context: RenderContext) {
