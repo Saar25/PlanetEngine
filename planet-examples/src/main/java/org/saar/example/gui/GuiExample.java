@@ -83,6 +83,7 @@ public class GuiExample {
             GlUtils.clear(GlBuffer.COLOUR);
             display.render(new RenderContextBase(null));
 
+            display.update();
             window.update(true);
             window.pollEvents();
         }

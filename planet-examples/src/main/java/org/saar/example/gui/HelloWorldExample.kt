@@ -22,7 +22,7 @@ object HelloWorldExample {
         val writeable = UITextElement("Hello World!").apply {
             style.x.value = center()
             style.y.value = center()
-            style.fontSize.value = 48
+            style.fontSize.set(48)
         }
         display.add(writeable)
 

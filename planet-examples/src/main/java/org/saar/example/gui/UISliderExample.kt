@@ -26,15 +26,15 @@ object UISliderExample {
         val writeable = UITextElement("Hello World!").apply {
             style.x.value = center()
             style.y.value = center()
-            style.fontSize.value = 48
+            style.fontSize.set(48)
             style.borderColour.set(Colours.PURPLE)
         }
         display.add(writeable)
 
-        val borderSize = UITextElement("Border size: ").apply {
+        val borderSize = UITextElement("Border size: 0").apply {
             style.x.value = center()
             style.y.value = sub(center(), 200)
-
+            style.fontSize.set(48)
         }
         display.add(borderSize)
 

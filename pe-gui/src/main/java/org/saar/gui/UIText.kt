@@ -22,6 +22,8 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
     var contentHeight: Int = 0
         private set
 
+    private var maxWidth: Int = 0
+
     var text: String by Delegates.observable(text) { _, _, _ ->
         this.isValid = false
     }
@@ -29,7 +31,7 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
     private var letters = emptyList<UILetter>()
 
     private fun updateLetters() {
-        val maxWidth = this.parent.parent.style.width.get()
+        this.maxWidth = this.parent.parent.style.width.get()
 
         val offset = Vector2.of(0f, this.font.lineHeight * this.fontScale)
 
@@ -41,7 +43,7 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
             val xAdvance = character.xAdvance * this.fontScale
             val yAdvance = this.font.lineHeight * this.fontScale
 
-            if (maxWidth > 0 && offset.x + xAdvance > maxWidth) {
+            if (this.maxWidth > 0 && offset.x + xAdvance > this.maxWidth) {
                 offset.y += yAdvance
                 offset.x = 0f
             } else if (char != '\n') {
@@ -63,7 +65,8 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
     }
 
     fun update() {
-        if (this.contentWidth > this.parent.parent.style.width.get()) {
+        if (this.maxWidth != this.parent.parent.style.width.get()) {
+            this.maxWidth = this.parent.parent.style.width.get()
             this.isValid = false
         }
 

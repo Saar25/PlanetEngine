@@ -7,14 +7,11 @@ import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
-import org.saar.gui.style.length.Length
-import org.saar.gui.style.length.Lengths
-import org.saar.gui.style.length.PixelsLength
+import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.redius.StyleRadiuses
-import org.saar.gui.style.value.LengthValues
 
-class TextStyle(container: UITextElement) : ITextStyle {
+class TextStyle(container: UITextElement) : IStyle {
 
     override val x: Coordinate = Coordinates.X(container)
 
@@ -24,7 +21,7 @@ class TextStyle(container: UITextElement) : ITextStyle {
 
     override val height: ReadonlyLength = ReadonlyLength { container.uiText.contentHeight }
 
-    override val fontSize: PixelsLength = PixelsLength(container)
+    override val fontSize: FontSize = FontSize(container)
 
     override val colourModifier: ColourModifier = ColourModifier(container)
 

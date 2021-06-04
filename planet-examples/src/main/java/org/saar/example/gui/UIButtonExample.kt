@@ -63,7 +63,7 @@ object UIButtonExample {
         display.add(writeable)
 
         val uiFps = UITextElement(font, "").apply {
-            style.fontSize.value = 22
+            style.fontSize.set(22)
         }
         display.add(uiFps)
 
@@ -115,13 +115,13 @@ object UIButtonExample {
                 text + when {
                     e.modifiers.isShift() -> {
                         characterShiftMap.getOrDefault(
-                            e.keyCode, e.keyCode.toChar().toUpperCase())
+                            e.keyCode, e.keyCode.toChar().uppercaseChar())
                     }
                     e.modifiers.isCapsLock() -> {
-                        e.keyCode.toChar().toUpperCase()
+                        e.keyCode.toChar().uppercaseChar()
                     }
                     else -> {
-                        e.keyCode.toChar().toLowerCase()
+                        e.keyCode.toChar().lowercaseChar()
                     }
                 }
             }
