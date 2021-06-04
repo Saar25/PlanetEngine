@@ -6,7 +6,7 @@ import org.saar.gui.UIBlockElement
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.percentCenter
+import org.saar.gui.style.value.CoordinateValues.pixels
 import org.saar.maths.utils.Maths
 
 class UISlider : UIComponent() {
@@ -53,11 +53,14 @@ class UISlider : UIComponent() {
         val x1 = uiTruck.style.x.get()
         val w1 = uiTruck.style.width.get()
         val w2 = uiThumb.style.width.get()
-        val x2 = Maths.clamp(event.x, x1 + w2 / 2, x1 + w1 - w2 / 2)
-        val xMax = x1 + w1
-        val normalized = (x2 - x1).toFloat() / (xMax - x1)
-        uiThumb.style.x.set(
-            percentCenter(normalized * 100))
-        dynamicValueProperty.set(normalized * max.get() + min.get())
+
+        val xMin = x1 + w2 / 2
+        val xMax = x1 + w1 - w2 / 2
+
+        val x2 = Maths.clamp(event.x, xMin, xMax)
+        uiThumb.style.x.value = pixels(x2 - xMin)
+
+        val normalized = (x2 - xMin).toFloat() / (w1 - w2)
+        dynamicValueProperty.value = normalized * (max.get() - min.get()) + min.get()
     }
 }
