@@ -1,7 +1,7 @@
 package org.saar.gui.font
 
 import org.joml.Vector2i
-import org.joml.Vector4i
+import org.joml.Vector4f
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
@@ -12,10 +12,7 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec4iUniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -47,7 +44,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     }
 
     @UniformProperty
-    private val boundsUniform = Vec4iUniformValue("u_bounds")
+    private val boundsUniform = Vec4UniformValue("u_bounds")
 
     @UniformProperty
     private val bitmapUniform = TextureUniformValue("u_bitmap", 0)
@@ -87,11 +84,11 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             .mul(uiLetter.style.fontSize.get() / uiLetter.font.size)
             .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
 
-        this.boundsUniform.value = Vector4i(
-            bounds.x().toInt() + uiLetter.style.x.get(),
-            bounds.y().toInt() + uiLetter.style.y.get(),
-            bounds.z().toInt(),
-            bounds.w().toInt())
+        this.boundsUniform.value = Vector4f(
+            bounds.x() + uiLetter.style.x.get(),
+            bounds.y() + uiLetter.style.y.get(),
+            bounds.z(),
+            bounds.w())
     }
 
     override fun doInstanceDraw(context: RenderContext, uiLetter: UILetter) = QuadMesh.draw()

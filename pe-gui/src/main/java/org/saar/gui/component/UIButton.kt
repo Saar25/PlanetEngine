@@ -9,6 +9,7 @@ import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
+import org.saar.gui.style.value.FontSizeValues
 
 class UIButton : UIComponent() {
 
@@ -17,7 +18,9 @@ class UIButton : UIComponent() {
     private var onAction: EventHandler<MouseEvent>? = null
 
     override val children = listOf(
-        UITextElement("Button").also { it.parent = this }
+        UITextElement("Button").also { it.parent = this }.apply {
+            style.fontSize.value = FontSizeValues.percent(48 / 100f)
+        }
     )
 
     fun setOnAction(onAction: EventHandler<MouseEvent>) {

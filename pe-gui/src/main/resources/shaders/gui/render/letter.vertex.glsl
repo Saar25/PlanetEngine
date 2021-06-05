@@ -5,7 +5,7 @@ vec2(1, 1), vec2(1, 0)
 );
 
 // Uniforms
-uniform ivec4 u_bounds;
+uniform vec4  u_bounds;
 uniform ivec2 u_bitmapDimensions;
 uniform ivec4 u_bitmapBounds;
 uniform ivec2 u_resolution;
@@ -37,8 +37,8 @@ vec2 calculatePosition(vec2 p, vec2 s) {
 
 // Main
 void main(void) {
-    vec2 p = toNdc(vec2(u_bounds.xy));
-    vec2 s = toNdc(vec2(u_bounds.zw));
+    vec2 p = toNdc(u_bounds.xy);
+    vec2 s = toNdc(u_bounds.zw);
     vec2 pos = calculatePosition(p, s);
 
     gl_Position = vec4(pos, 0, 1);
