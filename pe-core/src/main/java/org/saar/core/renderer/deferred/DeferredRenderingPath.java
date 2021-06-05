@@ -10,8 +10,9 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class DeferredRenderingPath implements RenderingPath {
 
-    private final OffScreen screen;
-    private final DeferredScreenPrototype prototype;
+    private final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
+
+    private final OffScreen screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0));
 
     private final ICamera camera;
     private final DeferredRenderNode renderNode;
@@ -19,14 +20,6 @@ public class DeferredRenderingPath implements RenderingPath {
 
     public DeferredRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                  DeferredRenderPassesPipeline pipeline) {
-        this(new DeferredScreenPrototypeDefault(), camera, renderNode, pipeline);
-    }
-
-    public DeferredRenderingPath(DeferredScreenPrototype prototype, ICamera camera,
-                                 DeferredRenderNode renderNode, DeferredRenderPassesPipeline pipeline) {
-        this.prototype = prototype;
-        this.screen = Screens.fromPrototype(prototype, Fbo.create(0, 0));
-
         this.camera = camera;
         this.renderNode = renderNode;
         this.pipeline = pipeline;

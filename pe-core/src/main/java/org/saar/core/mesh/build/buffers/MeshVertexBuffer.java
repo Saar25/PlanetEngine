@@ -1,6 +1,5 @@
 package org.saar.core.mesh.build.buffers;
 
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.objects.vbos.Vbo;
 import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
@@ -8,13 +7,13 @@ import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 
 public class MeshVertexBuffer extends MeshDataBuffer {
 
-    public MeshVertexBuffer(IVbo vbo, BufferObjectWrapper wrapper) {
-        super(vbo, wrapper);
+    public MeshVertexBuffer(IVbo vbo) {
+        super(vbo);
     }
 
     private static MeshVertexBuffer create(VboUsage usage) {
         final IVbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, usage);
-        return new MeshVertexBuffer(vbo, new BufferObjectWrapper(vbo));
+        return new MeshVertexBuffer(vbo);
     }
 
     public static MeshVertexBuffer createStatic() {

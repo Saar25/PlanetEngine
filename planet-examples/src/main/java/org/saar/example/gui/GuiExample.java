@@ -1,12 +1,9 @@
 package org.saar.example.gui;
 
-import org.saar.core.postprocessing.PostProcessingBuffers;
-import org.saar.core.postprocessing.PostProcessingPipeline;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.forward.ForwardRenderingPath;
+import org.saar.core.renderer.RenderContextBase;
 import org.saar.gui.UIComponent;
+import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
-import org.saar.gui.UIGroup;
 import org.saar.gui.component.UIButton;
 import org.saar.gui.component.UICheckbox;
 import org.saar.gui.component.UISlider;
@@ -15,6 +12,8 @@ import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class GuiExample {
 
@@ -26,7 +25,7 @@ public class GuiExample {
 
         final UIDisplay display = new UIDisplay(window);
 
-        final UIGroup uiGroup = new UIGroup();
+        final UIContainer uiContainer = new UIContainer();
 
         final UISlider sizeUiSlider = new UISlider();
         sizeUiSlider.getStyle().getY().set(450);
@@ -34,21 +33,21 @@ public class GuiExample {
         sizeUiSlider.getStyle().getWidth().set(LengthValues.percent(90));
         sizeUiSlider.getStyle().getHeight().set(20);
 
-        sizeUiSlider.dynamicValueProperty().addListener(e -> {
+        sizeUiSlider.getDynamicValueProperty().addListener(e -> {
             final float percents = (e.getNewValue().floatValue() / 100) * 50 + 20;
-            uiGroup.getStyle().getWidth().set(LengthValues.percent(percents));
+            uiContainer.getStyle().getWidth().set(LengthValues.percent(percents));
         });
 
         display.add(sizeUiSlider);
 
 
-        uiGroup.getStyle().getWidth().set(LengthValues.percent(50));
-        uiGroup.getStyle().getHeight().set(LengthValues.ratio(1));
-        uiGroup.getStyle().getX().set(CoordinateValues.center());
-        display.add(uiGroup);
+        uiContainer.getStyle().getWidth().set(LengthValues.percent(50));
+        uiContainer.getStyle().getHeight().set(LengthValues.ratio(1));
+        uiContainer.getStyle().getX().set(CoordinateValues.center());
+        display.add(uiContainer);
 
         final UIComponent uiComponent = new MyUIComponent();
-        uiGroup.add(uiComponent);
+        uiContainer.add(uiComponent);
 
         final UIButton uiButton = new UIButton();
         uiButton.getStyle().getX().set(CoordinateValues.center());
@@ -56,7 +55,7 @@ public class GuiExample {
         uiButton.getStyle().getWidth().set(LengthValues.percent(10));
         uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
         uiButton.setOnAction(e -> System.out.println("Clicked!"));
-        uiGroup.add(uiButton);
+        uiContainer.add(uiButton);
 
         final UISlider uiSlider = new UISlider();
         uiSlider.getStyle().getY().set(20);
@@ -64,12 +63,12 @@ public class GuiExample {
         uiSlider.getStyle().getWidth().set(LengthValues.percent(90));
         uiSlider.getStyle().getHeight().set(20);
 
-        uiSlider.dynamicValueProperty().addListener(e -> {
+        uiSlider.getDynamicValueProperty().addListener(e -> {
             final float percents = e.getNewValue().floatValue() / 2;
             uiButton.getStyle().getWidth().set(LengthValues.percent(percents));
         });
 
-        uiGroup.add(uiSlider);
+        uiContainer.add(uiSlider);
 
         final UICheckbox uiCheckbox = new UICheckbox();
         uiCheckbox.getStyle().getY().set(50);
@@ -77,29 +76,18 @@ public class GuiExample {
         uiCheckbox.getStyle().getWidth().set(LengthValues.pixels(20));
         uiCheckbox.getStyle().getBackgroundColour().set(new Colour(48, 63, 159, 1f));
         uiCheckbox.getStyle().getRadiuses().set(3);
-        uiGroup.add(uiCheckbox);
-
-        final ForwardRenderingPath renderingPath = new ForwardRenderingPath(null, display);
-
-        final PostProcessingPipeline fxaaPipeline = new PostProcessingPipeline(
-                new FxaaPostProcessor()
-        );
+        uiContainer.add(uiCheckbox);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-            if (keyboard.isKeyPressed('R')) {
-                renderingPath.render().toMainScreen();
-            } else {
-                final PostProcessingBuffers buffers =
-                        renderingPath.render().asPostProcessingInput();
-                fxaaPipeline.process(buffers).toMainScreen();
-            }
+            GlUtils.clear(GlBuffer.COLOUR);
+            display.render(new RenderContextBase(null));
 
+            display.update();
             window.update(true);
             window.pollEvents();
         }
 
-        renderingPath.delete();
         display.delete();
         window.destroy();
     }

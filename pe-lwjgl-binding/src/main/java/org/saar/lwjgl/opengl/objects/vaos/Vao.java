@@ -2,20 +2,20 @@ package org.saar.lwjgl.opengl.objects.vaos;
 
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.opengl.objects.vbos.IVbo;
+import org.saar.lwjgl.opengl.objects.vbos.ReadOnlyVbo;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vao implements WriteableVao {
+public class Vao implements IVao {
 
-    private static final ReadOnlyVao NULL = new Vao(0);
+    public static final IVao NULL = new Vao(0);
+
     public static final ReadOnlyVao EMPTY = Vao.create();
 
     private final int id;
 
-    private final List<IVbo> buffers = new ArrayList<>();
     private final List<Attribute> attributes = new ArrayList<>();
 
     private boolean deleted = false;
@@ -44,11 +44,10 @@ public class Vao implements WriteableVao {
     }
 
     @Override
-    public void loadVbo(IVbo buffer, Attribute... attributes) {
-        this.bind();
+    public void loadVbo(ReadOnlyVbo buffer, Attribute... attributes) {
+        bind();
         buffer.bind();
         linkAttributes(attributes);
-        this.buffers.add(buffer);
         unbind();
     }
 
@@ -83,7 +82,6 @@ public class Vao implements WriteableVao {
 
     @Override
     public void delete() {
-        this.buffers.forEach(IVbo::delete);
         if (!GlConfigs.CACHE_STATE || !this.deleted) {
             GL30.glDeleteVertexArrays(this.id);
             this.deleted = true;

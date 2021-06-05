@@ -2,8 +2,7 @@ package org.saar.core.mesh.build.buffers;
 
 import org.saar.core.mesh.build.MeshBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.opengl.objects.buffers.BufferObjectWrapper;
-import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
+import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 
 import java.util.ArrayList;
@@ -13,11 +12,9 @@ import java.util.List;
 public class MeshDataBuffer extends MeshBuffer {
 
     private final List<Attribute> attributes = new ArrayList<>();
-    private final IVbo vbo;
 
-    public MeshDataBuffer(IVbo vbo, BufferObjectWrapper wrapper) {
-        super(wrapper);
-        this.vbo = vbo;
+    public MeshDataBuffer(IVbo vbo) {
+        super(vbo);
     }
 
     public void allocateCount(int count) {
@@ -27,8 +24,9 @@ public class MeshDataBuffer extends MeshBuffer {
     }
 
     @Override
-    public void loadInVao(WriteableVao vao) {
+    public void loadInVao(WritableVao vao) {
         vao.loadVbo(this.vbo, attributesArray());
+        this.vbo.delete();
     }
 
     public void addAttribute(Attribute attribute) {

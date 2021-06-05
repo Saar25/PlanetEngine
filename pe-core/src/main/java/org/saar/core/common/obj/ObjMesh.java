@@ -1,6 +1,5 @@
 package org.saar.core.common.obj;
 
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Meshes;
 
@@ -8,14 +7,14 @@ import java.util.Collection;
 
 public class ObjMesh implements Mesh {
 
-    private final DrawCallMesh mesh;
+    private final Mesh mesh;
 
-    public ObjMesh(DrawCallMesh mesh) {
+    public ObjMesh(Mesh mesh) {
         this.mesh = mesh;
     }
 
     static ObjMesh create(ObjMeshPrototype prototype, int indices) {
-        return new ObjMesh(Meshes.toElementsDrawCallMesh(prototype, indices));
+        return new ObjMesh(Meshes.toElementsMesh(prototype, indices));
     }
 
     public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {

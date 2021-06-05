@@ -2,7 +2,7 @@ package org.saar.core.renderer.renderpass
 
 import org.saar.lwjgl.opengl.shaders.Shader
 
-interface RenderPassPrototype<T : RenderPassRenderingBuffers> {
+interface RenderPassPrototype<T : RenderPassBuffers> {
 
     fun fragmentShader(): Shader
 

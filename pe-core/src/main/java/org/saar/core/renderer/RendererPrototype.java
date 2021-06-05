@@ -1,8 +1,6 @@
 package org.saar.core.renderer;
 
-import org.saar.core.mesh.Model;
-
-public interface RendererPrototype<T extends Model> {
+public interface RendererPrototype<T> {
 
     default String[] vertexAttributes() {
         return new String[0];
@@ -15,7 +13,9 @@ public interface RendererPrototype<T extends Model> {
     default void onRenderCycle(RenderContext context) {
     }
 
-    default void onInstanceDraw(RenderContext context, T state) {
+    default void onInstanceDraw(RenderContext context, T instance) {
     }
+
+    void doInstanceDraw(RenderContext context, T instance);
 
 }

@@ -1,80 +1,81 @@
 package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
-import org.saar.gui.font.Font
-import org.saar.gui.font.Letter
-import org.saar.gui.font.LetterRenderer
+import org.saar.gui.font.UILetter
+import org.saar.gui.font.UILetterRenderer
 import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
 
-class UIText(val font: Font, text: String) : UIChildNode, UIElement {
+class UIText(val parent: UITextElement, text: String) {
 
-    override val style = TextStyle(this)
+    private var isValid: Boolean = false
 
-    val fontScale: Float get() = this.style.fontSize.get() / this.font.size
+    val style: TextStyle get() = this.parent.style
 
-    override var parent: UIElement by Delegates.observable(UINullElement) { _, _, _ ->
-        updateLetters()
-    }
+    var contentWidth: Int = 0
+        private set
+
+    var contentHeight: Int = 0
+        private set
+
+    private var maxWidth: Int = 0
 
     var text: String by Delegates.observable(text) { _, _, _ ->
-        updateLetters()
+        this.isValid = false
     }
 
-    private var letters = emptyList<Letter>()
+    private var letters = emptyList<UILetter>()
 
     private fun updateLetters() {
-        val maxWidth = this.style.width.getMax()
+        this.maxWidth = this.parent.parent.style.width.get()
 
-        val advance = Vector2.of(0f, this.font.lineHeight * this.fontScale)
+        val font = this.style.font.get()
+        val fontScale = this.style.fontSize.get() / font.size
+        val offset = Vector2.of(0f, font.lineHeight * fontScale)
 
         var contentWidth = 0f
 
         this.letters = this.text.mapNotNull { char ->
-            val character = this.font.getCharacterOrDefault(char)
+            val character = font.getCharacterOrDefault(char)
 
-            val xAdvance = character.xAdvance * this.fontScale
-            val yAdvance = this.font.lineHeight * this.fontScale
+            val xAdvance = character.xAdvance * fontScale
+            val yAdvance = font.lineHeight * fontScale
 
-            if (maxWidth > 0 && advance.x + xAdvance > maxWidth) {
-                advance.y += yAdvance
-                advance.x = 0f
+            if (this.maxWidth > 0 && offset.x + xAdvance > this.maxWidth) {
+                offset.y += yAdvance
+                offset.x = 0f
             } else if (char != '\n') {
-                contentWidth = contentWidth.coerceAtLeast(advance.x + xAdvance)
+                contentWidth = contentWidth.coerceAtLeast(offset.x + xAdvance)
             }
 
-            Letter(this, this.font, character, Vector2.of(advance)).also {
-                advance.add(xAdvance, 0f)
+            UILetter(this, font, character, Vector2.of(offset)).also {
+                offset.add(xAdvance, 0f)
 
                 if (char == '\n') {
-                    advance.y += yAdvance
-                    advance.x = 0f
+                    offset.y += yAdvance
+                    offset.x = 0f
                 }
             }
         }
 
-        this.style.contentWidth.set(contentWidth.toInt())
-        this.style.contentHeight.set(advance.y.toInt())
+        this.contentWidth = contentWidth.toInt()
+        this.contentHeight = offset.y.toInt()
     }
 
-    private var textWidth = 0
+    fun update() {
+        if (this.maxWidth != this.parent.parent.style.width.get()) {
+            this.maxWidth = this.parent.parent.style.width.get()
+            this.isValid = false
+        }
 
-    private fun validate() {
-        val maxWidth = this.style.width.getMax()
-        if (this.textWidth != maxWidth) {
-            this.textWidth = maxWidth
+        if (!this.isValid) {
             updateLetters()
+            this.isValid = true
         }
     }
 
-    override fun update() {
-        validate()
+    fun render(context: RenderContext) {
+        UILetterRenderer.render(context, this.letters)
     }
-
-    override fun render(context: RenderContext) {
-        LetterRenderer.render(context, this.letters)
-    }
-
-    override fun delete() = this.letters.forEach { it.delete() }
 }

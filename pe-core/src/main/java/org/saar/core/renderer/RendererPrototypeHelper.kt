@@ -1,12 +1,11 @@
 package org.saar.core.renderer
 
-import org.saar.core.mesh.Model
 import org.saar.core.renderer.shaders.ShadersHelper
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-class RendererPrototypeHelper<T : Model>(private val prototype: RendererPrototype<T>) : Renderer {
+class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : Renderer {
 
     private val shadersProgram: ShadersProgram = ShadersHelper.empty()
         .let {
@@ -40,20 +39,28 @@ class RendererPrototypeHelper<T : Model>(private val prototype: RendererPrototyp
         this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    fun render(context: RenderContext, models: Iterable<T>) {
+    fun beforeRender(context: RenderContext) {
         this.shadersProgram.bind()
-
         this.prototype.onRenderCycle(context)
-
         this.uniformsHelper.loadPerRenderCycle()
+    }
 
-        models.forEach { render(context, it) }
-
+    fun afterRender() {
         this.shadersProgram.unbind()
     }
 
-    fun render(context: RenderContext, vararg models: T) {
-        this.render(context, models.asIterable())
+    inline fun render(context: RenderContext, renderCallback: () -> Unit) {
+        beforeRender(context)
+        renderCallback()
+        afterRender()
+    }
+
+    fun render(context: RenderContext, models: Iterable<T>) = render(context) {
+        models.forEach { render(context, it) }
+    }
+
+    fun render(context: RenderContext, vararg models: T) = render(context) {
+        models.forEach { render(context, it) }
     }
 
     fun render(context: RenderContext, model: T) {
@@ -61,7 +68,7 @@ class RendererPrototypeHelper<T : Model>(private val prototype: RendererPrototyp
 
         this.uniformsHelper.loadPerInstance()
 
-        model.draw()
+        this.prototype.doInstanceDraw(context, model)
     }
 
     override fun delete() {

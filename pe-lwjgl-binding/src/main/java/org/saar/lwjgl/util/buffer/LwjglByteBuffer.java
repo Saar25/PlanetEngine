@@ -170,6 +170,11 @@ public class LwjglByteBuffer implements LwjglBuffer {
     }
 
     @Override
+    public BufferWriter getWriter() {
+        return new BufferWriter(this.buffer);
+    }
+
+    @Override
     public int capacity() {
         return this.buffer.capacity();
     }

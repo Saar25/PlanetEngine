@@ -3,7 +3,7 @@ package org.saar.core.common.inference.weak;
 import org.saar.core.mesh.Instance;
 import org.saar.lwjgl.opengl.objects.attributes.Attribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.util.DataWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +18,7 @@ public class WeakInstance implements Instance {
         return this;
     }
 
-    public void write(BufferWriter writer) {
+    public void write(DataWriter writer) {
         for (GlPrimitive primitive : this.primitives) {
             primitive.write(writer);
         }

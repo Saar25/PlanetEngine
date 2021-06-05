@@ -16,32 +16,32 @@ object Meshes {
     private fun toVao(prototype: MeshPrototype): IVao {
         val vao = Vao.create()
         with(MeshPrototypeHelper(prototype)) {
-            loadToVao(vao)
             store()
+            loadToVao(vao)
         }
         return vao
     }
 
     @JvmStatic
-    fun toArraysDrawCallMesh(prototype: MeshPrototype, vertices: Int): DrawCallMesh {
+    fun toArraysMesh(prototype: MeshPrototype, vertices: Int): DrawCallMesh {
         return DrawCallMesh(toVao(prototype), ArraysDrawCall(
             RenderMode.TRIANGLES, 0, vertices))
     }
 
     @JvmStatic
-    fun toElementsDrawCallMesh(prototype: MeshPrototype, indices: Int): DrawCallMesh {
+    fun toElementsMesh(prototype: MeshPrototype, indices: Int): Mesh {
         return DrawCallMesh(toVao(prototype), ElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT))
     }
 
     @JvmStatic
-    fun toInstancedDrawCallMesh(prototype: MeshPrototype, instances: Int): DrawCallMesh {
+    fun toInstancedMesh(prototype: MeshPrototype, instances: Int): Mesh {
         return DrawCallMesh(toVao(prototype), InstancedArraysDrawCall(
             RenderMode.TRIANGLES, 0, instances))
     }
 
     @JvmStatic
-    fun toInstancedElementsDrawCallMesh(prototype: MeshPrototype, indices: Int, instances: Int): DrawCallMesh {
+    fun toInstancedElementsMesh(prototype: MeshPrototype, indices: Int, instances: Int): Mesh {
         return DrawCallMesh(toVao(prototype), InstancedElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT, instances))
     }

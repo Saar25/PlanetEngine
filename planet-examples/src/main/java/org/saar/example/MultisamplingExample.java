@@ -34,6 +34,7 @@ public class MultisamplingExample {
                 Attribute.of(0, 2, DataType.FLOAT, false),
                 Attribute.of(1, 3, DataType.FLOAT, false),
                 Attribute.of(2, 1, DataType.FLOAT, false));
+        vbo.delete();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

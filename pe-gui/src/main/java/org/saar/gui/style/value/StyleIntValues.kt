@@ -6,6 +6,9 @@ object StyleIntValues {
     val inherit: StyleIntValue = StyleIntValue { it }
 
     @JvmStatic
+    val none: StyleIntValue = StyleIntValue { 0 }
+
+    @JvmStatic
     fun pixels(value: Int): StyleIntValue = StyleIntValue { value }
 
 }

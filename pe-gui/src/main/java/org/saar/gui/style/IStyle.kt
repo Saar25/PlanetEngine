@@ -5,6 +5,8 @@ import org.saar.gui.style.border.ReadonlyStyleBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.font.ReadonlyStyleFont
+import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 
@@ -17,6 +19,10 @@ interface IStyle {
     val width: ReadonlyLength
 
     val height: ReadonlyLength
+
+    val fontSize: ReadonlyFontSize
+
+    val font: ReadonlyStyleFont
 
     val colourModifier: ReadonlyColourModifier
 

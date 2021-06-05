@@ -23,7 +23,7 @@ public final class Vbos {
         return vbo;
     }
 
-    public static void allocateAndStore(IVbo vbo, ByteBuffer buffer) {
+    public static void allocateAndStore(WritableVbo vbo, ByteBuffer buffer) {
         vbo.allocate(buffer.limit());
         vbo.store(0, buffer);
     }

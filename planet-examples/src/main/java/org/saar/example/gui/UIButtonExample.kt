@@ -3,15 +3,15 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContextBase
 import org.saar.core.util.Fps
+import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
-import org.saar.gui.UIText
+import org.saar.gui.UITextElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.font.Font
 import org.saar.gui.font.FontLoader
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.ratio
-import org.saar.gui.style.value.TextLengthValues.fitContent
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -38,6 +38,15 @@ object UIButtonExample {
 
         val display = UIDisplay(window)
 
+        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+            (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
+        )
+
+        val container = UIContainer().apply {
+            style.fontSize.set(48)
+        }
+        display.add(container)
+
         val uiButton = UIButton().apply {
             style.x.value = center()
             style.y.value = center()
@@ -45,11 +54,7 @@ object UIButtonExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         }
-        display.add(uiButton)
-
-        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
-            (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
-        )
+        container.add(uiButton)
 
         val text = """
             Lwjgl!!, some symbols?
@@ -58,46 +63,45 @@ object UIButtonExample {
             write here
         """.trimIndent()
 
-        val writeable = UIText(font, text).apply {
+        val writeable = UITextElement(text).apply {
             style.x.value = center()
-            style.width.value = fitContent()
         }
-        display.add(writeable)
+        container.add(writeable)
 
-        val uiFps = UIText(font, "").apply {
-            style.fontSize.value = 22
+        val uiFps = UITextElement("").apply {
+            style.fontSize.set(22)
         }
-        display.add(uiFps)
+        container.add(uiFps)
 
         val keyboard = window.keyboard
 
         keyboard.addKeyPressListener { e ->
-            writeable.text = changeTextByKeyboard(font, writeable.text, e)
+            writeable.uiText.text = changeTextByKeyboard(font, writeable.uiText.text, e)
         }
 
         keyboard.addKeyRepeatListener { e ->
-            writeable.text = changeTextByKeyboard(font, writeable.text, e)
+            writeable.uiText.text = changeTextByKeyboard(font, writeable.uiText.text, e)
         }
 
         val fps = Fps()
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            display.update()
+            container.update()
 
             GlUtils.clearColourAndDepthBuffer()
-            display.render(RenderContextBase(null))
+            container.render(RenderContextBase(null))
 
             window.update(true)
             window.pollEvents()
 
-            uiFps.text = "Fps: ${String.format("%.3f", fps.fps())}"
+            uiFps.uiText.text = "Fps: ${String.format("%.3f", fps.fps())}"
             fps.update()
         }
 
-        println(writeable.text)
+        println(writeable.uiText.text)
 
         font.delete()
-        display.delete()
+        container.delete()
         window.destroy()
     }
 
@@ -117,13 +121,13 @@ object UIButtonExample {
                 text + when {
                     e.modifiers.isShift() -> {
                         characterShiftMap.getOrDefault(
-                            e.keyCode, e.keyCode.toChar().toUpperCase())
+                            e.keyCode, e.keyCode.toChar().uppercaseChar())
                     }
                     e.modifiers.isCapsLock() -> {
-                        e.keyCode.toChar().toUpperCase()
+                        e.keyCode.toChar().uppercaseChar()
                     }
                     else -> {
-                        e.keyCode.toChar().toLowerCase()
+                        e.keyCode.toChar().lowercaseChar()
                     }
                 }
             }

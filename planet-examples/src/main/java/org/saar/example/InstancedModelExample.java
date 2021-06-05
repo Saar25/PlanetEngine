@@ -38,12 +38,14 @@ public class InstancedModelExample {
         vao.loadVbo(dataBuffer,
                 Attribute.of(0, 2, DataType.FLOAT, true),
                 Attribute.of(1, 3, DataType.FLOAT, true));
+        dataBuffer.delete();
 
         final DataBuffer instanceBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
         final float[] instanceData = {0.5f, .1f, .2f};
         instanceBuffer.allocateFloat(instanceData.length);
         instanceBuffer.storeFloat(0, instanceData);
         vao.loadVbo(instanceBuffer, Attribute.ofInstance(2, 1, DataType.FLOAT, false));
+        instanceBuffer.delete();
 
         final DrawCall drawCall = new InstancedArraysDrawCall(RenderMode.TRIANGLES, 3, 3);
         final Mesh mesh = new DrawCallMesh(vao, drawCall);

@@ -1,32 +1,20 @@
 package org.saar.gui
 
-import org.saar.core.renderer.RenderContext
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent
+import org.saar.gui.block.UIBlock
+import org.saar.gui.style.Style
 
-interface UIContainer : UINode {
+open class UIContainer : UIParentElement, UIChildElement {
 
-    val children: List<UINode>
+    final override var parent: UIElement = UINullElement
 
-    override fun onMouseClickEvent(event: ClickEvent): Boolean {
-        return this.children.asReversed().any { it.onMouseClickEvent(event) }
-    }
+    final override val children = mutableListOf<UIElement>()
 
-    override fun onMouseMoveEvent(event: MoveEvent) {
-        for (childUiContainer in this.children.asReversed()) {
-            childUiContainer.onMouseMoveEvent(event)
-        }
-    }
+    final override val style = Style(this)
 
-    override fun update() {
-        this.children.forEach { it.update() }
-    }
+    final override val uiBlock = UIBlock(this.style)
 
-    override fun render(context: RenderContext) {
-        this.children.forEach { it.render(context) }
-    }
-
-    override fun delete() {
-        this.children.forEach { it.delete() }
+    fun add(uiNode: UIChildElement) {
+        this.children.add(uiNode)
+        uiNode.parent = this
     }
 }

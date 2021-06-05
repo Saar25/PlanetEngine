@@ -75,4 +75,6 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
         this.textureUniform.value = model.texture
         this.normalMapUniform.value = model.normalMap
     }
+
+    override fun doInstanceDraw(context: RenderContext, model: NormalMappedModel) = model.draw()
 }

@@ -3,18 +3,16 @@ package org.saar.core.renderer.forward
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.screen.Screen
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
 class ForwardRenderingOutput(private val screen: Screen,
-                             private val colourTexture: ReadOnlyTexture,
-                             private val depthTexture: ReadOnlyTexture) : RenderingOutput {
+                             private val buffers: ForwardRenderingBuffers) : RenderingOutput {
 
     override fun to(screen: Screen) = this.screen.copyTo(screen)
 
-    override fun toTexture() = this.colourTexture
+    override fun toTexture() = this.buffers.albedo
 
-    fun toDepthTexture() = this.depthTexture
+    fun toDepthTexture() = this.buffers.depth
 
-    fun asPostProcessingInput() = PostProcessingBuffers(this.colourTexture, this.depthTexture)
+    fun asPostProcessingInput() = PostProcessingBuffers(this.buffers.albedo, this.buffers.depth)
 
 }

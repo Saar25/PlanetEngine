@@ -1,19 +1,18 @@
 package org.saar.core.common.r3d;
 
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Meshes;
 
 public class Mesh3D implements Mesh {
 
-    private final DrawCallMesh mesh;
+    private final Mesh mesh;
 
-    private Mesh3D(DrawCallMesh mesh) {
+    private Mesh3D(Mesh mesh) {
         this.mesh = mesh;
     }
 
     static Mesh3D create(Mesh3DPrototype prototype, int indices, int instances) {
-        return new Mesh3D(Meshes.toInstancedElementsDrawCallMesh(prototype, indices, instances));
+        return new Mesh3D(Meshes.toInstancedElementsMesh(prototype, indices, instances));
     }
 
     public static Mesh3D load(Mesh3DPrototype prototype, Vertex3D[] vertices, int[] indices, Instance3D[] instances) {

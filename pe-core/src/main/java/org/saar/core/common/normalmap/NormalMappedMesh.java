@@ -32,7 +32,7 @@ public class NormalMappedMesh implements Mesh {
     }
 
     private static NormalMappedMesh create(NormalMappedMeshPrototype prototype, int indices) {
-        return new NormalMappedMesh(Meshes.toElementsDrawCallMesh(prototype, indices));
+        return new NormalMappedMesh(Meshes.toElementsMesh(prototype, indices));
     }
 
     public static NormalMappedMesh load(NormalMappedMeshPrototype prototype, NormalMappedVertex[] vertices, int[] indices) {

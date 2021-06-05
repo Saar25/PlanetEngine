@@ -6,10 +6,10 @@ import org.saar.gui.style.value.StyleIntValues
 
 class StyleBorders(private val container: UIChildElement) : ReadonlyStyleBorders {
 
-    var topValue: StyleIntValue = StyleIntValues.inherit
-    var rightValue: StyleIntValue = StyleIntValues.inherit
-    var bottomValue: StyleIntValue = StyleIntValues.inherit
-    var leftValue: StyleIntValue = StyleIntValues.inherit
+    var topValue: StyleIntValue = StyleIntValues.none
+    var rightValue: StyleIntValue = StyleIntValues.none
+    var bottomValue: StyleIntValue = StyleIntValues.none
+    var leftValue: StyleIntValue = StyleIntValues.none
 
     override var top: Int
         get() = this.topValue.compute(this.container.parent.style.borders.top)

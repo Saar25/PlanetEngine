@@ -2,7 +2,6 @@ package org.saar.gui.component
 
 import org.jproperty.type.BooleanProperty
 import org.jproperty.type.SimpleBooleanProperty
-import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
@@ -14,8 +13,6 @@ private val discardMap = Texture2D.of("/assets/gui/checkbox.png")
 class UICheckbox : UIComponent() {
 
     private val checkedProperty: BooleanProperty = SimpleBooleanProperty()
-
-    private val uiBlock = UIBlock()
 
     init {
         initUiObject()
@@ -29,10 +26,9 @@ class UICheckbox : UIComponent() {
     }
 
     private fun initUiObject() {
-        this.uiBlock.style.height.value = LengthValues.ratio(1f)
-        this.uiBlock.style.borderColour.set(Colours.LIGHT_GREY)
-        this.uiBlock.style.borders.set(1)
-        add(this.uiBlock)
+        this.style.height.value = LengthValues.ratio(1f)
+        this.style.borderColour.set(Colours.LIGHT_GREY)
+        this.style.borders.set(1)
     }
 
     override fun onMousePress(event: MouseEvent) {

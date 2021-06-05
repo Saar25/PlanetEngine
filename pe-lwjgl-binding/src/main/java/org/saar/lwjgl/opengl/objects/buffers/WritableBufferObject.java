@@ -1,21 +1,79 @@
 package org.saar.lwjgl.opengl.objects.buffers;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-public interface WritableBufferObject {
-
-    /**
-     * Allocate memory for the vbo
-     *
-     * @param capacity the bytes to allocate
-     */
-    void allocate(long capacity);
+public interface WritableBufferObject extends ReadonlyBufferObject {
 
     /**
-     * Store memory in the vbo
+     * Allocate data to the buffer object
      *
-     * @param offset the offset of the vbo
-     * @param buffer the buffer to store in the vbo
+     * @param target   the buffer target
+     * @param capacity the capacity in bytes
+     * @param usage    the buffer usage
      */
-    void store(long offset, ByteBuffer buffer);
+    void allocate(BufferTarget target, long capacity, BufferUsage usage);
+
+    /**
+     * Store int data to the buffer object
+     *
+     * @param target the buffer target
+     * @param offset the data offset
+     * @param buffer the data
+     */
+    void store(BufferTarget target, long offset, int[] buffer);
+
+    /**
+     * Store float data to the buffer object
+     *
+     * @param target the buffer target
+     * @param offset the data offset
+     * @param buffer the data
+     */
+    void store(BufferTarget target, long offset, float[] buffer);
+
+    /**
+     * Store byte data to the buffer object
+     *
+     * @param target the buffer target
+     * @param offset the data offset
+     * @param buffer the data
+     */
+    void store(BufferTarget target, long offset, ByteBuffer buffer);
+
+    /**
+     * Store int data to the buffer object
+     *
+     * @param target the buffer target
+     * @param offset the data offset
+     * @param buffer the data
+     */
+    void store(BufferTarget target, long offset, IntBuffer buffer);
+
+    /**
+     * Store float data to the buffer object
+     *
+     * @param target the buffer target
+     * @param offset the data offset
+     * @param buffer the data
+     */
+    void store(BufferTarget target, long offset, FloatBuffer buffer);
+
+    /**
+     * Map the buffer object
+     *
+     * @param target the buffer target
+     * @param access the buffer access
+     * @return the mapped byte buffer
+     */
+    ByteBuffer map(BufferTarget target, BufferAccess access);
+
+    /**
+     * Unmap the buffer object
+     *
+     * @param target the buffer target
+     */
+    void unmap(BufferTarget target);
+
 }

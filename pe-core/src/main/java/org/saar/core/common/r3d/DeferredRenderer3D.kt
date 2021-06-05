@@ -59,4 +59,6 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
     }
+
+    override fun doInstanceDraw(context: RenderContext, model: Model3D) = model.draw()
 }

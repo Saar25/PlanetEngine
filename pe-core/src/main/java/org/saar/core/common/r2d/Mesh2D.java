@@ -27,9 +27,6 @@ public class Mesh2D implements Mesh {
         prototype.getColourBuffer().addAttribute(colourAttribute);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
         helper.allocateIndices(indices);
         helper.allocateVertices(vertices);
 
@@ -38,6 +35,9 @@ public class Mesh2D implements Mesh {
         writer.writeIndices(indices);
 
         helper.store();
+
+        final Vao vao = Vao.create();
+        helper.loadToVao(vao);
 
         final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);

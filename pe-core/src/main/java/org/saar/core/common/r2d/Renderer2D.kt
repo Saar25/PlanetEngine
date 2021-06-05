@@ -1,5 +1,6 @@
 package org.saar.core.common.r2d
 
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
@@ -22,4 +23,6 @@ private class RendererPrototype2D : RendererPrototype<Model2D> {
         ShaderCode.loadSource("/shaders/r2d/r2d.fragment.glsl"))
 
     override fun vertexAttributes() = arrayOf("in_position", "in_colour")
+
+    override fun doInstanceDraw(context: RenderContext, model: Model2D) = model.draw()
 }

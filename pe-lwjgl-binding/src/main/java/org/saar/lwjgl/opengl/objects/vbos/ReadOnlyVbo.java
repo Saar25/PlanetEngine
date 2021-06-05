@@ -3,9 +3,9 @@ package org.saar.lwjgl.opengl.objects.vbos;
 public interface ReadOnlyVbo {
 
     /**
-     * Return the size of the vbo in bytes
+     * Returns the capacity allocated to the buffer object in bytes
      *
-     * @return the size of the vbo int bytes
+     * @return the capacity allocated to the buffer object in bytes
      */
     long getCapacity();
 
