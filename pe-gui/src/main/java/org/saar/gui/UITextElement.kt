@@ -19,8 +19,7 @@ class UITextElement(text: String = "") : UIChildElement {
 
     override fun update() = this.uiText.update()
 
-    override fun render(context: RenderContext) {
-        UIBlockRenderer.render(context, this)
+    override fun renderText(context: RenderContext) {
         this.uiText.render(context)
     }
 }
