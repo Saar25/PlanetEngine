@@ -1,20 +1,17 @@
 package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
-import org.saar.gui.font.Font
 import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer
 import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
 
-class UIText(val parent: UITextElement, val font: Font, text: String) {
+class UIText(val parent: UITextElement, text: String) {
 
     private var isValid: Boolean = false
 
     val style: TextStyle get() = this.parent.style
-
-    val fontScale: Float get() = this.style.fontSize.get() / this.font.size
 
     var contentWidth: Int = 0
         private set
@@ -33,15 +30,17 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
     private fun updateLetters() {
         this.maxWidth = this.parent.parent.style.width.get()
 
-        val offset = Vector2.of(0f, this.font.lineHeight * this.fontScale)
+        val font = this.style.font.get()
+        val fontScale = this.style.fontSize.get() / font.size
+        val offset = Vector2.of(0f, font.lineHeight * fontScale)
 
         var contentWidth = 0f
 
         this.letters = this.text.mapNotNull { char ->
-            val character = this.font.getCharacterOrDefault(char)
+            val character = font.getCharacterOrDefault(char)
 
-            val xAdvance = character.xAdvance * this.fontScale
-            val yAdvance = this.font.lineHeight * this.fontScale
+            val xAdvance = character.xAdvance * fontScale
+            val yAdvance = font.lineHeight * fontScale
 
             if (this.maxWidth > 0 && offset.x + xAdvance > this.maxWidth) {
                 offset.y += yAdvance
@@ -50,7 +49,7 @@ class UIText(val parent: UITextElement, val font: Font, text: String) {
                 contentWidth = contentWidth.coerceAtLeast(offset.x + xAdvance)
             }
 
-            UILetter(this, this.font, character, Vector2.of(offset)).also {
+            UILetter(this, font, character, Vector2.of(offset)).also {
                 offset.add(xAdvance, 0f)
 
                 if (char == '\n') {

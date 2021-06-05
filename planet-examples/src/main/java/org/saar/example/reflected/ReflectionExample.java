@@ -95,15 +95,17 @@ public class ReflectionExample {
         final UIContainer uiTextGroup = new UIContainer();
         uiTextGroup.getStyle().getX().set(30);
         uiTextGroup.getStyle().getY().set(30);
+        uiTextGroup.getStyle().getFont().set(font);
+        uiTextGroup.getStyle().getFontSize().set(22);
 
-        final UITextElement uiFps = new UITextElement(font, "Fps: ???");
+        final UITextElement uiFps = new UITextElement("Fps: ???");
         uiTextGroup.add(uiFps);
 
-        final UITextElement uiSpeed = new UITextElement(font, "Speed: ???");
+        final UITextElement uiSpeed = new UITextElement("Speed: ???");
         uiSpeed.getStyle().getY().set((int) font.getSize());
         uiTextGroup.add(uiSpeed);
 
-        final UITextElement uiDelta = new UITextElement(font, "Delta: ???");
+        final UITextElement uiDelta = new UITextElement("Delta: ???");
         uiDelta.getStyle().getY().set((int) font.getSize() * 2);
         uiTextGroup.add(uiDelta);
 

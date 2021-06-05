@@ -7,6 +7,7 @@ import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
+import org.saar.gui.style.font.StyleFont
 import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.Lengths
@@ -22,6 +23,10 @@ class Style(container: UIChildElement) : IStyle {
 
     override val height: Length = Lengths.Height(container)
 
+    override val fontSize: FontSize = FontSize(container)
+
+    override val font: StyleFont = StyleFont(container)
+
     override val colourModifier: ColourModifier = ColourModifier(container)
 
     override val borders: StyleBorders = StyleBorders(container)
@@ -31,6 +36,4 @@ class Style(container: UIChildElement) : IStyle {
     override val radiuses: StyleRadiuses = StyleRadiuses(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
-
-    override val fontSize: FontSize = FontSize(container)
 }

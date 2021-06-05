@@ -3,6 +3,7 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContextBase
 import org.saar.core.util.Fps
+import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
 import org.saar.gui.UITextElement
 import org.saar.gui.component.UIButton
@@ -37,6 +38,15 @@ object UIButtonExample {
 
         val display = UIDisplay(window)
 
+        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+            (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
+        )
+
+        val container = UIContainer().apply {
+            style.fontSize.set(48)
+        }
+        display.add(container)
+
         val uiButton = UIButton().apply {
             style.x.value = center()
             style.y.value = center()
@@ -44,11 +54,7 @@ object UIButtonExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         }
-        display.add(uiButton)
-
-        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
-            (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
-        )
+        container.add(uiButton)
 
         val text = """
             Lwjgl!!, some symbols?
@@ -57,15 +63,15 @@ object UIButtonExample {
             write here
         """.trimIndent()
 
-        val writeable = UITextElement(font, text).apply {
+        val writeable = UITextElement(text).apply {
             style.x.value = center()
         }
-        display.add(writeable)
+        container.add(writeable)
 
-        val uiFps = UITextElement(font, "").apply {
+        val uiFps = UITextElement("").apply {
             style.fontSize.set(22)
         }
-        display.add(uiFps)
+        container.add(uiFps)
 
         val keyboard = window.keyboard
 
@@ -80,10 +86,10 @@ object UIButtonExample {
         val fps = Fps()
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            display.update()
+            container.update()
 
             GlUtils.clearColourAndDepthBuffer()
-            display.render(RenderContextBase(null))
+            container.render(RenderContextBase(null))
 
             window.update(true)
             window.pollEvents()
@@ -95,7 +101,7 @@ object UIButtonExample {
         println(writeable.uiText.text)
 
         font.delete()
-        display.delete()
+        container.delete()
         window.destroy()
     }
 

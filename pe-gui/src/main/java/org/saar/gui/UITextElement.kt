@@ -3,17 +3,11 @@ package org.saar.gui
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlock
 import org.saar.gui.block.UIBlockRenderer
-import org.saar.gui.font.Font
-import org.saar.gui.font.FontLoader
 import org.saar.gui.style.TextStyle
 
-class UITextElement(val font: Font = FontLoader.DEFAULT_FONT, text: String = "") : UIChildElement {
+class UITextElement(text: String = "") : UIChildElement {
 
-    constructor() : this(FontLoader.DEFAULT_FONT, "")
-
-    constructor(font: Font) : this(font, "")
-
-    constructor(text: String) : this(FontLoader.DEFAULT_FONT, text)
+    constructor() : this("")
 
     override val style = TextStyle(this)
 
@@ -21,7 +15,7 @@ class UITextElement(val font: Font = FontLoader.DEFAULT_FONT, text: String = "")
 
     override val uiBlock = UIBlock(this.style)
 
-    val uiText: UIText = UIText(this, font, text)
+    val uiText: UIText = UIText(this, text)
 
     override fun update() = this.uiText.update()
 

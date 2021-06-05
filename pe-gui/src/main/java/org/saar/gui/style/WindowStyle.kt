@@ -1,5 +1,6 @@
 package org.saar.gui.style
 
+import org.saar.gui.font.FontLoader
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.NoStyleBorders
@@ -9,6 +10,7 @@ import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.colourmodifier.NoColourModifier
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.font.ReadonlyStyleFont
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.redius.NoStyleRadiuses
@@ -25,6 +27,10 @@ class WindowStyle(private val window: Window) : IStyle {
 
     override val height: ReadonlyLength = ReadonlyLength { this.window.height }
 
+    override val fontSize: ReadonlyFontSize = ReadonlyFontSize { 16 }
+
+    override val font: ReadonlyStyleFont = ReadonlyStyleFont { FontLoader.DEFAULT_FONT }
+
     override val colourModifier: ReadonlyColourModifier = NoColourModifier
 
     override val borders: ReadonlyStyleBorders = NoStyleBorders
@@ -34,6 +40,4 @@ class WindowStyle(private val window: Window) : IStyle {
     override val radiuses: ReadonlyStyleRadiuses = NoStyleRadiuses
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
-
-    override val fontSize: ReadonlyFontSize = ReadonlyFontSize { 16 }
 }

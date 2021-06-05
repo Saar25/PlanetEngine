@@ -9,6 +9,8 @@ import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.colourmodifier.NoColourModifier
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.font.NoStyleFont
+import org.saar.gui.style.font.ReadonlyStyleFont
 import org.saar.gui.style.fontsize.NoFontSize
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
@@ -25,6 +27,10 @@ object NoStyle : IStyle {
 
     override val height: ReadonlyLength = ReadonlyLength { 0 }
 
+    override val fontSize: ReadonlyFontSize = NoFontSize
+
+    override val font: ReadonlyStyleFont = NoStyleFont
+
     override val colourModifier: ReadonlyColourModifier = NoColourModifier
 
     override val borders: ReadonlyStyleBorders = NoStyleBorders
@@ -34,6 +40,4 @@ object NoStyle : IStyle {
     override val radiuses: ReadonlyStyleRadiuses = NoStyleRadiuses
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
-
-    override val fontSize: ReadonlyFontSize = NoFontSize
 }
