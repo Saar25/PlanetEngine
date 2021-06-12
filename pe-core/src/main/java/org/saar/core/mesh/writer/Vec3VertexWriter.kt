@@ -8,9 +8,9 @@ import org.saar.lwjgl.util.DataWriter
 
 class Vec3VertexWriter(private val dataWriter: DataWriter) : VertexDataWriter {
 
-    override val attributeLinkers: List<AttributeLinker> = listOf(
-        FloatAttributeLinker(3, DataType.FLOAT, false)
-    )
+    val attributeLinker: AttributeLinker = FloatAttributeLinker(3, DataType.FLOAT, false)
+
+    override val attributeLinkers: List<AttributeLinker> = listOf(this.attributeLinker)
 
     fun write(value: Vector3fc) {
         write(value.x(), value.y(), value.z())

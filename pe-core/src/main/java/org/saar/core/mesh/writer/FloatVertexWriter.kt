@@ -7,9 +7,9 @@ import org.saar.lwjgl.util.DataWriter
 
 class FloatVertexWriter(private val dataWriter: DataWriter) : VertexDataWriter {
 
-    override val attributeLinkers: List<AttributeLinker> = listOf(
-        FloatAttributeLinker(1, DataType.FLOAT, false)
-    )
+    val attributeLinker: AttributeLinker = FloatAttributeLinker(1, DataType.FLOAT, false)
+
+    override val attributeLinkers: List<AttributeLinker> = listOf(this.attributeLinker)
 
     fun write(value: Float) = this.dataWriter.writeFloat(value)
 }
