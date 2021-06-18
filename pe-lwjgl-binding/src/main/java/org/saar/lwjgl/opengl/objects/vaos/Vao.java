@@ -1,7 +1,8 @@
 package org.saar.lwjgl.opengl.objects.vaos;
 
 import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.vbos.ReadOnlyVbo;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
@@ -16,7 +17,7 @@ public class Vao implements IVao {
 
     private final int id;
 
-    private final List<Attribute> attributes = new ArrayList<>();
+    private final List<IAttribute> attributes = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -31,20 +32,20 @@ public class Vao implements IVao {
 
     @Override
     public void enableAttributes() {
-        for (Attribute attribute : this.attributes) {
+        for (IAttribute attribute : this.attributes) {
             attribute.enable();
         }
     }
 
     @Override
     public void disableAttributes() {
-        for (Attribute attribute : this.attributes) {
+        for (IAttribute attribute : this.attributes) {
             attribute.disable();
         }
     }
 
     @Override
-    public void loadVbo(ReadOnlyVbo buffer, Attribute... attributes) {
+    public void loadVbo(ReadOnlyVbo buffer, IAttribute... attributes) {
         bind();
         buffer.bind();
         linkAttributes(attributes);
@@ -57,10 +58,10 @@ public class Vao implements IVao {
      *
      * @param attributes the attributes to link
      */
-    private void linkAttributes(Attribute... attributes) {
+    private void linkAttributes(IAttribute... attributes) {
         int offset = 0;
-        int stride = Attribute.sumBytes(attributes);
-        for (Attribute attribute : attributes) {
+        int stride = Attributes.sumBytes(attributes);
+        for (IAttribute attribute : attributes) {
             attribute.link(stride, offset);
             offset += attribute.getBytesPerVertex();
             this.attributes.add(attribute);

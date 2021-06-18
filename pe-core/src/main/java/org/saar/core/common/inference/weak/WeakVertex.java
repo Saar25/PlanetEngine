@@ -1,7 +1,7 @@
 package org.saar.core.common.inference.weak;
 
 import org.saar.core.mesh.Vertex;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.util.DataWriter;
 
@@ -24,13 +24,13 @@ public class WeakVertex implements Vertex {
         }
     }
 
-    public Attribute[] getAttributes() {
+    public IAttribute[] getAttributes() {
         int index = 0;
-        final List<Attribute> attributes = new ArrayList<>();
+        final List<IAttribute> attributes = new ArrayList<>();
         for (GlPrimitive primitive : this.primitives) {
             Collections.addAll(attributes, primitive
                     .attribute(index++, false, 0));
         }
-        return attributes.toArray(new Attribute[0]);
+        return attributes.toArray(new IAttribute[0]);
     }
 }
