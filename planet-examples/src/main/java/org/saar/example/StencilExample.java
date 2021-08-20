@@ -1,8 +1,8 @@
 package org.saar.example;
 
-import org.lwjgl.opengl.GL11;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.constants.Comparator;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
@@ -11,6 +11,7 @@ import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.stencil.*;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -30,22 +31,27 @@ public class StencilExample {
 
         shadersProgram.bind();
 
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        Stencil.enable();
+
+        final StencilState writeStencil = new StencilState(
+                new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
+                new StencilFunction(Comparator.ALWAYS, 1, 0xFF), StencilMask.UNCHANGED);
+
+        final StencilState readStencil = new StencilState(
+                new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
+                new StencilFunction(Comparator.EQUAL, 1, 0xFF), StencilMask.UNCHANGED);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.STENCIL);
 
-            GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-            GL11.glStencilMask(0xFF);
+            Stencil.apply(writeStencil);
 
             vao1.bind();
             vao1.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-            GL11.glStencilMask(0x00);
+            Stencil.apply(readStencil);
 
             vao2.bind();
             vao2.enableAttributes();
