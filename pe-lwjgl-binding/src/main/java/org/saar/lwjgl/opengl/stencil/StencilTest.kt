@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.stencil
 import org.lwjgl.opengl.GL11
 import org.saar.lwjgl.opengl.constants.Comparator
 
-object Stencil {
+object StencilTest {
 
     private val DEFAULTS = StencilState(
         StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.KEEP),

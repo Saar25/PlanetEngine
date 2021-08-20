@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.depth
 import org.lwjgl.opengl.GL11
 import org.saar.lwjgl.opengl.constants.Comparator
 
-object Depth {
+object DepthTest {
 
     private val DEFAULTS = DepthState(
         DepthFunction(Comparator.LESS),

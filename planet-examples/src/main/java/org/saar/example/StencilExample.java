@@ -31,7 +31,7 @@ public class StencilExample {
 
         shadersProgram.bind();
 
-        Stencil.enable();
+        StencilTest.enable();
 
         final StencilState writeStencil = new StencilState(
                 new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
@@ -45,13 +45,13 @@ public class StencilExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.STENCIL);
 
-            Stencil.apply(writeStencil);
+            StencilTest.apply(writeStencil);
 
             vao1.bind();
             vao1.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            Stencil.apply(readStencil);
+            StencilTest.apply(readStencil);
 
             vao2.bind();
             vao2.enableAttributes();
