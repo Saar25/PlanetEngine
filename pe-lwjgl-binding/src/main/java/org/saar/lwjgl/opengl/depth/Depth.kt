@@ -13,16 +13,10 @@ object Depth {
     private var current: DepthState = DEFAULTS
 
     @JvmStatic
-    fun disable() {
-        GL11.glDisable(GL11.GL_DEPTH_TEST)
-    }
+    fun enable() = GL11.glEnable(GL11.GL_DEPTH_TEST)
 
     @JvmStatic
-    fun enable() {
-        GL11.glEnable(GL11.GL_DEPTH_TEST)
-        setFunction(current.function)
-        setMask(current.mask)
-    }
+    fun disable() = GL11.glDisable(GL11.GL_DEPTH_TEST)
 
     @JvmStatic
     fun apply(state: DepthState) {

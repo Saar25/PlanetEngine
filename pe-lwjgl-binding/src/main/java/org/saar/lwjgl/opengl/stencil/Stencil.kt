@@ -14,12 +14,10 @@ object Stencil {
     private var current: StencilState = DEFAULTS
 
     @JvmStatic
-    fun enable() {
-        GL11.glEnable(GL11.GL_STENCIL_TEST)
-        setFunction(current.function)
-        setOperation(current.operation)
-        setMask(current.mask)
-    }
+    fun enable() = GL11.glEnable(GL11.GL_STENCIL_TEST)
+
+    @JvmStatic
+    fun disable() = GL11.glDisable(GL11.GL_STENCIL_TEST)
 
     @JvmStatic
     fun apply(state: StencilState) {
