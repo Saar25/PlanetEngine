@@ -9,6 +9,7 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIElement
+import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -91,8 +92,8 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.enableAlphaBlending()
-        GlUtils.disableDepthTest()
         GlUtils.setCullFace(GlCullFace.NONE)
+        DepthTest.disable()
     }
 
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {

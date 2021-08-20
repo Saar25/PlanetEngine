@@ -8,12 +8,8 @@ public final class GlUtils {
     private final static boolean[] clipPlanes = new boolean[6];
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
-    private static boolean depthMasking = false;
-    private static byte stencilMasking = 0;
 
     private static BlendFunction blendFunction = BlendFunction.NONE;
-    private static DepthFunction depthFunction = DepthFunction.NONE;
-    private static DepthFunction stencilFunction = DepthFunction.NONE;
     private static GlCullFace cullFace = GlCullFace.NONE;
 
     private GlUtils() {
@@ -96,97 +92,6 @@ public final class GlUtils {
                 GL11.glBlendFunc(blendFunction.getSource(),
                         blendFunction.getDestination());
             }
-        }
-    }
-
-    public static void enableDepthTest() {
-        setDepthFunction(DepthFunction.LESS);
-    }
-
-    public static void disableDepthTest() {
-        setDepthFunction(DepthFunction.NONE);
-    }
-
-    /**
-     * Sets the depth function used for depth testing
-     *
-     * @param depthFunction the depth function
-     */
-    public static void setDepthFunction(DepthFunction depthFunction) {
-        if (GlUtils.depthFunction != depthFunction) {
-            GlUtils.depthFunction = depthFunction;
-            if (depthFunction == DepthFunction.NONE) {
-                GlUtils.setEnabled(GL11.GL_DEPTH_TEST, false);
-            } else {
-                GlUtils.setEnabled(GL11.GL_DEPTH_TEST, true);
-                GL11.glDepthFunc(depthFunction.get());
-            }
-        }
-    }
-
-    /**
-     * Enable depth mask, enable this if writing to depth buffer is needed
-     */
-    public static void enableDepthMasking() {
-        if (!depthMasking) {
-            GL11.glDepthMask(true);
-            depthMasking = true;
-        }
-    }
-
-    /**
-     * Disable depth mask, enable this if writing to depth buffer is not needed
-     */
-    public static void disableDepthMasking() {
-        if (depthMasking) {
-            GL11.glDepthMask(false);
-            depthMasking = false;
-        }
-    }
-
-    public static void enableStencilTest() {
-        setStencilFunction(DepthFunction.EQUAL);
-    }
-
-    public static void disableStencilTest() {
-        setStencilFunction(DepthFunction.NONE);
-    }
-
-    /**
-     * Sets the stencil function used for stencil testing
-     *
-     * @param stencilFunction the depth function
-     */
-    public static void setStencilFunction(DepthFunction stencilFunction) {
-        if (GlUtils.stencilFunction != stencilFunction) {
-            GlUtils.stencilFunction = stencilFunction;
-            if (stencilFunction == DepthFunction.NONE) {
-                GlUtils.setEnabled(GL11.GL_STENCIL_TEST, false);
-            } else {
-                GlUtils.setEnabled(GL11.GL_STENCIL_TEST, true);
-                GL11.glStencilFunc(stencilFunction.get(), 2, 0xFF);
-            }
-        }
-    }
-
-    /**
-     * Enable stencil mask, enable this if writing to stencil buffer is needed
-     */
-    public static void enableStencilMasking() {
-        setStencilMasking((byte) 0xFF);
-    }
-
-    /**
-     * Disable stencil mask, enable this if writing to stencil buffer is not needed
-     */
-    public static void disableStencilMasking() {
-        setStencilMasking((byte) 0);
-    }
-
-    public static void setStencilMasking(byte stencilMasking) {
-        if (GlUtils.stencilMasking != stencilMasking) {
-            GlUtils.stencilMasking = stencilMasking;
-            GL11.glStencilMask(stencilMasking);
         }
     }
 

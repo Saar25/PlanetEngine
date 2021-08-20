@@ -5,6 +5,7 @@ import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -57,8 +58,8 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
         GlUtils.enableAlphaBlending()
-        GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+        DepthTest.enable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
     }
