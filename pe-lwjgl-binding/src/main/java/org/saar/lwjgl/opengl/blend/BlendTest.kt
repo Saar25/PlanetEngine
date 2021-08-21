@@ -10,15 +10,27 @@ object BlendTest {
     private val DEFAULTS = BlendFunction(BlendValue.ONE, BlendValue.ZERO)
 
     private var current: BlendFunction = DEFAULTS
+    private var enabled: Boolean = false
 
     @JvmStatic
-    fun enable() = GL11.glEnable(GL11.GL_BLEND)
+    fun enable() {
+        if (!this.enabled) {
+            GL11.glEnable(GL11.GL_BLEND)
+            this.enabled = true
+        }
+    }
 
     @JvmStatic
-    fun disable() = GL11.glDisable(GL11.GL_BLEND)
+    fun disable() {
+        if (!this.enabled) {
+            GL11.glDisable(GL11.GL_BLEND)
+            this.enabled = true
+        }
+    }
 
     @JvmStatic
     fun apply(state: BlendFunction) {
+        enable()
         if (state != this.current) {
             setFunction(state)
         }

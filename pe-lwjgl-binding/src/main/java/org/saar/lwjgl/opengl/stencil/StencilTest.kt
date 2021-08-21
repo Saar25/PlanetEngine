@@ -12,15 +12,27 @@ object StencilTest {
     )
 
     private var current: StencilState = DEFAULTS
+    private var enabled: Boolean = false
 
     @JvmStatic
-    fun enable() = GL11.glEnable(GL11.GL_STENCIL_TEST)
+    fun enable() {
+        if (!this.enabled) {
+            GL11.glEnable(GL11.GL_STENCIL_TEST)
+            this.enabled = true
+        }
+    }
 
     @JvmStatic
-    fun disable() = GL11.glDisable(GL11.GL_STENCIL_TEST)
+    fun disable() {
+        if (!this.enabled) {
+            GL11.glDisable(GL11.GL_STENCIL_TEST)
+            this.enabled = true
+        }
+    }
 
     @JvmStatic
     fun apply(state: StencilState) {
+        enable()
         if (state.function != current.function) {
             setFunction(state.function)
         }
