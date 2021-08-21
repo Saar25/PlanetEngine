@@ -9,7 +9,6 @@ public final class GlUtils {
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
 
-    private static BlendFunction blendFunction = BlendFunction.NONE;
     private static GlCullFace cullFace = GlCullFace.NONE;
 
     private GlUtils() {
@@ -62,44 +61,6 @@ public final class GlUtils {
         } else {
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glCullFace(face.get());
-        }
-    }
-
-    public static void enableAlphaBlending() {
-        setBlendFunction(BlendFunction.ALPHA);
-    }
-
-    public static void enableAdditiveBlending() {
-        setBlendFunction(BlendFunction.ADDITIVE);
-    }
-
-    public static void disableBlending() {
-        setBlendFunction(BlendFunction.NONE);
-    }
-
-    /**
-     * Sets the blend function used for blending
-     *
-     * @param blendFunction the blend function
-     */
-    public static void setBlendFunction(BlendFunction blendFunction) {
-        if (GlUtils.blendFunction != blendFunction) {
-            GlUtils.blendFunction = blendFunction;
-            if (blendFunction == BlendFunction.NONE) {
-                GlUtils.setEnabled(GL11.GL_BLEND, false);
-            } else {
-                GlUtils.setEnabled(GL11.GL_BLEND, true);
-                GL11.glBlendFunc(blendFunction.getSource(),
-                        blendFunction.getDestination());
-            }
-        }
-    }
-
-    private static void setEnabled(int state, boolean enabled) {
-        if (enabled) {
-            GL11.glEnable(state);
-        } else {
-            GL11.glDisable(state);
         }
     }
 

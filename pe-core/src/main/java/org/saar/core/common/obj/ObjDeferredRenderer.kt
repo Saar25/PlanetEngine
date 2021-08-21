@@ -5,6 +5,7 @@ import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -57,7 +58,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-        GlUtils.enableAlphaBlending()
+        BlendTest.applyAlpha()
         DepthTest.enable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()

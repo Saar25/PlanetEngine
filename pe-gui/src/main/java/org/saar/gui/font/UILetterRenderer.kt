@@ -8,6 +8,7 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UITextElement
+import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -67,8 +68,8 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     override fun fragmentOutputs() = arrayOf("fragColour")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.enableAlphaBlending()
         GlUtils.setCullFace(GlCullFace.NONE)
+        BlendTest.applyAlpha()
         DepthTest.disable()
     }
 
