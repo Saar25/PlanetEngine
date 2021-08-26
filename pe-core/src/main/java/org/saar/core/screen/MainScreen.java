@@ -31,11 +31,11 @@ public final class MainScreen implements Screen {
     }
 
     @Override
-    public void copyTo(Screen other) {
+    public void copyTo(Screen other, FboBlitFilter filter, GlBuffer... buffers) {
         setAsRead();
         other.setAsDraw();
-        getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, other.getWidth(),
-                other.getHeight(), FboBlitFilter.LINEAR, GlBuffer.COLOUR);
+        getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0,
+                other.getWidth(), other.getHeight(), filter, buffers);
     }
 
     @Override
