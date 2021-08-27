@@ -21,6 +21,10 @@ object JomlOperators {
         mul(1f / other.x(), 1f / other.y(), Vector2f())
     }
 
+    operator fun Vector2fc.component1() = this.x()
+
+    operator fun Vector2fc.component2() = this.y()
+
     /* Vector2f extensions */
     operator fun Vector2f.plusAssign(other: Vector2fc) {
         add(other)
@@ -55,6 +59,12 @@ object JomlOperators {
         mul(1f / other.x(), 1f / other.y(), 1f / other.z(), Vector3f())
     }
 
+    operator fun Vector3fc.component1() = this.x()
+
+    operator fun Vector3fc.component2() = this.y()
+
+    operator fun Vector3fc.component3() = this.z()
+
     /* Vector3f extensions */
     operator fun Vector3f.plusAssign(other: Vector3fc) {
         add(other)
@@ -88,6 +98,14 @@ object JomlOperators {
     operator fun Vector4fc.div(other: Vector4fc) {
         mul(1f / other.x(), 1f / other.y(), 1f / other.z(), 1f / other.w(), Vector4f())
     }
+
+    operator fun Vector4fc.component1() = this.x()
+
+    operator fun Vector4fc.component2() = this.y()
+
+    operator fun Vector4fc.component3() = this.z()
+
+    operator fun Vector4fc.component4() = this.w()
 
     /* Vector4f extensions */
     operator fun Vector4f.plusAssign(other: Vector4fc) {
