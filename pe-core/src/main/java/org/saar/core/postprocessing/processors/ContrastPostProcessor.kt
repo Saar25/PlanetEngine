@@ -31,7 +31,4 @@ private class ContrastPostProcessorPrototype(private val contrast: Float) : Post
     override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
         this.textureUniform.value = buffers.albedo
     }
-
-    override fun onDelete() {
-    }
 }

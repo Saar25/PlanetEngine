@@ -12,6 +12,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
+import org.saar.lwjgl.opengl.stencil.StencilTest
 
 class FxaaPostProcessor : PostProcessorPrototypeWrapper(FxaaPostProcessorPrototype())
 
@@ -34,9 +35,8 @@ private class FxaaPostProcessorPrototype : PostProcessorPrototype {
         ShaderCode.loadSource("/shaders/postprocessing/fxaa.pass.glsl"))
 
     override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
-        this.textureUniform.value = buffers.albedo
-    }
+        StencilTest.disable()
 
-    override fun onDelete() {
+        this.textureUniform.value = buffers.albedo
     }
 }
