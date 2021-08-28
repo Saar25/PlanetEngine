@@ -53,9 +53,7 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     private val resolutionUniform = object : Vec2iUniform() {
         override fun getName() = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(
-            MainScreen.getInstance().width,
-            MainScreen.getInstance().height)
+        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty

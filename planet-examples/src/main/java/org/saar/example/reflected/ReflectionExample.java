@@ -111,7 +111,7 @@ public class ReflectionExample {
         uiDisplay.add(uiTextGroup);
 
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);

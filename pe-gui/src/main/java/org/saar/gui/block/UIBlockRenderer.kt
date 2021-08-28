@@ -46,9 +46,7 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     private val resolutionUniform = object : Vec2iUniform() {
         override fun getName(): String = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(
-            MainScreen.getInstance().width,
-            MainScreen.getInstance().height)
+        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty

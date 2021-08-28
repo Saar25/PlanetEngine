@@ -1,50 +1,27 @@
-package org.saar.core.screen;
+package org.saar.core.screen
 
-import org.saar.lwjgl.opengl.fbos.FboBlitFilter;
-import org.saar.lwjgl.opengl.fbos.ScreenFbo;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.fbos.FboBlitFilter
+import org.saar.lwjgl.opengl.fbos.ScreenFbo
+import org.saar.lwjgl.opengl.utils.GlBuffer
 
-public final class MainScreen implements Screen {
+object MainScreen : Screen {
 
-    private static final MainScreen instance = new MainScreen();
+    private val fbo: ScreenFbo get() = ScreenFbo.getInstance()
 
-    private MainScreen() {
+    override fun getWidth() = this.fbo.width
 
+    override fun getHeight() = this.fbo.height
+
+    override fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer) {
+        setAsRead()
+        other.setAsDraw()
+        this.fbo.blitFramebuffer(
+            0, 0, this.width, this.height,
+            0, 0, other.width, other.height,
+            filter, buffers)
     }
 
-    public static MainScreen getInstance() {
-        return MainScreen.instance;
-    }
+    override fun setAsDraw() = this.fbo.bindAsDraw()
 
-    private ScreenFbo getFbo() {
-        return ScreenFbo.getInstance();
-    }
-
-    @Override
-    public int getWidth() {
-        return getFbo().getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return getFbo().getHeight();
-    }
-
-    @Override
-    public void copyTo(Screen other, FboBlitFilter filter, GlBuffer... buffers) {
-        setAsRead();
-        other.setAsDraw();
-        getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0,
-                other.getWidth(), other.getHeight(), filter, buffers);
-    }
-
-    @Override
-    public void setAsDraw() {
-        getFbo().bindAsDraw();
-    }
-
-    @Override
-    public void setAsRead() {
-        getFbo().bindAsRead();
-    }
+    override fun setAsRead() = this.fbo.bindAsRead()
 }

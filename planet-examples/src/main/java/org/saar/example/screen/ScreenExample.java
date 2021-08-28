@@ -13,7 +13,6 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
-import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbos.IFbo;
@@ -58,7 +57,7 @@ public class ScreenExample {
 
             renderer.render(new RenderContextBase(camera), cottageModel);
 
-            screen.copyTo(MainScreen.getInstance());
+            screen.copyTo(MainScreen.INSTANCE);
 
             window.update(true);
             window.pollEvents();
@@ -72,7 +71,7 @@ public class ScreenExample {
 
     private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),

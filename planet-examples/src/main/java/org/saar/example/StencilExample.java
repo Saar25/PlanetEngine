@@ -69,7 +69,7 @@ public class StencilExample {
             vao2.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            screen.copyTo(MainScreen.getInstance());
+            screen.copyTo(MainScreen.INSTANCE);
 
             window.update(true);
             window.pollEvents();

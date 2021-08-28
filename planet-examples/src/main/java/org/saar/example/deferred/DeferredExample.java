@@ -4,7 +4,6 @@ import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.behaviors.SmoothMouseRotationBehavior;
 import org.saar.core.common.behaviors.ThirdPersonViewBehavior;
 import org.saar.core.common.obj.ObjMesh;
@@ -71,7 +70,7 @@ public class DeferredExample {
 
     private static Camera buildCamera(Mouse mouse) {
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 1000);
 
         final Transform center = new SimpleTransform();
 

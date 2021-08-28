@@ -11,7 +11,7 @@ public interface RenderingOutput {
     ReadOnlyTexture toTexture();
 
     default void toMainScreen() {
-        to(MainScreen.getInstance());
+        to(MainScreen.INSTANCE);
     }
 
 }

@@ -29,7 +29,7 @@ class PostProcessingPipeline(private vararg val processors: PostProcessor) {
     }
 
     @JvmOverloads
-    fun process(camera: ICamera?, input: PostProcessingBuffers, screen: Screen = MainScreen.getInstance()): PostProcessingOutput {
+    fun process(camera: ICamera?, input: PostProcessingBuffers, screen: Screen = MainScreen): PostProcessingOutput {
         this.screen.assureSize(screen.width, screen.height)
         screen.copyTo(this.screen, FboBlitFilter.NEAREST,
             GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
