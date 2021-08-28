@@ -4,6 +4,5 @@ import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
 class PostProcessingBuffers(
-    override val albedo: ReadOnlyTexture,
-    val depth: ReadOnlyTexture
+    override val albedo: ReadOnlyTexture
 ) : RenderPassBuffers

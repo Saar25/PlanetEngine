@@ -64,7 +64,7 @@ public class PostProcessingExample {
             renderer.render(new RenderContextBase(null), model);
 
             pipeline.process(new RenderPassContext(camera),
-                    new PostProcessingBuffers(colourTexture, Texture.NULL));
+                    new PostProcessingBuffers(colourTexture));
 
             screen.copyTo(MainScreen.INSTANCE);
 

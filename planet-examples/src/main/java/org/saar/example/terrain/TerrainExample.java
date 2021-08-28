@@ -20,7 +20,7 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.FogPostProcessor;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
@@ -132,7 +132,7 @@ public class TerrainExample {
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass(),
                 new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, FogDistance.XZ),
+                new FogRenderPass(fog, FogDistance.XZ),
                 new FxaaPostProcessor()
         );
 

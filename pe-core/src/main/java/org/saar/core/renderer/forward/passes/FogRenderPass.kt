@@ -1,12 +1,12 @@
-package org.saar.core.postprocessing.processors
+package org.saar.core.renderer.forward.passes
 
 import org.joml.Matrix4f
 import org.saar.core.fog.FogDistance
 import org.saar.core.fog.FogUniformValue
 import org.saar.core.fog.IFog
-import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessorPrototype
-import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
+import org.saar.core.renderer.forward.ForwardRenderPassPrototype
+import org.saar.core.renderer.forward.ForwardRenderPassPrototypeWrapper
+import org.saar.core.renderer.forward.ForwardRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -18,13 +18,13 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
 import org.saar.maths.utils.Matrix4
 
-class FogPostProcessor(fog: IFog, fogDistance: FogDistance)
-    : PostProcessorPrototypeWrapper(FogPostProcessorPrototype(fog, fogDistance))
+class FogRenderPass(fog: IFog, fogDistance: FogDistance)
+    : ForwardRenderPassPrototypeWrapper(FogRenderPassPrototype(fog, fogDistance))
 
 private val matrix: Matrix4f = Matrix4.create()
 
-private class FogPostProcessorPrototype(private val fog: IFog, private val fogDistance: FogDistance)
-    : PostProcessorPrototype {
+private class FogRenderPassPrototype(private val fog: IFog, private val fogDistance: FogDistance)
+    : ForwardRenderPassPrototype {
 
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
@@ -36,7 +36,7 @@ private class FogPostProcessorPrototype(private val fog: IFog, private val fogDi
     private val fogUniform = object : FogUniformValue() {
         override fun getName() = "u_fog"
 
-        override fun getUniformValue() = this@FogPostProcessorPrototype.fog
+        override fun getUniformValue() = this@FogRenderPassPrototype.fog
     }
 
     @UniformProperty
@@ -52,7 +52,7 @@ private class FogPostProcessorPrototype(private val fog: IFog, private val fogDi
     private val fogDistanceUniform = object : IntUniform() {
         override fun getName() = "u_fogDistance"
 
-        override fun getUniformValue() = this@FogPostProcessorPrototype.fogDistance.ordinal
+        override fun getUniformValue() = this@FogRenderPassPrototype.fogDistance.ordinal
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
@@ -61,7 +61,7 @@ private class FogPostProcessorPrototype(private val fog: IFog, private val fogDi
         ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/fog.pass.glsl"))
 
-    override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
+    override fun onRender(context: RenderPassContext, buffers: ForwardRenderingBuffers) {
         this.textureUniform.value = buffers.albedo
         this.depthUniform.value = buffers.depth
 

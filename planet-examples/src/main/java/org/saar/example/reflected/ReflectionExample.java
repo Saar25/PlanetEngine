@@ -20,7 +20,7 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.FogPostProcessor;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
@@ -276,7 +276,7 @@ public class ReflectionExample {
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, FogDistance.XYZ),
+                new FogRenderPass(fog, FogDistance.XYZ),
                 new FxaaPostProcessor()
         );
 
