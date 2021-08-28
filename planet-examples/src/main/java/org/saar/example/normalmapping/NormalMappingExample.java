@@ -19,14 +19,11 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.deferred.DeferredRenderingOutput;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.renderpass.RenderPassContext;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
@@ -93,7 +90,9 @@ public class NormalMappingExample {
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
-                new SsaoRenderPass()
+                new SsaoRenderPass(),
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
         );
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
@@ -102,19 +101,11 @@ public class NormalMappingExample {
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 camera, renderNode, renderPassesPipeline);
 
-        final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-                new ContrastPostProcessor(1.3f),
-                new FxaaPostProcessor()
-        );
-
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final DeferredRenderingOutput output = deferredRenderer.render();
-            pipeline.process(new RenderPassContext(camera),
-                    output.asPostProcessingInput());
-            output.toMainScreen();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -130,7 +121,6 @@ public class NormalMappingExample {
         }
 
         camera.delete();
-        pipeline.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();

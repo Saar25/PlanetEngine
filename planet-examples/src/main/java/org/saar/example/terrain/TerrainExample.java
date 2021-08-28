@@ -19,12 +19,13 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.deferred.*;
-import org.saar.core.renderer.renderpass.RenderPassContext;
+import org.saar.core.renderer.deferred.DeferredRenderNode;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -86,23 +87,11 @@ public class TerrainExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
         final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light);
 
-        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
-
-        final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
-                new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, FogDistance.XZ),
-                new FxaaPostProcessor()
-        );
-
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final DeferredRenderingOutput output = renderingPath.render();
-            postProcessing.process(
-                    new RenderPassContext(camera),
-                    output.asPostProcessingInput());
-            output.toMainScreen();
+            renderingPath.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -118,7 +107,6 @@ public class TerrainExample {
 
         camera.delete();
         renderingPath.delete();
-        postProcessing.delete();
         window.destroy();
     }
 
@@ -139,8 +127,13 @@ public class TerrainExample {
     }
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
+        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
+
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new LightRenderPass()
+                new LightRenderPass(),
+                new ContrastPostProcessor(1.3f),
+                new FogPostProcessor(fog, FogDistance.XZ),
+                new FxaaPostProcessor()
         );
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
