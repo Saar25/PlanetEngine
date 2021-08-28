@@ -1,10 +1,6 @@
 package org.saar.utils.file;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 public final class TextFileLoader {
@@ -20,24 +16,5 @@ public final class TextFileLoader {
             result = scanner.useDelimiter("\\A").next();
         }
         return result;
-    }
-
-    public static List<String> readAllLines(String fileName) throws Exception {
-        List<String> list = new LinkedList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(TextFileLoader.class.getResourceAsStream(fileName)))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                list.add(line);
-            }
-        }
-        return list;
-    }
-
-    public static String connectStringList(List<String> list) {
-        StringBuilder string = new StringBuilder();
-        for (String s : list) {
-            string.append(s).append('\n');
-        }
-        return string.toString();
     }
 }
