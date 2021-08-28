@@ -47,7 +47,7 @@ public class TerrainExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        GlUtils.setClearColour(.2f, .2f, .2f);
+        GlUtils.setClearColour(.0f, .7f, .8f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -87,7 +87,7 @@ public class TerrainExample {
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
 
-        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 450);
+        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
