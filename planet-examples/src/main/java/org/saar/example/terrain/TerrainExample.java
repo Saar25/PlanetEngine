@@ -20,19 +20,21 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
+import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.textures.CubeMapTexture;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
@@ -43,7 +45,7 @@ public class TerrainExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
         GlUtils.setClearColour(.0f, .7f, .8f);
@@ -84,8 +86,9 @@ public class TerrainExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
+        final CubeMapTexture cubeMap = createCubeMap();
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
-        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light);
+        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light, cubeMap);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -126,17 +129,29 @@ public class TerrainExample {
         return light;
     }
 
-    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                                            DirectionalLight light, CubeMapTexture cubeMap) {
         final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass(),
                 new ContrastPostProcessor(1.3f),
                 new FogRenderPass(fog, FogDistance.XZ),
+                new SkyboxPostProcessor(cubeMap),
                 new FxaaPostProcessor()
         );
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
+    private static CubeMapTexture createCubeMap() throws Exception {
+        return CubeMapTexture.builder()
+                .positiveX("/assets/skybox/right.jpg")
+                .negativeX("/assets/skybox/left.jpg")
+                .positiveY("/assets/skybox/top.jpg")
+                .negativeY("/assets/skybox/bottom.jpg")
+                .positiveZ("/assets/skybox/front.jpg")
+                .negativeZ("/assets/skybox/back.jpg")
+                .create();
+    }
 }
