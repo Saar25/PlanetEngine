@@ -6,7 +6,8 @@ import org.saar.core.mesh.build.writers.MeshIndexWriter;
 import org.saar.core.mesh.build.writers.MeshInstanceWriter;
 import org.saar.core.mesh.build.writers.MeshVertexWriter;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +15,17 @@ import java.util.List;
 public abstract class Mesh3DBuilder implements MeshBuilder,
         MeshVertexWriter<Vertex3D>, MeshIndexWriter, MeshInstanceWriter<Instance3D> {
 
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, true);
+    private static final IAttribute positionAttribute = Attributes.of(0, 3, DataType.FLOAT, true);
 
-    private static final Attribute normalAttribute = Attribute.of(1, 3, DataType.FLOAT, true);
+    private static final IAttribute normalAttribute = Attributes.of(1, 3, DataType.FLOAT, true);
 
-    private static final Attribute colourAttribute = Attribute.of(2, 3, DataType.FLOAT, true);
+    private static final IAttribute colourAttribute = Attributes.of(2, 3, DataType.FLOAT, true);
 
-    private static final Attribute[] transformAttributes = {
-            Attribute.ofInstance(3, 4, DataType.FLOAT, false),
-            Attribute.ofInstance(4, 4, DataType.FLOAT, false),
-            Attribute.ofInstance(5, 4, DataType.FLOAT, false),
-            Attribute.ofInstance(6, 4, DataType.FLOAT, false)};
+    private static final IAttribute[] transformAttributes = {
+            Attributes.ofInstanced(3, 4, DataType.FLOAT, false),
+            Attributes.ofInstanced(4, 4, DataType.FLOAT, false),
+            Attributes.ofInstanced(5, 4, DataType.FLOAT, false),
+            Attributes.ofInstanced(6, 4, DataType.FLOAT, false)};
 
     private static void addAttributes(Mesh3DPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);

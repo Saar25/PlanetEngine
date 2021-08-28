@@ -1,10 +1,10 @@
 package org.saar.core.postprocessing.processors
 
 import org.joml.Vector2i
-import org.saar.core.postprocessing.PostProcessingContext
-import org.saar.core.postprocessing.PostProcessor
+import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessorPrototype
 import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
+import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -14,11 +14,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.pow
-
-private val blurLevels: Array<Float> = arrayOf(
-    0.0093f, 0.028002f, 0.065984f, 0.121703f,
-    0.175713f, 0.198596f, 0.175713f, 0.121703f,
-    0.065984f, 0.028002f, 0.0093f)
 
 private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
     val mean = samples / 2
@@ -35,12 +30,12 @@ private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
     return kernel
 }
 
-class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor,
-    PostProcessorPrototypeWrapper(GaussianBlurPostProcessorPrototype(calculateGaussianKernel(samples, sigma))) {
+class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessorPrototypeWrapper(
+    GaussianBlurPostProcessorPrototype(calculateGaussianKernel(samples, sigma))) {
 
-    override fun doProcess(context: PostProcessingContext) {
-        super.doProcess(context)
-        super.doProcess(context)
+    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        super.render(context, buffers)
+        super.render(context, buffers)
     }
 }
 
@@ -53,9 +48,7 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     private val resolutionUniform = object : Vec2iUniform() {
         override fun getName() = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(
-            MainScreen.getInstance().width,
-            MainScreen.getInstance().height)
+        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
@@ -75,8 +68,8 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
         ShaderCode.define("LEVELS", this.samples.size.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl"))
 
-    override fun onRender(context: PostProcessingContext) {
-        this.textureUniform.value = context.buffers.colour
+    override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        this.textureUniform.value = buffers.albedo
 
         val vertical = 1 - this.verticalBlurUniform.value
         this.verticalBlurUniform.value = vertical

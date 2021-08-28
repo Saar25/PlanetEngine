@@ -1,9 +1,10 @@
 package org.saar.core.postprocessing
 
-interface PostProcessor {
+import org.saar.core.renderer.renderpass.RenderPass
+import org.saar.core.renderer.renderpass.RenderPassContext
 
-    fun process(context: PostProcessingContext)
+interface PostProcessor : RenderPass {
 
-    fun delete()
+    fun render(context: RenderPassContext, buffers: PostProcessingBuffers)
 
 }

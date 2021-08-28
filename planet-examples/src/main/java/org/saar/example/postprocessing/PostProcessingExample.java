@@ -1,11 +1,14 @@
 package org.saar.example.postprocessing;
 
+import org.saar.core.camera.Camera;
 import org.saar.core.common.r2d.*;
 import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.renderpass.RenderPassContext;
+import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -30,6 +33,8 @@ public class PostProcessingExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         GlUtils.setClearColour(.2f, .2f, .2f);
+
+        final Camera camera = new Camera(null);
 
         final Model2D model = buildModel2D();
         final Renderer2D renderer = Renderer2D.INSTANCE;
@@ -58,7 +63,10 @@ public class PostProcessingExample {
             GlUtils.clearColourAndDepthBuffer();
             renderer.render(new RenderContextBase(null), model);
 
-            pipeline.process(new PostProcessingBuffers(colourTexture)).toMainScreen();
+            pipeline.process(new RenderPassContext(camera),
+                    new PostProcessingBuffers(colourTexture));
+
+            screen.copyTo(MainScreen.INSTANCE);
 
             window.update(true);
             window.pollEvents();

@@ -3,7 +3,6 @@ package org.saar.lwjgl.opengl.textures;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.textures.loader.TextureLoader;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
 import org.saar.lwjgl.opengl.textures.settings.*;

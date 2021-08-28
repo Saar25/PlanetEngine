@@ -42,7 +42,7 @@ public class ManyCubesExample {
         final Keyboard keyboard = window.getKeyboard();
 
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f),

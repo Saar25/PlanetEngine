@@ -28,16 +28,16 @@ class KeyboardMovementBehavior(private val keyboard: Keyboard, velocity: Vector3
 
         val direction: Vector3f = Vector3.create()
 
-        if (this.keyboard.isKeyPressed('W'.toInt())) {
+        if (this.keyboard.isKeyPressed('W'.code)) {
             direction.z += this.velocity.z() * delta
         }
-        if (this.keyboard.isKeyPressed('A'.toInt())) {
+        if (this.keyboard.isKeyPressed('A'.code)) {
             direction.x += this.velocity.x() * delta
         }
-        if (this.keyboard.isKeyPressed('S'.toInt())) {
+        if (this.keyboard.isKeyPressed('S'.code)) {
             direction.z -= this.velocity.z() * delta
         }
-        if (this.keyboard.isKeyPressed('D'.toInt())) {
+        if (this.keyboard.isKeyPressed('D'.code)) {
             direction.x -= this.velocity.x() * delta
         }
 

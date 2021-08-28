@@ -1,42 +1,16 @@
 package org.saar.core.postprocessing
 
-import org.saar.core.camera.ICamera
-import org.saar.core.screen.Screens
-import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassesPipelineHelper
 
-class PostProcessingPipeline(private vararg val processors: PostProcessor) {
+class PostProcessingPipeline(vararg processors: PostProcessor) {
 
-    private val screenPrototype = PostProcessingScreenPrototype()
+    private val helper = RenderPassesPipelineHelper(processors)
 
-    private val screen = Screens.fromPrototype(this.screenPrototype, Fbo.create(0, 0))
-
-    private val colourTexture: ReadOnlyTexture
-        get() = this.screenPrototype.colourTexture
-
-    fun process(buffers: PostProcessingBuffers): PostProcessingOutput {
-        return process(null, buffers)
+    fun process(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        this.helper.process { it.render(context, buffers) }
     }
 
-    fun process(camera: ICamera?, buffers: PostProcessingBuffers): PostProcessingOutput {
-        this.screen.resizeToMainScreen()
-
-        this.screen.setAsDraw()
-
-        var currentBuffers = buffers
-        for (processor in this.processors) {
-            processor.process(PostProcessingContext(camera, currentBuffers))
-
-            currentBuffers = PostProcessingBuffers(
-                this.colourTexture, currentBuffers.depth)
-        }
-
-        return PostProcessingOutput(this.screen, currentBuffers.colour, buffers.depth)
-    }
-
-    fun delete() {
-        this.processors.forEach { it.delete() }
-        this.screen.delete()
-    }
+    fun delete() = this.helper.delete()
 
 }

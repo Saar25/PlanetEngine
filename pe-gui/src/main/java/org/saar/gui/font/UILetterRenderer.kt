@@ -8,11 +8,14 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UITextElement
+import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.*
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -38,9 +41,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     private val resolutionUniform = object : Vec2iUniform() {
         override fun getName(): String = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(
-            MainScreen.getInstance().width,
-            MainScreen.getInstance().height)
+        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
@@ -66,9 +67,10 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     override fun fragmentOutputs() = arrayOf("fragColour")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.enableAlphaBlending()
-        GlUtils.disableDepthTest()
         GlUtils.setCullFace(GlCullFace.NONE)
+        BlendTest.applyAlpha()
+        StencilTest.disable()
+        DepthTest.disable()
     }
 
     override fun onInstanceDraw(context: RenderContext, uiLetter: UILetter) {

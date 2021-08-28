@@ -1,7 +1,8 @@
 package org.saar.core.mesh.build.buffers;
 
 import org.saar.core.mesh.build.MeshBuffer;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 
@@ -11,14 +12,14 @@ import java.util.List;
 
 public class MeshDataBuffer extends MeshBuffer {
 
-    private final List<Attribute> attributes = new ArrayList<>();
+    private final List<IAttribute> attributes = new ArrayList<>();
 
     public MeshDataBuffer(IVbo vbo) {
         super(vbo);
     }
 
     public void allocateCount(int count) {
-        final int bytes = Attribute.sumBytes(attributesArray());
+        final int bytes = Attributes.sumBytes(attributesArray());
         final int capacity = count * bytes;
         allocate(capacity);
     }
@@ -29,15 +30,15 @@ public class MeshDataBuffer extends MeshBuffer {
         this.vbo.delete();
     }
 
-    public void addAttribute(Attribute attribute) {
+    public void addAttribute(IAttribute attribute) {
         this.attributes.add(attribute);
     }
 
-    public void addAttributes(Attribute... attributes) {
+    public void addAttributes(IAttribute... attributes) {
         Collections.addAll(this.attributes, attributes);
     }
 
-    private Attribute[] attributesArray() {
-        return this.attributes.toArray(new Attribute[0]);
+    private IAttribute[] attributesArray() {
+        return this.attributes.toArray(new IAttribute[0]);
     }
 }

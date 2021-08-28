@@ -24,7 +24,6 @@ uniform Fog       u_fog;
 uniform mat4      u_projectionMatrixInv;
 uniform mat4      u_viewMatrixInv;
 uniform vec3      u_cameraPosition;
-uniform bool      u_applyBackground;
 uniform int       u_fogDistance;
 
 // Fragment outputs
@@ -40,10 +39,6 @@ float calcDistanceXYZ(vec3 viewPosition);
 // Main
 void main(void) {
     float depth = texture(u_depth, v_position).r;
-
-    if (!u_applyBackground && depth == 1) {
-        discard;
-    }
 
     vec4 colour = texture(u_texture, v_position);
 

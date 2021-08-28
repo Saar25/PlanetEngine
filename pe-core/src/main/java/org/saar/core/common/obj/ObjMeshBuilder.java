@@ -5,16 +5,17 @@ import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.core.mesh.build.writers.MeshIndexWriter;
 import org.saar.core.mesh.build.writers.MeshVertexWriter;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ObjMeshBuilder implements MeshBuilder, MeshVertexWriter<ObjVertex>, MeshIndexWriter {
 
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
-    private static final Attribute uvCoordAttribute = Attribute.of(1, 2, DataType.FLOAT, false);
-    private static final Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
+    private static final IAttribute positionAttribute = Attributes.of(0, 3, DataType.FLOAT, false);
+    private static final IAttribute uvCoordAttribute = Attributes.of(1, 2, DataType.FLOAT, false);
+    private static final IAttribute normalAttribute = Attributes.of(2, 3, DataType.FLOAT, false);
 
     static void addAttributes(ObjMeshPrototype prototype) {
         prototype.getPositionBuffer().addAttribute(positionAttribute);

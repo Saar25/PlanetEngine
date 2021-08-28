@@ -19,7 +19,7 @@ import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
+import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -50,7 +50,7 @@ public class ShadowExample {
         final Mouse mouse = window.getMouse();
 
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);

@@ -16,7 +16,7 @@ object TrueTypeFontLoader {
             val bitmap = LwjglByteBuffer.allocate(bitmapWidth * bitmapHeight)
 
             STBTruetype.stbtt_BakeFontBitmap(buffer.asByteBuffer(), fontHeight,
-                bitmap.asByteBuffer(), bitmapWidth, bitmapHeight, start.toInt(), cdata)
+                bitmap.asByteBuffer(), bitmapWidth, bitmapHeight, start.code, cdata)
 
             val characters = sequence {
                 for (i in 0 until cdata.limit()) {

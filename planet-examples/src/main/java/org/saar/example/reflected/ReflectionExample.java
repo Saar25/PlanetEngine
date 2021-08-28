@@ -19,10 +19,8 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingBuffers;
-import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.FogPostProcessor;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
@@ -30,9 +28,9 @@ import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.passes.LightRenderPass;
+import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.reflection.Reflection;
-import org.saar.core.renderer.renderpass.light.LightRenderPass;
-import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -112,7 +110,7 @@ public class ReflectionExample {
         uiDisplay.add(uiTextGroup);
 
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 300);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
@@ -154,14 +152,6 @@ public class ReflectionExample {
         final DeferredRenderingPath deferredRenderer = buildRenderingPath(
                 camera, renderNode, shadowsRenderingPath, light);
 
-        final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
-
-        final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
-                new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, true, FogDistance.XYZ),
-                new FxaaPostProcessor()
-        );
-
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             renderNode.update();
@@ -173,9 +163,7 @@ public class ReflectionExample {
 
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
 
-            final PostProcessingBuffers buffers =
-                    deferredRenderer.render().asPostProcessingInput();
-            postProcessingPipeline.process(camera, buffers).toMainScreen();
+            deferredRenderer.render().toMainScreen();
 
             reflectionUiElement.setTexture(reflection.getReflectionMap());
             uiDisplay.render(new RenderContextBase(null));
@@ -192,7 +180,6 @@ public class ReflectionExample {
 
         camera.delete();
         uiDisplay.delete();
-        postProcessingPipeline.delete();
         reflection.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
@@ -284,9 +271,13 @@ public class ReflectionExample {
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                             ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+        final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
+                new ContrastPostProcessor(1.3f),
+                new FogRenderPass(fog, FogDistance.XYZ),
+                new FxaaPostProcessor()
         );
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);

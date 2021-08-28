@@ -63,7 +63,7 @@ public class Renderer3DExample {
 
     private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
+                MainScreen.INSTANCE, 70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),

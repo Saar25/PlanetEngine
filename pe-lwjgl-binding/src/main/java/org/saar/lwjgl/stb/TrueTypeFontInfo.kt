@@ -47,7 +47,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             val leftSideBearingBuffer = stack.mallocInt(1)
 
             STBTruetype.stbtt_GetCodepointHMetrics(this.info,
-                char.toInt(), advanceWidthBuffer, leftSideBearingBuffer)
+                char.code, advanceWidthBuffer, leftSideBearingBuffer)
 
             return TrueTypeCodepointHMetrics(advanceWidthBuffer.get(), leftSideBearingBuffer.get())
         }
@@ -60,7 +60,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             val x1Buffer = stack.mallocInt(1)
             val y1Buffer = stack.mallocInt(1)
 
-            STBTruetype.stbtt_GetCodepointBitmapBox(this.info, char.toInt(),
+            STBTruetype.stbtt_GetCodepointBitmapBox(this.info, char.code,
                 this.scale, this.scale, x0Buffer, y0Buffer, x1Buffer, y1Buffer)
 
             return Box2i(x0Buffer.get(), y0Buffer.get(), x1Buffer.get(), y1Buffer.get())
@@ -74,7 +74,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             val x1Buffer = stack.mallocInt(1)
             val y1Buffer = stack.mallocInt(1)
 
-            STBTruetype.stbtt_GetCodepointBitmapBoxSubpixel(this.info, char.toInt(),
+            STBTruetype.stbtt_GetCodepointBitmapBoxSubpixel(this.info, char.code,
                 this.scale, this.scale, xShift, yShift, x0Buffer, y0Buffer, x1Buffer, y1Buffer)
 
             return Box2i(x0Buffer.get(), y0Buffer.get(), x1Buffer.get(), y1Buffer.get())
@@ -89,7 +89,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
             val yBuffer = stack.mallocInt(1)
 
             val bitmap = STBTruetype.stbtt_GetCodepointBitmap(this.info,
-                this.scale, this.scale, char.toInt(), wBuffer, hBuffer, xBuffer, yBuffer)!!
+                this.scale, this.scale, char.code, wBuffer, hBuffer, xBuffer, yBuffer)!!
 
             return TrueTypeCharacterBitmap(LwjglByteBuffer.wrap(bitmap),
                 wBuffer.get(), hBuffer.get(), xBuffer.get(), yBuffer.get())
@@ -106,7 +106,7 @@ class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, priv
         bitmap.position(position)
 
         STBTruetype.stbtt_MakeCodepointBitmapSubpixel(this.info, bitmap, box.width,
-            box.height, bitmapWidth, this.scale, this.scale, x.fraction(), 0f, char.toInt())
+            box.height, bitmapWidth, this.scale, this.scale, x.fraction(), 0f, char.code)
     }
 
     fun createCodepointBitmapSubpixel(width: Int, height: Int, charSequence: CharSequence): TrueTypeBitmap {

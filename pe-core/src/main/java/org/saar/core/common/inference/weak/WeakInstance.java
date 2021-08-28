@@ -1,7 +1,7 @@
 package org.saar.core.common.inference.weak;
 
 import org.saar.core.mesh.Instance;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.util.DataWriter;
 
@@ -24,13 +24,13 @@ public class WeakInstance implements Instance {
         }
     }
 
-    public Attribute[] getAttributes(int vertexAttributes) {
+    public IAttribute[] getAttributes(int vertexAttributes) {
         int index = vertexAttributes;
-        final List<Attribute> attributes = new ArrayList<>();
+        final List<IAttribute> attributes = new ArrayList<>();
         for (GlPrimitive primitive : this.primitives) {
             Collections.addAll(attributes, primitive
                     .attribute(index++, false, 1));
         }
-        return attributes.toArray(new Attribute[0]);
+        return attributes.toArray(new IAttribute[0]);
     }
 }

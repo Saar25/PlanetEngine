@@ -4,21 +4,13 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
 open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
     private val prototype: RenderPassPrototype<T>) : RenderPass {
 
-    companion object {
-        private val vertexShaderCode = ShaderCode.loadSource(
-            "/shaders/common/quad/quad.vertex.glsl")
-    }
-
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, vertexShaderCode),
+        this.prototype.vertexShader(),
         this.prototype.fragmentShader())
 
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
@@ -58,5 +50,6 @@ open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
 
     override fun delete() {
         this.shadersProgram.delete()
+        this.prototype.onDelete();
     }
 }
