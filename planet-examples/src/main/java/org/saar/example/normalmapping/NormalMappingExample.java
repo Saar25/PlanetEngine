@@ -19,7 +19,6 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
@@ -27,6 +26,7 @@ import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingOutput;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.renderpass.RenderPassContext;
 import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.renderpass.ssao.SsaoRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
@@ -112,7 +112,8 @@ public class NormalMappingExample {
             camera.update();
 
             final DeferredRenderingOutput output = deferredRenderer.render();
-            pipeline.process(new PostProcessingBuffers(output.toTexture()));
+            pipeline.process(new RenderPassContext(camera),
+                    output.asPostProcessingInput());
             output.toMainScreen();
 
             window.update(true);

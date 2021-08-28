@@ -1,26 +1,16 @@
 package org.saar.core.postprocessing
 
-import org.saar.core.camera.ICamera
-import org.saar.lwjgl.opengl.constants.Comparator
-import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.stencil.*
+import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassesPipelineHelper
 
-class PostProcessingPipeline(private vararg val processors: PostProcessor) {
+class PostProcessingPipeline(vararg processors: PostProcessor) {
 
-    private val stencilState = StencilState(StencilOperation.ALWAYS_KEEP,
-        StencilFunction(Comparator.NOT_EQUAL, 0, 0xFF), StencilMask.UNCHANGED)
+    private val helper = RenderPassesPipelineHelper(processors)
 
-    fun process(buffers: PostProcessingBuffers) = process(null, buffers)
-
-    fun process(camera: ICamera?, buffers: PostProcessingBuffers) {
-        this.processors.forEach { processor ->
-            StencilTest.apply(this.stencilState)
-            DepthTest.disable()
-
-            processor.process(PostProcessingContext(camera, buffers))
-        }
+    fun process(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        this.helper.process { it.render(context, buffers) }
     }
 
-    fun delete() = this.processors.forEach { it.delete() }
+    fun delete() = this.helper.delete()
 
 }

@@ -24,6 +24,7 @@ import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.*;
+import org.saar.core.renderer.renderpass.RenderPassContext;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -89,7 +90,7 @@ public class TerrainExample {
 
         final PostProcessingPipeline postProcessing = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, true, FogDistance.XZ),
+                new FogPostProcessor(fog, FogDistance.XZ),
                 new FxaaPostProcessor()
         );
 
@@ -98,7 +99,9 @@ public class TerrainExample {
             camera.update();
 
             final DeferredRenderingOutput output = renderingPath.render();
-            postProcessing.process(camera, output.asPostProcessingInput());
+            postProcessing.process(
+                    new RenderPassContext(camera),
+                    output.asPostProcessingInput());
             output.toMainScreen();
 
             window.update(true);

@@ -27,6 +27,7 @@ import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.*;
 import org.saar.core.renderer.reflection.Reflection;
+import org.saar.core.renderer.renderpass.RenderPassContext;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
@@ -154,7 +155,7 @@ public class ReflectionExample {
 
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
-                new FogPostProcessor(fog, true, FogDistance.XYZ),
+                new FogPostProcessor(fog, FogDistance.XYZ),
                 new FxaaPostProcessor()
         );
 
@@ -170,7 +171,9 @@ public class ReflectionExample {
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
 
             final DeferredRenderingOutput output = deferredRenderer.render();
-            postProcessingPipeline.process(camera, output.asPostProcessingInput());
+            postProcessingPipeline.process(
+                    new RenderPassContext(camera),
+                    output.asPostProcessingInput());
             output.toMainScreen();
 
             reflectionUiElement.setTexture(reflection.getReflectionMap());

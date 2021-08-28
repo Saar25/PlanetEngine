@@ -1,15 +1,5 @@
 package org.saar.core.postprocessing
 
-import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.core.renderer.renderpass.RenderPassPrototype
 
-interface PostProcessorPrototype {
-
-    fun fragmentShader(): Shader
-
-    fun onRender(context: PostProcessingContext) {
-    }
-
-    fun onDelete() {
-    }
-
-}
+interface PostProcessorPrototype : RenderPassPrototype<PostProcessingBuffers>

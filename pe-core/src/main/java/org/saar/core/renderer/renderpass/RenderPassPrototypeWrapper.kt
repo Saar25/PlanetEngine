@@ -58,5 +58,6 @@ open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
 
     override fun delete() {
         this.shadersProgram.delete()
+        this.prototype.onDelete();
     }
 }

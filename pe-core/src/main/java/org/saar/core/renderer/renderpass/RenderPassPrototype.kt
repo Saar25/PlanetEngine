@@ -8,4 +8,6 @@ interface RenderPassPrototype<T : RenderPassBuffers> {
 
     fun onRender(context: RenderPassContext, buffers: T)
 
+    fun onDelete() {}
+
 }

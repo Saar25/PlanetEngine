@@ -1,9 +1,9 @@
 package org.saar.core.postprocessing.processors
 
-import org.saar.core.postprocessing.PostProcessingContext
-import org.saar.core.postprocessing.PostProcessor
+import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessorPrototype
 import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
+import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -11,10 +11,7 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 
-class ContrastPostProcessor(contrast: Float) : PostProcessor,
-    PostProcessorPrototypeWrapper(ContrastPostProcessorPrototype(contrast)) {
-
-}
+class ContrastPostProcessor(contrast: Float) : PostProcessorPrototypeWrapper(ContrastPostProcessorPrototype(contrast))
 
 private class ContrastPostProcessorPrototype(private val contrast: Float) : PostProcessorPrototype {
 
@@ -31,8 +28,8 @@ private class ContrastPostProcessorPrototype(private val contrast: Float) : Post
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl"))
 
-    override fun onRender(context: PostProcessingContext) {
-        this.textureUniform.value = context.buffers.colour
+    override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        this.textureUniform.value = buffers.albedo
     }
 
     override fun onDelete() {
