@@ -23,9 +23,9 @@ object DepthTest {
 
     @JvmStatic
     fun disable() {
-        if (!this.enabled) {
+        if (this.enabled) {
             GL11.glDisable(GL11.GL_DEPTH_TEST)
-            this.enabled = true
+            this.enabled = false
         }
     }
 
