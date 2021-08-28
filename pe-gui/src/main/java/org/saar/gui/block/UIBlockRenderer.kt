@@ -16,6 +16,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.*
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -92,6 +93,7 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
         BlendTest.applyAlpha()
+        StencilTest.disable()
         DepthTest.disable()
     }
 
