@@ -134,7 +134,7 @@ public class TerrainExample {
         final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new LightRenderPass(),
+                new LightRenderPass(light),
                 new ContrastPostProcessor(1.3f),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new SkyboxPostProcessor(cubeMap),

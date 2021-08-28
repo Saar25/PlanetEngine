@@ -20,7 +20,6 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
@@ -30,6 +29,7 @@ import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
@@ -134,14 +134,14 @@ public class ReflectionExample {
         final DeferredRenderNodeGroup reflectionRenderNode = new DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D);
         final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(objNodeBatch, nodeBatch3D);
 
+        final DirectionalLight light = buildDirectionalLight();
+
         final Camera reflectionCamera = new Camera(camera.getProjection());
         final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
-                reflectionCamera, reflectionRenderNode);
+                reflectionCamera, reflectionRenderNode, light);
 
         final Reflection reflection = new Reflection(mirrorModel.toPlane(),
                 camera, reflectionCamera, reflectionRenderingPath);
-
-        final DirectionalLight light = buildDirectionalLight();
 
         final ShadowsRenderingPath shadowsRenderingPath =
                 buildShadowsRenderingPath(shadowsRenderNode, light);
@@ -206,9 +206,9 @@ public class ReflectionExample {
         return new ObjNodeBatch(cottage, dragon, stall);
     }
 
-    private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode) {
+    private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
         final DeferredRenderPassesPipeline renderPassesPipeline =
-                new DeferredRenderPassesPipeline(new LightRenderPass());
+                new DeferredRenderPassesPipeline(new LightRenderPass(light));
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }

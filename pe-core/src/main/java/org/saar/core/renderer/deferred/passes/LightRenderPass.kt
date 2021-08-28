@@ -19,13 +19,15 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformArray
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
 
-private val light = DirectionalLight()
-    .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
-    .also { light -> light.direction.set(-50f, -50f, -50f) }
-
 private val matrix: Matrix4f = Matrix4.create()
 
-class LightRenderPass : DeferredRenderPassPrototypeWrapper(LightRenderPassPrototype(emptyArray(), arrayOf(light)))
+class LightRenderPass(pointLights: Array<PointLight>, directionalLights: Array<DirectionalLight>)
+    : DeferredRenderPassPrototypeWrapper(LightRenderPassPrototype(pointLights, directionalLights)) {
+
+    constructor(directionalLight: DirectionalLight) : this(emptyArray(), arrayOf(directionalLight))
+
+    constructor(pointLight: PointLight) : this(arrayOf(pointLight), emptyArray())
+}
 
 private class LightRenderPassPrototype(private val pointLights: Array<PointLight>,
                                        private val directionalLights: Array<DirectionalLight>)
