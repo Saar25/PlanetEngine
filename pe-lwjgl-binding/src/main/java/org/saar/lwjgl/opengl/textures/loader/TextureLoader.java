@@ -13,6 +13,7 @@ public final class TextureLoader {
 
     static {
         loaders.put("png", new PNGFileLoader());
+        loaders.put("jpg", new JPGFileLoader());
     }
 
     private TextureLoader() {
