@@ -20,10 +20,10 @@ class KeyboardRotationBehavior(private val keyboard: Keyboard, private val veloc
 
         var rotation = 0f
 
-        if (this.keyboard.isKeyPressed('Q'.toInt())) {
+        if (this.keyboard.isKeyPressed('Q'.code)) {
             rotation += this.velocity * delta
         }
-        if (this.keyboard.isKeyPressed('E'.toInt())) {
+        if (this.keyboard.isKeyPressed('E'.code)) {
             rotation -= this.velocity * delta
         }
 
