@@ -1,4 +1,4 @@
-package org.saar.core.renderer.renderpass.shadow
+package org.saar.core.renderer.deferred.passes
 
 import org.joml.Matrix4f
 import org.joml.Matrix4fc

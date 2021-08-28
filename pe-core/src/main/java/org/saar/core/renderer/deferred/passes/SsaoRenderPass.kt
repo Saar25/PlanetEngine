@@ -1,4 +1,4 @@
-package org.saar.core.renderer.renderpass.ssao
+package org.saar.core.renderer.deferred.passes
 
 import org.joml.Matrix4f
 import org.saar.core.renderer.deferred.DeferredRenderPassPrototypeWrapper

@@ -25,7 +25,7 @@ import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.*;
 import org.saar.core.renderer.renderpass.RenderPassContext;
-import org.saar.core.renderer.renderpass.light.LightRenderPass;
+import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
