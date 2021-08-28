@@ -6,6 +6,7 @@ import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -58,7 +59,9 @@ public class PostProcessingExample {
             GlUtils.clearColourAndDepthBuffer();
             renderer.render(new RenderContextBase(null), model);
 
-            pipeline.process(new PostProcessingBuffers(colourTexture)).toMainScreen();
+            pipeline.process(new PostProcessingBuffers(colourTexture));
+
+            screen.copyTo(MainScreen.INSTANCE);
 
             window.update(true);
             window.pollEvents();

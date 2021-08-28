@@ -25,10 +25,7 @@ import org.saar.core.postprocessing.processors.FogPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
 import org.saar.core.renderer.RenderingPath;
-import org.saar.core.renderer.deferred.DeferredRenderNode;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.*;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.renderer.renderpass.light.LightRenderPass;
 import org.saar.core.renderer.renderpass.shadow.ShadowsRenderPass;
@@ -150,6 +147,9 @@ public class ReflectionExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
 
+        final DeferredRenderingPath deferredRenderer = buildRenderingPath(
+                camera, renderNode, shadowsRenderingPath, light);
+
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final PostProcessingPipeline postProcessingPipeline = new PostProcessingPipeline(
@@ -157,9 +157,6 @@ public class ReflectionExample {
                 new FogPostProcessor(fog, true, FogDistance.XYZ),
                 new FxaaPostProcessor()
         );
-
-        final DeferredRenderingPath deferredRenderer = buildRenderingPath(
-                camera, renderNode, shadowsRenderingPath, light, postProcessingPipeline);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -172,7 +169,9 @@ public class ReflectionExample {
 
             mirrorModel.setReflectionMap(reflection.getReflectionMap());
 
-            deferredRenderer.render().toMainScreen();
+            final DeferredRenderingOutput output = deferredRenderer.render();
+            postProcessingPipeline.process(camera, output.asPostProcessingInput());
+            output.toMainScreen();
 
             reflectionUiElement.setTexture(reflection.getReflectionMap());
             uiDisplay.render(new RenderContextBase(null));
@@ -279,15 +278,14 @@ public class ReflectionExample {
     }
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light,
-                                                            PostProcessingPipeline postProcessingPipeline) {
+                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
         final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline, postProcessingPipeline);
+        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
     private static ObjModel loadCottage() {
