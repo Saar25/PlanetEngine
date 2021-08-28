@@ -5,11 +5,10 @@ import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
-import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderPassPrototype
+import org.saar.core.renderer.deferred.DeferredRenderPassPrototypeWrapper
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -19,20 +18,14 @@ import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.maths.utils.Matrix4
 
 class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) :
-    DeferredRenderPass,
-    RenderPassPrototypeWrapper<ShadowsRenderingBuffers>(ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)) {
-
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        super.render(context, ShadowsRenderingBuffers(buffers.albedo, buffers.normal, buffers.specular, buffers.depth))
-    }
-}
+    DeferredRenderPassPrototypeWrapper(ShadowsRenderPassPrototype(shadowCamera, shadowMap, light))
 
 private val matrix: Matrix4f = Matrix4.create()
 
 private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
                                          private val shadowMap: ReadOnlyTexture,
                                          private val light: DirectionalLight)
-    : RenderPassPrototype<ShadowsRenderingBuffers> {
+    : DeferredRenderPassPrototype {
 
     @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
@@ -91,7 +84,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext, buffers: ShadowsRenderingBuffers) {
+    override fun onRender(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
         this.colourTextureUniform.value = buffers.albedo
         this.normalTextureUniform.value = buffers.normal
         this.specularTextureUniform.value = buffers.specular

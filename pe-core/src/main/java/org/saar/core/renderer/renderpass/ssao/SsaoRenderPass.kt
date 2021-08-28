@@ -1,11 +1,10 @@
 package org.saar.core.renderer.renderpass.ssao
 
 import org.joml.Matrix4f
-import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderPassPrototypeWrapper
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -17,13 +16,9 @@ import org.saar.maths.utils.Matrix4
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class SsaoRenderPass : DeferredRenderPass, RenderPassPrototypeWrapper<SsaoRenderingBuffers>(SsaoRenderPassPrototype()) {
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        super.render(context, SsaoRenderingBuffers(buffers.albedo, buffers.normal, buffers.depth))
-    }
-}
+class SsaoRenderPass : DeferredRenderPassPrototypeWrapper(SsaoRenderPassPrototype())
 
-private class SsaoRenderPassPrototype : RenderPassPrototype<SsaoRenderingBuffers> {
+private class SsaoRenderPassPrototype : RenderPassPrototype<DeferredRenderingBuffers> {
 
     @UniformProperty
     private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -48,7 +43,7 @@ private class SsaoRenderPassPrototype : RenderPassPrototype<SsaoRenderingBuffers
         ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext, buffers: SsaoRenderingBuffers) {
+    override fun onRender(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
         this.colourTextureUniform.value = buffers.albedo
         this.normalTextureUniform.value = buffers.normal
         this.depthTextureUniform.value = buffers.depth

@@ -4,11 +4,10 @@ import org.joml.Matrix4f
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
-import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderPassPrototype
+import org.saar.core.renderer.deferred.DeferredRenderPassPrototypeWrapper
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -26,17 +25,11 @@ private val light = DirectionalLight()
 
 private val matrix: Matrix4f = Matrix4.create()
 
-class LightRenderPass : DeferredRenderPass,
-    RenderPassPrototypeWrapper<LightRenderingBuffers>(LightRenderPassPrototype(emptyArray(), arrayOf(light))) {
-
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        super.render(context, LightRenderingBuffers(buffers.albedo, buffers.normal, buffers.specular, buffers.depth))
-    }
-}
+class LightRenderPass : DeferredRenderPassPrototypeWrapper(LightRenderPassPrototype(emptyArray(), arrayOf(light)))
 
 private class LightRenderPassPrototype(private val pointLights: Array<PointLight>,
                                        private val directionalLights: Array<DirectionalLight>)
-    : RenderPassPrototype<LightRenderingBuffers> {
+    : DeferredRenderPassPrototype {
 
     @UniformProperty
     private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -75,7 +68,7 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
         ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
     )
 
-    override fun onRender(context: RenderPassContext, buffers: LightRenderingBuffers) {
+    override fun onRender(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
         this.colourTextureUniform.value = buffers.albedo
         this.normalTextureUniform.value = buffers.normal
         this.specularTextureUniform.value = buffers.specular
