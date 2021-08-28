@@ -19,7 +19,6 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
@@ -98,21 +97,19 @@ public class NormalMappingExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, renderNode, renderPassesPipeline);
-
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
         );
 
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                camera, renderNode, renderPassesPipeline, pipeline);
+
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final PostProcessingBuffers buffers =
-                    deferredRenderer.render().asPostProcessingInput();
-            pipeline.process(buffers).toMainScreen();
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();

@@ -19,7 +19,6 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FogPostProcessor;
@@ -87,7 +86,6 @@ public class TerrainExample {
         final DirectionalLight light = buildDirectionalLight();
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
-        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light);
 
         final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 450);
 
@@ -96,14 +94,13 @@ public class TerrainExample {
                 new FogPostProcessor(fog, true, FogDistance.XZ),
                 new FxaaPostProcessor()
         );
+        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light, postProcessing);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            final PostProcessingBuffers buffers =
-                    renderingPath.render().asPostProcessingInput();
-            postProcessing.process(camera, buffers).toMainScreen();
+            renderingPath.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
@@ -138,12 +135,13 @@ public class TerrainExample {
         return light;
     }
 
-    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
+    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                                            DirectionalLight light, PostProcessingPipeline postProcessing) {
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass()
         );
 
-        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline, postProcessing);
     }
 
 }

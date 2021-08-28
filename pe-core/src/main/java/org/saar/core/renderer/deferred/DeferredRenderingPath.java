@@ -1,7 +1,10 @@
 package org.saar.core.renderer.deferred;
 
 import org.saar.core.camera.ICamera;
+import org.saar.core.postprocessing.PostProcessingBuffers;
+import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderingOutput;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -23,16 +26,24 @@ public class DeferredRenderingPath implements RenderingPath {
     private final ICamera camera;
     private final DeferredRenderNode renderNode;
     private final DeferredRenderPassesPipeline pipeline;
+    private final PostProcessingPipeline postProcessingPipeline;
 
     public DeferredRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                  DeferredRenderPassesPipeline pipeline) {
+        this(camera, renderNode, pipeline, null);
+    }
+
+    public DeferredRenderingPath(ICamera camera, DeferredRenderNode renderNode,
+                                 DeferredRenderPassesPipeline pipeline,
+                                 PostProcessingPipeline postProcessingPipeline) {
         this.camera = camera;
         this.renderNode = renderNode;
         this.pipeline = pipeline;
+        this.postProcessingPipeline = postProcessingPipeline;
     }
 
     @Override
-    public DeferredRenderingOutput render() {
+    public RenderingOutput render() {
         this.screen.setAsDraw();
         this.screen.resizeToMainScreen();
 
@@ -42,7 +53,16 @@ public class DeferredRenderingPath implements RenderingPath {
 
         this.renderNode.renderDeferred(new RenderContextBase(this.camera));
 
-        return this.pipeline.process(this.camera, this.prototype.asBuffers(), screen);
+        final DeferredRenderingOutput pipelineOutput = this.pipeline
+                .process(this.camera, this.prototype.asBuffers(), screen);
+
+        if (this.postProcessingPipeline != null) {
+            final PostProcessingBuffers buffers = pipelineOutput.asPostProcessingInput();
+
+            return this.postProcessingPipeline.process(camera, buffers, this.screen);
+        } else {
+            return pipelineOutput;
+        }
     }
 
     @Override
