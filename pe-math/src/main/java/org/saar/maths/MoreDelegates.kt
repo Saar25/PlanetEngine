@@ -1,4 +1,4 @@
-package org.saar.utils
+package org.saar.maths
 
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty

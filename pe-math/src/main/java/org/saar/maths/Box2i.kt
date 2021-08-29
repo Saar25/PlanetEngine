@@ -1,4 +1,4 @@
-package org.saar.utils
+package org.saar.maths
 
 import org.joml.Vector4f
 import org.joml.Vector4i

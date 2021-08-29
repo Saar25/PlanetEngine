@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.shaders;
 
-import org.saar.utils.file.TextFileLoader;
+import org.saar.lwjgl.util.FileLoader;
 
 import java.util.Arrays;
 
@@ -12,13 +12,13 @@ public final class ShaderCodeLoader {
     }
 
     public static String loadSource(String file) throws Exception {
-        final String code = TextFileLoader.loadResource(file);
+        final String code = FileLoader.loadTextFile(file);
         return preProcessCode(code);
     }
 
     public static String loadSource(String file, boolean required, String... included) throws ShaderLoaderException {
         try {
-            final String code = TextFileLoader.loadResource(file);
+            final String code = FileLoader.loadTextFile(file);
             return preProcessCode(code, included);
         } catch (Exception e) {
             if (required) {
