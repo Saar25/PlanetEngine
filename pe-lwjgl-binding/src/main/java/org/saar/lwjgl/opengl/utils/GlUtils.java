@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL32;
 
 public final class GlUtils {
 
-    private final static boolean[] clipPlanes = new boolean[6];
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
 
@@ -97,30 +96,6 @@ public final class GlUtils {
      */
     public static void setViewport(int x, int y, int w, int h) {
         GL11.glViewport(x, y, w, h);
-    }
-
-    /**
-     * Enable the clip plane, should be call whenever rendering only certain areas
-     *
-     * @param clipPlane the number of the clip plane to enable
-     */
-    public static void enableClipPlane(int clipPlane) {
-        if (!clipPlanes[clipPlane]) {
-            GL11.glEnable(GL11.GL_CLIP_PLANE0 + clipPlane);
-            clipPlanes[clipPlane] = true;
-        }
-    }
-
-    /**
-     * Disable the clip plane, should be call whenever rendering without clipping areas
-     *
-     * @param clipPlane the number of the clip plane to enable
-     */
-    public static void disableClipPlane(int clipPlane) {
-        if (clipPlanes[clipPlane]) {
-            GL11.glEnable(GL11.GL_CLIP_PLANE0 + clipPlane);
-            clipPlanes[clipPlane] = false;
-        }
     }
 
     /**
