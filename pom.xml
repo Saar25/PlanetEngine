@@ -63,7 +63,6 @@
     <modules>
         <module>pe-lwjgl-binding</module>
         <module>pe-math</module>
-        <module>pe-util</module>
         <module>planet-examples</module>
         <module>pe-core</module>
         <module>pe-gui</module>
