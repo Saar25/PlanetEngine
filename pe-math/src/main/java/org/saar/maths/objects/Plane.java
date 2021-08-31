@@ -9,7 +9,7 @@ public class Plane {
     private final float cp;
 
     public Plane(Vector3fc normal, float d) {
-        float length = Vector3.length(normal);
+        float length = normal.length();
         this.normal = Vector3.of(normal).div(length);
         this.cp = d / length;
     }
