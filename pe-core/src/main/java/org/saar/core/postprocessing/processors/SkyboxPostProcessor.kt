@@ -18,8 +18,6 @@ import org.saar.maths.utils.Matrix4
 class SkyboxPostProcessor(cubeMap: CubeMapTexture)
     : PostProcessorPrototypeWrapper(SkyboxPostProcessorPrototype(cubeMap))
 
-private val matrix = Matrix4.create()
-
 private class SkyboxPostProcessorPrototype(private val cubeMap: CubeMapTexture) : PostProcessorPrototype {
 
     @UniformProperty
@@ -42,7 +40,7 @@ private class SkyboxPostProcessorPrototype(private val cubeMap: CubeMapTexture) 
             StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED))
         this.cubeMapUniform.value = this.cubeMap
 
-        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(matrix)
-        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
+        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)
+        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
     }
 }

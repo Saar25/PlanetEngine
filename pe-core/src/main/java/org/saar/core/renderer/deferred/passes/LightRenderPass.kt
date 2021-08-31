@@ -1,6 +1,5 @@
 package org.saar.core.renderer.deferred.passes
 
-import org.joml.Matrix4f
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
@@ -18,8 +17,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformArray
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
-
-private val matrix: Matrix4f = Matrix4.create()
 
 class LightRenderPass(pointLights: Array<PointLight>, directionalLights: Array<DirectionalLight>)
     : DeferredRenderPassPrototypeWrapper(LightRenderPassPrototype(pointLights, directionalLights)) {
@@ -76,7 +73,7 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
         this.specularTextureUniform.value = buffers.specular
         this.depthTextureUniform.value = buffers.depth
 
-        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
+        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(Matrix4.temp)
 
         this.directionalLightsUniform.forEach { it.camera = context.camera }
     }

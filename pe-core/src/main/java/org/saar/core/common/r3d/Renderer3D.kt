@@ -46,7 +46,7 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
     }
 
     override fun doInstanceDraw(context: RenderContext, model: Model3D) = model.draw()

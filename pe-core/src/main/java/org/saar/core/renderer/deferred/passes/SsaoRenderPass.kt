@@ -1,6 +1,5 @@
 package org.saar.core.renderer.deferred.passes
 
-import org.joml.Matrix4f
 import org.saar.core.renderer.deferred.DeferredRenderPassPrototypeWrapper
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
@@ -13,8 +12,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
 import org.saar.maths.utils.Matrix4
-
-private val matrix: Matrix4f = Matrix4.create()
 
 class SsaoRenderPass : DeferredRenderPassPrototypeWrapper(SsaoRenderPassPrototype())
 
@@ -49,7 +46,7 @@ private class SsaoRenderPassPrototype : RenderPassPrototype<DeferredRenderingBuf
         this.depthTextureUniform.value = buffers.depth
 
         this.cameraWorldPositionUniform.value = context.camera.transform.position.value
-        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
-        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
+        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
     }
 }

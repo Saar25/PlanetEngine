@@ -19,8 +19,6 @@ import org.saar.maths.utils.Matrix4
 
 object NormalMappedDeferredRenderer : RendererPrototypeWrapper<NormalMappedModel>(NormalMappedPrototype())
 
-private val matrix = Matrix4.create()
-
 private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
@@ -66,9 +64,9 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+        this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {

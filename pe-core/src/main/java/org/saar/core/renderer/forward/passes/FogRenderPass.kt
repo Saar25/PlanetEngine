@@ -1,6 +1,5 @@
 package org.saar.core.renderer.forward.passes
 
-import org.joml.Matrix4f
 import org.saar.core.fog.FogDistance
 import org.saar.core.fog.FogUniformValue
 import org.saar.core.fog.IFog
@@ -20,8 +19,6 @@ import org.saar.maths.utils.Matrix4
 
 class FogRenderPass(fog: IFog, fogDistance: FogDistance)
     : ForwardRenderPassPrototypeWrapper(FogRenderPassPrototype(fog, fogDistance))
-
-private val matrix: Matrix4f = Matrix4.create()
 
 private class FogRenderPassPrototype(private val fog: IFog, private val fogDistance: FogDistance)
     : ForwardRenderPassPrototype {
@@ -66,10 +63,10 @@ private class FogRenderPassPrototype(private val fog: IFog, private val fogDista
         this.depthUniform.value = buffers.depth
 
         this.projectionMatrixInvUniform.value = context.camera
-            .projection.matrix.invertPerspective(matrix)
+            .projection.matrix.invertPerspective(Matrix4.temp)
 
         this.viewMatrixInvUniform.value = context.camera
-            .viewMatrix.invert(matrix)
+            .viewMatrix.invert(Matrix4.temp)
 
         this.cameraPositionUniform.value = context.camera.transform.position.value
     }

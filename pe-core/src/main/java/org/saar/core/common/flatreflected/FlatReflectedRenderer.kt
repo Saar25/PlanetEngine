@@ -54,7 +54,7 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
         this.reflectionMapUniform.value = model.reflectionMap
         this.normalUniform.value = model.normal
     }

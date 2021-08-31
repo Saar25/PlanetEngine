@@ -1,6 +1,5 @@
 package org.saar.core.renderer.deferred.passes
 
-import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
@@ -20,8 +19,6 @@ import org.saar.maths.utils.Matrix4
 class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) :
     DeferredRenderPassPrototypeWrapper(ShadowsRenderPassPrototype(shadowCamera, shadowMap, light))
 
-private val matrix: Matrix4f = Matrix4.create()
-
 private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
                                          private val shadowMap: ReadOnlyTexture,
                                          private val light: DirectionalLight)
@@ -33,7 +30,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
         override fun getUniformValue(): Matrix4fc {
             return this@ShadowsRenderPassPrototype.shadowCamera.projection.matrix.mul(
-                this@ShadowsRenderPassPrototype.shadowCamera.viewMatrix, matrix)
+                this@ShadowsRenderPassPrototype.shadowCamera.viewMatrix, Matrix4.temp)
         }
     }
 
@@ -90,8 +87,8 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
         this.specularTextureUniform.value = buffers.specular
         this.depthTextureUniform.value = buffers.depth
 
-        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
-        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(matrix)
+        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+        this.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
         this.lightUniform.camera = context.camera
     }
 }

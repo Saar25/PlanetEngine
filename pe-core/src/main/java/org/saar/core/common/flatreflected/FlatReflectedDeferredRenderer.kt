@@ -21,8 +21,6 @@ import org.saar.maths.utils.Matrix4
 object FlatReflectedDeferredRenderer :
     RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype())
 
-private val matrix = Matrix4.create()
-
 private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {
 
     @UniformProperty
@@ -61,7 +59,7 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         BlendTest.applyAlpha()
         DepthTest.enable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
@@ -69,7 +67,7 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
 
         this.normalUniform.value = model.normal
         this.reflectionMapUniform.value = model.reflectionMap

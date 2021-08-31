@@ -52,7 +52,7 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
     override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+        this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
         this.transformationUniform.value = model.transform.transformationMatrix
         this.textureUniform.value = model.texture

@@ -18,8 +18,6 @@ import org.saar.maths.utils.Matrix4
 
 object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
 
-private val matrix = Matrix4.create()
-
 private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
@@ -60,13 +58,13 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         BlendTest.applyAlpha()
         DepthTest.enable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+        this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
         this.transformUniform.value = model.transform.transformationMatrix
         this.textureUniform.value = model.texture

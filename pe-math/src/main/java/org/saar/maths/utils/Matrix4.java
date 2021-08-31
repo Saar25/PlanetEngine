@@ -9,7 +9,7 @@ public final class Matrix4 {
 
     public static final ObjectPool<Matrix4f> pool = new ObjectPool<>(Matrix4::create);
 
-    private static final Matrix4f matrix = Matrix4.create();
+    public static final Matrix4f temp = Matrix4.create();
 
     private Matrix4() {
 
