@@ -35,7 +35,7 @@ public class Rectangle {
         return new Rectangle(x, y, 0, 0);
     }
 
-    public static Rectangle ofDimentions(float w, float h) {
+    public static Rectangle ofDimensions(float w, float h) {
         return new Rectangle(0, 0, w, h);
     }
 
