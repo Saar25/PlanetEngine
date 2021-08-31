@@ -47,7 +47,7 @@ public class Shader {
     }
 
     public static Shader createVertex(String source) throws Exception {
-        return Shader.createVertex(GlslVersion.NONE, ShaderCode.loadSource(source));
+        return Shader.of(ShaderType.VERTEX, GlslVersion.NONE, ShaderCode.loadSource(source));
     }
 
     /**
@@ -133,5 +133,14 @@ public class Shader {
      */
     public void delete() {
         GL20.glDeleteShader(id);
+    }
+
+    /**
+     * Returns the shader type
+     *
+     * @return the shader type
+     */
+    public ShaderType getType() {
+        return this.type;
     }
 }
