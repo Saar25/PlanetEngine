@@ -46,10 +46,7 @@ public final class Matrix4 {
      * @return the projection matrix
      */
     public static Matrix4f ofProjection(float fov, float width, float height, float zNear, float zFar, Matrix4f dest) {
-        float aspectRatio = width / height;
-        dest.identity();
-        dest.perspective(fov, aspectRatio, zNear, zFar);
-        return dest;
+        return dest.setPerspective(fov, width / height, zNear, zFar);
     }
 
     public static Matrix4f ofProjection(float fov, float width, float height, float zNear, float zFar) {
@@ -61,7 +58,7 @@ public final class Matrix4 {
     }
 
     /**
-     * Returns a orthographic projection matrix
+     * Returns an orthographic projection matrix
      *
      * @param left   the left frustum edge
      * @param right  the right frustum edge
@@ -74,9 +71,7 @@ public final class Matrix4 {
      */
     public static Matrix4f ofProjection(float left, float right, float bottom, float top,
                                         float zNear, float zFar, Matrix4f dest) {
-        dest.identity();
-        dest.ortho(left, right, bottom, top, zNear, zFar);
-        return dest;
+        return dest.identity().ortho(left, right, bottom, top, zNear, zFar);
     }
 
     public static Matrix4f ofProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
@@ -96,9 +91,8 @@ public final class Matrix4 {
      * @return the view matrix
      */
     public static Matrix4f ofView(Vector3fc position, Vector3fc rotation, Matrix4f dest) {
-        dest.identity().rotateXYZ(rotation.x(), rotation.y(), rotation.z())
+        return dest.identity().rotateXYZ(rotation)
                 .translate(-position.x(), -position.y(), -position.z());
-        return dest;
     }
 
     public static Matrix4f ofView(Vector3fc position, Vector3fc rotation) {

@@ -1,12 +1,12 @@
 package org.saar.core.renderer.reflection;
 
-import org.joml.Planef;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.core.camera.Camera;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.maths.objects.Planef;
 import org.saar.maths.transform.Rotation;
 import org.saar.maths.utils.Vector3;
 
