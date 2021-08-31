@@ -14,7 +14,6 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.utils.GlCullFace
@@ -80,11 +79,11 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     @UniformProperty
     private val discardMapUniform = TextureUniformValue("u_discardMap", 1)
 
-    @ShaderProperty(ShaderType.VERTEX)
+    @ShaderProperty
     private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl"))
 
-    @ShaderProperty(ShaderType.FRAGMENT)
+    @ShaderProperty
     private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
 

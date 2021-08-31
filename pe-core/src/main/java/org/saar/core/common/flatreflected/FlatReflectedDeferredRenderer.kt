@@ -10,7 +10,6 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
@@ -45,11 +44,11 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
     @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    @ShaderProperty(ShaderType.VERTEX)
+    @ShaderProperty
     private val vertex = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
 
-    @ShaderProperty(ShaderType.FRAGMENT)
+    @ShaderProperty
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.dfragment.glsl"))
 
