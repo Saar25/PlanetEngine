@@ -21,6 +21,7 @@ import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
@@ -61,7 +62,7 @@ public class PostProcessingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             screen.setAsDraw();
 
-            GlUtils.clearColourAndDepthBuffer();
+            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
             renderer.render(new RenderContextBase(null), model);
 
             pipeline.process(new RenderPassContext(camera),

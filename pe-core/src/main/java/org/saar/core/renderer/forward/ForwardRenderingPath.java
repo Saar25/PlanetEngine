@@ -6,6 +6,7 @@ import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.opengl.fbos.Fbo;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class ForwardRenderingPath implements RenderingPath {
@@ -28,7 +29,7 @@ public class ForwardRenderingPath implements RenderingPath {
 
         this.screen.setAsDraw();
 
-        GlUtils.clearColourAndDepthBuffer();
+        GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
 
         this.renderNode.renderForward(new RenderContextBase(this.camera));
 

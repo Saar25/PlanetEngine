@@ -14,6 +14,7 @@ import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.ratio
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
 object UIButtonExample {
@@ -88,7 +89,7 @@ object UIButtonExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             container.update()
 
-            GlUtils.clearColourAndDepthBuffer()
+            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
             container.render(RenderContextBase(null))
 
             window.update(true)

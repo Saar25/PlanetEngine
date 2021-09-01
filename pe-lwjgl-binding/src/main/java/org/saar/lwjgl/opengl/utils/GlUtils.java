@@ -95,24 +95,15 @@ public final class GlUtils {
         }
     }
 
-    /**
-     * Clears the colour buffer and the depth buffer, should be called before rendering the next frame
-     */
-    public static void clearColourAndDepthBuffer() {
-        clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+    public static void clear(GlBuffer buffer1) {
+        GL11.glClear(buffer1.get());
     }
 
-    /**
-     * Clears the buffers received
-     *
-     * @param glBuffers the buffers to clear
-     */
-    public static void clear(GlBuffer... glBuffers) {
-        int mask = 0;
-        for (GlBuffer glBuffer : glBuffers) {
-            mask |= glBuffer.get();
-        }
-        GL11.glClear(mask);
+    public static void clear(GlBuffer buffer1, GlBuffer buffer2) {
+        GL11.glClear(buffer1.get() | buffer2.get());
     }
 
+    public static void clear(GlBuffer buffer1, GlBuffer buffer2, GlBuffer buffer3) {
+        GL11.glClear(buffer1.get() | buffer2.get() | buffer3.get());
+    }
 }
