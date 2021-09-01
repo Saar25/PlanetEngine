@@ -13,6 +13,7 @@ import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
@@ -32,7 +33,7 @@ public class PostProcessingExample {
     public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        GlUtils.setClearColour(.2f, .2f, .2f);
+        ClearColour.set(.2f, .2f, .2f);
 
         final Camera camera = new Camera(null);
 

@@ -64,29 +64,6 @@ public final class GlUtils {
     }
 
     /**
-     * Set the clear colour of the screen, the background of the window
-     *
-     * @param r red value
-     * @param g green value
-     * @param b blue value
-     */
-    public static void setClearColour(float r, float g, float b) {
-        setClearColour(r, g, b, 1);
-    }
-
-    /**
-     * Set the clear colour of the screen, the background of the window
-     *
-     * @param r red value
-     * @param g green value
-     * @param b blue value
-     * @param a alpha value
-     */
-    public static void setClearColour(float r, float g, float b, float a) {
-        GL11.glClearColor(r, g, b, a);
-    }
-
-    /**
      * Set the viewport of the screen, should be called whenever the effect of resizing the window is needed
      *
      * @param x x coordinate on the screen
