@@ -47,6 +47,9 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     private val boundsUniform = Vec4UniformValue("u_bounds")
 
     @UniformProperty
+    private val fontColourUniform = UIntUniformValue("u_fontColour")
+
+    @UniformProperty
     private val bitmapUniform = TextureUniformValue("u_bitmap", 0)
 
     @UniformProperty
@@ -90,6 +93,8 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             bounds.y() + uiLetter.style.y.get(),
             bounds.z(),
             bounds.w())
+
+        this.fontColourUniform.value = uiLetter.style.fontColour.asInt()
     }
 
     override fun doInstanceDraw(context: RenderContext, uiLetter: UILetter) = QuadMesh.draw()
