@@ -29,6 +29,7 @@ object UISliderExample {
             style.y.value = center()
             style.fontSize.set(48)
             style.borderColour.set(Colours.PURPLE)
+            style.fontColour.set(Colours.WHITE)
         }
         display.add(writeable)
 
@@ -36,6 +37,7 @@ object UISliderExample {
             style.x.value = center()
             style.y.value = sub(center(), 200)
             style.fontSize.set(48)
+            style.fontColour.set(Colours.WHITE)
         }
         display.add(borderSize)
 

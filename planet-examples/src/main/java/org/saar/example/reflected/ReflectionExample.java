@@ -95,6 +95,7 @@ public class ReflectionExample {
         uiTextGroup.getStyle().getY().set(30);
         uiTextGroup.getStyle().getFont().set(font);
         uiTextGroup.getStyle().getFontSize().set(22);
+        uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
 
         final UITextElement uiFps = new UITextElement("Fps: ???");
         uiTextGroup.add(uiFps);

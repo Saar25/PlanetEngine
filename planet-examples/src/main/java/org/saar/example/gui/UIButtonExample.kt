@@ -9,6 +9,7 @@ import org.saar.gui.UITextElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.font.FontLoader
+import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.ratio
@@ -61,6 +62,7 @@ object UIButtonExample {
         container.add(writeable)
 
         val uiFps = UITextElement("").apply {
+            style.fontColour.set(Colours.WHITE)
             style.fontSize.set(22)
         }
         container.add(uiFps)
