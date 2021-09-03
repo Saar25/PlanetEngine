@@ -10,7 +10,7 @@ class FontColour(private val container: UIChildElement) : ReadonlyFontColour {
     private var colourValue: StyleColourValue = StyleColourValues.inherit
 
     override var colour: Colour
-        get() = this.colourValue.compute(this.container.parent.style.borderColour.colour)
+        get() = this.colourValue.compute(this.container.parent.style.fontColour.colour)
         set(value) {
             this.colourValue = StyleColourValues.of(value)
         }
