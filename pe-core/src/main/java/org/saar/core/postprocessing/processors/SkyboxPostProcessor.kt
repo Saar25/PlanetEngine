@@ -38,6 +38,7 @@ private class SkyboxPostProcessorPrototype(private val cubeMap: CubeMapTexture) 
     override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
         StencilTest.apply(StencilState(StencilOperation.ALWAYS_KEEP,
             StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED))
+
         this.cubeMapUniform.value = this.cubeMap
 
         this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)

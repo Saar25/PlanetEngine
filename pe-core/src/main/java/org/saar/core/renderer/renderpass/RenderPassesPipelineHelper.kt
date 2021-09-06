@@ -1,5 +1,6 @@
 package org.saar.core.renderer.renderpass
 
+import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.stencil.*
@@ -13,6 +14,7 @@ class RenderPassesPipelineHelper<T : RenderPass>(val renderPasses: Array<T>) {
         this.renderPasses.forEach {
             StencilTest.apply(this.stencilState)
             DepthTest.disable()
+            BlendTest.disable()
 
             renderCallback(it)
         }
