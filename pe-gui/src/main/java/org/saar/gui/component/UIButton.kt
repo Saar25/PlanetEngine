@@ -50,8 +50,8 @@ class UIButton : UIComponent() {
     }
 
     init {
-        this.style.backgroundColour.set(Colours.GREY)
-        this.style.borderColour.set(Colours.DARK_GREY)
+        this.style.backgroundColour.set(Colours.GRAY)
+        this.style.borderColour.set(Colours.DARK_GRAY)
         this.style.borders.set(2)
     }
 }

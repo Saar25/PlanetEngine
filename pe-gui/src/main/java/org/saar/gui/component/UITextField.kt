@@ -25,7 +25,7 @@ class UITextField(keyboard: Keyboard, text: String = "") : UIComponent() {
     private val uiBackground = UIBlockElement().also {
         it.parent = this
         it.style.backgroundColour.set(Colours.WHITE)
-        it.style.borderColour.set(Colours.DARK_GREY)
+        it.style.borderColour.set(Colours.DARK_GRAY)
         it.style.borders.set(2)
     }
     private val uiTextElement = UITextElement().also { it.parent = this }
