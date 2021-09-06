@@ -58,10 +58,6 @@ vec3 specularColour(void);
 // Main
 void main(void) {
     initBufferValues();
-    if (g_depth == 1) {
-        discard;
-    }
-
     initGlobals();
     initShadowGlobals();
 
