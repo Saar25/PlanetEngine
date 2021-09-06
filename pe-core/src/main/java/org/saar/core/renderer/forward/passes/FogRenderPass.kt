@@ -53,6 +53,7 @@ private class FogRenderPassPrototype(private val fog: IFog, private val fogDista
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
         ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
         ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),
         ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
