@@ -73,7 +73,7 @@ float calcDistanceDepth(vec3 viewPosition) {
 float calcDistanceY(vec3 viewPosition) {
     vec3 worldSpace = viewSpaceToWorldSpace(viewPosition, u_viewMatrixInv);
 
-    return abs(worldSpace.y);
+    return worldSpace.y;
 }
 
 float calcDistanceXZ(vec3 viewPosition) {
