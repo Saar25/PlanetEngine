@@ -4,7 +4,6 @@ import org.saar.core.camera.projection.OrthographicProjection
 import org.saar.core.light.IDirectionalLight
 import org.saar.core.renderer.RenderContextBase
 import org.saar.core.renderer.RenderingPath
-import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.textures.TextureTarget
@@ -20,7 +19,6 @@ import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
 class ShadowsRenderingPath(
-    private val prototype: ShadowsScreenPrototype,
     quality: ShadowsQuality,
     projection: OrthographicProjection,
     light: IDirectionalLight,
@@ -31,12 +29,10 @@ class ShadowsRenderingPath(
         transform.position.set(0f, 0f, 0f)
     }
 
-    private val screen: OffScreen = Screens.fromPrototype(this.prototype,
-        Fbo.create(quality.imageSize, quality.imageSize))
+    private val prototype = ShadowsScreenPrototype()
 
-    constructor(quality: ShadowsQuality, projection: OrthographicProjection,
-                light: IDirectionalLight, renderNode: ShadowsRenderNode) :
-            this(ShadowsScreenPrototypeDefault(), quality, projection, light, renderNode)
+    private val screen = Screens.fromPrototype(this.prototype,
+        Fbo.create(quality.imageSize, quality.imageSize))
 
     override fun render(): ShadowRenderingOutput {
         this.screen.setAsDraw()
