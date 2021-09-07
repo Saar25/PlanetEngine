@@ -152,11 +152,11 @@ Prototype objects are used in order to write a unique rendering pipeline
 private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
 // Use vertex and fragment shaders in the shaders program
-@ShaderProperty(ShaderType.VERTEX)
+@ShaderProperty
 private val vertex = Shader.createVertex(GlslVersion.V400,
     ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
 
-@ShaderProperty(ShaderType.FRAGMENT)
+@ShaderProperty
 private val fragment = Shader.createFragment(GlslVersion.V400,
     ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
 
