@@ -11,7 +11,7 @@ const vec2[] blurXy = vec2[](vec2(1, 0), vec2(0, 1));
 uniform sampler2D     u_texture;
 uniform ivec2         u_resolution;
 uniform float[LEVELS] u_blurLevels;
-uniform int           u_verticalBlur;
+uniform bool          u_verticalBlur;
 
 // Vertex outputs
 in vec2 v_position;
@@ -24,7 +24,7 @@ vec4 doBlur(vec2 xy);
 
 // Main
 void main(void) {
-    vec2 xy = blurXy[u_verticalBlur];
+    vec2 xy = blurXy[int(u_verticalBlur)];
     f_colour = doBlur(xy);
 }
 

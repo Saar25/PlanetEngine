@@ -41,12 +41,12 @@ class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor {
         this.wrapper.render {
             this.prototype.textureUniform.value = buffers.albedo
 
-            this.prototype.verticalBlurUniform.value = 0
+            this.prototype.verticalBlurUniform.value = true
         }
         this.wrapper.render {
             this.prototype.textureUniform.value = buffers.albedo
 
-            this.prototype.verticalBlurUniform.value = 1
+            this.prototype.verticalBlurUniform.value = false
         }
     }
 
@@ -78,7 +78,7 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     }
 
     @UniformProperty
-    val verticalBlurUniform = IntUniformValue("u_verticalBlur")
+    val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("LEVELS", this.samples.size.toString()),
