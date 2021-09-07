@@ -1,17 +1,17 @@
-package org.saar.core.renderer;
+package org.saar.core.renderer
 
-import org.saar.core.screen.MainScreen;
-import org.saar.core.screen.Screen;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
+import org.saar.core.renderer.renderpass.RenderPassBuffers
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screen
+import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
-public interface RenderingOutput {
+class RenderingOutput<T : RenderPassBuffers>(
+    private val screen: Screen,
+    val buffers: T) {
 
-    void to(Screen screen);
+    fun to(screen: Screen) = this.screen.copyTo(screen)
 
-    ReadOnlyTexture toTexture();
+    fun toTexture(): ReadOnlyTexture = this.buffers.albedo
 
-    default void toMainScreen() {
-        to(MainScreen.INSTANCE);
-    }
-
+    fun toMainScreen() = to(MainScreen)
 }

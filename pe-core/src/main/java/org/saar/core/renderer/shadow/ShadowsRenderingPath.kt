@@ -1,80 +1,66 @@
-package org.saar.core.renderer.shadow;
+package org.saar.core.renderer.shadow
 
-import org.joml.Vector3fc;
-import org.saar.core.camera.projection.OrthographicProjection;
-import org.saar.core.light.IDirectionalLight;
-import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderingPath;
-import org.saar.core.screen.OffScreen;
-import org.saar.core.screen.Screens;
-import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.textures.TextureTarget;
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
-import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
-import org.saar.lwjgl.opengl.textures.parameters.WrapParameter;
-import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting;
-import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting;
-import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting;
-import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlCullFace;
-import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.core.camera.projection.OrthographicProjection
+import org.saar.core.light.IDirectionalLight
+import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderingPath
+import org.saar.core.screen.OffScreen
+import org.saar.core.screen.Screens
+import org.saar.lwjgl.opengl.fbos.Fbo
+import org.saar.lwjgl.opengl.textures.TextureTarget
+import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter
+import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter
+import org.saar.lwjgl.opengl.textures.parameters.WrapParameter
+import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting
+import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting
+import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting
+import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlCullFace
+import org.saar.lwjgl.opengl.utils.GlUtils
 
-public class ShadowsRenderingPath implements RenderingPath {
+class ShadowsRenderingPath(
+    private val prototype: ShadowsScreenPrototype,
+    quality: ShadowsQuality,
+    projection: OrthographicProjection,
+    light: IDirectionalLight,
+    private val renderNode: ShadowsRenderNode) : RenderingPath {
 
-    private final ShadowsScreenPrototype prototype;
-    private final ShadowsCamera camera;
-    private final OffScreen screen;
-
-    private final ShadowsRenderNode renderNode;
-
-    public ShadowsRenderingPath(ShadowsQuality quality, OrthographicProjection projection,
-                                IDirectionalLight light, ShadowsRenderNode renderNode) {
-        this(new ShadowsScreenPrototypeDefault(), quality, projection, light, renderNode);
+    val camera: ShadowsCamera = ShadowsCamera(projection).apply {
+        transform.rotation.lookAlong(light.direction)
+        transform.position.set(0f, 0f, 0f)
     }
 
-    public ShadowsRenderingPath(ShadowsScreenPrototype prototype, ShadowsQuality quality,
-                                OrthographicProjection projection, IDirectionalLight light,
-                                ShadowsRenderNode renderNode) {
-        this.prototype = prototype;
-        this.camera = camera(projection, light.getDirection());
-        this.renderNode = renderNode;
+    private val screen: OffScreen = Screens.fromPrototype(this.prototype,
+        Fbo.create(quality.imageSize, quality.imageSize))
 
-        final Fbo fbo = Fbo.create(quality.getImageSize(), quality.getImageSize());
-        this.screen = Screens.fromPrototype(this.prototype, fbo);
-        this.prototype.getDepthTexture().setSettings(TextureTarget.TEXTURE_2D,
-                new TextureMinFilterSetting(MinFilterParameter.LINEAR),
-                new TextureMagFilterSetting(MagFilterParameter.LINEAR),
-                new TextureSWrapSetting(WrapParameter.CLAMP_TO_EDGE),
-                new TextureTWrapSetting(WrapParameter.CLAMP_TO_EDGE));
+    constructor(quality: ShadowsQuality, projection: OrthographicProjection,
+                light: IDirectionalLight, renderNode: ShadowsRenderNode) :
+            this(ShadowsScreenPrototypeDefault(), quality, projection, light, renderNode)
+
+    override fun render(): ShadowRenderingOutput {
+        this.screen.setAsDraw()
+
+        GlUtils.clear(GlBuffer.DEPTH)
+
+        val context = RenderContextBase(this.camera)
+
+        context.hints.cullFace = GlCullFace.FRONT
+        this.renderNode.renderShadows(context)
+
+        return ShadowRenderingOutput(this.screen, ShadowsBuffers(this.prototype.depthTexture))
     }
 
-    private static ShadowsCamera camera(OrthographicProjection projection, Vector3fc direction) {
-        final ShadowsCamera shadowsCamera = new ShadowsCamera(projection);
-        shadowsCamera.getTransform().getRotation().lookAlong(direction);
-        shadowsCamera.getTransform().getPosition().set(0, 0, 0);
-        return shadowsCamera;
+    override fun delete() {
+        this.renderNode.delete()
+        this.screen.delete()
     }
 
-    public ShadowsCamera getCamera() {
-        return this.camera;
-    }
-
-    @Override
-    public ShadowRenderingOutput render() {
-        this.screen.setAsDraw();
-        GlUtils.clear(GlBuffer.DEPTH);
-
-        final RenderContextBase context = new RenderContextBase(this.camera);
-        context.getHints().cullFace = GlCullFace.FRONT;
-        this.renderNode.renderShadows(context);
-
-        return new ShadowRenderingOutput(this.screen, this.prototype.getDepthTexture());
-    }
-
-    @Override
-    public void delete() {
-        this.renderNode.delete();
-        this.screen.delete();
+    init {
+        this.prototype.depthTexture.setSettings(TextureTarget.TEXTURE_2D,
+            TextureMinFilterSetting(MinFilterParameter.LINEAR),
+            TextureMagFilterSetting(MagFilterParameter.LINEAR),
+            TextureSWrapSetting(WrapParameter.CLAMP_TO_EDGE),
+            TextureTWrapSetting(WrapParameter.CLAMP_TO_EDGE))
     }
 }

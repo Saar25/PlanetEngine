@@ -1,44 +1,32 @@
-package org.saar.core.renderer.forward;
+package org.saar.core.renderer.forward
 
-import org.saar.core.camera.ICamera;
-import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderingPath;
-import org.saar.core.screen.OffScreen;
-import org.saar.core.screen.Screens;
-import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.core.camera.ICamera
+import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderingPath
+import org.saar.core.screen.Screens
+import org.saar.lwjgl.opengl.fbos.Fbo
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlUtils
 
-public class ForwardRenderingPath implements RenderingPath {
+class ForwardRenderingPath(private val camera: ICamera, private val renderNode: ForwardRenderNode) : RenderingPath {
 
-    private final ForwardScreenPrototype prototype = new ForwardScreenPrototype();
+    private val prototype = ForwardScreenPrototype()
 
-    private final OffScreen screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0));
+    private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
-    private final ICamera camera;
-    private final ForwardRenderNode renderNode;
+    override fun render(): ForwardRenderingOutput {
+        this.screen.resizeToMainScreen()
+        this.screen.setAsDraw()
 
-    public ForwardRenderingPath(ICamera camera, ForwardRenderNode renderNode) {
-        this.camera = camera;
-        this.renderNode = renderNode;
+        GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
+
+        this.renderNode.renderForward(RenderContextBase(this.camera))
+
+        return ForwardRenderingOutput(this.screen, this.prototype.asBuffers())
     }
 
-    @Override
-    public ForwardRenderingOutput render() {
-        this.screen.resizeToMainScreen();
-
-        this.screen.setAsDraw();
-
-        GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
-
-        this.renderNode.renderForward(new RenderContextBase(this.camera));
-
-        return new ForwardRenderingOutput(this.screen, this.prototype.asBuffers());
-    }
-
-    @Override
-    public void delete() {
-        this.renderNode.delete();
-        this.screen.delete();
+    override fun delete() {
+        this.renderNode.delete()
+        this.screen.delete()
     }
 }
