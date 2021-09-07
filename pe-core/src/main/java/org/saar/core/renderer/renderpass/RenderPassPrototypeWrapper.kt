@@ -41,7 +41,7 @@ class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : R
         this.shadersProgram.unbind()
     }
 
-    inline fun render(beforeDraw: () -> Unit) {
+    inline fun render(beforeDraw: () -> Unit = {}) {
         beforeRender()
 
         beforeDraw()
