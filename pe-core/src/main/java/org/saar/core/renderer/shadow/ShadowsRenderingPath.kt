@@ -3,6 +3,7 @@ package org.saar.core.renderer.shadow
 import org.saar.core.camera.projection.OrthographicProjection
 import org.saar.core.light.IDirectionalLight
 import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
@@ -34,7 +35,7 @@ class ShadowsRenderingPath(
     private val screen = Screens.fromPrototype(this.prototype,
         Fbo.create(quality.imageSize, quality.imageSize))
 
-    override fun render(): ShadowRenderingOutput {
+    override fun render(): RenderingOutput<ShadowsBuffers> {
         this.screen.setAsDraw()
 
         GlUtils.clear(GlBuffer.DEPTH)
@@ -44,7 +45,7 @@ class ShadowsRenderingPath(
         context.hints.cullFace = GlCullFace.FRONT
         this.renderNode.renderShadows(context)
 
-        return ShadowRenderingOutput(this.screen, ShadowsBuffers(this.prototype.depthTexture))
+        return RenderingOutput(this.screen, ShadowsBuffers(this.prototype.depthTexture))
     }
 
     override fun delete() {

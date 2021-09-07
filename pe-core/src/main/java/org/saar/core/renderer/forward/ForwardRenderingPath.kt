@@ -2,6 +2,7 @@ package org.saar.core.renderer.forward
 
 import org.saar.core.camera.ICamera
 import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
@@ -15,7 +16,7 @@ class ForwardRenderingPath(private val camera: ICamera, private val renderNode: 
 
     private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
-    override fun render(): ForwardRenderingOutput {
+    override fun render(): RenderingOutput<ForwardRenderingBuffers> {
         this.screen.resizeToMainScreen()
         this.screen.setAsDraw()
 
@@ -23,7 +24,7 @@ class ForwardRenderingPath(private val camera: ICamera, private val renderNode: 
 
         this.renderNode.renderForward(RenderContextBase(this.camera))
 
-        return ForwardRenderingOutput(this.screen, this.prototype.asBuffers())
+        return RenderingOutput(this.screen, this.prototype.asBuffers())
     }
 
     override fun delete() {

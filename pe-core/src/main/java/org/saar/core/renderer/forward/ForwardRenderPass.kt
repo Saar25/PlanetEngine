@@ -1,10 +1,14 @@
-package org.saar.core.renderer.forward;
+package org.saar.core.renderer.forward
 
-import org.saar.core.renderer.renderpass.RenderPass;
-import org.saar.core.renderer.renderpass.RenderPassContext;
+import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.renderpass.RenderPass
+import org.saar.core.renderer.renderpass.RenderPassContext
 
-public interface ForwardRenderPass extends RenderPass {
+interface ForwardRenderPass : RenderPass, DeferredRenderPass {
+    fun render(context: RenderPassContext, buffers: ForwardRenderingBuffers)
 
-    void render(RenderPassContext context, ForwardRenderingBuffers buffers);
-
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        render(context, ForwardRenderingBuffers(buffers.albedo, buffers.depth))
+    }
 }

@@ -6,12 +6,12 @@ import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 
-open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
-    private val prototype: RenderPassPrototype<T>) : RenderPass {
+class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : RenderPass {
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
         this.prototype.vertexShader(),
-        this.prototype.fragmentShader())
+        this.prototype.fragmentShader()
+    )
 
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
         .let {
@@ -33,16 +33,24 @@ open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
         this.shadersProgram.bindFragmentOutputs("f_colour")
     }
 
-    protected open fun render(context: RenderPassContext, buffers: T) {
+    fun beforeRender() {
         this.shadersProgram.bind()
+    }
 
-        this.prototype.onRender(context, buffers)
-        drawQuad()
-
+    fun afterRender() {
         this.shadersProgram.unbind()
     }
 
-    private fun drawQuad() {
+    inline fun render(beforeDraw: () -> Unit) {
+        beforeRender()
+
+        beforeDraw()
+        drawQuad()
+
+        afterRender()
+    }
+
+    fun drawQuad() {
         this.uniformsHelper.load()
 
         QuadMesh.draw()
@@ -50,6 +58,5 @@ open class RenderPassPrototypeWrapper<T : RenderPassBuffers>(
 
     override fun delete() {
         this.shadersProgram.delete()
-        this.prototype.onDelete();
     }
 }
