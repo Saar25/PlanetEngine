@@ -2,6 +2,7 @@ package org.saar.core.renderer.deferred
 
 import org.saar.core.camera.ICamera
 import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.screen.Screens
@@ -23,7 +24,7 @@ class DeferredRenderingPath(
     private val stencilState = StencilState(StencilOperation.REPLACE_ON_PASS,
         StencilFunction(Comparator.ALWAYS, 1, 0xFF), StencilMask.UNCHANGED)
 
-    override fun render(): DeferredRenderingOutput {
+    override fun render(): RenderingOutput<DeferredRenderingBuffers> {
         this.screen.setAsDraw()
         this.screen.resizeToMainScreen()
 
@@ -35,7 +36,7 @@ class DeferredRenderingPath(
         val context = RenderPassContext(this.camera)
         this.pipeline.process(context, this.prototype.asBuffers())
 
-        return DeferredRenderingOutput(this.screen, this.prototype.asBuffers())
+        return RenderingOutput(this.screen, this.prototype.asBuffers())
     }
 
     override fun delete() {
