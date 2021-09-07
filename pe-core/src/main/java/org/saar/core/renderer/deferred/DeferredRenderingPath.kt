@@ -14,7 +14,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 class DeferredRenderingPath(
     private val camera: ICamera,
     private val renderNode: DeferredRenderNode,
-    private val pipeline: DeferredRenderPassesPipeline) : RenderingPath {
+    private val pipeline: DeferredRenderPassesPipeline) : RenderingPath<DeferredRenderingBuffers> {
 
     private val prototype = DeferredScreenPrototype()
 

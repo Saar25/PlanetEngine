@@ -22,7 +22,6 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
@@ -138,7 +137,7 @@ public class ReflectionExample {
         final DirectionalLight light = buildDirectionalLight();
 
         final Camera reflectionCamera = new Camera(camera.getProjection());
-        final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
+        final DeferredRenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
                 reflectionCamera, reflectionRenderNode, light);
 
         final Reflection reflection = new Reflection(mirrorModel.toPlane(),
@@ -207,7 +206,7 @@ public class ReflectionExample {
         return new ObjNodeBatch(cottage, dragon, stall);
     }
 
-    private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
+    private static DeferredRenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
         final DeferredRenderPassesPipeline renderPassesPipeline =
                 new DeferredRenderPassesPipeline(new LightRenderPass(light));
 
@@ -271,7 +270,7 @@ public class ReflectionExample {
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                             ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(

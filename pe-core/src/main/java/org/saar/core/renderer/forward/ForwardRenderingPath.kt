@@ -8,7 +8,8 @@ import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class ForwardRenderingPath(private val camera: ICamera, private val renderNode: ForwardRenderNode) : RenderingPath {
+class ForwardRenderingPath(private val camera: ICamera, private val renderNode: ForwardRenderNode)
+    : RenderingPath<ForwardRenderingBuffers> {
 
     private val prototype = ForwardScreenPrototype()
 

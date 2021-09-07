@@ -1,8 +1,10 @@
 package org.saar.core.renderer;
 
-public interface RenderingPath {
+import org.saar.core.renderer.renderpass.RenderPassBuffers;
 
-    RenderingOutput render();
+public interface RenderingPath<T extends RenderPassBuffers> {
+
+    RenderingOutput<T> render();
 
     void delete();
 

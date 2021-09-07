@@ -22,7 +22,7 @@ class ShadowsRenderingPath(
     quality: ShadowsQuality,
     projection: OrthographicProjection,
     light: IDirectionalLight,
-    private val renderNode: ShadowsRenderNode) : RenderingPath {
+    private val renderNode: ShadowsRenderNode) : RenderingPath<ShadowsBuffers> {
 
     val camera: ShadowsCamera = ShadowsCamera(projection).apply {
         transform.rotation.lookAlong(light.direction)

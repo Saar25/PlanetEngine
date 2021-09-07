@@ -78,7 +78,7 @@ public class ShadowExample {
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
