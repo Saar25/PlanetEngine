@@ -1,13 +1,13 @@
 package org.saar.core.renderer.deferred.passes
 
-import org.joml.Matrix4f
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
-import org.saar.core.renderer.deferred.DeferredRenderPassPrototype
-import org.saar.core.renderer.deferred.DeferredRenderPassPrototypeWrapper
+import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -19,45 +19,63 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformArray
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
 
-private val light = DirectionalLight()
-    .also { light -> light.colour.set(1.0f, 1.0f, 1.0f) }
-    .also { light -> light.direction.set(-50f, -50f, -50f) }
+class LightRenderPass(pointLights: Array<PointLight>, directionalLights: Array<DirectionalLight>) : DeferredRenderPass {
 
-private val matrix: Matrix4f = Matrix4.create()
+    private val prototype = LightRenderPassPrototype(pointLights, directionalLights)
+    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-class LightRenderPass : DeferredRenderPassPrototypeWrapper(LightRenderPassPrototype(emptyArray(), arrayOf(light)))
+    constructor(directionalLight: DirectionalLight) : this(emptyArray(), arrayOf(directionalLight))
 
-private class LightRenderPassPrototype(private val pointLights: Array<PointLight>,
-                                       private val directionalLights: Array<DirectionalLight>)
-    : DeferredRenderPassPrototype {
+    constructor(pointLight: PointLight) : this(arrayOf(pointLight), emptyArray())
+
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
+        this.prototype.colourTextureUniform.value = buffers.albedo
+        this.prototype.normalTextureUniform.value = buffers.normal
+        this.prototype.specularTextureUniform.value = buffers.specular
+        this.prototype.depthTextureUniform.value = buffers.depth
+
+        this.prototype.projectionMatrixInvUniform.value =
+            context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+
+        this.prototype.directionalLightsUniform.forEach { it.camera = context.camera }
+    }
+
+    override fun delete() {
+        this.wrapper.delete()
+    }
+}
+
+private class LightRenderPassPrototype(
+    private val pointLights: Array<PointLight>,
+    private val directionalLights: Array<DirectionalLight>) : RenderPassPrototype {
 
     @UniformProperty
-    private val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
+    val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
 
     @UniformProperty
-    private val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
+    val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
 
     @UniformProperty
-    private val specularTextureUniform = TextureUniformValue("u_specularTexture", 2)
+    val specularTextureUniform = TextureUniformValue("u_specularTexture", 2)
 
     @UniformProperty
-    private val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
+    val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
     @UniformProperty
-    private val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
+    val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
 
     @UniformProperty
-    private val directionalLightsCountUniform = object : IntUniform() {
+    val directionalLightsCountUniform = object : IntUniform() {
         override fun getName() = "u_directionalLightsCount"
 
-        override fun getUniformValue() = directionalLights.size
+        override fun getUniformValue() = this@LightRenderPassPrototype.directionalLights.size
     }
 
     @UniformProperty
-    private val directionalLightsUniform =
+    val directionalLightsUniform: UniformArray<ViewSpaceDirectionalLightUniform> =
         UniformArray("u_directionalLights", this.directionalLights.size) { name, index ->
             object : ViewSpaceDirectionalLightUniform(name) {
-                override fun getUniformValue() = directionalLights[index]
+                override fun getUniformValue() = this@LightRenderPassPrototype.directionalLights[index]
             }
         }
 
@@ -67,15 +85,4 @@ private class LightRenderPassPrototype(private val pointLights: Array<PointLight
 
         ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
     )
-
-    override fun onRender(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        this.colourTextureUniform.value = buffers.albedo
-        this.normalTextureUniform.value = buffers.normal
-        this.specularTextureUniform.value = buffers.specular
-        this.depthTextureUniform.value = buffers.depth
-
-        this.projectionMatrixInvUniform.value = context.camera.projection.matrix.invertPerspective(matrix)
-
-        this.directionalLightsUniform.forEach { it.camera = context.camera }
-    }
 }

@@ -7,15 +7,14 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.gui.style.Colour
 import org.saar.gui.style.Colours
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.UIntUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.objects.Polygon
-import java.util.*
 
 class RenderGraphics : Graphics {
 
@@ -82,7 +81,7 @@ class RenderGraphics : Graphics {
     }
 
     override fun clear(clearColour: Colour) {
-        GlUtils.setClearColour(
+        ClearColour.set(
             clearColour.red / 256f,
             clearColour.green / 256f,
             clearColour.blue / 256f,

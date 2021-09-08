@@ -11,7 +11,6 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
@@ -32,11 +31,11 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
     @UniformProperty
     private val normalUniform = Vec3UniformValue("u_normal")
 
-    @ShaderProperty(ShaderType.VERTEX)
+    @ShaderProperty
     private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
 
-    @ShaderProperty(ShaderType.FRAGMENT)
+    @ShaderProperty
     private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.fragment.glsl"))
 
@@ -55,7 +54,7 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
         this.reflectionMapUniform.value = model.reflectionMap
         this.normalUniform.value = model.normal
     }

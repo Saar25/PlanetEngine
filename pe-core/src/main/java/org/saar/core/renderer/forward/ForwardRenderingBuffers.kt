@@ -1,9 +1,13 @@
 package org.saar.core.renderer.forward
 
+import org.saar.core.renderer.renderpass.AlbedoBuffer
+import org.saar.core.renderer.renderpass.DepthBuffer
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 
 data class ForwardRenderingBuffers(
     override val albedo: ReadOnlyTexture,
-    val depth: ReadOnlyTexture
-) : RenderPassBuffers
+    override val depth: ReadOnlyTexture
+) : RenderPassBuffers,
+    AlbedoBuffer,
+    DepthBuffer

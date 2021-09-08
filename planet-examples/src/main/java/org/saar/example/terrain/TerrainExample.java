@@ -34,8 +34,8 @@ import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.textures.CubeMapTexture;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
@@ -46,9 +46,9 @@ public class TerrainExample {
     private static final int HEIGHT = 700;
 
     public static void main(String[] args) throws Exception {
-        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
+        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        GlUtils.setClearColour(.0f, .7f, .8f);
+        ClearColour.set(.0f, .7f, .8f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -132,11 +132,13 @@ public class TerrainExample {
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                             DirectionalLight light, CubeMapTexture cubeMap) {
         final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
+        final Fog fog2 = new Fog(Vector3.of(.0f, .2f, 5f), 0, -80);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new LightRenderPass(),
+                new LightRenderPass(light),
                 new ContrastPostProcessor(1.3f),
                 new FogRenderPass(fog, FogDistance.XZ),
+                new FogRenderPass(fog2, FogDistance.Y),
                 new SkyboxPostProcessor(cubeMap),
                 new FxaaPostProcessor()
         );

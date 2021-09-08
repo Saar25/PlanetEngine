@@ -11,15 +11,12 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object DeferredRenderer3D : RendererPrototypeWrapper<Model3D>(DeferredRendererPrototype3D())
-
-private val matrix = Matrix4.create()
 
 private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
 
@@ -32,11 +29,11 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    @ShaderProperty(ShaderType.VERTEX)
+    @ShaderProperty
     private val vertex = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl"))
 
-    @ShaderProperty(ShaderType.FRAGMENT)
+    @ShaderProperty
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/r3d/r3d.dfragment.glsl"))
 
@@ -49,7 +46,7 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
         BlendTest.applyAlpha()
         DepthTest.enable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Model3D) {
@@ -59,7 +56,7 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
     }
 
     override fun doInstanceDraw(context: RenderContext, model: Model3D) = model.draw()

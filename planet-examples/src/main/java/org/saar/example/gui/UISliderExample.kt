@@ -10,6 +10,7 @@ import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.CoordinateValues.sub
 import org.saar.gui.style.value.LengthValues.pixels
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
 object UISliderExample {
@@ -28,6 +29,7 @@ object UISliderExample {
             style.y.value = center()
             style.fontSize.set(48)
             style.borderColour.set(Colours.PURPLE)
+            style.fontColour.set(Colours.WHITE)
         }
         display.add(writeable)
 
@@ -35,6 +37,7 @@ object UISliderExample {
             style.x.value = center()
             style.y.value = sub(center(), 200)
             style.fontSize.set(48)
+            style.fontColour.set(Colours.WHITE)
         }
         display.add(borderSize)
 
@@ -55,7 +58,7 @@ object UISliderExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()
 
-            GlUtils.clearColourAndDepthBuffer()
+            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
             display.render(RenderContextBase(null))
 
             window.update(true)

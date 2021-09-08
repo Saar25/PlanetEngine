@@ -7,14 +7,10 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 private val vertexShaderCode = ShaderCode.loadSource(
     "/shaders/common/quad/quad.vertex.glsl")
 
-interface RenderPassPrototype<T : RenderPassBuffers> {
+interface RenderPassPrototype {
 
     fun vertexShader(): Shader = Shader.createVertex(GlslVersion.V400, vertexShaderCode)
 
     fun fragmentShader(): Shader
-
-    fun onRender(context: RenderPassContext, buffers: T)
-
-    fun onDelete() {}
 
 }

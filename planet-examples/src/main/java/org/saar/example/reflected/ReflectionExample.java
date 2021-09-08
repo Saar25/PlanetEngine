@@ -20,16 +20,15 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.renderer.reflection.Reflection;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
@@ -50,10 +49,10 @@ import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
@@ -71,7 +70,7 @@ public class ReflectionExample {
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
 
-        GlUtils.setClearColour(.2f, .2f, .2f);
+        ClearColour.set(.2f, .2f, .2f);
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
@@ -95,6 +94,7 @@ public class ReflectionExample {
         uiTextGroup.getStyle().getY().set(30);
         uiTextGroup.getStyle().getFont().set(font);
         uiTextGroup.getStyle().getFontSize().set(22);
+        uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
 
         final UITextElement uiFps = new UITextElement("Fps: ???");
         uiTextGroup.add(uiFps);
@@ -134,14 +134,14 @@ public class ReflectionExample {
         final DeferredRenderNodeGroup reflectionRenderNode = new DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D);
         final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(objNodeBatch, nodeBatch3D);
 
+        final DirectionalLight light = buildDirectionalLight();
+
         final Camera reflectionCamera = new Camera(camera.getProjection());
-        final RenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
-                reflectionCamera, reflectionRenderNode);
+        final DeferredRenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
+                reflectionCamera, reflectionRenderNode, light);
 
         final Reflection reflection = new Reflection(mirrorModel.toPlane(),
                 camera, reflectionCamera, reflectionRenderingPath);
-
-        final DirectionalLight light = buildDirectionalLight();
 
         final ShadowsRenderingPath shadowsRenderingPath =
                 buildShadowsRenderingPath(shadowsRenderNode, light);
@@ -206,9 +206,9 @@ public class ReflectionExample {
         return new ObjNodeBatch(cottage, dragon, stall);
     }
 
-    private static RenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode) {
+    private static DeferredRenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
         final DeferredRenderPassesPipeline renderPassesPipeline =
-                new DeferredRenderPassesPipeline(new LightRenderPass());
+                new DeferredRenderPassesPipeline(new LightRenderPass(light));
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
@@ -270,7 +270,7 @@ public class ReflectionExample {
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                             ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(

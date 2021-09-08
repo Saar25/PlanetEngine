@@ -29,7 +29,7 @@ class MyUIComponent : UIComponent() {
             style.radiuses.set(20)
             style.borders.set(2)
             style.backgroundColour.set(Colours.CYAN)
-            style.borderColour.set(Colours.LIGHT_GREY)
+            style.borderColour.set(Colours.LIGHT_GRAY)
         }
 
         initChildStyle(object1.style)

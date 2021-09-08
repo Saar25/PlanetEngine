@@ -1,6 +1,6 @@
 package org.saar.lwjgl.stb
 
-import org.saar.utils.Box2i
+import org.saar.maths.Box2i
 
 data class TrueTypeCharacter(
     val char: Char,

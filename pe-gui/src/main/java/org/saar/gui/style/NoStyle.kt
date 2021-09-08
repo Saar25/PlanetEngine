@@ -11,6 +11,8 @@ import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.font.NoStyleFont
 import org.saar.gui.style.font.ReadonlyStyleFont
+import org.saar.gui.style.fontcolour.NoFontColour
+import org.saar.gui.style.fontcolour.ReadonlyFontColour
 import org.saar.gui.style.fontsize.NoFontSize
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
@@ -28,6 +30,8 @@ object NoStyle : IStyle {
     override val height: ReadonlyLength = ReadonlyLength { 0 }
 
     override val fontSize: ReadonlyFontSize = NoFontSize
+
+    override val fontColour: ReadonlyFontColour = NoFontColour
 
     override val font: ReadonlyStyleFont = NoStyleFont
 

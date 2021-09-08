@@ -30,13 +30,13 @@ class UISlider : UIComponent() {
     }
 
     private fun initUiTruck() {
-        this.uiTruck.style.backgroundColour.set(Colours.GREY)
-        this.uiTruck.style.borderColour.set(Colours.DARK_GREY)
+        this.uiTruck.style.backgroundColour.set(Colours.GRAY)
+        this.uiTruck.style.borderColour.set(Colours.DARK_GRAY)
         this.uiTruck.style.borders.set(2)
     }
 
     private fun initUiThumb() {
-        this.uiThumb.style.backgroundColour.set(Colours.DARK_GREY)
+        this.uiThumb.style.backgroundColour.set(Colours.DARK_GRAY)
         this.uiThumb.style.width.set(20)
     }
 

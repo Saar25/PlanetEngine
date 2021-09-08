@@ -22,9 +22,9 @@ object BlendTest {
 
     @JvmStatic
     fun disable() {
-        if (!this.enabled) {
+        if (this.enabled) {
             GL11.glDisable(GL11.GL_BLEND)
-            this.enabled = true
+            this.enabled = false
         }
     }
 

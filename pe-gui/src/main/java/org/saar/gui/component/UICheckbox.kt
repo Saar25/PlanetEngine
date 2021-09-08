@@ -27,7 +27,7 @@ class UICheckbox : UIComponent() {
 
     private fun initUiObject() {
         this.style.height.value = LengthValues.ratio(1f)
-        this.style.borderColour.set(Colours.LIGHT_GREY)
+        this.style.borderColour.set(Colours.LIGHT_GRAY)
         this.style.borders.set(1)
     }
 

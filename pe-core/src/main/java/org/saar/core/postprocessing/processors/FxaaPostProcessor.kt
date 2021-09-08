@@ -2,9 +2,10 @@ package org.saar.core.postprocessing.processors
 
 import org.joml.Vector2i
 import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessorPrototype
-import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
+import org.saar.core.postprocessing.PostProcessor
 import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -14,15 +15,29 @@ import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
 import org.saar.lwjgl.opengl.stencil.StencilTest
 
-class FxaaPostProcessor : PostProcessorPrototypeWrapper(FxaaPostProcessorPrototype())
+class FxaaPostProcessor : PostProcessor {
 
-private class FxaaPostProcessorPrototype : PostProcessorPrototype {
+    private val prototype = FxaaPostProcessorPrototype()
+    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+
+    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+        StencilTest.disable()
+
+        this.prototype.textureUniform.value = buffers.albedo
+    }
+
+    override fun delete() {
+        this.wrapper.delete()
+    }
+}
+
+private class FxaaPostProcessorPrototype : RenderPassPrototype {
 
     @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
+    val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformProperty
-    private val resolutionUniform = object : Vec2iUniform() {
+    val resolutionUniform = object : Vec2iUniform() {
         override fun getName() = "u_resolution"
 
         override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
@@ -33,10 +48,4 @@ private class FxaaPostProcessorPrototype : PostProcessorPrototype {
         ShaderCode.define("FXAA_REDUCE_MUL", (1.0 / 8.0).toString()),
         ShaderCode.define("FXAA_SPAN_MAX", 8.0.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/fxaa.pass.glsl"))
-
-    override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
-        StencilTest.disable()
-
-        this.textureUniform.value = buffers.albedo
-    }
 }

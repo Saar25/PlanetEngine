@@ -41,10 +41,6 @@ vec3 finalSpecularColour(void);
 // Main
 void main(void) {
     initBufferValues();
-    if (g_depth == 1) {
-        discard;
-    }
-
     initGlobals();
 
     vec3 finalColour = g_colour;

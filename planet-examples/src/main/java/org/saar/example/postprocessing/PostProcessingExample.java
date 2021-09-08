@@ -13,6 +13,7 @@ import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
@@ -20,6 +21,7 @@ import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.textures.Texture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
@@ -32,7 +34,7 @@ public class PostProcessingExample {
     public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        GlUtils.setClearColour(.2f, .2f, .2f);
+        ClearColour.set(.2f, .2f, .2f);
 
         final Camera camera = new Camera(null);
 
@@ -60,7 +62,7 @@ public class PostProcessingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             screen.setAsDraw();
 
-            GlUtils.clearColourAndDepthBuffer();
+            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
             renderer.render(new RenderContextBase(null), model);
 
             pipeline.process(new RenderPassContext(camera),

@@ -6,7 +6,7 @@ import org.lwjgl.system.MemoryStack
 import org.saar.lwjgl.stb.exceptions.STBBufferOverflowException
 import org.saar.lwjgl.stb.exceptions.STBInitializationException
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
-import org.saar.utils.Box2i
+import org.saar.maths.Box2i
 import java.nio.ByteBuffer
 
 class TrueTypeFontInfo private constructor(private val info: STBTTFontinfo, private val scale: Float) : AutoCloseable {

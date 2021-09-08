@@ -1,9 +1,10 @@
 package org.saar.core.postprocessing.processors
 
 import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessorPrototype
-import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
+import org.saar.core.postprocessing.PostProcessor
 import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -11,15 +12,27 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 
-class ContrastPostProcessor(contrast: Float) : PostProcessorPrototypeWrapper(ContrastPostProcessorPrototype(contrast))
+class ContrastPostProcessor(contrast: Float) : PostProcessor {
 
-private class ContrastPostProcessorPrototype(private val contrast: Float) : PostProcessorPrototype {
+    private val prototype = ContrastPostProcessorPrototype(contrast)
+    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+
+    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+        this.prototype.textureUniform.value = buffers.albedo
+    }
+
+    override fun delete() {
+        this.wrapper.delete()
+    }
+}
+
+private class ContrastPostProcessorPrototype(private val contrast: Float) : RenderPassPrototype {
 
     @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
+    val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformProperty
-    private val contrastUniform = object : FloatUniform() {
+    val contrastUniform = object : FloatUniform() {
         override fun getName() = "u_contrast"
 
         override fun getUniformValue() = this@ContrastPostProcessorPrototype.contrast
@@ -27,8 +40,4 @@ private class ContrastPostProcessorPrototype(private val contrast: Float) : Post
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl"))
-
-    override fun onRender(context: RenderPassContext, buffers: PostProcessingBuffers) {
-        this.textureUniform.value = buffers.albedo
-    }
 }

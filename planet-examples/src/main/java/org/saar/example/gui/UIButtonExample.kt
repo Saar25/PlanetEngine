@@ -7,13 +7,14 @@ import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
 import org.saar.gui.UITextElement
 import org.saar.gui.component.UIButton
-import org.saar.gui.font.Font
+import org.saar.gui.component.UITextField
 import org.saar.gui.font.FontLoader
+import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.ratio
-import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
 object UIButtonExample {
@@ -21,20 +22,11 @@ object UIButtonExample {
     private const val WIDTH = 700
     private const val HEIGHT = 500
 
-    private val characterShiftMap = mapOf(
-        96 to '~', 49 to '!', 50 to '@',
-        51 to '#', 52 to '$', 53 to '%',
-        54 to '^', 55 to '&', 56 to '*',
-        57 to '(', 48 to ')', 45 to '_',
-        61 to '+', 91 to '{', 93 to '}',
-        92 to '|', 59 to ':', 222 to '\\',
-        44 to '<', 46 to '>', 47 to '?',
-        32 to ' ', 39 to '"'
-    )
-
     @JvmStatic
     fun main(args: Array<String>) {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
+
+        val keyboard = window.keyboard
 
         val display = UIDisplay(window)
 
@@ -59,36 +51,28 @@ object UIButtonExample {
         val text = """
             Lwjgl!!, some symbols?
             5! = 1 * 2 * 3 * 4 * 5 = 120.
-            ${"משפט זה עשוי להכיל תוכן מגניב".reversed()}
             write here
         """.trimIndent()
 
-        val writeable = UITextElement(text).apply {
+        val writeable = UITextField(keyboard, text).apply {
             style.x.value = center()
+            style.width.value = percent(50f)
+            style.height.value = percent(50f)
         }
         container.add(writeable)
 
         val uiFps = UITextElement("").apply {
+            style.fontColour.set(Colours.WHITE)
             style.fontSize.set(22)
         }
         container.add(uiFps)
-
-        val keyboard = window.keyboard
-
-        keyboard.addKeyPressListener { e ->
-            writeable.uiText.text = changeTextByKeyboard(font, writeable.uiText.text, e)
-        }
-
-        keyboard.addKeyRepeatListener { e ->
-            writeable.uiText.text = changeTextByKeyboard(font, writeable.uiText.text, e)
-        }
 
         val fps = Fps()
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             container.update()
 
-            GlUtils.clearColourAndDepthBuffer()
+            GlUtils.clear(GlBuffer.COLOUR)
             container.render(RenderContextBase(null))
 
             window.update(true)
@@ -98,42 +82,10 @@ object UIButtonExample {
             fps.update()
         }
 
-        println(writeable.uiText.text)
+        println(writeable.text)
 
         font.delete()
         container.delete()
         window.destroy()
-    }
-
-    private fun changeTextByKeyboard(font: Font, text: String, e: KeyEvent): String {
-        return when {
-            e.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
-                if (e.modifiers.isCtrl()) {
-                    text.dropLast(text.length - text.lastIndexOfAny(charArrayOf(' ', '\n')))
-                } else {
-                    text.dropLast(1)
-                }
-            }
-            e.keyCode == GLFW.GLFW_KEY_ENTER -> {
-                text + '\n'
-            }
-            font.characters.any { it.char == e.keyCode.toChar() } -> {
-                text + when {
-                    e.modifiers.isShift() -> {
-                        characterShiftMap.getOrDefault(
-                            e.keyCode, e.keyCode.toChar().uppercaseChar())
-                    }
-                    e.modifiers.isCapsLock() -> {
-                        e.keyCode.toChar().uppercaseChar()
-                    }
-                    else -> {
-                        e.keyCode.toChar().lowercaseChar()
-                    }
-                }
-            }
-            else -> {
-                text
-            }
-        }
     }
 }

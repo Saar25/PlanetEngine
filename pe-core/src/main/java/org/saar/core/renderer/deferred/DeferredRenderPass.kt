@@ -1,0 +1,8 @@
+package org.saar.core.renderer.deferred
+
+import org.saar.core.renderer.renderpass.RenderPass
+import org.saar.core.renderer.renderpass.RenderPassContext
+
+interface DeferredRenderPass : RenderPass {
+    fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers)
+}

@@ -11,6 +11,7 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
+import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -20,8 +21,8 @@ import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.transform.Transform;
@@ -36,7 +37,7 @@ public class DeferredExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        GlUtils.setClearColour(.1f, .1f, .1f);
+        ClearColour.set(.1f, .1f, .1f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -45,8 +46,12 @@ public class DeferredExample {
 
         final DeferredRenderNodeGroup renderNode = buildRenderNode();
 
+        final DirectionalLight light = new DirectionalLight();
+        light.getDirection().set(-50f, -50f, -50f);
+        light.getColour().set(1.0f, 1.0f, 1.0f);
+
         final DeferredRenderPassesPipeline renderPassesPipeline =
-                new DeferredRenderPassesPipeline(new LightRenderPass());
+                new DeferredRenderPassesPipeline(new LightRenderPass(light));
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
                 camera, renderNode, renderPassesPipeline);

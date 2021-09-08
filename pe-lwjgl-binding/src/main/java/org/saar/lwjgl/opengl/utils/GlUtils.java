@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL32;
 
 public final class GlUtils {
 
-    private final static boolean[] clipPlanes = new boolean[6];
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
 
@@ -65,29 +64,6 @@ public final class GlUtils {
     }
 
     /**
-     * Set the clear colour of the screen, the background of the window
-     *
-     * @param r red value
-     * @param g green value
-     * @param b blue value
-     */
-    public static void setClearColour(float r, float g, float b) {
-        setClearColour(r, g, b, 1);
-    }
-
-    /**
-     * Set the clear colour of the screen, the background of the window
-     *
-     * @param r red value
-     * @param g green value
-     * @param b blue value
-     * @param a alpha value
-     */
-    public static void setClearColour(float r, float g, float b, float a) {
-        GL11.glClearColor(r, g, b, a);
-    }
-
-    /**
      * Set the viewport of the screen, should be called whenever the effect of resizing the window is needed
      *
      * @param x x coordinate on the screen
@@ -97,30 +73,6 @@ public final class GlUtils {
      */
     public static void setViewport(int x, int y, int w, int h) {
         GL11.glViewport(x, y, w, h);
-    }
-
-    /**
-     * Enable the clip plane, should be call whenever rendering only certain areas
-     *
-     * @param clipPlane the number of the clip plane to enable
-     */
-    public static void enableClipPlane(int clipPlane) {
-        if (!clipPlanes[clipPlane]) {
-            GL11.glEnable(GL11.GL_CLIP_PLANE0 + clipPlane);
-            clipPlanes[clipPlane] = true;
-        }
-    }
-
-    /**
-     * Disable the clip plane, should be call whenever rendering without clipping areas
-     *
-     * @param clipPlane the number of the clip plane to enable
-     */
-    public static void disableClipPlane(int clipPlane) {
-        if (clipPlanes[clipPlane]) {
-            GL11.glEnable(GL11.GL_CLIP_PLANE0 + clipPlane);
-            clipPlanes[clipPlane] = false;
-        }
     }
 
     /**
@@ -143,24 +95,15 @@ public final class GlUtils {
         }
     }
 
-    /**
-     * Clears the colour buffer and the depth buffer, should be called before rendering the next frame
-     */
-    public static void clearColourAndDepthBuffer() {
-        clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+    public static void clear(GlBuffer buffer1) {
+        GL11.glClear(buffer1.get());
     }
 
-    /**
-     * Clears the buffers received
-     *
-     * @param glBuffers the buffers to clear
-     */
-    public static void clear(GlBuffer... glBuffers) {
-        int mask = 0;
-        for (GlBuffer glBuffer : glBuffers) {
-            mask |= glBuffer.get();
-        }
-        GL11.glClear(mask);
+    public static void clear(GlBuffer buffer1, GlBuffer buffer2) {
+        GL11.glClear(buffer1.get() | buffer2.get());
     }
 
+    public static void clear(GlBuffer buffer1, GlBuffer buffer2, GlBuffer buffer3) {
+        GL11.glClear(buffer1.get() | buffer2.get() | buffer3.get());
+    }
 }

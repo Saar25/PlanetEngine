@@ -41,15 +41,15 @@ object Colours {
 
     @JvmField
     @Suppress("unused")
-    val LIGHT_GREY: Colour = Colour(179, 179, 179, 1f)
+    val LIGHT_GRAY: Colour = Colour(179, 179, 179, 1f)
 
     @JvmField
     @Suppress("unused")
-    val GREY: Colour = Colour(127, 127, 127, 1f)
+    val GRAY: Colour = Colour(127, 127, 127, 1f)
 
     @JvmField
     @Suppress("unused")
-    val DARK_GREY: Colour = Colour(77, 77, 77, 1f)
+    val DARK_GRAY: Colour = Colour(77, 77, 77, 1f)
 
     @JvmField
     @Suppress("unused")

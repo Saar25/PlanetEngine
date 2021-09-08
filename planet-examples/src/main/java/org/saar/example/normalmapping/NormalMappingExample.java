@@ -35,10 +35,10 @@ import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.textures.ColourTexture;
 import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class NormalMappingExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        GlUtils.setClearColour(0, .7f, .9f);
+        ClearColour.set(0, .7f, .9f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -86,7 +86,7 @@ public class NormalMappingExample {
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
                 ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),

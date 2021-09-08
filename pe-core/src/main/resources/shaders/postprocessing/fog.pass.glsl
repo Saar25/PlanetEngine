@@ -1,16 +1,20 @@
 #include "/shaders/common/fog/fog"
 #include "/shaders/common/transform/transform"
 
+#ifndef FD_DEPTH
+#define FD_DEPTH 0
+#endif
+
 #ifndef FD_Y
-#define FD_Y 0
+#define FD_Y 1
 #endif
 
 #ifndef FD_XZ
-#define FD_XZ 1
+#define FD_XZ 2
 #endif
 
 #ifndef FD_XYZ
-#define FD_XYZ 2
+#define FD_XYZ 3
 #endif
 
 // Vertex outputs
@@ -32,6 +36,7 @@ layout (location = 0) out vec4 f_colour;
 // Methods declaration
 float calcDistance(float depth, int fogDistance);
 
+float calcDistanceDepth(vec3 viewPosition);
 float calcDistanceY(vec3 viewPosition);
 float calcDistanceXZ(vec3 viewPosition);
 float calcDistanceXYZ(vec3 viewPosition);
@@ -53,6 +58,7 @@ float calcDistance(float depth, int fogDistance) {
     vec3 viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
 
     switch (fogDistance) {
+        case FD_DEPTH: return calcDistanceDepth(viewPosition);
         case FD_Y: return calcDistanceY(viewPosition);
         case FD_XZ: return calcDistanceXZ(viewPosition);
         case FD_XYZ: return calcDistanceXYZ(viewPosition);
@@ -60,15 +66,22 @@ float calcDistance(float depth, int fogDistance) {
     return -1;
 }
 
+float calcDistanceDepth(vec3 viewPosition) {
+    return abs(viewPosition.z);
+}
+
 float calcDistanceY(vec3 viewPosition) {
     vec3 worldSpace = viewSpaceToWorldSpace(viewPosition, u_viewMatrixInv);
-    return abs(worldSpace.y);
+
+    return worldSpace.y;
 }
+
 float calcDistanceXZ(vec3 viewPosition) {
     vec3 worldSpace = viewSpaceToWorldSpace(viewPosition, u_viewMatrixInv);
 
     return length(worldSpace.xz - u_cameraPosition.xz);
 }
+
 float calcDistanceXYZ(vec3 viewPosition) {
     return length(viewPosition.xyz);
 }

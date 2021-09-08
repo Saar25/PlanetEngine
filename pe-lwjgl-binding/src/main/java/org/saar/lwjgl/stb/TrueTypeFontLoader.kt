@@ -5,7 +5,7 @@ import org.lwjgl.stb.STBTruetype
 import org.lwjgl.system.MemoryStack
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
 import org.saar.lwjgl.util.buffer.ReadonlyLwjglBuffer
-import org.saar.utils.Box2i
+import org.saar.maths.Box2i
 
 object TrueTypeFontLoader {
 

@@ -10,7 +10,6 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShaderType
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
@@ -18,8 +17,6 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
-
-private val matrix = Matrix4.create()
 
 private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
@@ -42,11 +39,11 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
     @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    @ShaderProperty(ShaderType.VERTEX)
+    @ShaderProperty
     private val vertex = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
 
-    @ShaderProperty(ShaderType.FRAGMENT)
+    @ShaderProperty
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
 
@@ -61,13 +58,13 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         BlendTest.applyAlpha()
         DepthTest.enable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(matrix).transpose()
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, Matrix4.create())
+        this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
         this.transformUniform.value = model.transform.transformationMatrix
         this.textureUniform.value = model.texture
