@@ -1,6 +1,7 @@
 package org.saar.example;
 
-import org.saar.core.shadertoy.toys.RandomShaderToy;
+import org.saar.core.shadertoy.ShaderToy;
+import org.saar.core.shadertoy.toys.FBMShaderToy;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.glfw.window.hint.WindowHintDecorated;
@@ -20,19 +21,12 @@ public class ShaderToyExample {
                 .hint(new WindowHintFocused(true))
                 .build();
 
-        final RandomShaderToy shaderToy = new RandomShaderToy();
-
-        shaderToy.render();
-        window.update(true);
-
-        window.addResizeListener(e -> {
-            window.update(false);
-            shaderToy.render();
-            window.update(true);
-        });
+        final ShaderToy shaderToy = new FBMShaderToy();
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
+            shaderToy.render();
+            window.update(true);
             window.pollEvents();
         }
 
