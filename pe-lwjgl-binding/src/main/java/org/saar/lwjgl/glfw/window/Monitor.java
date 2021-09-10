@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 import org.saar.maths.objects.Dimensions;
-import org.saar.maths.objects.Rectangle;
+import org.saar.maths.objects.RectangleI;
 
 import java.nio.IntBuffer;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class Monitor {
     final long id;
 
     private final Dimensions dimensions;
-    private final Rectangle workArea;
+    private final RectangleI workArea;
 
     private Monitor(long id) {
         this.id = id;
@@ -24,7 +24,7 @@ public class Monitor {
         this.workArea = findWorkArea();
     }
 
-    private Rectangle findWorkArea() {
+    private RectangleI findWorkArea() {
         try (final MemoryStack stack = MemoryStack.stackPush()) {
             final IntBuffer x = stack.callocInt(1);
             final IntBuffer y = stack.callocInt(1);
@@ -32,7 +32,7 @@ public class Monitor {
             final IntBuffer h = stack.callocInt(1);
             GLFW.glfwGetMonitorWorkarea(this.id, x, y, w, h);
 
-            return new Rectangle(x.get(), y.get(), w.get(), y.get());
+            return new RectangleI(x.get(), y.get(), w.get(), h.get());
         }
     }
 
@@ -45,7 +45,7 @@ public class Monitor {
         return this.dimensions;
     }
 
-    public Rectangle getWorkArea() {
+    public RectangleI getWorkArea() {
         return this.workArea;
     }
 }
