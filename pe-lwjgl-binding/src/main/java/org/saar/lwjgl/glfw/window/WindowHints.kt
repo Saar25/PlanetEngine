@@ -1,7 +1,6 @@
 package org.saar.lwjgl.glfw.window
 
 import org.lwjgl.glfw.GLFW
-import org.saar.lwjgl.glfw.window.hint.OpenGlProfileType
 
 private fun hintOf(type: WindowHintType, value: Int) = WindowHint { GLFW.glfwWindowHint(type.get(), value) }
 

@@ -5,12 +5,11 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
-import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
+import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.glfw.window.hint.*;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class Window {
@@ -63,16 +62,16 @@ public class Window {
 
     public static Window create(String title, int width, int height, boolean vSync) {
         final WindowBuilder builder = builder(title, width, height, vSync);
-        builder.hint(new WindowHintVisible(false))
-                .hint(new WindowHintResizeable(true));
+        builder.hint(WindowHints.visible(false))
+                .hint(WindowHints.resizable());
         return builder.build();
     }
 
     public static WindowBuilder builder(String title, int width, int height, boolean vSync) {
         final WindowBuilder builder = new WindowBuilder(title, width, height, vSync);
-        builder.hint(new WindowHintContextVersion(3, 2))
-                .hint(new WindowHintOpenGlProfile(OpenGlProfileType.CORE))
-                .hint(new WindowHintOpenGlForwardCompatibility(true));
+        builder.hint(WindowHints.contextVersion(3, 2))
+                .hint(WindowHints.openglProfile(OpenGlProfileType.CORE))
+                .hint(WindowHints.openglForwardCompatibility());
         return builder;
     }
 
@@ -88,7 +87,7 @@ public class Window {
         this.positionListenersHelper = this.positionListenersHelper.addListener(listener);
     }
 
-    private void init() {
+    private void  init() {
         GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
             final ResizeEvent event = new ResizeEvent(
                     new IntValueChange(this.width, width),

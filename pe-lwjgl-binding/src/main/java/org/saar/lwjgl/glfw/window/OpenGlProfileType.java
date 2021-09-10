@@ -1,4 +1,4 @@
-package org.saar.lwjgl.glfw.window.hint;
+package org.saar.lwjgl.glfw.window;
 
 import org.lwjgl.glfw.GLFW;
 
