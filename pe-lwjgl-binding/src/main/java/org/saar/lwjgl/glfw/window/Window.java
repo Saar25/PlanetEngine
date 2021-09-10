@@ -2,7 +2,6 @@ package org.saar.lwjgl.glfw.window;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.saar.lwjgl.glfw.event.EventListener;
@@ -11,13 +10,15 @@ import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.maths.objects.Dimensions;
+import org.saar.maths.objects.RectangleI;
 
 public class Window {
 
     private static Window current = null;
 
     static {
-        // Setup an error callback. The default implementation
+        // Set up an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -87,7 +88,7 @@ public class Window {
         this.positionListenersHelper = this.positionListenersHelper.addListener(listener);
     }
 
-    private void  init() {
+    private void init() {
         GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
             final ResizeEvent event = new ResizeEvent(
                     new IntValueChange(this.width, width),
@@ -256,6 +257,8 @@ public class Window {
      */
     public void setSize(int width, int height) {
         GLFW.glfwSetWindowSize(this.id, width, height);
+        this.width = width;
+        this.height = height;
     }
 
     /**
@@ -308,13 +311,34 @@ public class Window {
      * Center the window in the middle of the screen
      */
     public void center() {
-        final long monitor = GLFW.glfwGetPrimaryMonitor();
-        final GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
-        if (vidMode != null) {
-            final int w = (vidMode.width() - getWidth()) / 2;
-            final int h = (vidMode.height() - getHeight()) / 2;
-            setPosition(w, h);
-        }
+        final Dimensions dimensions = Monitor.primary.getDimensions();
+        final int w = (dimensions.getWidth() - getWidth()) / 2;
+        final int h = (dimensions.getHeight() - getHeight()) / 2;
+        setPosition(w, h);
+    }
+
+    /**
+     * Set the window to fullscreen
+     */
+    public void setFullscreen() {
+        final Dimensions dimensions = Monitor.primary.getDimensions();
+        GLFW.glfwSetWindowMonitor(this.id, Monitor.primary.id, 0, 0,
+                dimensions.getWidth(), dimensions.getHeight(), GLFW.GLFW_DONT_CARE);
+
+        this.width = dimensions.getWidth();
+        this.height = dimensions.getHeight();
+    }
+
+    public void setMaximized() {
+        final RectangleI workArea = Monitor.primary.getWorkArea();
+        GLFW.glfwSetWindowMonitor(this.id, 0, workArea.x, workArea.y,
+                workArea.w, workArea.h, GLFW.GLFW_DONT_CARE);
+
+        GLFW.glfwMaximizeWindow(this.id);
+        this.x = workArea.x;
+        this.y = workArea.y;
+        this.width = workArea.w;
+        this.height = workArea.h;
     }
 
     /**
