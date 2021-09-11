@@ -4,13 +4,14 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
 import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
-import org.saar.core.screen.image.DepthStencilScreenImage;
+import org.saar.core.screen.image.ScreenImage;
+import org.saar.core.screen.image.StencilScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.*;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.StencilAttachment;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
@@ -81,10 +82,9 @@ public class StencilExample {
     private static Screen buildScreen(int width, int height) {
         final SimpleScreen screen = new SimpleScreen(Fbo.create(width, height));
 
-        final DepthStencilScreenImage depthStencilImage = new DepthStencilScreenImage(DepthStencilAttachment.withTexture(
-                Texture.create(TextureTarget.TEXTURE_2D), DepthStencilFormatType.DEPTH24_STENCIL8, DataType.U_INT_24_8
-        ));
-        screen.addScreenImage(depthStencilImage);
+        final ScreenImage screenImage = new StencilScreenImage(
+                StencilAttachment.withRenderBuffer());
+        screen.addScreenImage(screenImage);
 
         final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment.withTexture(0,
                 Texture.create(TextureTarget.TEXTURE_2D), ColourFormatType.RGBA8, FormatType.RGBA, DataType.BYTE));
