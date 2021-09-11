@@ -1,4 +1,4 @@
-package org.saar.core.shadertoy
+package org.saar.core.painting
 
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
@@ -9,7 +9,7 @@ import org.saar.core.renderer.forward.ForwardRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassContext
 
-interface ShaderToy : RenderPass, PostProcessor, ForwardRenderPass, DeferredRenderPass {
+interface Painter : RenderPass, PostProcessor, ForwardRenderPass, DeferredRenderPass {
 
     fun render()
 

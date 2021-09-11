@@ -1,11 +1,11 @@
-package org.saar.core.shadertoy
+package org.saar.core.painting
 
 import org.saar.core.renderer.renderpass.RenderPassesPipelineHelper
 import org.saar.lwjgl.opengl.stencil.StencilTest
 
-class ShaderToyPipeline(vararg toys: ShaderToy) {
+class PaintingPipeline(vararg painters: Painter) {
 
-    private val helper = RenderPassesPipelineHelper(toys)
+    private val helper = RenderPassesPipelineHelper(painters)
 
     fun process() = this.helper.process {
         StencilTest.disable()
