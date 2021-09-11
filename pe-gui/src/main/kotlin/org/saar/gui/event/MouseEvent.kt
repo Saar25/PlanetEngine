@@ -1,140 +1,36 @@
-package org.saar.gui.event;
+package org.saar.gui.event
 
+import org.saar.lwjgl.glfw.input.mouse.ClickEvent
+import org.saar.lwjgl.glfw.input.mouse.MouseButton
+import org.saar.lwjgl.glfw.input.mouse.MoveEvent
+import org.saar.lwjgl.glfw.window.Window
 
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent;
-import org.saar.lwjgl.glfw.input.mouse.MouseButton;
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
-import org.saar.lwjgl.glfw.window.Window;
-
-public class MouseEvent {
-
-    private final MouseButton button;
-    private final Modifiers modifiers;
-
-    private final int x;
-    private final int y;
-    private final int xBefore;
-    private final int yBefore;
-    private final int xOnScreen;
-    private final int yOnScreen;
-
-    public MouseEvent(MouseButton button, Modifiers modifiers, int x, int y, int xBefore, int yBefore, int xOnScreen, int yOnScreen) {
-        this.button = button;
-        this.modifiers = modifiers;
-        this.x = x;
-        this.y = y;
-        this.xBefore = xBefore;
-        this.yBefore = yBefore;
-        this.xOnScreen = xOnScreen;
-        this.yOnScreen = yOnScreen;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static MouseEvent create(ClickEvent event) {
-        return MouseEvent.builder()
-                .setX(event.getMouse().getXPos())
-                .setY(event.getMouse().getYPos())
-                .setxBefore(event.getMouse().getXPos())
-                .setyBefore(event.getMouse().getYPos())
-                .setButton(event.getButton())
-                .create();
-    }
-
-    public static MouseEvent create(MoveEvent event) {
-        return MouseEvent.builder()
-                .setX(event.getX().getAfter())
-                .setY(event.getY().getAfter())
-                .setButton(event.getMouse().isButtonDown(MouseButton.PRIMARY)
-                        ? MouseButton.PRIMARY : MouseButton.NONE)
-                .create();
-    }
-
-    public MouseButton getButton() {
-        return button;
-    }
-
-    public Modifiers getModifiers() {
-        return modifiers;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getxBefore() {
-        return xBefore;
-    }
-
-    public int getyBefore() {
-        return yBefore;
-    }
-
-    public int getDeltaX() {
-        return x - xBefore;
-    }
-
-    public int getDeltaY() {
-        return y - yBefore;
-    }
-
-    public int getxOnScreen() {
-        return xOnScreen;
-    }
-
-    public int getyOnScreen() {
-        return yOnScreen;
-    }
-
-    public static class Builder {
-
-        private MouseButton button = null;
-        private Modifiers modifiers = new Modifiers();
-
-        private int x;
-        private int y;
-        private int xBefore;
-        private int yBefore;
-
-        public Builder setButton(MouseButton button) {
-            this.button = button;
-            return this;
-        }
-
-        public Builder setModifiers(Modifiers modifiers) {
-            this.modifiers = modifiers;
-            return this;
-        }
-
-        public Builder setX(int x) {
-            this.x = x;
-            return this;
-        }
-
-        public Builder setY(int y) {
-            this.y = y;
-            return this;
-        }
-
-        public Builder setxBefore(int xBefore) {
-            this.xBefore = xBefore;
-            return this;
-        }
-
-        public Builder setyBefore(int yBefore) {
-            this.yBefore = yBefore;
-            return this;
-        }
-
-        public MouseEvent create() {
-            return new MouseEvent(button, modifiers, x, y, xBefore, yBefore, x + Window.current().getX(), y + Window.current().getY());
-        }
-    }
-
+class MouseEvent(
+    val button: MouseButton = MouseButton.NONE,
+    val modifiers: Modifiers = Modifiers(),
+    val x: Int,
+    val y: Int,
+    val xBefore: Int,
+    val yBefore: Int,
+) {
+    val deltaX: Int get() = this.x - this.xBefore
+    val deltaY: Int get() = this.y - this.yBefore
+    val xOnScreen: Int get() = Window.current().x + this.x
+    val yOnScreen: Int get() = Window.current().y + this.y
 }
+
+fun ClickEvent.asMouseEvent() = MouseEvent(
+    x = this.mouse.xPos,
+    y = this.mouse.xPos,
+    xBefore = this.mouse.xPos,
+    yBefore = this.mouse.yPos,
+    button = this.button
+)
+
+fun MoveEvent.asMouseEvent() = MouseEvent(
+    x = this.x.after,
+    y = this.y.after,
+    xBefore = this.x.before,
+    yBefore = this.y.before,
+    button = if (this.mouse.isButtonDown(MouseButton.PRIMARY)) MouseButton.PRIMARY else MouseButton.NONE
+)

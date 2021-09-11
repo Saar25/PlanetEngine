@@ -1,140 +1,114 @@
-package org.saar.gui.graphics;
+package org.saar.gui.graphics
 
-import org.saar.gui.style.Colour;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
-import org.saar.maths.objects.Polygon;
+import org.saar.gui.style.Colour
+import org.saar.gui.style.Colours
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.FormatType
+import org.saar.lwjgl.opengl.textures.Texture2D
+import org.saar.lwjgl.util.buffer.LwjglByteBuffer
+import org.saar.maths.objects.Polygon
 
-public class BufferedGraphics implements Graphics {
+class BufferedGraphics(private val texture: Texture2D) : Graphics {
 
-    private final Texture2D texture;
-    private final LwjglByteBuffer buffer;
+    private val buffer = LwjglByteBuffer.allocate(4 * texture.width * texture.height)
 
-    private Colour colour;
+    override var colour: Colour = Colours.BLACK
 
-    public BufferedGraphics(Texture2D texture) {
-        final int capacity = 4 * texture.getWidth() * texture.getHeight();
-        this.buffer = LwjglByteBuffer.allocate(capacity);
-        this.texture = texture;
+    private fun getPixel(x: Int, y: Int): Int {
+        val position = x + y * this.texture.width
+        var colour = this.buffer[position].toInt()
+        colour = (colour shl 4) + this.buffer[position + 1]
+        colour = (colour shl 4) + this.buffer[position + 2]
+        colour = (colour shl 4) + this.buffer[position + 3]
+        return colour
     }
 
-    private int getColour(int x, int y) {
-        int position = x + y * texture.getWidth();
-        int colour = buffer.get(position);
-        colour = (colour << 4) + buffer.get(position + 1);
-        colour = (colour << 4) + buffer.get(position + 2);
-        colour = (colour << 4) + buffer.get(position + 3);
-        return colour;
-    }
-
-    private void setPixel(int x, int y, Colour colour) {
-        if (x >= 0 && x < texture.getWidth() && y >= 0 && y < texture.getHeight()) {
-            buffer.position(x + y * texture.getWidth());
-            buffer.putInt(colour.asInt());
+    private fun setPixel(x: Int, y: Int, colour: Colour) {
+        if (x >= 0 && x < this.texture.width && y >= 0 && y < this.texture.height) {
+            this.buffer.position(x + y * this.texture.width)
+            this.buffer.putInt(colour.asInt())
         }
     }
 
-    @Override
-    public void setColour(Colour colour) {
-        this.colour = colour;
-    }
+    private fun minAndMax(a: Int, b: Int) = if (a < b) Pair(a, b) else Pair(b, a)
 
-    @Override
-    public void drawLine(int x1, int y1, int x2, int y2) {
-        if (x1 > x2) {
-            int temp = x2;
-            x2 = x1;
-            x1 = temp;
-        }
-        if (y1 > y2) {
-            int temp = y2;
-            y2 = y1;
-            y1 = temp;
-        }
-        final int xLength = x2 - x1;
-        final int yLength = y2 - y1;
+    override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
+        val (xMin, xMax) = this.minAndMax(x1, x2)
+        val (yMin, yMax) = this.minAndMax(y1, y2)
+        val xLength = xMax - xMin
+        val yLength = yMax - yMin
+
         if (xLength > yLength) {
-            final float m = yLength == 0 ? 0 : (float) xLength / yLength;
-            for (int x = x1; x <= x2; x++) {
-                setPixel(x, (int) (y1 + (x - x1) * m), colour);
+            val m: Float = if (yLength == 0) 0f else xLength.toFloat() / yLength
+            for (x in xMin..xMax) {
+                this.setPixel(x, (yMin + (x - xMin) * m).toInt(), this.colour)
             }
         } else {
-            final float m = xLength == 0 ? 0 : (float) yLength / xLength;
-            for (int y = y1; y <= y2; y++) {
-                setPixel((int) (x1 + (y - y1) * m), y, colour);
+            val m: Float = if (xLength == 0) 0f else yLength.toFloat() / xLength
+            for (y in yMin..yMax) {
+                this.setPixel((xMin + (y - yMin) * m).toInt(), y, this.colour)
             }
         }
     }
 
-    @Override
-    public void drawRectangle(int x, int y, int w, int h) {
-        drawLine(x, y, x + w, y);
-        drawLine(x, y, x, y + h);
-        drawLine(x + w, y, x + w, y + h);
-        drawLine(x, y + h, x + w, y + h);
+    override fun drawRectangle(x: Int, y: Int, w: Int, h: Int) {
+        drawLine(x, y, x + w, y)
+        drawLine(x, y, x, y + h)
+        drawLine(x + w, y, x + w, y + h)
+        drawLine(x, y + h, x + w, y + h)
     }
 
-    @Override
-    public void fillRectangle(int x, int y, int w, int h) {
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                setPixel(x + i, y + j, colour);
+    override fun fillRectangle(x: Int, y: Int, w: Int, h: Int) {
+        for (i in 0 until w) {
+            for (j in 0 until h) {
+                setPixel(x + i, y + j, this.colour)
             }
         }
     }
 
-    @Override
-    public void drawOval(int cx, int cy, int a, int b) {
-        final float invCx2 = 1f / (a * a);
-        final float invCy2 = 1f / (b * b);
-        for (int x = cx - a; x < cx + a * 2; x++) {
-            for (int y = cy - b; y < cy + b * 2; y++) {
-                float dx = x - cx, dy = y - cy;
-                if (dx * dx * invCx2 + dy * dy * invCy2 == 1) {
-                    setPixel(x, y, colour);
+    override fun drawOval(cx: Int, cy: Int, a: Int, b: Int) {
+        val invCx2 = 1f / (a * a)
+        val invCy2 = 1f / (b * b)
+        for (x in cx - a until cx + a * 2) {
+            for (y in cy - b until cy + b * 2) {
+                val dx = (x - cx).toFloat()
+                val dy = (y - cy).toFloat()
+                if (dx * dx * invCx2 + dy * dy * invCy2 == 1f) {
+                    setPixel(x, y, this.colour)
                 }
             }
         }
     }
 
-    @Override
-    public void fillOval(int cx, int cy, int a, int b) {
-        final float invCx2 = 1f / (a * a);
-        final float invCy2 = 1f / (b * b);
-        for (int x = cx - a; x < cx + a * 2; x++) {
-            for (int y = cy - b; y < cy + b * 2; y++) {
-                float dx = x - cx, dy = y - cy;
+    override fun fillOval(cx: Int, cy: Int, a: Int, b: Int) {
+        val invCx2 = 1f / (a * a)
+        val invCy2 = 1f / (b * b)
+        for (x in cx - a until cx + a * 2) {
+            for (y in cy - b until cy + b * 2) {
+                val dx = (x - cx).toFloat()
+                val dy = (y - cy).toFloat()
                 if (dx * dx * invCx2 + dy * dy * invCy2 <= 1) {
-                    setPixel(x, y, colour);
+                    setPixel(x, y, this.colour)
                 }
             }
         }
     }
 
-    @Override
-    public void fillPolygon(Polygon polygon) {
-
-    }
-
-    @Override
-    public void clear(Colour clearColour) {
-        buffer.clear();
-        final int colour = clearColour.asInt();
-        for (int i = 0; i < buffer.limit(); i++) {
-            buffer.putInt(colour);
+    override fun fillPolygon(polygon: Polygon) {}
+    override fun clear(clearColour: Colour) {
+        this.buffer.clear()
+        val colour = clearColour.asInt()
+        for (i in 0 until this.buffer.limit()) {
+            this.buffer.putInt(colour)
         }
     }
 
-    @Override
-    public void process() {
-        buffer.flip().limit(buffer.capacity());
-        texture.load(buffer.asByteBuffer(), FormatType.RGBA, DataType.BYTE);
+    override fun process() {
+        this.buffer.flip().limit(this.buffer.capacity())
+        this.texture.load(this.buffer.asByteBuffer(), FormatType.RGBA, DataType.BYTE)
     }
 
-    @Override
-    public void delete() {
-        this.buffer.close();
+    override fun delete() {
+        this.buffer.close()
     }
 }

@@ -40,8 +40,6 @@ class UITextField(keyboard: Keyboard, text: String = "") : UIComponent() {
         keyboard.addKeyRepeatListener(this::changeTextByKeyboard)
     }
 
-    override fun update() = this.uiTextElement.update()
-
     override fun renderText(context: RenderContext) {
         this.uiTextElement.render(context)
     }

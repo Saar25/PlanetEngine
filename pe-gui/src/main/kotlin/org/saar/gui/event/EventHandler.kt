@@ -1,11 +1,10 @@
-package org.saar.gui.event;
+package org.saar.gui.event
 
-public interface EventHandler<T> {
+fun interface EventHandler<T> {
+    fun handle(event: T)
+}
 
-    void handle(T event);
-
-    default EventHandler<T> andThen(EventHandler<? super T> listener) {
-        return event -> { handle(event); listener.handle(event);};
-    }
-
+fun <T> EventHandler<T>.andThen(listener: EventHandler<in T>) = EventHandler { event: T ->
+    handle(event)
+    listener.handle(event)
 }

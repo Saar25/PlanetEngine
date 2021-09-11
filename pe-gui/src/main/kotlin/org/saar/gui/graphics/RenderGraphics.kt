@@ -22,7 +22,7 @@ class RenderGraphics : Graphics {
 
     private val renderList = ArrayList<Model>()
 
-    private var colour: Colour = Colours.BLACK
+    override var colour: Colour = Colours.BLACK
 
     @UniformProperty
     private val windowSizeUniform = object : Vec2iUniform() {
@@ -48,10 +48,6 @@ class RenderGraphics : Graphics {
         private val fragment = Shader.createFragment(GlslVersion.V400,
             ShaderCode.loadSource("/shaders/gui/graphics/render/graphics.fragment.glsl"))
         private val shadersProgram = ShadersProgram.create(vertex, fragment)
-    }
-
-    override fun setColour(colour: Colour) {
-        this.colour = colour
     }
 
     override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {

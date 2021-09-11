@@ -1,5 +1,3 @@
-package org.saar.gui.style;
+package org.saar.gui.style
 
-public interface StyleProperty {
-
-}
+interface StyleProperty

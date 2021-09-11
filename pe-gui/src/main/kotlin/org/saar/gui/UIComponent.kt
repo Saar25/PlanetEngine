@@ -2,6 +2,7 @@ package org.saar.gui
 
 import org.saar.gui.block.UIBlock
 import org.saar.gui.event.MouseEvent
+import org.saar.gui.event.asMouseEvent
 import org.saar.gui.style.Style
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent
@@ -24,12 +25,12 @@ abstract class UIComponent : UIChildElement {
     var isMousePressed = false
         private set
 
-    override fun update() = this.children.forEach { it.update() }
+    final override fun update() = this.children.forEach { it.update() }
 
-    override fun delete() = this.children.forEach { it.delete() }
+    final override fun delete() = this.children.forEach { it.delete() }
 
-    override fun onMouseMoveEvent(event: MoveEvent) {
-        val e = MouseEvent.create(event)
+    final override fun onMouseMoveEvent(event: MoveEvent) {
+        val e = event.asMouseEvent()
         val x = event.mouse.xPos
         val y = event.mouse.yPos
 
@@ -48,8 +49,8 @@ abstract class UIComponent : UIChildElement {
         }
     }
 
-    override fun onMouseClickEvent(event: ClickEvent): Boolean {
-        val e = MouseEvent.create(event)
+    final override fun onMouseClickEvent(event: ClickEvent): Boolean {
+        val e = event.asMouseEvent()
         if (event.isDown && this.isMouseHover) {
             mousePress(e)
             return true

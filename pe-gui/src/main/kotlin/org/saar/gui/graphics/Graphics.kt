@@ -1,28 +1,27 @@
-package org.saar.gui.graphics;
+package org.saar.gui.graphics
 
-import org.saar.gui.style.Colour;
-import org.saar.maths.objects.Polygon;
+import org.saar.gui.style.Colour
+import org.saar.maths.objects.Polygon
 
-public interface Graphics {
+interface Graphics {
 
-    void setColour(Colour colour);
+    var colour: Colour
 
-    void drawLine(int x1, int y1, int x2, int y2);
+    fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int)
 
-    void drawRectangle(int x, int y, int w, int h);
+    fun drawRectangle(x: Int, y: Int, w: Int, h: Int)
 
-    void fillRectangle(int x, int y, int w, int h);
+    fun fillRectangle(x: Int, y: Int, w: Int, h: Int)
 
-    void drawOval(int cx, int cy, int a, int b);
+    fun drawOval(cx: Int, cy: Int, a: Int, b: Int)
 
-    void fillOval(int cx, int cy, int a, int b);
+    fun fillOval(cx: Int, cy: Int, a: Int, b: Int)
 
-    void fillPolygon(Polygon polygon);
+    fun fillPolygon(polygon: Polygon)
 
-    void clear(Colour clearColour);
+    fun clear(clearColour: Colour)
 
-    void process();
+    fun process()
 
-    void delete();
-
+    fun delete()
 }
