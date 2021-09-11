@@ -27,6 +27,7 @@ import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
+import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -84,10 +85,15 @@ public class TerrainExample {
         final Model3D cubeModel = buildCubeModel();
         final Node3D cube = new Node3D(cubeModel);
 
+        final Model3D cubeModel2 = buildCubeModel();
+        cubeModel2.getTransform().getPosition().addX(-5);
+        cubeModel2.getTransform().getPosition().addY(5);
+        final Node3D cube2 = new Node3D(cubeModel2);
+
         final DirectionalLight light = buildDirectionalLight();
 
         final CubeMapTexture cubeMap = createCubeMap();
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, world);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, cube2, world);
         final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light, cubeMap);
 
         final Fps fps = new Fps();
@@ -136,6 +142,7 @@ public class TerrainExample {
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new LightRenderPass(light),
+                new SsaoRenderPass(),
                 new ContrastPostProcessor(1.3f),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new FogRenderPass(fog2, FogDistance.Y),
