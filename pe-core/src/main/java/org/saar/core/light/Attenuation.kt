@@ -1,10 +1,16 @@
 package org.saar.core.light
 
+import org.joml.Vector3fc
+import org.saar.maths.utils.Vector3
+
 data class Attenuation(
     val constant: Float = 1f,
     val linear: Float,
     val quadratic: Float,
 ) {
+
+    val vector3f: Vector3fc = Vector3.of(this.constant, linear, quadratic)
+
     companion object {
         val DISTANCE_7 = Attenuation(1.0f, 0.7f, 1.8f)
         val DISTANCE_13 = Attenuation(1.0f, 0.35f, 0.44f)
