@@ -1,11 +1,8 @@
-package org.saar.core.light;
+package org.saar.core.light
 
-import org.joml.Vector3fc;
+import org.joml.Vector3fc
 
-public interface IDirectionalLight {
-
-    Vector3fc getDirection();
-
-    Vector3fc getColour();
-
+interface IDirectionalLight {
+    val direction: Vector3fc
+    val colour: Vector3fc
 }

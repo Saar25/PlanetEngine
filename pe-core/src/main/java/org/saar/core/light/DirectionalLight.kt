@@ -1,21 +1,9 @@
-package org.saar.core.light;
+package org.saar.core.light
 
-import org.joml.Vector3f;
-import org.saar.maths.utils.Vector3;
+import org.joml.Vector3f
+import org.saar.maths.utils.Vector3
 
-public class DirectionalLight implements IDirectionalLight {
-
-    private final Vector3f direction = Vector3.create();
-    private final Vector3f colour = Vector3.create();
-
-    @Override
-    public Vector3f getDirection() {
-        return this.direction;
-    }
-
-    @Override
-    public Vector3f getColour() {
-        return this.colour;
-    }
-
+class DirectionalLight : IDirectionalLight {
+    override val direction: Vector3f = Vector3.create()
+    override val colour: Vector3f = Vector3.create()
 }
