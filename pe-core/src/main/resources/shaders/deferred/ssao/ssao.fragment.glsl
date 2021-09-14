@@ -14,14 +14,12 @@
 in vec2 v_position;
 
 // Uniforms
-uniform sampler2D u_colourTexture;
 uniform sampler2D u_normalTexture;
 uniform sampler2D u_depthTexture;
 uniform sampler2D u_noiseTexture;
 
 uniform vec3 u_cameraWorldPosition;
 uniform mat4 u_projectionMatrixInv;
-uniform mat4 u_viewMatrixInv;
 
 uniform mat4 u_projectionMatrix;
 uniform mat4 u_viewMatrix;
@@ -34,7 +32,6 @@ uniform float u_radius;
 out vec4 f_colour;
 
 // Global variables
-vec3 g_colour;
 vec3 g_normal;
 float g_depth;
 vec3 g_viewPosition;
@@ -81,11 +78,10 @@ void main(void) {
     }
     
     occlusion = 1 - (occlusion / KERNEL_SAMPLES);
-    f_colour = vec4(g_colour * occlusion, 1);
+    f_colour = vec4(vec3(occlusion), 1);
 }
 
 void initBufferValues(void) {
-    g_colour = texture(u_colourTexture, v_position).rgb;
     g_normal = texture(u_normalTexture, v_position).rgb;
     g_depth = texture(u_depthTexture, v_position).r;
 }

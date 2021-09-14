@@ -25,7 +25,6 @@ import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
-import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -90,7 +89,6 @@ public class NormalMappingExample {
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
-                new SsaoRenderPass(),
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
         );

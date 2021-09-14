@@ -4,16 +4,24 @@ import org.joml.Math
 import org.joml.Vector3f
 import org.saar.core.painting.painters.Random2fPainter
 import org.saar.core.painting.renderToTexture
+import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor
+import org.saar.core.postprocessing.processors.MultiplyPostProcessor
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.ScreenPrototype
+import org.saar.core.screen.Screens
+import org.saar.core.screen.annotations.ScreenImageProperty
+import org.saar.core.screen.image.ColourScreenImage
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.ColourFormatType
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.FormatType
+import org.saar.lwjgl.opengl.fbos.Fbo
+import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -32,12 +40,24 @@ import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 import kotlin.random.Random
 
-class SsaoRenderPass(val radius: Float = 5f) : DeferredRenderPass {
+class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
 
     private val noiseTextureSize = 64
-    private val prototype = SsaoRenderPassPrototype(
-        createNoiseTexture(), createKernel(32), this.noiseTextureSize, radius)
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val kernelSamplesSize = 32
+
+    private val ssaoPrototype = SsaoRenderPassPrototype(
+        createNoiseTexture(), createKernel(), this.noiseTextureSize, radius)
+    private val ssaoWrapper = RenderPassPrototypeWrapper(this.ssaoPrototype)
+
+    private val ssaoTexture = Texture.create(TextureTarget.TEXTURE_2D)
+    private val screen = Screens.fromPrototype(object : ScreenPrototype {
+        @ScreenImageProperty
+        private val colourImage = ColourScreenImage(ColourAttachment.withTexture(
+            0, ssaoTexture, ColourFormatType.R16F, FormatType.RED, DataType.FLOAT))
+    }, Fbo.create(0, 0))
+
+    private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)
+    private val multiplyPostProcessor = MultiplyPostProcessor(ssaoTexture, 1)
 
     private fun createNoiseTexture(): Texture {
         val painter = Random2fPainter()
@@ -55,7 +75,7 @@ class SsaoRenderPass(val radius: Float = 5f) : DeferredRenderPass {
         return texture
     }
 
-    private fun createKernel(size: Int) = Array(size) { i ->
+    private fun createKernel() = Array(this.kernelSamplesSize) { i ->
         val x = Random.nextFloat() * 2 - 1
         val y = Random.nextFloat() * 2 - 1
         val z = Random.nextFloat()
@@ -65,20 +85,28 @@ class SsaoRenderPass(val radius: Float = 5f) : DeferredRenderPass {
         Vector3.of(x, y, z).normalize(Random.nextFloat() * scale)
     }
 
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
-        this.prototype.colourTextureUniform.value = buffers.albedo
-        this.prototype.normalTextureUniform.value = buffers.normal
-        this.prototype.depthTextureUniform.value = buffers.depth
+    override fun prepare(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        this.screen.resizeToMainScreen()
+        this.screen.setAsDraw()
 
-        this.prototype.projectionMatrixInvUniform.value =
-            context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+        this.ssaoWrapper.render {
+            this.ssaoPrototype.normalTextureUniform.value = buffers.normal
+            this.ssaoPrototype.depthTextureUniform.value = buffers.depth
 
-        this.prototype.projectionMatrixUniform.value = context.camera.projection.matrix
+            this.ssaoPrototype.projectionMatrixInvUniform.value =
+                context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+
+            this.ssaoPrototype.projectionMatrixUniform.value = context.camera.projection.matrix
+        }
+    }
+
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        this.multiplyPostProcessor.render(context, buffers)
     }
 
     override fun delete() {
-        this.wrapper.delete()
-        this.prototype.noiseTexture.delete()
+        this.ssaoWrapper.delete()
+        this.ssaoPrototype.noiseTexture.delete()
     }
 }
 
@@ -88,13 +116,10 @@ private class SsaoRenderPassPrototype(val noiseTexture: Texture,
                                       val radius: Float) : RenderPassPrototype {
 
     @UniformProperty
-    val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
+    val normalTextureUniform = TextureUniformValue("u_normalTexture", 0)
 
     @UniformProperty
-    val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
-
-    @UniformProperty
-    val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
+    val depthTextureUniform = TextureUniformValue("u_depthTexture", 1)
 
     @UniformProperty
     private val noiseTextureUniform = object : TextureUniform() {
@@ -102,7 +127,7 @@ private class SsaoRenderPassPrototype(val noiseTexture: Texture,
 
         override fun getName() = "u_noiseTexture"
 
-        override fun getUnit() = 3
+        override fun getUnit() = 2
     }
 
     @UniformProperty
@@ -141,3 +166,28 @@ private class SsaoRenderPassPrototype(val noiseTexture: Texture,
         ShaderCode.define("KERNEL_SAMPLES", kernel.size.toString()),
         ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl"))
 }
+
+/*
+private class SsaoLightRenderPassPrototype() : RenderPassPrototype {
+
+    @UniformProperty
+    val colourTextureUniform = TextureUniformValue("u_normalTexture", 1)
+
+    @UniformProperty
+    val normalTextureUniform = TextureUniformValue("u_normalTexture", 2)
+
+    @UniformProperty
+    val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
+
+    @UniformProperty
+    val ssaoTextureUniform = TextureUniformValue("u_ssaoTexture", 4)
+
+    @UniformProperty
+    val lightUniform = DirectionalLightUniformValue("u_light")
+
+    @UniformProperty
+    val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
+
+    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+        ShaderCode.loadSource("/shaders/deferred/ssao/light.fragment.glsl"))
+}*/

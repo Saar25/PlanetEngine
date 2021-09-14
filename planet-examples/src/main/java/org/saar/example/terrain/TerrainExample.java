@@ -19,7 +19,6 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
@@ -141,13 +140,12 @@ public class TerrainExample {
         final Fog fog2 = new Fog(Vector3.of(.0f, .2f, 5f), 0, -80);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+                new SkyboxPostProcessor(cubeMap),
+                new FxaaPostProcessor(),
                 new LightRenderPass(light),
                 new SsaoRenderPass(),
-                new ContrastPostProcessor(1.3f),
                 new FogRenderPass(fog, FogDistance.XZ),
-                new FogRenderPass(fog2, FogDistance.Y),
-                new SkyboxPostProcessor(cubeMap),
-                new FxaaPostProcessor()
+                new FogRenderPass(fog2, FogDistance.Y)
         );
 
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
