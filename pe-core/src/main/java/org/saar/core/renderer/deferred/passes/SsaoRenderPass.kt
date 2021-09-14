@@ -32,14 +32,17 @@ import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 import kotlin.random.Random
 
-class SsaoRenderPass : DeferredRenderPass {
+class SsaoRenderPass(val radius: Float = 5f) : DeferredRenderPass {
 
-    private val prototype = SsaoRenderPassPrototype(createNoiseTexture(), createKernel(32))
+    private val noiseTextureSize = 64
+    private val prototype = SsaoRenderPassPrototype(
+        createNoiseTexture(), createKernel(32), this.noiseTextureSize, radius)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
     private fun createNoiseTexture(): Texture {
         val painter = Random2fPainter()
-        val texture = painter.renderToTexture(64, 64,
+        val texture = painter.renderToTexture(
+            this.noiseTextureSize, this.noiseTextureSize,
             ColourFormatType.RG16F, FormatType.RG, DataType.FLOAT)
         painter.delete()
 
@@ -79,7 +82,10 @@ class SsaoRenderPass : DeferredRenderPass {
     }
 }
 
-private class SsaoRenderPassPrototype(val noiseTexture: Texture, val kernel: Array<Vector3f>) : RenderPassPrototype {
+private class SsaoRenderPassPrototype(val noiseTexture: Texture,
+                                      val kernel: Array<Vector3f>,
+                                      val noiseTextureSize: Int,
+                                      val radius: Float) : RenderPassPrototype {
 
     @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -115,7 +121,7 @@ private class SsaoRenderPassPrototype(val noiseTexture: Texture, val kernel: Arr
         override fun getUniformValue() = Vector2.of(
             Window.current().width.toFloat(),
             Window.current().height.toFloat()
-        ).div(kernel.size.toFloat())
+        ).div(noiseTextureSize.toFloat())
     }
 
     @UniformProperty
@@ -123,6 +129,13 @@ private class SsaoRenderPassPrototype(val noiseTexture: Texture, val kernel: Arr
 
     @UniformProperty
     val projectionMatrixUniform = Mat4UniformValue("u_projectionMatrix")
+
+    @UniformProperty
+    val radiusUniform = object : FloatUniform() {
+        override fun getName() = "u_radius"
+
+        override fun getUniformValue() = radius
+    }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("KERNEL_SAMPLES", kernel.size.toString()),

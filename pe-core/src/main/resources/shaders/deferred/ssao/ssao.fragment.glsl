@@ -28,6 +28,7 @@ uniform mat4 u_viewMatrix;
 
 uniform vec3[KERNEL_SAMPLES] u_kernel;
 uniform vec2 u_noiseScale;
+uniform float u_radius;
 
 // Fragment outputs
 out vec4 f_colour;
@@ -59,24 +60,24 @@ void main(void) {
     mat3 TBN       = mat3(tangent, bitangent, g_normal);
     
     float bias = .0025;
-    float radius = 10;
     
     float occlusion = 0.0;
     for (int i = 0; i < KERNEL_SAMPLES; i++) {
-        vec3 pointViewSpace = g_viewPosition + (TBN * u_kernel[i]) * radius;
+        vec3 point_vs = g_viewPosition + (TBN * u_kernel[i]) * u_radius;
         
-        vec4 offset   = u_projectionMatrix * vec4(pointViewSpace, 1.0);
-        vec2 sampleUv = (offset.xy / offset.w) * 0.5 + 0.5;
-        sampleUv      = clamp(sampleUv, vec2(.001), vec2(.999));
+        vec4 offset    = u_projectionMatrix * vec4(point_vs, 1.0);
+        vec2 sample_uv = (offset.xy / offset.w) * 0.5 + 0.5;
         
-        float sampleDepth    = texture(u_depthTexture, sampleUv).r;
-        vec3 sampleClipSpace = ndcToClipSpace(sampleUv, sampleDepth);
-        vec3 sampleViewSpace = clipSpaceToViewSpace(sampleClipSpace, u_projectionMatrixInv);
-        
-        float distance   = abs(g_viewPosition.z - sampleViewSpace.z);
-        float rangeCheck = smoothstep(0.0, 1.0, radius / distance);
-        
-        occlusion += clamp(sampleViewSpace.z - pointViewSpace.z - bias, 0, 1) * rangeCheck;
+        if (sample_uv.x > 0 && sample_uv.x < 1 && sample_uv.y > 0 && sample_uv.y < 1) {
+            float sample_d  = texture(u_depthTexture, sample_uv).r;
+            vec3  sample_cs = ndcToClipSpace(sample_uv, sample_d);
+            vec3  sample_vs = clipSpaceToViewSpace(sample_cs, u_projectionMatrixInv);
+            
+            float distance   = abs(g_viewPosition.z - sample_vs.z);
+            float rangeCheck = smoothstep(0.0, 1.0, u_radius / distance);
+            
+            occlusion += clamp(sample_vs.z - point_vs.z - bias, 0, 1) * rangeCheck;
+        }
     }
     
     occlusion = 1 - (occlusion / KERNEL_SAMPLES);
