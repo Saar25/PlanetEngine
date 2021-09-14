@@ -86,8 +86,11 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     }
 
     override fun prepare(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
-        this.screen.resizeToMainScreen()
         this.screen.setAsDraw()
+        this.screen.assureSize(
+            Window.current().width,
+            Window.current().height / 4
+        )
 
         this.ssaoWrapper.render {
             this.ssaoPrototype.normalTextureUniform.value = buffers.normal
@@ -107,6 +110,9 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     override fun delete() {
         this.ssaoWrapper.delete()
         this.ssaoPrototype.noiseTexture.delete()
+        this.blurPostProcessor.delete()
+        this.multiplyPostProcessor.delete()
+        this.screen.delete()
     }
 }
 

@@ -56,7 +56,7 @@ void main(void) {
     vec3 bitangent = cross(g_normal, tangent);
     mat3 TBN       = mat3(tangent, bitangent, g_normal);
     
-    float bias = .0025;
+    float bias = .025;
     
     float occlusion = 0.0;
     for (int i = 0; i < KERNEL_SAMPLES; i++) {

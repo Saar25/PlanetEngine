@@ -26,7 +26,6 @@ import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
-import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -143,7 +142,6 @@ public class TerrainExample {
                 new SkyboxPostProcessor(cubeMap),
                 new FxaaPostProcessor(),
                 new LightRenderPass(light),
-                new SsaoRenderPass(),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new FogRenderPass(fog2, FogDistance.Y)
         );
