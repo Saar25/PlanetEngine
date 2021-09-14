@@ -34,6 +34,9 @@ class DeferredRenderingPath(
         this.renderNode.renderDeferred(RenderContextBase(this.camera))
 
         val context = RenderPassContext(this.camera)
+
+        this.pipeline.prepare(context, this.prototype.asBuffers())
+        this.screen.setAsDraw()
         this.pipeline.process(context, this.prototype.asBuffers())
 
         return RenderingOutput(this.screen, this.prototype.asBuffers())

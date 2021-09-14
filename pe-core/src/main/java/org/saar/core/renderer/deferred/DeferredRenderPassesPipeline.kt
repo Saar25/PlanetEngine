@@ -7,6 +7,10 @@ class DeferredRenderPassesPipeline(vararg renderPasses: DeferredRenderPass) {
 
     private val helper = RenderPassesPipelineHelper(renderPasses)
 
+    fun prepare(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        this.helper.process { it.prepare(context, buffers) }
+    }
+
     fun process(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
         this.helper.process { it.render(context, buffers) }
     }
