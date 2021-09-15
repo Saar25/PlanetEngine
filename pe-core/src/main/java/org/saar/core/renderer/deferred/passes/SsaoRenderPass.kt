@@ -18,8 +18,6 @@ import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.ColourFormatType
-import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -52,8 +50,8 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     private val ssaoTexture = Texture.create(TextureTarget.TEXTURE_2D)
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
         @ScreenImageProperty
-        private val colourImage = ColourScreenImage(ColourAttachment.withTexture(
-            0, ssaoTexture, ColourFormatType.R16F, FormatType.RED, DataType.FLOAT))
+        private val colourImage = ColourScreenImage(ColourAttachment
+            .withTexture(0, ssaoTexture, ColourFormatType.R16F))
     }, Fbo.create(0, 0))
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)
@@ -63,7 +61,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         val painter = Random2fPainter()
         val texture = painter.renderToTexture(
             this.noiseTextureSize, this.noiseTextureSize,
-            ColourFormatType.RG16F, FormatType.RG, DataType.FLOAT)
+            ColourFormatType.RG16F)
         painter.delete()
 
         texture.setSettings(TextureTarget.TEXTURE_2D,

@@ -8,7 +8,6 @@ import org.saar.core.screen.image.ScreenImage
 import org.saar.lwjgl.opengl.constants.ColourFormatType
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.DepthStencilFormatType
-import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment
 import org.saar.lwjgl.opengl.textures.Texture
@@ -25,16 +24,16 @@ class DeferredScreenPrototype : ScreenPrototype {
     private val depthTexture = Texture.create(TextureTarget.TEXTURE_2D)
 
     @ScreenImageProperty(draw = true, read = true)
-    private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
-        0, this.colourTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE))
+    private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment
+        .withTexture(0, this.colourTexture, ColourFormatType.RGB16))
 
     @ScreenImageProperty(draw = true)
-    private val normalImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
-        1, this.normalTexture, ColourFormatType.RGB16F, FormatType.RGB, DataType.U_BYTE))
+    private val normalImage: ScreenImage = ColourScreenImage(ColourAttachment
+        .withTexture(1, this.normalTexture, ColourFormatType.RGB16F))
 
     @ScreenImageProperty(draw = true)
-    private val specularImage: ScreenImage = ColourScreenImage(ColourAttachment.withTexture(
-        2, this.specularTexture, ColourFormatType.R16F, FormatType.RED, DataType.FLOAT))
+    private val specularImage: ScreenImage = ColourScreenImage(ColourAttachment
+        .withTexture(2, this.specularTexture, ColourFormatType.R16F))
 
     @ScreenImageProperty
     private val depthImage: ScreenImage = DepthStencilScreenImage(DepthStencilAttachment.withTexture(

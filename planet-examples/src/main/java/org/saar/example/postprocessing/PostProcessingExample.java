@@ -15,8 +15,6 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.textures.Texture;
@@ -44,8 +42,8 @@ public class PostProcessingExample {
         final SimpleScreen screen = new SimpleScreen(Fbo.create(WIDTH, HEIGHT));
 
         final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
-        final ColourScreenImage image = new ColourScreenImage(ColourAttachment.withTexture(
-                0, colourTexture, ColourFormatType.RGB16, FormatType.RGB, DataType.U_BYTE));
+        final ColourScreenImage image = new ColourScreenImage(ColourAttachment
+                .withTexture(0, colourTexture, ColourFormatType.RGB16));
         screen.addScreenImage(image);
         screen.setDrawImages(image);
         screen.setReadImages(image);

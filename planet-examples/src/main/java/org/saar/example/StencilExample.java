@@ -8,7 +8,10 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.core.screen.image.StencilScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.*;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
+import org.saar.lwjgl.opengl.constants.Comparator;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.StencilAttachment;
@@ -86,8 +89,8 @@ public class StencilExample {
                 StencilAttachment.withRenderBuffer());
         screen.addScreenImage(screenImage);
 
-        final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment.withTexture(0,
-                Texture.create(TextureTarget.TEXTURE_2D), ColourFormatType.RGBA8, FormatType.RGBA, DataType.BYTE));
+        final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment
+                .withTexture(0, Texture.create(TextureTarget.TEXTURE_2D), ColourFormatType.RGBA8));
         screen.addScreenImage(colourImage);
         screen.setReadImages(colourImage);
         screen.setDrawImages(colourImage);

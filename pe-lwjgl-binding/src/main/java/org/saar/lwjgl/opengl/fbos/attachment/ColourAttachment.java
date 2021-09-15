@@ -20,9 +20,8 @@ public class ColourAttachment implements Attachment {
         this.buffer = buffer;
     }
 
-    public static ColourAttachment withTexture(int index, Texture texture, ColourFormatType iFormat,
-                                               FormatType format, DataType dataType) {
-        return new ColourAttachment(index, new AttachmentTextureBuffer(texture, iFormat.get(), format, dataType));
+    public static ColourAttachment withTexture(int index, Texture texture, ColourFormatType iFormat) {
+        return new ColourAttachment(index, new AttachmentTextureBuffer(texture, iFormat.get(), FormatType.RGBA, DataType.BYTE));
     }
 
     public static ColourAttachment withRenderBuffer(int index, RenderBuffer renderBuffer, ColourFormatType iFormat) {

@@ -18,9 +18,9 @@ public class DepthAttachment implements Attachment {
         this.buffer = buffer;
     }
 
-    public static DepthAttachment withTexture(Texture texture, DepthFormatType iFormat, DataType dataType) {
+    public static DepthAttachment withTexture(Texture texture, DepthFormatType iFormat) {
         final AttachmentTextureBuffer buffer = new AttachmentTextureBuffer(
-                texture, iFormat.get(), FormatType.DEPTH_COMPONENT, dataType);
+                texture, iFormat.get(), FormatType.DEPTH_COMPONENT, DataType.U_BYTE);
         return new DepthAttachment(buffer);
     }
 
