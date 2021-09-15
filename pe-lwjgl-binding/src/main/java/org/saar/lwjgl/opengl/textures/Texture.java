@@ -56,6 +56,7 @@ public class Texture implements ITexture {
         Texture.NULL.bind(unit);
     }
 
+    @Override
     public void setSettings(TextureTarget target, TextureSetting... settings) {
         bind();
         for (TextureSetting setting : settings) {
@@ -77,11 +78,6 @@ public class Texture implements ITexture {
     }
 
     @Override
-    public void allocate(TextureTarget target, int levels, InternalFormat internalFormat, int width, int height) {
-        GL42.glTexStorage2D(target.get(), levels, internalFormat.get(), width, height);
-    }
-
-    @Override
     public void allocateMultisample(TextureTarget target, int samples, InternalFormat iFormat,
                                     int width, int height, boolean fixedSampleLocations) {
         bind();
@@ -90,11 +86,22 @@ public class Texture implements ITexture {
     }
 
     @Override
+    public void allocateStorage(TextureTarget target, int levels, InternalFormat internalFormat, int width, int height) {
+        GL42.glTexStorage2D(target.get(), levels, internalFormat.get(), width, height);
+    }
+
+    @Override
+    public void allocateStorageMultisample(TextureTarget target, int levels, InternalFormat internalFormat,
+                                           int width, int height, boolean fixedSampleLocations) {
+        GL43.glTexStorage2DMultisample(target.get(), levels, internalFormat.get(), width, height, fixedSampleLocations);
+    }
+
+    @Override
     public void load(TextureTarget target, int level, int xOffset, int yOffset, int width,
                      int height, FormatType format, DataType type, ByteBuffer data) {
         bind();
-        GL11.glTexSubImage2D(target.get(), level, xOffset, yOffset, width,
-                height, format.get(), type.get(), data);
+        GL11.glTexSubImage2D(target.get(), level, xOffset, yOffset,
+                width, height, format.get(), type.get(), data);
     }
 
     public int getWidth() {

@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.textures.ITexture;
 import org.saar.lwjgl.opengl.textures.TextureTarget;
 import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter;
 import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter;
@@ -14,16 +14,16 @@ import org.saar.lwjgl.opengl.textures.settings.TextureMipMapSetting;
 
 public class AttachmentTextureBuffer implements AttachmentBuffer {
 
-    private final Texture texture;
+    private final ITexture texture;
     private final InternalFormat iFormat;
     private final FormatType format;
     private final DataType dataType;
 
-    public AttachmentTextureBuffer(Texture texture, InternalFormat iFormat) {
+    public AttachmentTextureBuffer(ITexture texture, InternalFormat iFormat) {
         this(texture, iFormat, FormatType.RGBA, DataType.U_BYTE);
     }
 
-    public AttachmentTextureBuffer(Texture texture, InternalFormat iFormat, FormatType format, DataType dataType) {
+    public AttachmentTextureBuffer(ITexture texture, InternalFormat iFormat, FormatType format, DataType dataType) {
         this.texture = texture;
         this.iFormat = iFormat;
         this.format = format;

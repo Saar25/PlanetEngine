@@ -16,20 +16,20 @@ public class Texture2D implements ReadOnlyTexture {
 
     private static final TextureTarget target = TextureTarget.TEXTURE_2D;
 
-    private final Texture texture;
+    private final ITexture texture;
     private final int width;
     private final int height;
 
     private final List<TextureSetting> settings = new ArrayList<>();
 
-    public Texture2D(Texture texture) {
+    public Texture2D(ImmutableTexture texture) {
         this.texture = texture;
         this.width = texture.getWidth();
         this.height = texture.getHeight();
     }
 
     public Texture2D(int width, int height) {
-        this.texture = Texture.create(target);
+        this.texture = ImmutableTexture.create();
         this.width = width;
         this.height = height;
 
@@ -44,14 +44,15 @@ public class Texture2D implements ReadOnlyTexture {
         ReadOnlyTexture cached = TextureCache.getTexture(fileName);
         if (cached instanceof Texture2D) {
             return (Texture2D) cached;
-        } else if (cached instanceof Texture) {
-            return new Texture2D((Texture) cached);
+        } else if (cached instanceof ImmutableTexture) {
+            return new Texture2D((ImmutableTexture) cached);
         }
         final TextureInfo info = TextureLoader.load(fileName);
-        final Texture texture = Texture.create(Texture2D.target);
+        final ImmutableTexture texture = ImmutableTexture.create();
 
-        texture.allocate(Texture2D.target, 0, InternalFormat.RGBA8, info.getWidth(),
-                info.getHeight(), 0, info.getFormatType(), DataType.U_BYTE, info.getData());
+        texture.allocateStorage(Texture2D.target, 2, InternalFormat.RGBA8, info.getWidth(), info.getHeight());
+        texture.load(Texture2D.target, 0, 0, 0, info.getWidth(), info.getHeight(),
+                FormatType.RGBA, DataType.U_BYTE, info.getData());
 
         TextureCache.addToCache(fileName, texture);
 
