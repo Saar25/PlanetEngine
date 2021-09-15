@@ -80,6 +80,11 @@ public class Texture implements ITexture {
     }
 
     @Override
+    public void allocate(TextureTarget target, int level, InternalFormat internalFormat, int width, int height, int border) {
+        allocate(target, level, internalFormat, width, height, border, FormatType.RGBA, DataType.U_BYTE, null);
+    }
+
+    @Override
     public void allocateMultisample(TextureTarget target, int samples, InternalFormat iFormat,
                                     int width, int height, boolean fixedSampleLocations) {
         bind();
