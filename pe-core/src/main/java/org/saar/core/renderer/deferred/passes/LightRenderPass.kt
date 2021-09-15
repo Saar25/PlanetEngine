@@ -3,6 +3,7 @@ package org.saar.core.renderer.deferred.passes
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
+import org.saar.core.light.ViewSpacePointLightUniform
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassContext
@@ -38,6 +39,7 @@ class LightRenderPass(pointLights: Array<PointLight>, directionalLights: Array<D
             context.camera.projection.matrix.invertPerspective(Matrix4.temp)
 
         this.prototype.directionalLightsUniform.forEach { it.camera = context.camera }
+        this.prototype.pointLightsUniform.forEach { it.camera = context.camera }
     }
 
     override fun delete() {
@@ -79,9 +81,25 @@ private class LightRenderPassPrototype(
             }
         }
 
+    @UniformProperty
+    val pointLightsCountUniform = object : IntUniform() {
+        override fun getName() = "u_pointLightsCount"
+
+        override fun getUniformValue() = this@LightRenderPassPrototype.pointLights.size
+    }
+
+    @UniformProperty
+    val pointLightsUniform: UniformArray<ViewSpacePointLightUniform> =
+        UniformArray("u_pointLights", this.pointLights.size) { name, index ->
+            object : ViewSpacePointLightUniform(name) {
+                override fun getUniformValue() = this@LightRenderPassPrototype.pointLights[index]
+            }
+        }
+
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
+        ShaderCode.define("MAX_POINT_LIGHTS", max(this.directionalLights.size, 1).toString()),
 
         ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
     )

@@ -24,12 +24,12 @@ abstract class ViewSpacePointLightUniform(name: String) : Uniform {
 
     final override fun load() {
         val value = getUniformValue()
-        this.colourUniform.value = value.colour
 
-        val vs = Vector4.of(value.position, 1f).mul(this.camera!!.viewMatrix.invert(Matrix4.temp).transpose())
+        val vs = Vector4.of(value.position, 1f).mul(this.camera!!.viewMatrix)
         this.positionUniform.value = Vector3.of(vs).div(vs.w())
 
         this.attenuationUniform.value = value.attenuation.vector3f
+        this.colourUniform.value = value.colour
 
         this.positionUniform.load()
         this.attenuationUniform.load()

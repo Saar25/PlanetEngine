@@ -25,6 +25,7 @@ uniform sampler2D u_specularTexture;
 uniform sampler2D u_depthTexture;
 
 uniform mat4 u_projectionMatrixInv;
+uniform mat4 u_viewMatrixInv;
 
 uniform int u_directionalLightsCount;
 uniform DirectionalLight[MAX_DIRECTIONAL_LIGHTS] u_directionalLights;
@@ -40,6 +41,7 @@ vec3  g_colour;
 vec3  g_normal;
 float g_specular;
 float g_depth;
+vec3 g_viewPosition;
 vec3  g_viewDirection;
 
 // Methods declaration
@@ -72,8 +74,8 @@ void initBufferValues(void) {
 
 void initGlobals(void) {
     vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
-    vec3 viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
-    g_viewDirection = normalize(-viewPosition);
+    g_viewPosition = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
+    g_viewDirection = normalize(-g_viewPosition);
 }
 
 vec3 finalAmbientColour(void) {
@@ -81,10 +83,13 @@ vec3 finalAmbientColour(void) {
 }
 
 vec3 finalDiffuseColour(void) {
-    return totalDiffuseColour(g_normal, u_directionalLightsCount, u_directionalLights);
+    return totalDiffuseColour(g_normal, u_directionalLightsCount, u_directionalLights) +
+        totalDiffuseColour(g_normal, g_viewPosition, u_pointLightsCount, u_pointLights);
 }
 
 vec3 finalSpecularColour(void) {
     return totalSpecularColour(16, g_specular, g_viewDirection,
-            g_normal, u_directionalLightsCount, u_directionalLights);
+            g_normal, u_directionalLightsCount, u_directionalLights) +
+        totalSpecularColour(16, g_specular, g_viewPosition, g_viewDirection,
+            g_normal, u_pointLightsCount, u_pointLights);
 }

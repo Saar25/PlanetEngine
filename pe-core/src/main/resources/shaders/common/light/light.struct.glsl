@@ -7,7 +7,7 @@
 // Point light
 struct PointLight {
     vec3 position;
-    vec3 radiuses;
+    vec3 attenuation;
     vec3 colour;
 };
 
