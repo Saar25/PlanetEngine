@@ -1,9 +1,6 @@
 package org.saar.lwjgl.opengl.textures;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.*;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -80,8 +77,8 @@ public class Texture implements ITexture {
     }
 
     @Override
-    public void allocate(TextureTarget target, int level, InternalFormat internalFormat, int width, int height, int border) {
-        allocate(target, level, internalFormat, width, height, border, FormatType.RGBA, DataType.U_BYTE, null);
+    public void allocate(TextureTarget target, int levels, InternalFormat internalFormat, int width, int height) {
+        GL42.glTexStorage2D(target.get(), levels, internalFormat.get(), width, height);
     }
 
     @Override

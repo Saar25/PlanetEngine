@@ -3,58 +3,30 @@ package org.saar.lwjgl.opengl.fbos.attachment;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.DepthFormatType;
 import org.saar.lwjgl.opengl.constants.FormatType;
-import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.textures.Texture;
 
-public class DepthAttachment implements Attachment {
+public class DepthAttachment extends AttachmentBase implements Attachment {
 
-    private final AttachmentBuffer buffer;
-
-    public DepthAttachment(AttachmentBuffer buffer) {
-        this.buffer = buffer;
+    public DepthAttachment(AttachmentIndex index, AttachmentBuffer buffer) {
+        super(index, buffer);
     }
 
     public static DepthAttachment withTexture(Texture texture, DepthFormatType iFormat) {
-        final AttachmentTextureBuffer buffer = new AttachmentTextureBuffer(
-                texture, iFormat.get(), FormatType.DEPTH_COMPONENT, DataType.U_BYTE);
-        return new DepthAttachment(buffer);
+        final AttachmentTextureBuffer buffer = new AttachmentTextureBuffer(texture,
+                iFormat.get(), FormatType.DEPTH_COMPONENT, DataType.U_BYTE);
+        return new DepthAttachment(AttachmentIndex.ofDepth(), buffer);
     }
 
     public static DepthAttachment withRenderBuffer(RenderBuffer renderBuffer, DepthFormatType iFormat) {
-        return new DepthAttachment(new AttachmentRenderBuffer(renderBuffer, iFormat.get()));
+        final AttachmentBuffer buffer = new AttachmentRenderBuffer(renderBuffer, iFormat.get());
+        return new DepthAttachment(AttachmentIndex.ofDepth(), buffer);
     }
 
     public static DepthAttachment withRenderBuffer(DepthFormatType iFormat) {
-        return DepthAttachment.withRenderBuffer(RenderBuffer.create(), iFormat);
-    }
-
-    private AttachmentBuffer getBuffer() {
-        return this.buffer;
-    }
-
-    @Override
-    public int getAttachmentPoint() {
-        return AttachmentType.DEPTH.get();
-    }
-
-    @Override
-    public void init(ReadOnlyFbo fbo) {
-        getBuffer().allocate(fbo.getWidth(), fbo.getHeight());
-        getBuffer().attachToFbo(getAttachmentPoint());
-    }
-
-    @Override
-    public void initMS(ReadOnlyFbo fbo, int samples) {
-        getBuffer().allocateMultisample(fbo.getWidth(), fbo.getHeight(), samples);
-        getBuffer().attachToFbo(getAttachmentPoint());
-    }
-
-    @Override
-    public void delete() {
-        getBuffer().delete();
+        return withRenderBuffer(RenderBuffer.create(), iFormat);
     }
 }

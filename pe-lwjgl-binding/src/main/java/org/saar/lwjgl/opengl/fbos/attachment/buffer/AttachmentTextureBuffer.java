@@ -19,8 +19,8 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
     private final FormatType format;
     private final DataType dataType;
 
-    public AttachmentTextureBuffer(Texture texture) {
-        this(texture, InternalFormat.RGBA8, FormatType.RGBA, DataType.U_BYTE);
+    public AttachmentTextureBuffer(Texture texture, InternalFormat iFormat) {
+        this(texture, iFormat, FormatType.RGBA, DataType.U_BYTE);
     }
 
     public AttachmentTextureBuffer(Texture texture, InternalFormat iFormat, FormatType format, DataType dataType) {
@@ -30,49 +30,35 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
         this.dataType = dataType;
     }
 
-    public static AttachmentTextureBuffer create() {
-        final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
-        return new AttachmentTextureBuffer(texture);
-    }
-
-    public static AttachmentTextureBuffer create(InternalFormat iFormat, FormatType format, DataType dataType) {
-        final Texture texture = Texture.create(TextureTarget.TEXTURE_2D);
-        return new AttachmentTextureBuffer(texture, iFormat, format, dataType);
-    }
-
     private void setTextureSettings() {
-        getTexture().setSettings(TextureTarget.TEXTURE_2D,
+        this.texture.setSettings(TextureTarget.TEXTURE_2D,
                 new TextureMipMapSetting(),
                 new TextureAnisotropicFilterSetting(4f),
                 new TextureMagFilterSetting(MagFilterParameter.LINEAR),
                 new TextureMinFilterSetting(MinFilterParameter.NEAREST));
     }
 
-    private Texture getTexture() {
-        return this.texture;
-    }
-
     @Override
     public void allocate(int width, int height) {
-        getTexture().allocate(TextureTarget.TEXTURE_2D, 0, this.iFormat,
+        this.texture.allocate(TextureTarget.TEXTURE_2D, 0, this.iFormat,
                 width, height, 0, this.format, this.dataType, null);
         setTextureSettings();
     }
 
     @Override
     public void allocateMultisample(int width, int height, int samples) {
-        getTexture().allocateMultisample(TextureTarget.TEXTURE_2D,
+        this.texture.allocateMultisample(TextureTarget.TEXTURE_2D,
                 samples, this.iFormat, width, height, true);
         setTextureSettings();
     }
 
     @Override
     public void attachToFbo(int attachment) {
-        getTexture().attachToFbo(attachment, 0);
+        this.texture.attachToFbo(attachment, 0);
     }
 
     @Override
     public void delete() {
-        getTexture().delete();
+        this.texture.delete();
     }
 }

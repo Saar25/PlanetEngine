@@ -11,7 +11,7 @@ public interface WritableTexture extends ReadOnlyTexture {
     void allocate(TextureTarget target, int level, InternalFormat internalFormat, int width,
                   int height, int border, FormatType format, DataType type, ByteBuffer data);
 
-    void allocate(TextureTarget target, int level, InternalFormat internalFormat, int width, int height, int border);
+    void allocate(TextureTarget target, int levels, InternalFormat internalFormat, int width, int height);
 
     void allocateMultisample(TextureTarget target, int samples, InternalFormat iFormat,
                              int width, int height, boolean fixedSampleLocations);
