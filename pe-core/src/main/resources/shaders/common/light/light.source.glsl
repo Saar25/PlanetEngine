@@ -12,6 +12,12 @@
 #define MAX_POINT_LIGHTS 10
 #endif
 
+// Utility
+
+float ambientFactor() {
+    return .3;
+}
+
 float diffuseFactor(const vec3 normal, const vec3 direction) {
     return max(dot(normal, -direction), 0);
 }
@@ -24,90 +30,55 @@ float specularFactor(const vec3 normal, const vec3 lightDirection, vec3 viewDire
     return 0;
 }
 
-float smoothSpecular(const float specular, const float power, const float scalar) {
+float smoothSpecularFactor(const float specular, const float power, const float scalar) {
     return pow(max(specular, 0), power) * scalar;
 }
 
-vec3 ambientColour(const DirectionalLight light) {
-    return light.colour * 0.3;
+// Directional light
+
+float lightFactor(const DirectionalLight light, const vec3 normal, const vec3 viewDirection, const float power, const float scalar) {
+    float specularFactor = specularFactor(normal, light.direction, viewDirection);
+    float smoothSpecularFactor = smoothSpecularFactor(specularFactor, power, scalar);
+    return ambientFactor() + diffuseFactor(normal, light.direction) + smoothSpecularFactor;
 }
 
-vec3 diffuseColour(const vec3 normal, const DirectionalLight light) {
-    return light.colour * diffuseFactor(normal, light.direction);
+vec3 lightColour(const DirectionalLight light, const vec3 normal, const vec3 viewDirection, const float power, const float scalar) {
+    return light.colour * lightFactor(light, normal, viewDirection, power, scalar);
 }
 
-vec3 specularColour(const float power, const float scalar, const vec3 viewDirection,
-                    const vec3 normal, const DirectionalLight light) {
-    float specular = specularFactor(normal, light.direction, viewDirection);
-    return light.colour * smoothSpecular(specular, power, scalar);
-}
-
-vec3 totalAmbientColour(const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights) {
+vec3 totalLightsColour(const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights, const int count,
+                       const vec3 normal, const vec3 viewDirection, const float power, const float scalar) {
     vec3 colour = vec3(0, 0, 0);
     for (int i = 0; i < count; i++) {
-        colour += ambientColour(lights[i]);
+        colour += lightColour(lights[i], normal, viewDirection, power, scalar);
     }
     return colour;
 }
 
-vec3 totalDiffuseColour(const vec3 normal, const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights) {
-    vec3 color = vec3(0, 0, 0);
-    for (int i = 0; i < count; i++) {
-        DirectionalLight light = lights[i];
-        color += diffuseColour(normal, light);
-    }
-    return color;
-}
+// Point light
 
-vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewDirection,
-                         const vec3 normal, const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights) {
-    vec3 color = vec3(0, 0, 0);
-    for (int i = 0; i < count; i++) {
-        DirectionalLight light = lights[i];
-        color += specularColour(power, scalar, viewDirection, normal, light);
-    }
-    return color;
-}
-
-vec3 ambientColour(const PointLight light) {
-    return light.colour * 0.0;
-}
-
-vec3 diffuseColour(const vec3 normal, const vec3 viewPosition, const PointLight light) {
-    float distance = distance(viewPosition, light.position);
-    float attenuation = light.attenuation.x + light.attenuation.y * distance + light.attenuation.z * distance * distance;
+float lightFactor(const PointLight light, const vec3 normal, const vec3 viewDirection,
+                  const vec3 viewPosition, const float power, const float scalar) {
+    vec3 a = light.attenuation;
+    float d = distance(viewPosition, light.position);
+    float attenuation = a.x + a.y * d + a.z * d * d;
     vec3 direction = normalize(viewPosition - light.position);
-    return light.colour * diffuseFactor(normal, direction) / attenuation;
+    
+    float specularFactor = specularFactor(normal, direction, viewDirection);
+    float smoothSpecularFactor = smoothSpecularFactor(specularFactor, power, scalar);
+    return (ambientFactor() + diffuseFactor(normal, direction) + smoothSpecularFactor) / attenuation;
 }
 
-vec3 specularColour(const float power, const float scalar, const vec3 viewPosition,
-                    const vec3 viewDirection, const vec3 normal, const PointLight light) {
-    float distance = distance(viewPosition, light.position);
-    float attenuation = light.attenuation.x + light.attenuation.y * distance + light.attenuation.z * distance * distance;
-    vec3 direction = normalize(viewPosition - light.position);
-    float specular = specularFactor(normal, direction, viewDirection) / attenuation;
-    return light.colour * smoothSpecular(specular, power, scalar);
+vec3 lightColour(const PointLight light, const vec3 normal, const vec3 viewDirection,
+                 const vec3 viewPosition, const float power, const float scalar) {
+    return light.colour * lightFactor(light, normal, viewDirection, viewPosition, power, scalar);
 }
 
-vec3 totalAmbientColour(const int count, const PointLight[MAX_POINT_LIGHTS] lights) {
-    return vec3(0, 0, 0);
-}
-
-vec3 totalDiffuseColour(const vec3 normal, const vec3 viewPosition, const int count, const PointLight[MAX_POINT_LIGHTS] lights) {
-    vec3 color = vec3(0, 0, 0);
+vec3 totalLightsColour(const PointLight[MAX_POINT_LIGHTS] lights, const int count, const vec3 normal,
+                       const vec3 viewDirection, const vec3 viewPosition, const float power, const float scalar) {
+    vec3 colour = vec3(0, 0, 0);
     for (int i = 0; i < count; i++) {
-        PointLight light = lights[i];
-        color += diffuseColour(normal, viewPosition, light);
+        colour += lightColour(lights[i], normal, viewDirection, viewPosition, power, scalar);
     }
-    return color;
-}
-
-vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewPosition, const vec3 viewDirection,
-                         const vec3 normal, const int count, const PointLight[MAX_POINT_LIGHTS] lights) {
-    vec3 color = vec3(0, 0, 0);
-    for (int i = 0; i < count; i++) {
-        PointLight light = lights[i];
-        color += specularColour(power, scalar, viewPosition, viewDirection, normal, light);
-    }
-    return color;
+    return colour;
 }

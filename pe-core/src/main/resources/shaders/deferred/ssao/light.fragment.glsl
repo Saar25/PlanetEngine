@@ -36,19 +36,15 @@ vec3  g_viewDirection;
 void initBufferValues(void);
 void initGlobals(void);
 
-vec3 finalAmbientColour(void);
-vec3 finalDiffuseColour(void);
-vec3 finalSpecularColour(void);
+vec3 finalLightColour(void);
 
 // Main
 void main(void) {
     initBufferValues();
     initGlobals();
     
-    vec3 ambientColour = finalAmbientColour();
-    vec3 diffuseColour = finalDiffuseColour();
-    vec3 specularColour = finalSpecularColour();
-    vec3 finalColour = g_colour * (ambientColour + diffuseColour + specularColour);
+    vec3 lightsColour = finalLightsColour() * g_ssao;
+    vec3 finalColour = g_colour * lightsColour;
     
     f_colour = vec4(finalColour, 1);
 }
@@ -67,14 +63,6 @@ void initGlobals(void) {
     g_viewDirection = normalize(-viewPosition);
 }
 
-vec3 finalAmbientColour(void) {
-    return ambientColour(u_light) * g_ssao;
-}
-
-vec3 finalDiffuseColour(void) {
-    return diffuseColour(g_normal, u_light);
-}
-
-vec3 finalSpecularColour(void) {
-    return specularColour(16, g_specular, g_viewDirection, g_normal, u_light);
+vec3 finalLightColour(void) {
+    return lightColour(u_light, g_normal, g_viewDirection, 16, g_specular);
 }

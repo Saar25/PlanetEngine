@@ -13,41 +13,28 @@
 #endif
 
 
+float ambientFactor();
+
 float diffuseFactor(const vec3 normal, const vec3 direction);
 
 float specularFactor(const vec3 normal, const vec3 lightDirection, vec3 viewDirection);
 
-float smoothSpecular(const float specular, const float power, const float scalar);
+float smoothSpecularFactor(const float specular, const float power, const float scalar);
 
 // Directional light
 
-// Ambient
-vec3 totalAmbientColour(const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights);
-vec3 ambientColour(const DirectionalLight light);
+float lightFactor(const DirectionalLight light, const vec3 normal, const vec3 viewDirection, const float power, const float scalar);
 
-// Diffuse
-vec3 totalDiffuseColour(const vec3 normal, const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights);
-vec3 diffuseColour(const vec3 normal, const DirectionalLight lights);
+vec3 lightColour(const DirectionalLight light, const vec3 normal, const vec3 viewDirection, const float power, const float scalar);
 
-// Specular
-vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewDirection,
-                         const vec3 normal, const int count, const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights);
-vec3 specularColour(const float power, const float scalar, const vec3 viewDirection,
-                    const vec3 normal, const DirectionalLight light);
+vec3 totalLightsColour(const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights, const int count,
+                       const vec3 normal, const vec3 viewDirection, const float power, const float scalar);
 
 // Point light
 
-// Ambient
-vec3 totalAmbientColour(const int count, const PointLight[MAX_POINT_LIGHTS] lights);
-vec3 ambientColour(const PointLight light);
+float lightFactor(const PointLight light, const vec3 normal, const vec3 viewDirection, const vec3 viewPosition, const float power, const float scalar);
 
-// Diffuse
-vec3 totalDiffuseColour(const vec3 normal, const vec3 viewPosition, const int count, const PointLight[MAX_POINT_LIGHTS] lights);
-vec3 diffuseColour(const vec3 normal, const vec3 viewPosition, const PointLight lights);
+vec3 lightColour(const PointLight light, const vec3 normal, const vec3 viewDirection, const vec3 viewPosition, const float power, const float scalar);
 
-// Specular
-vec3 totalSpecularColour(const float power, const float scalar, const vec3 viewPosition, const vec3 viewDirection,
-                         const vec3 normal, const int count, const PointLight[MAX_POINT_LIGHTS] lights);
-vec3 specularColour(const float power, const float scalar, const vec3 viewPosition,
-                    const vec3 viewDirection, const vec3 normal, const PointLight light);
-
+vec3 totalLightsColour(const PointLight[MAX_POINT_LIGHTS] lights, const int count, const vec3 normal,
+                       const vec3 viewDirection, const vec3 viewPosition, const float power, const float scalar);

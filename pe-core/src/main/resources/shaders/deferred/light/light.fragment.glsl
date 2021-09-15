@@ -9,10 +9,10 @@
 
 // definitions
 #ifndef MAX_DIRECTIONAL_LIGHTS
-    #define MAX_DIRECTIONAL_LIGHTS 10
+#define MAX_DIRECTIONAL_LIGHTS 10
 #endif
 #ifndef MAX_POINT_LIGHTS
-    #define MAX_POINT_LIGHTS 10
+#define MAX_POINT_LIGHTS 10
 #endif
 
 // Vertex outputs
@@ -48,20 +48,16 @@ vec3  g_viewDirection;
 void initBufferValues(void);
 void initGlobals(void);
 
-vec3 finalAmbientColour(void);
-vec3 finalDiffuseColour(void);
-vec3 finalSpecularColour(void);
+vec3 finalLightsColour(void);
 
 // Main
 void main(void) {
     initBufferValues();
     initGlobals();
-
-    vec3 ambientColour = finalAmbientColour();
-    vec3 diffuseColour = finalDiffuseColour();
-    vec3 specularColour = finalSpecularColour();
-    vec3 finalColour = g_colour * (ambientColour + diffuseColour + specularColour);
-
+    
+    vec3 lightsColour = finalLightsColour();
+    vec3 finalColour = g_colour * lightsColour;
+    
     f_colour = vec4(finalColour, 1);
 }
 
@@ -78,18 +74,7 @@ void initGlobals(void) {
     g_viewDirection = normalize(-g_viewPosition);
 }
 
-vec3 finalAmbientColour(void) {
-    return totalAmbientColour(u_directionalLightsCount, u_directionalLights);
-}
-
-vec3 finalDiffuseColour(void) {
-    return totalDiffuseColour(g_normal, u_directionalLightsCount, u_directionalLights) +
-        totalDiffuseColour(g_normal, g_viewPosition, u_pointLightsCount, u_pointLights);
-}
-
-vec3 finalSpecularColour(void) {
-    return totalSpecularColour(16, g_specular, g_viewDirection,
-            g_normal, u_directionalLightsCount, u_directionalLights) +
-        totalSpecularColour(16, g_specular, g_viewPosition, g_viewDirection,
-            g_normal, u_pointLightsCount, u_pointLights);
+vec3 finalLightsColour(void) {
+    return totalLightsColour(u_directionalLights, u_directionalLightsCount, g_normal, g_viewDirection, 16, g_specular) +
+            totalLightsColour(u_pointLights, u_pointLightsCount, g_normal, g_viewDirection, g_viewPosition, 16, g_specular);
 }

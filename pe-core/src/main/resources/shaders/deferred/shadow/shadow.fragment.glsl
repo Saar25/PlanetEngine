@@ -52,8 +52,6 @@ void initShadowGlobals(void);
 float calcShadowFactor(void);
 
 vec3 ambientColour(void);
-vec3 diffuseColour(void);
-vec3 specularColour(void);
 
 // Main
 void main(void) {
@@ -66,9 +64,8 @@ void main(void) {
     float shadowFactor = calcShadowFactor();
 
     if (shadowFactor > 0) {
-        vec3 diffuseColour = diffuseColour();
-        vec3 specularColour = specularColour();
-        vec3 finalColour = g_colour * (ambientColour + diffuseColour + specularColour) * shadowFactor;
+        vec3 lightColour = lightColour(u_light, g_normal, g_viewDirection, 16, g_specular);
+        vec3 finalColour = g_colour * lightColour;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -119,13 +116,5 @@ float calcShadowFactor(void) {
 }
 
 vec3 ambientColour(void) {
-    return ambientColour(u_light);
-}
-
-vec3 diffuseColour(void) {
-    return diffuseColour(g_normal, u_light);
-}
-
-vec3 specularColour(void) {
-    return specularColour(16, g_specular, g_viewDirection, g_normal, u_light);
+    return u_light.colour * ambientFactor();
 }
