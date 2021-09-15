@@ -5,9 +5,7 @@ import org.saar.core.behavior.BehaviorGroup
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
-import org.saar.core.common.behaviors.KeyboardMovementBehavior
-import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior
-import org.saar.core.common.behaviors.MouseRotationBehavior
+import org.saar.core.common.behaviors.*
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
@@ -68,10 +66,17 @@ fun main() {
         Vector2.of(1024f, 1024f), 100f
     ))
 
-    val light = PointLight().apply {
-        position.set(0f, 10f, 0f)
-        attenuation = Attenuation.DISTANCE_600
-        colour.set(1f, 1f, 1f)
+    val lights = Array(200) {
+        val lightBehaviors = BehaviorGroup(
+            TransformBehavior().apply { transform.position.set(0f, 10f, 0f) },
+            VelocityBehavior(),
+            AccelerationBehavior(),
+            RandomMovementBehavior()
+        )
+        PointLight(lightBehaviors).apply {
+            attenuation = Attenuation.DISTANCE_600
+            Vector3.randomize(colour)
+        }
     }
 
     val cubeMap = createCubeMap()
@@ -79,7 +84,7 @@ fun main() {
     val pipeline = DeferredRenderPassesPipeline(
         SkyboxPostProcessor(cubeMap),
         FxaaPostProcessor(),
-        LightRenderPass(light)
+        LightRenderPass(lights, emptyArray())
     )
     val renderingPath = DeferredRenderingPath(camera, renderNode, pipeline)
 
@@ -107,6 +112,7 @@ fun main() {
     while (window.isOpen && !keyboard.isKeyPressed('T'.code)) {
         camera.update()
         uiDisplay.update()
+        lights.forEach { it.update() }
 
         renderingPath.render().toMainScreen()
         uiDisplay.render(RenderContextBase(camera))
