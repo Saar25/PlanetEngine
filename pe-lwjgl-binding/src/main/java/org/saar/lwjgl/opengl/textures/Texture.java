@@ -79,10 +79,6 @@ public class Texture implements ITexture {
                 height, border, format.get(), type.get(), data);
     }
 
-    public void allocateMultisample(int samples, InternalFormat iFormat, int width, int height) {
-        GL32.glTexImage2DMultisample(target.get(), samples, iFormat.get(), width, height, true);
-    }
-
     @Override
     public void allocateMultisample(TextureTarget target, int samples, InternalFormat iFormat,
                                     int width, int height, boolean fixedSampleLocations) {

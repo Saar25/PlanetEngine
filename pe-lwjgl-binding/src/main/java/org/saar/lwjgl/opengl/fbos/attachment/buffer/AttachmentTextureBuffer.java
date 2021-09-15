@@ -61,7 +61,8 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
 
     @Override
     public void allocateMultisample(int width, int height, int samples) {
-        getTexture().allocateMultisample(samples, this.iFormat, width, height);
+        getTexture().allocateMultisample(TextureTarget.TEXTURE_2D,
+                samples, this.iFormat, width, height, true);
         setTextureSettings();
     }
 
