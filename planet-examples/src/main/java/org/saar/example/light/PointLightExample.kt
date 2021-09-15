@@ -6,6 +6,10 @@ import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.behaviors.*
+import org.saar.core.common.r3d.Mesh3D
+import org.saar.core.common.r3d.Model3D
+import org.saar.core.common.r3d.Node3D
+import org.saar.core.common.r3d.R3D
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
@@ -23,6 +27,7 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.screen.MainScreen
 import org.saar.core.util.Fps
+import org.saar.example.ExamplesUtils
 import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
 import org.saar.gui.UITextElement
@@ -66,9 +71,9 @@ fun main() {
         Vector2.of(1024f, 1024f), 100f
     ))
 
-    val lights = Array(200) {
+    val lights = Array(100) {
         val lightBehaviors = BehaviorGroup(
-            TransformBehavior().apply { transform.position.set(0f, 10f, 0f) },
+            TransformBehavior().apply { transform.position.set(0f, 30f, 0f) },
             VelocityBehavior(),
             AccelerationBehavior(),
             RandomMovementBehavior()
@@ -76,15 +81,23 @@ fun main() {
         PointLight(lightBehaviors).apply {
             attenuation = Attenuation.DISTANCE_600
             Vector3.randomize(colour)
+            update()
         }
     }
 
+    val cubeModel = buildCubeModel().apply {
+        transform.position.addX(-30f)
+        transform.position.addY(10f)
+    }
+    val cube = Node3D(cubeModel)
+
+    val renderNode = DeferredRenderNodeGroup(terrain, cube)
+
     val cubeMap = createCubeMap()
-    val renderNode = DeferredRenderNodeGroup(terrain)
     val pipeline = DeferredRenderPassesPipeline(
         SkyboxPostProcessor(cubeMap),
-        FxaaPostProcessor(),
-        LightRenderPass(lights, emptyArray())
+        LightRenderPass(pointLights = lights),
+        FxaaPostProcessor()
     )
     val renderingPath = DeferredRenderingPath(camera, renderNode, pipeline)
 
@@ -138,3 +151,11 @@ private fun createCubeMap() = CubeMapTexture.builder()
     .positiveZ("/assets/skybox/front.jpg")
     .negativeZ("/assets/skybox/back.jpg")
     .create()
+
+private fun buildCubeModel(): Model3D {
+    val cubeInstance = R3D.instance()
+    cubeInstance.transform.scale.set(10f, 10f, 10f)
+    val cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
+        ExamplesUtils.cubeIndices, arrayOf(cubeInstance))
+    return Model3D(cubeMesh)
+}

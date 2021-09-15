@@ -20,14 +20,15 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformArray
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
 
-class LightRenderPass(pointLights: Array<PointLight>, directionalLights: Array<DirectionalLight>) : DeferredRenderPass {
+class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
+                      directionalLights: Array<DirectionalLight> = emptyArray()) : DeferredRenderPass {
 
     private val prototype = LightRenderPassPrototype(pointLights, directionalLights)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    constructor(directionalLight: DirectionalLight) : this(emptyArray(), arrayOf(directionalLight))
+    constructor(light: DirectionalLight) : this(directionalLights = arrayOf(light))
 
-    constructor(pointLight: PointLight) : this(arrayOf(pointLight), emptyArray())
+    constructor(light: PointLight) : this(pointLights = arrayOf(light))
 
     override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo

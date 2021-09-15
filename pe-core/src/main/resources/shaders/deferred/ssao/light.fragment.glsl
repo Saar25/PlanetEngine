@@ -64,5 +64,6 @@ void initGlobals(void) {
 }
 
 vec3 finalLightColour(void) {
-    return lightColour(u_light, g_normal, g_viewDirection, 16, g_specular);
+    vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
+    return lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular);
 }
