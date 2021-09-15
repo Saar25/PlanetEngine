@@ -33,12 +33,13 @@ float smoothSpecularFactor(const float specular, const float power, const float 
 // Directional light
 
 float lightFactor(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection, const float power, const float scalar) {
-    if (dot(-light.direction, normal) > 0) {
+    float diffuse = ambientFactor() + diffuseFactor(normal, light.direction);
+    if (diffuse > 0) {
         float specularFactor = specularFactor(light.direction, reflectedViewDirection);
         float smoothSpecularFactor = smoothSpecularFactor(specularFactor, power, scalar);
-        return ambientFactor() + diffuseFactor(normal, light.direction) + smoothSpecularFactor;
+        return diffuse + smoothSpecularFactor;
     } else {
-        return 0;
+        return diffuse;
     }
 }
 
@@ -65,12 +66,13 @@ float lightFactor(const PointLight light, const vec3 normal, const vec3 reflecte
     float attenuation = a.x + a.y * d + a.z * d * d;
     vec3 direction = normalize(viewPosition - light.position);
     
-    if (dot(-direction, normal) > 0) {
+    float diffuse = ambientFactor() + diffuseFactor(normal, direction);
+    if (diffuse > 0) {
         float specularFactor = specularFactor(direction, reflectedViewDirection);
         float smoothSpecularFactor = smoothSpecularFactor(specularFactor, power, scalar);
-        return (ambientFactor() + diffuseFactor(normal, direction) + smoothSpecularFactor) / attenuation;
+        return (diffuse + smoothSpecularFactor) / attenuation;
     } else {
-        return 0;
+        return diffuse / attenuation;
     }
 }
 
