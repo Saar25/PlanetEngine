@@ -1,6 +1,6 @@
 package org.saar.gui.font
 
-import org.saar.lwjgl.opengl.textures.Texture2D
+import org.saar.lwjgl.opengl.texture.Texture2D
 
 interface Font {
     val size: Float

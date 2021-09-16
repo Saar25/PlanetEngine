@@ -10,18 +10,17 @@ import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.DepthStencilFormatType
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment
-import org.saar.lwjgl.opengl.textures.Texture
-import org.saar.lwjgl.opengl.textures.TextureTarget
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class DeferredScreenPrototype : ScreenPrototype {
 
-    private val colourTexture = Texture.create(TextureTarget.TEXTURE_2D)
+    private val colourTexture = MutableTexture2D.create()
 
-    private val normalTexture = Texture.create(TextureTarget.TEXTURE_2D)
+    private val normalTexture = MutableTexture2D.create()
 
-    private val specularTexture = Texture.create(TextureTarget.TEXTURE_2D)
+    private val specularTexture = MutableTexture2D.create()
 
-    private val depthTexture = Texture.create(TextureTarget.TEXTURE_2D)
+    private val depthTexture = MutableTexture2D.create()
 
     @ScreenImageProperty(draw = true, read = true)
     private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment

@@ -22,8 +22,7 @@ import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.stencil.*;
-import org.saar.lwjgl.opengl.textures.Texture;
-import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -90,7 +89,7 @@ public class StencilExample {
         screen.addScreenImage(screenImage);
 
         final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment
-                .withTexture(0, Texture.create(TextureTarget.TEXTURE_2D), ColourFormatType.RGBA8));
+                .withTexture(0, MutableTexture2D.create(), ColourFormatType.RGBA8));
         screen.addScreenImage(colourImage);
         screen.setReadImages(colourImage);
         screen.setDrawImages(colourImage);

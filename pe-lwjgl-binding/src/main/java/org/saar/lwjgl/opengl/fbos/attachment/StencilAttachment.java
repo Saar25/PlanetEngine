@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
 public class StencilAttachment extends AttachmentBase implements Attachment {
 
@@ -15,7 +15,7 @@ public class StencilAttachment extends AttachmentBase implements Attachment {
         super(index, buffer);
     }
 
-    public static StencilAttachment withTexture(Texture texture) {
+    public static StencilAttachment withTexture(MutableTexture2D texture) {
         final AttachmentBuffer buffer = new AttachmentTextureBuffer(
                 texture, InternalFormat.STENCIL_INDEX8, FormatType.STENCIL_INDEX, DataType.U_BYTE);
         return new StencilAttachment(AttachmentIndex.ofStencil(), buffer);

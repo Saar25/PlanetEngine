@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
 public class DepthStencilAttachment extends AttachmentBase implements Attachment {
 
@@ -15,7 +15,7 @@ public class DepthStencilAttachment extends AttachmentBase implements Attachment
         super(index, buffer);
     }
 
-    public static DepthStencilAttachment withTexture(Texture texture, DepthStencilFormatType iFormat, DataType dataType) {
+    public static DepthStencilAttachment withTexture(MutableTexture2D texture, DepthStencilFormatType iFormat, DataType dataType) {
         final AttachmentTextureBuffer buffer = new AttachmentTextureBuffer(
                 texture, iFormat.get(), FormatType.DEPTH_STENCIL, dataType);
         return new DepthStencilAttachment(AttachmentIndex.ofDepthStencil(), buffer);

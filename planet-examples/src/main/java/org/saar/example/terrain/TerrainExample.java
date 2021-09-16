@@ -34,10 +34,13 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
-import org.saar.lwjgl.opengl.textures.CubeMapTexture;
+import org.saar.lwjgl.opengl.texture.CubeMapTexture;
+import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
+
+import java.io.IOException;
 
 public class TerrainExample {
 
@@ -149,8 +152,8 @@ public class TerrainExample {
         return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
     }
 
-    private static CubeMapTexture createCubeMap() throws Exception {
-        return CubeMapTexture.builder()
+    private static CubeMapTexture createCubeMap() throws IOException {
+        return new CubeMapTextureBuilder()
                 .positiveX("/assets/skybox/right.jpg")
                 .negativeX("/assets/skybox/left.jpg")
                 .positiveY("/assets/skybox/top.jpg")

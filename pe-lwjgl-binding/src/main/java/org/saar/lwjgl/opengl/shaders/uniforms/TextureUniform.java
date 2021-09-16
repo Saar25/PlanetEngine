@@ -1,8 +1,7 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
 import org.lwjgl.opengl.GL20;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
 
 public abstract class TextureUniform extends UniformBase implements Uniform {
 
@@ -13,7 +12,7 @@ public abstract class TextureUniform extends UniformBase implements Uniform {
 
     @Override
     public final void doLoad() {
-        Texture.bind(getUniformValue(), getUnit());
+        getUniformValue().bind(getUnit());
     }
 
     public abstract ReadOnlyTexture getUniformValue();

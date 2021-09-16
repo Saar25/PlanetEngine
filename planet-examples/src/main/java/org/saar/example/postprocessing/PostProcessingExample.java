@@ -17,8 +17,7 @@ import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.textures.Texture;
-import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
@@ -41,7 +40,7 @@ public class PostProcessingExample {
 
         final SimpleScreen screen = new SimpleScreen(Fbo.create(WIDTH, HEIGHT));
 
-        final Texture colourTexture = Texture.create(TextureTarget.TEXTURE_2D);
+        final MutableTexture2D colourTexture = MutableTexture2D.create();
         final ColourScreenImage image = new ColourScreenImage(ColourAttachment
                 .withTexture(0, colourTexture, ColourFormatType.RGB16));
         screen.addScreenImage(image);

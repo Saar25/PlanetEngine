@@ -14,7 +14,7 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.maths.utils.Matrix4
 
 class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) : DeferredRenderPass {

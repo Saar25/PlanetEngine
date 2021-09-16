@@ -11,7 +11,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 
 class MultiplyPostProcessor(multiply: ReadOnlyTexture, components: Int = 4) : PostProcessor {
 

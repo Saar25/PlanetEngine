@@ -13,7 +13,7 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
 import org.saar.lwjgl.opengl.stencil.*
-import org.saar.lwjgl.opengl.textures.CubeMapTexture
+import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.maths.utils.Matrix4
 
 class SkyboxPostProcessor(cubeMap: CubeMapTexture) : PostProcessor {

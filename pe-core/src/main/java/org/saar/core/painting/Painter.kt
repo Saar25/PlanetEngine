@@ -11,8 +11,7 @@ import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.lwjgl.opengl.constants.ColourFormatType
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.textures.Texture
-import org.saar.lwjgl.opengl.textures.TextureTarget
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 interface Painter : RenderPass, PostProcessor, ForwardRenderPass, DeferredRenderPass {
 
@@ -26,8 +25,8 @@ interface Painter : RenderPass, PostProcessor, ForwardRenderPass, DeferredRender
 }
 
 fun Painter.renderToTexture(width: Int, height: Int,
-                            colourFormatType: ColourFormatType = ColourFormatType.RGB8): Texture {
-    return Texture.create(TextureTarget.TEXTURE_2D).also { texture ->
+                            colourFormatType: ColourFormatType = ColourFormatType.RGB8): MutableTexture2D {
+    return MutableTexture2D.create().also { texture ->
         val fbo = Fbo.create(width, height).apply {
             val attachment = ColourAttachment.withTexture(0,
                 texture, colourFormatType)

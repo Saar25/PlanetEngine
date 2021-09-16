@@ -7,14 +7,13 @@ import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.textures.TextureTarget
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter
-import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter
-import org.saar.lwjgl.opengl.textures.parameters.WrapParameter
-import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting
-import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting
-import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting
-import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting
+import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureTWrapParameter
+import org.saar.lwjgl.opengl.texture.values.MagFilterValue
+import org.saar.lwjgl.opengl.texture.values.MinFilterValue
+import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -54,10 +53,10 @@ class ShadowsRenderingPath(
     }
 
     init {
-        this.prototype.depthTexture.setSettings(TextureTarget.TEXTURE_2D,
-            TextureMinFilterSetting(MinFilterParameter.LINEAR),
-            TextureMagFilterSetting(MagFilterParameter.LINEAR),
-            TextureSWrapSetting(WrapParameter.CLAMP_TO_EDGE),
-            TextureTWrapSetting(WrapParameter.CLAMP_TO_EDGE))
+        this.prototype.depthTexture.applyParameters(
+            TextureMinFilterParameter(MinFilterValue.LINEAR),
+            TextureMagFilterParameter(MagFilterValue.LINEAR),
+            TextureSWrapParameter(WrapValue.CLAMP_TO_EDGE),
+            TextureTWrapParameter(WrapValue.CLAMP_TO_EDGE))
     }
 }

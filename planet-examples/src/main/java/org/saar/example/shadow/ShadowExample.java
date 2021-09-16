@@ -30,9 +30,9 @@ import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.textures.ColourTexture;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.texture.ColourTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 

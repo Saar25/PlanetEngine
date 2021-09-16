@@ -24,15 +24,14 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
-import org.saar.lwjgl.opengl.textures.Texture
-import org.saar.lwjgl.opengl.textures.TextureTarget
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter
-import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter
-import org.saar.lwjgl.opengl.textures.parameters.WrapParameter
-import org.saar.lwjgl.opengl.textures.settings.TextureMagFilterSetting
-import org.saar.lwjgl.opengl.textures.settings.TextureMinFilterSetting
-import org.saar.lwjgl.opengl.textures.settings.TextureSWrapSetting
-import org.saar.lwjgl.opengl.textures.settings.TextureTWrapSetting
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureTWrapParameter
+import org.saar.lwjgl.opengl.texture.values.MagFilterValue
+import org.saar.lwjgl.opengl.texture.values.MinFilterValue
+import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
@@ -47,7 +46,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         createNoiseTexture(), createKernel(), this.noiseTextureSize, radius)
     private val ssaoWrapper = RenderPassPrototypeWrapper(this.ssaoPrototype)
 
-    private val ssaoTexture = Texture.create(TextureTarget.TEXTURE_2D)
+    private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
         @ScreenImageProperty
         private val colourImage = ColourScreenImage(ColourAttachment
@@ -57,18 +56,18 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)
     private val multiplyPostProcessor = MultiplyPostProcessor(ssaoTexture, 1)
 
-    private fun createNoiseTexture(): Texture {
+    private fun createNoiseTexture(): MutableTexture2D {
         val painter = Random2fPainter()
         val texture = painter.renderToTexture(
             this.noiseTextureSize, this.noiseTextureSize,
             ColourFormatType.RG16F)
         painter.delete()
 
-        texture.setSettings(TextureTarget.TEXTURE_2D,
-            TextureMinFilterSetting(MinFilterParameter.NEAREST),
-            TextureMagFilterSetting(MagFilterParameter.NEAREST),
-            TextureSWrapSetting(WrapParameter.REPEAT),
-            TextureTWrapSetting(WrapParameter.REPEAT))
+        texture.applyParameters(
+            TextureMinFilterParameter(MinFilterValue.NEAREST),
+            TextureMagFilterParameter(MagFilterValue.NEAREST),
+            TextureSWrapParameter(WrapValue.REPEAT),
+            TextureTWrapParameter(WrapValue.REPEAT))
 
         return texture
     }
@@ -114,7 +113,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     }
 }
 
-private class SsaoRenderPassPrototype(val noiseTexture: Texture,
+private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
                                       val kernel: Array<Vector3f>,
                                       val noiseTextureSize: Int,
                                       val radius: Float) : RenderPassPrototype {

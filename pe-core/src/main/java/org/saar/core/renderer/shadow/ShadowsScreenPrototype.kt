@@ -6,12 +6,11 @@ import org.saar.core.screen.image.DepthScreenImage
 import org.saar.core.screen.image.ScreenImage
 import org.saar.lwjgl.opengl.constants.DepthFormatType
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment
-import org.saar.lwjgl.opengl.textures.Texture
-import org.saar.lwjgl.opengl.textures.TextureTarget
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class ShadowsScreenPrototype : ScreenPrototype {
 
-    val depthTexture: Texture = Texture.create(TextureTarget.TEXTURE_2D)
+    val depthTexture = MutableTexture2D.create()
 
     @ScreenImageProperty
     private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment

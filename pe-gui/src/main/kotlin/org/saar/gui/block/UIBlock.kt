@@ -1,7 +1,7 @@
 package org.saar.gui.block
 
 import org.saar.gui.style.IStyle
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.maths.objects.Rectangle
 import org.saar.maths.utils.Maths
 

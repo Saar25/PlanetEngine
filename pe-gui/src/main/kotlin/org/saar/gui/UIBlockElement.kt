@@ -2,7 +2,7 @@ package org.saar.gui
 
 import org.saar.gui.block.UIBlock
 import org.saar.gui.style.Style
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 
 class UIBlockElement : UIChildElement {
 

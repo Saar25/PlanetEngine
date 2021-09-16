@@ -4,7 +4,7 @@ import org.saar.gui.style.Colour
 import org.saar.gui.style.Colours
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.FormatType
-import org.saar.lwjgl.opengl.textures.Texture2D
+import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
 import org.saar.maths.objects.Polygon
 
@@ -105,7 +105,7 @@ class BufferedGraphics(private val texture: Texture2D) : Graphics {
 
     override fun process() {
         this.buffer.flip().limit(this.buffer.capacity())
-        this.texture.load(this.buffer.asByteBuffer(), FormatType.RGBA, DataType.BYTE)
+        this.texture.load(0, FormatType.RGBA, DataType.BYTE, this.buffer.asByteBuffer())
     }
 
     override fun delete() {

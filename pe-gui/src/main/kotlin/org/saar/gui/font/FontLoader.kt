@@ -2,11 +2,14 @@ package org.saar.gui.font
 
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.FormatType
-import org.saar.lwjgl.opengl.textures.Texture2D
-import org.saar.lwjgl.opengl.textures.parameters.MagFilterParameter
-import org.saar.lwjgl.opengl.textures.parameters.MinFilterParameter
-import org.saar.lwjgl.opengl.textures.parameters.WrapParameter
-import org.saar.lwjgl.opengl.textures.settings.*
+import org.saar.lwjgl.opengl.texture.Texture2D
+import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureTWrapParameter
+import org.saar.lwjgl.opengl.texture.values.MagFilterValue
+import org.saar.lwjgl.opengl.texture.values.MinFilterValue
+import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.lwjgl.stb.TrueTypeBitmap
 import org.saar.lwjgl.stb.TrueTypeFontLoader
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
@@ -25,13 +28,12 @@ object FontLoader {
 
     private fun bitmapToTexture(bitmap: LwjglByteBuffer, width: Int, height: Int): Texture2D {
         return Texture2D.of(width, height).also { texture ->
-            texture.load(bitmap.asByteBuffer(), FormatType.RED, DataType.U_BYTE)
-            texture.setSettings(
-                TextureSWrapSetting(WrapParameter.CLAMP_TO_BORDER),
-                TextureTWrapSetting(WrapParameter.CLAMP_TO_BORDER),
-                TextureMagFilterSetting(MagFilterParameter.LINEAR),
-                TextureMinFilterSetting(MinFilterParameter.NEAREST),
-                TextureMipMapSetting()
+            texture.load(0, FormatType.RED, DataType.U_BYTE, bitmap.asByteBuffer())
+            texture.applyParameters(
+                TextureSWrapParameter(WrapValue.CLAMP_TO_BORDER),
+                TextureTWrapParameter(WrapValue.CLAMP_TO_BORDER),
+                TextureMagFilterParameter(MagFilterValue.LINEAR),
+                TextureMinFilterParameter(MinFilterValue.NEAREST),
             )
         }
     }

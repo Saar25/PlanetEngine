@@ -5,7 +5,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
 public class ColourAttachment extends AttachmentBase implements Attachment {
 
@@ -13,7 +13,7 @@ public class ColourAttachment extends AttachmentBase implements Attachment {
         super(index, buffer);
     }
 
-    public static ColourAttachment withTexture(int index, Texture texture, ColourFormatType iFormat) {
+    public static ColourAttachment withTexture(int index, MutableTexture2D texture, ColourFormatType iFormat) {
         final AttachmentBuffer buffer = new AttachmentTextureBuffer(texture, iFormat.get());
         return new ColourAttachment(AttachmentIndex.ofColour(index), buffer);
     }
