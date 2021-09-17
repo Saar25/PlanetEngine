@@ -18,31 +18,12 @@ public enum TextureTarget {
 
     TEXTURE_2D_MULTISAMPLE(GL32.GL_TEXTURE_2D_MULTISAMPLE),
     TEXTURE_2D_MULTISAMPLE_ARRAY(GL32.GL_TEXTURE_2D_MULTISAMPLE_ARRAY),
-
-    TEXTURE_CUBE_MAP_POSITIVE_X(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X),
-    TEXTURE_CUBE_MAP_NEGATIVE_X(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X),
-    TEXTURE_CUBE_MAP_POSITIVE_Y(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y),
-    TEXTURE_CUBE_MAP_NEGATIVE_Y(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y),
-    TEXTURE_CUBE_MAP_POSITIVE_Z(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z),
-    TEXTURE_CUBE_MAP_NEGATIVE_Z(GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z),
     ;
 
     private final int value;
 
     TextureTarget(int value) {
         this.value = value;
-    }
-
-    public static TextureTarget ofCubeFace(int face) {
-        return switch (face) {
-            case 0 -> TEXTURE_CUBE_MAP_POSITIVE_X;
-            case 1 -> TEXTURE_CUBE_MAP_NEGATIVE_X;
-            case 2 -> TEXTURE_CUBE_MAP_POSITIVE_Y;
-            case 3 -> TEXTURE_CUBE_MAP_NEGATIVE_Y;
-            case 4 -> TEXTURE_CUBE_MAP_POSITIVE_Z;
-            case 5 -> TEXTURE_CUBE_MAP_NEGATIVE_Z;
-            default -> throw new IllegalArgumentException("Cubes do not have face " + face);
-        };
     }
 
     public int get() {

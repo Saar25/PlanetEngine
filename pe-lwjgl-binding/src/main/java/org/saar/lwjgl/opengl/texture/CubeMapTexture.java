@@ -1,7 +1,5 @@
 package org.saar.lwjgl.opengl.texture;
 
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.texture.parameter.TextureParameter;
 
@@ -23,23 +21,25 @@ public class CubeMapTexture implements ReadOnlyTexture {
     public static CubeMapTexture of(TextureInfo px, TextureInfo py, TextureInfo pz,
                                     TextureInfo nx, TextureInfo ny, TextureInfo nz) {
         final TextureObject texture = TextureObject.create();
-        allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_POSITIVE_X, px);
-        allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_NEGATIVE_X, nx);
-        allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_POSITIVE_Y, py);
-        allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_NEGATIVE_Y, ny);
-        allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_POSITIVE_Z, pz);
-        allocate(texture, TextureTarget.TEXTURE_CUBE_MAP_NEGATIVE_Z, nz);
+        texture.allocate(target, 1, InternalFormat.RGBA8, px.getWidth(), px.getHeight());
+
+        allocate(texture, CubeMapFace.POSITIVE_X, px);
+        allocate(texture, CubeMapFace.NEGATIVE_X, nx);
+        allocate(texture, CubeMapFace.POSITIVE_Y, py);
+        allocate(texture, CubeMapFace.NEGATIVE_Y, ny);
+        allocate(texture, CubeMapFace.POSITIVE_Z, pz);
+        allocate(texture, CubeMapFace.NEGATIVE_Z, nz);
         return new CubeMapTexture(texture);
     }
 
-    private static void allocate(TextureObject texture, TextureTarget target, TextureInfo info) {
-        texture.allocate(target, 0, InternalFormat.RGBA8, info.getWidth(), info.getHeight());
-        texture.load(target, 0, 0, 0, info.getWidth(), info.getHeight(),
-                FormatType.RGBA, DataType.U_BYTE, info.getData());
+    private static void allocate(TextureObject texture, CubeMapFace face, TextureInfo info) {
+        texture.loadCubeFace(face, 0, 0, 0, info.getWidth(), info.getHeight(),
+                info.getFormatType(), info.getDataType(), info.getData());
     }
 
     public void applyParameters(TextureParameter... parameters) {
         this.texture.applyParameters(CubeMapTexture.target, parameters);
+        this.texture.generateMipmap(target);
     }
 
     @Override

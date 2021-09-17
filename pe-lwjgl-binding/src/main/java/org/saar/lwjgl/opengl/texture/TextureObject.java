@@ -57,6 +57,13 @@ public class TextureObject {
                 width, height, format.get(), type.get(), data);
     }
 
+    public void loadCubeFace(CubeMapFace face, int level, int xOffset, int yOffset, int width,
+                             int height, FormatType format, DataType type, ByteBuffer data) {
+        bind(TextureTarget.TEXTURE_CUBE_MAP);
+        GL11.glTexSubImage2D(face.get(), level, xOffset, yOffset,
+                width, height, format.get(), type.get(), data);
+    }
+
     public void applyParameters(TextureTarget target, TextureParameter... parameters) {
         bind(target);
         for (TextureParameter setting : parameters) {
