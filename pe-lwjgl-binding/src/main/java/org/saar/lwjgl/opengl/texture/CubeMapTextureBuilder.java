@@ -57,6 +57,7 @@ public class CubeMapTextureBuilder {
                 new TextureMagFilterParameter(MagFilterValue.LINEAR),
                 new TextureSWrapParameter(WrapValue.CLAMP_TO_EDGE),
                 new TextureTWrapParameter(WrapValue.CLAMP_TO_EDGE));
+        texture.generateMipmap();
         return texture;
     }
 

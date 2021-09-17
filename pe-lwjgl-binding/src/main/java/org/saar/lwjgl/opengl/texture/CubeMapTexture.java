@@ -21,25 +21,31 @@ public class CubeMapTexture implements ReadOnlyTexture {
     public static CubeMapTexture of(TextureInfo px, TextureInfo py, TextureInfo pz,
                                     TextureInfo nx, TextureInfo ny, TextureInfo nz) {
         final TextureObject texture = TextureObject.create();
-        texture.allocate(target, 1, InternalFormat.RGBA8, px.getWidth(), px.getHeight());
+        texture.allocate(CubeMapTexture.target, 1, InternalFormat.RGBA8, px.getWidth(), px.getHeight());
 
-        allocate(texture, CubeMapFace.POSITIVE_X, px);
-        allocate(texture, CubeMapFace.NEGATIVE_X, nx);
-        allocate(texture, CubeMapFace.POSITIVE_Y, py);
-        allocate(texture, CubeMapFace.NEGATIVE_Y, ny);
-        allocate(texture, CubeMapFace.POSITIVE_Z, pz);
-        allocate(texture, CubeMapFace.NEGATIVE_Z, nz);
-        return new CubeMapTexture(texture);
+        final CubeMapTexture cubeMapTexture = new CubeMapTexture(texture);
+        cubeMapTexture.load(CubeMapFace.POSITIVE_X, px);
+        cubeMapTexture.load(CubeMapFace.NEGATIVE_X, nx);
+        cubeMapTexture.load(CubeMapFace.POSITIVE_Y, py);
+        cubeMapTexture.load(CubeMapFace.NEGATIVE_Y, ny);
+        cubeMapTexture.load(CubeMapFace.POSITIVE_Z, pz);
+        cubeMapTexture.load(CubeMapFace.NEGATIVE_Z, nz);
+        return cubeMapTexture;
     }
 
-    private static void allocate(TextureObject texture, CubeMapFace face, TextureInfo info) {
-        texture.loadCubeFace(face, 0, 0, 0, info.getWidth(), info.getHeight(),
+    private void load(CubeMapFace face, TextureInfo info) {
+        this.texture.loadCubeFace(face, 0, 0, 0, info.getWidth(), info.getHeight(),
                 info.getFormatType(), info.getDataType(), info.getData());
     }
 
+    @Override
     public void applyParameters(TextureParameter... parameters) {
         this.texture.applyParameters(CubeMapTexture.target, parameters);
-        this.texture.generateMipmap(target);
+    }
+
+    @Override
+    public void generateMipmap() {
+        this.texture.generateMipmap(CubeMapTexture.target);
     }
 
     @Override

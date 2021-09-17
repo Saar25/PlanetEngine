@@ -12,7 +12,7 @@ import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 
 import java.nio.ByteBuffer;
 
-public class Texture2D implements WritableTexture {
+public class Texture2D implements WritableTexture2D {
 
     public static final Texture2D NULL = new Texture2D(TextureObject.NULL, 0, 0);
 
@@ -62,14 +62,6 @@ public class Texture2D implements WritableTexture {
         return texture2D;
     }
 
-    public void applyParameters(TextureParameter... parameters) {
-        this.texture.applyParameters(Texture2D.target, parameters);
-    }
-
-    public void generateMipmap() {
-        this.texture.generateMipmap(Texture2D.target);
-    }
-
     public void load(String textureFile) throws Exception {
         final TextureInfo info = TextureLoader.load(textureFile);
         load(0, info.getFormatType(), info.getDataType(), info.getData());
@@ -80,14 +72,22 @@ public class Texture2D implements WritableTexture {
         this.texture.load(Texture2D.target, level, xOffset, yOffset, width, height, format, type, data);
     }
 
-    public void load(int level, FormatType format, DataType type, ByteBuffer data) {
-        this.texture.load(Texture2D.target, level, 0, 0, this.width, this.height, format, type, data);
+    @Override
+    public void applyParameters(TextureParameter... parameters) {
+        this.texture.applyParameters(Texture2D.target, parameters);
     }
 
+    @Override
+    public void generateMipmap() {
+        this.texture.generateMipmap(Texture2D.target);
+    }
+
+    @Override
     public int getWidth() {
         return this.width;
     }
 
+    @Override
     public int getHeight() {
         return this.height;
     }

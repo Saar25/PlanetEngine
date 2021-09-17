@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureParameter;
 
 import java.nio.ByteBuffer;
 
-public class MutableTexture2D implements MutableTexture {
+public class MutableTexture2D implements WritableTexture2D {
 
     private static final TextureTarget target = TextureTarget.TEXTURE_2D;
 
@@ -24,28 +24,34 @@ public class MutableTexture2D implements MutableTexture {
         return new MutableTexture2D(texture);
     }
 
-    public void applyParameters(TextureParameter... parameters) {
-        this.texture.applyParameters(MutableTexture2D.target, parameters);
-    }
-
-    public void generateMipmap() {
-        this.texture.generateMipmap(MutableTexture2D.target);
-    }
-
-    public void allocate(int level, InternalFormat internalFormat, int width, int height, int border) {
-        allocate(level, internalFormat, width, height, border, FormatType.RGBA, DataType.U_BYTE, null);
+    public void allocate(int level, InternalFormat internalFormat, int width, int height) {
+        allocate(level, internalFormat, width, height, 0, FormatType.RGBA, DataType.U_BYTE, null);
     }
 
     public void allocate(int level, InternalFormat internalFormat, int width,
                          int height, int border, FormatType format, DataType type, ByteBuffer data) {
         this.texture.allocateMutable(MutableTexture2D.target, level,
                 internalFormat, width, height, border, format, type, data);
+        this.width = width;
+        this.height = height;
     }
 
     public void allocateMultisample(int samples, InternalFormat internalFormat, int width,
                                     int height, boolean fixedSampleLocations) {
         this.texture.allocateMutableMultisample(MutableTexture2D.target, samples,
                 internalFormat, width, height, fixedSampleLocations);
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public void applyParameters(TextureParameter... parameters) {
+        this.texture.applyParameters(MutableTexture2D.target, parameters);
+    }
+
+    @Override
+    public void generateMipmap() {
+        this.texture.generateMipmap(MutableTexture2D.target);
     }
 
     @Override
@@ -53,14 +59,12 @@ public class MutableTexture2D implements MutableTexture {
         this.texture.load(MutableTexture2D.target, level, xOffset, yOffset, width, height, format, type, data);
     }
 
-    public void load(int level, FormatType format, DataType type, ByteBuffer data) {
-        this.texture.load(MutableTexture2D.target, level, 0, 0, this.width, this.height, format, type, data);
-    }
-
+    @Override
     public int getWidth() {
         return this.width;
     }
 
+    @Override
     public int getHeight() {
         return this.height;
     }
