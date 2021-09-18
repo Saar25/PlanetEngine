@@ -1,25 +1,25 @@
 package org.saar.core.renderer.renderpass
 
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
 interface RenderPassBuffers
 
 interface AlbedoBuffer : RenderPassBuffers {
-    val albedo: ReadOnlyTexture
+    val albedo: ReadOnlyTexture2D
 }
 
 interface DepthBuffer : RenderPassBuffers {
-    val depth: ReadOnlyTexture
+    val depth: ReadOnlyTexture2D
 }
 
 interface NormalBuffer : RenderPassBuffers {
-    val normal: ReadOnlyTexture
+    val normal: ReadOnlyTexture2D
 }
 
 interface SpecularBuffer : RenderPassBuffers {
-    val specular: ReadOnlyTexture
+    val specular: ReadOnlyTexture2D
 }
 
 interface NormalSpecularBuffer : RenderPassBuffers {
-    val normalSpecular: ReadOnlyTexture
+    val normalSpecular: ReadOnlyTexture2D
 }
