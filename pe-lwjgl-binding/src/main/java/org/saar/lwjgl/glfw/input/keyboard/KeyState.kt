@@ -1,31 +1,23 @@
-package org.saar.lwjgl.glfw.input.keyboard;
+package org.saar.lwjgl.glfw.input.keyboard
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW
 
-public enum KeyState {
+enum class KeyState(private val value: Int) {
 
     RELEASE(GLFW.GLFW_RELEASE),
     PRESS(GLFW.GLFW_PRESS),
     REPEAT(GLFW.GLFW_REPEAT),
     ;
 
-    private static final KeyState[] values = values();
+    fun get() = this.value
 
-    private final int value;
-
-    KeyState(int value) {
-        this.value = value;
-    }
-
-    public int get() {
-        return this.value;
-    }
-
-    public static KeyState valueOf(int value) {
-        final int index = value - KeyState.values[0].get();
-        if (index >= 0 && index <= KeyState.values.length) {
-            return KeyState.values[index];
+    companion object {
+        @JvmStatic
+        fun valueOf(value: Int) = when (value) {
+            RELEASE.value -> RELEASE
+            PRESS.value -> PRESS
+            REPEAT.value -> REPEAT
+            else -> throw IllegalArgumentException("KeyState non found: $value")
         }
-        throw new IllegalArgumentException("KeyState non found: " + value);
     }
 }

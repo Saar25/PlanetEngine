@@ -5,6 +5,7 @@ import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.event.OnAction;
+import org.saar.lwjgl.glfw.input.Modifiers;
 
 public class Mouse {
 
@@ -26,10 +27,13 @@ public class Mouse {
     }
 
     public void init() {
-        GLFW.glfwSetMouseButtonCallback(this.window, (window, button, action, mods) -> {
-            final boolean isDown = action == GLFW.GLFW_PRESS;
-            final MouseButton mouseButton = MouseButton.valueOf(button);
-            final ClickEvent event = new ClickEvent(this, mouseButton, isDown);
+        GLFW.glfwSetMouseButtonCallback(this.window, (window, buttonId, actionId, mods) -> {
+            final MouseButton button = MouseButton.valueOf(buttonId);
+            final boolean isDown = actionId == GLFW.GLFW_PRESS;
+            final Modifiers modifiers = new Modifiers(mods);
+
+            final ClickEvent event = new ClickEvent(this, button, isDown, modifiers);
+
             this.helperClick.fireEvent(event);
         });
         GLFW.glfwSetCursorPosCallback(this.window, (window, xPos, yPos) -> {

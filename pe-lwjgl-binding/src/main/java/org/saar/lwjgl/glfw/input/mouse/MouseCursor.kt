@@ -1,31 +1,23 @@
-package org.saar.lwjgl.glfw.input.mouse;
+package org.saar.lwjgl.glfw.input.mouse
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW
 
-public enum MouseCursor {
+enum class MouseCursor(private val value: Int) {
 
     NORMAL(GLFW.GLFW_CURSOR_NORMAL),
     HIDDEN(GLFW.GLFW_CURSOR_HIDDEN),
     DISABLED(GLFW.GLFW_CURSOR_DISABLED),
     ;
 
-    private static final MouseCursor[] values = values();
+    fun get() = this.value
 
-    private final int value;
-
-    MouseCursor(int value) {
-        this.value = value;
-    }
-
-    public int get() {
-        return this.value;
-    }
-
-    public static MouseCursor valueOf(int value) {
-        final int index = value - MouseCursor.values[0].get();
-        if (index >= 0 && index <= MouseCursor.values.length) {
-            return MouseCursor.values[index];
+    companion object {
+        @JvmStatic
+        fun valueOf(value: Int) = when (value) {
+            NORMAL.value -> NORMAL
+            HIDDEN.value -> HIDDEN
+            DISABLED.value -> DISABLED
+            else -> throw IllegalArgumentException("MouseCursor non found: $value")
         }
-        throw new IllegalArgumentException("MouseCursor non found: " + value);
     }
 }

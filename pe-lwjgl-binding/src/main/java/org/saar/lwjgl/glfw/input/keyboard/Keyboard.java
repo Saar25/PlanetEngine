@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.event.OnAction;
+import org.saar.lwjgl.glfw.input.Modifiers;
 
 public class Keyboard {
 
@@ -22,14 +23,12 @@ public class Keyboard {
 
     public void init() {
         GLFW.glfwSetKeyCallback(window, (window, key, scanCode, action, mods) -> {
+            final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
             if (action == KeyState.PRESS.get()) {
-                final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
                 this.helperKeyPress.fireEvent(event);
             } else if (action == KeyState.RELEASE.get()) {
-                final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
                 this.helperKeyRelease.fireEvent(event);
             } else if (action == KeyState.REPEAT.get()) {
-                final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
                 this.helperKeyRepeat.fireEvent(event);
             }
         });

@@ -1,4 +1,4 @@
-package org.saar.lwjgl.glfw.input.keyboard
+package org.saar.lwjgl.glfw.input
 
 import org.lwjgl.glfw.GLFW
 
@@ -16,8 +16,6 @@ class Modifiers(private val modifiers: Int) {
 
     fun isNumLock(): Boolean = checkBit(GLFW.GLFW_MOD_NUM_LOCK)
 
-    private fun checkBit(mask: Int): Boolean {
-        return this.modifiers and mask > 0
-    }
+    private fun checkBit(mask: Int) = this.modifiers and mask != 0
 
 }

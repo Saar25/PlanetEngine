@@ -1,30 +1,21 @@
-package org.saar.lwjgl.glfw.input.mouse;
+package org.saar.lwjgl.glfw.input.mouse
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW
 
-public enum MouseButtonState {
+enum class MouseButtonState(private val value: Int) {
 
     RELEASE(GLFW.GLFW_RELEASE),
     PRESS(GLFW.GLFW_PRESS),
     ;
 
-    private final int value;
+    fun get() = this.value
 
-    MouseButtonState(int value) {
-        this.value = value;
-    }
-
-    public int get() {
-        return this.value;
-    }
-
-    public static MouseButtonState valueOf(int value) {
-        switch (value) {
-            case GLFW.GLFW_RELEASE:
-                return MouseButtonState.RELEASE;
-            case GLFW.GLFW_PRESS:
-                return MouseButtonState.PRESS;
+    companion object {
+        @JvmStatic
+        fun valueOf(value: Int): MouseButtonState = when (value) {
+            RELEASE.value -> RELEASE
+            PRESS.value -> PRESS
+            else -> throw IllegalArgumentException("MouseButtonState non found: $value")
         }
-        throw new IllegalArgumentException("MouseButtonState non found: " + value);
     }
 }
