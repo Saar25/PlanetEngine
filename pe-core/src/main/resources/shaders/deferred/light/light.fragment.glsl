@@ -20,8 +20,7 @@ in vec2 v_position;
 
 // Uniforms
 uniform sampler2D u_colourTexture;
-uniform sampler2D u_normalTexture;
-uniform sampler2D u_specularTexture;
+uniform sampler2D u_normalSpecularTexture;
 uniform sampler2D u_depthTexture;
 
 uniform mat4 u_projectionMatrixInv;
@@ -63,8 +62,11 @@ void main(void) {
 
 void initBufferValues(void) {
     g_colour = texture(u_colourTexture, v_position).rgb;
-    g_normal = texture(u_normalTexture, v_position).rgb;
-    g_specular = texture(u_specularTexture, v_position).r;
+    
+    vec4 normalSpecular = texture(u_normalSpecularTexture, v_position);
+    g_normal = normalSpecular.rgb;
+    g_specular = normalSpecular.a;
+    
     g_depth = texture(u_depthTexture, v_position).r;
 }
 

@@ -19,3 +19,7 @@ interface NormalBuffer : RenderPassBuffers {
 interface SpecularBuffer : RenderPassBuffers {
     val specular: ReadOnlyTexture
 }
+
+interface NormalSpecularBuffer : RenderPassBuffers {
+    val normalSpecular: ReadOnlyTexture
+}

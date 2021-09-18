@@ -14,7 +14,7 @@
 in vec2 v_position;
 
 // Uniforms
-uniform sampler2D u_normalTexture;
+uniform sampler2D u_normalSpecularTexture;
 uniform sampler2D u_depthTexture;
 uniform sampler2D u_noiseTexture;
 
@@ -82,7 +82,7 @@ void main(void) {
 }
 
 void initBufferValues(void) {
-    g_normal = texture(u_normalTexture, v_position).rgb;
+    g_normal = texture(u_normalSpecularTexture, v_position).rgb;
     g_depth = texture(u_depthTexture, v_position).r;
 }
 

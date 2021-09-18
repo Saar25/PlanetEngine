@@ -32,8 +32,7 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
 
     override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
-        this.prototype.normalTextureUniform.value = buffers.normal
-        this.prototype.specularTextureUniform.value = buffers.specular
+        this.prototype.normalSpecularTextureUniform.value = buffers.normalSpecular
         this.prototype.depthTextureUniform.value = buffers.depth
 
         this.prototype.projectionMatrixInvUniform.value =
@@ -56,10 +55,7 @@ private class LightRenderPassPrototype(
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
 
     @UniformProperty
-    val normalTextureUniform = TextureUniformValue("u_normalTexture", 1)
-
-    @UniformProperty
-    val specularTextureUniform = TextureUniformValue("u_specularTexture", 2)
+    val normalSpecularTextureUniform = TextureUniformValue("u_normalSpecularTexture", 1)
 
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)

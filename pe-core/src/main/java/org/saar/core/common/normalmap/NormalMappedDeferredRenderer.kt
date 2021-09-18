@@ -59,7 +59,7 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-        BlendTest.applyAlpha()
+        BlendTest.disable()
         DepthTest.enable()
 
         val v = context.camera.viewMatrix

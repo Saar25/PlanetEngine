@@ -88,7 +88,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         )
 
         this.ssaoWrapper.render {
-            this.ssaoPrototype.normalTextureUniform.value = buffers.normal
+            this.ssaoPrototype.normalSpecularTexture.value = buffers.normalSpecular
             this.ssaoPrototype.depthTextureUniform.value = buffers.depth
 
             this.ssaoPrototype.projectionMatrixInvUniform.value =
@@ -117,7 +117,7 @@ private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
                                       val radius: Float) : RenderPassPrototype {
 
     @UniformProperty
-    val normalTextureUniform = TextureUniformValue("u_normalTexture", 0)
+    val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 0)
 
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 1)
@@ -172,10 +172,10 @@ private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
 private class SsaoLightRenderPassPrototype() : RenderPassPrototype {
 
     @UniformProperty
-    val colourTextureUniform = TextureUniformValue("u_normalTexture", 1)
+    val colourTextureUniform = TextureUniformValue("u_colourTexture", 1)
 
     @UniformProperty
-    val normalTextureUniform = TextureUniformValue("u_normalTexture", 2)
+    val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 2)
 
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)

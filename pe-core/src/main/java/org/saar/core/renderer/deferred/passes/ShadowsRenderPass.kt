@@ -17,15 +17,15 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.maths.utils.Matrix4
 
-class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) : DeferredRenderPass {
+class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) :
+    DeferredRenderPass {
 
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
     override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
-        this.prototype.normalTextureUniform.value = buffers.normal
-        this.prototype.specularTextureUniform.value = buffers.specular
+        this.prototype.normalSpecularTexture.value = buffers.normalSpecular
         this.prototype.depthTextureUniform.value = buffers.depth
 
         this.prototype.projectionMatrixInvUniform.value =
@@ -87,10 +87,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 1)
 
     @UniformProperty
-    val normalTextureUniform = TextureUniformValue("u_normalTexture", 2)
-
-    @UniformProperty
-    val specularTextureUniform = TextureUniformValue("u_specularTexture", 3)
+    val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 2)
 
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 4)

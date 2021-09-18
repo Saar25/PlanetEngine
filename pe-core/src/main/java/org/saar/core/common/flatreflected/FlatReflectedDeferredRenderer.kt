@@ -56,7 +56,7 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
         GlUtils.setProvokingVertexFirst()
-        BlendTest.applyAlpha()
+        BlendTest.disable()
         DepthTest.enable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()

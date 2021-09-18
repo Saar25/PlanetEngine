@@ -55,7 +55,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-        BlendTest.applyAlpha()
+        BlendTest.disable()
         DepthTest.enable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
