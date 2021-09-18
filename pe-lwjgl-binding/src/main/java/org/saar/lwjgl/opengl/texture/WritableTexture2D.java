@@ -5,7 +5,7 @@ import org.saar.lwjgl.opengl.constants.FormatType;
 
 import java.nio.ByteBuffer;
 
-public interface WritableTexture2D extends MutableTexture {
+public interface WritableTexture2D extends MutableTexture, ReadOnlyTexture2D {
 
     void load(int level, int xOffset, int yOffset, int width,
               int height, FormatType format, DataType type, ByteBuffer data);
@@ -13,9 +13,5 @@ public interface WritableTexture2D extends MutableTexture {
     default void load(int level, FormatType format, DataType type, ByteBuffer data) {
         load(level, 0, 0, getWidth(), getHeight(), format, type, data);
     }
-
-    int getWidth();
-
-    int getHeight();
 
 }
