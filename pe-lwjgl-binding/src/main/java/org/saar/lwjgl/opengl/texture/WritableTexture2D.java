@@ -5,7 +5,7 @@ import org.saar.lwjgl.opengl.constants.FormatType;
 
 import java.nio.ByteBuffer;
 
-public interface WritableTexture2D extends ReadOnlyTexture {
+public interface WritableTexture2D extends MutableTexture {
 
     void load(int level, int xOffset, int yOffset, int width,
               int height, FormatType format, DataType type, ByteBuffer data);

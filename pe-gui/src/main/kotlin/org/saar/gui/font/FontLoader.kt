@@ -3,10 +3,7 @@ package org.saar.gui.font
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.texture.Texture2D
-import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureTWrapParameter
+import org.saar.lwjgl.opengl.texture.parameter.*
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 import org.saar.lwjgl.opengl.texture.values.WrapValue
@@ -29,12 +26,12 @@ object FontLoader {
     private fun bitmapToTexture(bitmap: LwjglByteBuffer, width: Int, height: Int): Texture2D {
         return Texture2D.of(width, height).also { texture ->
             texture.load(0, FormatType.RED, DataType.U_BYTE, bitmap.asByteBuffer())
-            texture.applyParameters(
+            texture.applyParameters(arrayOf<TextureParameter>(
                 TextureSWrapParameter(WrapValue.CLAMP_TO_BORDER),
                 TextureTWrapParameter(WrapValue.CLAMP_TO_BORDER),
                 TextureMagFilterParameter(MagFilterValue.LINEAR),
                 TextureMinFilterParameter(MinFilterValue.NEAREST),
-            )
+            ))
         }
     }
 

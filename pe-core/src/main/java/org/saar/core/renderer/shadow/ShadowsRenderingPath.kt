@@ -7,10 +7,7 @@ import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureTWrapParameter
+import org.saar.lwjgl.opengl.texture.parameter.*
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 import org.saar.lwjgl.opengl.texture.values.WrapValue
@@ -53,10 +50,11 @@ class ShadowsRenderingPath(
     }
 
     init {
-        this.prototype.depthTexture.applyParameters(
+        this.prototype.depthTexture.applyParameters(arrayOf<TextureParameter>(
             TextureMinFilterParameter(MinFilterValue.LINEAR),
             TextureMagFilterParameter(MagFilterValue.LINEAR),
             TextureSWrapParameter(WrapValue.CLAMP_TO_EDGE),
-            TextureTWrapParameter(WrapValue.CLAMP_TO_EDGE))
+            TextureTWrapParameter(WrapValue.CLAMP_TO_EDGE)
+        ))
     }
 }

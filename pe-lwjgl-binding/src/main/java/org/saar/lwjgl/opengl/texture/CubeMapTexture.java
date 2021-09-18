@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.texture;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.texture.parameter.TextureParameter;
 
-public class CubeMapTexture implements ReadOnlyTexture {
+public class CubeMapTexture implements MutableTexture {
 
     private static final TextureTarget target = TextureTarget.TEXTURE_CUBE_MAP;
 
