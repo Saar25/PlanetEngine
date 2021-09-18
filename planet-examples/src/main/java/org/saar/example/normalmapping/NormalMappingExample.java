@@ -37,6 +37,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.texture.ColourTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.transform.Position;
 
@@ -84,8 +85,8 @@ public class NormalMappingExample {
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
+                ShadowsQuality.LOW, shadowProjection, light, shadowsRenderNode);
+        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),

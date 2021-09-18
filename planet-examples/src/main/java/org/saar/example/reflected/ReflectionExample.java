@@ -52,6 +52,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.texture.ColourTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
@@ -270,7 +271,7 @@ public class ReflectionExample {
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                             ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
+        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(

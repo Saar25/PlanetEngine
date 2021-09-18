@@ -7,8 +7,10 @@
 #include "/shaders/common/light/light"
 #include "/shaders/common/transform/transform"
 
-// Constants
-float SHADOW_BIAS = -0.0001f;
+// Definitions
+#ifndef SHADOW_BIAS
+#define SHADOW_BIAS 0.001f
+#endif
 
 // Vertex outputs
 in vec2 v_position;
@@ -23,7 +25,8 @@ uniform mat4 u_shadowMatrix;
 uniform mat4 u_projectionMatrixInv;
 uniform mat4 u_viewMatrixInv;
 
-uniform int u_pcfRadius;
+uniform ivec2 u_shadowMapSize;
+uniform int   u_pcfRadius;
 
 uniform DirectionalLight u_light;
 
@@ -40,7 +43,6 @@ vec3 g_worldSpace;
 vec3 g_viewDirection;
 
 float g_shadowDepth;
-float g_shadowMapDepth;
 vec2 g_shadowMapCoords;
 
 // Methods declaration
@@ -63,7 +65,7 @@ void main(void) {
     if (shadowFactor > 0) {
         vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
         vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular);
-        vec3 finalColour = g_colour * lightColour;
+        vec3 finalColour = g_colour * lightColour * shadowFactor;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -96,7 +98,6 @@ void initShadowGlobals(void) {
     shadowCoords = shadowCoords * 0.5f + 0.5f;
 
     g_shadowMapCoords = shadowCoords.xy;
-    g_shadowMapDepth = texture(u_shadowMap, shadowCoords.xy).r;
     g_shadowDepth = shadowCoords.z;
 }
 
@@ -113,5 +114,5 @@ float calcShadowFactor(void) {
             }
         }
     }
-    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius);
+    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius + 1);
 }

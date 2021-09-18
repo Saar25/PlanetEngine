@@ -1,6 +1,7 @@
 package org.saar.core.renderer.deferred.passes
 
 import org.joml.Matrix4fc
+import org.joml.Vector2i
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
@@ -15,9 +16,10 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 
-class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light: DirectionalLight) :
+class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture2D, light: DirectionalLight) :
     DeferredRenderPass {
 
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
@@ -41,7 +43,7 @@ class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture, light
 }
 
 private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
-                                         private val shadowMap: ReadOnlyTexture,
+                                         private val shadowMap: ReadOnlyTexture2D,
                                          private val light: DirectionalLight) : RenderPassPrototype {
 
     @UniformProperty
@@ -84,6 +86,13 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     }
 
     @UniformProperty
+    private val shadowMapSizeUniform = object : Vec2iUniform() {
+        override fun getName(): String = "u_shadowMapSize"
+
+        override fun getUniformValue() = Vector2i(shadowMap.width, shadowMap.height)
+    }
+
+    @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 1)
 
     @UniformProperty
@@ -94,7 +103,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
-
+        ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.001f)),
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
     )
 }
