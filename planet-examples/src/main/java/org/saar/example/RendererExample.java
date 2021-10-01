@@ -33,7 +33,7 @@ public class RendererExample {
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
 
         fbo.addAttachment(attachment);
         fbo.setDrawAttachments(attachment);

@@ -30,7 +30,7 @@ object UIButtonExample {
 
         val display = UIDisplay(window)
 
-        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+        val font = FontLoader.loadFont(FontLoader.DEFAULT_FONT_FAMILY, 48f, 512, 512,
             (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
         )
 

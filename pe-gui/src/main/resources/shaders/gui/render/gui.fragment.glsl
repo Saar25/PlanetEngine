@@ -188,7 +188,7 @@ float getDiscardMapValue(void) {
     if (u_hasDiscardMap) {
         return texture(u_discardMap, v_position).r;
     }
-    return 1;
+    return 1.0;
 }
 
 /**

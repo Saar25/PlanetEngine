@@ -87,7 +87,7 @@ public class ReflectionExample {
         uiDisplay.add(reflectionUiElement);
 
         final Font font = FontLoader.loadFont(
-                "C:/Windows/Fonts/arial.ttf",
+                FontLoader.DEFAULT_FONT_FAMILY,
                 22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
 
         final UIContainer uiTextGroup = new UIContainer();

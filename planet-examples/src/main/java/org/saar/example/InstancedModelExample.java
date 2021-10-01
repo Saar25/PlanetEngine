@@ -57,7 +57,7 @@ public class InstancedModelExample {
 
         shadersProgram.bind();
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);

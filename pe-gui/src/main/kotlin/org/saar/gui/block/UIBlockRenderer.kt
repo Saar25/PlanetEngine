@@ -16,6 +16,7 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
+import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -98,10 +99,10 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
         hasTextureUniform.value = uiBlock.texture != null
-        textureUniform.value = uiBlock.texture
+        textureUniform.value = uiBlock.texture ?: Texture2D.NULL
 
         hasDiscardMapUniform.value = uiBlock.discardMap != null
-        discardMapUniform.value = uiBlock.discardMap
+        discardMapUniform.value = uiBlock.discardMap ?: Texture2D.NULL
 
         // TODO: make these ivec4
         boundsUniform.value = Vector4f(

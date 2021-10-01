@@ -38,7 +38,7 @@ public class ScreenExample {
 
         final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
-        final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+        final IFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo);
 

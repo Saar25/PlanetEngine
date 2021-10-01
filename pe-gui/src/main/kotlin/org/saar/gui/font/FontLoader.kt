@@ -15,7 +15,15 @@ import java.io.File
 
 object FontLoader {
 
-    val DEFAULT_FONT: Font by lazy { loadFont("C:/Windows/Fonts/segoeui.ttf", 48f, 512, 512) }
+    @JvmField
+    val DEFAULT_FONT_FAMILY =
+        if (System.getProperty("os.name").contains("win")) "C:/Windows/Fonts/segoeui.ttf"
+        else if (System.getProperty("os.name").contains("nux")) "/usr/share/fonts/truetype/ubuntu/Ubuntu-L.ttf"
+        else if (System.getProperty("os.name").contains("nix")) "/usr/share/fonts/truetype/ubuntu/Ubuntu-L.ttf"
+        else ""
+
+    @JvmStatic
+    val DEFAULT_FONT: Font by lazy { loadFont(DEFAULT_FONT_FAMILY, 48f, 512, 512) }
 
     private val DEFAULT_CHAR_SEQUENCE = (0x20.toChar()..0x7e.toChar()).joinToString("")
 
@@ -50,8 +58,10 @@ object FontLoader {
     }
 
     @JvmStatic
-    fun loadFont(fontFile: String, fontHeight: Float, bitmapWidth: Int,
-                 bitmapHeight: Int, charSequence: CharSequence): Font {
+    fun loadFont(
+        fontFile: String, fontHeight: Float, bitmapWidth: Int,
+        bitmapHeight: Int, charSequence: CharSequence
+    ): Font {
         val trueTypeBitmap = File(fontFile).readToLwjglBuffer().use { buffer ->
             TrueTypeFontLoader.bakeFontBitmap(buffer, fontHeight, bitmapWidth, bitmapHeight, charSequence)
         }
@@ -64,8 +74,10 @@ object FontLoader {
     }
 
     @JvmStatic
-    fun loadFont(fontFile: String, fontHeight: Float, bitmapWidth: Int,
-                 bitmapHeight: Int, start: Char, count: Int): Font {
+    fun loadFont(
+        fontFile: String, fontHeight: Float, bitmapWidth: Int,
+        bitmapHeight: Int, start: Char, count: Int
+    ): Font {
         val charSequence = (start..start + count).joinToString("")
         return loadFont(fontFile, fontHeight, bitmapWidth, bitmapHeight, charSequence)
     }

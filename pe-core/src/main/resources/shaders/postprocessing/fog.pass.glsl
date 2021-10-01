@@ -63,7 +63,7 @@ float calcDistance(float depth, int fogDistance) {
         case FD_XZ: return calcDistanceXZ(viewPosition);
         case FD_XYZ: return calcDistanceXYZ(viewPosition);
     }
-    return -1;
+    return -1.0;
 }
 
 float calcDistanceDepth(vec3 viewPosition) {
