@@ -34,7 +34,9 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
                 new TextureAnisotropicFilterParameter(4f),
                 new TextureMagFilterParameter(MagFilterValue.LINEAR),
                 new TextureMinFilterParameter(MinFilterValue.NEAREST));
-        this.texture.generateMipmap();
+        if (this.texture.getWidth() > 0 && this.texture.getHeight() > 0) {
+            this.texture.generateMipmap();
+        }
     }
 
     @Override
