@@ -42,7 +42,7 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
 
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(context.hints.cullFace)
-        BlendTest.applyAlpha()
+        BlendTest.disable()
         DepthTest.enable()
     }
 

@@ -45,7 +45,7 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
         GlUtils.setProvokingVertexFirst()
-        BlendTest.applyAlpha()
+        BlendTest.disable()
         DepthTest.enable()
     }
 

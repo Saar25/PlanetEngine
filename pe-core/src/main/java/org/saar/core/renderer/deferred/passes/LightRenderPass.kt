@@ -36,7 +36,7 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
         this.prototype.depthTextureUniform.value = buffers.depth
 
         this.prototype.projectionMatrixInvUniform.value =
-            context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+            context.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
 
         this.prototype.directionalLightsUniform.forEach { it.camera = context.camera }
         this.prototype.pointLightsUniform.forEach { it.camera = context.camera }
