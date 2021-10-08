@@ -58,7 +58,7 @@ private class LightRenderPassPrototype(
     val normalSpecularTextureUniform = TextureUniformValue("u_normalSpecularTexture", 1)
 
     @UniformProperty
-    val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
+    val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
 
     @UniformProperty
     val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")

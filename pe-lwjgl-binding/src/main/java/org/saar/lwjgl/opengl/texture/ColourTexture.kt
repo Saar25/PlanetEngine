@@ -10,7 +10,8 @@ class ColourTexture private constructor(
     val red: Int,
     val green: Int,
     val blue: Int,
-    val alpha: Int) : ReadOnlyTexture {
+    val alpha: Int
+) : ReadOnlyTexture2D {
 
     override fun bind(unit: Int) = this.texture.bind(unit)
 
@@ -19,6 +20,10 @@ class ColourTexture private constructor(
     override fun unbind() = this.texture.unbind()
 
     override fun delete() = this.texture.delete()
+
+    override fun getWidth(): Int = 1
+
+    override fun getHeight(): Int = 1
 
     companion object {
         @JvmStatic
