@@ -11,9 +11,8 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.postprocessing.PostProcessingBuffers;
 import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
+import org.saar.core.renderer.forward.ForwardRenderingPath;
 import org.saar.core.renderer.renderpass.RenderPassContext;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -130,9 +129,8 @@ public class Minecraft {
                 new UnderwaterPostProcessor()
         );
 
-        final DeferredRenderingPath renderingPath = new DeferredRenderingPath(camera,
-                new DeferredRenderNodeGroup(chunkRenderNode, waterRenderNode),
-                new DeferredRenderPassesPipeline());
+        final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera,
+                new ForwardRenderNodeGroup(chunkRenderNode, waterRenderNode));
 
         final Fps fps = new Fps();
 

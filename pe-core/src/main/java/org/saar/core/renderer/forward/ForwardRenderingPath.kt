@@ -9,16 +9,16 @@ import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-class ForwardRenderingPath(private val camera: ICamera, private val renderNode: ForwardRenderNode)
-    : RenderingPath<ForwardRenderingBuffers> {
+class ForwardRenderingPath(private val camera: ICamera, private val renderNode: ForwardRenderNode) :
+    RenderingPath<ForwardRenderingBuffers> {
 
     private val prototype = ForwardScreenPrototype()
 
     private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
     override fun render(): RenderingOutput<ForwardRenderingBuffers> {
-        this.screen.resizeToMainScreen()
         this.screen.setAsDraw()
+        this.screen.resizeToMainScreen()
 
         GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
 
