@@ -1,32 +1,18 @@
 package org.saar.minecraft.chunk;
 
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.build.MeshPrototypeHelper;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall;
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.core.mesh.Meshes;
 
 public class ChunkMesh implements Mesh {
 
     private final Mesh mesh;
 
-    private ChunkMesh(Mesh mesh) {
+    public ChunkMesh(Mesh mesh) {
         this.mesh = mesh;
     }
 
     static ChunkMesh create(ChunkMeshPrototype prototype, int vertices) {
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.store();
-
-        final DrawCall drawCall = new ArraysDrawCall(
-                RenderMode.TRIANGLES, vertices);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new ChunkMesh(mesh);
+        return new ChunkMesh(Meshes.toArraysMesh(prototype, vertices));
     }
 
     public static ChunkMesh load(ChunkMeshPrototype prototype, ChunkVertex[] vertices) {

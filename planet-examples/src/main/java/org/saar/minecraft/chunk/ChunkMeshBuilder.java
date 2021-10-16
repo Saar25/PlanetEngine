@@ -2,11 +2,15 @@ package org.saar.minecraft.chunk;
 
 import org.saar.core.mesh.build.MeshBuilder;
 import org.saar.core.mesh.build.MeshPrototypeHelper;
+import org.saar.core.mesh.build.writers.MeshVertexWriter;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 
-public class ChunkMeshBuilder implements MeshBuilder {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class ChunkMeshBuilder implements MeshBuilder, MeshVertexWriter<ChunkVertex> {
 
     private static final IAttribute dataAttribute = Attributes.ofInteger(0, 1, DataType.U_INT);
 
@@ -21,18 +25,8 @@ public class ChunkMeshBuilder implements MeshBuilder {
             {0, 4, 5, 1}, // z-
     };
 
-    private final ChunkMeshPrototype prototype;
-    private final ChunkMeshWriter writer;
-    private final int vertices;
-
-    public ChunkMeshBuilder(ChunkMeshPrototype prototype, int vertices) {
-        this.prototype = prototype;
-        this.writer = new ChunkMeshWriter(prototype);
-        this.vertices = vertices;
-    }
-
-    private static void addAttributes(ChunkMeshPrototype prototype) {
-        prototype.getDataBuffer().addAttributes(dataAttribute);
+    static void addAttributes(ChunkMeshPrototype prototype) {
+        prototype.getDataBuffer().addAttribute(dataAttribute);
     }
 
     private static void initPrototype(ChunkMeshPrototype prototype, int vertices) {
@@ -42,18 +36,25 @@ public class ChunkMeshBuilder implements MeshBuilder {
         helper.allocateVertices(vertices);
     }
 
-    public static ChunkMeshBuilder create(ChunkMeshPrototype prototype, int vertices) {
-        ChunkMeshBuilder.initPrototype(prototype, vertices);
-        return new ChunkMeshBuilder(prototype, vertices);
+    public static ChunkMeshBuilder createDynamic(ChunkMeshPrototype prototype) {
+        return new ChunkMeshBuilder.DynamicChunkMeshBuilder(prototype);
     }
 
-    public static ChunkMeshBuilder create(int vertices) {
-        return ChunkMeshBuilder.create(Chunks.meshPrototype(), vertices);
+    public static ChunkMeshBuilder createFixed(ChunkMeshPrototype prototype, int vertices) {
+        return new ChunkMeshBuilder.FixedChunkMeshBuilder(prototype, vertices);
+    }
+
+    public static ChunkMeshBuilder createDynamic() {
+        return ChunkMeshBuilder.createDynamic(Chunks.meshPrototype());
+    }
+
+    public static ChunkMeshBuilder createFixed(int vertices) {
+        return ChunkMeshBuilder.createFixed(Chunks.meshPrototype(), vertices);
     }
 
     public static ChunkMeshBuilder build(ChunkMeshPrototype prototype, ChunkVertex[] vertices) {
-        final ChunkMeshBuilder builder = create(prototype, vertices.length);
-        builder.getWriter().writeVertices(vertices);
+        final ChunkMeshBuilder builder = ChunkMeshBuilder.createFixed(prototype, vertices.length);
+        builder.writeVertices(vertices);
         return builder;
     }
 
@@ -70,21 +71,62 @@ public class ChunkMeshBuilder implements MeshBuilder {
     public void writeFace(int x, int y, int z, int id, int face) {
         final int[] faceIds = ChunkMeshBuilder.vertexIds[face];
         for (int index : ChunkMeshBuilder.indices) {
-            getWriter().writeVertex(Chunks.vertex(
-                    x, y, z, id, faceIds[index], face == 0));
+            writeVertex(Chunks.vertex(x, y, z, id, faceIds[index], face == 0));
         }
     }
 
-    public ChunkMeshWriter getWriter() {
-        return this.writer;
-    }
-
     @Override
-    public ChunkMesh load() {
-        return ChunkMesh.create(this.prototype, this.vertices);
+    public abstract ChunkMesh load();
+
+    private static class FixedChunkMeshBuilder extends ChunkMeshBuilder {
+
+        private final ChunkMeshPrototype prototype;
+        private final ChunkMeshWriter writer;
+
+        private final int vertices;
+
+        public FixedChunkMeshBuilder(ChunkMeshPrototype prototype, int vertices) {
+            this.prototype = prototype;
+            this.writer = new ChunkMeshWriter(prototype);
+            this.vertices = vertices;
+
+            ChunkMeshBuilder.initPrototype(prototype, vertices);
+        }
+
+        @Override
+        public void writeVertex(ChunkVertex vertex) {
+            this.writer.writeVertex(vertex);
+        }
+
+        @Override
+        public ChunkMesh load() {
+            return ChunkMesh.create(this.prototype, this.vertices);
+        }
     }
 
-    public void delete() {
-        load().delete();
+    private static class DynamicChunkMeshBuilder extends ChunkMeshBuilder {
+
+        private final ChunkMeshPrototype prototype;
+
+        private final List<ChunkVertex> vertices = new ArrayList<>();
+
+        public DynamicChunkMeshBuilder(ChunkMeshPrototype prototype) {
+            this.prototype = prototype;
+        }
+
+        @Override
+        public void writeVertex(ChunkVertex vertex) {
+            this.vertices.add(vertex);
+        }
+
+        @Override
+        public ChunkMesh load() {
+            initPrototype(this.prototype, this.vertices.size());
+            final ChunkMeshWriter writer = new ChunkMeshWriter(this.prototype);
+
+            writer.writeVertices(this.vertices);
+
+            return ChunkMesh.create(this.prototype, this.vertices.size());
+        }
     }
 }

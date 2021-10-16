@@ -36,6 +36,8 @@ private fun FrustumIntersection.testChunk(chunk: Chunk) = testAab(
 
 object ChunkRenderer : Renderer {
 
+    lateinit var atlas: Texture2D
+
     val rayCastedFace: Vec4iUniformValue
         get() = prototype.rayCastedFace
 
@@ -49,6 +51,7 @@ object ChunkRenderer : Renderer {
             projection.mul(view, Matrix4.create())
         )
 
+        this.prototype.atlas = this.atlas
         this.helper.render(context, world.chunks.filter { frustumIntersection.testChunk(it) })
     }
 
