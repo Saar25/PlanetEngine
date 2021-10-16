@@ -32,7 +32,7 @@ class FogRenderPass(fog: IFog, fogDistance: FogDistance) : ForwardRenderPass {
 
         this.prototype.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
 
-        this.prototype.cameraPositionUniform.value = context.camera.transform.position.value
+        this.prototype.cameraPositionUniform.value.set(context.camera.transform.position.value)
     }
 
     override fun delete() {
@@ -40,8 +40,7 @@ class FogRenderPass(fog: IFog, fogDistance: FogDistance) : ForwardRenderPass {
     }
 }
 
-private class FogRenderPassPrototype(private val fog: IFog, private val fogDistance: FogDistance) :
-    RenderPassPrototype {
+private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : RenderPassPrototype {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
@@ -50,11 +49,7 @@ private class FogRenderPassPrototype(private val fog: IFog, private val fogDista
     val depthUniform = TextureUniformValue("u_depth", 1)
 
     @UniformProperty
-    val fogUniform = object : FogUniformValue() {
-        override fun getName() = "u_fog"
-
-        override fun getUniformValue() = this@FogRenderPassPrototype.fog
-    }
+    val fogUniform = FogUniformValue("u_fog", fog)
 
     @UniformProperty
     val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
@@ -67,9 +62,9 @@ private class FogRenderPassPrototype(private val fog: IFog, private val fogDista
 
     @UniformProperty
     val fogDistanceUniform = object : IntUniform() {
-        override fun getName() = "u_fogDistance"
+        override val name = "u_fogDistance"
 
-        override fun getUniformValue() = this@FogRenderPassPrototype.fogDistance.ordinal
+        override val value = fogDistance.ordinal
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

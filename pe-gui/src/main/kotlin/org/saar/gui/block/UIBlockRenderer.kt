@@ -1,7 +1,6 @@
 package org.saar.gui.block
 
 import org.joml.Vector2i
-import org.joml.Vector4f
 import org.joml.Vector4i
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
@@ -45,9 +44,9 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
-        override fun getName(): String = "u_resolution"
+        override val name = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
+        override val value get() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
@@ -105,7 +104,7 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         discardMapUniform.value = uiBlock.discardMap ?: Texture2D.NULL
 
         // TODO: make these ivec4
-        boundsUniform.value = Vector4f(
+        boundsUniform.value.set(
             uiBlock.style.x.get().toFloat(),
             uiBlock.style.y.get().toFloat(),
             uiBlock.style.width.get().toFloat(),
@@ -113,12 +112,12 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         )
 
         val vector4i = Vector4i()
-        bordersUniform.value = Vector4f(uiBlock.style.borders.asVector4i(vector4i))
-        radiusesUniform.value = Vector4f(uiBlock.style.radiuses.asVector4i(vector4i))
+        bordersUniform.value.set(uiBlock.style.borders.asVector4i(vector4i))
+        radiusesUniform.value.set(uiBlock.style.radiuses.asVector4i(vector4i))
         cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
 
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
-        colourModifierUniform.value = uiBlock.style.colourModifier.multiply
+        colourModifierUniform.value.set(uiBlock.style.colourModifier.multiply)
     }
 
     override fun doInstanceDraw(context: RenderContext, uiBlock: UIBlock) = QuadMesh.draw()

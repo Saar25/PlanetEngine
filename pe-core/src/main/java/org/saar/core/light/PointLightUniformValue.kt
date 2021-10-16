@@ -1,22 +1,27 @@
 package org.saar.core.light
 
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
 
-class PointLightUniformValue(name: String) : PointLightUniform(name), UniformValue<IPointLight> {
+class PointLightUniformValue(name: String, var value: IPointLight) : UniformContainer {
 
-    private val value: PointLight = PointLight()
+    private val positionUniform = object : Vec3Uniform() {
+        override val name = "$name.position"
 
-    override fun setValue(value: IPointLight) {
-        this.value.position.set(value.position)
-        this.value.attenuation = value.attenuation
-        this.value.colour.set(value.colour)
+        override val value get() = this@PointLightUniformValue.value.position
     }
 
-    override fun getValue(): IPointLight {
-        return this.value
+    private val attenuationUniform = object : Vec3Uniform() {
+        override val name = "$name.attenuation"
+
+        override val value get() = this@PointLightUniformValue.value.attenuation.vector3f
     }
 
-    override fun getUniformValue(): IPointLight {
-        return this.value
+    private val colourUniform = object : Vec3Uniform() {
+        override val name = "$name.colour"
+
+        override val value get() = this@PointLightUniformValue.value.colour
     }
+
+    override val subUniforms = listOf(this.positionUniform, this.attenuationUniform, this.colourUniform)
 }

@@ -25,9 +25,9 @@ private class FBMPainterPrototype : RenderPassPrototype {
 
     @UniformProperty
     val timeUniform = object : FloatUniform() {
-        override fun getUniformValue() = (System.currentTimeMillis() - startTime) / 1000f
+        override val name = "u_time"
 
-        override fun getName() = "u_time"
+        override val value get() = (System.currentTimeMillis() - startTime) / 1000f
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

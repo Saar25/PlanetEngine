@@ -34,9 +34,9 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
 
     @UniformProperty
     private val specularUniform = object : FloatUniform() {
-        override fun getName() = "u_specular"
+        override val name = "u_specular"
 
-        override fun getUniformValue() = 1f
+        override val value = 1f
     }
 
     @UniformProperty

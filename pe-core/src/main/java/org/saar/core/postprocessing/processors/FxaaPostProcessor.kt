@@ -38,9 +38,9 @@ private class FxaaPostProcessorPrototype : RenderPassPrototype {
 
     @UniformProperty
     val resolutionUniform = object : Vec2iUniform() {
-        override fun getName() = "u_resolution"
+        override val name = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
+        override val value get() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

@@ -1,7 +1,7 @@
 package org.saar.core.renderer.uniforms;
 
 import org.saar.core.util.reflection.FieldsLocator;
-import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ public final class UniformPropertiesLocator {
         this.fieldsLocator = new FieldsLocator(object);
     }
 
-    public List<Uniform> getUniforms() {
-        return this.fieldsLocator.getFilteredValues(Uniform.class, UniformProperty.class);
+    public List<UniformContainer> getUniforms() {
+        return this.fieldsLocator.getFilteredValues(UniformContainer.class, UniformProperty.class);
     }
 
-    public List<Uniform> getUniformsByTrigger(UniformTrigger trigger) {
-        return this.fieldsLocator.getFilteredValues(Uniform.class, UniformProperty.class,
+    public List<UniformContainer> getUniformsByTrigger(UniformTrigger trigger) {
+        return this.fieldsLocator.getFilteredValues(UniformContainer.class, UniformProperty.class,
                 f -> f.getAnnotation(UniformProperty.class).value() == trigger);
     }
 }

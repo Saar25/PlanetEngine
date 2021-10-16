@@ -26,16 +26,16 @@ class ContrastPostProcessor(contrast: Float) : PostProcessor {
     }
 }
 
-private class ContrastPostProcessorPrototype(private val contrast: Float) : RenderPassPrototype {
+private class ContrastPostProcessorPrototype(contrast: Float) : RenderPassPrototype {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformProperty
     val contrastUniform = object : FloatUniform() {
-        override fun getName() = "u_contrast"
+        override val name = "u_contrast"
 
-        override fun getUniformValue() = this@ContrastPostProcessorPrototype.contrast
+        override val value = contrast
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

@@ -65,32 +65,28 @@ private class LightRenderPassPrototype(
 
     @UniformProperty
     val directionalLightsCountUniform = object : IntUniform() {
-        override fun getName() = "u_directionalLightsCount"
+        override val name = "u_directionalLightsCount"
 
-        override fun getUniformValue() = this@LightRenderPassPrototype.directionalLights.size
+        override val value get() = this@LightRenderPassPrototype.directionalLights.size
     }
 
     @UniformProperty
     val directionalLightsUniform: UniformArray<ViewSpaceDirectionalLightUniform> =
         UniformArray("u_directionalLights", this.directionalLights.size) { name, index ->
-            object : ViewSpaceDirectionalLightUniform(name) {
-                override fun getUniformValue() = this@LightRenderPassPrototype.directionalLights[index]
-            }
+            ViewSpaceDirectionalLightUniform(name, this@LightRenderPassPrototype.directionalLights[index])
         }
 
     @UniformProperty
     val pointLightsCountUniform = object : IntUniform() {
-        override fun getName() = "u_pointLightsCount"
+        override val name = "u_pointLightsCount"
 
-        override fun getUniformValue() = this@LightRenderPassPrototype.pointLights.size
+        override val value get() = this@LightRenderPassPrototype.pointLights.size
     }
 
     @UniformProperty
     val pointLightsUniform: UniformArray<ViewSpacePointLightUniform> =
         UniformArray("u_pointLights", this.pointLights.size) { name, index ->
-            object : ViewSpacePointLightUniform(name) {
-                override fun getUniformValue() = this@LightRenderPassPrototype.pointLights[index]
-            }
+            ViewSpacePointLightUniform(name, this@LightRenderPassPrototype.pointLights[index])
         }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

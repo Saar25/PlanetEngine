@@ -62,19 +62,14 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
 
     @UniformProperty
     val resolutionUniform = object : Vec2iUniform() {
-        override fun getName() = "u_resolution"
+        override val name = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
+        override val value get() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
     val blurLevelsUniform: UniformArray<FloatUniform> = UniformArray("u_blurLevels", this.samples.size) { name, index ->
-        object : FloatUniform() {
-            override fun getName() = name
-
-            override fun getUniformValue() =
-                this@GaussianBlurPostProcessorPrototype.samples[index]
-        }
+        FloatUniformValue(name, this.samples[index])
     }
 
     @UniformProperty
