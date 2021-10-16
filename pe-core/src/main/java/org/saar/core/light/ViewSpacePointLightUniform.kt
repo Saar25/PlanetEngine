@@ -1,40 +1,38 @@
 package org.saar.core.light
 
+import org.joml.Vector3f
+import org.joml.Vector3fc
 import org.saar.core.camera.ICamera
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.Uniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.maths.utils.Matrix4
-import org.saar.maths.utils.Vector3
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
 import org.saar.maths.utils.Vector4
 
-abstract class ViewSpacePointLightUniform(name: String) : Uniform {
+class ViewSpacePointLightUniform(name: String, var value: IPointLight) : UniformContainer {
 
     var camera: ICamera? = null
 
-    private val positionUniform = Vec3UniformValue("$name.position")
-    private val attenuationUniform = Vec3UniformValue("$name.attenuation")
-    private val colourUniform = Vec3UniformValue("$name.colour")
+    private val positionUniform = object : Vec3Uniform() {
+        override val name = "$name.position"
 
-    final override fun initialize(shadersProgram: ShadersProgram) {
-        this.positionUniform.initialize(shadersProgram)
-        this.attenuationUniform.initialize(shadersProgram)
-        this.colourUniform.initialize(shadersProgram)
+        override val value: Vector3fc
+            get() {
+                val vs = Vector4.of(this@ViewSpacePointLightUniform.value.position, 1f)
+                    .mul(this@ViewSpacePointLightUniform.camera!!.viewMatrix)
+                return Vector3f(vs.x(), vs.y(), vs.z()).div(vs.w)
+            }
     }
 
-    final override fun load() {
-        val value = getUniformValue()
+    private val attenuationUniform = object : Vec3Uniform() {
+        override val name = "$name.attenuation"
 
-        val vs = Vector4.of(value.position, 1f).mul(this.camera!!.viewMatrix)
-        this.positionUniform.value = Vector3.of(vs).div(vs.w())
-
-        this.attenuationUniform.value = value.attenuation.vector3f
-        this.colourUniform.value = value.colour
-
-        this.positionUniform.load()
-        this.attenuationUniform.load()
-        this.colourUniform.load()
+        override val value get() = this@ViewSpacePointLightUniform.value.attenuation.vector3f
     }
 
-    abstract fun getUniformValue(): IPointLight
+    private val colourUniform = object : Vec3Uniform() {
+        override val name = "$name.colour"
+
+        override val value get() = this@ViewSpacePointLightUniform.value.colour
+    }
+
+    override val subUniforms = listOf(this.positionUniform, this.attenuationUniform, this.colourUniform)
 }

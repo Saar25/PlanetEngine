@@ -107,7 +107,7 @@ public class ObjRendererExample {
     }
 
     private static MultisampledFbo createFbo(int width, int height) {
-        final MultisampledFbo fbo = new MultisampledFbo(width, height, 16);
+        final MultisampledFbo fbo = new MultisampledFbo(width, height, 8);
         fbo.setDrawAttachments(colorAttachment);
         fbo.setReadAttachment(colorAttachment);
         fbo.addAttachment(colorAttachment);

@@ -27,7 +27,7 @@ class MultiplyPostProcessor(multiply: ReadOnlyTexture, components: Int = 4) : Po
     }
 }
 
-private class MultiplyPostProcessorPrototype(private val multiply: ReadOnlyTexture,
+private class MultiplyPostProcessorPrototype(multiply: ReadOnlyTexture,
                                              private val components: Int) : RenderPassPrototype {
 
     @UniformProperty
@@ -35,11 +35,11 @@ private class MultiplyPostProcessorPrototype(private val multiply: ReadOnlyTextu
 
     @UniformProperty
     val multiplyUniform = object : TextureUniform() {
-        override fun getUnit() = 1
+        override val unit = 1
 
-        override fun getName() = "u_multiply"
+        override val name = "u_multiply"
 
-        override fun getUniformValue() = multiply
+        override val value = multiply
     }
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,

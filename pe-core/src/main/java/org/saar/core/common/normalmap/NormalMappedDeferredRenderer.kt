@@ -35,9 +35,9 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
     @UniformProperty
     private val specularUniform = object : FloatUniform() {
-        override fun getName() = "u_specular"
+        override val name = "u_specular"
 
-        override fun getUniformValue() = 2.5f
+        override val value = 2.5f
     }
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
@@ -70,7 +70,7 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
     }
 
     override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {
-        this.transformationUniform.value = model.transform.transformationMatrix
+        this.transformationUniform.value.set(model.transform.transformationMatrix)
         this.textureUniform.value = model.texture
         this.normalMapUniform.value = model.normalMap
     }

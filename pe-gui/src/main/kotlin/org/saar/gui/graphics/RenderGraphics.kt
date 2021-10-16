@@ -26,20 +26,21 @@ class RenderGraphics : Graphics {
 
     @UniformProperty
     private val windowSizeUniform = object : Vec2iUniform() {
-        override fun getName(): String = "windowSize"
+        override val name = "windowSize"
 
-        override fun getUniformValue(): Vector2ic {
-            val width = Window.current().width
-            val height = Window.current().height
-            return windowSize.set(width, height)
-        }
+        override val value: Vector2ic
+            get() {
+                val width = Window.current().width
+                val height = Window.current().height
+                return windowSize.set(width, height)
+            }
     }
 
     @UniformProperty
     private val colourUniform = object : UIntUniform() {
-        override fun getName(): String = "colour"
+        override val name = "colour"
 
-        override fun getUniformValue(): Int = colour.asInt()
+        override val value get() = colour.asInt()
     }
 
     companion object {

@@ -31,9 +31,9 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
     private val specularUniform = object : FloatUniform() {
-        override fun getName() = "u_specular"
+        override val name = "u_specular"
 
-        override fun getUniformValue() = 2.5f
+        override val value = 2.5f
     }
 
     @UniformProperty
@@ -66,7 +66,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
-        this.transformUniform.value = model.transform.transformationMatrix
+        this.transformUniform.value.set(model.transform.transformationMatrix)
         this.textureUniform.value = model.texture
     }
 

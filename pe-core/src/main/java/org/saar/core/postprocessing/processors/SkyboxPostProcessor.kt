@@ -39,11 +39,11 @@ private class SkyboxPostProcessorPrototype(val cubeMap: CubeMapTexture) : Render
 
     @UniformProperty
     val cubeMapUniform = object : TextureUniform() {
-        override fun getUnit() = 0
+        override val unit = 0
 
-        override fun getName() = "u_cubeMap"
+        override val name = "u_cubeMap"
 
-        override fun getUniformValue() = cubeMap
+        override val value get() = cubeMap
     }
 
     @UniformProperty

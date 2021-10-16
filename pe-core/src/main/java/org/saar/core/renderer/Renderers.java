@@ -4,7 +4,7 @@ import org.saar.core.renderer.shaders.ShaderPropertiesLocator;
 import org.saar.core.renderer.uniforms.UniformPropertiesLocator;
 import org.saar.core.renderer.uniforms.UniformTrigger;
 import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.uniforms.Uniform;
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer;
 
 import java.util.List;
 
@@ -27,11 +27,11 @@ public final class Renderers {
         return new ShaderPropertiesLocator(renderer).getFragmentShaders();
     }
 
-    public static List<Uniform> findUniforms(Object renderer) {
+    public static List<UniformContainer> findUniforms(Object renderer) {
         return new UniformPropertiesLocator(renderer).getUniforms();
     }
 
-    public static List<Uniform> findUniformsByTrigger(Object renderer, UniformTrigger trigger) {
+    public static List<UniformContainer> findUniformsByTrigger(Object renderer, UniformTrigger trigger) {
         return new UniformPropertiesLocator(renderer).getUniformsByTrigger(trigger);
     }
 }

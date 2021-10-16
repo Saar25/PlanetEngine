@@ -52,7 +52,7 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
         this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
         this.textureUniform.value = model.texture
-        this.transformUniform.value = model.transform.transformationMatrix
+        this.transformUniform.value.set(model.transform.transformationMatrix)
     }
 
     override fun doInstanceDraw(context: RenderContext, model: ObjModel) = model.draw()

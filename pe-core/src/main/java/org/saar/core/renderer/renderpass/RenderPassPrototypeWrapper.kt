@@ -5,6 +5,7 @@ import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformWrapper
 
 class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : RenderPass {
 
@@ -14,22 +15,28 @@ class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : R
     )
 
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
+        .also { this.shadersProgram.bind() }
         .let {
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.ALWAYS)
+                .flatMap { u -> u.subUniforms }
+                .map { u -> UniformWrapper(this.shadersProgram.getUniformLocation(u.name), u) }
                 .fold(it) { helper, uniform -> helper.addUniform(uniform) }
         }
         .let {
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_INSTANCE)
+                .flatMap { u -> u.subUniforms }
+                .map { u -> UniformWrapper(this.shadersProgram.getUniformLocation(u.name), u) }
                 .fold(it) { helper, uniform -> helper.addPerInstanceUniform(uniform) }
         }
         .let {
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_RENDER_CYCLE)
+                .flatMap { u -> u.subUniforms }
+                .map { u -> UniformWrapper(this.shadersProgram.getUniformLocation(u.name), u) }
                 .fold(it) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
         }
 
     init {
         this.shadersProgram.bind()
-        this.uniformsHelper.initialize(this.shadersProgram)
         this.shadersProgram.bindFragmentOutputs("f_colour")
     }
 
