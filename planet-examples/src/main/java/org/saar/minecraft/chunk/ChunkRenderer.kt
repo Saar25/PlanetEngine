@@ -1,58 +1,66 @@
 package org.saar.minecraft.chunk
 
-import org.joml.*
-import org.saar.core.renderer.*
+import org.joml.FrustumIntersection
+import org.joml.Vector2i
+import org.joml.Vector2ic
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.shaders.*
+import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
+import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.shaders.GlslVersion
+import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
-import org.saar.lwjgl.opengl.textures.Texture
-import org.saar.lwjgl.opengl.textures.Texture2D
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
+import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 import org.saar.minecraft.Chunk
 import org.saar.minecraft.World
 
-private val prototype = ChunkRendererPrototype()
+private fun FrustumIntersection.testChunk(chunk: Chunk) = testAab(
+    chunk.bounds.min.x().toFloat(),
+    chunk.bounds.min.y().toFloat(),
+    chunk.bounds.min.z().toFloat(),
+    chunk.bounds.max.x().toFloat() + 1,
+    chunk.bounds.max.y().toFloat() + 1,
+    chunk.bounds.max.z().toFloat() + 1
+)
 
-class ChunkRenderer(private val world: World, private val atlas: Texture2D) : Renderer,
-    RendererPrototypeWrapper<Chunk>(prototype) {
+object ChunkRenderer : Renderer {
 
     val rayCastedFace: Vec4iUniformValue
         get() = prototype.rayCastedFace
 
-    override fun doRender(context: RenderContext) {
+    private val prototype = ChunkRendererPrototype()
+    private val helper = RendererPrototypeHelper(prototype)
+
+    fun render(context: RenderContext, world: World) {
         val view = context.camera.viewMatrix
         val projection = context.camera.projection.matrix
         val frustumIntersection = FrustumIntersection(
-            projection.mul(view, Matrix4.create()))
+            projection.mul(view, Matrix4.create())
+        )
 
-        prototype.atlas = this.atlas
-
-        for (chunk in this.world.chunks) {
-            val intersect = frustumIntersection.testAab(
-                chunk.bounds.min.x().toFloat(),
-                chunk.bounds.min.y().toFloat(),
-                chunk.bounds.min.z().toFloat(),
-                chunk.bounds.max.x().toFloat() + 1,
-                chunk.bounds.max.y().toFloat() + 1,
-                chunk.bounds.max.z().toFloat() + 1
-            )
-
-            if (intersect) renderModel(context, chunk)
-        }
+        this.helper.render(context, world.chunks.filter { frustumIntersection.testChunk(it) })
     }
 
-    override fun doRenderModel(context: RenderContext, model: Chunk) {
-        model.drawOpaque()
+    override fun delete() {
+        this.helper.delete()
+        this.prototype.atlas.delete()
     }
 }
 
 private class ChunkRendererPrototype : RendererPrototype<Chunk> {
 
-    var atlas: ReadOnlyTexture = Texture.NULL
+    var atlas: ReadOnlyTexture2D = Texture2D.NULL
 
     @UniformProperty
     val rayCastedFace = Vec4iUniformValue("u_rayCastedFace")
@@ -79,23 +87,26 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
     @UniformProperty
     private val chunkCoordinateUniform = Vec2iUniformValue("u_chunkCoordinate")
 
-    @ShaderProperty(ShaderType.VERTEX)
-    private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/minecraft/shaders/block.vertex.glsl"))
+    @ShaderProperty
+    private val vertex: Shader = Shader.createVertex(
+        GlslVersion.V400,
+        ShaderCode.loadSource("/minecraft/shaders/block.vertex.glsl")
+    )
 
-    @ShaderProperty(ShaderType.FRAGMENT)
-    private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/minecraft/shaders/block.fragment.glsl"))
+    @ShaderProperty
+    private val fragment: Shader = Shader.createFragment(
+        GlslVersion.V400,
+        ShaderCode.loadSource("/minecraft/shaders/block.fragment.glsl")
+    )
 
     override fun vertexAttributes() = arrayOf("in_data")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.enableDepthTest()
-        GlUtils.enableDepthMasking()
+        DepthTest.enable()
         GlUtils.setCullFace(GlCullFace.BACK)
         GlUtils.setProvokingVertexFirst()
-        GlUtils.disableClipPlane(0)
-        GlUtils.disableBlending()
+        BlendTest.disable()
+        ClipPlaneTest.disable()
 
 
         val v = context.camera.viewMatrix
@@ -106,4 +117,6 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
     override fun onInstanceDraw(context: RenderContext, chunk: Chunk) {
         this.chunkCoordinateUniform.value = chunk.position
     }
+
+    override fun doInstanceDraw(context: RenderContext, instance: Chunk) = instance.drawOpaque()
 }

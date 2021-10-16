@@ -14,7 +14,7 @@ in vec2 v_uvCoords2;
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
 
-const float[] lights = { .75, .75, 1.0, .25, .50, .50 };
+const float[] lights = float[]( .75, .75, 1.0, .25, .50, .50 );
 
 void main(void) {
     float transitionCross = v_dir == TOP_DIR ? u_transitionCross : 0;

@@ -18,6 +18,6 @@ public class ChunkMeshWriter implements MeshVertexWriter<ChunkVertex> {
                 | (vertex.getBlockId() & 0xFF) << 8
                 | (vertex.getVertexId() & 0b111) << 5
                 | (vertex.getTextureInc() ? 1 : 0) << 4;
-        this.prototype.getDataBuffer().getWriter().write(data);
+        this.prototype.getDataBuffer().getWriter().writeInt(data);
     }
 }

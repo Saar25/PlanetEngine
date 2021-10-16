@@ -11,7 +11,7 @@ in vec3 v_position;
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
 
-const float[] lights = { .75, .75, 1.0, .25, .50, .50 };
+const float[] lights = float[]( .75, .75, 1.0, .25, .50, .50 );
 
 void main(void) {
 //    f_colour = vec4(colours[v_id], 1);

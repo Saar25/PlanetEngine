@@ -1,6 +1,5 @@
 package org.saar.minecraft.entity;
 
-import org.joml.AABBf;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.maths.transform.Position;
@@ -10,7 +9,6 @@ import org.saar.minecraft.BlockContainer;
 import org.saar.minecraft.World;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HitBox {
@@ -52,12 +50,15 @@ public class HitBox {
     }
 
     public boolean isColliding(Vector3fc camera, BlockContainer block) {
-        final AABBf aabB = new AABBf(block.getX(), block.getY(), block.getZ(),
-                block.getX() + 1, block.getY() + 1, block.getZ() + 1);
-        return Arrays.stream(this.vertices).map(v -> Vector3.add(v, camera)).anyMatch(aabB::testPoint);
+        return false;
+
+//        final AABBf aabB = new AABBf(block.getX(), block.getY(), block.getZ(),
+//                block.getX() + 1, block.getY() + 1, block.getZ() + 1);
+//
+//        return Arrays.stream(this.vertices).map(v -> Vector3.add(v, camera)).anyMatch(aabB::testPoint);
 //        for (Vector3fc vertex : this.vertices) {
 //            if (aabB.testPoint(vertex.x() + camera.x(), vertex.y(), camera.y(), vertex.z() + camera.z())) {
-//                return true;
+//                return true;AABBf0
 //            }
 //        }
 //        return false;

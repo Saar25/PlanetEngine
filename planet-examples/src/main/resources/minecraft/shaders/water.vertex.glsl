@@ -3,25 +3,25 @@
 */
 
 // Consts
-const vec2[] uvCoords = {
+const vec2[] uvCoords = vec2[](
 vec2(+0.0, +1.0), vec2(+0.0, +0.0),
 vec2(+1.0, +0.0), vec2(+1.0, +1.0)
-};
+);
 
-const int[] indexMap = {
+const int[] indexMap = int[](
 0, 1, 2, 0, 2, 3
-};
+);
 
-const vec3[] vertexMap = {
+const vec3[] vertexMap = vec3[](
 vec3(0, 0, 0), vec3(1, 0, 0),
 vec3(0, 0, 1), vec3(1, 0, 1),
 vec3(0, 1, 0), vec3(1, 1, 0),
-vec3(0, 1, 1), vec3(1, 1, 1),
-};
+vec3(0, 1, 1), vec3(1, 1, 1)
+);
 
-const int[] directionMap = {
+const int[] directionMap = int[](
 5, 3, 1, 4, 2, 0, -1, -1
-};
+);
 
 const int TOP_DIR = 2;
 

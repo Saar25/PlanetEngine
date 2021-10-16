@@ -3,11 +3,12 @@ package org.saar.minecraft.chunk;
 import org.saar.core.mesh.build.MeshBuilder;
 import org.saar.core.mesh.build.MeshPrototypeHelper;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 
 public class ChunkMeshBuilder implements MeshBuilder {
 
-    private static final Attribute dataAttribute = Attribute.ofInteger(0, 1, DataType.U_INT);
+    private static final IAttribute dataAttribute = Attributes.ofInteger(0, 1, DataType.U_INT);
 
     private static final int[] indices = {0, 1, 2, 0, 2, 3};
 
