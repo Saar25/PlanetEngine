@@ -1,33 +1,29 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.shaders.*
+import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.shaders.GlslVersion
+import org.saar.lwjgl.opengl.shaders.Shader
+import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
+import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
-class FlatReflectedRenderer(vararg models: FlatReflectedModel, reflectionMap: ReadOnlyTexture) : Renderer,
-    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype(reflectionMap), *models)
+object FlatReflectedRenderer : Renderer, RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype())
 
-private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnlyTexture) :
-    RendererPrototype<FlatReflectedModel> {
+private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflectedModel> {
 
     @UniformProperty
-    private val reflectionMapUniform = object : TextureUniform() {
-        override fun getUnit(): Int = 1
-
-        override fun getName(): String = "u_reflectionMap"
-
-        override fun getUniformValue(): ReadOnlyTexture {
-            return this@FlatReflectedRendererPrototype.reflectionMap
-        }
-    }
+    private val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 1)
 
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
@@ -35,11 +31,11 @@ private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnly
     @UniformProperty
     private val normalUniform = Vec3UniformValue("u_normal")
 
-    @ShaderProperty(ShaderType.VERTEX)
+    @ShaderProperty
     private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
 
-    @ShaderProperty(ShaderType.FRAGMENT)
+    @ShaderProperty
     private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.fragment.glsl"))
 
@@ -48,9 +44,9 @@ private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnly
 
     override fun onRenderCycle(context: RenderContext) {
         GlUtils.setCullFace(GlCullFace.NONE)
-        GlUtils.enableAlphaBlending()
-        GlUtils.enableDepthTest()
         GlUtils.setProvokingVertexFirst()
+        BlendTest.disable()
+        DepthTest.enable()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
@@ -58,6 +54,10 @@ private class FlatReflectedRendererPrototype(private val reflectionMap: ReadOnly
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
+        this.reflectionMapUniform.value = model.reflectionMap
+        this.normalUniform.value = model.normal
     }
+
+    override fun doInstanceDraw(context: RenderContext, model: FlatReflectedModel) = model.draw()
 }

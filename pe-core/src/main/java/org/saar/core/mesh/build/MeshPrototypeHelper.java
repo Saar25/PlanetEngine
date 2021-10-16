@@ -5,7 +5,7 @@ import org.saar.core.mesh.Vertex;
 import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
 import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
 import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
-import org.saar.lwjgl.opengl.objects.vaos.WriteableVao;
+import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class MeshPrototypeHelper {
         this.locator = new MeshBufferLocator(prototype);
     }
 
-    public void loadToVao(WriteableVao vao) {
+    public void loadToVao(WritableVao vao) {
         for (MeshBuffer buffer : getBuffers()) {
             buffer.loadInVao(vao);
         }

@@ -11,8 +11,8 @@ public interface OffScreen extends Screen {
     }
 
     default void resizeToMainScreen() {
-        final int width = MainScreen.getInstance().getWidth();
-        final int height = MainScreen.getInstance().getHeight();
+        final int width = MainScreen.INSTANCE.getWidth();
+        final int height = MainScreen.INSTANCE.getHeight();
         assureSize(width, height);
     }
 

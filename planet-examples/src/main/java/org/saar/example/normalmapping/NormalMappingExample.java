@@ -1,38 +1,44 @@
 package org.saar.example.normalmapping;
 
+import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.normalmap.NormalMappedDeferredRenderer;
+import org.saar.core.common.behaviors.KeyboardMovementBehavior;
+import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
+import org.saar.core.common.behaviors.MouseRotationBehavior;
 import org.saar.core.common.normalmap.NormalMappedMesh;
 import org.saar.core.common.normalmap.NormalMappedModel;
-import org.saar.core.common.obj.ObjDeferredRenderer;
+import org.saar.core.common.normalmap.NormalMappedNode;
+import org.saar.core.common.normalmap.NormalMappedNodeBatch;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
+import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.RenderersGroup;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.RenderPassesPipeline;
-import org.saar.core.renderer.deferred.shadow.ShadowsQuality;
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderPass;
-import org.saar.core.renderer.deferred.shadow.ShadowsRenderingPath;
-import org.saar.core.renderer.deferred.ssao.SsaoRenderPass;
+import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
+import org.saar.core.renderer.shadow.ShadowsQuality;
+import org.saar.core.renderer.shadow.ShadowsRenderNode;
+import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
+import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
-import org.saar.example.MyScreenPrototype;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.textures.ColourTexture;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.clear.ClearColour;
+import org.saar.lwjgl.opengl.texture.ColourTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
+import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.transform.Position;
 
 import java.util.Objects;
@@ -42,113 +48,126 @@ public class NormalMappingExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    private static float scrollSpeed = 50f;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
+        ClearColour.set(0, .7f, .9f);
+
+        final Keyboard keyboard = window.getKeyboard();
+        final Mouse mouse = window.getMouse();
+
         final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.getInstance(), 70f, 1, 1000);
-        final Camera camera = new Camera(projection);
+                MainScreen.INSTANCE, 70f, 1, 1000);
+
+        final KeyboardMovementBehavior cameraMovementBehavior =
+                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
+        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
+                new KeyboardMovementScrollVelocityBehavior(mouse),
+                new MouseRotationBehavior(mouse, -.3f));
+
+        final Camera camera = new Camera(projection, behaviors);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final ObjModel cottageNode = Objects.requireNonNull(loadCottage());
+        final NormalMappedNodeBatch normalMappedNodeBatch =
+                buildNormalMappedNodeBatch();
 
-        final ObjModel dragonNode = Objects.requireNonNull(loadDragon());
-        dragonNode.getTransform().getPosition().set(50, 0, 0);
+        final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
-        final ObjModel stallNode = Objects.requireNonNull(loadStall());
-        stallNode.getTransform().getRotation().rotateDegrees(0, 180, 0);
-        stallNode.getTransform().getPosition().set(-50, 0, 0);
-
-        final ObjDeferredRenderer renderer = new ObjDeferredRenderer(cottageNode, dragonNode, stallNode);
-
-        final NormalMappedModel boulder = Objects.requireNonNull(loadBoulder());
-        boulder.getTransform().getPosition().set(0, 20, 0);
-
-        final NormalMappedModel barrel = Objects.requireNonNull(loadBarrel());
-        barrel.getTransform().getPosition().set(-20, 20, 0);
-
-        final NormalMappedModel crate = Objects.requireNonNull(loadCrate());
-        crate.getTransform().getPosition().set(+20, 20, 0);
-        crate.getTransform().getScale().scale(.05f);
-
-        final NormalMappedDeferredRenderer normalMappedRenderer =
-                new NormalMappedDeferredRenderer(boulder, barrel, crate);
-
-        final Instance3D cube = R3D.instance();
-        cube.getTransform().getScale().set(10, 10, 10);
-        cube.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, new Instance3D[]{cube});
-        final Model3D cubeModel = new Model3D(cubeMesh);
-
-        final DeferredRenderer3D renderer3D = new DeferredRenderer3D(cubeModel);
-
-        final Keyboard keyboard = window.getKeyboard();
+        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final RenderersGroup shadowsRenderersGroup = new RenderersGroup(
-                normalMappedRenderer, renderer, renderer3D);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch, nodeBatch3D);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderersGroup);
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().toTexture();
+                ShadowsQuality.LOW, shadowProjection, light, shadowsRenderNode);
+        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
-        final MyScreenPrototype screenPrototype = new MyScreenPrototype();
-
-        final RenderersGroup renderersGroup = new RenderersGroup(normalMappedRenderer, renderer3D, renderer);
-
-        final RenderPassesPipeline renderPassesPipeline = new RenderPassesPipeline(
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
-                new SsaoRenderPass()
-        );
-
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                screenPrototype, camera, renderersGroup, renderPassesPipeline);
-
-        final Mouse mouse = window.getMouse();
-        ExamplesUtils.addRotationListener(camera, mouse);
-        mouse.addScrollListener(e -> {
-            scrollSpeed += e.getOffset();
-            scrollSpeed = Math.max(scrollSpeed, 1);
-        });
-        GlUtils.setClearColour(0, .7f, .9f);
-
-        final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
         );
 
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
+                nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
+                camera, renderNode, renderPassesPipeline);
+
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
-            pipeline.process(texture).toMainScreen();
+            camera.update();
+
+            deferredRenderer.render().toMainScreen();
 
             window.update(true);
             window.pollEvents();
 
             final long delta = System.currentTimeMillis() - current;
-            ExamplesUtils.move(camera, keyboard, delta, scrollSpeed);
 
             final float fps = 1000f / delta;
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", scrollSpeed) +
+                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps) +
                     ", Delta: " + delta);
             current = System.currentTimeMillis();
         }
 
-        pipeline.delete();
-        renderersGroup.delete();
+        camera.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
+    }
+
+    private static NodeBatch3D buildNodeBatch3D() {
+        final Instance3D cubeInstance = R3D.instance();
+        cubeInstance.getTransform().getScale().set(10, 10, 10);
+        cubeInstance.getTransform().getPosition().set(0, 0, 50);
+        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
+                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Model3D cubeModel = new Model3D(cubeMesh);
+        final Node3D cube = new Node3D(cubeModel);
+
+        return new NodeBatch3D(cube);
+    }
+
+    private static NormalMappedNodeBatch buildNormalMappedNodeBatch() {
+        final NormalMappedModel boulderModel = Objects.requireNonNull(loadBoulder());
+        boulderModel.getTransform().getPosition().set(0, 20, 0);
+        final NormalMappedNode boulder = new NormalMappedNode(boulderModel);
+
+        final NormalMappedModel barrelModel = Objects.requireNonNull(loadBarrel());
+        barrelModel.getTransform().getPosition().set(-20, 20, 0);
+        final NormalMappedNode barrel = new NormalMappedNode(barrelModel);
+
+        final NormalMappedModel crateModel = Objects.requireNonNull(loadCrate());
+        crateModel.getTransform().getPosition().set(+20, 20, 0);
+        crateModel.getTransform().getScale().scale(.05f);
+        final NormalMappedNode crate = new NormalMappedNode(crateModel);
+
+        return new NormalMappedNodeBatch(boulder, barrel, crate);
+    }
+
+    private static ObjNodeBatch buildObjNodeBatch() {
+        final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
+        final ObjNode cottage = new ObjNode(cottageModel);
+
+        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
+        dragonModel.getTransform().getPosition().set(50, 0, 0);
+        final ObjNode dragon = new ObjNode(dragonModel);
+
+        final ObjModel stallModel = Objects.requireNonNull(loadStall());
+        stallModel.getTransform().getRotation().rotateDegrees(0, 180, 0);
+        stallModel.getTransform().getPosition().set(-50, 0, 0);
+        final ObjNode stall = new ObjNode(stallModel);
+
+        return new ObjNodeBatch(cottage, dragon, stall);
     }
 
     private static ObjModel loadCottage() {

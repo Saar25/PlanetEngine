@@ -7,12 +7,13 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class FlatReflectedMesh implements Mesh {
 
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
+    private static final IAttribute positionAttribute = Attributes.of(0, 3, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
@@ -28,17 +29,16 @@ public class FlatReflectedMesh implements Mesh {
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
         helper.allocateIndices(indices);
         helper.allocateVertices(vertices);
 
         final FlatReflectedMeshWriter writer = new FlatReflectedMeshWriter(prototype);
         writer.writeVertices(vertices);
         writer.writeIndices(indices);
-
         helper.store();
+
+        final Vao vao = Vao.create();
+        helper.loadToVao(vao);
 
         final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);

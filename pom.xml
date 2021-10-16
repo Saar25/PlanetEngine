@@ -9,17 +9,39 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>1.5.30</kotlin.version>
+        <java.source>15</java.source>
+        <java.target>15</java.target>
+        <maven.compiler.source>${java.source}</maven.compiler.source>
+        <maven.compiler.target>${java.target}</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>pe-lwjgl-binding</module>
+        <module>pe-math</module>
+        <module>planet-examples</module>
+        <module>pe-core</module>
+        <module>pe-gui</module>
+    </modules>
+
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-                <version>3.5.1</version>
-            </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -41,50 +63,38 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
+                    <jvmTarget>${java.target}</jvmTarget>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <joml.version>1.9.20</joml.version>
-        <kotlin.version>1.4.20</kotlin.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.joml</groupId>
-            <artifactId>joml</artifactId>
-            <version>${joml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.saar25</groupId>
-            <artifactId>jproperty</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-    </dependencies>
-
-    <modules>
-        <module>pe-lwjgl-binding</module>
-        <module>pe-math</module>
-        <module>pe-util</module>
-        <module>planet-examples</module>
-        <module>pe-core</module>
-        <module>pe-gui</module>
-    </modules>
-
 
 </project>

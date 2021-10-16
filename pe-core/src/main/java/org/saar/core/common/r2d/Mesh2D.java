@@ -7,14 +7,15 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 
 public class Mesh2D implements Mesh {
 
-    private static final Attribute positionAttribute = Attribute.of(0, 2, DataType.FLOAT, false);
+    private static final IAttribute positionAttribute = Attributes.of(0, 2, DataType.FLOAT, false);
 
-    private static final Attribute colourAttribute = Attribute.of(1, 3, DataType.FLOAT, false);
+    private static final IAttribute colourAttribute = Attributes.of(1, 3, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
@@ -27,9 +28,6 @@ public class Mesh2D implements Mesh {
         prototype.getColourBuffer().addAttribute(colourAttribute);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
         helper.allocateIndices(indices);
         helper.allocateVertices(vertices);
 
@@ -38,6 +36,9 @@ public class Mesh2D implements Mesh {
         writer.writeIndices(indices);
 
         helper.store();
+
+        final Vao vao = Vao.create();
+        helper.loadToVao(vao);
 
         final DrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);

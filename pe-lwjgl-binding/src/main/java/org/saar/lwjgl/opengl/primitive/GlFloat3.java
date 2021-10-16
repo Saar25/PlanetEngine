@@ -3,8 +3,9 @@ package org.saar.lwjgl.opengl.primitive;
 import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.util.DataWriter;
 import org.saar.maths.utils.Vector3;
 
 public class GlFloat3 extends GlPrimitiveBase implements GlPrimitive {
@@ -32,15 +33,13 @@ public class GlFloat3 extends GlPrimitiveBase implements GlPrimitive {
     }
 
     @Override
-    public Attribute[] attribute(int index, boolean normalized, int instances) {
-        return new Attribute[]{Attribute.ofInstances(index, 3, DATA_TYPE, normalized, instances)};
+    public IAttribute[] attribute(int index, boolean normalized, int instances) {
+        return new IAttribute[]{Attributes.ofInstanced(index, 3, DATA_TYPE, normalized, instances)};
     }
 
     @Override
-    public void write(BufferWriter buffer) {
-        buffer.write(getValue().x());
-        buffer.write(getValue().y());
-        buffer.write(getValue().z());
+    public void write(DataWriter writer) {
+        writer.write3f(getValue());
     }
 
     @Override

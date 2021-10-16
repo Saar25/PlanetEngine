@@ -1,5 +1,6 @@
 package org.saar.maths.objects;
 
+import org.joml.Intersectionf;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.saar.maths.utils.Maths;
@@ -20,19 +21,12 @@ public class Triangle {
     }
 
     public boolean contains(Vector3fc point) {
-        Vector3fc e21 = Vector3.sub(p2, p1);
-        Vector3fc e31 = Vector3.sub(p3, p1);
-        Vector3fc ep1 = Vector3.sub(point, p1);
-        float a = e21.dot(e21);
-        float b = e21.dot(e31);
-        float c = e31.dot(e31);
-        float d = ep1.dot(e21);
-        float e = ep1.dot(e31);
-        float ac_bb = a * c - b * b;
-        int x = (int) (d * c - e * b);
-        int y = (int) (e * a - d * b);
-        int z = (int) (x + y - ac_bb);
-        return ((z & ~(x | y)) & 0x80000000) != 0;
+        return Intersectionf.testPointInTriangle(
+                point.x(), point.y(), point.z(),
+                this.p1.x(), this.p1.y(), this.p1.z(),
+                this.p2.x(), this.p2.y(), this.p2.z(),
+                this.p3.x(), this.p3.y(), this.p3.z()
+        );
     }
 
     public boolean contains(float x, float z) {

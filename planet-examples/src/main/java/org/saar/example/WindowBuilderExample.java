@@ -2,17 +2,18 @@ package org.saar.example;
 
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.glfw.window.hint.WindowHintResizeable;
-import org.saar.lwjgl.glfw.window.hint.WindowHintTransparentFramebuffer;
+import org.saar.lwjgl.glfw.window.WindowHints;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class WindowBuilderExample {
 
@@ -21,9 +22,10 @@ public class WindowBuilderExample {
 
     public static void main(String[] args) throws Exception {
         final Window window = Window.builder("Lwjgl", WIDTH, HEIGHT, true)
-                .hint(new WindowHintTransparentFramebuffer(true))
-                .hint(new WindowHintResizeable(false))
+                .hint(WindowHints.transparent())
+                .hint(WindowHints.resizable())
                 .build();
+        window.setFullscreen();
 
         final Vao vao = Vao.create();
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
@@ -33,9 +35,10 @@ public class WindowBuilderExample {
                 +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
         vao.loadVbo(vbo,
-                Attribute.of(0, 2, DataType.FLOAT, false),
-                Attribute.of(1, 3, DataType.FLOAT, false),
-                Attribute.of(2, 1, DataType.FLOAT, false));
+                Attributes.of(0, 2, DataType.FLOAT, false),
+                Attributes.of(1, 3, DataType.FLOAT, false),
+                Attributes.of(2, 1, DataType.FLOAT, false));
+        vbo.delete();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -48,11 +51,15 @@ public class WindowBuilderExample {
         vao.enableAttributes();
 
         final Keyboard keyboard = window.getKeyboard();
+        keyboard.onKeyPress('K').perform(e -> window.setFullscreen());
+        keyboard.onKeyPress('J').perform(e -> window.setMaximized());
+
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            GlUtils.clear(GlBuffer.COLOUR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             window.update(true);
-            window.pollEvents();
+            window.waitEvents();
         }
 
         vao.delete();

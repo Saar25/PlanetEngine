@@ -23,7 +23,7 @@ public class ScreenFbo implements ReadOnlyFbo, ReadableFbo, DrawableFbo {
 
     @Override
     public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
-                                int h2, FboBlitFilter filter, GlBuffer... buffers) {
+                                int h2, FboBlitFilter filter, GlBuffer[] buffers) {
         getFbo().blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, buffers);
     }
 

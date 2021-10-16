@@ -5,6 +5,7 @@ in mat3 v_TBN;
 // Uniforms
 uniform sampler2D u_texture;
 uniform sampler2D u_normalMap;
+uniform mat4 u_normalMatrix;
 
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
@@ -14,6 +15,5 @@ void main(void) {
 
     vec3 normal = texture(u_normalMap, v_uvCoord).rgb;
     normal = normalize(v_TBN * (normal * 2.0 - 1.0));
-
-    f_normal = vec4(normal, 1);
+    normal = (u_normalMatrix * vec4(normal, 0)).xyz;
 }

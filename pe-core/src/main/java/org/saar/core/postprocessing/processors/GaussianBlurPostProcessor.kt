@@ -1,10 +1,11 @@
 package org.saar.core.postprocessing.processors
 
 import org.joml.Vector2i
-import org.saar.core.postprocessing.PostProcessingContext
+import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.postprocessing.PostProcessorPrototype
-import org.saar.core.postprocessing.PostProcessorPrototypeWrapper
+import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.renderpass.RenderPassPrototype
+import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -14,11 +15,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.pow
-
-private val blurLevels: Array<Float> = arrayOf(
-    0.0093f, 0.028002f, 0.065984f, 0.121703f,
-    0.175713f, 0.198596f, 0.175713f, 0.121703f,
-    0.065984f, 0.028002f, 0.0093f)
 
 private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
     val mean = samples / 2
@@ -35,31 +31,44 @@ private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
     return kernel
 }
 
-class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor,
-    PostProcessorPrototypeWrapper(GaussianBlurPostProcessorPrototype(calculateGaussianKernel(samples, sigma))) {
+class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor {
 
-    override fun doProcess(context: PostProcessingContext) {
-        super.doProcess(context)
-        super.doProcess(context)
+    private val samples = calculateGaussianKernel(samples, sigma)
+    private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
+    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+
+    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        this.wrapper.render {
+            this.prototype.textureUniform.value = buffers.albedo
+
+            this.prototype.verticalBlurUniform.value = true
+        }
+        this.wrapper.render {
+            this.prototype.textureUniform.value = buffers.albedo
+
+            this.prototype.verticalBlurUniform.value = false
+        }
+    }
+
+    override fun delete() {
+        this.wrapper.delete()
     }
 }
 
-private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : PostProcessorPrototype {
+private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : RenderPassPrototype {
 
     @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
+    val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformProperty
-    private val resolutionUniform = object : Vec2iUniform() {
+    val resolutionUniform = object : Vec2iUniform() {
         override fun getName() = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(
-            MainScreen.getInstance().width,
-            MainScreen.getInstance().height)
+        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
-    private val blurLevelsUniform = UniformArray("u_blurLevels", this.samples.size) { name, index ->
+    val blurLevelsUniform: UniformArray<FloatUniform> = UniformArray("u_blurLevels", this.samples.size) { name, index ->
         object : FloatUniform() {
             override fun getName() = name
 
@@ -69,16 +78,9 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     }
 
     @UniformProperty
-    private val verticalBlurUniform = IntUniformValue("u_verticalBlur")
+    val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
     override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("LEVELS", this.samples.size.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl"))
-
-    override fun onRender(context: PostProcessingContext) {
-        this.textureUniform.value = context.texture
-
-        val vertical = 1 - this.verticalBlurUniform.value
-        this.verticalBlurUniform.value = vertical
-    }
 }

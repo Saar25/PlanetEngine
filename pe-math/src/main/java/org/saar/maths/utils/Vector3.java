@@ -118,12 +118,6 @@ public final class Vector3 {
         return Vector3.of(ZERO.x(), ZERO.y(), ZERO.z());
     }
 
-    /*
-     *
-     * Methods for static operations on vectors
-     *
-     */
-
     public static Vector3f add(Vector3fc v1, Vector3fc v2) {
         return Vector3.of(v1).add(v2);
     }
@@ -162,10 +156,6 @@ public final class Vector3 {
 
     public static float length(float x, float y, float z) {
         return (float) Math.sqrt(x * x + y * y + z * z);
-    }
-
-    public static float length(Vector3fc vector) {
-        return vector.length();
     }
 
     public static Vector3f randomize(Vector3f vector) {

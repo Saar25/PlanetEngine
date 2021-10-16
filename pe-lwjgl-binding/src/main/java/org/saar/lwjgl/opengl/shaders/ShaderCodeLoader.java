@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.shaders;
 
-import org.saar.utils.file.TextFileLoader;
+import org.saar.lwjgl.util.FileLoader;
 
 import java.util.Arrays;
 
@@ -12,13 +12,13 @@ public final class ShaderCodeLoader {
     }
 
     public static String loadSource(String file) throws Exception {
-        final String code = TextFileLoader.loadResource(file);
+        final String code = FileLoader.loadTextFile(file);
         return preProcessCode(code);
     }
 
     public static String loadSource(String file, boolean required, String... included) throws ShaderLoaderException {
         try {
-            final String code = TextFileLoader.loadResource(file);
+            final String code = FileLoader.loadTextFile(file);
             return preProcessCode(code, included);
         } catch (Exception e) {
             if (required) {
@@ -42,15 +42,15 @@ public final class ShaderCodeLoader {
                 final String[] newIncluded = Arrays.copyOf(included, included.length + 1);
                 newIncluded[included.length] = include;
 
-                codeBuilder.append(loadSource(include + ".struct.glsl", false, newIncluded));
-                codeBuilder.append(loadSource(include + ".header.glsl", false, newIncluded));
-                toAppend.append(loadSource(include + ".source.glsl", true, newIncluded));
+                codeBuilder.append(loadSource(include + ".struct.glsl", false, newIncluded)).append('\n');
+                codeBuilder.append(loadSource(include + ".header.glsl", false, newIncluded)).append('\n');
+                toAppend.append(loadSource(include + ".source.glsl", true, newIncluded)).append('\n');
             } else {
-                codeBuilder.append(line);
+                codeBuilder.append(line).append('\n');
             }
         }
 
-        return codeBuilder.append(toAppend).toString();
+        return codeBuilder.append(toAppend).append('\n').toString();
     }
 
     private static String findMacroStringValue(String line) {

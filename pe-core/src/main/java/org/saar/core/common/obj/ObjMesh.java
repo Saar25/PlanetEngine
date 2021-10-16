@@ -1,26 +1,11 @@
 package org.saar.core.common.obj;
 
-
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.build.MeshPrototypeHelper;
-import org.saar.lwjgl.assimp.AssimpMesh;
-import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.assimp.component.AssimpNormalComponent;
-import org.saar.lwjgl.assimp.component.AssimpPositionComponent;
-import org.saar.lwjgl.assimp.component.AssimpTexCoordComponent;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.core.mesh.Meshes;
+
+import java.util.Collection;
 
 public class ObjMesh implements Mesh {
-
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
-    private static final Attribute uvCoordAttribute = Attribute.of(1, 2, DataType.FLOAT, false);
-    private static final Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
@@ -28,30 +13,8 @@ public class ObjMesh implements Mesh {
         this.mesh = mesh;
     }
 
-    private static void addAttributes(ObjMeshPrototype prototype) {
-        prototype.getPositionBuffer().addAttribute(positionAttribute);
-        prototype.getUvCoordBuffer().addAttribute(uvCoordAttribute);
-        prototype.getNormalBuffer().addAttribute(normalAttribute);
-    }
-
-    static void initPrototype(ObjMeshPrototype prototype, int vertices, int indices) {
-        addAttributes(prototype);
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-        helper.allocateVertices(vertices);
-        helper.allocateIndices(indices);
-    }
-
     static ObjMesh create(ObjMeshPrototype prototype, int indices) {
-        final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.store();
-
-        final DrawCall drawCall = new ElementsDrawCall(
-                RenderMode.TRIANGLES, indices, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new ObjMesh(mesh);
+        return new ObjMesh(Meshes.toElementsMesh(prototype, indices));
     }
 
     public static ObjMesh load(ObjMeshPrototype prototype, ObjVertex[] vertices, int[] indices) {
@@ -62,20 +25,26 @@ public class ObjMesh implements Mesh {
         return ObjMeshBuilder.build(Obj.mesh(), vertices, indices).load();
     }
 
-    public static ObjMesh load(String objFile) throws Exception {
-        final ObjMeshPrototype prototype = Obj.mesh();
-        addAttributes(prototype);
+    private static ObjMesh load(ObjMeshPrototype prototype, Collection<ObjVertex> vertices, Collection<Integer> indices) {
+        final ObjMeshBuilder builder = ObjMeshBuilder.create(
+                prototype, vertices.size(), indices.size());
+        builder.writeVertices(vertices);
+        builder.writeIndices(indices);
+        return builder.load();
+    }
 
-        try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
-            assimpMesh.writeDataBuffer(
-                    new AssimpPositionComponent(prototype.getPositionBuffer().getWrapper()),
-                    new AssimpTexCoordComponent(0, prototype.getUvCoordBuffer().getWrapper()),
-                    new AssimpNormalComponent(prototype.getNormalBuffer().getWrapper()));
+    private static ObjMesh load(Collection<ObjVertex> vertices, Collection<Integer> indices) {
+        return load(Obj.mesh(), vertices, indices);
+    }
 
-            assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
-
-            return ObjMesh.create(prototype, assimpMesh.indexCount());
+    public static ObjMesh load(ObjMeshPrototype prototype, String objFile) throws Exception {
+        try (final ObjMeshLoader loader = new ObjMeshLoader(objFile)) {
+            return load(prototype, loader.loadVertices(), loader.loadIndices());
         }
+    }
+
+    public static ObjMesh load(String objFile) throws Exception {
+        return load(Obj.mesh(), objFile);
     }
 
     @Override

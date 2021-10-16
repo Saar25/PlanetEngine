@@ -15,18 +15,14 @@ public final class Attachments {
     }
 
     public static void readAttachment(Attachment attachment) {
-        Attachments.readBuffers(attachment.getAttachmentPoint());
+        Attachments.readBuffer(attachment.getIndex().get());
     }
 
     public static void drawBuffers(int... buffers) {
-        if (buffers.length == 1) {
-            GL11.glDrawBuffer(buffers[0]);
-        } else if (buffers.length > 1) {
-            GL20.glDrawBuffers(buffers);
-        }
+        GL20.glDrawBuffers(buffers);
     }
 
-    public static void readBuffers(int buffer) {
+    public static void readBuffer(int buffer) {
         GL11.glReadBuffer(buffer);
     }
 
@@ -34,7 +30,7 @@ public final class Attachments {
         final int[] buffer = new int[attachments.length];
         for (int i = 0; i < attachments.length; i++) {
             final Attachment attachment = attachments[i];
-            buffer[i] = attachment.getAttachmentPoint();
+            buffer[i] = attachment.getIndex().get();
         }
         return buffer;
     }

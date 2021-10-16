@@ -1,10 +1,13 @@
 package org.saar.core.renderer.reflection;
 
-import org.joml.Planef;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.saar.core.camera.Camera;
 import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.renderpass.AlbedoBuffer;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.Texture2D;
+import org.saar.maths.objects.Planef;
 import org.saar.maths.transform.Rotation;
 import org.saar.maths.utils.Vector3;
 
@@ -13,9 +16,11 @@ public class Reflection {
     private final Planef plane;
     private final Camera camera;
     private final Camera reflectionCamera;
-    private final RenderingPath renderingPath;
+    private final RenderingPath<? extends AlbedoBuffer> renderingPath;
 
-    public Reflection(Planef plane, Camera camera, Camera reflectionCamera, RenderingPath renderingPath) {
+    private ReadOnlyTexture reflectionMap = Texture2D.NULL;
+
+    public Reflection(Planef plane, Camera camera, Camera reflectionCamera, RenderingPath<? extends AlbedoBuffer> renderingPath) {
         this.plane = plane;
         this.camera = camera;
         this.reflectionCamera = reflectionCamera;
@@ -31,14 +36,18 @@ public class Reflection {
         this.reflectionCamera.getTransform().getPosition().set(p.sub(ptc, ptc));
 
         final Rotation rotation = this.camera.getTransform().getRotation();
-        final Vector3fc reflect = rotation.getDirection().reflect(normal);
+        final Vector3fc reflect = rotation.getDirection().reflect(normal).negate();
         this.reflectionCamera.getTransform().getRotation().lookAlong(reflect);
     }
 
     public void updateReflectionMap() {
         reflect();
 
-        this.renderingPath.render();
+        this.reflectionMap = this.renderingPath.render().getBuffers().getAlbedo();
+    }
+
+    public ReadOnlyTexture getReflectionMap() {
+        return this.reflectionMap;
     }
 
     public Planef getPlane() {

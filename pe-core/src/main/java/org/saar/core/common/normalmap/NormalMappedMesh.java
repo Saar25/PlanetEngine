@@ -1,25 +1,22 @@
 package org.saar.core.common.normalmap;
 
-import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.Meshes;
 import org.saar.core.mesh.build.MeshPrototypeHelper;
-import org.saar.lwjgl.assimp.AssimpMesh;
-import org.saar.lwjgl.assimp.AssimpUtil;
-import org.saar.lwjgl.assimp.component.*;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+
+import java.io.IOException;
+import java.util.Collection;
 
 public class NormalMappedMesh implements Mesh {
 
-    private static final Attribute positionAttribute = Attribute.of(0, 3, DataType.FLOAT, false);
-    private static final Attribute uvCoordAttribute = Attribute.of(1, 2, DataType.FLOAT, false);
-    private static final Attribute normalAttribute = Attribute.of(2, 3, DataType.FLOAT, false);
-    private static final Attribute tangentAttribute = Attribute.of(3, 3, DataType.FLOAT, false);
-    private static final Attribute biTangentAttribute = Attribute.of(4, 3, DataType.FLOAT, false);
+    private static final IAttribute positionAttribute = Attributes.of(0, 3, DataType.FLOAT, false);
+    private static final IAttribute uvCoordAttribute = Attributes.of(1, 2, DataType.FLOAT, false);
+    private static final IAttribute normalAttribute = Attributes.of(2, 3, DataType.FLOAT, false);
+    private static final IAttribute tangentAttribute = Attributes.of(3, 3, DataType.FLOAT, false);
+    private static final IAttribute biTangentAttribute = Attributes.of(4, 3, DataType.FLOAT, false);
 
     private final Mesh mesh;
 
@@ -35,58 +32,56 @@ public class NormalMappedMesh implements Mesh {
         prototype.getBiTangentBuffer().addAttribute(biTangentAttribute);
     }
 
+    private static NormalMappedMesh create(NormalMappedMeshPrototype prototype, int indices) {
+        return new NormalMappedMesh(Meshes.toElementsMesh(prototype, indices));
+    }
+
     public static NormalMappedMesh load(NormalMappedMeshPrototype prototype, NormalMappedVertex[] vertices, int[] indices) {
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
-
-        final Vao vao = Vao.create();
-        helper.loadToVao(vao);
-        helper.allocateIndices(indices);
-        helper.allocateVertices(vertices);
+        helper.allocateVertices(vertices.length);
+        helper.allocateIndices(indices.length);
 
         final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
         writer.writeVertices(vertices);
         writer.writeIndices(indices);
 
-        helper.store();
-
-        final DrawCall drawCall = new ElementsDrawCall(
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new NormalMappedMesh(mesh);
+        return NormalMappedMesh.create(prototype, indices.length);
     }
 
     public static NormalMappedMesh load(NormalMappedVertex[] vertices, int[] indices) {
         return NormalMappedMesh.load(NormalMapped.mesh(), vertices, indices);
     }
 
-    public static NormalMappedMesh load(String objFile) throws Exception {
-        final NormalMappedMeshPrototype prototype = NormalMapped.mesh();
+    public static NormalMappedMesh load(NormalMappedMeshPrototype prototype,
+                                        Collection<NormalMappedVertex> vertices,
+                                        Collection<Integer> indices) {
         setUpPrototype(prototype);
 
         final MeshPrototypeHelper helper = new MeshPrototypeHelper(prototype);
+        helper.allocateVertices(vertices.size());
+        helper.allocateIndices(indices.size());
 
-        final Vao vao = Vao.create();
+        final NormalMappedMeshWriter writer = new NormalMappedMeshWriter(prototype);
+        writer.writeVertices(vertices);
+        writer.writeIndices(indices);
 
-        try (final AssimpMesh assimpMesh = AssimpUtil.load(objFile)) {
-            assimpMesh.writeDataBuffer(
-                    new AssimpPositionComponent(prototype.getPositionBuffer().getWrapper()),
-                    new AssimpTexCoordComponent(0, prototype.getUvCoordBuffer().getWrapper()),
-                    new AssimpNormalComponent(prototype.getNormalBuffer().getWrapper()),
-                    new AssimpTangentComponent(prototype.getTangentBuffer().getWrapper()),
-                    new AssimpBiTangentComponent(prototype.getBiTangentBuffer().getWrapper()));
+        return NormalMappedMesh.create(prototype, indices.size());
+    }
 
-            assimpMesh.writeIndexBuffer(prototype.getIndexBuffer().getWrapper());
+    public static NormalMappedMesh load(Collection<NormalMappedVertex> vertices, Collection<Integer> indices) {
+        return load(NormalMapped.mesh(), vertices, indices);
+    }
 
-            helper.store();
-            helper.loadToVao(vao);
-
-            final DrawCall drawCall = new ElementsDrawCall(
-                    RenderMode.TRIANGLES, assimpMesh.indexCount(), DataType.U_INT);
-            final Mesh mesh = new DrawCallMesh(vao, drawCall);
-            return new NormalMappedMesh(mesh);
+    public static NormalMappedMesh load(NormalMappedMeshPrototype prototype, String objFile) throws IOException {
+        try (final NormalMappedMeshLoader loader = new NormalMappedMeshLoader(objFile)) {
+            return load(prototype, loader.loadVertices(), loader.loadIndices());
         }
+    }
+
+    public static NormalMappedMesh load(String objFile) throws Exception {
+        return NormalMappedMesh.load(NormalMapped.mesh(), objFile);
     }
 
     @Override

@@ -2,8 +2,9 @@ package org.saar.lwjgl.opengl.primitive;
 
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.util.DataWriter;
 
 public class GlFloat extends GlPrimitiveBase implements GlPrimitive {
 
@@ -26,13 +27,13 @@ public class GlFloat extends GlPrimitiveBase implements GlPrimitive {
     }
 
     @Override
-    public Attribute[] attribute(int index, boolean normalized, int instances) {
-        return new Attribute[]{Attribute.ofInstances(index, 1, DATA_TYPE, normalized, instances)};
+    public IAttribute[] attribute(int index, boolean normalized, int instances) {
+        return new IAttribute[]{Attributes.ofInstanced(index, 1, DATA_TYPE, normalized, instances)};
     }
 
     @Override
-    public void write(BufferWriter buffer) {
-        buffer.write(getValue());
+    public void write(DataWriter writer) {
+        writer.writeFloat(getValue());
     }
 
     @Override

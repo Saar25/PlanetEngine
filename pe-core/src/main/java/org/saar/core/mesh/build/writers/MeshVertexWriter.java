@@ -12,4 +12,10 @@ public interface MeshVertexWriter<T extends Vertex> {
         }
     }
 
+    default void writeVertices(Iterable<T> vertices) {
+        for (T vertex : vertices) {
+            writeVertex(vertex);
+        }
+    }
+
 }

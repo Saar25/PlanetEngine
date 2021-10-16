@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
@@ -31,9 +31,10 @@ public class MultisamplingExample {
                 +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
         vao.loadVbo(vbo,
-                Attribute.of(0, 2, DataType.FLOAT, false),
-                Attribute.of(1, 3, DataType.FLOAT, false),
-                Attribute.of(2, 1, DataType.FLOAT, false));
+                Attributes.of(0, 2, DataType.FLOAT, false),
+                Attributes.of(1, 3, DataType.FLOAT, false),
+                Attributes.of(2, 1, DataType.FLOAT, false));
+        vbo.delete();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
@@ -45,7 +46,7 @@ public class MultisamplingExample {
         vao.bind();
         vao.enableAttributes();
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);

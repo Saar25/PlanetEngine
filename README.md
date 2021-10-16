@@ -77,10 +77,10 @@ final Vertex2D[] vertices = {
 // Create the mesh, model, and renderer
 final Mesh2D mesh = Mesh2D.load(vertices, indices);
 final Model2D model = new Model2D(mesh);
-final Renderer2D renderer = new Renderer2D(model);
+final Renderer2D renderer = new Renderer2D();
 
 // Render the model
-renderer.render(new RenderContextBase(null));
+renderer.render(new RenderContextBase(camera), model);
 ```
 
 the rendering pipeline consists of some primary interfaces
@@ -128,6 +128,18 @@ class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model
 }
 ```
 
+### Node
+
+base class for complex objects in the scene
+usually holds the model and a renderer, and has at least one render method
+
+```java
+final Model3D cubeModel = buildCubeModel();
+final Node3D cube = new Node3D(cubeModel);
+
+cube.renderForward(new RenderContextBase(camera))
+```
+
 ### Renderer
 
 Prototype objects are used in order to write a unique rendering pipeline
@@ -137,14 +149,14 @@ Prototype objects are used in order to write a unique rendering pipeline
 
 // Connect uniforms in the shaders to our code
 @UniformProperty(UniformTrigger.PER_INSTANCE)
-private val mvpMatrixUniform = Mat4UniformValue("mvpMatrix")
+private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
 // Use vertex and fragment shaders in the shaders program
-@ShaderProperty(ShaderType.VERTEX)
+@ShaderProperty
 private val vertex = Shader.createVertex(GlslVersion.V400,
     ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
 
-@ShaderProperty(ShaderType.FRAGMENT)
+@ShaderProperty
 private val fragment = Shader.createFragment(GlslVersion.V400,
     ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
 
@@ -185,18 +197,18 @@ Render passes like LightRenderPass and ShadowsRenderPass are implemented
 as well as unique renderers like ObjDeferredRenderer and NormalMappedDeferredRenderer  
 and DeferredRenderingPath to wrap it all
 
-### Post processing
+### Post-processing
 
-Post processing is extremely simple using this engine  
-all that it takes is to create your own PostProcessor and create your PostProcessingPipeline  
+Post-processing is extremely simple using this engine  
+all that it takes is to create your own PostProcessor and create your PostProcessingPipeline
 
 ```java
 // org.saar.example.normalmapping.NormalMappingExample.java
 
 // Create the pipeline
 final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-        new ContrastPostProcessor(1.8f),
-        new GaussianBlurPostProcessor(11, 2)
+    new ContrastPostProcessor(1.8f),
+    new GaussianBlurPostProcessor(11, 2)
 );
 
 // Render to texture using deferred renderer
@@ -206,6 +218,90 @@ final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
 pipeline.process(texture).toMainScreen();
 ```
 
+### Gui
+
+The Gui architecture is already implemented  
+with some useful ui components like UISlider and UIButton
+
+```kotlin
+// org.saar.example.gui.UIButtonExample.kt
+
+val display = UIDisplay(window)
+
+val uiButton = UIButton().apply {
+    style.x.value = center()
+    style.y.value = center()
+    style.width.value = percent(50f)
+    style.height.value = ratio(.5f)
+    setOnAction { println("Clicked!") }
+}
+display.add(uiButton)
+
+display.render(RenderContextBase(null))
+```
+
+### Text rendering
+
+Together with the gui, text components are also included  
+allowing you to load ttf fonts and render text using simple operations
+
+```kotlin
+val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
+val uiText = UIText(font, "The quick brown fox jumps over the lazy dog").apply {
+    style.width.value = fitContent()
+    style.x.value = center()
+    style.y.value = center()
+}
+display.add(uiText)
+```
+
+### Behaviors
+
+Behaviors are the implementation of the ECS (Entity Component System) design pattern  
+any Behavior is attachable to every BehaviorNode  
+allowing better composition and reusable code
+
+```java
+final BehaviorGroup behaviors = new BehaviorGroup(
+    // Move with WASD at 50 units per second
+    new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
+    
+    // Change movement velocity by the mouse scroll
+    new KeyboardMovementScrollVelocityBehavior(mouse),
+    
+    // Rotate by the mouse movement
+    new MouseRotationBehavior(mouse, -.3f)
+);
+
+final Camera camera = new Camera(projection, behaviors);
+```
+
+Behaviors are very easy to create and handle  
+this behavior implements third person view
+
+```kotlin
+// org.saar.core.common.behaviors.ThirdPersonViewBehavior.kt
+
+class ThirdPersonViewBehavior(private val toFollow: Transform, private val distance: Float) : Behavior {
+
+    private lateinit var transformBehavior: TransformBehavior
+
+    override fun start(node: BehaviorNode) {
+        // Get dependent behaviors at initialization
+        this.transformBehavior = node.behaviors.get()
+    }
+
+    override fun update(node: BehaviorNode) {
+        // Update node position every update
+        val position = this.transformBehavior.transform.rotation.direction
+            .normalize(this.distance).add(this.toFollow.position.value)
+        this.transformBehavior.transform.position.set(position)
+    }
+}
+```
+
 ### Example classes
 
 You can try some examples that are under planet-examples module
@@ -213,4 +309,6 @@ You can try some examples that are under planet-examples module
 for example:  
 MultisamplingExample.java  
 NormalMappingExample.java  
+ReflectionExample.java  
 ManyCubesExample.java
+GuiExample.java

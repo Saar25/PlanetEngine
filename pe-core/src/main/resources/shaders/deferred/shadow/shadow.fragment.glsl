@@ -7,8 +7,10 @@
 #include "/shaders/common/light/light"
 #include "/shaders/common/transform/transform"
 
-// Constants
-float SHADOW_BIAS = -0.0001f;
+// Definitions
+#ifndef SHADOW_BIAS
+#define SHADOW_BIAS 0.001f
+#endif
 
 // Vertex outputs
 in vec2 v_position;
@@ -16,15 +18,15 @@ in vec2 v_position;
 // Uniforms
 uniform sampler2D u_shadowMap;
 uniform sampler2D u_colourTexture;
-uniform sampler2D u_normalTexture;
+uniform sampler2D u_normalSpecularTexture;
 uniform sampler2D u_depthTexture;
 
 uniform mat4 u_shadowMatrix;
 uniform mat4 u_projectionMatrixInv;
 uniform mat4 u_viewMatrixInv;
-uniform vec3 u_cameraWorldPosition;
 
-uniform int u_pcfRadius;
+uniform ivec2 u_shadowMapSize;
+uniform int   u_pcfRadius;
 
 uniform DirectionalLight u_light;
 
@@ -34,13 +36,13 @@ out vec4 f_colour;
 // Global variables
 vec3 g_colour;
 vec3 g_normal;
+float g_specular;
 float g_depth;
-vec3 g_viewSpace;
+
 vec3 g_worldSpace;
 vec3 g_viewDirection;
 
 float g_shadowDepth;
-float g_shadowMapDepth;
 vec2 g_shadowMapCoords;
 
 // Methods declaration
@@ -50,24 +52,20 @@ void initShadowGlobals(void);
 
 float calcShadowFactor(void);
 
-vec3 ambientColour(void);
-vec3 diffuseColour(void);
-vec3 specularColour(void);
-
 // Main
 void main(void) {
     initBufferValues();
     initGlobals();
     initShadowGlobals();
 
-    vec3 ambientColour = ambientColour();
+    vec3 ambientColour = u_light.colour * ambientFactor();
 
     float shadowFactor = calcShadowFactor();
 
     if (shadowFactor > 0) {
-        vec3 diffuseColour = diffuseColour();
-        vec3 specularColour = specularColour();
-        vec3 finalColour = g_colour * (ambientColour + diffuseColour + specularColour) * shadowFactor;
+        vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
+        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular);
+        vec3 finalColour = g_colour * lightColour * shadowFactor;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -79,15 +77,19 @@ void main(void) {
 
 void initBufferValues(void) {
     g_colour = texture(u_colourTexture, v_position).rgb;
-    g_normal = texture(u_normalTexture, v_position).xyz;
+    
+    vec4 normalSpecular = texture(u_normalSpecularTexture, v_position);
+    g_normal = normalSpecular.rgb;
+    g_specular = normalSpecular.a;
+    
     g_depth = texture(u_depthTexture, v_position).r;
 }
 
 void initGlobals(void) {
     vec3 clipSpace = ndcToClipSpace(v_position, g_depth);
-    g_viewSpace = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
-    g_worldSpace = viewSpaceToWorldSpace(g_viewSpace, u_viewMatrixInv);
-    g_viewDirection = calcViewDirection(u_cameraWorldPosition, g_worldSpace);
+    vec3 viewSpace = clipSpaceToViewSpace(clipSpace, u_projectionMatrixInv);
+    g_worldSpace = viewSpaceToWorldSpace(viewSpace, u_viewMatrixInv);
+    g_viewDirection = normalize(-viewSpace);
 }
 
 void initShadowGlobals(void) {
@@ -96,7 +98,6 @@ void initShadowGlobals(void) {
     shadowCoords = shadowCoords * 0.5f + 0.5f;
 
     g_shadowMapCoords = shadowCoords.xy;
-    g_shadowMapDepth = texture(u_shadowMap, shadowCoords.xy).r;
     g_shadowDepth = shadowCoords.z;
 }
 
@@ -113,17 +114,5 @@ float calcShadowFactor(void) {
             }
         }
     }
-    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius);
-}
-
-vec3 ambientColour(void) {
-    return ambientColour(u_light);
-}
-
-vec3 diffuseColour(void) {
-    return diffuseColour(g_normal, u_light);
-}
-
-vec3 specularColour(void) {
-    return specularColour(16, 2.5, g_viewDirection, g_normal, u_light);
+    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius + 1);
 }

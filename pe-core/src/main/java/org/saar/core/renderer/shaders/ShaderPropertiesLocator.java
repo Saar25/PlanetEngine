@@ -28,7 +28,8 @@ public final class ShaderPropertiesLocator {
     }
 
     private List<Shader> getShadersByType(ShaderType type) {
-        return this.fieldsLocator.getFilteredValues(Shader.class, ShaderProperty.class,
-                f -> f.getAnnotation(ShaderProperty.class).value() == type);
+        final List<Shader> shaders = getShaders();
+        shaders.removeIf(s -> s.getType() == type);
+        return shaders;
     }
 }

@@ -4,8 +4,9 @@ import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attribute;
-import org.saar.lwjgl.util.buffer.BufferWriter;
+import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.util.DataWriter;
 
 public class GlInt3 extends GlPrimitiveBase implements GlPrimitive {
 
@@ -32,15 +33,13 @@ public class GlInt3 extends GlPrimitiveBase implements GlPrimitive {
     }
 
     @Override
-    public Attribute[] attribute(int index, boolean normalized, int instances) {
-        return new Attribute[]{Attribute.ofIntegerInstances(index, 3, DATA_TYPE, instances)};
+    public IAttribute[] attribute(int index, boolean normalized, int instances) {
+        return new IAttribute[]{Attributes.ofIntegerInstanced(index, 3, DATA_TYPE, instances)};
     }
 
     @Override
-    public void write(BufferWriter buffer) {
-        buffer.write(getValue().x());
-        buffer.write(getValue().y());
-        buffer.write(getValue().z());
+    public void write(DataWriter writer) {
+        writer.write3i(getValue());
     }
 
     @Override

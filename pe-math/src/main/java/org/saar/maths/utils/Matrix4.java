@@ -9,7 +9,7 @@ public final class Matrix4 {
 
     public static final ObjectPool<Matrix4f> pool = new ObjectPool<>(Matrix4::create);
 
-    private static final Matrix4f matrix = Matrix4.create();
+    public static final Matrix4f temp = Matrix4.create();
 
     private Matrix4() {
 
@@ -46,14 +46,7 @@ public final class Matrix4 {
      * @return the projection matrix
      */
     public static Matrix4f ofProjection(float fov, float width, float height, float zNear, float zFar, Matrix4f dest) {
-        float aspectRatio = width / height;
-        dest.identity();
-        dest.perspective(fov, aspectRatio, zNear, zFar);
-        return dest;
-    }
-
-    public static Matrix4f ofProjection(float fov, float width, float height, float zNear, float zFar) {
-        return ofProjection(fov, width, height, zNear, zFar, matrix);
+        return dest.setPerspective(fov, width / height, zNear, zFar);
     }
 
     public static Matrix4f createProjection(float fov, float width, float height, float zNear, float zFar) {
@@ -61,7 +54,7 @@ public final class Matrix4 {
     }
 
     /**
-     * Returns a orthographic projection matrix
+     * Returns an orthographic projection matrix
      *
      * @param left   the left frustum edge
      * @param right  the right frustum edge
@@ -74,13 +67,7 @@ public final class Matrix4 {
      */
     public static Matrix4f ofProjection(float left, float right, float bottom, float top,
                                         float zNear, float zFar, Matrix4f dest) {
-        dest.identity();
-        dest.ortho(left, right, bottom, top, zNear, zFar);
-        return dest;
-    }
-
-    public static Matrix4f ofProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
-        return ofProjection(left, right, bottom, top, zNear, zFar, matrix);
+        return dest.setOrtho(left, right, bottom, top, zNear, zFar);
     }
 
     public static Matrix4f createProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
@@ -96,13 +83,8 @@ public final class Matrix4 {
      * @return the view matrix
      */
     public static Matrix4f ofView(Vector3fc position, Vector3fc rotation, Matrix4f dest) {
-        dest.identity().rotateXYZ(rotation.x(), rotation.y(), rotation.z())
+        return dest.identity().rotateXYZ(rotation)
                 .translate(-position.x(), -position.y(), -position.z());
-        return dest;
-    }
-
-    public static Matrix4f ofView(Vector3fc position, Vector3fc rotation) {
-        return ofView(position, rotation, matrix);
     }
 
     public static Matrix4f createView(Vector3fc position, Vector3fc rotation) {
@@ -119,12 +101,6 @@ public final class Matrix4 {
      */
     public static Matrix4f ofView(Vector3fc position, Quaternionfc rotation, Matrix4f dest) {
         return dest.identity().translationRotateScaleInvert(position, rotation, 1);
-        //return dest.identity().rotate(rotation.invert(Quaternion.create()))
-        //        .translate(-position.x(), -position.y(), -position.z());
-    }
-
-    public static Matrix4f ofView(Vector3fc position, Quaternionfc rotation) {
-        return ofView(position, rotation, matrix);
     }
 
     public static Matrix4f createView(Vector3fc position, Quaternionfc rotation) {
@@ -140,62 +116,12 @@ public final class Matrix4 {
      * @param dest     the value destination
      * @return the transformation matrix
      */
-    public static Matrix4f ofTransformation(Vector3fc position, Vector3fc rotation, Vector3fc scale, Matrix4f dest) {
-        return dest.identity().translate(position)
-                .rotateXYZ(rotation.x(), rotation.y(), rotation.z())
-                .scale(scale);
-    }
-
-    public static Matrix4f ofTransformation(Vector3fc position, Vector3fc rotation, Vector3fc scale) {
-        return ofTransformation(position, rotation, scale, matrix);
-    }
-
-    public static Matrix4f createTransformation(Vector3fc position, Vector3fc rotation, Vector3fc scale) {
-        return ofTransformation(position, rotation, scale, Matrix4.create());
-    }
-
-    /**
-     * Returns a transformation matrix based on the given values
-     *
-     * @param position the position
-     * @param rotation the rotation
-     * @param scale    the scale
-     * @param dest     the value destination
-     * @return the transformation matrix
-     */
     public static Matrix4f ofTransformation(Vector3fc position, Quaternionfc rotation, Vector3fc scale, Matrix4f dest) {
         return dest.identity().translationRotateScale(position, rotation, scale);
-        //return dest.identity().translate(position).rotate(rotation).scale(scale);
-    }
-
-    public static Matrix4f ofTransformation(Vector3fc position, Quaternionfc rotation, Vector3fc scale) {
-        return ofTransformation(position, rotation, scale, matrix);
-    }
-
-    public static Matrix4f createTransformation(Vector3fc position, Quaternionfc rotation, Vector3fc scale) {
-        return ofTransformation(position, rotation, scale, Matrix4.create());
-    }
-
-    /**
-     * Returns an identity matrix
-     *
-     * @param dest the value destination
-     * @return the identity matrix
-     */
-    public static Matrix4f ofIdentity(Matrix4f dest) {
-        return dest.identity();
-    }
-
-    public static Matrix4f ofIdentity() {
-        return matrix.identity();
-    }
-
-    public static Matrix4f createIdentity() {
-        return ofIdentity(Matrix4.create());
     }
 
     public static Matrix4f mul(Matrix4f a, Matrix4f b) {
-        return Matrix4.of(a).mul(b);
+        return a.mul(b, Matrix4.create());
     }
 
 }

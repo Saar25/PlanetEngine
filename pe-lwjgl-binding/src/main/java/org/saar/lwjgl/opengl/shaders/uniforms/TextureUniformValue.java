@@ -1,14 +1,14 @@
 package org.saar.lwjgl.opengl.shaders.uniforms;
 
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.Texture2D;
 
 public class TextureUniformValue extends TextureUniform implements UniformValue<ReadOnlyTexture> {
 
     private final String name;
     private final int unit;
 
-    private ReadOnlyTexture value = Texture.NULL;
+    private ReadOnlyTexture value = Texture2D.NULL;
 
     public TextureUniformValue(String name, int unit) {
         this.name = name;

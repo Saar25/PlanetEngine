@@ -12,8 +12,17 @@ public class LwjglByteBuffer implements LwjglBuffer {
         this.buffer = buffer;
     }
 
+    public static LwjglByteBuffer wrap(ByteBuffer buffer) {
+        return new LwjglByteBuffer(buffer);
+    }
+
     public static LwjglByteBuffer allocate(int capacity) {
         final ByteBuffer buffer = MemoryUtil.memAlloc(capacity);
+        return new LwjglByteBuffer(buffer);
+    }
+
+    public static LwjglByteBuffer callocate(int capacity) {
+        final ByteBuffer buffer = MemoryUtil.memCalloc(capacity);
         return new LwjglByteBuffer(buffer);
     }
 
@@ -146,6 +155,23 @@ public class LwjglByteBuffer implements LwjglBuffer {
     public LwjglByteBuffer putDouble(int index, double value) {
         this.buffer.putDouble(index, value);
         return this;
+    }
+
+    @Override
+    public LwjglByteBuffer put(byte[] b) {
+        this.buffer.put(b);
+        return this;
+    }
+
+    @Override
+    public LwjglByteBuffer put(byte[] b, int offset, int length) {
+        this.buffer.put(b, offset, length);
+        return this;
+    }
+
+    @Override
+    public BufferWriter getWriter() {
+        return new BufferWriter(this.buffer);
     }
 
     @Override

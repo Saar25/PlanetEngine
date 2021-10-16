@@ -7,13 +7,19 @@ in vec4 v_backgroundColour;
 // Uniforms
 uniform bool u_hasTexture;
 uniform sampler2D u_texture;
-uniform ivec2 u_windowSize;
+uniform bool u_hasDiscardMap;
+uniform sampler2D u_discardMap;
+uniform ivec2 u_resolution;
 uniform vec4 u_radiuses;
 uniform uint u_borderColour;
 uniform vec4 u_colourModifier;
 
 // Output
 out vec4 fragColour;
+
+// Global variables
+float g_radius;
+float g_radiusAlpha = 1;
 
 /**
 * Returns whether the rectangle contains the position
@@ -35,7 +41,7 @@ bool contains(vec4 rectangle, vec2 position) {
 * @return the normalized device coordinates
 */
 vec2 toNdc(vec2 v) {
-    return v / u_windowSize;
+    return v / u_resolution;
 }
 
 /**
@@ -45,7 +51,7 @@ vec2 toNdc(vec2 v) {
 * @return the normalized device coordinates
 */
 vec4 toNdc(vec4 rectangle) {
-    return rectangle / vec4(u_windowSize, u_windowSize);
+    return rectangle / vec4(u_resolution, u_resolution);
 }
 
 /**
@@ -55,7 +61,7 @@ vec4 toNdc(vec4 rectangle) {
 * @return the screen coordinates
 */
 vec2 fromNdc(vec2 v) {
-    return v * u_windowSize;
+    return v * u_resolution;
 }
 
 /**
@@ -65,7 +71,7 @@ vec2 fromNdc(vec2 v) {
 * @return the screen coordinates
 */
 vec4 fromNdc(vec4 v) {
-    return v * vec4(u_windowSize, u_windowSize);
+    return v * vec4(u_resolution, u_resolution);
 }
 
 /**
@@ -124,7 +130,7 @@ vec2 edgeCenter(vec4 bounds, vec2 position) {
     float w = bounds.z;
     float h = bounds.w;
 
-    float r = getRadius(bounds, position);
+    float r = g_radius;
     vec2 center = center(bounds);
 
     vec2 edgeCenter = vec2(0, 0);
@@ -144,7 +150,7 @@ bool isInside(vec4 bounds) {
     vec2 position = (mapInRectangle(fromNdc(v_bounds), v_position));
 
     vec4 boundsNdc = fromNdc(bounds);
-    float r = getRadius(bounds, position);
+    float r = g_radius;
 
     vec4 boundsVertical = boundsNdc + vec4(r, 0, -r * 2, 0);
     vec4 boundsHorizontal = boundsNdc + vec4(0, r, 0, -r * 2);
@@ -155,7 +161,9 @@ bool isInside(vec4 bounds) {
 
     vec2 mapped = mapInRectangle(bounds, v_position);
     vec2 coords = position - edgeCenter(bounds, mapped);
-    return pow(coords.x, 2) + pow(coords.y, 2) < r * r;
+    float distance = r * r - (pow(coords.x, 2) + pow(coords.y, 2));
+    g_radiusAlpha = smoothstep(distance, -g_radius / 2, 0);
+    return distance > -g_radius / 2;
 }
 
 /**
@@ -169,6 +177,18 @@ vec4 getColour(void) {
         return mix(v_backgroundColour, colour, colour.a);
     }
     return v_backgroundColour * u_colourModifier;
+}
+
+/**
+* Returns the discard map value of the fragment
+*
+* @return the discard map value of the fragment
+*/
+float getDiscardMapValue(void) {
+    if (u_hasDiscardMap) {
+        return texture(u_discardMap, v_position).r;
+    }
+    return 1.0;
 }
 
 /**
@@ -192,11 +212,23 @@ vec4 getBorderColour(void) {
 /*================ */
 
 void main(void) {
-    if (isInside(v_bounds)){
-        fragColour = getColour();
+    g_radius = getRadius(v_bounds, v_position);
+
+    if (getDiscardMapValue() < .1) {
+        discard;
+    }
+    else if (isInside(v_bounds)){
+        vec4 colour = getColour();
+        vec4 borderColour = getBorderColour();
+        float blendFactor = g_radiusAlpha * g_radiusAlpha;
+
+        fragColour = mix(borderColour, colour, blendFactor);
     }
     else if (isInside(v_borders)){
-        fragColour = getBorderColour();
+        vec4 borderColour = getBorderColour();
+        float blendFactor = g_radiusAlpha * g_radiusAlpha;
+
+        fragColour = borderColour * vec4(1, 1, 1, blendFactor);
     }
     else {
         discard;

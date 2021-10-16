@@ -1,11 +1,21 @@
 package org.saar.core.postprocessing
 
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.core.renderer.deferred.DeferredRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.forward.ForwardRenderPass
+import org.saar.core.renderer.forward.ForwardRenderingBuffers
+import org.saar.core.renderer.renderpass.RenderPass
+import org.saar.core.renderer.renderpass.RenderPassContext
 
-interface PostProcessor {
+interface PostProcessor : RenderPass, ForwardRenderPass, DeferredRenderPass {
 
-    fun process(image: ReadOnlyTexture)
+    fun render(context: RenderPassContext, buffers: PostProcessingBuffers)
 
-    fun delete()
+    override fun render(context: RenderPassContext, buffers: ForwardRenderingBuffers) {
+        render(context, PostProcessingBuffers(buffers.albedo))
+    }
 
+    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+        render(context, PostProcessingBuffers(buffers.albedo))
+    }
 }
