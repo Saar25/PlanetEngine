@@ -45,7 +45,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
-        @ScreenImageProperty
+        @ScreenImageProperty(draw = true, read = true)
         private val colourImage = ColourScreenImage(ColourAttachment
             .withTexture(0, ssaoTexture, ColourFormatType.R16F))
     }, Fbo.create(0, 0))
@@ -84,7 +84,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         this.screen.setAsDraw()
         this.screen.assureSize(
             Window.current().width,
-            Window.current().height / 4
+            Window.current().height
         )
 
         this.ssaoWrapper.render {
