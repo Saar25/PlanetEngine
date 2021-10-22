@@ -1,5 +1,7 @@
 package org.saar.core.screen;
 
+import org.saar.core.screen.exceptions.MissingDrawAttachmentsException;
+import org.saar.core.screen.exceptions.MissingReadAttachmentException;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbos.IFbo;
@@ -38,14 +40,23 @@ public final class Screens {
     }
 
     private static void setDrawAttachments(ModifiableFbo fbo, ScreenImagesLocator locator) {
-        fbo.setDrawAttachments(toColourAttachments(locator.getDrawScreenImage()));
+        final List<ColourScreenImage> drawScreenImages = locator.getDrawScreenImage();
+
+        if (drawScreenImages.size() <= 0) {
+            throw new MissingDrawAttachmentsException("No draw attachments found in screen prototype");
+        }
+
+        fbo.setDrawAttachments(toColourAttachments(drawScreenImages));
     }
 
     private static void setReadAttachments(ModifiableFbo fbo, ScreenImagesLocator locator) {
         final List<ColourScreenImage> readScreenImages = locator.getReadScreenImages();
-        if (readScreenImages.size() > 0) {
-            fbo.setReadAttachment(readScreenImages.get(0).getAttachment());
+
+        if (readScreenImages.size() <= 0) {
+            throw new MissingReadAttachmentException("No read attachment found in screen prototype");
         }
+
+        fbo.setReadAttachment(readScreenImages.get(0).getAttachment());
     }
 
     private static ColourAttachment[] toColourAttachments(List<ColourScreenImage> images) {
