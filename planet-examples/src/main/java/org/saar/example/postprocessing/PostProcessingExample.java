@@ -67,7 +67,7 @@ public class PostProcessingExample {
 
             screen.copyTo(MainScreen.INSTANCE);
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

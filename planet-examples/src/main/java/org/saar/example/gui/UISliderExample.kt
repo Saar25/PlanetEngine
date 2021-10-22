@@ -61,7 +61,7 @@ object UISliderExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
             display.render(RenderContextBase(null))
 
-            window.update(true)
+            window.swapBuffers()
             window.pollEvents()
         }
 

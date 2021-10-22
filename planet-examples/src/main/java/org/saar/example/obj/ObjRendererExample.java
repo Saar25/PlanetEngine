@@ -65,7 +65,7 @@ public class ObjRendererExample {
 
             fbo.blitToScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             System.out.print("\rFps: " +

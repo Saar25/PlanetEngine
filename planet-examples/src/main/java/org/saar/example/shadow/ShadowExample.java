@@ -95,7 +95,7 @@ public class ShadowExample {
 
             deferredRenderer.render().toMainScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             final double delta = fps.delta() * 1000;

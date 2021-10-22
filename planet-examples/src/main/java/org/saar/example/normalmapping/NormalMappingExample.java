@@ -106,7 +106,7 @@ public class NormalMappingExample {
 
             deferredRenderer.render().toMainScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             final long delta = System.currentTimeMillis() - current;

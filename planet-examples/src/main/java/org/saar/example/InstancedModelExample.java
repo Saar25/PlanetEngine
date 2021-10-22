@@ -70,7 +70,7 @@ public class InstancedModelExample {
             mesh.draw();
             fbo.blitToScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

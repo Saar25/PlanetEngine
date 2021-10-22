@@ -75,7 +75,7 @@ object UIButtonExample {
             GlUtils.clear(GlBuffer.COLOUR)
             container.render(RenderContextBase(null))
 
-            window.update(true)
+            window.swapBuffers()
             window.pollEvents()
 
             uiFps.uiText.text = "Fps: ${String.format("%.3f", fps.fps())}"

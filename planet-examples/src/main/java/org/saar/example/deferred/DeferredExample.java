@@ -62,7 +62,7 @@ public class DeferredExample {
 
             deferredRenderer.render().toMainScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             System.out.print("\rFps: " + 1000f / (-current + (current = System.currentTimeMillis())));

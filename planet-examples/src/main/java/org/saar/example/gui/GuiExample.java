@@ -84,7 +84,7 @@ public class GuiExample {
             display.render(new RenderContextBase(null));
 
             display.update();
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

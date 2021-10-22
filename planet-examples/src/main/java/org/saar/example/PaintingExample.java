@@ -13,9 +13,9 @@ public class PaintingExample {
     public static void main(String[] args) throws Exception {
         final int width = Toolkit.getDefaultToolkit().getScreenSize().width;
         final int height = Toolkit.getDefaultToolkit().getScreenSize().height;
-        final Window window = Window.builder("Lwjgl", width, height, true)
+        final Window window = Window.builder("Lwjgl", width / 2, height / 2, true)
                 .hint(WindowHints.decorated(false))
-                .hint(WindowHints.maximized())
+                //                .hint(WindowHints.maximized())
                 .hint(WindowHints.focused())
                 .build();
 
@@ -24,7 +24,7 @@ public class PaintingExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             painter.render();
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

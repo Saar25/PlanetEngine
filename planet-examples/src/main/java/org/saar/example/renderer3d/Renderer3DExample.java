@@ -48,8 +48,8 @@ public class Renderer3DExample {
 
             renderer.render(new RenderContextBase(camera), models);
 
+            window.swapBuffers();
             window.pollEvents();
-            window.update(true);
 
             System.out.print("\rFps: " + fps.fps());
 

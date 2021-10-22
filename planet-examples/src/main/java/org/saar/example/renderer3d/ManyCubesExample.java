@@ -70,7 +70,7 @@ public class ManyCubesExample {
             }
 
             window.pollEvents();
-            window.update(true);
+            window.swapBuffers();
 
             System.out.print("\rFps: " +
                     1000f / (-current + (current = System.currentTimeMillis()))

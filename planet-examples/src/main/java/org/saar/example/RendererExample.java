@@ -57,7 +57,7 @@ public class RendererExample {
 
             fbo.blitToScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

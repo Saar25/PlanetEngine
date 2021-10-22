@@ -59,7 +59,7 @@ public class ScreenExample {
 
             screen.copyTo(MainScreen.INSTANCE);
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

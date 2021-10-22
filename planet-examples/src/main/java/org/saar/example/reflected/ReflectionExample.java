@@ -169,7 +169,7 @@ public class ReflectionExample {
             reflectionUiElement.setTexture(reflection.getReflectionMap());
             uiDisplay.render(new RenderContextBase(null));
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             uiFps.getUiText().setText(String.format("Fps: %.2f", fps.fps()));

@@ -130,7 +130,7 @@ fun main() {
         renderingPath.render().toMainScreen()
         uiDisplay.render(RenderContextBase(camera))
 
-        window.update(true)
+        window.swapBuffers()
         window.pollEvents()
 
         uiFps.uiText.text = "Fps: ${fps.fps().format(2)}"
