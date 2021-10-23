@@ -21,10 +21,14 @@ class SkyboxPostProcessor(cubeMap: CubeMapTexture) : PostProcessor {
     private val prototype = SkyboxPostProcessorPrototype(cubeMap)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
-        StencilTest.apply(StencilState(StencilOperation.ALWAYS_KEEP,
-            StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED))
+    private val stencilState = StencilState(StencilOperation.ALWAYS_KEEP,
+        StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED)
 
+    override fun prepare(context: RenderPassContext, buffers: PostProcessingBuffers) {
+        StencilTest.apply(this.stencilState)
+    }
+
+    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         this.prototype.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)
         this.prototype.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
     }
