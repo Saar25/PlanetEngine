@@ -7,10 +7,6 @@ import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.texture.parameter.*
-import org.saar.lwjgl.opengl.texture.values.MagFilterValue
-import org.saar.lwjgl.opengl.texture.values.MinFilterValue
-import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -41,20 +37,11 @@ class ShadowsRenderingPath(
         context.hints.cullFace = GlCullFace.FRONT
         this.renderNode.renderShadows(context)
 
-        return RenderingOutput(this.screen, this.prototype.buffer)
+        return RenderingOutput(this.screen, this.prototype.buffers)
     }
 
     override fun delete() {
         this.renderNode.delete()
         this.screen.delete()
-    }
-
-    init {
-        this.prototype.depthTexture.applyParameters(arrayOf<TextureParameter>(
-            TextureMinFilterParameter(MinFilterValue.LINEAR),
-            TextureMagFilterParameter(MagFilterValue.LINEAR),
-            TextureSWrapParameter(WrapValue.CLAMP_TO_EDGE),
-            TextureTWrapParameter(WrapValue.CLAMP_TO_EDGE)
-        ))
     }
 }
