@@ -1,15 +1,17 @@
 package org.saar.core.renderer.forward
 
-import org.saar.core.renderer.renderpass.RenderPassContext
-import org.saar.core.renderer.renderpass.RenderPassesPipelineHelper
+class ForwardRenderPassesPipeline(vararg val renderPasses: ForwardRenderPass)
 
-class ForwardRenderPassesPipeline(vararg renderPasses: ForwardRenderPass) {
+inline fun <reified T : ForwardRenderPass> ForwardRenderPassesPipeline.findOne() = findOne(T::class.java)
 
-    private val helper = RenderPassesPipelineHelper(renderPasses)
+inline fun <reified T : ForwardRenderPass> ForwardRenderPassesPipeline.findMany() = findMany(T::class.java)
 
-    fun process(context: RenderPassContext, buffers: ForwardRenderingBuffers) {
-        this.helper.process { it.render(context, buffers) }
-    }
+@Suppress("UNCHECKED_CAST")
+fun <T : ForwardRenderPass> ForwardRenderPassesPipeline.findOne(klass: Class<T>): T? {
+    return this.renderPasses.find { klass.isInstance(it) } as T?
+}
 
-    fun delete() = this.helper.delete()
+@Suppress("UNCHECKED_CAST")
+fun <T : ForwardRenderPass> ForwardRenderPassesPipeline.findMany(klass: Class<T>): List<T> {
+    return this.renderPasses.filter { klass.isInstance(it) }.map { it as T }
 }
