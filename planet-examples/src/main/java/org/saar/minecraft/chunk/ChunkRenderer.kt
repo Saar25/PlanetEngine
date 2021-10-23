@@ -2,7 +2,6 @@ package org.saar.minecraft.chunk
 
 import org.joml.FrustumIntersection
 import org.joml.Vector2i
-import org.joml.Vector2ic
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
@@ -16,7 +15,6 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlCullFace
@@ -73,18 +71,18 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
 
     @UniformProperty
     private val atlasUniform = object : TextureUniform() {
-        override fun getUnit(): Int = 0
+        override val unit = 0
 
-        override fun getName(): String = "u_atlas"
+        override val name = "u_atlas"
 
-        override fun getUniformValue(): ReadOnlyTexture = this@ChunkRendererPrototype.atlas
+        override val value get() = this@ChunkRendererPrototype.atlas
     }
 
     @UniformProperty
     private val dimensionsUniform = object : Vec2iUniform() {
-        override fun getName(): String = "u_dimensions"
+        override val name = "u_dimensions"
 
-        override fun getUniformValue(): Vector2ic = Vector2i(16, 16)
+        override val value get() = Vector2i(16, 16)
     }
 
     @UniformProperty

@@ -15,14 +15,6 @@ public class ChunkMesh implements Mesh {
         return new ChunkMesh(Meshes.toArraysMesh(prototype, vertices));
     }
 
-    public static ChunkMesh load(ChunkMeshPrototype prototype, ChunkVertex[] vertices) {
-        return ChunkMeshBuilder.build(prototype, vertices).load();
-    }
-
-    public static ChunkMesh load(ChunkVertex[] vertices) {
-        return ChunkMeshBuilder.build(Chunks.meshPrototype(), vertices).load();
-    }
-
     @Override
     public void draw() {
         this.mesh.draw();

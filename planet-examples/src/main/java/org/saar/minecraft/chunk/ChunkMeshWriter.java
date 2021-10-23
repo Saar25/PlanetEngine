@@ -1,8 +1,8 @@
 package org.saar.minecraft.chunk;
 
-import org.saar.core.mesh.build.writers.MeshVertexWriter;
+import org.saar.core.mesh.writers.ArraysMeshWriter;
 
-public class ChunkMeshWriter implements MeshVertexWriter<ChunkVertex> {
+public class ChunkMeshWriter implements ArraysMeshWriter<ChunkVertex> {
 
     private final ChunkMeshPrototype prototype;
 

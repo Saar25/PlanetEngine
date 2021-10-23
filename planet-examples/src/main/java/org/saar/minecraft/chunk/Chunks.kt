@@ -1,7 +1,7 @@
 package org.saar.minecraft.chunk
 
-import org.saar.core.mesh.build.MeshBufferProperty
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer
+import org.saar.core.mesh.buffer.MeshBufferProperty
+import org.saar.core.mesh.buffer.MeshVertexBuffer
 
 object Chunks {
 

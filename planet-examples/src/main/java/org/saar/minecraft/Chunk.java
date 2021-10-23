@@ -177,7 +177,7 @@ public class Chunk implements IChunk, Model {
             final ChunkMeshBuilder builder = ChunkMeshBuilder.createFixed(faceCount);
             for (BlockFaceContainer b : blockFaceContainers) {
                 final int faceId = b.getBlock().getFaces().faceId(b.getDirection());
-                builder.writeFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection());
+                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection());
             }
             return builder;
         });

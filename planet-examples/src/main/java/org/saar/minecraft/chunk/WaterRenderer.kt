@@ -2,7 +2,6 @@ package org.saar.minecraft.chunk
 
 import org.joml.FrustumIntersection
 import org.joml.Vector2i
-import org.joml.Vector2ic
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
@@ -66,25 +65,25 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val atlasUniform = object : TextureUniform() {
-        override fun getUnit(): Int = 0
+        override val unit = 0
 
-        override fun getName(): String = "u_atlas"
+        override val name = "u_atlas"
 
-        override fun getUniformValue(): ReadOnlyTexture2D = this@WaterRendererPrototype.atlas
+        override val value get() = this@WaterRendererPrototype.atlas
     }
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val dimensionsUniform = object : Vec2iUniform() {
-        override fun getName(): String = "u_dimensions"
+        override val name = "u_dimensions"
 
-        override fun getUniformValue(): Vector2ic = Vector2i(16, 16)
+        override val value = Vector2i(16, 16)
     }
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val texturesCount = object : IntUniform() {
-        override fun getName(): String = "u_texturesCount"
+        override val name = "u_texturesCount"
 
-        override fun getUniformValue(): Int = 4
+        override val value = 4
     }
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
