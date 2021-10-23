@@ -10,8 +10,8 @@ import org.saar.lwjgl.opengl.shaders.uniforms.UniformWrapper
 class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : RenderPass {
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
-        this.prototype.vertexShader(),
-        this.prototype.fragmentShader()
+        this.prototype.vertexShader,
+        this.prototype.fragmentShader
     )
 
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()

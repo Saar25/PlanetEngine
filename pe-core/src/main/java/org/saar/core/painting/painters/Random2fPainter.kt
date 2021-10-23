@@ -19,7 +19,7 @@ class Random2fPainter : Painter {
 
 private class Random2fPainterPrototype : RenderPassPrototype {
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/painting/random2f.fragment.glsl")
     )
 }

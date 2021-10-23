@@ -67,7 +67,7 @@ private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : Rend
         override val value = fogDistance.ordinal
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
         ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
         ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),

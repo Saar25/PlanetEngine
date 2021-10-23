@@ -89,7 +89,7 @@ private class LightRenderPassPrototype(
             ViewSpacePointLightUniform(name, this@LightRenderPassPrototype.pointLights[index])
         }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
 

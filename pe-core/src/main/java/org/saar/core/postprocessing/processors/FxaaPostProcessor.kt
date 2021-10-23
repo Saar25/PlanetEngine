@@ -43,7 +43,7 @@ private class FxaaPostProcessorPrototype : RenderPassPrototype {
         override val value get() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("FXAA_REDUCE_MIN", (1.0 / 128.0).toString()),
         ShaderCode.define("FXAA_REDUCE_MUL", (1.0 / 8.0).toString()),
         ShaderCode.define("FXAA_SPAN_MAX", 8.0.toString()),

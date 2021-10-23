@@ -52,9 +52,9 @@ private class SkyboxPostProcessorPrototype(val cubeMap: CubeMapTexture) : Render
     @UniformProperty
     val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
-    override fun vertexShader(): Shader = Shader.createVertex(GlslVersion.V400,
+    override val vertexShader: Shader = Shader.createVertex(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/skybox.vertex.glsl"))
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/skybox.pass.glsl"))
 }

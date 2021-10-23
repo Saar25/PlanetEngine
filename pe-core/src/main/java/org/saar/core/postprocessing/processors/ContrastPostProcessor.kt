@@ -38,6 +38,6 @@ private class ContrastPostProcessorPrototype(contrast: Float) : RenderPassProtot
         override val value = contrast
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl"))
 }

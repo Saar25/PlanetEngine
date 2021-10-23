@@ -96,7 +96,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
         ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.001f)),
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")

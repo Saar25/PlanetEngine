@@ -75,7 +75,7 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     @UniformProperty
     val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("LEVELS", this.samples.size.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl"))
 }

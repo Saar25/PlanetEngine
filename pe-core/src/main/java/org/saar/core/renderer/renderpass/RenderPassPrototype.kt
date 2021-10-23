@@ -9,8 +9,8 @@ private val vertexShaderCode = ShaderCode.loadSource(
 
 interface RenderPassPrototype {
 
-    fun vertexShader(): Shader = Shader.createVertex(GlslVersion.V400, vertexShaderCode)
+    val vertexShader: Shader get() = Shader.createVertex(GlslVersion.V400, vertexShaderCode)
 
-    fun fragmentShader(): Shader
+    val fragmentShader: Shader
 
 }

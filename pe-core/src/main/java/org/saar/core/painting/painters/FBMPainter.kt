@@ -30,7 +30,7 @@ private class FBMPainterPrototype : RenderPassPrototype {
         override val value get() = (System.currentTimeMillis() - startTime) / 1000f
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/painting/fbm.fragment.glsl")
     )
 }

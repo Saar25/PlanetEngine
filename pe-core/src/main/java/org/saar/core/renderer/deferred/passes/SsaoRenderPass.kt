@@ -160,7 +160,7 @@ private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
         override val value get() = radius
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("KERNEL_SAMPLES", kernel.size.toString()),
         ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl"))
 }
