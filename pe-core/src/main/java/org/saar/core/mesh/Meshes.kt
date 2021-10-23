@@ -33,9 +33,9 @@ object Meshes {
     }
 
     @JvmStatic
-    fun toInstancedMesh(prototype: MeshPrototype, instances: Int): Mesh {
-        return DrawCallMesh(toVao(prototype), InstancedArraysDrawCall(
-            RenderMode.TRIANGLES, 0, instances))
+    fun toInstancedMesh(prototype: MeshPrototype, vertices: Int, instances: Int,
+                        renderMode: RenderMode = RenderMode.TRIANGLES): Mesh {
+        return DrawCallMesh(toVao(prototype), InstancedArraysDrawCall(renderMode, vertices, instances))
     }
 
     @JvmStatic

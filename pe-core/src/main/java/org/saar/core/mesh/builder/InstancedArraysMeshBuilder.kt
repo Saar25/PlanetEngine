@@ -2,6 +2,7 @@ package org.saar.core.mesh.builder
 
 import org.saar.core.mesh.*
 import org.saar.core.mesh.writers.InstancedArraysMeshWriter
+import org.saar.lwjgl.opengl.constants.RenderMode
 
 abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal constructor(
     protected val prototype: MeshPrototype,
@@ -20,6 +21,10 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
     abstract fun addInstance(instance: I)
     abstract fun addVertex(vertex: V)
 
+    abstract fun load(renderMode: RenderMode): Mesh
+
+    override fun load() = load(RenderMode.TRIANGLES)
+
     class Dynamic<V : Vertex, I : Instance>(
         prototype: MeshPrototype,
         writer: InstancedArraysMeshWriter<V, I>
@@ -36,11 +41,12 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
             this.vertices += vertex
         }
 
-        override fun load(): Mesh {
+        override fun load(renderMode: RenderMode): Mesh {
             allocate(this.instances.size, this.vertices.size)
             this.writer.writeInstances(this.instances)
             this.writer.writeVertices(this.vertices)
-            return Meshes.toInstancedMesh(this.prototype, this.instances.size)
+            return Meshes.toInstancedMesh(this.prototype,
+                this.vertices.size, this.instances.size, renderMode)
         }
     }
 
@@ -59,6 +65,7 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
 
         override fun addVertex(vertex: V) = this.writer.writeVertex(vertex)
 
-        override fun load() = Meshes.toInstancedMesh(this.prototype, this.instances)
+        override fun load(renderMode: RenderMode) = Meshes.toInstancedMesh(
+            this.prototype, this.vertices, this.instances, renderMode)
     }
 }
