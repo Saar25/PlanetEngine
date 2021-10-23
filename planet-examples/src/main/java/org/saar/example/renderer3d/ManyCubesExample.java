@@ -8,7 +8,6 @@ import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.KeyboardRotationBehavior;
 import org.saar.core.common.r3d.*;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -41,8 +40,7 @@ public class ManyCubesExample {
 
         final Keyboard keyboard = window.getKeyboard();
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f),

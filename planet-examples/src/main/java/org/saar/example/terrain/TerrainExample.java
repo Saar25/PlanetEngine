@@ -29,7 +29,6 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -57,8 +56,7 @@ public class TerrainExample {
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);

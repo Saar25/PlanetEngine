@@ -10,7 +10,6 @@ import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.screen.MainScreen;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
@@ -81,8 +80,7 @@ public class ObjRendererExample {
     }
 
     private static Camera buildCamera(Keyboard keyboard) {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new KeyboardMovementBehavior(keyboard, 20f, 20f, 20f),

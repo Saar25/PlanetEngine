@@ -17,7 +17,6 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
-import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -76,8 +75,7 @@ public class DeferredExample {
     }
 
     private static Camera buildCamera(Mouse mouse) {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final Transform center = new SimpleTransform();
 

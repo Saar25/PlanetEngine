@@ -30,7 +30,6 @@ import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
-import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -57,8 +56,7 @@ public class NormalMappingExample {
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);

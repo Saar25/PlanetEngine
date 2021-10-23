@@ -35,7 +35,6 @@ import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
-import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.gui.UIBlockElement;
@@ -111,8 +110,7 @@ public class ReflectionExample {
 
         uiDisplay.add(uiTextGroup);
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 300);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 300);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);

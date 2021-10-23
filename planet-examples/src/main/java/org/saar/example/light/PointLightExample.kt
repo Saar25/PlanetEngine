@@ -25,7 +25,6 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
-import org.saar.core.screen.MainScreen
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.gui.UIContainer
@@ -49,7 +48,7 @@ fun main() {
 
     val keyboard = window.keyboard
     val mouse = window.mouse
-    val projection: Projection = ScreenPerspectiveProjection(MainScreen, 70f, 1f, 1000f)
+    val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
     val behaviors = BehaviorGroup(
         KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
