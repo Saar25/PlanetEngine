@@ -15,4 +15,8 @@ class ShadowsScreenPrototype : ScreenPrototype {
     @ScreenImageProperty
     private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment
         .withTexture(depthTexture, DepthFormatType.COMPONENT24))
+
+    val buffer = object : ShadowsBuffers {
+        override val depth = depthTexture
+    }
 }

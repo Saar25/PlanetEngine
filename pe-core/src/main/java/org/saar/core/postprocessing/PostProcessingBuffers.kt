@@ -4,7 +4,6 @@ import org.saar.core.renderer.renderpass.AlbedoBuffer
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
-class PostProcessingBuffers(
+interface PostProcessingBuffers : RenderPassBuffers, AlbedoBuffer {
     override val albedo: ReadOnlyTexture2D
-) : RenderPassBuffers,
-    AlbedoBuffer
+}

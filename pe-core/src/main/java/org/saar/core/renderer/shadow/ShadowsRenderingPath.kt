@@ -41,7 +41,7 @@ class ShadowsRenderingPath(
         context.hints.cullFace = GlCullFace.FRONT
         this.renderNode.renderShadows(context)
 
-        return RenderingOutput(this.screen, ShadowsBuffers(this.prototype.depthTexture))
+        return RenderingOutput(this.screen, this.prototype.buffer)
     }
 
     override fun delete() {

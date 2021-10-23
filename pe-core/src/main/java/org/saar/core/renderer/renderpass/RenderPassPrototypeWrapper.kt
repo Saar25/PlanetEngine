@@ -7,7 +7,7 @@ import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.shaders.ShadersProgram
 import org.saar.lwjgl.opengl.shaders.uniforms.UniformWrapper
 
-class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : RenderPass {
+class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) {
 
     private val shadersProgram: ShadersProgram = ShadersProgram.create(
         this.prototype.vertexShader,
@@ -63,7 +63,7 @@ class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) : R
         QuadMesh.draw()
     }
 
-    override fun delete() {
+    fun delete() {
         this.shadersProgram.delete()
     }
 }

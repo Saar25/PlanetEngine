@@ -22,5 +22,8 @@ class ForwardScreenPrototype : ScreenPrototype {
     private val depthImage: ScreenImage = ColourScreenImage(ColourAttachment
         .withTexture(0, depthTexture, ColourFormatType.RGB16))
 
-    fun asBuffers() = ForwardRenderingBuffers(this.colourTexture, this.depthTexture)
+    val buffers = object : ForwardRenderingBuffers {
+        override val albedo = colourTexture
+        override val depth = depthTexture
+    }
 }

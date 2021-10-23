@@ -32,5 +32,9 @@ class DeferredScreenPrototype : ScreenPrototype {
     private val depthImage: ScreenImage = DepthStencilScreenImage(DepthStencilAttachment.withTexture(
         this.depthTexture, DepthStencilFormatType.DEPTH24_STENCIL8, DataType.U_INT_24_8))
 
-    fun asBuffers() = DeferredRenderingBuffers(this.colourTexture, this.normalSpecularTexture, this.depthTexture)
+    val buffers = object : DeferredRenderingBuffers {
+        override val albedo = colourTexture
+        override val normalSpecular = normalSpecularTexture
+        override val depth = depthTexture
+    }
 }

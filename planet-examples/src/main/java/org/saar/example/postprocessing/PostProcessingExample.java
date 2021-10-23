@@ -46,6 +46,7 @@ public class PostProcessingExample {
         screen.addScreenImage(image);
         screen.setDrawImages(image);
         screen.setReadImages(image);
+        final PostProcessingBuffers buffers = () -> colourTexture;
 
         final PostProcessingPipeline pipeline = new PostProcessingPipeline(
                 new ContrastPostProcessor(1.8f),
@@ -62,8 +63,7 @@ public class PostProcessingExample {
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
             renderer.render(new RenderContextBase(null), model);
 
-            pipeline.process(new RenderPassContext(camera),
-                    new PostProcessingBuffers(colourTexture));
+            pipeline.process(new RenderPassContext(camera), buffers);
 
             screen.copyTo(MainScreen.INSTANCE);
 

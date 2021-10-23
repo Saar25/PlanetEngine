@@ -29,12 +29,12 @@ class DeferredRenderingPath(
 
         val context = RenderPassContext(this.camera)
         this.helper.process {
-            it.prepare(context, this.prototype.asBuffers())
+            it.prepare(context, this.prototype.buffers)
             this.screen.setAsDraw()
-            it.render(context, this.prototype.asBuffers())
+            it.render(context, this.prototype.buffers)
         }
 
-        return RenderingOutput(this.screen, this.prototype.asBuffers())
+        return RenderingOutput(this.screen, this.prototype.buffers)
     }
 
     override fun delete() {
