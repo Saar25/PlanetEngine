@@ -1,6 +1,6 @@
 package org.saar.example.gui;
 
-import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderContext;
 import org.saar.gui.UIComponent;
 import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
@@ -81,7 +81,7 @@ public class GuiExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             GlUtils.clear(GlBuffer.COLOUR);
-            display.render(new RenderContextBase(null));
+            display.render(new RenderContext(null));
 
             display.update();
             window.swapBuffers();

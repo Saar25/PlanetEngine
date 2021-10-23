@@ -2,7 +2,7 @@ package org.saar.core.renderer.shadow
 
 import org.saar.core.camera.projection.OrthographicProjection
 import org.saar.core.light.IDirectionalLight
-import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
@@ -32,9 +32,9 @@ class ShadowsRenderingPath(
 
         GlUtils.clear(GlBuffer.DEPTH)
 
-        val context = RenderContextBase(this.camera)
+        val context = RenderContext(this.camera)
 
-        context.hints.cullFace = GlCullFace.FRONT
+        GlUtils.setCullFace(GlCullFace.FRONT)
         this.renderNode.renderShadows(context)
 
         return RenderingOutput(this.screen, this.prototype.buffers)

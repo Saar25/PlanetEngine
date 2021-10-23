@@ -6,9 +6,9 @@ import org.saar.core.painting.painters.Random2fPainter
 import org.saar.core.painting.renderToTexture
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor
 import org.saar.core.postprocessing.processors.MultiplyPostProcessor
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -80,7 +80,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         Vector3.of(x, y, z).normalize(Random.nextFloat() * scale)
     }
 
-    override fun prepare(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+    override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
         this.screen.setAsDraw()
         this.screen.assureSize(
             Window.current().width,
@@ -98,7 +98,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         }
     }
 
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) {
+    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) {
         this.multiplyPostProcessor.render(context, buffers)
     }
 

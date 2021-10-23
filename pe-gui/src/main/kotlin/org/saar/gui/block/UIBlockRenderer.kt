@@ -16,8 +16,6 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
-import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlUtils
 
 object UIBlockRenderer : Renderer, RendererMethodsBase<RenderContext, UIBlock> {
 
@@ -90,7 +88,6 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     override fun fragmentOutputs() = arrayOf("fragColour")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(GlCullFace.NONE)
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()

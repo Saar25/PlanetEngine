@@ -13,7 +13,6 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
@@ -54,7 +53,6 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         "f_colour", "f_normal")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
         BlendTest.disable()
         DepthTest.enable()
 

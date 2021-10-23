@@ -4,9 +4,9 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.light.ViewSpacePointLightUniform
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -30,7 +30,7 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
 
     constructor(light: PointLight) : this(pointLights = arrayOf(light))
 
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
         this.prototype.normalSpecularTextureUniform.value = buffers.normalSpecular
         this.prototype.depthTextureUniform.value = buffers.depth

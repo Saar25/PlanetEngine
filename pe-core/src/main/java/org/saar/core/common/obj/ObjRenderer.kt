@@ -13,7 +13,6 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object ObjRenderer : Renderer, RendererPrototypeWrapper<ObjModel>(ObjRendererPrototype())
@@ -41,7 +40,6 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
         "in_position", "in_uvCoord", "in_normal")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
         BlendTest.disable()
         DepthTest.enable()
     }

@@ -3,7 +3,7 @@ package org.saar.core.postprocessing.processors
 import org.joml.Vector2i
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -20,7 +20,7 @@ class FxaaPostProcessor : PostProcessor {
     private val prototype = FxaaPostProcessorPrototype()
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         StencilTest.disable()
 
         this.prototype.textureUniform.value = buffers.albedo

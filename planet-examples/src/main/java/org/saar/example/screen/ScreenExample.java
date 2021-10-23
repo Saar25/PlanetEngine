@@ -9,7 +9,7 @@ import org.saar.core.common.behaviors.KeyboardRotationBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
-import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderContext;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.Screens;
@@ -55,7 +55,7 @@ public class ScreenExample {
 
             camera.update();
 
-            renderer.render(new RenderContextBase(camera), cottageModel);
+            renderer.render(new RenderContext(camera), cottageModel);
 
             screen.copyTo(MainScreen.INSTANCE);
 

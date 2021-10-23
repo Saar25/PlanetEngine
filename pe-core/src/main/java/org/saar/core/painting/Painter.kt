@@ -1,8 +1,8 @@
 package org.saar.core.painting
 
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.lwjgl.opengl.constants.ColourFormatType
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
@@ -14,9 +14,9 @@ interface Painter : RenderPass<RenderPassBuffers> {
 
     fun render()
 
-    override fun prepare(context: RenderPassContext, buffers: RenderPassBuffers) = prepare()
+    override fun prepare(context: RenderContext, buffers: RenderPassBuffers) = prepare()
 
-    override fun render(context: RenderPassContext, buffers: RenderPassBuffers) = render()
+    override fun render(context: RenderContext, buffers: RenderPassBuffers) = render()
 }
 
 fun Painter.renderToTexture(width: Int, height: Int,

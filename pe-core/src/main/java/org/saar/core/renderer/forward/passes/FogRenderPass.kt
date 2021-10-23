@@ -3,9 +3,9 @@ package org.saar.core.renderer.forward.passes
 import org.saar.core.fog.FogDistance
 import org.saar.core.fog.FogUniformValue
 import org.saar.core.fog.IFog
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.forward.ForwardRenderPass
 import org.saar.core.renderer.forward.ForwardRenderingBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -23,7 +23,7 @@ class FogRenderPass(fog: IFog, fogDistance: FogDistance) : ForwardRenderPass {
     private val prototype = FogRenderPassPrototype(fog, fogDistance)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: ForwardRenderingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: ForwardRenderingBuffers) = this.wrapper.render {
         this.prototype.textureUniform.value = buffers.albedo
         this.prototype.depthUniform.value = buffers.depth
 

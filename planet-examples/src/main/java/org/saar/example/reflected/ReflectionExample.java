@@ -21,7 +21,7 @@ import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -166,7 +166,7 @@ public class ReflectionExample {
             deferredRenderer.render().toMainScreen();
 
             reflectionUiElement.setTexture(reflection.getReflectionMap());
-            uiDisplay.render(new RenderContextBase(null));
+            uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();
             window.pollEvents();
@@ -222,7 +222,7 @@ public class ReflectionExample {
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
         };
-        final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{3, 2, 1, 3, 1, 0});
+        final FlatReflectedMesh mesh = FlatReflectedMesh.load(vertices, new int[]{0, 1, 2, 0, 2, 3});
 
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
         mirror.getTransform().getPosition().set(0, .1f, 0);

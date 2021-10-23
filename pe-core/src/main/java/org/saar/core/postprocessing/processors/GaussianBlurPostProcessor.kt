@@ -3,7 +3,7 @@ package org.saar.core.postprocessing.processors
 import org.joml.Vector2i
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -37,7 +37,7 @@ class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor {
     private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) {
         this.wrapper.render {
             this.prototype.textureUniform.value = buffers.albedo
 

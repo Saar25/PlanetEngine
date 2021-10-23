@@ -1,10 +1,12 @@
 package org.saar.core.renderer.renderpass
 
+import org.saar.core.renderer.RenderContext
+
 interface RenderPass<in T : RenderPassBuffers> {
 
-    fun prepare(context: RenderPassContext, buffers: T) = Unit
+    fun prepare(context: RenderContext, buffers: T) = Unit
 
-    fun render(context: RenderPassContext, buffers: T)
+    fun render(context: RenderContext, buffers: T)
 
     fun delete()
 

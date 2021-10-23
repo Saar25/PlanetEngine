@@ -2,7 +2,6 @@ package org.saar.core.renderer
 
 import org.saar.core.camera.ICamera
 import org.saar.core.renderer.renderpass.RenderPassBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassesPipelineHelper
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
@@ -24,7 +23,7 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
 
         GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        val context = RenderPassContext(this.camera)
+        val context = RenderContext(camera)
         this.helper.process {
             it.prepare(context, this.pipeline.prototype.buffers)
             this.screen.setAsDraw()

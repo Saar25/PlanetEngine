@@ -4,9 +4,9 @@ import org.joml.Vector2i
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -23,7 +23,7 @@ class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture2D, lig
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
         this.prototype.normalSpecularTexture.value = buffers.normalSpecular
         this.prototype.depthTextureUniform.value = buffers.depth

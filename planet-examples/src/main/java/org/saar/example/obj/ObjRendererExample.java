@@ -9,7 +9,7 @@ import org.saar.core.common.behaviors.KeyboardRotationBehavior;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
-import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
@@ -60,7 +60,7 @@ public class ObjRendererExample {
 
             camera.update();
 
-            renderer.render(new RenderContextBase(camera), cottageModel);
+            renderer.render(new RenderContext(camera), cottageModel);
 
             fbo.blitToScreen();
 

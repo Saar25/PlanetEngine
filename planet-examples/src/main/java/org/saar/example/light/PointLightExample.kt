@@ -20,7 +20,7 @@ import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor
-import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
@@ -126,7 +126,7 @@ fun main() {
         lights.forEach { it.update() }
 
         renderingPath.render().toMainScreen()
-        uiDisplay.render(RenderContextBase(camera))
+        uiDisplay.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()

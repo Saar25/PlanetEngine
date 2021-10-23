@@ -2,7 +2,7 @@ package org.saar.core.postprocessing.processors
 
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -24,11 +24,11 @@ class SkyboxPostProcessor(cubeMap: CubeMapTexture) : PostProcessor {
     private val stencilState = StencilState(StencilOperation.ALWAYS_KEEP,
         StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED)
 
-    override fun prepare(context: RenderPassContext, buffers: PostProcessingBuffers) {
+    override fun prepare(context: RenderContext, buffers: PostProcessingBuffers) {
         StencilTest.apply(this.stencilState)
     }
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         this.prototype.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)
         this.prototype.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
     }

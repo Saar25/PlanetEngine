@@ -1,7 +1,7 @@
 package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UITextElement
 import org.saar.gui.style.Colours
@@ -35,7 +35,7 @@ object HelloWorldExample {
             display.update()
 
             GlUtils.clear(GlBuffer.COLOUR)
-            display.render(RenderContextBase(null))
+            display.render(RenderContext(null))
 
             window.swapBuffers()
             window.pollEvents()
