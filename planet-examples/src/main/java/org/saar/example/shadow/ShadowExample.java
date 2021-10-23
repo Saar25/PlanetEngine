@@ -9,10 +9,7 @@ import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjNode;
-import org.saar.core.common.obj.ObjNodeBatch;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
@@ -117,8 +114,8 @@ public class ShadowExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
-                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 
@@ -143,7 +140,7 @@ public class ShadowExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -154,7 +151,7 @@ public class ShadowExample {
 
     private static ObjModel loadStall() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -165,7 +162,7 @@ public class ShadowExample {
 
     private static ObjModel loadDragon() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {

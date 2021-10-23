@@ -1,4 +1,4 @@
-package org.saar.core.mesh.build;
+package org.saar.core.mesh.buffer;
 
 import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;

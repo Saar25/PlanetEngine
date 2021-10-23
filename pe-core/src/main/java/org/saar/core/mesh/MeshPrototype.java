@@ -1,4 +1,4 @@
-package org.saar.core.mesh.build;
+package org.saar.core.mesh;
 
 public interface MeshPrototype {
 

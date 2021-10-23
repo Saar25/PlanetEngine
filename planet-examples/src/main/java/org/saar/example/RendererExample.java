@@ -28,7 +28,7 @@ public class RendererExample {
                 R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
                 R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
-        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        final Mesh2D mesh = R2D.mesh(vertices, indices);
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = Renderer2D.INSTANCE;
 

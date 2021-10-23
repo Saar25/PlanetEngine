@@ -61,7 +61,7 @@ public class PostProcessingExample {
         };
         final int[] indices = {0, 1, 2, 0, 2, 3};
 
-        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        final Mesh2D mesh = R2D.mesh(vertices, indices);
         return new Model2D(mesh);
     }
 }

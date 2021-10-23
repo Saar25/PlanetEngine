@@ -1,15 +1,13 @@
 package org.saar.core.common.r3d;
 
 import org.joml.Matrix4fc;
-import org.saar.core.mesh.build.writers.MeshIndexWriter;
-import org.saar.core.mesh.build.writers.MeshInstanceWriter;
-import org.saar.core.mesh.build.writers.MeshVertexWriter;
+import org.saar.core.mesh.writers.InstancedElementsMeshWriter;
 
-public class Mesh3DWriter implements MeshInstanceWriter<Instance3D>, MeshVertexWriter<Vertex3D>, MeshIndexWriter {
+public class MeshWriter3D implements InstancedElementsMeshWriter<Vertex3D, Instance3D> {
 
-    private final Mesh3DPrototype prototype;
+    private final MeshPrototype3D prototype;
 
-    public Mesh3DWriter(Mesh3DPrototype prototype) {
+    public MeshWriter3D(MeshPrototype3D prototype) {
         this.prototype = prototype;
     }
 

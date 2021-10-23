@@ -2,9 +2,9 @@ package org.saar.core.common.obj
 
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.saar.core.mesh.build.MeshBufferProperty
-import org.saar.core.mesh.build.buffers.MeshIndexBuffer
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer
+import org.saar.core.mesh.buffer.MeshBufferProperty
+import org.saar.core.mesh.buffer.MeshIndexBuffer
+import org.saar.core.mesh.buffer.MeshVertexBuffer
 
 object Obj {
 
@@ -20,7 +20,7 @@ object Obj {
     }
 
     @JvmStatic
-    fun mesh(vertex: MeshVertexBuffer, index: MeshIndexBuffer): ObjMeshPrototype {
+    fun meshPrototype(vertex: MeshVertexBuffer, index: MeshIndexBuffer): ObjMeshPrototype {
         return object : ObjMeshPrototype {
 
             @MeshBufferProperty
@@ -40,10 +40,26 @@ object Obj {
     }
 
     @JvmStatic
-    fun mesh(): ObjMeshPrototype {
+    fun meshPrototype(): ObjMeshPrototype {
         val vertex = MeshVertexBuffer.createStatic()
         val index = MeshIndexBuffer.createStatic()
-        return mesh(vertex, index)
+        return meshPrototype(vertex, index)
     }
 
+    @JvmStatic
+    @JvmOverloads
+    fun mesh(vertices: Array<ObjVertex>, indices: IntArray, prototype: ObjMeshPrototype = meshPrototype()): ObjMesh {
+        return ObjMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
+            vertices.forEach(it::addVertex)
+            indices.forEach(it::addIndex)
+        }.load()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun mesh(file: String, prototype: ObjMeshPrototype = meshPrototype()): ObjMesh {
+        return ObjMeshLoader(file).use { loader ->
+            mesh(loader.loadVertices(), loader.loadIndices(), prototype)
+        }
+    }
 }

@@ -1,17 +1,20 @@
-package org.saar.core.common.obj;
+package org.saar.core.common.r3d;
 
 
 import org.saar.core.mesh.MeshPrototype;
 import org.saar.core.mesh.buffer.MeshIndexBuffer;
+import org.saar.core.mesh.buffer.MeshInstanceBuffer;
 import org.saar.core.mesh.buffer.MeshVertexBuffer;
 
-public interface ObjMeshPrototype extends MeshPrototype {
+public interface MeshPrototype3D extends MeshPrototype {
 
     MeshVertexBuffer getPositionBuffer();
 
-    MeshVertexBuffer getUvCoordBuffer();
-
     MeshVertexBuffer getNormalBuffer();
+
+    MeshVertexBuffer getColourBuffer();
+
+    MeshInstanceBuffer getTransformBuffer();
 
     MeshIndexBuffer getIndexBuffer();
 }

@@ -1,4 +1,4 @@
-package org.saar.core.mesh.build;
+package org.saar.core.mesh.buffer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

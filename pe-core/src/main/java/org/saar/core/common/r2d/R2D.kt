@@ -2,9 +2,10 @@ package org.saar.core.common.r2d
 
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.saar.core.mesh.build.MeshBufferProperty
-import org.saar.core.mesh.build.buffers.MeshIndexBuffer
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer
+import org.saar.core.common.r2d.MeshBuilder2D.Companion.fixed
+import org.saar.core.mesh.buffer.MeshBufferProperty
+import org.saar.core.mesh.buffer.MeshIndexBuffer
+import org.saar.core.mesh.buffer.MeshVertexBuffer
 
 object R2D {
 
@@ -18,8 +19,8 @@ object R2D {
     }
 
     @JvmStatic
-    fun mesh(vertex: MeshVertexBuffer, index: MeshIndexBuffer): Mesh2DPrototype {
-        return object : Mesh2DPrototype {
+    fun meshPrototype(vertex: MeshVertexBuffer, index: MeshIndexBuffer): MeshPrototype2D {
+        return object : MeshPrototype2D {
             @MeshBufferProperty
             val meshVertexBuffer: MeshVertexBuffer = vertex
 
@@ -35,10 +36,18 @@ object R2D {
     }
 
     @JvmStatic
-    fun mesh(): Mesh2DPrototype {
+    fun meshPrototype(): MeshPrototype2D {
         val vertex = MeshVertexBuffer.createStatic()
         val index = MeshIndexBuffer.createStatic()
-        return mesh(vertex, index)
+        return meshPrototype(vertex, index)
     }
 
+    @JvmStatic
+    @JvmOverloads
+    fun mesh(vertices: Array<Vertex2D>, indices: IntArray, prototype: MeshPrototype2D = meshPrototype()): Mesh2D {
+        return fixed(vertices.size, indices.size, prototype).also {
+            vertices.forEach(it::addVertex)
+            indices.forEach(it::addIndex)
+        }.load()
+    }
 }

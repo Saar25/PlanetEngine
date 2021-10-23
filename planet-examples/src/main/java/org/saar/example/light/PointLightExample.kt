@@ -6,7 +6,6 @@ import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.behaviors.*
-import org.saar.core.common.r3d.Mesh3D
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
@@ -153,7 +152,7 @@ private fun createCubeMap() = CubeMapTextureBuilder()
 private fun buildCubeModel(): Model3D {
     val cubeInstance = R3D.instance()
     cubeInstance.transform.scale.set(10f, 10f, 10f)
-    val cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
-        ExamplesUtils.cubeIndices, arrayOf(cubeInstance))
+    val cubeMesh = R3D.mesh(arrayOf(cubeInstance),
+        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
     return Model3D(cubeMesh)
 }

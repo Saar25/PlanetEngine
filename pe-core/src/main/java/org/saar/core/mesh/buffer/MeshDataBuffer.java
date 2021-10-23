@@ -1,6 +1,5 @@
-package org.saar.core.mesh.build.buffers;
+package org.saar.core.mesh.buffer;
 
-import org.saar.core.mesh.build.MeshBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.objects.vaos.WritableVao;

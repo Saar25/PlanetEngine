@@ -10,7 +10,7 @@ class ObjMeshLoader(private val objFile: String) : AutoCloseable {
 
     private val assimpMesh = AssimpUtil.load(this@ObjMeshLoader.objFile)
 
-    fun loadVertices(): List<ObjVertex> = loadVerticesSequence().toList()
+    fun loadVertices(): Array<ObjVertex> = loadVerticesSequence().toList().toTypedArray()
 
     fun loadVerticesSequence(): Sequence<ObjVertex> = sequence {
         val assimpPosition = AssimpPositionComponent.of(
@@ -29,7 +29,7 @@ class ObjMeshLoader(private val objFile: String) : AutoCloseable {
         }
     }
 
-    fun loadIndices(): List<Int> = loadIndicesSequence().toList()
+    fun loadIndices(): IntArray = loadIndicesSequence().toList().toIntArray()
 
     fun loadIndicesSequence(): Sequence<Int> = sequence {
         val assimpIndex = AssimpIndexComponent.of(

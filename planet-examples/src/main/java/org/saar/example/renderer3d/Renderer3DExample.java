@@ -90,8 +90,8 @@ public class Renderer3DExample {
                         (float) Math.random(), (float) Math.random()).normalize());
                 nodes[j] = newNode;
             }
-            final Mesh3DPrototype prototype = optimizeMesh ? new MeshOptimized() : new MeshUnoptimized();
-            final Mesh3D mesh = Mesh3D.load(prototype, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
+            final MeshPrototype3D prototype = optimizeMesh ? new MeshOptimized() : new MeshUnoptimized();
+            final Mesh3D mesh = R3D.mesh(nodes, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, prototype);
             batches[i] = new Model3D(mesh);
         }
         return batches;

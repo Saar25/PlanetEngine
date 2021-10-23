@@ -1,6 +1,5 @@
-package org.saar.core.mesh.build.buffers;
+package org.saar.core.mesh.buffer;
 
-import org.saar.core.mesh.build.MeshBuffer;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;

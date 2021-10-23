@@ -1,4 +1,4 @@
-package org.saar.core.mesh.build.writers;
+package org.saar.core.mesh.writers;
 
 import org.saar.core.mesh.Vertex;
 

@@ -94,7 +94,9 @@ public class ManyCubesExample {
                     a * SPACE, b * SPACE, c * SPACE);
             nodes[i] = newNode;
         }
-        final Mesh3D mesh = Mesh3D.load(ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
+        final Mesh3D mesh = R3D.mesh(nodes,
+                ExamplesUtils.cubeVertices,
+                ExamplesUtils.cubeIndices);
         return new Model3D(mesh);
     }
 

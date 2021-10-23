@@ -1,9 +1,9 @@
 package org.saar.core.common.flatreflected
 
 import org.joml.Vector3fc
-import org.saar.core.mesh.build.MeshBufferProperty
-import org.saar.core.mesh.build.buffers.MeshIndexBuffer
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer
+import org.saar.core.mesh.buffer.MeshBufferProperty
+import org.saar.core.mesh.buffer.MeshIndexBuffer
+import org.saar.core.mesh.buffer.MeshVertexBuffer
 
 object FlatReflected {
 
@@ -25,5 +25,15 @@ object FlatReflected {
 
             override fun getIndexBuffer(): MeshIndexBuffer = this.meshIndexBuffer
         }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun mesh(vertices: Array<FlatReflectedVertex>, indices: IntArray,
+             prototype: FlatReflectedMeshPrototype = meshPrototype()): FlatReflectedMesh {
+        return FlatReflectedMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
+            vertices.forEach(it::addVertex)
+            indices.forEach(it::addIndex)
+        }.load()
     }
 }

@@ -1,10 +1,6 @@
-package org.saar.core.mesh.build;
+package org.saar.core.mesh;
 
-import org.saar.core.mesh.Instance;
-import org.saar.core.mesh.Vertex;
-import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
-import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
+import org.saar.core.mesh.buffer.*;
 import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
 
 import java.util.List;
@@ -44,18 +40,6 @@ public class MeshPrototypeHelper {
         for (MeshIndexBuffer buffer : getIndexBuffers()) {
             buffer.allocateCount(indices);
         }
-    }
-
-    public void allocateInstances(Instance[] instances) {
-        allocateInstances(instances.length);
-    }
-
-    public void allocateVertices(Vertex[] vertices) {
-        allocateVertices(vertices.length);
-    }
-
-    public void allocateIndices(int[] indices) {
-        allocateIndices(indices.length);
     }
 
     public void store() {

@@ -1,13 +1,12 @@
 package org.saar.core.common.r2d;
 
-import org.saar.core.mesh.build.writers.MeshIndexWriter;
-import org.saar.core.mesh.build.writers.MeshVertexWriter;
+import org.saar.core.mesh.writers.ElementsMeshWriter;
 
-public class Mesh2DWriter implements MeshVertexWriter<Vertex2D>, MeshIndexWriter {
+public class MeshWriter2D implements ElementsMeshWriter<Vertex2D> {
 
-    private final Mesh2DPrototype prototype;
+    private final MeshPrototype2D prototype;
 
-    public Mesh2DWriter(Mesh2DPrototype prototype) {
+    public MeshWriter2D(MeshPrototype2D prototype) {
         this.prototype = prototype;
     }
 
@@ -21,5 +20,4 @@ public class Mesh2DWriter implements MeshVertexWriter<Vertex2D>, MeshIndexWriter
     public void writeIndex(int index) {
         this.prototype.getIndexBuffer().getWriter().writeInt(index);
     }
-
 }

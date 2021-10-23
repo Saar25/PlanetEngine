@@ -1,7 +1,5 @@
 package org.saar.core.mesh
 
-import org.saar.core.mesh.build.MeshPrototype
-import org.saar.core.mesh.build.MeshPrototypeHelper
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall
