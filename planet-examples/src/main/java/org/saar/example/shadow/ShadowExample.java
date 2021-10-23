@@ -9,22 +9,19 @@ import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
 import org.saar.core.common.behaviors.MouseRotationBehavior;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjNode;
-import org.saar.core.common.obj.ObjNodeBatch;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
-import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -50,8 +47,7 @@ public class ShadowExample {
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
@@ -81,13 +77,14 @@ public class ShadowExample {
                 ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
+
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
+                new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );
 
-        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, renderNode, renderPassesPipeline);
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -95,7 +92,7 @@ public class ShadowExample {
 
             deferredRenderer.render().toMainScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             final double delta = fps.delta() * 1000;
@@ -117,8 +114,8 @@ public class ShadowExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
-                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 
@@ -143,7 +140,7 @@ public class ShadowExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -154,7 +151,7 @@ public class ShadowExample {
 
     private static ObjModel loadStall() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -165,7 +162,7 @@ public class ShadowExample {
 
     private static ObjModel loadDragon() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {

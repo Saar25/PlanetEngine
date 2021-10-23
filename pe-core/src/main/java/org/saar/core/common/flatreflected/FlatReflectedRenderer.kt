@@ -14,7 +14,6 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
@@ -43,7 +42,6 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
         "in_position", "in_normal")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(GlCullFace.NONE)
         GlUtils.setProvokingVertexFirst()
         BlendTest.disable()
         DepthTest.enable()

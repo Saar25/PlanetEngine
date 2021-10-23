@@ -2,7 +2,7 @@ package org.saar.core.postprocessing.processors
 
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -17,7 +17,7 @@ class ContrastPostProcessor(contrast: Float) : PostProcessor {
     private val prototype = ContrastPostProcessorPrototype(contrast)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         this.prototype.textureUniform.value = buffers.albedo
     }
 
@@ -26,18 +26,18 @@ class ContrastPostProcessor(contrast: Float) : PostProcessor {
     }
 }
 
-private class ContrastPostProcessorPrototype(private val contrast: Float) : RenderPassPrototype {
+private class ContrastPostProcessorPrototype(contrast: Float) : RenderPassPrototype {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformProperty
     val contrastUniform = object : FloatUniform() {
-        override fun getName() = "u_contrast"
+        override val name = "u_contrast"
 
-        override fun getUniformValue() = this@ContrastPostProcessorPrototype.contrast
+        override val value = contrast
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl"))
 }

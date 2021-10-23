@@ -7,8 +7,7 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.behaviors.KeyboardMovementBehavior;
 import org.saar.core.common.behaviors.KeyboardRotationBehavior;
 import org.saar.core.common.r3d.*;
-import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.screen.MainScreen;
+import org.saar.core.renderer.RenderContext;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -46,10 +45,10 @@ public class Renderer3DExample {
 
             camera.update();
 
-            renderer.render(new RenderContextBase(camera), models);
+            renderer.render(new RenderContext(camera), models);
 
+            window.swapBuffers();
             window.pollEvents();
-            window.update(true);
 
             System.out.print("\rFps: " + fps.fps());
 
@@ -62,8 +61,7 @@ public class Renderer3DExample {
     }
 
     private static Camera buildCamera(Keyboard keyboard) {
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final BehaviorGroup behaviors = new BehaviorGroup(
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
@@ -92,8 +90,8 @@ public class Renderer3DExample {
                         (float) Math.random(), (float) Math.random()).normalize());
                 nodes[j] = newNode;
             }
-            final Mesh3DPrototype prototype = optimizeMesh ? new MeshOptimized() : new MeshUnoptimized();
-            final Mesh3D mesh = Mesh3D.load(prototype, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, nodes);
+            final MeshPrototype3D prototype = optimizeMesh ? new MeshOptimized() : new MeshUnoptimized();
+            final Mesh3D mesh = R3D.mesh(nodes, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, prototype);
             batches[i] = new Model3D(mesh);
         }
         return batches;

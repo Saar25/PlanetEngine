@@ -3,7 +3,7 @@ package org.saar.core.postprocessing.processors
 import org.joml.Vector2i
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -37,7 +37,7 @@ class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor {
     private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) {
         this.wrapper.render {
             this.prototype.textureUniform.value = buffers.albedo
 
@@ -62,25 +62,20 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
 
     @UniformProperty
     val resolutionUniform = object : Vec2iUniform() {
-        override fun getName() = "u_resolution"
+        override val name = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
+        override val value get() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
     val blurLevelsUniform: UniformArray<FloatUniform> = UniformArray("u_blurLevels", this.samples.size) { name, index ->
-        object : FloatUniform() {
-            override fun getName() = name
-
-            override fun getUniformValue() =
-                this@GaussianBlurPostProcessorPrototype.samples[index]
-        }
+        FloatUniformValue(name, this.samples[index])
     }
 
     @UniformProperty
     val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("LEVELS", this.samples.size.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl"))
 }

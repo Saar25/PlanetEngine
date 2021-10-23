@@ -80,7 +80,7 @@ final Model2D model = new Model2D(mesh);
 final Renderer2D renderer = new Renderer2D();
 
 // Render the model
-renderer.render(new RenderContextBase(camera), model);
+renderer.render(new RenderContext(camera), model);
 ```
 
 the rendering pipeline consists of some primary interfaces
@@ -137,7 +137,7 @@ usually holds the model and a renderer, and has at least one render method
 final Model3D cubeModel = buildCubeModel();
 final Node3D cube = new Node3D(cubeModel);
 
-cube.renderForward(new RenderContextBase(camera))
+cube.renderForward(new RenderContext(camera))
 ```
 
 ### Renderer
@@ -237,7 +237,7 @@ val uiButton = UIButton().apply {
 }
 display.add(uiButton)
 
-display.render(RenderContextBase(null))
+display.render(RenderContext(null))
 ```
 
 ### Text rendering

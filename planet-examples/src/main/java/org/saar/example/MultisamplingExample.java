@@ -59,7 +59,7 @@ public class MultisamplingExample {
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
             fbo.blitToScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

@@ -23,11 +23,12 @@ import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
+import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -55,8 +56,7 @@ public class TerrainExample {
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final KeyboardMovementBehavior cameraMovementBehavior =
                 new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
@@ -103,7 +103,7 @@ public class TerrainExample {
 
             renderingPath.render().toMainScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             final double delta = fps.delta() * 1000;
@@ -124,8 +124,8 @@ public class TerrainExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
-                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);
     }
 
@@ -141,15 +141,17 @@ public class TerrainExample {
         final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
         final Fog fog2 = new Fog(Vector3.of(.0f, .2f, 5f), 0, -80);
 
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
+                new DeferredGeometryPass(renderNode),
                 new SkyboxPostProcessor(cubeMap),
                 new FxaaPostProcessor(),
                 new LightRenderPass(light),
+                new SsaoRenderPass(),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new FogRenderPass(fog2, FogDistance.Y)
         );
 
-        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderPassesPipeline);
     }
 
     private static CubeMapTexture createCubeMap() throws IOException {

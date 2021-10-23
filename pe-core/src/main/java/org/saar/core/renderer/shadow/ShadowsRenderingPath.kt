@@ -2,15 +2,11 @@ package org.saar.core.renderer.shadow
 
 import org.saar.core.camera.projection.OrthographicProjection
 import org.saar.core.light.IDirectionalLight
-import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.texture.parameter.*
-import org.saar.lwjgl.opengl.texture.values.MagFilterValue
-import org.saar.lwjgl.opengl.texture.values.MinFilterValue
-import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -36,25 +32,16 @@ class ShadowsRenderingPath(
 
         GlUtils.clear(GlBuffer.DEPTH)
 
-        val context = RenderContextBase(this.camera)
+        val context = RenderContext(this.camera)
 
-        context.hints.cullFace = GlCullFace.FRONT
+        GlUtils.setCullFace(GlCullFace.FRONT)
         this.renderNode.renderShadows(context)
 
-        return RenderingOutput(this.screen, ShadowsBuffers(this.prototype.depthTexture))
+        return RenderingOutput(this.screen, this.prototype.buffers)
     }
 
     override fun delete() {
         this.renderNode.delete()
         this.screen.delete()
-    }
-
-    init {
-        this.prototype.depthTexture.applyParameters(arrayOf<TextureParameter>(
-            TextureMinFilterParameter(MinFilterValue.LINEAR),
-            TextureMagFilterParameter(MagFilterValue.LINEAR),
-            TextureSWrapParameter(WrapValue.CLAMP_TO_EDGE),
-            TextureTWrapParameter(WrapValue.CLAMP_TO_EDGE)
-        ))
     }
 }

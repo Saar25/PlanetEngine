@@ -7,7 +7,7 @@ class NormalMappedMeshLoader(private val objFile: String) : AutoCloseable {
 
     private val assimpMesh = AssimpUtil.load(this@NormalMappedMeshLoader.objFile)
 
-    fun loadVertices(): List<NormalMappedVertex> = loadVerticesSequence().toList()
+    fun loadVertices(): Array<NormalMappedVertex> = loadVerticesSequence().toList().toTypedArray()
 
     fun loadVerticesSequence(): Sequence<NormalMappedVertex> = sequence {
         val assimpPosition = AssimpPositionComponent.of(
@@ -32,7 +32,7 @@ class NormalMappedMeshLoader(private val objFile: String) : AutoCloseable {
         }
     }
 
-    fun loadIndices(): List<Int> = loadIndicesSequence().toList()
+    fun loadIndices(): IntArray = loadIndicesSequence().toList().toIntArray()
 
     fun loadIndicesSequence(): Sequence<Int> = sequence {
         val assimpIndex = AssimpIndexComponent.of(

@@ -2,7 +2,7 @@ package org.saar.core.postprocessing.processors
 
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -18,7 +18,7 @@ class MultiplyPostProcessor(multiply: ReadOnlyTexture, components: Int = 4) : Po
     private val prototype = MultiplyPostProcessorPrototype(multiply, components)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         this.prototype.textureUniform.value = buffers.albedo
     }
 
@@ -27,22 +27,21 @@ class MultiplyPostProcessor(multiply: ReadOnlyTexture, components: Int = 4) : Po
     }
 }
 
-private class MultiplyPostProcessorPrototype(private val multiply: ReadOnlyTexture,
-                                             private val components: Int) : RenderPassPrototype {
+private class MultiplyPostProcessorPrototype(multiply: ReadOnlyTexture, components: Int) : RenderPassPrototype {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
 
     @UniformProperty
     val multiplyUniform = object : TextureUniform() {
-        override fun getUnit() = 1
+        override val unit = 1
 
-        override fun getName() = "u_multiply"
+        override val name = "u_multiply"
 
-        override fun getUniformValue() = multiply
+        override val value = multiply
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("COMPONENTS", components.toString()),
         ShaderCode.loadSource("/shaders/postprocessing/multiply.pass.glsl"))
 }

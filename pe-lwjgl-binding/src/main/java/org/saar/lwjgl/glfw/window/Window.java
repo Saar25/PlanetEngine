@@ -9,7 +9,7 @@ import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.fbos.ScreenFbo;
 import org.saar.maths.objects.Dimensions;
 import org.saar.maths.objects.RectangleI;
 
@@ -97,6 +97,8 @@ public class Window {
             this.width = width;
             this.height = height;
             this.resizeListenersHelper.fireEvent(event);
+
+            ScreenFbo.getInstance().bind();
         });
 
         GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
@@ -357,16 +359,6 @@ public class Window {
      */
     public Keyboard getKeyboard() {
         return this.keyboard;
-    }
-
-    /**
-     * Updates the window
-     */
-    public void update(boolean swapBuffers) {
-        if (swapBuffers) {
-            swapBuffers();
-        }
-        GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 
     /**

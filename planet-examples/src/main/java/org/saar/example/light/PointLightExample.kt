@@ -6,7 +6,6 @@ import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.behaviors.*
-import org.saar.core.common.r3d.Mesh3D
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
@@ -20,12 +19,11 @@ import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor
-import org.saar.core.renderer.RenderContextBase
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderingPath
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
-import org.saar.core.screen.MainScreen
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.gui.UIContainer
@@ -49,7 +47,7 @@ fun main() {
 
     val keyboard = window.keyboard
     val mouse = window.mouse
-    val projection: Projection = ScreenPerspectiveProjection(MainScreen, 70f, 1f, 1000f)
+    val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
     val behaviors = BehaviorGroup(
         KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
@@ -91,15 +89,14 @@ fun main() {
     }
     val cube = Node3D(cubeModel)
 
-    val renderNode = DeferredRenderNodeGroup(terrain, cube)
-
     val cubeMap = createCubeMap()
-    val pipeline = DeferredRenderPassesPipeline(
+    val pipeline = DeferredRenderingPipeline(
+        DeferredGeometryPass(terrain, cube),
         SkyboxPostProcessor(cubeMap),
         LightRenderPass(pointLights = lights),
         FxaaPostProcessor()
     )
-    val renderingPath = DeferredRenderingPath(camera, renderNode, pipeline)
+    val renderingPath = DeferredRenderingPath(camera, pipeline)
 
     val uiDisplay = UIDisplay(window)
 
@@ -128,9 +125,9 @@ fun main() {
         lights.forEach { it.update() }
 
         renderingPath.render().toMainScreen()
-        uiDisplay.render(RenderContextBase(camera))
+        uiDisplay.render(RenderContext(camera))
 
-        window.update(true)
+        window.swapBuffers()
         window.pollEvents()
 
         uiFps.uiText.text = "Fps: ${fps.fps().format(2)}"
@@ -155,7 +152,7 @@ private fun createCubeMap() = CubeMapTextureBuilder()
 private fun buildCubeModel(): Model3D {
     val cubeInstance = R3D.instance()
     cubeInstance.transform.scale.set(10f, 10f, 10f)
-    val cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
-        ExamplesUtils.cubeIndices, arrayOf(cubeInstance))
+    val cubeMesh = R3D.mesh(arrayOf(cubeInstance),
+        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
     return Model3D(cubeMesh)
 }

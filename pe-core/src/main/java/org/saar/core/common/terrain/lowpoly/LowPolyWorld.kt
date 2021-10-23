@@ -5,12 +5,12 @@ import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.NodeBatch3D
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderParentNode
-import org.saar.core.renderer.forward.ForwardRenderParentNode
+import org.saar.core.renderer.deferred.DeferredRenderNode
+import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
 class LowPolyWorld(private val configuration: LowPolyTerrainConfiguration) : ParentNode,
-    ForwardRenderParentNode, DeferredRenderParentNode, ShadowsRenderNode {
+    ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode {
 
     private val batch = NodeBatch3D()
 

@@ -13,7 +13,6 @@ import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
@@ -31,9 +30,9 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
 
     @UniformProperty
     private val specularUniform = object : FloatUniform() {
-        override fun getName() = "u_specular"
+        override val name = "u_specular"
 
-        override fun getUniformValue() = 2.5f
+        override val value = 2.5f
     }
 
     @UniformProperty
@@ -54,7 +53,6 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         "f_colour", "f_normal")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
         BlendTest.disable()
         DepthTest.enable()
 
@@ -66,7 +64,7 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
-        this.transformUniform.value = model.transform.transformationMatrix
+        this.transformUniform.value.set(model.transform.transformationMatrix)
         this.textureUniform.value = model.texture
     }
 

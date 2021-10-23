@@ -1,6 +1,6 @@
 package org.saar.core.renderer.forward
 
-import org.saar.core.screen.ScreenPrototype
+import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.core.screen.image.DepthScreenImage
@@ -11,7 +11,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
-class ForwardScreenPrototype : ScreenPrototype {
+class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuffers> {
 
     private val colourTexture = MutableTexture2D.create()
 
@@ -25,5 +25,8 @@ class ForwardScreenPrototype : ScreenPrototype {
     private val depthImage: ScreenImage = DepthScreenImage(
         DepthAttachment.withTexture(depthTexture, DepthFormatType.COMPONENT24))
 
-    fun asBuffers() = ForwardRenderingBuffers(this.colourTexture, this.depthTexture)
+    override val buffers = object : ForwardRenderingBuffers {
+        override val albedo = colourTexture
+        override val depth = depthTexture
+    }
 }

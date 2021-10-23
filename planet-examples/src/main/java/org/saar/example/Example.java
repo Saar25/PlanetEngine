@@ -44,7 +44,7 @@ public class Example {
 
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

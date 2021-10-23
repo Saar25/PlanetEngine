@@ -14,7 +14,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
@@ -34,9 +33,9 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
 
     @UniformProperty
     private val specularUniform = object : FloatUniform() {
-        override fun getName() = "u_specular"
+        override val name = "u_specular"
 
-        override fun getUniformValue() = 1f
+        override val value = 1f
     }
 
     @UniformProperty
@@ -54,7 +53,6 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         "in_position", "in_normal")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(GlCullFace.NONE)
         GlUtils.setProvokingVertexFirst()
         BlendTest.disable()
         DepthTest.enable()

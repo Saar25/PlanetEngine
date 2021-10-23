@@ -20,6 +20,10 @@ public final class ScreenImagesLocator {
         return this.fieldsLocator.getFilteredValues(ScreenImage.class, ScreenImageProperty.class);
     }
 
+    public List<ColourScreenImage> getColourScreenImages() {
+        return this.fieldsLocator.getFilteredValues(ColourScreenImage.class, ScreenImageProperty.class);
+    }
+
     public List<ColourScreenImage> getDrawScreenImage() {
         return filterAnnotated(ScreenImageProperty::draw);
     }

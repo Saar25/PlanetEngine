@@ -13,7 +13,6 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object NormalMappedRenderer : Renderer, RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype())
@@ -44,7 +43,6 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
         "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
         BlendTest.disable()
         DepthTest.enable()
     }
@@ -54,7 +52,7 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
         val p = context.camera.projection.matrix
         this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
-        this.transformationUniform.value = model.transform.transformationMatrix
+        this.transformationUniform.value.set(model.transform.transformationMatrix)
         this.textureUniform.value = model.texture
         this.normalMapUniform.value = model.normalMap
     }

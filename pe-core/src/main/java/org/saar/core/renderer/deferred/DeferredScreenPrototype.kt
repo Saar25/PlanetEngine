@@ -1,6 +1,6 @@
 package org.saar.core.renderer.deferred
 
-import org.saar.core.screen.ScreenPrototype
+import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.core.screen.image.DepthStencilScreenImage
@@ -12,7 +12,7 @@ import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
-class DeferredScreenPrototype : ScreenPrototype {
+class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBuffers> {
 
     private val colourTexture = MutableTexture2D.create()
 
@@ -32,5 +32,9 @@ class DeferredScreenPrototype : ScreenPrototype {
     private val depthImage: ScreenImage = DepthStencilScreenImage(DepthStencilAttachment.withTexture(
         this.depthTexture, DepthStencilFormatType.DEPTH24_STENCIL8, DataType.U_INT_24_8))
 
-    fun asBuffers() = DeferredRenderingBuffers(this.colourTexture, this.normalSpecularTexture, this.depthTexture)
+    override val buffers = object : DeferredRenderingBuffers {
+        override val albedo = colourTexture
+        override val normalSpecular = normalSpecularTexture
+        override val depth = depthTexture
+    }
 }

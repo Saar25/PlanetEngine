@@ -4,9 +4,9 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.light.ViewSpacePointLightUniform
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -30,7 +30,7 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
 
     constructor(light: PointLight) : this(pointLights = arrayOf(light))
 
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
         this.prototype.normalSpecularTextureUniform.value = buffers.normalSpecular
         this.prototype.depthTextureUniform.value = buffers.depth
@@ -65,35 +65,31 @@ private class LightRenderPassPrototype(
 
     @UniformProperty
     val directionalLightsCountUniform = object : IntUniform() {
-        override fun getName() = "u_directionalLightsCount"
+        override val name = "u_directionalLightsCount"
 
-        override fun getUniformValue() = this@LightRenderPassPrototype.directionalLights.size
+        override val value get() = this@LightRenderPassPrototype.directionalLights.size
     }
 
     @UniformProperty
     val directionalLightsUniform: UniformArray<ViewSpaceDirectionalLightUniform> =
         UniformArray("u_directionalLights", this.directionalLights.size) { name, index ->
-            object : ViewSpaceDirectionalLightUniform(name) {
-                override fun getUniformValue() = this@LightRenderPassPrototype.directionalLights[index]
-            }
+            ViewSpaceDirectionalLightUniform(name, this@LightRenderPassPrototype.directionalLights[index])
         }
 
     @UniformProperty
     val pointLightsCountUniform = object : IntUniform() {
-        override fun getName() = "u_pointLightsCount"
+        override val name = "u_pointLightsCount"
 
-        override fun getUniformValue() = this@LightRenderPassPrototype.pointLights.size
+        override val value get() = this@LightRenderPassPrototype.pointLights.size
     }
 
     @UniformProperty
     val pointLightsUniform: UniformArray<ViewSpacePointLightUniform> =
         UniformArray("u_pointLights", this.pointLights.size) { name, index ->
-            object : ViewSpacePointLightUniform(name) {
-                override fun getUniformValue() = this@LightRenderPassPrototype.pointLights[index]
-            }
+            ViewSpacePointLightUniform(name, this@LightRenderPassPrototype.pointLights[index])
         }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
 

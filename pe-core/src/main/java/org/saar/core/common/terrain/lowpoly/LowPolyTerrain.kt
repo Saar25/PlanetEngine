@@ -3,7 +3,6 @@ package org.saar.core.common.terrain.lowpoly
 import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
-import org.saar.core.common.r3d.Mesh3D
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
@@ -52,8 +51,8 @@ private fun buildModel(position: Vector2fc, configuration: LowPolyTerrainConfigu
         R3D.vertex(tPosition, normal, colour)
     }
 
-    val mesh = Mesh3D.load(vertices.toTypedArray(),
-        indices.toIntArray(), arrayOf(R3D.instance()))
+    val mesh = R3D.mesh(arrayOf(R3D.instance()),
+        vertices.toTypedArray(), indices.toIntArray())
 
     return Model3D(mesh).also {
         it.specular = 0f

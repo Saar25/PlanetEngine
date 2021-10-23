@@ -2,24 +2,16 @@ package org.saar.example.postprocessing;
 
 import org.saar.core.camera.Camera;
 import org.saar.core.common.r2d.*;
-import org.saar.core.postprocessing.PostProcessingBuffers;
-import org.saar.core.postprocessing.PostProcessingPipeline;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
-import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.renderpass.RenderPassContext;
-import org.saar.core.screen.MainScreen;
-import org.saar.core.screen.SimpleScreen;
-import org.saar.core.screen.image.ColourScreenImage;
+import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.SimpleRenderingPath;
+import org.saar.core.renderer.p2d.GeometryPass2D;
+import org.saar.core.renderer.p2d.RenderingBuffers2D;
+import org.saar.core.renderer.p2d.RenderingPipeline2D;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.texture.MutableTexture2D;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
 
@@ -36,44 +28,26 @@ public class PostProcessingExample {
         final Camera camera = new Camera(null);
 
         final Model2D model = buildModel2D();
-        final Renderer2D renderer = Renderer2D.INSTANCE;
+        final Node2D node = new Node2D(model);
 
-        final SimpleScreen screen = new SimpleScreen(Fbo.create(WIDTH, HEIGHT));
-
-        final MutableTexture2D colourTexture = MutableTexture2D.create();
-        final ColourScreenImage image = new ColourScreenImage(ColourAttachment
-                .withTexture(0, colourTexture, ColourFormatType.RGB16));
-        screen.addScreenImage(image);
-        screen.setDrawImages(image);
-        screen.setReadImages(image);
-
-        final PostProcessingPipeline pipeline = new PostProcessingPipeline(
+        final RenderingPipeline2D pipeline = new RenderingPipeline2D(
+                new GeometryPass2D(node),
                 new ContrastPostProcessor(1.8f),
                 new GaussianBlurPostProcessor(11, 2)
         );
 
-        window.addResizeListener(e -> screen.resize(
-                e.getWidth().getAfter(), e.getHeight().getAfter()));
+        final RenderingPath<RenderingBuffers2D> renderingPath =
+                new SimpleRenderingPath<>(camera, pipeline);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-            screen.setAsDraw();
+            renderingPath.render().toMainScreen();
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
-            renderer.render(new RenderContextBase(null), model);
-
-            pipeline.process(new RenderPassContext(camera),
-                    new PostProcessingBuffers(colourTexture));
-
-            screen.copyTo(MainScreen.INSTANCE);
-
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 
-        pipeline.delete();
-        screen.delete();
-        model.delete();
+        renderingPath.delete();
         window.destroy();
     }
 
@@ -87,8 +61,7 @@ public class PostProcessingExample {
         };
         final int[] indices = {0, 1, 2, 0, 2, 3};
 
-        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        final Mesh2D mesh = R2D.mesh(vertices, indices);
         return new Model2D(mesh);
     }
-
 }

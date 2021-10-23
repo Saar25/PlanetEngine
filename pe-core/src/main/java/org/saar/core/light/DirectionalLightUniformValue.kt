@@ -1,21 +1,21 @@
 package org.saar.core.light
 
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
 
-class DirectionalLightUniformValue(name: String) : DirectionalLightUniform(name), UniformValue<IDirectionalLight> {
+class DirectionalLightUniformValue(name: String, var value: IDirectionalLight) : UniformContainer {
 
-    private val value: DirectionalLight = DirectionalLight()
+    private val directionUniform = object : Vec3Uniform() {
+        override val name = "$name.direction"
 
-    override fun setValue(value: IDirectionalLight) {
-        this.value.colour.set(value.colour)
-        this.value.direction.set(value.direction)
+        override val value get() = this@DirectionalLightUniformValue.value.direction
     }
 
-    override fun getValue(): DirectionalLight {
-        return this.value
+    private val colourUniform = object : Vec3Uniform() {
+        override val name = "$name.colour"
+
+        override val value get() = this@DirectionalLightUniformValue.value.colour
     }
 
-    override fun getUniformValue(): DirectionalLight {
-        return this.value
-    }
+    override val subUniforms = listOf(this.directionUniform, this.colourUniform)
 }

@@ -1,38 +1,28 @@
 package org.saar.core.fog
 
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.Uniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
+import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
 
-abstract class FogUniformValue : Uniform {
+class FogUniformValue(name: String, var value: IFog) : UniformContainer {
 
-    private val colourUniform = Vec3UniformValue("${getName()}.colour")
+    private val colourUniform = object : Vec3Uniform() {
+        override val name = "$name.colour"
 
-    private val startUniform = FloatUniformValue("${getName()}.start")
-
-    private val endUniform = FloatUniformValue("${getName()}.end")
-
-    final override fun initialize(shadersProgram: ShadersProgram) {
-        this.colourUniform.initialize(shadersProgram)
-        this.startUniform.initialize(shadersProgram)
-        this.endUniform.initialize(shadersProgram)
+        override val value get() = this@FogUniformValue.value.colour
     }
 
-    final override fun load() {
-        val value = getUniformValue()
+    private val startUniform = object : FloatUniform() {
+        override val name = "$name.start"
 
-        this.colourUniform.value = value.colour
-        this.colourUniform.load()
-
-        this.startUniform.value = value.start
-        this.startUniform.load()
-
-        this.endUniform.value = value.end
-        this.endUniform.load()
+        override val value get() = this@FogUniformValue.value.start
     }
 
-    abstract fun getName(): String
+    private val endUniform = object : FloatUniform() {
+        override val name = "$name.end"
 
-    abstract fun getUniformValue(): IFog
+        override val value get() = this@FogUniformValue.value.end
+    }
+
+    override val subUniforms = listOf(this.colourUniform, this.startUniform, this.endUniform)
 }

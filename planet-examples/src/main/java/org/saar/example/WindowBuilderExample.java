@@ -58,7 +58,7 @@ public class WindowBuilderExample {
             GlUtils.clear(GlBuffer.COLOUR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            window.update(true);
+            window.swapBuffers();
             window.waitEvents();
         }
 

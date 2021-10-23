@@ -1,7 +1,6 @@
 package org.saar.gui.font
 
 import org.joml.Vector2i
-import org.joml.Vector4f
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
@@ -15,8 +14,6 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
-import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlUtils
 
 object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter> {
 
@@ -38,9 +35,9 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
-        override fun getName(): String = "u_resolution"
+        override val name: String = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
+        override val value get() = Vector2i(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty
@@ -69,7 +66,6 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     override fun fragmentOutputs() = arrayOf("fragColour")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(GlCullFace.NONE)
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()
@@ -88,7 +84,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             .mul(uiLetter.style.fontSize.get() / uiLetter.font.size)
             .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
 
-        this.boundsUniform.value = Vector4f(
+        this.boundsUniform.value.set(
             bounds.x() + uiLetter.style.x.get(),
             bounds.y() + uiLetter.style.y.get(),
             bounds.z(),

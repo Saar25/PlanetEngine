@@ -1,13 +1,12 @@
 package org.saar.core.renderer.deferred.passes
 
-import org.joml.Matrix4fc
 import org.joml.Vector2i
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.core.renderer.renderpass.RenderPassContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -15,7 +14,6 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 
@@ -25,7 +23,7 @@ class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture2D, lig
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
         this.prototype.normalSpecularTexture.value = buffers.normalSpecular
         this.prototype.depthTextureUniform.value = buffers.depth
@@ -48,12 +46,13 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
     @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
-        override fun getName(): String = "u_shadowMatrix"
+        override val name = "u_shadowMatrix"
 
-        override fun getUniformValue(): Matrix4fc {
-            return this@ShadowsRenderPassPrototype.shadowCamera.projection.matrix.mul(
+        override val value
+            get() = this@ShadowsRenderPassPrototype.shadowCamera.projection.matrix.mul(
                 this@ShadowsRenderPassPrototype.shadowCamera.viewMatrix, Matrix4.temp)
-        }
+
+        override val transpose = false
     }
 
     @UniformProperty
@@ -64,32 +63,28 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
     @UniformProperty
     private val pcfRadiusUniform = object : IntUniform() {
-        override fun getName(): String = "u_pcfRadius"
+        override val name = "u_pcfRadius"
 
-        override fun getUniformValue(): Int = 2
+        override val value get() = 2
     }
 
     @UniformProperty
-    val lightUniform = object : ViewSpaceDirectionalLightUniform("u_light") {
-        override fun getUniformValue() = this@ShadowsRenderPassPrototype.light
-    }
+    val lightUniform = ViewSpaceDirectionalLightUniform("u_light", this.light)
 
     @UniformProperty
     private val shadowMapUniform = object : TextureUniform() {
-        override fun getUnit(): Int = 0
+        override val name = "u_shadowMap"
 
-        override fun getName(): String = "u_shadowMap"
+        override val value get() = this@ShadowsRenderPassPrototype.shadowMap
 
-        override fun getUniformValue(): ReadOnlyTexture {
-            return this@ShadowsRenderPassPrototype.shadowMap
-        }
+        override val unit = 0
     }
 
     @UniformProperty
     private val shadowMapSizeUniform = object : Vec2iUniform() {
-        override fun getName(): String = "u_shadowMapSize"
+        override val name = "u_shadowMapSize"
 
-        override fun getUniformValue() = Vector2i(shadowMap.width, shadowMap.height)
+        override val value get() = Vector2i(shadowMap.width, shadowMap.height)
     }
 
     @UniformProperty
@@ -99,9 +94,9 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 2)
 
     @UniformProperty
-    val depthTextureUniform = TextureUniformValue("u_depthTexture", 4)
+    val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
         ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.001f)),
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")

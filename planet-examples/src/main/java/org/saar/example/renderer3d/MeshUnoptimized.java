@@ -1,12 +1,12 @@
 package org.saar.example.renderer3d;
 
-import org.saar.core.common.r3d.Mesh3DPrototype;
-import org.saar.core.mesh.build.MeshBufferProperty;
-import org.saar.core.mesh.build.buffers.MeshIndexBuffer;
-import org.saar.core.mesh.build.buffers.MeshInstanceBuffer;
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer;
+import org.saar.core.common.r3d.MeshPrototype3D;
+import org.saar.core.mesh.buffer.MeshBufferProperty;
+import org.saar.core.mesh.buffer.MeshIndexBuffer;
+import org.saar.core.mesh.buffer.MeshInstanceBuffer;
+import org.saar.core.mesh.buffer.MeshVertexBuffer;
 
-public class MeshUnoptimized implements Mesh3DPrototype {
+public class MeshUnoptimized implements MeshPrototype3D {
 
     @MeshBufferProperty
     private final MeshVertexBuffer positionBuffer = MeshVertexBuffer.createStatic();
