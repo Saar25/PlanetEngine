@@ -15,7 +15,10 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
-import org.saar.core.renderer.deferred.*;
+import org.saar.core.renderer.deferred.DeferredRenderNode;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
@@ -81,7 +84,7 @@ public class ShadowExample {
 
         final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
         );

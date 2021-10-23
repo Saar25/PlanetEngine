@@ -22,7 +22,10 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.deferred.*;
+import org.saar.core.renderer.deferred.DeferredRenderNode;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
@@ -206,7 +209,7 @@ public class ReflectionExample {
     }
 
     private static DeferredRenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
                 new LightRenderPass(light)
         );
@@ -274,7 +277,7 @@ public class ReflectionExample {
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),

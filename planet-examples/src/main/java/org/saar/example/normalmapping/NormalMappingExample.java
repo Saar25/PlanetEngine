@@ -21,10 +21,10 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
@@ -92,7 +92,7 @@ public class NormalMappingExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
 
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),

@@ -21,9 +21,9 @@ import org.saar.core.light.PointLight
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContextBase
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline
 import org.saar.core.renderer.deferred.DeferredRenderingPath
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.screen.MainScreen
 import org.saar.core.util.Fps
@@ -92,7 +92,7 @@ fun main() {
     val cube = Node3D(cubeModel)
 
     val cubeMap = createCubeMap()
-    val pipeline = DeferredRenderPassesPipeline(
+    val pipeline = DeferredRenderingPipeline(
         DeferredGeometryPass(terrain, cube),
         SkyboxPostProcessor(cubeMap),
         LightRenderPass(pointLights = lights),
