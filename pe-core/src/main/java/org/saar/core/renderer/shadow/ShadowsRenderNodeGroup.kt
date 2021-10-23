@@ -1,17 +1,11 @@
 package org.saar.core.renderer.shadow
 
-class ShadowsRenderNodeGroup(vararg children: ShadowsRenderNode) : ShadowsRenderParentNode {
+import org.saar.core.node.ParentNode
+import org.saar.core.renderer.RenderContext
 
-    private val childrenList: MutableList<ShadowsRenderNode> = mutableListOf()
+class ShadowsRenderNodeGroup(vararg children: ShadowsRenderNode) : ParentNode, ShadowsRenderNode {
 
-    override val children: List<ShadowsRenderNode> get() = this.childrenList
+    override val children: MutableList<ShadowsRenderNode> = children.toMutableList()
 
-    init {
-        this.childrenList.addAll(children)
-    }
-
-    fun add(child: ShadowsRenderNode) {
-        this.childrenList.add(child)
-    }
-
+    override fun renderShadows(context: RenderContext) = this.children.forEach { it.renderShadows(context) }
 }
