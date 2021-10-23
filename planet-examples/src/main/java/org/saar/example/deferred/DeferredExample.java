@@ -12,6 +12,7 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -50,11 +51,12 @@ public class DeferredExample {
         light.getDirection().set(-50f, -50f, -50f);
         light.getColour().set(1.0f, 1.0f, 1.0f);
 
-        final DeferredRenderPassesPipeline renderPassesPipeline =
-                new DeferredRenderPassesPipeline(new LightRenderPass(light));
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+                new DeferredGeometryPass(renderNode),
+                new LightRenderPass(light)
+        );
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, renderNode, renderPassesPipeline);
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

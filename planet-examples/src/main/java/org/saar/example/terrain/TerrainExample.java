@@ -21,10 +21,8 @@ import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
-import org.saar.core.renderer.deferred.DeferredRenderNode;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.*;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
@@ -143,6 +141,7 @@ public class TerrainExample {
         final Fog fog2 = new Fog(Vector3.of(.0f, .2f, 5f), 0, -80);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+                new DeferredGeometryPass(renderNode),
                 new SkyboxPostProcessor(cubeMap),
                 new FxaaPostProcessor(),
                 new LightRenderPass(light),
@@ -151,7 +150,7 @@ public class TerrainExample {
                 new FogRenderPass(fog2, FogDistance.Y)
         );
 
-        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderPassesPipeline);
     }
 
     private static CubeMapTexture createCubeMap() throws IOException {

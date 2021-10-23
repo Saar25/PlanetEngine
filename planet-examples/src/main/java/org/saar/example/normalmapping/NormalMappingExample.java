@@ -21,6 +21,7 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -88,17 +89,17 @@ public class NormalMappingExample {
                 ShadowsQuality.LOW, shadowProjection, light, shadowsRenderNode);
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
+                nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
+
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+                new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
                 new FxaaPostProcessor()
         );
 
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
-                nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
-
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, renderNode, renderPassesPipeline);
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

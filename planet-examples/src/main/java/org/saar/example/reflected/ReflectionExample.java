@@ -22,10 +22,8 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContextBase;
-import org.saar.core.renderer.deferred.DeferredRenderNode;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.*;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
@@ -208,10 +206,12 @@ public class ReflectionExample {
     }
 
     private static DeferredRenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
-        final DeferredRenderPassesPipeline renderPassesPipeline =
-                new DeferredRenderPassesPipeline(new LightRenderPass(light));
+        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+                new DeferredGeometryPass(renderNode),
+                new LightRenderPass(light)
+        );
 
-        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderPassesPipeline);
     }
 
     private static FlatReflectedModel buildMirrorModel() {
@@ -275,13 +275,14 @@ public class ReflectionExample {
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
         final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
+                new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
                 new FogRenderPass(fog, FogDistance.XYZ),
                 new FxaaPostProcessor()
         );
 
-        return new DeferredRenderingPath(camera, renderNode, renderPassesPipeline);
+        return new DeferredRenderingPath(camera, renderPassesPipeline);
     }
 
     private static ObjModel loadCottage() {
