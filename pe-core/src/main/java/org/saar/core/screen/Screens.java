@@ -24,8 +24,12 @@ public final class Screens {
         final ScreenImagesLocator locator = new ScreenImagesLocator(prototype);
         final List<ScreenImage> screenImages = locator.getScreenImages();
         Screens.addAttachments(fbo, screenImages);
-        Screens.setDrawAttachments(fbo, locator);
-        Screens.setReadAttachments(fbo, locator);
+
+        if (locator.getColourScreenImages().size() > 0) {
+            Screens.setDrawAttachments(fbo, locator);
+            Screens.setReadAttachments(fbo, locator);
+        }
+
         return new ScreenPrototypeWrapper(fbo, screenImages);
     }
 
