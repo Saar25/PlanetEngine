@@ -15,9 +15,8 @@ class UISlider : UIComponent() {
 
     val dynamicValueProperty: FloatProperty = SimpleFloatProperty(0f)
 
-    private val min: FloatProperty = SimpleFloatProperty(0f)
-
-    private val max: FloatProperty = SimpleFloatProperty(100f)
+    val min: FloatProperty = SimpleFloatProperty(0f)
+    val max: FloatProperty = SimpleFloatProperty(100f)
 
     private val uiTruck = UIBlockElement().also { it.parent = this }
     private val uiThumb = UIBlockElement().also { it.parent = this }
