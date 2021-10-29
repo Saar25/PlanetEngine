@@ -7,24 +7,19 @@ interface Behavior {
      *
      * @param node the node that is influenced by the behavior
      */
-    fun start(node: BehaviorNode) {
-    }
+    fun start(node: BehaviorNode) = Unit
 
     /**
      * Update the behavior
      *
      * @param node the node that is influenced by the behavior
      */
-    fun update(node: BehaviorNode) {
-
-    }
+    fun update(node: BehaviorNode) = Unit
 
     /**
-     * Deleta the behavior
+     * Delete the behavior
      *
      * @param node the node that is influenced by the behavior
      */
-    fun delete(node: BehaviorNode) {
-
-    }
+    fun delete(node: BehaviorNode) = Unit
 }
