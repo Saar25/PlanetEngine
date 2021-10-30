@@ -14,15 +14,15 @@ class ViewSpaceDirectionalLightUniform(name: String, var value: IDirectionalLigh
     private val directionUniform = object : Vec3Uniform() {
         override val name = "$name.direction"
 
-        override val value: Vector3f
+        override val value: Vector3f = Vector3f()
             get() {
                 return if (this@ViewSpaceDirectionalLightUniform.camera != null) {
                     val vs = Vector4.of(this@ViewSpaceDirectionalLightUniform.value.direction, 0f)
                         .mul(this@ViewSpaceDirectionalLightUniform.camera!!.viewMatrix.invert(Matrix4f()).transpose())
-                    Vector3f(vs.x(), vs.y(), vs.z()).normalize()
+                    field.set(vs.x(), vs.y(), vs.z())
                 } else {
-                    Vector3f(this@ViewSpaceDirectionalLightUniform.value.direction).normalize()
-                }
+                    field.set(this@ViewSpaceDirectionalLightUniform.value.direction)
+                }.normalize()
             }
 
     }
