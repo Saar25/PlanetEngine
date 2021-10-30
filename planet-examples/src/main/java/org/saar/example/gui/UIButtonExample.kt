@@ -54,7 +54,7 @@ object UIButtonExample {
             write here
         """.trimIndent()
 
-        val writeable = UITextField(keyboard, text).apply {
+        val writeable = UITextField(text).apply {
             style.x.value = center()
             style.width.value = percent(50f)
             style.height.value = percent(50f)
