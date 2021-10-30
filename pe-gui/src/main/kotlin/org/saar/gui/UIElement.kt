@@ -4,6 +4,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlock
 import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.IStyle
+import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 
@@ -28,6 +29,12 @@ interface UIElement {
     fun onMouseClickEvent(event: ClickEvent) = false
 
     fun onMouseMoveEvent(event: MoveEvent) = Unit
+
+    fun onKeyPressEvent(event: KeyEvent) = Unit
+
+    fun onKeyReleaseEvent(event: KeyEvent) = Unit
+
+    fun onKeyRepeatEvent(event: KeyEvent) = Unit
 
     fun contains(mx: Int, my: Int) = this.uiBlock.inTouch(mx, my)
 
