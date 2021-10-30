@@ -6,13 +6,15 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.constants.Comparator
+import org.saar.lwjgl.opengl.blend.BlendFunction
+import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.blend.BlendValue
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
-import org.saar.lwjgl.opengl.stencil.*
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.maths.utils.Matrix4
 
@@ -21,11 +23,12 @@ class SkyboxPostProcessor(cubeMap: CubeMapTexture) : PostProcessor {
     private val prototype = SkyboxPostProcessorPrototype(cubeMap)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    private val stencilState = StencilState(StencilOperation.ALWAYS_KEEP,
-        StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED)
+    private val blendFunction = BlendFunction(
+        BlendValue.ONE_MINUS_DST_ALPHA, BlendValue.DST_ALPHA)
 
     override fun prepare(context: RenderContext, buffers: PostProcessingBuffers) {
-        StencilTest.apply(this.stencilState)
+        StencilTest.disable()
+        BlendTest.apply(this.blendFunction)
     }
 
     override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {

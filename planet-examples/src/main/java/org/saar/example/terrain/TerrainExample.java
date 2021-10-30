@@ -138,17 +138,15 @@ public class TerrainExample {
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
                                                             DirectionalLight light, CubeMapTexture cubeMap) {
-        final Fog fog = new Fog(Vector3.of(.0f, .7f, .8f), 400, 900);
-        final Fog fog2 = new Fog(Vector3.of(.0f, .2f, 5f), 0, -80);
+        final Fog fog = new Fog(Vector3.of(0), 700, 1000);
 
         final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
-                new SkyboxPostProcessor(cubeMap),
-                new FxaaPostProcessor(),
                 new LightRenderPass(light),
                 new SsaoRenderPass(),
                 new FogRenderPass(fog, FogDistance.XZ),
-                new FogRenderPass(fog2, FogDistance.Y)
+                new SkyboxPostProcessor(cubeMap),
+                new FxaaPostProcessor()
         );
 
         return new DeferredRenderingPath(camera, renderPassesPipeline);

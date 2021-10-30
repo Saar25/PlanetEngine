@@ -12,7 +12,7 @@ object ClearColour {
     private val value = Vector4.of(0f, 0f, 0f, 0f)
 
     @JvmStatic
-    fun set(r: Float, g: Float, b: Float) = set(r, g, b, 1f)
+    fun set(r: Float, g: Float, b: Float) = set(r, g, b, 0f)
 
     @JvmStatic
     fun set(r: Float, g: Float, b: Float, a: Float) {
