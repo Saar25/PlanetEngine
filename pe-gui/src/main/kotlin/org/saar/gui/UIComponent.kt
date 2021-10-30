@@ -71,11 +71,14 @@ abstract class UIComponent : UIChildElement {
         val e = event.asMouseEvent()
         if (event.isDown && this.isMouseHover) {
             mousePress(e)
+            this.isSelected = true
             return true
         } else if (this.isMousePressed) {
             mouseRelease(e)
+            this.isSelected = true
             return true
         }
+        this.isSelected = false
         return false
     }
 
@@ -114,7 +117,7 @@ abstract class UIComponent : UIChildElement {
      *
      * @return true if selected, false otherwise
      */
-    val isSelected: Boolean = false
+    var isSelected: Boolean = false
 
     /**
      * Invoked when a key has been pressed while the component in focused
@@ -170,7 +173,7 @@ abstract class UIComponent : UIChildElement {
      *
      * @param event the mouse event
      */
-    fun onMouseMove(event: MouseEvent) = Unit
+    open fun onMouseMove(event: MouseEvent) = Unit
 
     /**
      * Invoked when the mouse drags on the component
