@@ -27,7 +27,6 @@ import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
-import kotlin.math.pow
 
 private const val WIDTH = 1200
 private const val HEIGHT = 700
@@ -97,14 +96,16 @@ fun main() {
 }
 
 private fun buildParticlesModel(): ParticlesModel {
-    val mesh = Particles.mesh((0 until 50000).map {
+    val radius = 100f
+    val mesh = Particles.mesh(generateSequence {
         val x = (Math.random() * 2 - 1).toFloat()
         val y = (Math.random() * 2 - 1).toFloat()
         val z = (Math.random() * 2 - 1).toFloat()
-        val d = (1 - Math.random().toFloat().pow(100)) * 100
-        val p = Vector3.of(x, y, z).normalize(d)
-        Particles.instance(p, 2f / 16)
-    }.toTypedArray())
+        Vector3.of(x, y, z).mul(radius)
+    }
+        .filter { it.lengthSquared() < radius * radius }
+        .map { Particles.instance(it, 2f / 16) }
+        .take(50000).toList().toTypedArray())
 
     val texture = Texture2D.of("/assets/particles.png")
 
