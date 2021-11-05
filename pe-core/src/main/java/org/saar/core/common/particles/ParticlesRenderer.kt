@@ -11,6 +11,7 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
+import org.saar.lwjgl.opengl.shaders.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
@@ -33,6 +34,16 @@ private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
 
     @UniformProperty
     private val textureAtlasSizeUniform = IntUniformValue("u_textureAtlasSize")
+
+    @UniformProperty
+    private val maxAgeUniform = IntUniformValue("u_maxAge")
+
+    @UniformProperty
+    private val currentTimeUniform = object : IntUniform() {
+        override val name = "u_currentTime"
+
+        override val value: Int get() = System.currentTimeMillis().toInt()
+    }
 
     @ShaderProperty
     private val vertex = Shader.createVertex(GlslVersion.V400,
@@ -62,6 +73,8 @@ private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
 
         this.textureUniform.value = model.texture
         this.textureAtlasSizeUniform.value = model.textureAtlasSize
+
+        this.maxAgeUniform.value = model.maxAge
     }
 
     override fun doInstanceDraw(context: RenderContext, model: ParticlesModel) = model.draw()

@@ -14,8 +14,8 @@ class ParticlesMeshBuilder private constructor(
     init {
         prototype.positionBuffer.addAttribute(
             Attributes.ofInstanced(0, 3, DataType.FLOAT, false))
-        prototype.ageBuffer.addAttribute(
-            Attributes.ofInstanced(1, 1, DataType.FLOAT, false))
+        prototype.birthBuffer.addAttribute(
+            Attributes.ofIntegerInstanced(1, 1, DataType.INT))
         this.builder.init()
     }
 

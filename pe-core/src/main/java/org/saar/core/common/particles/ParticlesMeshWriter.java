@@ -17,7 +17,7 @@ public class ParticlesMeshWriter implements InstancedArraysMeshWriter<ParticlesV
     @Override
     public void writeInstance(ParticlesInstance instance) {
         this.prototype.getPositionBuffer().getWriter().write3f(instance.getPosition3f());
-        this.prototype.getAgeBuffer().getWriter().writeFloat(instance.getAge());
+        this.prototype.getBirthBuffer().getWriter().writeInt(instance.getBirth());
     }
 
 }

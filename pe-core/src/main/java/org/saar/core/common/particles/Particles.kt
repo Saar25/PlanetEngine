@@ -7,10 +7,11 @@ import org.saar.core.mesh.buffer.MeshInstanceBuffer
 object Particles {
 
     @JvmStatic
-    fun instance(position: Vector3fc, age: Float): ParticlesInstance {
+    @JvmOverloads
+    fun instance(position: Vector3fc, birth: Int = System.currentTimeMillis().toInt()): ParticlesInstance {
         return object : ParticlesInstance {
             override val position3f = position
-            override val age = age
+            override val birth = birth
         }
     }
 
@@ -27,7 +28,7 @@ object Particles {
 
             override val positionBuffer = instanceBuffer
 
-            override val ageBuffer = instanceBuffer
+            override val birthBuffer = instanceBuffer
         }
     }
 

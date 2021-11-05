@@ -104,12 +104,12 @@ private fun buildParticlesModel(): ParticlesModel {
         Vector3.of(x, y, z).mul(radius)
     }
         .filter { it.lengthSquared() < radius * radius }
-        .map { Particles.instance(it, 2f / 16) }
+        .map { Particles.instance(it) }
         .take(50000).toList().toTypedArray())
 
     val texture = Texture2D.of("/assets/particles.png")
 
-    return ParticlesModel(mesh, texture, 4)
+    return ParticlesModel(mesh, texture, 4, 32000)
 }
 
 private fun buildCubeModel(): Model3D {

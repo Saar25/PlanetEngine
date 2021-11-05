@@ -8,8 +8,9 @@ class ParticlesModel(
     override val mesh: ParticlesMesh,
     val texture: ReadOnlyTexture2D,
     val textureAtlasSize: Int,
+    val maxAge: Int,
     val transform: SimpleTransform = SimpleTransform()
 ) : Model {
-    constructor(mesh: ParticlesMesh, texture: ReadOnlyTexture2D, textureAtlasSize: Int) :
-            this(mesh, texture, textureAtlasSize, SimpleTransform())
+    constructor(mesh: ParticlesMesh, texture: ReadOnlyTexture2D, textureAtlasSize: Int, maxAge: Int) :
+            this(mesh, texture, textureAtlasSize, maxAge, SimpleTransform())
 }
