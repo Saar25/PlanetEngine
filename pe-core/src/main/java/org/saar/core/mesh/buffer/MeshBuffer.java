@@ -30,6 +30,11 @@ public abstract class MeshBuffer {
         this.vbo.store(offset, this.buffer.asByteBuffer());
     }
 
+    public void update(int offset, int bytes) {
+        this.buffer.position(offset).limit(offset + bytes);
+        this.vbo.store(offset, this.buffer.asByteBuffer());
+    }
+
     public DataWriter getWriter() {
         return this.buffer.getWriter();
     }
