@@ -1,9 +1,7 @@
-package org.saar.core.camera;
+package org.saar.core.camera
 
-import org.joml.Matrix4fc;
+import org.joml.Matrix4fc
 
-public interface Projection {
-
-    Matrix4fc getMatrix();
-
+interface Projection {
+    val matrix: Matrix4fc
 }
