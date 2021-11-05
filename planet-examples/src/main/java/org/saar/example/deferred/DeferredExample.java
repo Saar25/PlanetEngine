@@ -1,11 +1,11 @@
 package org.saar.example.deferred;
 
-import org.saar.core.behavior.BehaviorGroup;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.common.behaviors.SmoothMouseRotationBehavior;
-import org.saar.core.common.behaviors.ThirdPersonViewBehavior;
+import org.saar.core.common.components.SmoothMouseRotationComponent;
+import org.saar.core.common.components.ThirdPersonViewComponent;
 import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
@@ -76,11 +76,11 @@ public class DeferredExample {
 
         final Transform center = new SimpleTransform();
 
-        final BehaviorGroup behaviors = new BehaviorGroup(
-                new SmoothMouseRotationBehavior(mouse, -.3f),
-                new ThirdPersonViewBehavior(center, 80));
+        final NodeComponentGroup components = new NodeComponentGroup(
+                new SmoothMouseRotationComponent(mouse, -.3f),
+                new ThirdPersonViewComponent(center, 80));
 
-        final Camera camera = new Camera(projection, behaviors);
+        final Camera camera = new Camera(projection, components);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));

@@ -1,11 +1,11 @@
 package org.saar.example.screen;
 
-import org.saar.core.behavior.BehaviorGroup;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.common.behaviors.KeyboardMovementBehavior;
-import org.saar.core.common.behaviors.KeyboardRotationBehavior;
+import org.saar.core.common.components.KeyboardMovementComponent;
+import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.obj.Obj;
 import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
@@ -73,11 +73,11 @@ public class ScreenExample {
     private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
-        final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
-                new KeyboardRotationBehavior(keyboard, 50f));
+        final NodeComponentGroup component = new NodeComponentGroup(
+                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+                new KeyboardRotationComponent(keyboard, 50f));
 
-        final Camera camera = new Camera(projection, behaviors);
+        final Camera camera = new Camera(projection, component);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));

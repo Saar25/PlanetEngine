@@ -1,11 +1,11 @@
 package org.saar.example
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.behavior.BehaviorGroup
+import org.saar.core.node.NodeComponentGroup
 import org.saar.core.camera.Camera
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
-import org.saar.core.common.behaviors.KeyboardMovementBehavior
-import org.saar.core.common.behaviors.SmoothMouseRotationBehavior
+import org.saar.core.common.components.KeyboardMovementComponent
+import org.saar.core.common.components.SmoothMouseRotationComponent
 import org.saar.core.common.particles.Particles
 import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
@@ -38,12 +38,12 @@ fun main() {
 
     ClearColour.set(.2f, .2f, .2f)
 
-    val cameraBehaviors = BehaviorGroup(
-        KeyboardMovementBehavior(window.keyboard, 10f, 10f, 10f),
-        SmoothMouseRotationBehavior(window.mouse, .3f)
+    val cameraComponents = NodeComponentGroup(
+        KeyboardMovementComponent(window.keyboard, 10f, 10f, 10f),
+        SmoothMouseRotationComponent(window.mouse, .3f)
     )
 
-    val camera = Camera(ScreenPerspectiveProjection(70f, 1f, 1000f), cameraBehaviors).apply {
+    val camera = Camera(ScreenPerspectiveProjection(70f, 1f, 1000f), cameraComponents).apply {
         transform.position.set(0f, 0f, 50f)
         transform.lookAt(Position.of(0f, 0f, 0f))
     }

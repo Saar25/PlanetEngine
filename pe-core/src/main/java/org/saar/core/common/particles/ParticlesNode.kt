@@ -1,24 +1,24 @@
 package org.saar.core.common.particles
 
-import org.saar.core.behavior.BehaviorGroup
-import org.saar.core.behavior.BehaviorNode
-import org.saar.core.common.behaviors.TransformBehavior
+import org.saar.core.node.NodeComponentGroup
+import org.saar.core.node.ComposableNode
+import org.saar.core.common.components.TransformComponent
 import org.saar.core.node.Node
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
-open class ParticlesNode(val model: ParticlesModel, behaviors: BehaviorGroup) :
-    Node, ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode, BehaviorNode {
+open class ParticlesNode(val model: ParticlesModel, components: NodeComponentGroup) :
+    Node, ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode, ComposableNode {
 
-    constructor(model: ParticlesModel) : this(model, BehaviorGroup())
+    constructor(model: ParticlesModel) : this(model, NodeComponentGroup())
 
-    final override val behaviors: BehaviorGroup = BehaviorGroup(
-        behaviors, TransformBehavior(model.transform))
+    final override val components: NodeComponentGroup = NodeComponentGroup(
+        components, TransformComponent(model.transform))
 
     init {
-        this.behaviors.start(this)
+        this.components.start(this)
     }
 
     final override fun renderForward(context: RenderContext) {
@@ -34,11 +34,11 @@ open class ParticlesNode(val model: ParticlesModel, behaviors: BehaviorGroup) :
     }
 
     final override fun update() {
-        this.behaviors.update(this)
+        this.components.update(this)
     }
 
     final override fun delete() {
         this.model.delete()
-        this.behaviors.delete(this)
+        this.components.delete(this)
     }
 }

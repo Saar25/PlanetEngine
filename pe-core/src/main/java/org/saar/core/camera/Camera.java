@@ -2,30 +2,30 @@ package org.saar.core.camera;
 
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
-import org.saar.core.behavior.BehaviorGroup;
-import org.saar.core.behavior.BehaviorNode;
-import org.saar.core.common.behaviors.TransformBehavior;
+import org.saar.core.node.NodeComponentGroup;
+import org.saar.core.node.ComposableNode;
+import org.saar.core.common.components.TransformComponent;
 import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.utils.Matrix4;
 
-public class Camera implements ICamera, BehaviorNode {
+public class Camera implements ICamera, ComposableNode {
 
     private final Matrix4f viewMatrix = Matrix4.create();
     private final SimpleTransform transform = new SimpleTransform();
     private final Projection projection;
 
-    private final BehaviorGroup behaviors;
+    private final NodeComponentGroup components;
 
     public Camera(Projection projection) {
         this.projection = projection;
-        this.behaviors = new BehaviorGroup();
+        this.components = new NodeComponentGroup();
     }
 
-    public Camera(Projection projection, BehaviorGroup behaviors) {
+    public Camera(Projection projection, NodeComponentGroup components) {
         this.projection = projection;
-        this.behaviors = new BehaviorGroup(behaviors,
-                new TransformBehavior(this.transform));
-        this.behaviors.start(this);
+        this.components = new NodeComponentGroup(components,
+                new TransformComponent(this.transform));
+        this.components.start(this);
     }
 
     @Override
@@ -47,17 +47,17 @@ public class Camera implements ICamera, BehaviorNode {
     }
 
     @Override
-    public BehaviorGroup getBehaviors() {
-        return this.behaviors;
+    public NodeComponentGroup getComponents() {
+        return this.components;
     }
 
     @Override
     public void update() {
-        getBehaviors().update(this);
+        getComponents().update(this);
     }
 
     @Override
     public void delete() {
-        getBehaviors().delete(this);
+        getComponents().delete(this);
     }
 }
