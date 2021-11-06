@@ -34,7 +34,7 @@ object Particles {
 
     @JvmStatic
     fun meshPrototype(): ParticlesMeshPrototype {
-        val instance = MeshInstanceBuffer.createStatic()
+        val instance = MeshInstanceBuffer.createDynamic()
         return meshPrototype(instance)
     }
 

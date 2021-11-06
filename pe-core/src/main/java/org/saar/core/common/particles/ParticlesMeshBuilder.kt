@@ -8,20 +8,20 @@ import org.saar.lwjgl.opengl.objects.attributes.Attributes
 
 class ParticlesMeshBuilder private constructor(
     private val builder: InstancedArraysMeshBuilder<ParticlesVertex, ParticlesInstance>,
-    prototype: ParticlesMeshPrototype
+    private val prototype: ParticlesMeshPrototype
 ) : MeshBuilder {
 
     init {
-        prototype.positionBuffer.addAttribute(
+        this.prototype.positionBuffer.addAttribute(
             Attributes.ofInstanced(0, 3, DataType.FLOAT, false))
-        prototype.birthBuffer.addAttribute(
+        this.prototype.birthBuffer.addAttribute(
             Attributes.ofIntegerInstanced(1, 1, DataType.INT))
         this.builder.init()
     }
 
     fun addInstance(instance: ParticlesInstance) = this.builder.addInstance(instance)
 
-    override fun load() = ParticlesMesh(this.builder.load(RenderMode.TRIANGLE_STRIP))
+    override fun load() = ParticlesMesh(this.builder.load(RenderMode.TRIANGLE_STRIP), this.prototype)
 
     companion object {
         @JvmStatic
