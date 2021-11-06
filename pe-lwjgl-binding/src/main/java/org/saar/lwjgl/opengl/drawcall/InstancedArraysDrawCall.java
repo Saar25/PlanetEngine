@@ -5,28 +5,44 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class InstancedArraysDrawCall implements DrawCall {
 
-    private final RenderMode mode;
+    private final RenderMode renderMode;
     private final int first;
     private final int count;
     private final int instances;
 
-    public InstancedArraysDrawCall(RenderMode mode, int first, int count, int instances) {
-        this.mode = mode;
+    public InstancedArraysDrawCall(RenderMode renderMode, int first, int count, int instances) {
+        this.renderMode = renderMode;
         this.first = first;
         this.count = count;
         this.instances = instances;
     }
 
-    public InstancedArraysDrawCall(RenderMode mode, int count, int instances) {
-        this(mode, 0, count, instances);
+    public InstancedArraysDrawCall(RenderMode renderMode, int count, int instances) {
+        this(renderMode, 0, count, instances);
     }
 
     public static void drawCall(RenderMode mode, int first, int count, int instances) {
         GlRendering.drawArraysInstanced(mode, first, count, instances);
     }
 
+    public RenderMode getRenderMode() {
+        return this.renderMode;
+    }
+
+    public int getFirst() {
+        return this.first;
+    }
+
+    public int getCount() {
+        return this.count;
+    }
+
+    public int getInstances() {
+        return this.instances;
+    }
+
     @Override
     public void doDrawCall() {
-        drawCall(this.mode, this.first, this.count, this.instances);
+        drawCall(this.renderMode, this.first, this.count, this.instances);
     }
 }

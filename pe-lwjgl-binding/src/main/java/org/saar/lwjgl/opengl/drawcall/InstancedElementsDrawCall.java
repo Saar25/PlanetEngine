@@ -6,30 +6,50 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class InstancedElementsDrawCall implements DrawCall {
 
-    private final RenderMode mode;
+    private final RenderMode renderMode;
     private final int count;
-    private final DataType indexType;
-    private final int indices;
+    private final DataType type;
+    private final long indices;
     private final int instances;
 
-    public InstancedElementsDrawCall(RenderMode mode, int count, DataType indexType, int indices, int instances) {
-        this.mode = mode;
+    public InstancedElementsDrawCall(RenderMode renderMode, int count, DataType type, long indices, int instances) {
+        this.renderMode = renderMode;
         this.count = count;
-        this.indexType = indexType;
+        this.type = type;
         this.indices = indices;
         this.instances = instances;
     }
 
-    public InstancedElementsDrawCall(RenderMode mode, int count, DataType indexType, int instances) {
-        this(mode, count, indexType, 0, instances);
+    public InstancedElementsDrawCall(RenderMode renderMode, int count, DataType type, int instances) {
+        this(renderMode, count, type, 0, instances);
     }
 
-    public static void drawCall(RenderMode mode, int count, DataType indexType, int indices, int instances) {
+    public static void drawCall(RenderMode mode, int count, DataType indexType, long indices, int instances) {
         GlRendering.drawElementsInstanced(mode, count, indexType, indices, instances);
+    }
+
+    public RenderMode getRenderMode() {
+        return this.renderMode;
+    }
+
+    public int getCount() {
+        return this.count;
+    }
+
+    public DataType getType() {
+        return this.type;
+    }
+
+    public long getIndices() {
+        return this.indices;
+    }
+
+    public int getInstances() {
+        return this.instances;
     }
 
     @Override
     public void doDrawCall() {
-        drawCall(this.mode, this.count, this.indexType, this.indices, this.instances);
+        drawCall(this.renderMode, this.count, this.type, this.indices, this.instances);
     }
 }

@@ -6,29 +6,44 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class ElementsDrawCall implements DrawCall {
 
-    private final RenderMode mode;
+    private final RenderMode renderMode;
     private final int count;
-    private final DataType indexType;
-    private final int indices;
+    private final DataType type;
+    private final long indices;
 
-
-    public ElementsDrawCall(RenderMode mode, int count, DataType indexType, int indices) {
-        this.mode = mode;
+    public ElementsDrawCall(RenderMode renderMode, int count, DataType type, long indices) {
+        this.renderMode = renderMode;
         this.count = count;
-        this.indexType = indexType;
+        this.type = type;
         this.indices = indices;
     }
 
-    public ElementsDrawCall(RenderMode mode, int count, DataType indexType) {
-        this(mode, count, indexType, 0);
+    public ElementsDrawCall(RenderMode renderMode, int count, DataType type) {
+        this(renderMode, count, type, 0);
     }
 
     public static void drawCall(RenderMode mode, int count, DataType indexType, long indices) {
         GlRendering.drawElements(mode, count, indexType, indices);
     }
 
+    public RenderMode getRenderMode() {
+        return this.renderMode;
+    }
+
+    public int getCount() {
+        return this.count;
+    }
+
+    public DataType getType() {
+        return this.type;
+    }
+
+    public long getIndices() {
+        return this.indices;
+    }
+
     @Override
     public void doDrawCall() {
-        drawCall(this.mode, this.count, this.indexType, this.indices);
+        drawCall(this.renderMode, this.count, this.type, this.indices);
     }
 }
