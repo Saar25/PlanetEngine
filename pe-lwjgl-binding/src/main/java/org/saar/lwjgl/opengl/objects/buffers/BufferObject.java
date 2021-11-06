@@ -34,10 +34,10 @@ public final class BufferObject implements IBufferObject {
         }
     }
 
-    private void beforeStore(BufferTarget target, long offset, int limit, DataType dataType) {
+    private void beforeStore(BufferTarget target, long offset, int size, DataType dataType) {
         this.bind(target);
         final int bytes = dataType.getBytes();
-        ensureCapacity(offset, (long) limit * bytes);
+        ensureCapacity(offset, (long) size * bytes);
     }
 
     @Override
@@ -61,19 +61,19 @@ public final class BufferObject implements IBufferObject {
 
     @Override
     public void store(BufferTarget target, long offset, ByteBuffer buffer) {
-        beforeStore(target, offset, buffer.limit(), DataType.BYTE);
+        beforeStore(target, offset, buffer.limit() - buffer.position(), DataType.BYTE);
         GL15.glBufferSubData(target.get(), offset, buffer);
     }
 
     @Override
     public void store(BufferTarget target, long offset, IntBuffer buffer) {
-        beforeStore(target, offset, buffer.limit(), DataType.INT);
+        beforeStore(target, offset, buffer.limit() - buffer.position(), DataType.INT);
         GL15.glBufferSubData(target.get(), offset, buffer);
     }
 
     @Override
     public void store(BufferTarget target, long offset, FloatBuffer buffer) {
-        beforeStore(target, offset, buffer.limit(), DataType.FLOAT);
+        beforeStore(target, offset, buffer.limit() - buffer.position(), DataType.FLOAT);
         GL15.glBufferSubData(target.get(), offset, buffer);
     }
 
