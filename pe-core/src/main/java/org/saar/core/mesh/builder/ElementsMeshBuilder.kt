@@ -20,6 +20,8 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
     abstract fun addVertex(vertex: V)
     abstract fun addIndex(index: Int)
 
+    abstract override fun load(): ElementsMesh
+
     class Dynamic<V : Vertex>(
         prototype: MeshPrototype,
         writer: ElementsMeshWriter<V>
@@ -36,7 +38,7 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
             this.indices += index
         }
 
-        override fun load(): Mesh {
+        override fun load(): ElementsMesh {
             allocate(this.vertices.size, this.indices.size)
             this.writer.writeVertices(this.vertices)
             this.writer.writeIndices(this.indices)

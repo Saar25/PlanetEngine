@@ -18,6 +18,8 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
 
     abstract fun addVertex(vertex: V)
 
+    abstract override fun load(): ArraysMesh
+
     class Dynamic<V : Vertex>(
         prototype: MeshPrototype,
         writer: ArraysMeshWriter<V>
@@ -29,7 +31,7 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
             this.vertices += vertex
         }
 
-        override fun load(): Mesh {
+        override fun load(): ArraysMesh {
             allocate(this.vertices.size)
             this.writer.writeVertices(this.vertices)
             return Meshes.toArraysMesh(this.prototype, this.vertices.size)

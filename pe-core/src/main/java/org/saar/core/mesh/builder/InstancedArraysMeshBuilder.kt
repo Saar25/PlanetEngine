@@ -21,7 +21,7 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
     abstract fun addInstance(instance: I)
     abstract fun addVertex(vertex: V)
 
-    abstract fun load(renderMode: RenderMode): Mesh
+    abstract fun load(renderMode: RenderMode): InstancedArraysMesh
 
     override fun load() = load(RenderMode.TRIANGLES)
 
@@ -41,7 +41,7 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
             this.vertices += vertex
         }
 
-        override fun load(renderMode: RenderMode): Mesh {
+        override fun load(renderMode: RenderMode): InstancedArraysMesh {
             allocate(this.instances.size, this.vertices.size)
             this.writer.writeInstances(this.instances)
             this.writer.writeVertices(this.vertices)
