@@ -45,7 +45,7 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
             allocate(this.instances.size, this.vertices.size)
             this.writer.writeInstances(this.instances)
             this.writer.writeVertices(this.vertices)
-            return Meshes.toInstancedMesh(this.prototype,
+            return Meshes.toInstancedArrayMesh(this.prototype,
                 this.vertices.size, this.instances.size, renderMode)
         }
     }
@@ -65,7 +65,7 @@ abstract class InstancedArraysMeshBuilder<V : Vertex, I : Instance> internal con
 
         override fun addVertex(vertex: V) = this.writer.writeVertex(vertex)
 
-        override fun load(renderMode: RenderMode) = Meshes.toInstancedMesh(
+        override fun load(renderMode: RenderMode) = Meshes.toInstancedArrayMesh(
             this.prototype, this.vertices, this.instances, renderMode)
     }
 }

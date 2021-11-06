@@ -21,26 +21,26 @@ object Meshes {
     }
 
     @JvmStatic
-    fun toArraysMesh(prototype: MeshPrototype, vertices: Int): DrawCallMesh {
-        return DrawCallMesh(toVao(prototype), ArraysDrawCall(
+    fun toArraysMesh(prototype: MeshPrototype, vertices: Int): ArraysMesh {
+        return ArraysMesh(toVao(prototype), ArraysDrawCall(
             RenderMode.TRIANGLES, 0, vertices))
     }
 
     @JvmStatic
-    fun toElementsMesh(prototype: MeshPrototype, indices: Int): Mesh {
-        return DrawCallMesh(toVao(prototype), ElementsDrawCall(
+    fun toElementsMesh(prototype: MeshPrototype, indices: Int): ElementsMesh {
+        return ElementsMesh(toVao(prototype), ElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT))
     }
 
     @JvmStatic
-    fun toInstancedMesh(prototype: MeshPrototype, vertices: Int, instances: Int,
-                        renderMode: RenderMode = RenderMode.TRIANGLES): Mesh {
-        return DrawCallMesh(toVao(prototype), InstancedArraysDrawCall(renderMode, vertices, instances))
+    fun toInstancedArrayMesh(prototype: MeshPrototype, vertices: Int, instances: Int,
+                             renderMode: RenderMode = RenderMode.TRIANGLES): InstancedArraysMesh {
+        return InstancedArraysMesh(toVao(prototype), InstancedArraysDrawCall(renderMode, vertices, instances))
     }
 
     @JvmStatic
-    fun toInstancedElementsMesh(prototype: MeshPrototype, indices: Int, instances: Int): Mesh {
-        return DrawCallMesh(toVao(prototype), InstancedElementsDrawCall(
+    fun toInstancedElementsMesh(prototype: MeshPrototype, indices: Int, instances: Int): InstancedElementsMesh {
+        return InstancedElementsMesh(toVao(prototype), InstancedElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT, instances))
     }
 

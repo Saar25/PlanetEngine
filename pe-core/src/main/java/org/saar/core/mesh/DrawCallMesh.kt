@@ -1,27 +1,20 @@
-package org.saar.core.mesh;
+package org.saar.core.mesh
 
-import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.objects.vaos.IVao;
+import org.saar.lwjgl.opengl.drawcall.DrawCall
+import org.saar.lwjgl.opengl.objects.vaos.IVao
 
-public class DrawCallMesh implements Mesh {
+class DrawCallMesh(
+    private val vao: IVao,
+    private val drawCall: DrawCall
+) : Mesh {
 
-    private final IVao vao;
-    private final DrawCall drawCall;
-
-    public DrawCallMesh(IVao vao, DrawCall drawCall) {
-        this.vao = vao;
-        this.drawCall = drawCall;
+    override fun draw() {
+        this.vao.bind()
+        this.vao.enableAttributes()
+        this.drawCall.doDrawCall()
     }
 
-    @Override
-    public void draw() {
-        this.vao.bind();
-        this.vao.enableAttributes();
-        this.drawCall.doDrawCall();
-    }
-
-    @Override
-    public void delete() {
-        this.vao.delete();
+    override fun delete() {
+        this.vao.delete()
     }
 }
