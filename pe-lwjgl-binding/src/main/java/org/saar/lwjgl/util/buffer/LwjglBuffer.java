@@ -48,6 +48,8 @@ public interface LwjglBuffer extends ReadonlyLwjglBuffer, AutoCloseable {
 
     LwjglBuffer put(byte[] b, int offset, int length);
 
+    BufferReader getReader();
+
     BufferWriter getWriter();
 
     @Override
