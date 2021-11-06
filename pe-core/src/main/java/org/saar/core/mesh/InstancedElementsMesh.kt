@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.objects.vaos.IVao
 
 class InstancedElementsMesh(
     private val vao: IVao,
-    private var drawCall: InstancedElementsDrawCall
+    var drawCall: InstancedElementsDrawCall
 ) : Mesh {
 
     fun set(
