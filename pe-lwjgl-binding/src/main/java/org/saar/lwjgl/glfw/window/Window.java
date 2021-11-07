@@ -116,9 +116,9 @@ public class Window {
         if (this.vSync) {
             GLFW.glfwSwapInterval(1);
         }
-        setVisible(true);
         GL.createCapabilities();
         GLUtil.setupDebugMessageCallback(System.err);
+        setVisible(true);
     }
 
     private void makeContextCurrent() {
