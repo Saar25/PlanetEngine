@@ -6,9 +6,11 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.components.KeyboardMovementComponent
 import org.saar.core.common.components.SmoothMouseRotationComponent
 import org.saar.core.common.particles.Particles
+import org.saar.core.common.particles.ParticlesInstance
 import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
-import org.saar.core.common.particles.components.ParticlesMeshComponent
+import org.saar.core.common.particles.components.ParticlesControlComponent
+import org.saar.core.common.particles.components.ParticlesModelComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
@@ -108,21 +110,36 @@ private fun buildParticlesModel(): ParticlesModel {
     return ParticlesModel(mesh, texture, 4, 32000)
 }
 
+private class MyParticlesControlComponent : ParticlesControlComponent() {
+    override fun createParticles(): Collection<ParticlesInstance> {
+        return emptyList()
+    }
+
+    override fun mapInstance(index: Int, instance: ParticlesInstance): ParticlesInstance {
+        val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
+        val passed = Math.random() < .01 && v.lengthSquared() < 100
+        return if (passed) Particles.instance(v) else instance
+    }
+}
+
 private class MyParticlesComponent : NodeComponent {
 
-    private lateinit var meshComponent: ParticlesMeshComponent
+    private lateinit var meshComponent: ParticlesModelComponent
 
     override fun start(node: ComposableNode) {
         this.meshComponent = node.components.get()
+        meshComponent.instancesCount = 10
     }
 
     override fun update(node: ComposableNode) {
-        val instances = (0 until PARTICLES).asSequence().map {
+        val instances = (0 until PARTICLES).map {
             val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
             if (Math.random() < .01 && v.lengthSquared() < 100) Particles.instance(v)
             else meshComponent.readInstance(it)
-        }.asIterable()
+        }
 
         meshComponent.writeInstances(0, instances)
+
+        meshComponent.instancesCount++
     }
 }
