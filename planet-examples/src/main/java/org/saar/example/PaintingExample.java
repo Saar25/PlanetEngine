@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class PaintingExample {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         final int width = Toolkit.getDefaultToolkit().getScreenSize().width;
         final int height = Toolkit.getDefaultToolkit().getScreenSize().height;
         final Window window = Window.builder("Lwjgl", width / 2, height / 2, true)
