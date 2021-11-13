@@ -10,24 +10,18 @@ import org.saar.maths.transform.Transform
 object R3D {
 
     @JvmStatic
-    fun instance(transform: Transform): Instance3D {
-        return Instance3D { transform }
+    fun instance(transform: Transform) = object : Instance3D {
+        override val transform = transform
     }
 
     @JvmStatic
-    fun instance(): Instance3D {
-        return instance(SimpleTransform())
-    }
+    fun instance() = instance(SimpleTransform())
 
     @JvmStatic
-    fun vertex(position: Vector3fc, normal: Vector3fc, colour: Vector3fc): Vertex3D {
-        return object : Vertex3D {
-            override fun getPosition3f(): Vector3fc = position
-
-            override fun getNormal3f(): Vector3fc = normal
-
-            override fun getColour3f(): Vector3fc = colour
-        }
+    fun vertex(position: Vector3fc, normal: Vector3fc, colour: Vector3fc) = object : Vertex3D {
+        override val position3f = position
+        override val normal3f = normal
+        override val colour3f = colour
     }
 
     @JvmStatic

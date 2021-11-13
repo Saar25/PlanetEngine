@@ -1,13 +1,10 @@
-package org.saar.core.common.r2d;
+package org.saar.core.common.r2d
 
-import org.joml.Vector2fc;
-import org.joml.Vector3fc;
-import org.saar.core.mesh.Vertex;
+import org.joml.Vector2fc
+import org.joml.Vector3fc
+import org.saar.core.mesh.Vertex
 
-public interface Vertex2D extends Vertex {
-
-    Vector2fc getPosition2f();
-
-    Vector3fc getColour3f();
-
+interface Vertex2D : Vertex {
+    val position2f: Vector2fc
+    val colour3f: Vector3fc
 }

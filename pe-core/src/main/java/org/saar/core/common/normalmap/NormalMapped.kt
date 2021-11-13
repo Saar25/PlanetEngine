@@ -15,18 +15,12 @@ object NormalMapped {
         normal: Vector3fc,
         tangent: Vector3fc,
         biTangent: Vector3fc,
-    ): NormalMappedVertex {
-        return object : NormalMappedVertex {
-            override fun getPosition3f(): Vector3fc = position
-
-            override fun getUvCoord2f(): Vector2fc = uvCoord
-
-            override fun getNormal3f(): Vector3fc = normal
-
-            override fun getTangent3f(): Vector3fc = tangent
-
-            override fun getBiTangent3f(): Vector3fc = biTangent
-        }
+    ) = object : NormalMappedVertex {
+        override val position3f = position
+        override val uvCoord2f = uvCoord
+        override val normal3f = normal
+        override val tangent3f = tangent
+        override val biTangent3f = biTangent
     }
 
     @JvmStatic

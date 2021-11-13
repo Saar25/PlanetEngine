@@ -1,15 +1,10 @@
-package org.saar.core.common.r3d;
+package org.saar.core.common.r3d
 
+import org.joml.Vector3fc
+import org.saar.core.mesh.Vertex
 
-import org.joml.Vector3fc;
-import org.saar.core.mesh.Vertex;
-
-public interface Vertex3D extends Vertex {
-
-    Vector3fc getPosition3f();
-
-    Vector3fc getNormal3f();
-
-    Vector3fc getColour3f();
-
+interface Vertex3D : Vertex {
+    val position3f: Vector3fc
+    val normal3f: Vector3fc
+    val colour3f: Vector3fc
 }

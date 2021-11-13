@@ -7,8 +7,8 @@ import org.saar.core.mesh.buffer.MeshVertexBuffer
 object FlatReflected {
 
     @JvmStatic
-    fun vertex(position: Vector3fc): FlatReflectedVertex {
-        return FlatReflectedVertex { position }
+    fun vertex(position: Vector3fc) = object : FlatReflectedVertex {
+        override val position3f = position
     }
 
     @JvmStatic

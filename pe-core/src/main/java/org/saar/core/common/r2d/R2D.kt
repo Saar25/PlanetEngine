@@ -9,12 +9,9 @@ import org.saar.core.mesh.buffer.MeshVertexBuffer
 object R2D {
 
     @JvmStatic
-    fun vertex(position: Vector2fc, colour: Vector3fc): Vertex2D {
-        return object : Vertex2D {
-            override fun getPosition2f(): Vector2fc = position
-
-            override fun getColour3f(): Vector3fc = colour
-        }
+    fun vertex(position: Vector2fc, colour: Vector3fc) = object : Vertex2D {
+        override val position2f = position
+        override val colour3f = colour
     }
 
     @JvmStatic

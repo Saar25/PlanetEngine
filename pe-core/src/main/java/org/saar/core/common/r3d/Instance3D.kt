@@ -1,10 +1,8 @@
-package org.saar.core.common.r3d;
+package org.saar.core.common.r3d
 
-import org.saar.core.mesh.Instance;
-import org.saar.maths.transform.Transform;
+import org.saar.core.mesh.Instance
+import org.saar.maths.transform.Transform
 
-public interface Instance3D extends Instance {
-
-    Transform getTransform();
-
+interface Instance3D : Instance {
+    val transform: Transform
 }
