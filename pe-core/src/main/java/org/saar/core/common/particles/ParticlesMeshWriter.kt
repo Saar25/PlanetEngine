@@ -1,23 +1,11 @@
-package org.saar.core.common.particles;
+package org.saar.core.common.particles
 
-import org.saar.core.mesh.writers.InstancedArraysMeshWriter;
+import org.saar.core.mesh.writers.InstancedArraysMeshWriter
 
-public class ParticlesMeshWriter implements InstancedArraysMeshWriter<ParticlesVertex, ParticlesInstance> {
+class ParticlesMeshWriter(private val prototype: ParticlesMeshPrototype) :
+    InstancedArraysMeshWriter<ParticlesVertex, ParticlesInstance> {
 
-    private final ParticlesMeshPrototype prototype;
+    override fun writeVertex(vertex: ParticlesVertex) = Unit
 
-    public ParticlesMeshWriter(ParticlesMeshPrototype prototype) {
-        this.prototype = prototype;
-    }
-
-    @Override
-    public void writeVertex(ParticlesVertex vertex) {
-    }
-
-    @Override
-    public void writeInstance(ParticlesInstance instance) {
-        this.prototype.getPositionBuffer().getWriter().write3f(instance.getPosition3f());
-        this.prototype.getBirthBuffer().getWriter().writeInt(instance.getBirth());
-    }
-
+    override fun writeInstance(instance: ParticlesInstance) = prototype.writeInstance(instance)
 }

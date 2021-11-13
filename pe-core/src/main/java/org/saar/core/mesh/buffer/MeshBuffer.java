@@ -11,7 +11,7 @@ public abstract class MeshBuffer {
 
     protected final IVbo vbo;
 
-    private LwjglBuffer buffer = null;
+    protected LwjglBuffer buffer = null;
 
     public MeshBuffer(IVbo vbo) {
         this.vbo = vbo;
@@ -29,20 +29,6 @@ public abstract class MeshBuffer {
     public void store(long offset) {
         this.vbo.allocate(this.buffer.flip().limit());
         this.vbo.store(offset, this.buffer.asByteBuffer());
-    }
-
-    public void update(int offset, int bytes) {
-        this.buffer.position(offset).limit(offset + bytes);
-        this.vbo.store(offset, this.buffer.asByteBuffer());
-    }
-
-    public void setPosition(int position) {
-        this.buffer.position(position);
-    }
-
-    public void offsetPosition(int offset) {
-        final int current = this.buffer.position();
-        this.buffer.clear().position(current + offset);
     }
 
     public DataReader getReader() {

@@ -8,28 +8,24 @@ interface ParticlesMeshPrototype : MeshPrototype {
     val birthBuffer: MeshInstanceBuffer
 }
 
-fun ParticlesMeshPrototype.offsetInstance(index: Int) {
-    this.positionBuffer.setPosition(0)
-    this.birthBuffer.setPosition(0)
+val ParticlesMeshPrototype.instanceBuffers get() = arrayOf(this.positionBuffer, this.birthBuffer).distinct()
 
-    this.positionBuffer.offsetPosition(index * 12)
-    this.birthBuffer.offsetPosition(index * 4)
-}
+fun ParticlesMeshPrototype.offsetInstance(index: Int) = this.instanceBuffers.forEach { it.setPosition(index) }
 
 fun ParticlesMeshPrototype.writeInstance(instance: ParticlesInstance) {
     this.positionBuffer.writer.write3f(instance.position3f)
     this.birthBuffer.writer.writeInt(instance.birth)
 }
 
+fun ParticlesMeshPrototype.readInstance(): ParticlesInstance {
+    val position = this.positionBuffer.reader.read3f()
+    val birth = this.birthBuffer.reader.readInt()
+    return Particles.instance(position, birth)
+}
+
 fun ParticlesMeshPrototype.writeInstance(index: Int, instance: ParticlesInstance) {
     offsetInstance(index)
     writeInstance(instance)
-}
-
-fun ParticlesMeshPrototype.readInstance(): ParticlesInstance {
-    return this.positionBuffer.reader.let {
-        Particles.instance(it.read3f(), it.readInt())
-    }
 }
 
 fun ParticlesMeshPrototype.readInstance(index: Int): ParticlesInstance {
