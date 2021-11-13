@@ -1,5 +1,6 @@
 package org.saar.core.mesh
 
+import org.saar.core.mesh.prototype.InstancedMeshPrototype
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall
@@ -33,8 +34,10 @@ object Meshes {
     }
 
     @JvmStatic
-    fun toInstancedArrayMesh(prototype: MeshPrototype, vertices: Int, instances: Int,
-                             renderMode: RenderMode = RenderMode.TRIANGLES): InstancedArraysMesh {
+    fun toInstancedArrayMesh(
+        prototype: MeshPrototype, vertices: Int, instances: Int,
+        renderMode: RenderMode = RenderMode.TRIANGLES,
+    ): InstancedArraysMesh {
         return InstancedArraysMesh(toVao(prototype), InstancedArraysDrawCall(renderMode, vertices, instances))
     }
 
@@ -44,4 +47,14 @@ object Meshes {
             RenderMode.TRIANGLES, indices, DataType.U_INT, instances))
     }
 
+    @JvmStatic
+    fun toInstancedArrayMesh(
+        prototype: InstancedMeshPrototype<*>, vertices: Int, instances: Int,
+        renderMode: RenderMode = RenderMode.TRIANGLES,
+    ): InstancedArraysMesh {
+        val vao = Vao.create()
+        prototype.instanceBuffers.forEach { it.store(0) }
+        prototype.instanceBuffers.forEach { it.loadInVao(vao) }
+        return InstancedArraysMesh(vao, InstancedArraysDrawCall(renderMode, vertices, instances))
+    }
 }

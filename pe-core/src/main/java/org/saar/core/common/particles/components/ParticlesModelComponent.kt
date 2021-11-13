@@ -12,8 +12,9 @@ class ParticlesModelComponent(val model: ParticlesModel) : NodeComponent {
 
     fun writeInstance(index: Int, instance: ParticlesInstance) = this.model.mesh.writeInstance(index, instance)
 
-    fun writeInstances(index: Int, instances: ParticlesInstance) = this.model.mesh.writeInstances(index, instances)
+    fun writeInstances(index: Int, vararg instances: ParticlesInstance) =
+        this.model.mesh.writeInstances(index, *instances)
 
-    fun writeInstances(index: Int, instances: Iterable<ParticlesInstance>) =
+    fun writeInstances(index: Int, instances: Collection<ParticlesInstance>) =
         this.model.mesh.writeInstances(index, instances)
 }

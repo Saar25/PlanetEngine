@@ -33,6 +33,17 @@ public class MeshIndexBuffer extends MeshBuffer {
         allocate(capacity);
     }
 
+    public void update(int from, int amount) {
+        final int bytes = DataType.INT.getBytes();
+        this.buffer.position(from * bytes).limit((from + amount) * bytes);
+        this.vbo.store((long) from * bytes, this.buffer.asByteBuffer());
+    }
+
+    public void setPosition(int position) {
+        final int bytes = DataType.INT.getBytes();
+        this.buffer.position(position * bytes);
+    }
+
     @Override
     public void loadInVao(WritableVao vao) {
         vao.loadVbo(this.vbo);

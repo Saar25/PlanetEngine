@@ -1,34 +1,37 @@
 package org.saar.core.common.particles
 
-import org.saar.core.mesh.MeshPrototype
 import org.saar.core.mesh.buffer.MeshInstanceBuffer
+import org.saar.core.mesh.prototype.InstancedMeshPrototype
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.objects.attributes.Attributes
 
-interface ParticlesMeshPrototype : MeshPrototype {
-    val positionBuffer: MeshInstanceBuffer
-    val birthBuffer: MeshInstanceBuffer
-}
+class ParticlesMeshPrototype(
+    private val positionBuffer: MeshInstanceBuffer,
+    private val birthBuffer: MeshInstanceBuffer,
+) : InstancedMeshPrototype<ParticlesInstance> {
 
-val ParticlesMeshPrototype.instanceBuffers get() = arrayOf(this.positionBuffer, this.birthBuffer).distinct()
+    constructor(instanceBuffer: MeshInstanceBuffer) : this(
+        positionBuffer = instanceBuffer,
+        birthBuffer = instanceBuffer,
+    )
 
-fun ParticlesMeshPrototype.offsetInstance(index: Int) = this.instanceBuffers.forEach { it.setPosition(index) }
+    init {
+        this.positionBuffer.addAttribute(
+            Attributes.ofInstanced(0, 3, DataType.FLOAT, false))
+        this.birthBuffer.addAttribute(
+            Attributes.ofIntegerInstanced(1, 1, DataType.INT))
+    }
 
-fun ParticlesMeshPrototype.writeInstance(instance: ParticlesInstance) {
-    this.positionBuffer.writer.write3f(instance.position3f)
-    this.birthBuffer.writer.writeInt(instance.birth)
-}
+    override val instanceBuffers = arrayOf(this.positionBuffer, this.birthBuffer).distinct()
 
-fun ParticlesMeshPrototype.readInstance(): ParticlesInstance {
-    val position = this.positionBuffer.reader.read3f()
-    val birth = this.birthBuffer.reader.readInt()
-    return Particles.instance(position, birth)
-}
+    override fun writeInstance(instance: ParticlesInstance) {
+        this.positionBuffer.writer.write3f(instance.position3f)
+        this.birthBuffer.writer.writeInt(instance.birth)
+    }
 
-fun ParticlesMeshPrototype.writeInstance(index: Int, instance: ParticlesInstance) {
-    offsetInstance(index)
-    writeInstance(instance)
-}
-
-fun ParticlesMeshPrototype.readInstance(index: Int): ParticlesInstance {
-    offsetInstance(index)
-    return readInstance()
+    override fun readInstance(): ParticlesInstance {
+        val position = this.positionBuffer.reader.read3f()
+        val birth = this.birthBuffer.reader.readInt()
+        return Particles.instance(position, birth)
+    }
 }

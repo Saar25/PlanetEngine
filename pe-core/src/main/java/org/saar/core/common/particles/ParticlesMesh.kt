@@ -2,9 +2,14 @@ package org.saar.core.common.particles
 
 import org.saar.core.mesh.InstancedArraysMesh
 import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.prototype.readInstance
+import org.saar.core.mesh.prototype.storeInstances
+import org.saar.core.mesh.prototype.writeInstances
 
-class ParticlesMesh internal constructor(private val mesh: InstancedArraysMesh,
-                                         private val prototype: ParticlesMeshPrototype) : Mesh {
+class ParticlesMesh internal constructor(
+    private val mesh: InstancedArraysMesh,
+    private val prototype: ParticlesMeshPrototype,
+) : Mesh {
     override fun draw() = this.mesh.draw()
 
     override fun delete() = this.mesh.delete()
@@ -17,14 +22,10 @@ class ParticlesMesh internal constructor(private val mesh: InstancedArraysMesh,
 
     fun writeInstance(index: Int, instance: ParticlesInstance) = writeInstances(index, listOf(instance))
 
-    fun writeInstances(index: Int, vararg instances: ParticlesInstance) = writeInstances(index, instances.asIterable())
+    fun writeInstances(index: Int, vararg instances: ParticlesInstance) = writeInstances(index, instances.asList())
 
-    fun writeInstances(index: Int, instances: Iterable<ParticlesInstance>) {
-        var size = 0
-        instances.forEachIndexed { i, instance ->
-            this.prototype.writeInstance(index + i, instance)
-            size++
-        }
-        this.prototype.instanceBuffers.forEach { it.update(index, size) }
+    fun writeInstances(index: Int, instances: Collection<ParticlesInstance>) {
+        this.prototype.writeInstances(index, instances)
+        this.prototype.storeInstances(index, instances.size)
     }
 }
