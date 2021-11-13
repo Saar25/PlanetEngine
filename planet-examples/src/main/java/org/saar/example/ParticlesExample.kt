@@ -62,7 +62,7 @@ fun main() {
 
     val uiDisplay = UIDisplay(window)
 
-    val uiFps = UITextElement("Fps: ???").apply {
+    val uiFps = UITextElement("Fps:  ???").apply {
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
         style.x.set(30)
@@ -140,6 +140,6 @@ private class MyParticlesComponent : NodeComponent {
 
         meshComponent.writeInstances(0, instances)
 
-        meshComponent.instancesCount++
+        meshComponent.instancesCount = (meshComponent.instancesCount + 1).coerceAtMost(PARTICLES)
     }
 }
