@@ -16,14 +16,12 @@ class MeshBuilder2D private constructor(
     companion object {
         @JvmStatic
         @JvmOverloads
-        fun dynamic(prototype: MeshPrototype2D = R2D.meshPrototype()) = MeshBuilder2D(
-            ElementsMeshBuilder.Dynamic(prototype)
-        )
+        fun dynamic(prototype: MeshPrototype2D = R2D.meshPrototype()) =
+            MeshBuilder2D(ElementsMeshBuilder.Dynamic(prototype))
 
         @JvmStatic
         @JvmOverloads
-        fun fixed(vertices: Int, indices: Int, prototype: MeshPrototype2D = R2D.meshPrototype()) = MeshBuilder2D(
-            ElementsMeshBuilder.Fixed(vertices, indices, prototype)
-        )
+        fun fixed(vertices: Int, indices: Int, prototype: MeshPrototype2D = R2D.meshPrototype()) =
+            MeshBuilder2D(ElementsMeshBuilder.Fixed(vertices, indices, prototype))
     }
 }

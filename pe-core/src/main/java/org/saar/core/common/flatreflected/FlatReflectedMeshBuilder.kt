@@ -16,15 +16,12 @@ class FlatReflectedMeshBuilder private constructor(
     companion object {
         @JvmStatic
         @JvmOverloads
-        fun dynamic(prototype: FlatReflectedMeshPrototype = FlatReflected.meshPrototype()) = FlatReflectedMeshBuilder(
-            ElementsMeshBuilder.Dynamic(prototype)
-        )
+        fun dynamic(prototype: FlatReflectedMeshPrototype = FlatReflected.meshPrototype()) =
+            FlatReflectedMeshBuilder(ElementsMeshBuilder.Dynamic(prototype))
 
         @JvmStatic
         @JvmOverloads
         fun fixed(vertices: Int, indices: Int, prototype: FlatReflectedMeshPrototype = FlatReflected.meshPrototype()) =
-            FlatReflectedMeshBuilder(
-                ElementsMeshBuilder.Fixed(vertices, indices, prototype)
-            )
+            FlatReflectedMeshBuilder(ElementsMeshBuilder.Fixed(vertices, indices, prototype))
     }
 }
