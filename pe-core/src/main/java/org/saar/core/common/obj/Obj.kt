@@ -2,7 +2,6 @@ package org.saar.core.common.obj
 
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.saar.core.mesh.buffer.MeshBufferProperty
 import org.saar.core.mesh.buffer.MeshIndexBuffer
 import org.saar.core.mesh.buffer.MeshVertexBuffer
 
@@ -20,30 +19,10 @@ object Obj {
     }
 
     @JvmStatic
-    fun meshPrototype(vertex: MeshVertexBuffer, index: MeshIndexBuffer): ObjMeshPrototype {
-        return object : ObjMeshPrototype {
-
-            @MeshBufferProperty
-            val meshVertexBuffer: MeshVertexBuffer = vertex
-
-            @MeshBufferProperty
-            val meshIndexBuffer: MeshIndexBuffer = index
-
-            override fun getPositionBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getUvCoordBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getNormalBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getIndexBuffer(): MeshIndexBuffer = this.meshIndexBuffer
-        }
-    }
-
-    @JvmStatic
     fun meshPrototype(): ObjMeshPrototype {
         val vertex = MeshVertexBuffer.createStatic()
         val index = MeshIndexBuffer.createStatic()
-        return meshPrototype(vertex, index)
+        return ObjMeshPrototype(vertex, index)
     }
 
     @JvmStatic

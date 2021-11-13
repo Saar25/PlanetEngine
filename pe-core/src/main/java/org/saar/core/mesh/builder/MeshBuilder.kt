@@ -1,7 +1,5 @@
-package org.saar.core.mesh.builder;
+package org.saar.core.mesh.builder
 
-import org.saar.core.mesh.UnloadedMesh;
+import org.saar.core.mesh.UnloadedMesh
 
-public interface MeshBuilder extends UnloadedMesh {
-
-}
+interface MeshBuilder : UnloadedMesh

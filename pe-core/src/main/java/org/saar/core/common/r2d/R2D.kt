@@ -3,7 +3,6 @@ package org.saar.core.common.r2d
 import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.common.r2d.MeshBuilder2D.Companion.fixed
-import org.saar.core.mesh.buffer.MeshBufferProperty
 import org.saar.core.mesh.buffer.MeshIndexBuffer
 import org.saar.core.mesh.buffer.MeshVertexBuffer
 
@@ -19,27 +18,10 @@ object R2D {
     }
 
     @JvmStatic
-    fun meshPrototype(vertex: MeshVertexBuffer, index: MeshIndexBuffer): MeshPrototype2D {
-        return object : MeshPrototype2D {
-            @MeshBufferProperty
-            val meshVertexBuffer: MeshVertexBuffer = vertex
-
-            @MeshBufferProperty
-            val meshIndexBuffer: MeshIndexBuffer = index
-
-            override fun getPositionBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getColourBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getIndexBuffer(): MeshIndexBuffer = this.meshIndexBuffer
-        }
-    }
-
-    @JvmStatic
     fun meshPrototype(): MeshPrototype2D {
         val vertex = MeshVertexBuffer.createStatic()
         val index = MeshIndexBuffer.createStatic()
-        return meshPrototype(vertex, index)
+        return MeshPrototype2D(vertex, index)
     }
 
     @JvmStatic
