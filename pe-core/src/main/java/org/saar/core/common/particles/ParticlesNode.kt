@@ -1,6 +1,7 @@
 package org.saar.core.common.particles
 
 import org.saar.core.common.components.TransformComponent
+import org.saar.core.common.particles.components.ParticlesMeshUpdateComponent
 import org.saar.core.common.particles.components.ParticlesModelComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.Node
@@ -15,8 +16,11 @@ open class ParticlesNode(val model: ParticlesModel, components: NodeComponentGro
 
     constructor(model: ParticlesModel) : this(model, NodeComponentGroup())
 
-    final override val components: NodeComponentGroup = NodeComponentGroup(
-        components, TransformComponent(this.model.transform), ParticlesModelComponent(this.model))
+    final override val components: NodeComponentGroup = NodeComponentGroup(components,
+        TransformComponent(this.model.transform),
+        ParticlesModelComponent(this.model),
+        ParticlesMeshUpdateComponent(),
+    )
 
     init {
         this.components.start(this)

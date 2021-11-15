@@ -31,7 +31,7 @@ public class MeshDataBuffer extends MeshBuffer {
 
     public void setPosition(int position) {
         final int bytes = Attributes.sumBytes(attributesArray());
-        this.buffer.position(position * bytes);
+        this.buffer.clear().position(position * bytes);
     }
 
     @Override
