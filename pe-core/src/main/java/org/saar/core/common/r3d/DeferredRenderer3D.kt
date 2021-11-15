@@ -41,9 +41,8 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
         "in_position", "in_colour", "in_transformation")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setCullFace(context.hints.cullFace)
         GlUtils.setProvokingVertexFirst()
-        BlendTest.applyAlpha()
+        BlendTest.disable()
         DepthTest.enable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()

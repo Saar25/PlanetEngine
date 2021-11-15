@@ -2,23 +2,23 @@ package org.saar.lwjgl.glfw.window;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
-import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
+import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.glfw.window.hint.*;
-import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.fbos.ScreenFbo;
+import org.saar.maths.objects.Dimensions;
+import org.saar.maths.objects.RectangleI;
 
 public class Window {
 
     private static Window current = null;
 
     static {
-        // Setup an error callback. The default implementation
+        // Set up an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -63,16 +63,16 @@ public class Window {
 
     public static Window create(String title, int width, int height, boolean vSync) {
         final WindowBuilder builder = builder(title, width, height, vSync);
-        builder.hint(new WindowHintVisible(false))
-                .hint(new WindowHintResizeable(true));
+        builder.hint(WindowHints.visible(false))
+                .hint(WindowHints.resizable());
         return builder.build();
     }
 
     public static WindowBuilder builder(String title, int width, int height, boolean vSync) {
         final WindowBuilder builder = new WindowBuilder(title, width, height, vSync);
-        builder.hint(new WindowHintContextVersion(3, 2))
-                .hint(new WindowHintOpenGlProfile(OpenGlProfileType.CORE))
-                .hint(new WindowHintOpenGlForwardCompatibility(true));
+        builder.hint(WindowHints.contextVersion(3, 2))
+                .hint(WindowHints.openglProfile(OpenGlProfileType.CORE))
+                .hint(WindowHints.openglForwardCompatibility());
         return builder;
     }
 
@@ -97,6 +97,8 @@ public class Window {
             this.width = width;
             this.height = height;
             this.resizeListenersHelper.fireEvent(event);
+
+            ScreenFbo.getInstance().bind();
         });
 
         GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
@@ -114,9 +116,9 @@ public class Window {
         if (this.vSync) {
             GLFW.glfwSwapInterval(1);
         }
-        setVisible(true);
         GL.createCapabilities();
         GLUtil.setupDebugMessageCallback(System.err);
+        setVisible(true);
     }
 
     private void makeContextCurrent() {
@@ -257,6 +259,8 @@ public class Window {
      */
     public void setSize(int width, int height) {
         GLFW.glfwSetWindowSize(this.id, width, height);
+        this.width = width;
+        this.height = height;
     }
 
     /**
@@ -309,13 +313,34 @@ public class Window {
      * Center the window in the middle of the screen
      */
     public void center() {
-        final long monitor = GLFW.glfwGetPrimaryMonitor();
-        final GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
-        if (vidMode != null) {
-            final int w = (vidMode.width() - getWidth()) / 2;
-            final int h = (vidMode.height() - getHeight()) / 2;
-            setPosition(w, h);
-        }
+        final Dimensions dimensions = Monitor.primary.getDimensions();
+        final int w = (dimensions.getWidth() - getWidth()) / 2;
+        final int h = (dimensions.getHeight() - getHeight()) / 2;
+        setPosition(w, h);
+    }
+
+    /**
+     * Set the window to fullscreen
+     */
+    public void setFullscreen() {
+        final Dimensions dimensions = Monitor.primary.getDimensions();
+        GLFW.glfwSetWindowMonitor(this.id, Monitor.primary.id, 0, 0,
+                dimensions.getWidth(), dimensions.getHeight(), GLFW.GLFW_DONT_CARE);
+
+        this.width = dimensions.getWidth();
+        this.height = dimensions.getHeight();
+    }
+
+    public void setMaximized() {
+        final RectangleI workArea = Monitor.primary.getWorkArea();
+        GLFW.glfwSetWindowMonitor(this.id, 0, workArea.x, workArea.y,
+                workArea.w, workArea.h, GLFW.GLFW_DONT_CARE);
+
+        GLFW.glfwMaximizeWindow(this.id);
+        this.x = workArea.x;
+        this.y = workArea.y;
+        this.width = workArea.w;
+        this.height = workArea.h;
     }
 
     /**
@@ -334,16 +359,6 @@ public class Window {
      */
     public Keyboard getKeyboard() {
         return this.keyboard;
-    }
-
-    /**
-     * Updates the window
-     */
-    public void update(boolean swapBuffers) {
-        if (swapBuffers) {
-            swapBuffers();
-        }
-        GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 
     /**

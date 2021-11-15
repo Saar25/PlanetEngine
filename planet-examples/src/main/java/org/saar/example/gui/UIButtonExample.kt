@@ -1,7 +1,7 @@
 package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderContext
 import org.saar.core.util.Fps
 import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
@@ -30,7 +30,7 @@ object UIButtonExample {
 
         val display = UIDisplay(window)
 
-        val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
+        val font = FontLoader.loadFont(FontLoader.DEFAULT_FONT_FAMILY, 48f, 512, 512,
             (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
         )
 
@@ -54,7 +54,7 @@ object UIButtonExample {
             write here
         """.trimIndent()
 
-        val writeable = UITextField(keyboard, text).apply {
+        val writeable = UITextField(text).apply {
             style.x.value = center()
             style.width.value = percent(50f)
             style.height.value = percent(50f)
@@ -73,9 +73,9 @@ object UIButtonExample {
             container.update()
 
             GlUtils.clear(GlBuffer.COLOUR)
-            container.render(RenderContextBase(null))
+            container.render(RenderContext(null))
 
-            window.update(true)
+            window.swapBuffers()
             window.pollEvents()
 
             uiFps.uiText.text = "Fps: ${String.format("%.3f", fps.fps())}"

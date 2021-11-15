@@ -1,49 +1,62 @@
 package org.saar.core.mesh
 
-import org.saar.core.mesh.build.MeshPrototype
-import org.saar.core.mesh.build.MeshPrototypeHelper
+import org.saar.core.mesh.prototype.IndexedVertexMeshPrototype
+import org.saar.core.mesh.prototype.InstancedIndexedVertexMeshPrototype
+import org.saar.core.mesh.prototype.InstancedMeshPrototype
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
-import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
-import org.saar.lwjgl.opengl.objects.vaos.IVao
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 
 object Meshes {
 
-    private fun toVao(prototype: MeshPrototype): IVao {
+    @JvmStatic
+    fun toElementsMesh(prototype: IndexedVertexMeshPrototype<*>, indices: Int): ElementsMesh {
         val vao = Vao.create()
-        with(MeshPrototypeHelper(prototype)) {
-            store()
-            loadToVao(vao)
-        }
-        return vao
-    }
 
-    @JvmStatic
-    fun toArraysMesh(prototype: MeshPrototype, vertices: Int): DrawCallMesh {
-        return DrawCallMesh(toVao(prototype), ArraysDrawCall(
-            RenderMode.TRIANGLES, 0, vertices))
-    }
+        prototype.vertexBuffers.forEach { it.store(0) }
+        prototype.vertexBuffers.forEach { it.loadInVao(vao) }
 
-    @JvmStatic
-    fun toElementsMesh(prototype: MeshPrototype, indices: Int): Mesh {
-        return DrawCallMesh(toVao(prototype), ElementsDrawCall(
+        prototype.indexBuffers.forEach { it.store(0) }
+        prototype.indexBuffers.forEach { it.loadInVao(vao) }
+
+        return ElementsMesh(vao, ElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT))
     }
 
     @JvmStatic
-    fun toInstancedMesh(prototype: MeshPrototype, instances: Int): Mesh {
-        return DrawCallMesh(toVao(prototype), InstancedArraysDrawCall(
-            RenderMode.TRIANGLES, 0, instances))
+    fun toInstancedArrayMesh(
+        prototype: InstancedMeshPrototype<*>, vertices: Int, instances: Int,
+        renderMode: RenderMode = RenderMode.TRIANGLES,
+    ): InstancedArraysMesh {
+        val vao = Vao.create()
+
+        prototype.instanceBuffers.forEach { it.store(0) }
+        prototype.instanceBuffers.forEach { it.loadInVao(vao) }
+
+        return InstancedArraysMesh(vao, InstancedArraysDrawCall(renderMode, vertices, instances))
     }
 
     @JvmStatic
-    fun toInstancedElementsMesh(prototype: MeshPrototype, indices: Int, instances: Int): Mesh {
-        return DrawCallMesh(toVao(prototype), InstancedElementsDrawCall(
+    fun toInstancedElementsMesh(
+        prototype: InstancedIndexedVertexMeshPrototype<*, *>,
+        indices: Int,
+        instances: Int,
+    ): InstancedElementsMesh {
+        val vao = Vao.create()
+
+        prototype.vertexBuffers.forEach { it.store(0) }
+        prototype.vertexBuffers.forEach { it.loadInVao(vao) }
+
+        prototype.instanceBuffers.forEach { it.store(0) }
+        prototype.instanceBuffers.forEach { it.loadInVao(vao) }
+
+        prototype.indexBuffers.forEach { it.store(0) }
+        prototype.indexBuffers.forEach { it.loadInVao(vao) }
+
+        return InstancedElementsMesh(vao, InstancedElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT, instances))
     }
-
 }

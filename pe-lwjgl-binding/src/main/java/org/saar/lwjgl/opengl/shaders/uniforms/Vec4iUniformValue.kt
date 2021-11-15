@@ -1,19 +1,12 @@
 package org.saar.lwjgl.opengl.shaders.uniforms
 
+import org.joml.Vector4i
 import org.joml.Vector4ic
 import org.saar.maths.JomlDelegates
 
-class Vec4iUniformValue(private val name: String) : Vec4iUniform(), UniformValue<Vector4ic> {
-
-    private var vector: Vector4ic by JomlDelegates.CachedVector4i()
-
-    override fun getUniformValue() = this.value
-
-    override fun getName() = this.name
-
-    override fun getValue() = this.vector
-
-    override fun setValue(value: Vector4ic) {
-        this.vector = value
-    }
+class Vec4iUniformValue(
+    override val name: String,
+    initialValue: Vector4ic = Vector4i(0, 0, 0, 0)
+) : Vec4iUniform() {
+    override var value: Vector4i by JomlDelegates.CachedVector4i(Vector4i(initialValue))
 }

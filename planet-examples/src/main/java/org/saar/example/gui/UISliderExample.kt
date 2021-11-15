@@ -1,7 +1,7 @@
 package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.renderer.RenderContextBase
+import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UITextElement
 import org.saar.gui.component.UISlider
@@ -59,9 +59,9 @@ object UISliderExample {
             display.update()
 
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
-            display.render(RenderContextBase(null))
+            display.render(RenderContext(null))
 
-            window.update(true)
+            window.swapBuffers()
             window.pollEvents()
         }
 

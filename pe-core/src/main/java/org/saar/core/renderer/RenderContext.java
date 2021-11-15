@@ -2,10 +2,16 @@ package org.saar.core.renderer;
 
 import org.saar.core.camera.ICamera;
 
-public abstract class RenderContext {
+public class RenderContext {
 
-    public abstract ICamera getCamera();
+    private final ICamera camera;
 
-    public abstract RenderingHints getHints();
+    public RenderContext(ICamera camera) {
+        this.camera = camera;
+    }
+
+    public ICamera getCamera() {
+        return this.camera;
+    }
 
 }

@@ -1,40 +1,37 @@
 package org.saar.core.light
 
 import org.joml.Matrix4f
+import org.joml.Vector3f
 import org.saar.core.camera.ICamera
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.Uniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.maths.utils.Vector3
+import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
 import org.saar.maths.utils.Vector4
 
-abstract class ViewSpaceDirectionalLightUniform(name: String) : Uniform {
+class ViewSpaceDirectionalLightUniform(name: String, var value: IDirectionalLight) : UniformContainer {
 
     var camera: ICamera? = null
 
-    private val directionUniform = Vec3UniformValue("$name.direction")
+    private val directionUniform = object : Vec3Uniform() {
+        override val name = "$name.direction"
 
-    private val colourUniform = Vec3UniformValue("$name.colour")
+        override val value: Vector3f = Vector3f()
+            get() {
+                return if (this@ViewSpaceDirectionalLightUniform.camera != null) {
+                    val vs = Vector4.of(this@ViewSpaceDirectionalLightUniform.value.direction, 0f)
+                        .mul(this@ViewSpaceDirectionalLightUniform.camera!!.viewMatrix.invert(Matrix4f()).transpose())
+                    field.set(vs.x(), vs.y(), vs.z())
+                } else {
+                    field.set(this@ViewSpaceDirectionalLightUniform.value.direction)
+                }.normalize()
+            }
 
-    final override fun initialize(shadersProgram: ShadersProgram) {
-        this.directionUniform.initialize(shadersProgram)
-        this.colourUniform.initialize(shadersProgram)
     }
 
-    final override fun load() {
-        val value = getUniformValue()
-        this.colourUniform.value = value.colour
+    private val colourUniform = object : Vec3Uniform() {
+        override val name = "$name.colour"
 
-        if (this.camera != null) {
-            val vs = Vector4.of(value.direction, 0f).mul(this.camera!!.viewMatrix.invert(Matrix4f()).transpose())
-            this.directionUniform.value = Vector3.of(vs.x(), vs.y(), vs.z()).normalize()
-        } else {
-            this.directionUniform.value = value.direction.normalize()
-        }
-
-        this.colourUniform.load()
-        this.directionUniform.load()
+        override val value get() = this@ViewSpaceDirectionalLightUniform.value.colour
     }
 
-    abstract fun getUniformValue(): DirectionalLight
+    override val subUniforms = listOf(this.directionUniform, this.colourUniform)
 }

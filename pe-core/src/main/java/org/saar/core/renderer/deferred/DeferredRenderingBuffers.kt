@@ -1,15 +1,11 @@
 package org.saar.core.renderer.deferred
 
-import org.saar.core.renderer.renderpass.*
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture
+import org.saar.core.renderer.forward.ForwardRenderingBuffers
+import org.saar.core.renderer.renderpass.NormalSpecularBuffer
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
-data class DeferredRenderingBuffers(
-    override val albedo: ReadOnlyTexture,
-    override val normal: ReadOnlyTexture,
-    override val specular: ReadOnlyTexture,
-    override val depth: ReadOnlyTexture
-) : RenderPassBuffers,
-    AlbedoBuffer,
-    NormalBuffer,
-    SpecularBuffer,
-    DepthBuffer
+interface DeferredRenderingBuffers : ForwardRenderingBuffers, NormalSpecularBuffer {
+    override val albedo: ReadOnlyTexture2D
+    override val normalSpecular: ReadOnlyTexture2D
+    override val depth: ReadOnlyTexture2D
+}

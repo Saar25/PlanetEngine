@@ -4,13 +4,17 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
 import org.saar.core.screen.SimpleScreen;
 import org.saar.core.screen.image.ColourScreenImage;
-import org.saar.core.screen.image.DepthStencilScreenImage;
+import org.saar.core.screen.image.ScreenImage;
+import org.saar.core.screen.image.StencilScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.*;
+import org.saar.lwjgl.opengl.constants.ColourFormatType;
+import org.saar.lwjgl.opengl.constants.Comparator;
+import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.StencilAttachment;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
@@ -18,8 +22,7 @@ import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
 import org.saar.lwjgl.opengl.stencil.*;
-import org.saar.lwjgl.opengl.textures.Texture;
-import org.saar.lwjgl.opengl.textures.TextureTarget;
+import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -71,7 +74,7 @@ public class StencilExample {
 
             screen.copyTo(MainScreen.INSTANCE);
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 
@@ -81,13 +84,12 @@ public class StencilExample {
     private static Screen buildScreen(int width, int height) {
         final SimpleScreen screen = new SimpleScreen(Fbo.create(width, height));
 
-        final DepthStencilScreenImage depthStencilImage = new DepthStencilScreenImage(DepthStencilAttachment.withTexture(
-                Texture.create(TextureTarget.TEXTURE_2D), DepthStencilFormatType.DEPTH24_STENCIL8, DataType.U_INT_24_8
-        ));
-        screen.addScreenImage(depthStencilImage);
+        final ScreenImage screenImage = new StencilScreenImage(
+                StencilAttachment.withRenderBuffer());
+        screen.addScreenImage(screenImage);
 
-        final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment.withTexture(0,
-                Texture.create(TextureTarget.TEXTURE_2D), ColourFormatType.RGBA8, FormatType.RGBA, DataType.BYTE));
+        final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment
+                .withTexture(0, MutableTexture2D.create(), ColourFormatType.RGBA8));
         screen.addScreenImage(colourImage);
         screen.setReadImages(colourImage);
         screen.setDrawImages(colourImage);

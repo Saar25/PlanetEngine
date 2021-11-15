@@ -35,7 +35,7 @@ public class WeakExample {
 
             mesh.draw();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

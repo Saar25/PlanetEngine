@@ -4,15 +4,24 @@
 *
 **/
 
-// Φ = Golden Ratio
-const float PHI = 1.61803398874989484820459;
+#define RANDOM(seed) (fract(sin(seed) * 43758.5453))
 
-float goldenNoise(vec2 xy, float seed) {
-    float distance = distance(xy * PHI, xy);
-    return fract(tan(distance * seed) * xy.x);
+float random(float seed) {
+    float root = 12.9898;
+    return RANDOM(seed * root);
 }
 
-float random1f(vec4 seed) {
+float random(vec2 seed) {
+    vec2 root = vec2(12.9898, 78.233);
+    return RANDOM(dot(seed, root));
+}
+
+float random(vec3 seed) {
+    vec3 root = vec3(12.9898, 78.233, 45.164);
+    return RANDOM(dot(seed, root));
+}
+
+float random(vec4 seed) {
     vec4 root = vec4(12.9898, 78.233, 45.164, 94.673);
-    return fract(sin(dot(seed, root)) * 43758.5453);
+    return RANDOM(dot(seed, root));
 }

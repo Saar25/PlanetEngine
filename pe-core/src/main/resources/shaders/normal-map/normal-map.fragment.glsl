@@ -16,6 +16,4 @@ void main(void) {
     vec3 normal = texture(u_normalMap, v_uvCoord).rgb;
     normal = normalize(v_TBN * (normal * 2.0 - 1.0));
     normal = (u_normalMatrix * vec4(normal, 0)).xyz;
-
-    f_normal = vec4(normal, 1);
 }

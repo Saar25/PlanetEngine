@@ -2,12 +2,12 @@ package org.saar.core.common.obj
 
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderParentNode
-import org.saar.core.renderer.forward.ForwardRenderParentNode
+import org.saar.core.renderer.deferred.DeferredRenderNode
+import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
 class ObjNodeBatch(vararg nodes: ObjNode) : ParentNode,
-    ForwardRenderParentNode, DeferredRenderParentNode, ShadowsRenderNode {
+    ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode {
 
     override val children: MutableList<ObjNode> = nodes.toMutableList()
 

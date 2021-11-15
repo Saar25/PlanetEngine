@@ -1,7 +1,7 @@
 package org.saar.example;
 
 import org.saar.core.common.r2d.*;
-import org.saar.core.renderer.RenderContextBase;
+import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
@@ -28,12 +28,12 @@ public class RendererExample {
                 R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
                 R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
-        final Mesh2D mesh = Mesh2D.load(vertices, indices);
+        final Mesh2D mesh = R2D.mesh(vertices, indices);
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 16);
+        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
 
         fbo.addAttachment(attachment);
         fbo.setDrawAttachments(attachment);
@@ -53,11 +53,11 @@ public class RendererExample {
 
             GlUtils.clear(GlBuffer.COLOUR);
 
-            renderer.render(new RenderContextBase(null), model);
+            renderer.render(new RenderContext(null), model);
 
             fbo.blitToScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
         }
 

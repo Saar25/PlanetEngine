@@ -1,19 +1,12 @@
 package org.saar.lwjgl.opengl.shaders.uniforms
 
+import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.saar.maths.JomlDelegates
 
-class Vec3UniformValue(private val name: String) : Vec3Uniform(), UniformValue<Vector3fc> {
-
-    private var vector: Vector3fc by JomlDelegates.CachedVector3f()
-
-    override fun getUniformValue() = this.value
-
-    override fun getName() = this.name
-
-    override fun getValue() = this.vector
-
-    override fun setValue(value: Vector3fc) {
-        this.vector = value
-    }
+class Vec3UniformValue(
+    override val name: String,
+    initialValue: Vector3fc = Vector3f(0f, 0f, 0f)
+) : Vec3Uniform() {
+    override var value: Vector3f by JomlDelegates.CachedVector3f(Vector3f(initialValue))
 }

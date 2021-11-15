@@ -5,26 +5,38 @@ import org.saar.lwjgl.opengl.utils.GlRendering;
 
 public class ArraysDrawCall implements DrawCall {
 
-    private final RenderMode mode;
+    private final RenderMode renderMode;
     private final int first;
     private final int count;
 
-    public ArraysDrawCall(RenderMode mode, int first, int count) {
-        this.mode = mode;
+    public ArraysDrawCall(RenderMode renderMode, int first, int count) {
+        this.renderMode = renderMode;
         this.first = first;
         this.count = count;
     }
 
-    public ArraysDrawCall(RenderMode mode, int count) {
-        this(mode, 0, count);
+    public ArraysDrawCall(RenderMode renderMode, int count) {
+        this(renderMode, 0, count);
     }
 
     public static void drawCall(RenderMode mode, int first, int count) {
         GlRendering.drawArrays(mode, first, count);
     }
 
+    public RenderMode getRenderMode() {
+        return this.renderMode;
+    }
+
+    public int getFirst() {
+        return this.first;
+    }
+
+    public int getCount() {
+        return this.count;
+    }
+
     @Override
     public void doDrawCall() {
-        drawCall(this.mode, this.first, this.count);
+        drawCall(this.renderMode, this.first, this.count);
     }
 }

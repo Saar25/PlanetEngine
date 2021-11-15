@@ -1,29 +1,32 @@
 package org.saar.core.common.flatreflected
 
 import org.joml.Vector3fc
-import org.saar.core.mesh.build.MeshBufferProperty
-import org.saar.core.mesh.build.buffers.MeshIndexBuffer
-import org.saar.core.mesh.build.buffers.MeshVertexBuffer
+import org.saar.core.mesh.buffer.MeshIndexBuffer
+import org.saar.core.mesh.buffer.MeshVertexBuffer
 
 object FlatReflected {
 
     @JvmStatic
-    fun vertex(position: Vector3fc): FlatReflectedVertex {
-        return FlatReflectedVertex { position }
+    fun vertex(position: Vector3fc) = object : FlatReflectedVertex {
+        override val position3f = position
     }
 
     @JvmStatic
     fun meshPrototype(): FlatReflectedMeshPrototype {
-        return object : FlatReflectedMeshPrototype {
-            @MeshBufferProperty
-            val meshVertexBuffer: MeshVertexBuffer = MeshVertexBuffer.createStatic()
+        val vertexBuffer = MeshVertexBuffer.createStatic()
+        val indexBuffer = MeshIndexBuffer.createStatic()
+        return FlatReflectedMeshPrototype(vertexBuffer, indexBuffer)
+    }
 
-            @MeshBufferProperty
-            val meshIndexBuffer: MeshIndexBuffer = MeshIndexBuffer.createStatic()
-
-            override fun getPositionBuffer(): MeshVertexBuffer = this.meshVertexBuffer
-
-            override fun getIndexBuffer(): MeshIndexBuffer = this.meshIndexBuffer
-        }
+    @JvmStatic
+    @JvmOverloads
+    fun mesh(
+        vertices: Array<FlatReflectedVertex>, indices: IntArray,
+        prototype: FlatReflectedMeshPrototype = meshPrototype(),
+    ): FlatReflectedMesh {
+        return FlatReflectedMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
+            vertices.forEach(it::addVertex)
+            indices.forEach(it::addIndex)
+        }.load()
     }
 }

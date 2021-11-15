@@ -1,6 +1,7 @@
 package org.saar.core.camera.projection;
 
 import org.saar.core.camera.Projection;
+import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
 
 public class ScreenPerspectiveProjection extends PerspectiveProjection implements Projection {
@@ -15,6 +16,10 @@ public class ScreenPerspectiveProjection extends PerspectiveProjection implement
         this.fov = fov;
         this.near = near;
         this.far = far;
+    }
+
+    public ScreenPerspectiveProjection(float fov, float near, float far) {
+        this(MainScreen.INSTANCE, fov, near, far);
     }
 
     @Override

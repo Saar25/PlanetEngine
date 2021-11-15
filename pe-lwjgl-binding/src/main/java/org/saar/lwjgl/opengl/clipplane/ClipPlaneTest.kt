@@ -23,5 +23,5 @@ object ClipPlaneTest {
     }
 
     @JvmStatic
-    fun disable() = (0..6).forEach { disable(it) }
+    fun disable() = (0 until 6).forEach { disable(it) }
 }

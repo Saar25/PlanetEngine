@@ -9,6 +9,8 @@ public final class Vector4 {
 
     public static final ObjectPool<Vector4f> pool = new ObjectPool<>(Vector4::create);
 
+    public static final Vector4f temp = new Vector4f();
+
     private Vector4() {
 
     }

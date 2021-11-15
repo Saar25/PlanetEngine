@@ -4,7 +4,7 @@ import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 
 public interface Attachment {
 
-    int getAttachmentPoint();
+    AttachmentIndex getIndex();
 
     void init(ReadOnlyFbo fbo);
 

@@ -80,7 +80,7 @@ final Model2D model = new Model2D(mesh);
 final Renderer2D renderer = new Renderer2D();
 
 // Render the model
-renderer.render(new RenderContextBase(camera), model);
+renderer.render(new RenderContext(camera), model);
 ```
 
 the rendering pipeline consists of some primary interfaces
@@ -137,7 +137,7 @@ usually holds the model and a renderer, and has at least one render method
 final Model3D cubeModel = buildCubeModel();
 final Node3D cube = new Node3D(cubeModel);
 
-cube.renderForward(new RenderContextBase(camera))
+cube.renderForward(new RenderContext(camera))
 ```
 
 ### Renderer
@@ -237,7 +237,7 @@ val uiButton = UIButton().apply {
 }
 display.add(uiButton)
 
-display.render(RenderContextBase(null))
+display.render(RenderContext(null))
 ```
 
 ### Text rendering
@@ -257,47 +257,47 @@ val uiText = UIText(font, "The quick brown fox jumps over the lazy dog").apply {
 display.add(uiText)
 ```
 
-### Behaviors
+### Components
 
-Behaviors are the implementation of the ECS (Entity Component System) design pattern  
-any Behavior is attachable to every BehaviorNode  
+Components are the implementation of the ECS (Entity Component System) design pattern  
+any Component is attachable to every ComponentNode  
 allowing better composition and reusable code
 
 ```java
-final BehaviorGroup behaviors = new BehaviorGroup(
+final ComponentGroup components = new ComponentGroup(
     // Move with WASD at 50 units per second
-    new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
+    new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
     
     // Change movement velocity by the mouse scroll
-    new KeyboardMovementScrollVelocityBehavior(mouse),
+    new KeyboardMovementScrollVelocityComponent(mouse),
     
     // Rotate by the mouse movement
-    new MouseRotationBehavior(mouse, -.3f)
+    new MouseRotationComponent(mouse, -.3f)
 );
 
-final Camera camera = new Camera(projection, behaviors);
+final Camera camera = new Camera(projection, components);
 ```
 
-Behaviors are very easy to create and handle  
-this behavior implements third person view
+Components are very easy to create and handle  
+this component implements third person view
 
 ```kotlin
-// org.saar.core.common.behaviors.ThirdPersonViewBehavior.kt
+// org.saar.core.common.components.ThirdPersonViewComponent.kt
 
-class ThirdPersonViewBehavior(private val toFollow: Transform, private val distance: Float) : Behavior {
+class ThirdPersonViewComponent(private val toFollow: Transform, private val distance: Float) : Component {
 
-    private lateinit var transformBehavior: TransformBehavior
+    private lateinit var transformComponent: TransformComponent
 
-    override fun start(node: BehaviorNode) {
-        // Get dependent behaviors at initialization
-        this.transformBehavior = node.behaviors.get()
+    override fun start(node: ComponentNode) {
+        // Get dependent components at initialization
+        this.transformComponent = node.components.get()
     }
 
-    override fun update(node: BehaviorNode) {
+    override fun update(node: ComponentNode) {
         // Update node position every update
-        val position = this.transformBehavior.transform.rotation.direction
+        val position = this.transformComponent.transform.rotation.direction
             .normalize(this.distance).add(this.toFollow.position.value)
-        this.transformBehavior.transform.position.set(position)
+        this.transformComponent.transform.position.set(position)
     }
 }
 ```

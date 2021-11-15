@@ -1,44 +1,38 @@
 package org.saar.example.normalmapping;
 
-import org.saar.core.behavior.BehaviorGroup;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.behaviors.KeyboardMovementBehavior;
-import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
-import org.saar.core.common.behaviors.MouseRotationBehavior;
-import org.saar.core.common.normalmap.NormalMappedMesh;
-import org.saar.core.common.normalmap.NormalMappedModel;
-import org.saar.core.common.normalmap.NormalMappedNode;
-import org.saar.core.common.normalmap.NormalMappedNodeBatch;
-import org.saar.core.common.obj.ObjMesh;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjNode;
-import org.saar.core.common.obj.ObjNodeBatch;
+import org.saar.core.common.components.KeyboardMovementComponent;
+import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
+import org.saar.core.common.components.MouseRotationComponent;
+import org.saar.core.common.normalmap.*;
+import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderPassesPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
-import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
-import org.saar.core.screen.MainScreen;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
-import org.saar.lwjgl.opengl.textures.ColourTexture;
-import org.saar.lwjgl.opengl.textures.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.textures.Texture2D;
+import org.saar.lwjgl.opengl.texture.ColourTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
+import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.transform.Position;
 
 import java.util.Objects;
@@ -56,16 +50,15 @@ public class NormalMappingExample {
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
 
-        final Projection projection = new ScreenPerspectiveProjection(
-                MainScreen.INSTANCE, 70f, 1, 1000);
+        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
-        final KeyboardMovementBehavior cameraMovementBehavior =
-                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
-        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
-                new KeyboardMovementScrollVelocityBehavior(mouse),
-                new MouseRotationBehavior(mouse, -.3f));
+        final KeyboardMovementComponent cameraMovementComponent =
+                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
+        final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
+                new KeyboardMovementScrollVelocityComponent(mouse),
+                new MouseRotationComponent(mouse, -.3f));
 
-        final Camera camera = new Camera(projection, behaviors);
+        final Camera camera = new Camera(projection, components);
 
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
@@ -85,21 +78,20 @@ public class NormalMappingExample {
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.VERY_HIGH, shadowProjection, light, shadowsRenderNode);
-        final ReadOnlyTexture shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
-
-        final DeferredRenderPassesPipeline renderPassesPipeline = new DeferredRenderPassesPipeline(
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
-                new SsaoRenderPass(),
-                new ContrastPostProcessor(1.3f),
-                new FxaaPostProcessor()
-        );
+                ShadowsQuality.LOW, shadowProjection, light, shadowsRenderNode);
+        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(
-                camera, renderNode, renderPassesPipeline);
+        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
+                new DeferredGeometryPass(renderNode),
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
+                new ContrastPostProcessor(1.3f),
+                new FxaaPostProcessor()
+        );
+
+        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -107,14 +99,14 @@ public class NormalMappingExample {
 
             deferredRenderer.render().toMainScreen();
 
-            window.update(true);
+            window.swapBuffers();
             window.pollEvents();
 
             final long delta = System.currentTimeMillis() - current;
 
             final float fps = 1000f / delta;
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", cameraMovementBehavior.getVelocity().x()) +
+                    "Speed: " + String.format("%.2f", cameraMovementComponent.getVelocity().x()) +
                     ", Fps: " + String.format("%.2f", fps) +
                     ", Delta: " + delta);
             current = System.currentTimeMillis();
@@ -130,8 +122,8 @@ public class NormalMappingExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = Mesh3D.load(ExamplesUtils.cubeVertices,
-                ExamplesUtils.cubeIndices, new Instance3D[]{cubeInstance});
+        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 
@@ -173,7 +165,7 @@ public class NormalMappingExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/cottage/cottage.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -184,7 +176,7 @@ public class NormalMappingExample {
 
     private static ObjModel loadStall() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/stall/stall.model.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -195,7 +187,7 @@ public class NormalMappingExample {
 
     private static ObjModel loadDragon() {
         try {
-            final ObjMesh mesh = ObjMesh.load("/assets/dragon/dragon.model.obj");
+            final ObjMesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -206,7 +198,7 @@ public class NormalMappingExample {
 
     private static NormalMappedModel loadBoulder() {
         try {
-            final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/boulder/boulder.model.obj");
+            final NormalMappedMesh mesh = NormalMapped.mesh("/assets/boulder/boulder.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/boulder/boulder.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/boulder/boulder.diffuse.png");
             return new NormalMappedModel(mesh, texture, normalMap);
@@ -218,7 +210,7 @@ public class NormalMappingExample {
 
     private static NormalMappedModel loadBarrel() {
         try {
-            final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/barrel/barrel.model.obj");
+            final NormalMappedMesh mesh = NormalMapped.mesh("/assets/barrel/barrel.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/barrel/barrel.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/barrel/barrel.diffuse.png");
             return new NormalMappedModel(mesh, texture, normalMap);
@@ -230,7 +222,7 @@ public class NormalMappingExample {
 
     private static NormalMappedModel loadCrate() {
         try {
-            final NormalMappedMesh mesh = NormalMappedMesh.load("/assets/crate/crate.model.obj");
+            final NormalMappedMesh mesh = NormalMapped.mesh("/assets/crate/crate.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/crate/crate.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/crate/crate.diffuse.png");
             return new NormalMappedModel(mesh, texture, normalMap);

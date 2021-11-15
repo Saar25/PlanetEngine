@@ -3,7 +3,7 @@ package org.saar.core.postprocessing.processors
 import org.joml.Vector2i
 import org.saar.core.postprocessing.PostProcessingBuffers
 import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.renderer.renderpass.RenderPassContext
+import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -20,7 +20,7 @@ class FxaaPostProcessor : PostProcessor {
     private val prototype = FxaaPostProcessorPrototype()
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderPassContext, buffers: PostProcessingBuffers) = this.wrapper.render {
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         StencilTest.disable()
 
         this.prototype.textureUniform.value = buffers.albedo
@@ -38,12 +38,13 @@ private class FxaaPostProcessorPrototype : RenderPassPrototype {
 
     @UniformProperty
     val resolutionUniform = object : Vec2iUniform() {
-        override fun getName() = "u_resolution"
+        override val name = "u_resolution"
 
-        override fun getUniformValue() = Vector2i(MainScreen.width, MainScreen.height)
+        override val value = Vector2i()
+            get() = field.set(MainScreen.width, MainScreen.height)
     }
 
-    override fun fragmentShader(): Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("FXAA_REDUCE_MIN", (1.0 / 128.0).toString()),
         ShaderCode.define("FXAA_REDUCE_MUL", (1.0 / 8.0).toString()),
         ShaderCode.define("FXAA_SPAN_MAX", 8.0.toString()),
