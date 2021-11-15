@@ -23,6 +23,7 @@ import org.saar.maths.utils.Matrix4
 object ParticlesRenderer : Renderer, RendererPrototypeWrapper<ParticlesModel>(ParticlesRendererPrototype())
 
 private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
+
     @UniformProperty
     private val viewMatrixTUniform = Mat4UniformValue("u_viewMatrixT")
 

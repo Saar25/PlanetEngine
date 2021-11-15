@@ -11,12 +11,13 @@ import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
-open class ParticlesNode(val model: ParticlesModel, components: NodeComponentGroup) :
+class ParticlesNode(val model: ParticlesModel, components: NodeComponentGroup) :
     Node, ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode, ComposableNode {
 
     constructor(model: ParticlesModel) : this(model, NodeComponentGroup())
 
-    final override val components: NodeComponentGroup = NodeComponentGroup(components,
+    override val components: NodeComponentGroup = NodeComponentGroup(
+        components,
         TransformComponent(this.model.transform),
         ParticlesModelComponent(this.model),
         ParticlesMeshUpdateComponent(),
@@ -26,23 +27,23 @@ open class ParticlesNode(val model: ParticlesModel, components: NodeComponentGro
         this.components.start(this)
     }
 
-    final override fun renderForward(context: RenderContext) {
+    override fun renderForward(context: RenderContext) {
         ParticlesRenderer.render(context, this.model)
     }
 
-    final override fun renderDeferred(context: RenderContext) {
+    override fun renderDeferred(context: RenderContext) {
         ParticlesDeferredRenderer.render(context, this.model)
     }
 
-    final override fun renderShadows(context: RenderContext) {
+    override fun renderShadows(context: RenderContext) {
         ParticlesDeferredRenderer.render(context, this.model)
     }
 
-    final override fun update() {
+    override fun update() {
         this.components.update(this)
     }
 
-    final override fun delete() {
+    override fun delete() {
         this.model.delete()
         this.components.delete(this)
     }
