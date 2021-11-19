@@ -106,6 +106,14 @@ public class Keyboard {
         });
     }
 
+    public OnAction<KeyEvent> onKeyRepeat(int keyCode) {
+        return listener -> addKeyRepeatListener(e -> {
+            if (e.getKeyCode() == keyCode) {
+                listener.onEvent(e);
+            }
+        });
+    }
+
     public OnAction<KeyEvent> onKeyRelease(int keyCode) {
         return listener -> addKeyReleaseListener(e -> {
             if (e.getKeyCode() == keyCode) {
