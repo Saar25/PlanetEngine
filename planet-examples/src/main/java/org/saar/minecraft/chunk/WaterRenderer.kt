@@ -17,7 +17,6 @@ import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
-import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
@@ -37,6 +36,8 @@ private fun FrustumIntersection.testChunk(chunk: Chunk) = testAab(
 
 object WaterRenderer : Renderer {
 
+    lateinit var atlas: ReadOnlyTexture2D
+
     private val prototype = WaterRendererPrototype()
     private val helper = RendererPrototypeHelper(prototype)
 
@@ -52,13 +53,10 @@ object WaterRenderer : Renderer {
 
     override fun delete() {
         this.helper.delete()
-        this.prototype.atlas.delete()
     }
 }
 
 private class WaterRendererPrototype : RendererPrototype<Chunk> {
-
-    var atlas: ReadOnlyTexture2D = Texture2D.NULL
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val projectionViewUniform = Mat4UniformValue("u_projectionView")
@@ -69,7 +67,7 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
 
         override val name = "u_atlas"
 
-        override val value get() = this@WaterRendererPrototype.atlas
+        override val value get() = WaterRenderer.atlas
     }
 
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)

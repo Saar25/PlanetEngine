@@ -8,6 +8,8 @@ import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.common.components.MouseRotationComponent;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
@@ -19,12 +21,10 @@ import org.saar.core.util.Fps;
 import org.saar.gui.UIBlockElement;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.style.Colours;
-import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.input.mouse.MouseButton;
 import org.saar.lwjgl.glfw.input.mouse.MouseCursor;
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
@@ -39,6 +39,7 @@ import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
 import org.saar.minecraft.chunk.WaterRenderNode;
+import org.saar.minecraft.chunk.WaterRenderer;
 import org.saar.minecraft.entity.Player;
 import org.saar.minecraft.generator.*;
 import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
@@ -55,14 +56,6 @@ public class Minecraft {
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
-
-    private static final WorldGenerator generator = WorldGenerationPipeline
-            .pipe(new TerrainGenerator(80))
-            .then(new WaterGenerator(80))
-            .then(new TreesGenerator(SimplexNoise::noise))
-            .then(new BedrockGenerator());
-
-    private static final World world = new World(generator, THREAD_COUNT);
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
 
@@ -82,9 +75,18 @@ public class Minecraft {
         uiDisplay.add(square);
 
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
-        final Camera camera = new Camera(projection);
+        final NodeComponentGroup cameraComponents = new NodeComponentGroup(
+                new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY)
+        );
+        final Camera camera = new Camera(projection, cameraComponents);
         final Player player = new Player(camera);
 
+        final WorldGenerator generator = WorldGenerationPipeline
+                .pipe(new TerrainGenerator(80))
+                .then(new WaterGenerator(80))
+                .then(new TreesGenerator(SimplexNoise::noise))
+                .then(new BedrockGenerator());
+        final World world = new World(generator, THREAD_COUNT);
         world.generateAround(camera.getTransform().getPosition(), WORLD_RADIUS);
 
         final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
@@ -99,41 +101,24 @@ public class Minecraft {
         textureAtlas.generateMipmap();
 
         ChunkRenderer.INSTANCE.setAtlas(textureAtlas);
-        final ChunkRenderNode chunkRenderNode = new ChunkRenderNode(world);
-        final WaterRenderNode waterRenderNode = new WaterRenderNode(world);
+        WaterRenderer.INSTANCE.setAtlas(textureAtlas);
 
         camera.getTransform().getPosition().set(0, 100, 0);
-
-        final Mouse mouse = window.getMouse();
-        mouse.addMoveListener(new EventListener<>() {
-            private double xOld = mouse.getXPos();
-            private double yOld = mouse.getYPos();
-
-            @Override
-            public void onEvent(MoveEvent e) {
-                if (mouse.getCursor() == MouseCursor.DISABLED) {
-                    final float yRotate = (float) (this.xOld - mouse.getXPos()) * MOUSE_SENSITIVITY;
-                    final float xRotate = (float) (this.yOld - mouse.getYPos()) * MOUSE_SENSITIVITY;
-                    camera.getTransform().getRotation().rotateDegrees(xRotate, yRotate, 0);
-                }
-                this.xOld = mouse.getXPos();
-                this.yOld = mouse.getYPos();
-            }
-        });
-        mouse.hide();
 
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
 
-
-        final ForwardRenderNodeGroup renderNode = new ForwardRenderNodeGroup(chunkRenderNode, waterRenderNode);
-
-        final UnderwaterPostProcessor underwater = new UnderwaterPostProcessor();
-
-        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
-                new ForwardGeometryPass(renderNode),
-                new FxaaPostProcessor()
+        final ForwardRenderNodeGroup renderNode = new ForwardRenderNodeGroup(
+                new ChunkRenderNode(world),
+                new WaterRenderNode(world)
         );
+
+        final UnderwaterPostProcessor underwaterPass = new UnderwaterPostProcessor();
+        final ForwardGeometryPass geometryPass = new ForwardGeometryPass(renderNode);
+        final FxaaPostProcessor fxaaPass = new FxaaPostProcessor();
+
+        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(geometryPass, fxaaPass);
+        final ForwardRenderingPipeline underwater = new ForwardRenderingPipeline(geometryPass, underwaterPass, fxaaPass);
 
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera, pipeline);
 
@@ -141,18 +126,24 @@ public class Minecraft {
 
         long lastBlockPlace = System.currentTimeMillis();
 
+        final Mouse mouse = window.getMouse();
         final Keyboard keyboard = window.getKeyboard();
+
         keyboard.onKeyPress(GLFW.GLFW_KEY_ESCAPE).perform(e ->
                 mouse.setCursor(mouse.getCursor() == MouseCursor.DISABLED
                         ? MouseCursor.NORMAL : MouseCursor.DISABLED));
+        mouse.hide();
 
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
+            camera.update();
+            renderNode.update();
 
             if (world.getBlock(camera.getTransform().getPosition()) == Blocks.WATER) {
                 final ReadOnlyTexture2D rendererTexture = renderingPath.render().getBuffers().getAlbedo();
 
-                underwater.render(new RenderContext(camera), () -> rendererTexture);
+                MainScreen.INSTANCE.setAsDraw();
+                underwaterPass.render(new RenderContext(camera), () -> rendererTexture);
             } else {
                 renderingPath.render().toMainScreen();
             }
@@ -250,9 +241,8 @@ public class Minecraft {
         textureAtlas.delete();
         world.delete();
 
-        underwater.delete();
+        underwaterPass.delete();
         renderingPath.delete();
         window.destroy();
     }
-
 }
