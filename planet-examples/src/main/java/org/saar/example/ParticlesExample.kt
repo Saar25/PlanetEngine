@@ -17,7 +17,6 @@ import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
-import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
@@ -53,16 +52,6 @@ fun main() {
         transform.lookAt(Position.of(0f, 0f, 0f))
     }
 
-    val particlesComponents = NodeComponentGroup(MyParticlesComponent())
-    val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
-
-    val pipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(particles),
-        FxaaPostProcessor(),
-    )
-
-    val renderingPath = DeferredRenderingPath(camera, pipeline)
-
     val uiDisplay = UIDisplay(window)
 
     val uiFps = UITextElement("Fps: ???").apply {
@@ -83,6 +72,16 @@ fun main() {
     }
     uiDisplay.add(uiTime)
 
+    val particlesComponents = NodeComponentGroup(MyParticlesComponent())
+    val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
+
+    val pipeline = DeferredRenderingPipeline(
+        DeferredGeometryPass(particles, uiDisplay),
+        FxaaPostProcessor(),
+    )
+
+    val renderingPath = DeferredRenderingPath(camera, pipeline)
+
     val fps = Fps()
 
     val keyboard = window.keyboard
@@ -90,7 +89,6 @@ fun main() {
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         val time = measureTimeMillis {
             renderingPath.render().toMainScreen()
-            uiDisplay.render(RenderContext(null))
 
             particles.update()
             uiDisplay.update()

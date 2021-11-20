@@ -52,7 +52,7 @@ fun main() {
     val components = NodeComponentGroup(
         KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
         KeyboardMovementScrollVelocityComponent(mouse),
-        MouseRotationComponent(mouse, -.3f)
+        MouseDragRotationComponent(mouse, -.3f)
     )
 
     val camera = Camera(projection, components).apply {
