@@ -1,7 +1,6 @@
 package org.saar.example.terrain;
 
 import org.joml.SimplexNoise;
-import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -19,6 +18,7 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNode;

@@ -8,7 +8,7 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
-import org.saar.core.common.components.MouseRotationComponent;
+import org.saar.core.common.components.MouseDragRotationComponent;
 import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
@@ -53,7 +53,7 @@ public class ShadowExample {
                 new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
         final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
                 new KeyboardMovementScrollVelocityComponent(mouse),
-                new MouseRotationComponent(mouse, -.3f));
+                new MouseDragRotationComponent(mouse, -.3f));
 
         final Camera camera = new Camera(projection, components);
 
