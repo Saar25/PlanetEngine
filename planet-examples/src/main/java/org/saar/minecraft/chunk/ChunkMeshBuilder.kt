@@ -1,10 +1,10 @@
 package org.saar.minecraft.chunk
 
-import org.saar.core.mesh.builder.ElementsMeshBuilder
+import org.saar.core.mesh.builder.ArraysMeshBuilder
 import org.saar.core.mesh.builder.MeshBuilder
 
 class ChunkMeshBuilder private constructor(
-    private val builder: ElementsMeshBuilder<ChunkVertex>,
+    private val builder: ArraysMeshBuilder<ChunkVertex>,
 ) : MeshBuilder {
 
     private val indices = intArrayOf(0, 1, 2, 0, 2, 3)
@@ -35,11 +35,11 @@ class ChunkMeshBuilder private constructor(
         @JvmStatic
         @JvmOverloads
         fun dynamic(prototype: ChunkMeshPrototype = Chunks.meshPrototype()) =
-            ChunkMeshBuilder(ArrayMeshBuilder.Dynamic(prototype))
+            ChunkMeshBuilder(ArraysMeshBuilder.Dynamic(prototype))
 
         @JvmStatic
         @JvmOverloads
-        fun fixed(vertices: Int, indices: Int, prototype: ChunkMeshPrototype = Chunks.meshPrototype()) =
-            ChunkMeshBuilder(ArrayMeshBuilder.Fixed(vertices, indices, prototype))
+        fun fixed(vertices: Int, prototype: ChunkMeshPrototype = Chunks.meshPrototype()) =
+            ChunkMeshBuilder(ArraysMeshBuilder.Fixed(vertices, prototype))
     }
 }
