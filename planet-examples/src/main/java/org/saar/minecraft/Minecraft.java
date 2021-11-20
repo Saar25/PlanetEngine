@@ -16,6 +16,7 @@ import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
 import org.saar.core.renderer.forward.ForwardRenderingPipeline;
 import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
+import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.gui.UIBlockElement;
@@ -115,10 +116,13 @@ public class Minecraft {
 
         final UnderwaterPostProcessor underwaterPass = new UnderwaterPostProcessor();
         final ForwardGeometryPass geometryPass = new ForwardGeometryPass(renderNode);
+        final GeometryPass2D uiGeometryPass = new GeometryPass2D(uiDisplay);
         final FxaaPostProcessor fxaaPass = new FxaaPostProcessor();
 
-        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(geometryPass, fxaaPass);
-        final ForwardRenderingPipeline underwater = new ForwardRenderingPipeline(geometryPass, underwaterPass, fxaaPass);
+        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
+                geometryPass, uiGeometryPass, fxaaPass);
+        final ForwardRenderingPipeline underwater = new ForwardRenderingPipeline(
+                geometryPass, underwaterPass, uiGeometryPass, fxaaPass);
 
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera, pipeline);
 
@@ -147,7 +151,6 @@ public class Minecraft {
             } else {
                 renderingPath.render().toMainScreen();
             }
-            uiDisplay.render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
