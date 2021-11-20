@@ -37,8 +37,8 @@ import java.awt.Toolkit
 import kotlin.math.max
 import kotlin.properties.Delegates
 
-operator fun Dimension.component1() = this.width
-operator fun Dimension.component2() = this.height
+private operator fun Dimension.component1() = this.width
+private operator fun Dimension.component2() = this.height
 
 private val WIDTH = Toolkit.getDefaultToolkit().screenSize.width
 private val HEIGHT = Toolkit.getDefaultToolkit().screenSize.height
@@ -89,7 +89,7 @@ fun main() {
     window.destroy()
 }
 
-class MyScreenPrototype : ScreenPrototype {
+private class MyScreenPrototype : ScreenPrototype {
     val image = MutableTexture2D.create()
 
     @ScreenImageProperty(draw = true, read = true)
@@ -103,7 +103,7 @@ class MyScreenPrototype : ScreenPrototype {
     }
 }
 
-class MyPostProcessor : PostProcessor {
+private class MyPostProcessor : PostProcessor {
 
     private val prototype = MyRenderPassPrototype()
     val wrapper = RenderPassPrototypeWrapper(this.prototype)
@@ -115,7 +115,7 @@ class MyPostProcessor : PostProcessor {
     override fun delete() = this.wrapper.delete()
 }
 
-class MyRenderPassPrototype : RenderPassPrototype {
+private class MyRenderPassPrototype : RenderPassPrototype {
 
     @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)

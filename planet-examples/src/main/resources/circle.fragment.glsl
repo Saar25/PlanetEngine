@@ -24,9 +24,6 @@ void main(void) {
     vec2 position = 2 * v_position - 1;
     float angle = mod(atan2(position) + PI + u_time / 1000., 2 * PI) - PI;
 
-    vec2 position2 = vec2(cos(angle), sin(angle)) * length(position);
-    vec4 colour = texture(u_texture, position2);
-
     vec2 dimensions = gl_FragCoord.xy / v_position;
     vec2 c_position = dimensions / 2 - gl_FragCoord.xy;
 
