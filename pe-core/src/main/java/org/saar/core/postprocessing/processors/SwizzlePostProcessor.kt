@@ -10,11 +10,16 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
+import org.saar.lwjgl.opengl.stencil.StencilTest
 
 class SwizzlePostProcessor(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle) : PostProcessor {
 
     private val prototype = SwizzlePostProcessorPrototype(r, g, b, a)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+
+    override fun prepare(context: RenderContext, buffers: PostProcessingBuffers) {
+        StencilTest.disable()
+    }
 
     override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
         this.prototype.textureUniform.value = buffers.albedo
