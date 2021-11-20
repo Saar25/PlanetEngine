@@ -5,9 +5,8 @@ import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIBlockElement
 import org.saar.gui.UIComponent
 import org.saar.gui.UITextElement
+import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.style.Colours
-import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
-import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 
 private val characterShiftMap = mapOf(
     96 to '~', 49 to '!', 50 to '@',
@@ -20,7 +19,7 @@ private val characterShiftMap = mapOf(
     32 to ' ', 39 to '"'
 )
 
-class UITextField(keyboard: Keyboard, text: String = "") : UIComponent() {
+class UITextField(text: String = "") : UIComponent() {
 
     private val uiBackground = UIBlockElement().also {
         it.parent = this
@@ -36,15 +35,17 @@ class UITextField(keyboard: Keyboard, text: String = "") : UIComponent() {
 
     init {
         this.uiTextElement.uiText.text = text
-        keyboard.addKeyPressListener(this::changeTextByKeyboard)
-        keyboard.addKeyRepeatListener(this::changeTextByKeyboard)
     }
 
     override fun renderText(context: RenderContext) {
         this.uiTextElement.render(context)
     }
 
-    private fun changeTextByKeyboard(event: KeyEvent) {
+    override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)
+
+    override fun onKeyRepeat(event: KeyboardEvent) = changeTextByKeyboard(event)
+
+    private fun changeTextByKeyboard(event: KeyboardEvent) {
         val font = this.style.font.value.compute(this.parent.style, this.style)
 
         this.uiTextElement.uiText.text = when {

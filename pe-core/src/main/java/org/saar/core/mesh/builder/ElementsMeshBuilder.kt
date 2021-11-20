@@ -1,29 +1,27 @@
 package org.saar.core.mesh.builder
 
-import org.saar.core.mesh.*
-import org.saar.core.mesh.writers.ElementsMeshWriter
+import org.saar.core.mesh.ElementsMesh
+import org.saar.core.mesh.Meshes
+import org.saar.core.mesh.Vertex
+import org.saar.core.mesh.prototype.*
 
 abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
-    val prototype: MeshPrototype,
-    val writer: ElementsMeshWriter<V>,
+    val prototype: IndexedVertexMeshPrototype<V>,
 ) : MeshBuilder {
 
     protected fun allocate(vertices: Int, indices: Int) {
-        with(MeshPrototypeHelper(this.prototype)) {
-            allocateVertices(vertices)
-            allocateIndices(indices)
-        }
+        this.prototype.allocateVertices(vertices)
+        this.prototype.allocateIndices(indices)
     }
-
-    open fun init() = Unit
 
     abstract fun addVertex(vertex: V)
     abstract fun addIndex(index: Int)
 
+    abstract override fun load(): ElementsMesh
+
     class Dynamic<V : Vertex>(
-        prototype: MeshPrototype,
-        writer: ElementsMeshWriter<V>
-    ) : ElementsMeshBuilder<V>(prototype, writer) {
+        prototype: IndexedVertexMeshPrototype<V>,
+    ) : ElementsMeshBuilder<V>(prototype) {
 
         private val vertices = mutableListOf<V>()
         private val indices = mutableListOf<Int>()
@@ -36,10 +34,10 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
             this.indices += index
         }
 
-        override fun load(): Mesh {
+        override fun load(): ElementsMesh {
             allocate(this.vertices.size, this.indices.size)
-            this.writer.writeVertices(this.vertices)
-            this.writer.writeIndices(this.indices)
+            this.prototype.writeVertices(this.vertices)
+            this.prototype.writeIndices(this.indices)
             return Meshes.toElementsMesh(this.prototype, this.indices.size)
         }
     }
@@ -47,17 +45,16 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
     class Fixed<V : Vertex>(
         private val vertices: Int,
         private val indices: Int,
-        prototype: MeshPrototype,
-        writer: ElementsMeshWriter<V>
-    ) : ElementsMeshBuilder<V>(prototype, writer) {
+        prototype: IndexedVertexMeshPrototype<V>,
+    ) : ElementsMeshBuilder<V>(prototype) {
 
-        override fun init() {
+        init {
             allocate(this.vertices, this.indices)
         }
 
-        override fun addVertex(vertex: V) = this.writer.writeVertex(vertex)
+        override fun addVertex(vertex: V) = this.prototype.writeVertex(vertex)
 
-        override fun addIndex(index: Int) = this.writer.writeIndex(index)
+        override fun addIndex(index: Int) = this.prototype.writeIndex(index)
 
         override fun load() = Meshes.toElementsMesh(this.prototype, this.indices)
     }

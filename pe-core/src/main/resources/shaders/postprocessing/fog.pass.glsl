@@ -36,6 +36,8 @@ layout (location = 0) out vec4 f_colour;
 // Methods declaration
 float calcDistance(float depth, int fogDistance);
 
+float calcAlpha(float fogAmount, int fogDistance);
+
 float calcDistanceDepth(vec3 viewPosition);
 float calcDistanceY(vec3 viewPosition);
 float calcDistanceXZ(vec3 viewPosition);
@@ -48,9 +50,12 @@ void main(void) {
     vec4 colour = texture(u_texture, v_position);
 
     float distance = calcDistance(depth, u_fogDistance);
-    vec3 rgbColour = applyFogColour(distance, u_fog, colour.rgb);
 
-    f_colour = vec4(rgbColour, colour.a);
+    float amount = calcFogAmount(distance, u_fog);
+    vec3 rgbColour = mix(u_fog.colour, colour.rgb, amount);
+
+    float alpha = calcAlpha(amount, u_fogDistance);
+    f_colour = vec4(rgbColour, alpha * colour.a);
 }
 
 float calcDistance(float depth, int fogDistance) {
@@ -64,6 +69,15 @@ float calcDistance(float depth, int fogDistance) {
         case FD_XYZ: return calcDistanceXYZ(viewPosition);
     }
     return -1.0;
+}
+
+float calcAlpha(float fogAmount, int fogDistance) {
+    switch (fogDistance) {
+        case FD_DEPTH:
+        case FD_XZ:
+        case FD_XYZ: return fogAmount;
+    }
+    return 1.0;
 }
 
 float calcDistanceDepth(vec3 viewPosition) {

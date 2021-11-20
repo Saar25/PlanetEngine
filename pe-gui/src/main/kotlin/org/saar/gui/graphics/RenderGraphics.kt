@@ -1,12 +1,11 @@
 package org.saar.gui.graphics
 
 import org.joml.Vector2i
-import org.joml.Vector2ic
 import org.saar.core.mesh.Model
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.MainScreen
 import org.saar.gui.style.Colour
 import org.saar.gui.style.Colours
-import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -18,8 +17,6 @@ import org.saar.maths.objects.Polygon
 
 class RenderGraphics : Graphics {
 
-    private val windowSize: Vector2i = Vector2i()
-
     private val renderList = ArrayList<Model>()
 
     override var colour: Colour = Colours.BLACK
@@ -28,12 +25,8 @@ class RenderGraphics : Graphics {
     private val windowSizeUniform = object : Vec2iUniform() {
         override val name = "windowSize"
 
-        override val value: Vector2ic
-            get() {
-                val width = Window.current().width
-                val height = Window.current().height
-                return windowSize.set(width, height)
-            }
+        override val value = Vector2i()
+            get() = field.set(MainScreen.width, MainScreen.height)
     }
 
     @UniformProperty

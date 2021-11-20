@@ -14,8 +14,11 @@ class UIDisplay(private val window: Window) : UIParentElement {
 
     init {
         this.window.mouse.addClickListener(this::onMouseClickEvent)
-
         this.window.mouse.addMoveListener(this::onMouseMoveEvent)
+
+        this.window.keyboard.addKeyPressListener(this::onKeyPressEvent)
+        this.window.keyboard.addKeyReleaseListener(this::onKeyReleaseEvent)
+        this.window.keyboard.addKeyRepeatListener(this::onKeyRepeatEvent)
     }
 
     fun add(uiNode: UIChildElement) {

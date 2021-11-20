@@ -23,10 +23,20 @@ public class MeshDataBuffer extends MeshBuffer {
         allocate(capacity);
     }
 
+    public void update(int from, int amount) {
+        final int bytes = Attributes.sumBytes(attributesArray());
+        this.buffer.position(from * bytes).limit((from + amount) * bytes);
+        this.vbo.store((long) from * bytes, this.buffer.asByteBuffer());
+    }
+
+    public void setPosition(int position) {
+        final int bytes = Attributes.sumBytes(attributesArray());
+        this.buffer.clear().position(position * bytes);
+    }
+
     @Override
     public void loadInVao(WritableVao vao) {
         vao.loadVbo(this.vbo, attributesArray());
-        this.vbo.delete();
     }
 
     public void addAttribute(IAttribute attribute) {

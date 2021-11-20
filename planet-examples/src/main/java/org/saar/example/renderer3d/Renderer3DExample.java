@@ -1,12 +1,15 @@
 package org.saar.example.renderer3d;
 
-import org.saar.core.behavior.BehaviorGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.common.behaviors.KeyboardMovementBehavior;
-import org.saar.core.common.behaviors.KeyboardRotationBehavior;
+import org.saar.core.common.components.KeyboardMovementComponent;
+import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.r3d.*;
+import org.saar.core.mesh.buffer.MeshIndexBuffer;
+import org.saar.core.mesh.buffer.MeshInstanceBuffer;
+import org.saar.core.mesh.buffer.MeshVertexBuffer;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
@@ -63,11 +66,11 @@ public class Renderer3DExample {
     private static Camera buildCamera(Keyboard keyboard) {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
-        final BehaviorGroup behaviors = new BehaviorGroup(
-                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
-                new KeyboardRotationBehavior(keyboard, 50f));
+        final NodeComponentGroup components = new NodeComponentGroup(
+                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+                new KeyboardRotationComponent(keyboard, 50f));
 
-        final Camera camera = new Camera(projection, behaviors);
+        final Camera camera = new Camera(projection, components);
 
         camera.getTransform().getPosition().set(0, 0, -1000);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
@@ -90,11 +93,28 @@ public class Renderer3DExample {
                         (float) Math.random(), (float) Math.random()).normalize());
                 nodes[j] = newNode;
             }
-            final MeshPrototype3D prototype = optimizeMesh ? new MeshOptimized() : new MeshUnoptimized();
+            final MeshPrototype3D prototype = optimizeMesh ? optimizedMesh() : unoptimizedMesh();
             final Mesh3D mesh = R3D.mesh(nodes, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, prototype);
             batches[i] = new Model3D(mesh);
         }
         return batches;
     }
 
+    private static MeshPrototype3D optimizedMesh() {
+        return new MeshPrototype3D(
+                MeshVertexBuffer.createStatic(),
+                MeshInstanceBuffer.createStatic(),
+                MeshIndexBuffer.createStatic()
+        );
+    }
+
+    private static MeshPrototype3D unoptimizedMesh() {
+        return new MeshPrototype3D(
+                MeshVertexBuffer.createStatic(),
+                MeshVertexBuffer.createStatic(),
+                MeshVertexBuffer.createStatic(),
+                MeshInstanceBuffer.createStatic(),
+                MeshIndexBuffer.createStatic()
+        );
+    }
 }

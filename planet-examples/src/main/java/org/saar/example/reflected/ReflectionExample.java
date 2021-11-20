@@ -1,15 +1,15 @@
 package org.saar.example.reflected;
 
-import org.saar.core.behavior.BehaviorGroup;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.behaviors.KeyboardMovementBehavior;
-import org.saar.core.common.behaviors.KeyboardMovementScrollVelocityBehavior;
-import org.saar.core.common.behaviors.MouseRotationBehavior;
+import org.saar.core.common.components.KeyboardMovementComponent;
+import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
+import org.saar.core.common.components.MouseRotationComponent;
 import org.saar.core.common.flatreflected.*;
 import org.saar.core.common.obj.*;
 import org.saar.core.common.r3d.*;
@@ -109,13 +109,13 @@ public class ReflectionExample {
 
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 300);
 
-        final KeyboardMovementBehavior cameraMovementBehavior =
-                new KeyboardMovementBehavior(keyboard, 50f, 50f, 50f);
-        final BehaviorGroup behaviors = new BehaviorGroup(cameraMovementBehavior,
-                new KeyboardMovementScrollVelocityBehavior(mouse),
-                new MouseRotationBehavior(mouse, -.3f));
+        final KeyboardMovementComponent cameraMovementComponent =
+                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
+        final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
+                new KeyboardMovementScrollVelocityComponent(mouse),
+                new MouseRotationComponent(mouse, -.3f));
 
-        final Camera camera = new Camera(projection, behaviors);
+        final Camera camera = new Camera(projection, components);
         camera.getTransform().getPosition().set(0, 25, 100);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
@@ -169,7 +169,7 @@ public class ReflectionExample {
             window.pollEvents();
 
             uiFps.getUiText().setText(String.format("Fps: %.2f", fps.fps()));
-            uiSpeed.getUiText().setText(String.format("Speed: %.2f", cameraMovementBehavior.getVelocity().x()));
+            uiSpeed.getUiText().setText(String.format("Speed: %.2f", cameraMovementComponent.getVelocity().x()));
             uiDelta.getUiText().setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
 
             fps.update();

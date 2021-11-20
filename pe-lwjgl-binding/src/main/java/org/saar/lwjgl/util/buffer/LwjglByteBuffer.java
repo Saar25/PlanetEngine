@@ -170,6 +170,11 @@ public class LwjglByteBuffer implements LwjglBuffer {
     }
 
     @Override
+    public BufferReader getReader() {
+        return new BufferReader(this.buffer);
+    }
+
+    @Override
     public BufferWriter getWriter() {
         return new BufferWriter(this.buffer);
     }

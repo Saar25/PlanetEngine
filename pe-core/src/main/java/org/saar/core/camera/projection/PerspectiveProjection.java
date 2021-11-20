@@ -21,7 +21,7 @@ public abstract class PerspectiveProjection implements Projection {
 
     @Override
     public final Matrix4fc getMatrix() {
-        return Matrix4.ofProjection(getFov(), getWidth(),
-                getHeight(), getNear(), getFar(), this.matrix);
+        return Matrix4.ofProjection((float) Math.toRadians(getFov()),
+                getWidth(), getHeight(), getNear(), getFar(), this.matrix);
     }
 }

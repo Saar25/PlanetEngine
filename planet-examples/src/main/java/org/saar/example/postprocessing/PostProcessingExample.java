@@ -1,6 +1,7 @@
 package org.saar.example.postprocessing;
 
 import org.saar.core.camera.Camera;
+import org.saar.core.camera.projection.NullProjection;
 import org.saar.core.common.r2d.*;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
@@ -20,12 +21,12 @@ public class PostProcessingExample {
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         ClearColour.set(.2f, .2f, .2f);
 
-        final Camera camera = new Camera(null);
+        final Camera camera = new Camera(NullProjection.getInstance());
 
         final Model2D model = buildModel2D();
         final Node2D node = new Node2D(model);

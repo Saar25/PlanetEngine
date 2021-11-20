@@ -4,7 +4,11 @@ import org.saar.core.camera.ICamera
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.core.renderer.renderpass.RenderPassesPipelineHelper
 import org.saar.core.screen.Screens
+import org.saar.lwjgl.opengl.depth.DepthMask
+import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.fbos.Fbo
+import org.saar.lwjgl.opengl.stencil.StencilMask
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -21,6 +25,8 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
         this.screen.setAsDraw()
         this.screen.resizeToMainScreen()
 
+        DepthTest.apply(mask = DepthMask.WRITE)
+        StencilTest.apply(mask = StencilMask.UNCHANGED)
         GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
         val context = RenderContext(camera)

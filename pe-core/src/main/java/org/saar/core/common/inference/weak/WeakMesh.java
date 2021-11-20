@@ -1,10 +1,12 @@
 package org.saar.core.common.inference.weak;
 
-import org.saar.core.mesh.DrawCallMesh;
-import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.*;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.*;
+import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall;
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall;
+import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
+import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
@@ -39,9 +41,9 @@ public class WeakMesh implements Mesh {
 
         loadIndices(vao, indices);
 
-        final DrawCall drawCall = new InstancedElementsDrawCall(RenderMode.TRIANGLES,
-                indices.length, DataType.U_INT, instances.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
+        final InstancedElementsDrawCall drawCall = new InstancedElementsDrawCall(
+                RenderMode.TRIANGLES, indices.length, DataType.U_INT, instances.length);
+        final InstancedElementsMesh mesh = new InstancedElementsMesh(vao, drawCall);
         return new WeakMesh(mesh);
     }
 
@@ -61,9 +63,9 @@ public class WeakMesh implements Mesh {
             loadInstances(vao, instances, attributes);
         }
 
-        final DrawCall drawCall = new InstancedArraysDrawCall(
+        final InstancedArraysDrawCall drawCall = new InstancedArraysDrawCall(
                 RenderMode.TRIANGLES, vertices.length, instances.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
+        final InstancedArraysMesh mesh = new InstancedArraysMesh(vao, drawCall);
         return new WeakMesh(mesh);
     }
 
@@ -77,9 +79,9 @@ public class WeakMesh implements Mesh {
 
         loadIndices(vao, indices);
 
-        final DrawCall drawCall = new ElementsDrawCall(
+        final ElementsDrawCall drawCall = new ElementsDrawCall(
                 RenderMode.TRIANGLES, indices.length, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
+        final ElementsMesh mesh = new ElementsMesh(vao, drawCall);
         return new WeakMesh(mesh);
     }
 
@@ -91,9 +93,9 @@ public class WeakMesh implements Mesh {
             loadVertices(vao, vertices, attributes);
         }
 
-        final DrawCall drawCall = new ArraysDrawCall(
+        final ArraysDrawCall drawCall = new ArraysDrawCall(
                 RenderMode.TRIANGLES, vertices.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
+        final ArraysMesh mesh = new ArraysMesh(vao, drawCall);
         return new WeakMesh(mesh);
     }
 

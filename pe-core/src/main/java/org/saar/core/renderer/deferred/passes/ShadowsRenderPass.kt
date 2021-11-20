@@ -84,7 +84,8 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     private val shadowMapSizeUniform = object : Vec2iUniform() {
         override val name = "u_shadowMapSize"
 
-        override val value get() = Vector2i(shadowMap.width, shadowMap.height)
+        override val value = Vector2i()
+            get() = field.set(shadowMap.width, shadowMap.height)
     }
 
     @UniformProperty

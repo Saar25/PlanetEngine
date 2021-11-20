@@ -1,0 +1,20 @@
+package org.saar.core.mesh
+
+import org.saar.lwjgl.opengl.drawcall.DrawCall
+import org.saar.lwjgl.opengl.objects.vaos.IVao
+
+class DrawCallMesh(
+    private val vao: IVao,
+    private val drawCall: DrawCall
+) : Mesh {
+
+    override fun draw() {
+        this.vao.bind()
+        this.vao.enableAttributes()
+        this.drawCall.doDrawCall()
+    }
+
+    override fun delete() {
+        this.vao.delete()
+    }
+}

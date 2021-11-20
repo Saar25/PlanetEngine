@@ -1,11 +1,11 @@
 package org.saar.example.light
 
 import org.joml.SimplexNoise
-import org.saar.core.behavior.BehaviorGroup
+import org.saar.core.node.NodeComponentGroup
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
-import org.saar.core.common.behaviors.*
+import org.saar.core.common.components.*
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
@@ -49,13 +49,13 @@ fun main() {
     val mouse = window.mouse
     val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
-    val behaviors = BehaviorGroup(
-        KeyboardMovementBehavior(keyboard, 50f, 50f, 50f),
-        KeyboardMovementScrollVelocityBehavior(mouse),
-        MouseRotationBehavior(mouse, -.3f)
+    val components = NodeComponentGroup(
+        KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+        KeyboardMovementScrollVelocityComponent(mouse),
+        MouseRotationComponent(mouse, -.3f)
     )
 
-    val camera = Camera(projection, behaviors).apply {
+    val camera = Camera(projection, components).apply {
         transform.position.set(0f, 50f, 0f)
         transform.rotation.lookAlong(Vector3.of(0f, 0f, 1f))
     }
@@ -70,13 +70,13 @@ fun main() {
     ))
 
     val lights = Array(100) {
-        val lightBehaviors = BehaviorGroup(
-            TransformBehavior().apply { transform.position.set(0f, 30f, 0f) },
-            VelocityBehavior(),
-            AccelerationBehavior(),
-            RandomMovementBehavior()
+        val lightComponents = NodeComponentGroup(
+            TransformComponent().apply { transform.position.set(0f, 30f, 0f) },
+            VelocityComponent(),
+            AccelerationComponent(),
+            RandomMovementComponent()
         )
-        PointLight(lightBehaviors).apply {
+        PointLight(lightComponents).apply {
             attenuation = Attenuation.DISTANCE_600
             Vector3.randomize(colour)
             update()

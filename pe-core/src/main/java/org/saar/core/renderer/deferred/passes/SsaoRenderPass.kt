@@ -1,6 +1,7 @@
 package org.saar.core.renderer.deferred.passes
 
 import org.joml.Math
+import org.joml.Vector2f
 import org.joml.Vector3f
 import org.saar.core.painting.painters.Random2fPainter
 import org.saar.core.painting.renderToTexture
@@ -12,6 +13,7 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
 import org.saar.core.screen.annotations.ScreenImageProperty
@@ -30,7 +32,6 @@ import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.maths.utils.Matrix4
-import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 import kotlin.random.Random
 
@@ -140,10 +141,10 @@ private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
     val noiseScaleUniform = object : Vec2Uniform() {
         override val name = "u_noiseScale"
 
-        override val value
-            get() = Vector2.of(
-                Window.current().width.toFloat(),
-                Window.current().height.toFloat()
+        override val value = Vector2f()
+            get() = field.set(
+                MainScreen.width.toFloat(),
+                MainScreen.height.toFloat()
             ).div(noiseTextureSize.toFloat())
     }
 

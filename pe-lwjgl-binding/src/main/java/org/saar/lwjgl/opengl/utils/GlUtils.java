@@ -95,14 +95,32 @@ public final class GlUtils {
         }
     }
 
+    /**
+     * Clears the given buffer
+     *
+     * Warning: the color mask, depth mask, and stencil mask has effect when clearing the buffers
+     * when depth mask is disabled for example, the depth buffer will not clear!
+     *
+     * @param buffer1 the buffer to clear
+     */
     public static void clear(GlBuffer buffer1) {
         GL11.glClear(buffer1.get());
     }
 
+    /**
+     * Clears the given buffers
+     *
+     * @see GlUtils#clear(GlBuffer)
+     */
     public static void clear(GlBuffer buffer1, GlBuffer buffer2) {
         GL11.glClear(buffer1.get() | buffer2.get());
     }
 
+    /**
+     * Clears the given buffers
+     *
+     * @see GlUtils#clear(GlBuffer)
+     */
     public static void clear(GlBuffer buffer1, GlBuffer buffer2, GlBuffer buffer3) {
         GL11.glClear(buffer1.get() | buffer2.get() | buffer3.get());
     }
