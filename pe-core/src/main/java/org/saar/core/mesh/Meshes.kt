@@ -3,14 +3,27 @@ package org.saar.core.mesh
 import org.saar.core.mesh.prototype.IndexedVertexMeshPrototype
 import org.saar.core.mesh.prototype.InstancedIndexedVertexMeshPrototype
 import org.saar.core.mesh.prototype.InstancedMeshPrototype
+import org.saar.core.mesh.prototype.VertexMeshPrototype
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
 import org.saar.lwjgl.opengl.objects.vaos.Vao
 
 object Meshes {
+
+    @JvmStatic
+    fun toArraysMesh(prototype: VertexMeshPrototype<*>, vertices: Int): ArraysMesh {
+        val vao = Vao.create()
+
+        prototype.vertexBuffers.forEach { it.store(0) }
+        prototype.vertexBuffers.forEach { it.loadInVao(vao) }
+
+        return ArraysMesh(vao, ArraysDrawCall(
+            RenderMode.TRIANGLES, 0, vertices))
+    }
 
     @JvmStatic
     fun toElementsMesh(prototype: IndexedVertexMeshPrototype<*>, indices: Int): ElementsMesh {
