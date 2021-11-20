@@ -3,7 +3,6 @@ package org.saar.core.mesh.builder
 import org.saar.core.mesh.ArraysMesh
 import org.saar.core.mesh.Meshes
 import org.saar.core.mesh.Vertex
-import org.saar.core.mesh.prototype.IndexedVertexMeshPrototype
 import org.saar.core.mesh.prototype.VertexMeshPrototype
 import org.saar.core.mesh.prototype.allocateVertices
 import org.saar.core.mesh.prototype.writeVertices
@@ -21,7 +20,7 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
     abstract override fun load(): ArraysMesh
 
     class Dynamic<V : Vertex>(
-        prototype: IndexedVertexMeshPrototype<V>,
+        prototype: VertexMeshPrototype<V>,
     ) : ArraysMeshBuilder<V>(prototype) {
 
         private val vertices = mutableListOf<V>()
@@ -39,7 +38,7 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
 
     class Fixed<V : Vertex>(
         private val vertices: Int,
-        prototype: IndexedVertexMeshPrototype<V>,
+        prototype: VertexMeshPrototype<V>,
     ) : ArraysMeshBuilder<V>(prototype) {
 
         init {
