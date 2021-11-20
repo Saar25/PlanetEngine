@@ -1,68 +1,45 @@
-package org.saar.minecraft.chunk;
+package org.saar.minecraft.chunk
 
-import org.saar.core.mesh.builder.ArraysMeshBuilder;
-import org.saar.core.mesh.builder.MeshBuilder;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attributes;
+import org.saar.core.mesh.builder.ElementsMeshBuilder
+import org.saar.core.mesh.builder.MeshBuilder
 
-public class ChunkMeshBuilder implements MeshBuilder {
+class ChunkMeshBuilder private constructor(
+    private val builder: ElementsMeshBuilder<ChunkVertex>,
+) : MeshBuilder {
 
-    private static final int[] indices = {0, 1, 2, 0, 2, 3};
+    private val indices = intArrayOf(0, 1, 2, 0, 2, 3)
 
-    private static final int[][] vertexIds = {
-            {5, 7, 3, 1}, // x+
-            {2, 6, 4, 0}, // x-
-            {4, 6, 7, 5}, // y+
-            {1, 3, 2, 0}, // y-
-            {3, 7, 6, 2}, // z+
-            {0, 4, 5, 1}, // z-
-    };
+    private val vertexIds = arrayOf(
+        intArrayOf(5, 7, 3, 1),
+        intArrayOf(2, 6, 4, 0),
+        intArrayOf(4, 6, 7, 5),
+        intArrayOf(1, 3, 2, 0),
+        intArrayOf(3, 7, 6, 2),
+        intArrayOf(0, 4, 5, 1)
+    )
 
-    private final ArraysMeshBuilder<ChunkVertex> builder;
+    fun addBlock(x: Int, y: Int, z: Int, id: Int) = repeat(6) { addFace(x, y, z, id, it) }
 
-    public ChunkMeshBuilder(ArraysMeshBuilder<ChunkVertex> builder, ChunkMeshPrototype prototype) {
-        this.builder = builder;
-
-        prototype.getDataBuffer().addAttribute(
-                Attributes.ofInteger(0, 1, DataType.U_INT));
-        this.builder.init();
-    }
-
-    public static ChunkMeshBuilder createDynamic() {
-        return ChunkMeshBuilder.createDynamic(Chunks.meshPrototype());
-    }
-
-    public static ChunkMeshBuilder createDynamic(ChunkMeshPrototype prototype) {
-        return new ChunkMeshBuilder(new ArraysMeshBuilder.Dynamic<>(
-                prototype, new ChunkMeshWriter(prototype)), prototype);
-    }
-
-    public static ChunkMeshBuilder createFixed(int vertices) {
-        return ChunkMeshBuilder.createFixed(Chunks.meshPrototype(), vertices);
-    }
-
-    public static ChunkMeshBuilder createFixed(ChunkMeshPrototype prototype, int vertices) {
-        return new ChunkMeshBuilder(new ArraysMeshBuilder.Fixed<>(
-                vertices, prototype, new ChunkMeshWriter(prototype)), prototype);
-    }
-
-    public void addBlock(int x, int y, int z, int id) {
-        for (int i = 0; i < 6; i++) {
-            addFace(x, y, z, id, i);
+    fun addFace(x: Int, y: Int, z: Int, id: Int, face: Int) {
+        val faceIds = this.vertexIds[face]
+        for (index in this.indices) {
+            val vertex = Chunks.vertex(
+                x, y, z, id, faceIds[index], face == 0)
+            this.builder.addVertex(vertex)
         }
     }
 
-    public void addFace(int x, int y, int z, int id, int face) {
-        final int[] faceIds = ChunkMeshBuilder.vertexIds[face];
-        for (int index : ChunkMeshBuilder.indices) {
-            final ChunkVertex vertex = Chunks.vertex(
-                    x, y, z, id, faceIds[index], face == 0);
-            this.builder.addVertex(vertex);
-        }
-    }
+    override fun load() = ChunkMesh(this.builder.load())
 
-    @Override
-    public ChunkMesh load() {
-        return new ChunkMesh(this.builder.load());
+    companion object {
+        @JvmStatic
+        @JvmOverloads
+        fun dynamic(prototype: ChunkMeshPrototype = Chunks.meshPrototype()) =
+            ChunkMeshBuilder(ArrayMeshBuilder.Dynamic(prototype))
+
+        @JvmStatic
+        @JvmOverloads
+        fun fixed(vertices: Int, indices: Int, prototype: ChunkMeshPrototype = Chunks.meshPrototype()) =
+            ChunkMeshBuilder(ArrayMeshBuilder.Fixed(vertices, indices, prototype))
     }
 }
