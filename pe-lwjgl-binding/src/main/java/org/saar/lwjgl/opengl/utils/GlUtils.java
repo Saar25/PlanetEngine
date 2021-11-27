@@ -8,8 +8,6 @@ public final class GlUtils {
     private static boolean provokingVertexFirst = false;
     private static boolean polygonLines = false;
 
-    private static GlCullFace cullFace = GlCullFace.NONE;
-
     private GlUtils() {
 
     }
@@ -39,27 +37,6 @@ public final class GlUtils {
         if (!provokingVertexFirst) {
             GL32.glProvokingVertex(GL32.GL_LAST_VERTEX_CONVENTION);
             provokingVertexFirst = false;
-        }
-    }
-
-    /**
-     * Setting the cull face
-     *
-     * @param face the face to cull, GlCullFace.NONE if disable
-     */
-    public static void setCullFace(GlCullFace face) {
-        if (GlUtils.cullFace != face) {
-            GlUtils.cullFace = face;
-            setCullFace0(face);
-        }
-    }
-
-    private static void setCullFace0(GlCullFace face) {
-        if (face == GlCullFace.NONE) {
-            GL11.glDisable(GL11.GL_CULL_FACE);
-        } else {
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glCullFace(face.get());
         }
     }
 
@@ -97,7 +74,7 @@ public final class GlUtils {
 
     /**
      * Clears the given buffer
-     *
+     * <p>
      * Warning: the color mask, depth mask, and stencil mask has effect when clearing the buffers
      * when depth mask is disabled for example, the depth buffer will not clear!
      *

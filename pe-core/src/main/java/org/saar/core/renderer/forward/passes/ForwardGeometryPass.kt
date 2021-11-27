@@ -5,9 +5,9 @@ import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.forward.ForwardRenderPass
 import org.saar.core.renderer.forward.ForwardRenderingBuffers
 import org.saar.lwjgl.opengl.constants.Comparator
+import org.saar.lwjgl.opengl.cullface.CullFace
+import org.saar.lwjgl.opengl.cullface.CullFaceValue
 import org.saar.lwjgl.opengl.stencil.*
-import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlUtils
 
 class ForwardGeometryPass(private vararg val children: ForwardRenderNode) : ForwardRenderPass {
 
@@ -18,8 +18,8 @@ class ForwardGeometryPass(private vararg val children: ForwardRenderNode) : Forw
     )
 
     override fun prepare(context: RenderContext, buffers: ForwardRenderingBuffers) {
+        CullFace.set(true, CullFaceValue.BACK)
         StencilTest.apply(this.stencilState)
-        GlUtils.setCullFace(GlCullFace.BACK)
     }
 
     override fun render(context: RenderContext, buffers: ForwardRenderingBuffers) {
