@@ -4,7 +4,6 @@ import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 
 interface RenderingPathPipeline<T : RenderPassBuffers> {
-    val prototype: RenderingPathScreenPrototype<T>
     val passes: Array<out RenderPass<T>>
 }
 

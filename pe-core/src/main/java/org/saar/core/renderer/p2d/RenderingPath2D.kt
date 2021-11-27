@@ -6,7 +6,7 @@ import org.saar.core.renderer.SimpleRenderingPath
 
 class RenderingPath2D(camera: ICamera, pipeline: RenderingPipeline2D) : RenderingPath<RenderingBuffers2D> {
 
-    private val path = SimpleRenderingPath(camera, pipeline)
+    private val path = SimpleRenderingPath(camera, pipeline, ScreenPrototype2D())
 
     override fun render() = this.path.render()
 

@@ -6,10 +6,10 @@ import org.saar.core.renderer.SimpleRenderingPath
 
 class ForwardRenderingPath(
     camera: ICamera,
-    pipeline: ForwardRenderingPipeline
+    pipeline: ForwardRenderingPipeline,
 ) : RenderingPath<ForwardRenderingBuffers> {
 
-    private val path = SimpleRenderingPath(camera, pipeline)
+    private val path = SimpleRenderingPath(camera, pipeline, ForwardScreenPrototype())
 
     override fun render() = this.path.render()
 

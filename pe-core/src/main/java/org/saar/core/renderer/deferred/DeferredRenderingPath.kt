@@ -6,10 +6,10 @@ import org.saar.core.renderer.SimpleRenderingPath
 
 class DeferredRenderingPath(
     camera: ICamera,
-    pipeline: DeferredRenderingPipeline
+    pipeline: DeferredRenderingPipeline,
 ) : RenderingPath<DeferredRenderingBuffers> {
 
-    private val path = SimpleRenderingPath(camera, pipeline)
+    private val path = SimpleRenderingPath(camera, pipeline, DeferredScreenPrototype())
 
     override fun render() = this.path.render()
 
