@@ -1,11 +1,8 @@
 package org.saar.lwjgl.opengl.utils;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL32;
 
 public final class GlUtils {
-
-    private static boolean provokingVertexFirst = false;
 
     private GlUtils() {
 
@@ -13,26 +10,6 @@ public final class GlUtils {
 
     public static int valueOf(boolean b) {
         return b ? GL11.GL_TRUE : GL11.GL_FALSE;
-    }
-
-    /**
-     * Sets the first vertex as the provoking vertex
-     */
-    public static void setProvokingVertexFirst() {
-        if (!provokingVertexFirst) {
-            GL32.glProvokingVertex(GL32.GL_FIRST_VERTEX_CONVENTION);
-            provokingVertexFirst = true;
-        }
-    }
-
-    /**
-     * Sets the last vertex as the provoking vertex
-     */
-    public static void setProvokingVertexLast() {
-        if (!provokingVertexFirst) {
-            GL32.glProvokingVertex(GL32.GL_LAST_VERTEX_CONVENTION);
-            provokingVertexFirst = false;
-        }
     }
 
     /**

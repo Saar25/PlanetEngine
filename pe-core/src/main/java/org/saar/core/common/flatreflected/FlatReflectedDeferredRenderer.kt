@@ -7,6 +7,7 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -14,7 +15,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Vec3UniformValue
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object FlatReflectedDeferredRenderer :
@@ -53,7 +53,7 @@ private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatRef
         "in_position", "in_normal")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setProvokingVertexFirst()
+        ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
 
