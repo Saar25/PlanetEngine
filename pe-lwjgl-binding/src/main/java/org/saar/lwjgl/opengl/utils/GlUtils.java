@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL32;
 public final class GlUtils {
 
     private static boolean provokingVertexFirst = false;
-    private static boolean polygonLines = false;
 
     private GlUtils() {
 
@@ -14,10 +13,6 @@ public final class GlUtils {
 
     public static int valueOf(boolean b) {
         return b ? GL11.GL_TRUE : GL11.GL_FALSE;
-    }
-
-    public static boolean isPolygonLines() {
-        return polygonLines;
     }
 
     /**
@@ -50,26 +45,6 @@ public final class GlUtils {
      */
     public static void setViewport(int x, int y, int w, int h) {
         GL11.glViewport(x, y, w, h);
-    }
-
-    /**
-     * Render the meshes with lines, usually should be called for debugging
-     */
-    public static void drawPolygonLine() {
-        if (!polygonLines) {
-            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-            polygonLines = true;
-        }
-    }
-
-    /**
-     * Render the meshes as usual, usually should be called before rendering normally
-     */
-    public static void drawPolygonFill() {
-        if (polygonLines) {
-            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-            polygonLines = false;
-        }
     }
 
     /**
