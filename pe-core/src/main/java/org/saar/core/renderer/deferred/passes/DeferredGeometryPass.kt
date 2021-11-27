@@ -5,8 +5,8 @@ import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.lwjgl.opengl.constants.Comparator
+import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
-import org.saar.lwjgl.opengl.cullface.CullFaceValue
 import org.saar.lwjgl.opengl.depth.DepthFunction
 import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthState
@@ -24,7 +24,7 @@ class DeferredGeometryPass(private vararg val children: DeferredRenderNode) : De
     private val depthState = DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE)
 
     override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
-        CullFace.set(true, CullFaceValue.BACK)
+        CullFace.set(true, Face.BACK)
         StencilTest.apply(this.stencilState)
         DepthTest.apply(this.depthState)
     }

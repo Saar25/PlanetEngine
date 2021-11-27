@@ -1,12 +1,13 @@
 package org.saar.lwjgl.opengl.cullface
 
 import org.lwjgl.opengl.GL11
+import org.saar.lwjgl.opengl.constants.Face
 
 object CullFace {
 
     private val DEFAULTS = CullFaceState(
         enabled = false,
-        face = CullFaceValue.BACK,
+        face = Face.BACK,
         order = CullFaceOrder.COUNTER_CLOCKWISE,
     )
 
@@ -38,13 +39,13 @@ object CullFace {
     @JvmStatic
     fun set(
         enabled: Boolean = current.enabled,
-        face: CullFaceValue = current.face,
+        face: Face = current.face,
         order: CullFaceOrder = current.order,
     ) = set(CullFaceState(enabled, face, order))
 
     private fun setEnabled(enabled: Boolean) = if (enabled) GL11.glEnable(this.target) else GL11.glDisable(this.target)
 
-    private fun setFace(face: CullFaceValue) = GL11.glCullFace(face.value)
+    private fun setFace(face: Face) = GL11.glCullFace(face.value)
 
     private fun setOrder(order: CullFaceOrder) = GL11.glFrontFace(order.value)
 }

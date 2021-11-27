@@ -6,8 +6,8 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
+import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
-import org.saar.lwjgl.opengl.cullface.CullFaceValue
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -36,7 +36,7 @@ class ShadowsRenderingPath(
 
         val context = RenderContext(this.camera)
 
-        CullFace.set(true, CullFaceValue.FRONT)
+        CullFace.set(true, Face.FRONT)
         this.renderNode.renderShadows(context)
 
         return RenderingOutput(this.screen, this.prototype.buffers)

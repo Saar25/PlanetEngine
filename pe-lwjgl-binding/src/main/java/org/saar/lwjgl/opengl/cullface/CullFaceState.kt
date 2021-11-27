@@ -1,9 +1,11 @@
 package org.saar.lwjgl.opengl.cullface
 
+import org.saar.lwjgl.opengl.constants.Face
+
 data class CullFaceState(
     val enabled: Boolean,
-    val face: CullFaceValue,
+    val face: Face,
     val order: CullFaceOrder,
 ) {
-    constructor(face: CullFaceValue, order: CullFaceOrder) : this(true, face, order)
+    constructor(face: Face, order: CullFaceOrder) : this(true, face, order)
 }

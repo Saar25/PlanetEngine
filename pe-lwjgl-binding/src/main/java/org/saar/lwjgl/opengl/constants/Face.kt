@@ -1,8 +1,8 @@
-package org.saar.lwjgl.opengl.cullface
+package org.saar.lwjgl.opengl.constants
 
 import org.lwjgl.opengl.GL11
 
-enum class CullFaceValue(val value: Int) {
+enum class Face(val value: Int) {
 
     FRONT(GL11.GL_FRONT),
     BACK(GL11.GL_BACK),
