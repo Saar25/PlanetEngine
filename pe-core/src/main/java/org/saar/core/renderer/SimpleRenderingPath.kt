@@ -18,8 +18,11 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
     private val prototype: RenderingPathScreenPrototype<T>,
 ) : RenderingPath<T> {
 
-    private val stencilState = StencilState(StencilOperation.ALWAYS_KEEP,
-        StencilFunction(Comparator.NOT_EQUAL, 0, 0xFF), StencilMask.UNCHANGED)
+    private val stencilState = StencilState(
+        StencilOperation.ALWAYS_KEEP,
+        StencilFunction(Comparator.NOT_EQUAL, 0, 0xFF),
+        StencilMask.UNCHANGED
+    )
 
     private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
 
