@@ -11,7 +11,7 @@ object StencilTest {
         StencilMask.UNCHANGED
     )
 
-    private const val target = GL11.GL_BLEND
+    private const val target = GL11.GL_STENCIL_TEST
 
     private var current: StencilState = DEFAULTS
 
