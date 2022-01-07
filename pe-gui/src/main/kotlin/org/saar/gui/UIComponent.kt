@@ -6,7 +6,6 @@ import org.saar.gui.event.MouseEvent
 import org.saar.gui.event.asKeyboardEvent
 import org.saar.gui.event.asMouseEvent
 import org.saar.gui.style.ContainerStyle
-import org.saar.gui.style.Style
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent

@@ -7,6 +7,7 @@ import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.percent
+import org.saar.gui.style.value.PositionValues
 import org.saar.maths.utils.Maths
 
 class UISlider : UIComponent() {
@@ -36,6 +37,7 @@ class UISlider : UIComponent() {
 
     private fun initUiThumb() {
         this.uiThumb.style.backgroundColour.set(Colours.DARK_GRAY)
+        this.uiThumb.style.position.value = PositionValues.absolute()
         this.uiThumb.style.width.set(20)
     }
 
@@ -49,7 +51,7 @@ class UISlider : UIComponent() {
     }
 
     override fun onMouseDrag(event: MouseEvent) {
-        val x1 = uiTruck.style.x.get()
+        val x1 = uiTruck.style.position.getX()
         val w1 = uiTruck.style.width.get()
         val w2 = uiThumb.style.width.get()
 

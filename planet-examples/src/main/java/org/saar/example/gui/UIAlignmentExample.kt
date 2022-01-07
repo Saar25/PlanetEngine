@@ -6,7 +6,6 @@ import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
 import org.saar.gui.component.UIButton
 import org.saar.gui.font.FontLoader
-import org.saar.gui.style.value.CoordinateValues
 import org.saar.gui.style.value.LengthValues
 import org.saar.gui.style.value.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
@@ -15,8 +14,8 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 
 object UIAlignmentExample {
 
-    private const val WIDTH = 700
-    private const val HEIGHT = 500
+    private const val WIDTH = 1200
+    private const val HEIGHT = 700
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -36,16 +35,18 @@ object UIAlignmentExample {
         display.add(container)
 
         container.add(UIButton().apply {
-            style.x.value = CoordinateValues.pixels(0)
-            style.y.value = CoordinateValues.pixels(0)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         })
 
         container.add(UIButton().apply {
-            style.x.value = CoordinateValues.pixels(0)
-            style.y.value = CoordinateValues.pixels(0)
+            style.width.value = LengthValues.pixels(200)
+            style.height.value = ratio(.5f)
+            setOnAction { println("Clicked!") }
+        })
+
+        container.add(UIButton().apply {
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }

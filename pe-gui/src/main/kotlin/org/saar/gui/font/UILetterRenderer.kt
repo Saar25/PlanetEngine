@@ -86,8 +86,8 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
             .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
 
         this.boundsUniform.value.set(
-            bounds.x() + uiLetter.style.x.get(),
-            bounds.y() + uiLetter.style.y.get(),
+            bounds.x() + uiLetter.style.position.getX(),
+            bounds.y() + uiLetter.style.position.getY(),
             bounds.z(),
             bounds.w())
 

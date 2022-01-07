@@ -23,8 +23,8 @@ class UIBlock(val style: IStyle) {
     fun inTouch(mx: Int, my: Int): Boolean {
         val radiuses = style.radiuses
 
-        val x = style.x.get().toFloat()
-        val y = style.y.get().toFloat()
+        val x = style.position.getX().toFloat()
+        val y = style.position.getY().toFloat()
         val w = style.width.get().toFloat()
         val h = style.height.get().toFloat()
 
@@ -39,9 +39,9 @@ class UIBlock(val style: IStyle) {
         val bordersH = Rectangle(x, y + radius, w, h - radius * 2)
 
         if (bordersV.contains(mx.toFloat(), my.toFloat()) ||
-            bordersH.contains(mx.toFloat(), my.toFloat())) {
-            return true
-        }
+            bordersH.contains(mx.toFloat(), my.toFloat())
+        ) return true
+
         val cx = if (mx < x + w / 2) x + radius else x + w - radius
 
         val cy = if (my < y + h / 2) y + radius else y + h - radius

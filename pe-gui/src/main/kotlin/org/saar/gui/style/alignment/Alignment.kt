@@ -7,7 +7,7 @@ import org.saar.gui.style.value.AlignmentValues
 
 class Alignment(private val container: UIParentElement) : ReadonlyAlignment {
 
-    val value: AlignmentValue = AlignmentValues.horizontal()
+    var value: AlignmentValue = AlignmentValues.horizontal()
 
     override fun getX(child: UIChildElement) = this.value.computeAxisX(this.container, child)
 
