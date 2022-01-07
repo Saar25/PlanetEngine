@@ -21,9 +21,12 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.util.Fps
+import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
 import org.saar.gui.UITextElement
 import org.saar.gui.style.Colours
+import org.saar.gui.style.value.AlignmentValues
+import org.saar.gui.style.value.PositionValues.relative
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -54,23 +57,27 @@ fun main() {
 
     val uiDisplay = UIDisplay(window)
 
+    val uiContainer = UIContainer().apply {
+        style.alignment.value = AlignmentValues.vertical()
+    }
+
+    uiDisplay.add(uiContainer)
+
     val uiFps = UITextElement("Fps: ???").apply {
+        style.position.value = relative()
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
-        style.x.set(30)
-        style.y.set(30)
         style.backgroundColour.set(Colours.BLACK)
     }
-    uiDisplay.add(uiFps)
+    uiContainer.add(uiFps)
 
     val uiTime = UITextElement("Time: ???").apply {
+        style.position.value = relative()
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
-        style.x.set(30)
-        style.y.set(60)
         style.backgroundColour.set(Colours.BLACK)
     }
-    uiDisplay.add(uiTime)
+    uiContainer.add(uiTime)
 
     val particlesComponents = NodeComponentGroup(MyParticlesComponent())
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)

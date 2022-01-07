@@ -1,8 +1,6 @@
 package org.saar.gui.component
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.renderer.RenderContext
-import org.saar.gui.UIBlockElement
 import org.saar.gui.UIComponent
 import org.saar.gui.UITextElement
 import org.saar.gui.event.KeyboardEvent
@@ -21,24 +19,18 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    private val uiBackground = UIBlockElement().also {
-        it.parent = this
-        it.style.backgroundColour.set(Colours.WHITE)
-        it.style.borderColour.set(Colours.DARK_GRAY)
-        it.style.borders.set(2)
-    }
     private val uiTextElement = UITextElement().also { it.parent = this }
 
-    override val children = listOf(this.uiBackground, this.uiTextElement)
+    override val children = listOf(this.uiTextElement)
 
     val text: String get() = this.uiTextElement.uiText.text
 
     init {
         this.uiTextElement.uiText.text = text
-    }
 
-    override fun renderText(context: RenderContext) {
-        this.uiTextElement.render(context)
+        this.style.backgroundColour.set(Colours.WHITE)
+        this.style.borderColour.set(Colours.DARK_GRAY)
+        this.style.borders.set(2)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)

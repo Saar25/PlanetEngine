@@ -52,7 +52,7 @@ abstract class UIComponent : UIChildElement, UIParentElement {
         val x = event.mouse.xPos
         val y = event.mouse.yPos
 
-        val mouseInside = checkMouseInside(x, y)
+        val mouseInside = this.uiBlock.inTouch(x, y)
 
         if (mouseInside && !this.isMouseHover) {
             mouseEnter(e)
@@ -105,12 +105,6 @@ abstract class UIComponent : UIChildElement, UIParentElement {
     private fun mouseMove(event: MouseEvent) = onMouseMove(event)
 
     private fun mouseDrag(event: MouseEvent) = onMouseDrag(event)
-
-    fun checkMouseInside(x: Int, y: Int): Boolean {
-        return if (this.children.isNotEmpty()) {
-            this.children.any { it.contains(x, y) }
-        } else this.uiBlock.inTouch(x, y)
-    }
 
     /**
      * Returns whether the ui component is currently selected

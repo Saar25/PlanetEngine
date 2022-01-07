@@ -2,6 +2,7 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlock
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.TextStyle
 
 class UITextElement(text: String = "") : UIChildElement {
@@ -18,7 +19,8 @@ class UITextElement(text: String = "") : UIChildElement {
 
     override fun update() = this.uiText.update()
 
-    override fun renderText(context: RenderContext) {
+    override fun render(context: RenderContext) {
+        UIBlockRenderer.render(context, this)
         this.uiText.render(context)
     }
 }

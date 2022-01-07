@@ -27,12 +27,7 @@ interface UIElement : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
 
     fun render(context: RenderContext) {
         UIBlockRenderer.render(context, this)
-        renderText(context)
         this.children.forEach { it.render(context) }
-    }
-
-    fun renderText(context: RenderContext) {
-        children.forEach { it.renderText(context) }
     }
 
     fun onMouseClickEvent(event: ClickEvent) = false

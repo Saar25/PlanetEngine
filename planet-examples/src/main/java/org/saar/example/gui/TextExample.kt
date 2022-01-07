@@ -8,6 +8,7 @@ import org.saar.gui.UITextElement
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
+import org.saar.gui.style.value.PositionValues.absolute
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -24,6 +25,7 @@ object TextExample {
         val display = UIDisplay(window)
 
         val container = UIContainer().apply {
+            style.position.value = absolute()
             style.x.value = center()
             style.y.value = center()
             style.width.value = percent(90f)
