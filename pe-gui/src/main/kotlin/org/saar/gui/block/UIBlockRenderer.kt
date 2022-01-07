@@ -10,7 +10,6 @@ import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UIChildElement
 import org.saar.gui.UIElement
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -105,16 +104,10 @@ private class UIRendererPrototype : RendererPrototype<UIElement> {
         hasDiscardMapUniform.value = uiElement.uiBlock.discardMap != null
         discardMapUniform.value = uiElement.uiBlock.discardMap ?: Texture2D.NULL
 
-        val x = if (uiElement is UIChildElement)
-            uiElement.parent.style.alignment.getX(uiElement) else 0
-
-        val y = if (uiElement is UIChildElement)
-            uiElement.parent.style.alignment.getY(uiElement) else 0
-
         // TODO: make these ivec4
         boundsUniform.value.set(
-            x + uiElement.uiBlock.style.x.get().toFloat(),
-            y + uiElement.uiBlock.style.y.get().toFloat(),
+            uiElement.uiBlock.style.position.getX().toFloat(),
+            uiElement.uiBlock.style.position.getY().toFloat(),
             uiElement.uiBlock.style.width.get().toFloat(),
             uiElement.uiBlock.style.height.get().toFloat()
         )

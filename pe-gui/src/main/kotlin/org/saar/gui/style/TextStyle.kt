@@ -11,9 +11,12 @@ import org.saar.gui.style.font.StyleFont
 import org.saar.gui.style.fontcolour.FontColour
 import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.StyleRadiuses
 
 class TextStyle(container: UITextElement) : IStyle {
+
+    override val position: Position = Position(container)
 
     override val x: Coordinate = Coordinates.X(container)
 

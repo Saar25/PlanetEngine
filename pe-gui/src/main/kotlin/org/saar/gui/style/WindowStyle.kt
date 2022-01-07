@@ -17,11 +17,18 @@ import org.saar.gui.style.fontcolour.NoFontColour
 import org.saar.gui.style.fontcolour.ReadonlyFontColour
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.position.ReadonlyPosition
 import org.saar.gui.style.redius.NoStyleRadiuses
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 import org.saar.lwjgl.glfw.window.Window
 
 class WindowStyle(private val window: Window) : ParentStyle {
+
+    override val position: ReadonlyPosition = object : ReadonlyPosition {
+        override fun getX() = 0
+
+        override fun getY() = 0
+    }
 
     override val x: ReadonlyCoordinate = ReadonlyCoordinate { 0 }
 
