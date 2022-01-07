@@ -1,9 +1,8 @@
 package org.saar.gui.style
 
 import org.saar.gui.UIChildElement
+import org.saar.gui.UIParentElement
 import org.saar.gui.style.alignment.Alignment
-import org.saar.gui.style.alignment.AxisAlignment
-import org.saar.gui.style.alignment.ItemsAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.StyleBorders
 import org.saar.gui.style.bordercolour.BorderColour
@@ -17,7 +16,7 @@ import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.redius.StyleRadiuses
 
-class ContainerStyle(container: UIChildElement) : IStyle {
+class ContainerStyle<T>(container: T) : ParentStyle where T : UIParentElement, T : UIChildElement {
 
     override val x: Coordinate = Coordinates.X(container)
 
@@ -43,10 +42,6 @@ class ContainerStyle(container: UIChildElement) : IStyle {
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
-    val alignment: Alignment = Alignment(container)
-
-    val axisAlignment: AxisAlignment = AxisAlignment(container)
-
-    val itemsAlignment: ItemsAlignment = ItemsAlignment(container)
+    override val alignment: Alignment = Alignment(container)
 
 }

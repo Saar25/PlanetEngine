@@ -5,6 +5,7 @@ import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.event.asKeyboardEvent
 import org.saar.gui.event.asMouseEvent
+import org.saar.gui.style.ContainerStyle
 import org.saar.gui.style.Style
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
@@ -14,11 +15,11 @@ import org.saar.lwjgl.glfw.input.mouse.MoveEvent
  * This class represent a UI component
  * it contains multiple UIBlock object and handles user events
  */
-abstract class UIComponent : UIChildElement {
+abstract class UIComponent : UIChildElement, UIParentElement {
 
-    final override var parent: UIElement = UINullElement
+    final override var parent: UIParentElement = UINullElement
 
-    final override val style = Style(this)
+    final override val style = ContainerStyle(this)
 
     final override val uiBlock = UIBlock(this.style)
 

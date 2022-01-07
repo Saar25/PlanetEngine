@@ -2,7 +2,6 @@ package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlock
-import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.TextStyle
 
 class UITextElement(text: String = "") : UIChildElement {
@@ -11,7 +10,7 @@ class UITextElement(text: String = "") : UIChildElement {
 
     override val style = TextStyle(this)
 
-    override var parent: UIElement = UINullElement
+    override var parent: UIParentElement = UINullElement
 
     override val uiBlock = UIBlock(this.style)
 

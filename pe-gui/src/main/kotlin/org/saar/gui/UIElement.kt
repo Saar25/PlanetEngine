@@ -26,7 +26,7 @@ interface UIElement : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
     override fun render2D(context: RenderContext) = render(context)
 
     fun render(context: RenderContext) {
-        UIBlockRenderer.render(context, this.uiBlock)
+        UIBlockRenderer.render(context, this)
         renderText(context)
         this.children.forEach { it.render(context) }
     }

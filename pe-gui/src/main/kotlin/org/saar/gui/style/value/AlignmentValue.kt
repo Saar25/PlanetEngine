@@ -1,10 +1,10 @@
 package org.saar.gui.style.value
 
 import org.saar.gui.UIChildElement
-import org.saar.gui.UIContainer
+import org.saar.gui.UIParentElement
 
 interface AlignmentValue {
-    fun computeAxisX(parent: UIContainer, child: UIChildElement): Int
+    fun computeAxisX(parent: UIParentElement, child: UIChildElement): Int
 
-    fun computeAxisY(parent: UIContainer, child: UIChildElement): Int
+    fun computeAxisY(parent: UIParentElement, child: UIChildElement): Int
 }

@@ -1,6 +1,8 @@
 package org.saar.gui.style
 
+import org.saar.gui.UIChildElement
 import org.saar.gui.font.FontLoader
+import org.saar.gui.style.alignment.ReadonlyAlignment
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.NoStyleBorders
@@ -19,7 +21,7 @@ import org.saar.gui.style.redius.NoStyleRadiuses
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 import org.saar.lwjgl.glfw.window.Window
 
-class WindowStyle(private val window: Window) : IStyle {
+class WindowStyle(private val window: Window) : ParentStyle {
 
     override val x: ReadonlyCoordinate = ReadonlyCoordinate { 0 }
 
@@ -44,4 +46,10 @@ class WindowStyle(private val window: Window) : IStyle {
     override val radiuses: ReadonlyStyleRadiuses = NoStyleRadiuses
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
+
+    override val alignment: ReadonlyAlignment = object : ReadonlyAlignment {
+        override fun getX(child: UIChildElement) = 0
+
+        override fun getY(child: UIChildElement) = 0
+    }
 }

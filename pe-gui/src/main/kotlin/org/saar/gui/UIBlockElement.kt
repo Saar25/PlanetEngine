@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 
 class UIBlockElement : UIChildElement {
 
-    override var parent: UIElement = UINullElement
+    override var parent: UIParentElement = UINullElement
 
     override val style = Style(this)
 

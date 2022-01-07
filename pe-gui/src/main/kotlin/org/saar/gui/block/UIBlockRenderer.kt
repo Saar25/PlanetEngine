@@ -3,10 +3,14 @@ package org.saar.gui.block
 import org.joml.Vector2i
 import org.joml.Vector4i
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
+import org.saar.gui.UIChildElement
 import org.saar.gui.UIElement
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -17,12 +21,12 @@ import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
 
-object UIBlockRenderer : Renderer, RendererMethodsBase<RenderContext, UIBlock> {
+object UIBlockRenderer : Renderer {
 
     private val prototype = UIRendererPrototype()
     private val helper = RendererPrototypeHelper(this.prototype)
 
-    override fun render(context: RenderContext, models: Iterable<UIBlock>) {
+    fun render(context: RenderContext, models: Iterable<UIElement>) {
         this.helper.render(context, models)
     }
 
@@ -31,14 +35,14 @@ object UIBlockRenderer : Renderer, RendererMethodsBase<RenderContext, UIBlock> {
     }
 
     private fun doRender(context: RenderContext, uiElement: UIElement) {
-        render(context, uiElement.uiBlock)
+        this.helper.render(context, uiElement)
         uiElement.children.forEach { doRender(context, it) }
     }
 
     override fun delete() = this.helper.delete()
 }
 
-private class UIRendererPrototype : RendererPrototype<UIBlock> {
+private class UIRendererPrototype : RendererPrototype<UIElement> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
@@ -94,29 +98,35 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         DepthTest.disable()
     }
 
-    override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
-        hasTextureUniform.value = uiBlock.texture != null
-        textureUniform.value = uiBlock.texture ?: Texture2D.NULL
+    override fun onInstanceDraw(context: RenderContext, uiElement: UIElement) {
+        hasTextureUniform.value = uiElement.uiBlock.texture != null
+        textureUniform.value = uiElement.uiBlock.texture ?: Texture2D.NULL
 
-        hasDiscardMapUniform.value = uiBlock.discardMap != null
-        discardMapUniform.value = uiBlock.discardMap ?: Texture2D.NULL
+        hasDiscardMapUniform.value = uiElement.uiBlock.discardMap != null
+        discardMapUniform.value = uiElement.uiBlock.discardMap ?: Texture2D.NULL
+
+        val x = if (uiElement is UIChildElement)
+            uiElement.parent.style.alignment.getX(uiElement) else 0
+
+        val y = if (uiElement is UIChildElement)
+            uiElement.parent.style.alignment.getY(uiElement) else 0
 
         // TODO: make these ivec4
         boundsUniform.value.set(
-            uiBlock.style.x.get().toFloat(),
-            uiBlock.style.y.get().toFloat(),
-            uiBlock.style.width.get().toFloat(),
-            uiBlock.style.height.get().toFloat()
+            x + uiElement.uiBlock.style.x.get().toFloat(),
+            y + uiElement.uiBlock.style.y.get().toFloat(),
+            uiElement.uiBlock.style.width.get().toFloat(),
+            uiElement.uiBlock.style.height.get().toFloat()
         )
 
         val vector4i = Vector4i()
-        bordersUniform.value.set(uiBlock.style.borders.asVector4i(vector4i))
-        radiusesUniform.value.set(uiBlock.style.radiuses.asVector4i(vector4i))
-        cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
+        bordersUniform.value.set(uiElement.uiBlock.style.borders.asVector4i(vector4i).mul(2))
+        radiusesUniform.value.set(uiElement.uiBlock.style.radiuses.asVector4i(vector4i))
+        cornersColoursUniform.value = uiElement.uiBlock.style.backgroundColour.asVector4i(vector4i)
 
-        borderColourUniform.value = uiBlock.style.borderColour.asInt()
-        colourModifierUniform.value.set(uiBlock.style.colourModifier.multiply)
+        borderColourUniform.value = uiElement.uiBlock.style.borderColour.asInt()
+        colourModifierUniform.value.set(uiElement.uiBlock.style.colourModifier.multiply)
     }
 
-    override fun doInstanceDraw(context: RenderContext, uiBlock: UIBlock) = QuadMesh.draw()
+    override fun doInstanceDraw(context: RenderContext, uiElement: UIElement) = QuadMesh.draw()
 }

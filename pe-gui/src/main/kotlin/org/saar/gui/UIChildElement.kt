@@ -2,6 +2,6 @@ package org.saar.gui
 
 interface UIChildElement : UIElement {
 
-    var parent: UIElement
+    var parent: UIParentElement
 
 }

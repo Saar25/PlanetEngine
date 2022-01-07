@@ -1,10 +1,13 @@
 package org.saar.gui
 
+import org.saar.gui.style.ParentStyle
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 
 interface UIParentElement : UIElement {
+
+    override val style: ParentStyle
 
     override fun onMouseClickEvent(event: ClickEvent): Boolean {
         return this.children.asReversed().any { it.onMouseClickEvent(event) }
