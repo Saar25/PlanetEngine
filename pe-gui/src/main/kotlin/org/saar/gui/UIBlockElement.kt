@@ -1,14 +1,14 @@
 package org.saar.gui
 
 import org.saar.gui.block.UIBlock
-import org.saar.gui.style.Style
+import org.saar.gui.style.ElementStyle
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 
-class UIBlockElement : UIChildElement {
+class UIBlockElement : UIElement {
 
-    override var parent: UIParentElement = UINullElement
+    override var parent: UIParentNode = UINullNode
 
-    override val style = Style(this)
+    override val style = ElementStyle(this)
 
     override val uiBlock = UIBlock(this.style)
 

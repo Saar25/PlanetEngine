@@ -1,10 +1,10 @@
 package org.saar.gui.style.border
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.value.StyleIntValue
 import org.saar.gui.style.value.StyleIntValues
 
-class StyleBorders(private val container: UIChildElement) : ReadonlyStyleBorders {
+class StyleBorders(private val container: UIChildNode) : ReadonlyStyleBorders {
 
     var topValue: StyleIntValue = StyleIntValues.none
     var rightValue: StyleIntValue = StyleIntValues.none

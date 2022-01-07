@@ -1,11 +1,11 @@
 package org.saar.gui.style.font
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.font.Font
 import org.saar.gui.style.value.StyleFontValue
 import org.saar.gui.style.value.StyleFontValues
 
-class StyleFont(private val container: UIChildElement) : ReadonlyStyleFont {
+class StyleFont(private val container: UIChildNode) : ReadonlyStyleFont {
 
     var value: StyleFontValue = StyleFontValues.inherit
 

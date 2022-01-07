@@ -1,6 +1,6 @@
 package org.saar.gui.block
 
-import org.saar.gui.style.IStyle
+import org.saar.gui.style.Style
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.maths.objects.Rectangle
 import org.saar.maths.utils.Maths
@@ -14,7 +14,7 @@ import org.saar.maths.utils.Maths
  * @version 1.2
  * @since 18.2.2018
  */
-class UIBlock(val style: IStyle) {
+class UIBlock(val style: Style) {
 
     var texture: ReadOnlyTexture? = null
 

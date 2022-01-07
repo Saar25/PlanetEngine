@@ -23,7 +23,7 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.util.Fps
 import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.AlignmentValues
 import org.saar.gui.style.value.PositionValues.relative
@@ -63,7 +63,7 @@ fun main() {
 
     uiDisplay.add(uiContainer)
 
-    val uiFps = UITextElement("Fps: ???").apply {
+    val uiFps = UIText("Fps: ???").apply {
         style.position.value = relative()
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
@@ -71,7 +71,7 @@ fun main() {
     }
     uiContainer.add(uiFps)
 
-    val uiTime = UITextElement("Time: ???").apply {
+    val uiTime = UIText("Time: ???").apply {
         style.position.value = relative()
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
@@ -105,8 +105,8 @@ fun main() {
         window.swapBuffers()
         window.pollEvents()
 
-        uiFps.uiText.text = "Fps: ${fps.fps().format(2)}"
-        uiTime.uiText.text = "Time: $time"
+        uiFps.text = "Fps: ${fps.fps().format(2)}"
+        uiTime.text = "Time: $time"
         fps.update()
     }
 

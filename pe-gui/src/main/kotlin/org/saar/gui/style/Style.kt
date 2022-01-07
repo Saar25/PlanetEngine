@@ -1,45 +1,42 @@
 package org.saar.gui.style
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.style.backgroundcolour.BackgroundColour
-import org.saar.gui.style.border.StyleBorders
-import org.saar.gui.style.bordercolour.BorderColour
-import org.saar.gui.style.colourmodifier.ColourModifier
-import org.saar.gui.style.coordinate.Coordinate
-import org.saar.gui.style.coordinate.Coordinates
-import org.saar.gui.style.font.StyleFont
-import org.saar.gui.style.fontcolour.FontColour
-import org.saar.gui.style.fontsize.FontSize
-import org.saar.gui.style.length.Length
-import org.saar.gui.style.length.Lengths
-import org.saar.gui.style.position.Position
-import org.saar.gui.style.redius.StyleRadiuses
+import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.border.ReadonlyStyleBorders
+import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
+import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.font.ReadonlyStyleFont
+import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontsize.ReadonlyFontSize
+import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.position.ReadonlyPosition
+import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 
-class Style(container: UIChildElement) : IStyle {
+interface Style {
 
-    override val position: Position = Position(container)
+    val position: ReadonlyPosition
 
-    override val x: Coordinate = Coordinates.X(container)
+    val x: ReadonlyCoordinate
 
-    override val y: Coordinate = Coordinates.Y(container)
+    val y: ReadonlyCoordinate
 
-    override val width: Length = Lengths.Width(container)
+    val width: ReadonlyLength
 
-    override val height: Length = Lengths.Height(container)
+    val height: ReadonlyLength
 
-    override val fontSize: FontSize = FontSize(container)
+    val fontSize: ReadonlyFontSize
 
-    override val fontColour: FontColour = FontColour(container)
+    val fontColour: ReadonlyFontColour
 
-    override val font: StyleFont = StyleFont(container)
+    val font: ReadonlyStyleFont
 
-    override val colourModifier: ColourModifier = ColourModifier(container)
+    val colourModifier: ReadonlyColourModifier
 
-    override val borders: StyleBorders = StyleBorders(container)
+    val borders: ReadonlyStyleBorders
 
-    override val borderColour: BorderColour = BorderColour(container)
+    val borderColour: ReadonlyBorderColour
 
-    override val radiuses: StyleRadiuses = StyleRadiuses(container)
+    val radiuses: ReadonlyStyleRadiuses
 
-    override val backgroundColour: BackgroundColour = BackgroundColour(container)
+    val backgroundColour: ReadonlyBackgroundColour
 }

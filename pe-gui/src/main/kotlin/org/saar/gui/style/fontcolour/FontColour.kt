@@ -1,11 +1,11 @@
 package org.saar.gui.style.fontcolour
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 import org.saar.gui.style.value.StyleColourValue
 import org.saar.gui.style.value.StyleColourValues
 
-class FontColour(private val container: UIChildElement) : ReadonlyFontColour {
+class FontColour(private val container: UIChildNode) : ReadonlyFontColour {
 
     private var colourValue: StyleColourValue = StyleColourValues.inherit
 

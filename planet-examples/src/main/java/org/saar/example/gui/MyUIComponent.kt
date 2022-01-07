@@ -4,7 +4,7 @@ import org.saar.gui.UIBlockElement
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.Style
+import org.saar.gui.style.ElementStyle
 import org.saar.gui.style.value.CoordinateValues
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
@@ -25,7 +25,7 @@ class MyUIComponent : UIComponent() {
         style.width.set(percent(80f))
         style.height.set(percent(80f))
 
-        fun initChildStyle(style: Style) {
+        fun initChildStyle(style: ElementStyle) {
             style.radiuses.set(20)
             style.borders.set(2)
             style.backgroundColour.set(Colours.CYAN)

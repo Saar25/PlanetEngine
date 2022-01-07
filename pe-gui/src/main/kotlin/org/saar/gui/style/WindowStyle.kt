@@ -1,8 +1,8 @@
 package org.saar.gui.style
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIDisplay
 import org.saar.gui.font.FontLoader
-import org.saar.gui.style.alignment.ReadonlyAlignment
+import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.NoStyleBorders
@@ -20,9 +20,8 @@ import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.position.ReadonlyPosition
 import org.saar.gui.style.redius.NoStyleRadiuses
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
-import org.saar.lwjgl.glfw.window.Window
 
-class WindowStyle(private val window: Window) : ParentStyle {
+class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
 
     override val position: ReadonlyPosition = object : ReadonlyPosition {
         override fun getX() = 0
@@ -34,9 +33,9 @@ class WindowStyle(private val window: Window) : ParentStyle {
 
     override val y: ReadonlyCoordinate = ReadonlyCoordinate { 0 }
 
-    override val width: ReadonlyLength = ReadonlyLength { this.window.width }
+    override val width: ReadonlyLength = ReadonlyLength { uiDisplay.width }
 
-    override val height: ReadonlyLength = ReadonlyLength { this.window.height }
+    override val height: ReadonlyLength = ReadonlyLength { uiDisplay.height }
 
     override val fontSize: ReadonlyFontSize = ReadonlyFontSize { 16 }
 
@@ -54,9 +53,5 @@ class WindowStyle(private val window: Window) : ParentStyle {
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
 
-    override val alignment: ReadonlyAlignment = object : ReadonlyAlignment {
-        override fun getX(child: UIChildElement) = 0
-
-        override fun getY(child: UIChildElement) = 0
-    }
+    override val alignment: Alignment = Alignment(uiDisplay)
 }

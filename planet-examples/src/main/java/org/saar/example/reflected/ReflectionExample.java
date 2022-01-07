@@ -1,6 +1,5 @@
 package org.saar.example.reflected;
 
-import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -16,6 +15,7 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContext;
@@ -37,7 +37,7 @@ import org.saar.example.ExamplesUtils;
 import org.saar.gui.UIBlockElement;
 import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
-import org.saar.gui.UITextElement;
+import org.saar.gui.UIText;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;
@@ -94,14 +94,14 @@ public class ReflectionExample {
         uiTextGroup.getStyle().getFontSize().set(22);
         uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
 
-        final UITextElement uiFps = new UITextElement("Fps: ???");
+        final UIText uiFps = new UIText("Fps: ???");
         uiTextGroup.add(uiFps);
 
-        final UITextElement uiSpeed = new UITextElement("Speed: ???");
+        final UIText uiSpeed = new UIText("Speed: ???");
         uiSpeed.getStyle().getY().set((int) font.getSize());
         uiTextGroup.add(uiSpeed);
 
-        final UITextElement uiDelta = new UITextElement("Delta: ???");
+        final UIText uiDelta = new UIText("Delta: ???");
         uiDelta.getStyle().getY().set((int) font.getSize() * 2);
         uiTextGroup.add(uiDelta);
 
@@ -168,9 +168,9 @@ public class ReflectionExample {
             window.swapBuffers();
             window.pollEvents();
 
-            uiFps.getUiText().setText(String.format("Fps: %.2f", fps.fps()));
-            uiSpeed.getUiText().setText(String.format("Speed: %.2f", cameraMovementComponent.getVelocity().x()));
-            uiDelta.getUiText().setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
+            uiFps.setText(String.format("Fps: %.2f", fps.fps()));
+            uiSpeed.setText(String.format("Speed: %.2f", cameraMovementComponent.getVelocity().x()));
+            uiDelta.setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
 
             fps.update();
         }

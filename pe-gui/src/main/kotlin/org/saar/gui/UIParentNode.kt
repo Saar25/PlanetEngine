@@ -1,47 +1,40 @@
 package org.saar.gui
 
+import org.saar.core.renderer.RenderContext
 import org.saar.gui.style.ParentStyle
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
 import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 
-interface UIParentElement : UIElement {
+interface UIParentNode : UINode {
 
     override val style: ParentStyle
+
+    val children: List<UINode>
+
+    override fun render(context: RenderContext) = this.children.forEach { it.render(context) }
+
+    override fun update() = this.children.forEach { it.update() }
+
+    override fun delete() = this.children.forEach { it.delete() }
 
     override fun onMouseClickEvent(event: ClickEvent): Boolean {
         return this.children.asReversed().any { it.onMouseClickEvent(event) }
     }
 
     override fun onMouseMoveEvent(event: MoveEvent) {
-        for (child in this.children.asReversed()) {
-            child.onMouseMoveEvent(event)
-        }
+        this.children.asReversed().forEach { it.onMouseMoveEvent(event) }
     }
 
     override fun onKeyPressEvent(event: KeyEvent) {
-        for (child in this.children.asReversed()) {
-            child.onKeyPressEvent(event)
-        }
+        this.children.asReversed().forEach { it.onKeyPressEvent(event) }
     }
 
     override fun onKeyReleaseEvent(event: KeyEvent) {
-        for (child in this.children.asReversed()) {
-            child.onKeyReleaseEvent(event)
-        }
+        this.children.asReversed().forEach { it.onKeyReleaseEvent(event) }
     }
 
     override fun onKeyRepeatEvent(event: KeyEvent) {
-        for (child in this.children.asReversed()) {
-            child.onKeyRepeatEvent(event)
-        }
-    }
-
-    override fun update() {
-        this.children.forEach { it.update() }
-    }
-
-    override fun delete() {
-        this.children.forEach { it.delete() }
+        this.children.asReversed().forEach { it.onKeyRepeatEvent(event) }
     }
 }

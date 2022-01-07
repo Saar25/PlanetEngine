@@ -1,7 +1,6 @@
 package org.saar.gui.style
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.UIParentElement
+import org.saar.gui.UIElement
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.StyleBorders
@@ -17,7 +16,7 @@ import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.StyleRadiuses
 
-class ContainerStyle<T>(container: T) : ParentStyle where T : UIParentElement, T : UIChildElement {
+class ElementStyle(container: UIElement) : ParentStyle {
 
     override val position: Position = Position(container)
 
@@ -46,5 +45,4 @@ class ContainerStyle<T>(container: T) : ParentStyle where T : UIParentElement, T
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
     override val alignment: Alignment = Alignment(container)
-
 }

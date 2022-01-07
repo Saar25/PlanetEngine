@@ -1,28 +1,28 @@
 package org.saar.gui.style.value
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.UIParentElement
+import org.saar.gui.UINode
+import org.saar.gui.UIParentNode
 
 object AlignmentValues {
 
     @JvmStatic
     fun horizontal() = object : AlignmentValue {
-        override fun computeAxisX(parent: UIParentElement, child: UIChildElement): Int {
+        override fun computeAxisX(parent: UIParentNode, child: UINode): Int {
             return parent.children.takeWhile { it != child }.sumOf { it.style.width.get() }
         }
 
-        override fun computeAxisY(parent: UIParentElement, child: UIChildElement): Int {
+        override fun computeAxisY(parent: UIParentNode, child: UINode): Int {
             return 0
         }
     }
 
     @JvmStatic
     fun vertical() = object : AlignmentValue {
-        override fun computeAxisX(parent: UIParentElement, child: UIChildElement): Int {
+        override fun computeAxisX(parent: UIParentNode, child: UINode): Int {
             return 0
         }
 
-        override fun computeAxisY(parent: UIParentElement, child: UIChildElement): Int {
+        override fun computeAxisY(parent: UIParentNode, child: UINode): Int {
             return parent.children.takeWhile { it != child }.sumOf { it.style.height.get() }
         }
     }

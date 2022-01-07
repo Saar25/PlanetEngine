@@ -1,12 +1,12 @@
 package org.saar.gui.style.colourmodifier
 
 import org.joml.Vector4fc
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.value.StyleVector4fValue
 import org.saar.gui.style.value.StyleVector4fValues
 import org.saar.maths.utils.Vector4
 
-class ColourModifier(private val container: UIChildElement) : ReadonlyColourModifier {
+class ColourModifier(private val container: UIChildNode) : ReadonlyColourModifier {
 
     private var multiplyValue: StyleVector4fValue = StyleVector4fValues.inherit
 

@@ -1,12 +1,12 @@
 package org.saar.gui.style.redius
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.value.StyleIntValue
 import org.saar.gui.style.value.StyleIntValues
 import org.saar.maths.utils.Maths.clamp
 import kotlin.math.min
 
-class StyleRadiuses(private val container: UIChildElement) : ReadonlyStyleRadiuses {
+class StyleRadiuses(private val container: UIChildNode) : ReadonlyStyleRadiuses {
 
     var topRightValue: StyleIntValue = StyleIntValues.inherit
     var topLeftValue: StyleIntValue = StyleIntValues.inherit

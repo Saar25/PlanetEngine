@@ -35,7 +35,6 @@ object UIBlockRenderer : Renderer {
 
     private fun doRender(context: RenderContext, uiElement: UIElement) {
         this.helper.render(context, uiElement)
-        uiElement.children.forEach { doRender(context, it) }
     }
 
     override fun delete() = this.helper.delete()

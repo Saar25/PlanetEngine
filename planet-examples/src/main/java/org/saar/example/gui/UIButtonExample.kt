@@ -5,7 +5,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.util.Fps
 import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.font.FontLoader
@@ -61,7 +61,7 @@ object UIButtonExample {
         }
         container.add(writeable)
 
-        val uiFps = UITextElement("").apply {
+        val uiFps = UIText("").apply {
             style.fontColour.set(Colours.WHITE)
             style.fontSize.set(22)
         }
@@ -78,7 +78,7 @@ object UIButtonExample {
             window.swapBuffers()
             window.pollEvents()
 
-            uiFps.uiText.text = "Fps: ${String.format("%.3f", fps.fps())}"
+            uiFps.text = "Fps: ${String.format("%.3f", fps.fps())}"
             fps.update()
         }
 

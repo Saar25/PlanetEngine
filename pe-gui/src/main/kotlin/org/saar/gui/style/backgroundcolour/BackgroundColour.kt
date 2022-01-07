@@ -1,11 +1,11 @@
 package org.saar.gui.style.backgroundcolour
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 import org.saar.gui.style.value.StyleColourValue
 import org.saar.gui.style.value.StyleColourValues
 
-class BackgroundColour(private val container: UIChildElement) : ReadonlyBackgroundColour {
+class BackgroundColour(private val container: UIChildNode) : ReadonlyBackgroundColour {
 
     var topRightValue: StyleColourValue = StyleColourValues.inherit
     var topLeftValue: StyleColourValue = StyleColourValues.inherit

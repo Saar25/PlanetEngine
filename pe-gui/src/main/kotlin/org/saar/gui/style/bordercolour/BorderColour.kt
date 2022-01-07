@@ -1,11 +1,11 @@
 package org.saar.gui.style.bordercolour
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 import org.saar.gui.style.value.StyleColourValue
 import org.saar.gui.style.value.StyleColourValues
 
-class BorderColour(private val container: UIChildElement) : ReadonlyBorderColour {
+class BorderColour(private val container: UIChildNode) : ReadonlyBorderColour {
 
     private var colourValue: StyleColourValue = StyleColourValues.inherit
 

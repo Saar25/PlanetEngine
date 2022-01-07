@@ -1,10 +1,10 @@
 package org.saar.gui.style.fontsize
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.value.FontSizeValue
 import org.saar.gui.style.value.FontSizeValues
 
-class FontSize(private val container: UIChildElement) : ReadonlyFontSize {
+class FontSize(private val container: UIChildNode) : ReadonlyFontSize {
 
     var value: FontSizeValue = FontSizeValues.inherit
 

@@ -13,7 +13,7 @@ import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.position.ReadonlyPosition
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 
-interface ParentStyle : IStyle {
+interface ParentStyle : Style {
 
     override val position: ReadonlyPosition
 
@@ -42,5 +42,4 @@ interface ParentStyle : IStyle {
     override val backgroundColour: ReadonlyBackgroundColour
 
     val alignment: ReadonlyAlignment
-
 }

@@ -2,7 +2,7 @@ package org.saar.gui.component
 
 import org.lwjgl.glfw.GLFW
 import org.saar.gui.UIComponent
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.style.Colours
 
@@ -19,14 +19,14 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    private val uiTextElement = UITextElement().also { it.parent = this }
+    private val uiText = UIText().also { it.parent = this }
 
-    override val children = listOf(this.uiTextElement)
+    override val children = listOf(this.uiText)
 
-    val text: String get() = this.uiTextElement.uiText.text
+    val text: String get() = this.uiText.text
 
     init {
-        this.uiTextElement.uiText.text = text
+        this.uiText.text = text
 
         this.style.backgroundColour.set(Colours.WHITE)
         this.style.borderColour.set(Colours.DARK_GRAY)
@@ -40,7 +40,7 @@ class UITextField(text: String = "") : UIComponent() {
     private fun changeTextByKeyboard(event: KeyboardEvent) {
         val font = this.style.font.value.compute(this.parent.style, this.style)
 
-        this.uiTextElement.uiText.text = when {
+        this.uiText.text = when {
             event.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
                 if (event.modifiers.isCtrl()) {
                     this.text.dropLast(this.text.length - this.text.lastIndexOfAny(charArrayOf(' ', '\n')))

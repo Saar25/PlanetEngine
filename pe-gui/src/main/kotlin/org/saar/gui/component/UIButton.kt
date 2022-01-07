@@ -3,7 +3,7 @@ package org.saar.gui.component
 import org.jproperty.type.BooleanProperty
 import org.jproperty.type.SimpleBooleanProperty
 import org.saar.gui.UIComponent
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
@@ -16,7 +16,7 @@ class UIButton : UIComponent() {
     private var onAction: EventHandler<MouseEvent>? = null
 
     override val children = listOf(
-        UITextElement("Button").also { it.parent = this }.apply {
+        UIText("Button").also { it.parent = this }.apply {
             style.fontSize.value = FontSizeValues.percent(48 / 100f)
         }
     )

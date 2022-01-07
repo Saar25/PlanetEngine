@@ -1,8 +1,8 @@
 package org.saar.gui.style.value
 
-import org.saar.gui.style.IStyle
+import org.saar.gui.style.Style
 
 fun interface FontSizeValue {
 
-    fun compute(parent: IStyle, style: IStyle): Int
+    fun compute(parent: Style, style: Style): Int
 }

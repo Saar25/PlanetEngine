@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.gui.style.value.LengthValues.percent
@@ -70,7 +70,7 @@ object TextExample {
             mattis sapien, nec ultricies mi nibh at ante. Quisque maximus porttitor dolor, non sagittis metus porttitor a.
         """.trimIndent().replace('\n', ' ')
 
-        val textElement = UITextElement(text).apply {
+        val textElement = UIText(text).apply {
             style.x.value = center()
             style.y.value = center()
             style.fontColour.set(Colours.WHITE)

@@ -1,6 +1,6 @@
 package org.saar.gui.style
 
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.StyleBorders
 import org.saar.gui.style.bordercolour.BorderColour
@@ -14,7 +14,7 @@ import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.StyleRadiuses
 
-class TextStyle(container: UITextElement) : IStyle {
+class TextStyle(container: UIText) : Style {
 
     override val position: Position = Position(container)
 
@@ -22,9 +22,9 @@ class TextStyle(container: UITextElement) : IStyle {
 
     override val y: Coordinate = Coordinates.Y(container)
 
-    override val width: ReadonlyLength = ReadonlyLength { container.uiText.contentWidth }
+    override val width: ReadonlyLength = ReadonlyLength { container.contentWidth }
 
-    override val height: ReadonlyLength = ReadonlyLength { container.uiText.contentHeight }
+    override val height: ReadonlyLength = ReadonlyLength { container.contentHeight }
 
     override val fontSize: FontSize = FontSize(container)
 

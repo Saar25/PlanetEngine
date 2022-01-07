@@ -6,7 +6,6 @@ import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UITextElement
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -22,10 +21,6 @@ object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter>
 
     override fun render(context: RenderContext, models: Iterable<UILetter>) {
         this.helper.render(context, models)
-    }
-
-    fun render(context: RenderContext, uiElement: UITextElement) {
-        this.helper.render(context) { uiElement.uiText.render(context) }
     }
 
     override fun delete() = this.helper.delete()

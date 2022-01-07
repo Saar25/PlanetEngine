@@ -8,6 +8,7 @@ import org.saar.gui.component.UIButton;
 import org.saar.gui.component.UICheckbox;
 import org.saar.gui.component.UISlider;
 import org.saar.gui.style.Colour;
+import org.saar.gui.style.value.AlignmentValues;
 import org.saar.gui.style.value.CoordinateValues;
 import org.saar.gui.style.value.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -24,6 +25,7 @@ public class GuiExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final UIDisplay display = new UIDisplay(window);
+        display.getStyle().getAlignment().setValue(AlignmentValues.vertical());
 
         final UIContainer uiContainer = new UIContainer();
 

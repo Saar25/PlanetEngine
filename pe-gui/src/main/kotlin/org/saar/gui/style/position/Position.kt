@@ -1,10 +1,10 @@
 package org.saar.gui.style.position
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.value.PositionValue
 import org.saar.gui.style.value.PositionValues
 
-class Position(private val container: UIChildElement) : ReadonlyPosition {
+class Position(private val container: UIChildNode) : ReadonlyPosition {
 
     var value: PositionValue = PositionValues.relative()
 

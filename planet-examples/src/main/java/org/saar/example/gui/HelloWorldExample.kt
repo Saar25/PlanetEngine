@@ -3,7 +3,7 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
 import org.saar.lwjgl.glfw.window.Window
@@ -21,13 +21,13 @@ object HelloWorldExample {
 
         val display = UIDisplay(window)
 
-        val writeable = UITextElement("Hello World!").apply {
+        val text = UIText("Hello World!").apply {
             style.x.value = center()
             style.y.value = center()
             style.fontSize.set(48)
             style.fontColour.set(Colours.WHITE)
         }
-        display.add(writeable)
+        display.add(text)
 
         val keyboard = window.keyboard
 
