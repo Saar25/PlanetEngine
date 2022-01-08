@@ -20,6 +20,7 @@ class UISlider : UIComponent() {
     val max: FloatProperty = SimpleFloatProperty(100f)
 
     private val uiTruck = UIElement().apply {
+        style.borders.set(2)
     }
 
     private val uiThumb = UIElement().apply {
@@ -33,7 +34,6 @@ class UISlider : UIComponent() {
     init {
         this.style.backgroundColour.set(Colours.GRAY)
         this.style.borderColour.set(Colours.DARK_GRAY)
-        this.style.borders.set(2)
     }
 
     override fun onMousePress(event: MouseEvent) {

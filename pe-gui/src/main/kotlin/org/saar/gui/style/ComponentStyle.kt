@@ -3,7 +3,8 @@ package org.saar.gui.style
 import org.saar.gui.UIComponent
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
-import org.saar.gui.style.border.StyleBorders
+import org.saar.gui.style.border.NoStyleBorders
+import org.saar.gui.style.border.ReadonlyStyleBorders
 import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
@@ -36,7 +37,7 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
 
     override val colourModifier: ColourModifier = ColourModifier(container)
 
-    override val borders: StyleBorders = StyleBorders(container)
+    override val borders: ReadonlyStyleBorders = NoStyleBorders
 
     override val borderColour: BorderColour = BorderColour(container)
 

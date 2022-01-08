@@ -3,9 +3,7 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
-import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
-import org.saar.gui.font.FontLoader
 import org.saar.gui.style.value.LengthValues
 import org.saar.gui.style.value.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
@@ -23,47 +21,41 @@ object UIAlignmentExample {
 
         val keyboard = window.keyboard
 
-        val display = UIDisplay(window)
-
-        val font = FontLoader.loadFont(FontLoader.DEFAULT_FONT_FAMILY, 48f, 512, 512,
-            (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
-        )
-
-        val container = UIElement().apply {
-            style.fontSize.set(48)
+        val display = UIDisplay(window).apply {
         }
-        display.add(container)
 
-        container.add(UIButton().apply {
+        display.add(UIButton().apply {
+            style.fontSize.set(98)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         })
 
-        container.add(UIButton().apply {
+        display.add(UIButton().apply {
+            style.fontSize.set(48)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         })
 
-        container.add(UIButton().apply {
+        display.add(UIButton().apply {
+            style.fontSize.set(48)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         })
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            container.update()
+            display.update()
 
             GlUtils.clear(GlBuffer.COLOUR)
-            container.render(RenderContext(null))
+            display.render(RenderContext(null))
 
             window.swapBuffers()
             window.pollEvents()
         }
 
-        font.delete()
-        container.delete()
+        display.delete()
         window.destroy()
     }
 }

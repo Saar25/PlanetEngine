@@ -20,7 +20,7 @@ private val characterShiftMap = mapOf(
 class UITextField(text: String = "") : UIComponent() {
 
     val uiBackground = UIText().apply {
-
+        style.borders.set(2)
     }
 
     val uiText = UIText().apply {
@@ -34,7 +34,6 @@ class UITextField(text: String = "") : UIComponent() {
     init {
         this.style.backgroundColour.set(Colours.WHITE)
         this.style.borderColour.set(Colours.DARK_GRAY)
-        this.style.borders.set(2)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)

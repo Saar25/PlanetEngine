@@ -112,7 +112,7 @@ private class UIRendererPrototype : RendererPrototype<UIElement> {
         )
 
         val vector4i = Vector4i()
-        bordersUniform.value.set(uiElement.style.borders.asVector4i(vector4i).mul(2))
+        bordersUniform.value.set(uiElement.style.borders.asVector4i(vector4i))
         radiusesUniform.value.set(uiElement.style.radiuses.asVector4i(vector4i))
         cornersColoursUniform.value = uiElement.style.backgroundColour.asVector4i(vector4i)
 

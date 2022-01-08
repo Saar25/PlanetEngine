@@ -5,7 +5,7 @@ import org.saar.gui.style.value.LengthValues
 
 abstract class Length : ReadonlyLength {
 
-    var value: LengthValue = LengthValues.inherit
+    var value: LengthValue = LengthValues.fill
 
     fun set(value: LengthValue) {
         this.value = value

@@ -10,7 +10,6 @@ import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.FontSizeValues
 import org.saar.gui.style.value.PositionValues.absolute
-import org.saar.gui.style.value.StyleIntValues
 
 class UIButton : UIComponent() {
 
@@ -19,7 +18,7 @@ class UIButton : UIComponent() {
     private var onAction: EventHandler<MouseEvent>? = null
 
     val uiBackground = UIElement().apply {
-        style.borders.set(StyleIntValues.inherit)
+        style.borders.set(2)
     }
 
     val uiText = UIText("Button").apply {
@@ -60,6 +59,5 @@ class UIButton : UIComponent() {
     init {
         this.style.backgroundColour.set(Colours.GRAY)
         this.style.borderColour.set(Colours.DARK_GRAY)
-        this.style.borders.set(2)
     }
 }

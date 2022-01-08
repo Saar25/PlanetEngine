@@ -8,6 +8,7 @@ import org.saar.gui.UIText
 import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.AlignmentValues
+import org.saar.gui.style.value.LengthValues.percent
 import org.saar.gui.style.value.LengthValues.pixels
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
@@ -34,7 +35,9 @@ object UISliderExample {
 
         val blockGap = UIElement().apply {
             style.borderColour.set(Colours.PURPLE)
+            style.height.value = percent(50f)
         }
+        display.add(blockGap)
 
         val borderSize = UIText("Border size: 0").apply {
             style.fontSize.set(48)
@@ -51,7 +54,6 @@ object UISliderExample {
             }
         }
         display.add(scrollbar)
-        display.add(blockGap)
 
         val keyboard = window.keyboard
 

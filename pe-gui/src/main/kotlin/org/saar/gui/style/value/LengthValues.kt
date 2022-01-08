@@ -14,6 +14,15 @@ object LengthValues {
     }
 
     @JvmStatic
+    val fill = object : LengthValue {
+        override fun computeAxisX(parent: Style, style: Style) =
+            parent.width.get() - style.borders.left - style.borders.right
+
+        override fun computeAxisY(parent: Style, style: Style) =
+            parent.height.get() - style.borders.top - style.borders.bottom
+    }
+
+    @JvmStatic
     fun pixels(pixels: Int) = LengthValue.Simple { _: Style, _: Style -> pixels }
 
     @JvmStatic
