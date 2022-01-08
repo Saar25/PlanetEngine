@@ -58,7 +58,7 @@ fun main() {
     val uiDisplay = UIDisplay(window)
 
     val uiContainer = UIContainer().apply {
-        style.alignment.value = AlignmentValues.vertical()
+        style.alignment.value = AlignmentValues.vertical
     }
 
     uiDisplay.add(uiContainer)

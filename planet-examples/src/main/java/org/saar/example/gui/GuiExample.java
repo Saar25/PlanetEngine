@@ -25,7 +25,7 @@ public class GuiExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
         final UIDisplay display = new UIDisplay(window);
-        display.getStyle().getAlignment().setValue(AlignmentValues.vertical());
+        display.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
 
         final UIContainer uiContainer = new UIContainer();
 

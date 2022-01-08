@@ -24,7 +24,7 @@ object UISliderExample {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
         val display = UIDisplay(window).apply {
-            style.alignment.value = AlignmentValues.vertical()
+            style.alignment.value = AlignmentValues.vertical
         }
 
         val uiText = UIText("Hello World!").apply {

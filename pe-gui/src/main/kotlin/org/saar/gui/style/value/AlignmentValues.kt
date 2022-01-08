@@ -6,7 +6,7 @@ import org.saar.gui.UIParentNode
 object AlignmentValues {
 
     @JvmStatic
-    fun horizontal() = object : AlignmentValue {
+    val horizontal = object : AlignmentValue {
         override fun computeAxisX(parent: UIParentNode, child: UINode): Int {
             return parent.children.takeWhile { it != child }.sumOf { it.style.width.get() }
         }
@@ -17,7 +17,7 @@ object AlignmentValues {
     }
 
     @JvmStatic
-    fun vertical() = object : AlignmentValue {
+    val vertical = object : AlignmentValue {
         override fun computeAxisX(parent: UIParentNode, child: UINode): Int {
             return 0
         }
