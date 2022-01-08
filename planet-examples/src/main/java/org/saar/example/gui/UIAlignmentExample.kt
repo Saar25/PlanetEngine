@@ -29,6 +29,7 @@ object UIAlignmentExample {
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
+            style.margin.set(5)
         })
 
         display.add(UIButton().apply {
@@ -36,6 +37,7 @@ object UIAlignmentExample {
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
+            style.margin.set(5)
         })
 
         display.add(UIButton().apply {
@@ -43,6 +45,7 @@ object UIAlignmentExample {
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
+            style.margin.set(5)
         })
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {

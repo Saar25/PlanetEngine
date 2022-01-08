@@ -9,7 +9,9 @@ object AlignmentValues {
     val horizontal = object : AlignmentValue {
         override fun computeAxisX(parent: UIParentNode, child: UINode): Int {
             return parent.children.takeWhile { it != child }.sumOf {
-                it.style.width.get() + it.style.borders.left + it.style.borders.right
+                it.style.width.get() +
+                        it.style.borders.left + it.style.borders.right +
+                        it.style.margin.left + it.style.margin.right
             }
         }
 

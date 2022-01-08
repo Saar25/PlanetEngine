@@ -9,12 +9,15 @@ import org.saar.gui.style.font.ReadonlyStyleFont
 import org.saar.gui.style.fontcolour.ReadonlyFontColour
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.margin.ReadonlyMargin
 import org.saar.gui.style.position.ReadonlyPosition
 import org.saar.gui.style.redius.ReadonlyStyleRadiuses
 
 interface Style {
 
     val position: ReadonlyPosition
+
+    val margin: ReadonlyMargin
 
     val x: ReadonlyCoordinate
 
