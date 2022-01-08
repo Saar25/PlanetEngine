@@ -46,6 +46,13 @@ class StyleBorders(private val container: UIChildNode) : ReadonlyStyleBorders {
         set(all, all, all, all)
     }
 
+    fun set(value: StyleIntValue) {
+        this.topValue = value
+        this.rightValue = value
+        this.bottomValue = value
+        this.leftValue = value
+    }
+
     fun set(borders: StyleBorders) {
         this.topValue = borders.topValue
         this.rightValue = borders.rightValue

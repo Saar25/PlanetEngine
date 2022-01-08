@@ -2,8 +2,8 @@ package org.saar.gui.component
 
 import org.jproperty.type.FloatProperty
 import org.jproperty.type.SimpleFloatProperty
-import org.saar.gui.UIBlockElement
 import org.saar.gui.UIComponent
+import org.saar.gui.UIElement
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.percent
@@ -19,26 +19,21 @@ class UISlider : UIComponent() {
     val min: FloatProperty = SimpleFloatProperty(0f)
     val max: FloatProperty = SimpleFloatProperty(100f)
 
-    private val uiTruck = UIBlockElement().also { it.parent = this }
-    private val uiThumb = UIBlockElement().also { it.parent = this }
+    private val uiTruck = UIElement().apply {
+    }
 
-    override val children = listOf(this.uiTruck, this.uiThumb)
+    private val uiThumb = UIElement().apply {
+        style.backgroundColour.set(Colours.DARK_GRAY)
+        style.position.value = PositionValues.absolute()
+        style.width.set(20)
+    }
+
+    override val children = listOf(this.uiTruck, this.uiThumb).onEach { it.parent = this }
 
     init {
-        initUiTruck()
-        initUiThumb()
-    }
-
-    private fun initUiTruck() {
-        this.uiTruck.style.backgroundColour.set(Colours.GRAY)
-        this.uiTruck.style.borderColour.set(Colours.DARK_GRAY)
-        this.uiTruck.style.borders.set(2)
-    }
-
-    private fun initUiThumb() {
-        this.uiThumb.style.backgroundColour.set(Colours.DARK_GRAY)
-        this.uiThumb.style.position.value = PositionValues.absolute()
-        this.uiThumb.style.width.set(20)
+        this.style.backgroundColour.set(Colours.GRAY)
+        this.style.borderColour.set(Colours.DARK_GRAY)
+        this.style.borders.set(2)
     }
 
     override fun onMousePress(event: MouseEvent) {

@@ -1,97 +1,93 @@
-package org.saar.example.gui;
+package org.saar.example.gui
 
-import org.saar.core.renderer.RenderContext;
-import org.saar.gui.UIComponent;
-import org.saar.gui.UIContainer;
-import org.saar.gui.UIDisplay;
-import org.saar.gui.component.UIButton;
-import org.saar.gui.component.UICheckbox;
-import org.saar.gui.component.UISlider;
-import org.saar.gui.style.Colour;
-import org.saar.gui.style.value.AlignmentValues;
-import org.saar.gui.style.value.CoordinateValues;
-import org.saar.gui.style.value.LengthValues;
-import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
-import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.jproperty.ChangeEvent
+import org.saar.core.renderer.RenderContext
+import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
+import org.saar.gui.component.UIButton
+import org.saar.gui.component.UICheckbox
+import org.saar.gui.component.UISlider
+import org.saar.gui.style.Colour
+import org.saar.gui.style.value.AlignmentValues.vertical
+import org.saar.gui.style.value.LengthValues.percent
+import org.saar.gui.style.value.LengthValues.pixels
+import org.saar.gui.style.value.LengthValues.ratio
+import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlUtils
 
-public class GuiExample {
+object GuiExample {
+    private const val WIDTH = 700
+    private const val HEIGHT = 500
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 500;
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    public static void main(String[] args) {
-        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+        val display = UIDisplay(window).apply {
+            style.alignment.value = vertical
 
-        final UIDisplay display = new UIDisplay(window);
-        display.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
+            val sizeUiSlider = UISlider().apply {
+                style.width.value = percent(90f)
+                style.height.value = pixels(20)
+            }
+            add(sizeUiSlider)
 
-        final UIContainer uiContainer = new UIContainer();
+            val uiContainer = UIElement().apply {
+                style.width.value = percent(50f)
+                style.height.value = ratio(1f)
 
-        final UISlider sizeUiSlider = new UISlider();
-        sizeUiSlider.getStyle().getY().set(450);
-        sizeUiSlider.getStyle().getX().set(CoordinateValues.center());
-        sizeUiSlider.getStyle().getWidth().set(LengthValues.percent(90));
-        sizeUiSlider.getStyle().getHeight().set(20);
+                val uiComponent = MyUIComponent().apply {
+                }
+                add(uiComponent)
 
-        sizeUiSlider.getDynamicValueProperty().addListener(e -> {
-            final float percents = (e.getNewValue().floatValue() / 100) * 50 + 20;
-            uiContainer.getStyle().getWidth().set(LengthValues.percent(percents));
-        });
+                val uiButton = UIButton().apply {
+                    style.width.value = percent(10f)
+                    style.height.value = ratio(.5f)
+                    setOnAction { println("Clicked!") }
+                }
+                add(uiButton)
 
-        display.add(sizeUiSlider);
+                val uiSlider = UISlider().apply {
+                    style.width.value = percent(90f)
+                    style.height.value = pixels(20)
 
+                    dynamicValueProperty.addListener { e ->
+                        val percents = e.newValue.toFloat() / 2
+                        uiButton.style.width.set(percent(percents))
+                    }
+                }
+                add(uiSlider)
 
-        uiContainer.getStyle().getWidth().set(LengthValues.percent(50));
-        uiContainer.getStyle().getHeight().set(LengthValues.ratio(1));
-        uiContainer.getStyle().getX().set(CoordinateValues.center());
-        display.add(uiContainer);
+                val uiCheckbox = UICheckbox().apply {
+                    style.width.value = pixels(20)
+                    style.backgroundColour.set(Colour(48, 63, 159, 1f))
+                    style.radiuses.set(3)
+                }
+                add(uiCheckbox)
+            }
+            add(uiContainer)
 
-        final UIComponent uiComponent = new MyUIComponent();
-        uiContainer.add(uiComponent);
-
-        final UIButton uiButton = new UIButton();
-        uiButton.getStyle().getX().set(CoordinateValues.center());
-        uiButton.getStyle().getY().set(CoordinateValues.center());
-        uiButton.getStyle().getWidth().set(LengthValues.percent(10));
-        uiButton.getStyle().getHeight().set(LengthValues.ratio(.5f));
-        uiButton.setOnAction(e -> System.out.println("Clicked!"));
-        uiContainer.add(uiButton);
-
-        final UISlider uiSlider = new UISlider();
-        uiSlider.getStyle().getY().set(20);
-        uiSlider.getStyle().getX().set(CoordinateValues.center());
-        uiSlider.getStyle().getWidth().set(LengthValues.percent(90));
-        uiSlider.getStyle().getHeight().set(20);
-
-        uiSlider.getDynamicValueProperty().addListener(e -> {
-            final float percents = e.getNewValue().floatValue() / 2;
-            uiButton.getStyle().getWidth().set(LengthValues.percent(percents));
-        });
-
-        uiContainer.add(uiSlider);
-
-        final UICheckbox uiCheckbox = new UICheckbox();
-        uiCheckbox.getStyle().getY().set(50);
-        uiCheckbox.getStyle().getX().set(CoordinateValues.percentCenter(20));
-        uiCheckbox.getStyle().getWidth().set(LengthValues.pixels(20));
-        uiCheckbox.getStyle().getBackgroundColour().set(new Colour(48, 63, 159, 1f));
-        uiCheckbox.getStyle().getRadiuses().set(3);
-        uiContainer.add(uiCheckbox);
-
-        final Keyboard keyboard = window.getKeyboard();
-        while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-            GlUtils.clear(GlBuffer.COLOUR);
-            display.render(new RenderContext(null));
-
-            display.update();
-            window.swapBuffers();
-            window.pollEvents();
+            sizeUiSlider.dynamicValueProperty.addListener { e: ChangeEvent<out Number> ->
+                val percents = e.newValue.toFloat() / 100 * 50 + 20
+                uiContainer.style.width.value = percent(percents)
+            }
         }
 
-        display.delete();
-        window.destroy();
-    }
+        val keyboard = window.keyboard
 
+        while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
+            GlUtils.clear(GlBuffer.COLOUR)
+
+            display.update()
+
+            display.render(RenderContext(null))
+
+            window.swapBuffers()
+            window.pollEvents()
+        }
+
+        display.delete()
+        window.destroy()
+    }
 }

@@ -34,9 +34,8 @@ import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.gui.UIBlockElement;
-import org.saar.gui.UIContainer;
 import org.saar.gui.UIDisplay;
+import org.saar.gui.UIElement;
 import org.saar.gui.UIText;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
@@ -72,7 +71,7 @@ public class ReflectionExample {
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
-        final UIBlockElement reflectionUiElement = new UIBlockElement();
+        final UIElement reflectionUiElement = new UIElement();
         reflectionUiElement.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
         reflectionUiElement.getStyle().getY().set(30);
         reflectionUiElement.getStyle().getWidth().set(300);
@@ -87,7 +86,7 @@ public class ReflectionExample {
                 FontLoader.DEFAULT_FONT_FAMILY,
                 22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
 
-        final UIContainer uiTextGroup = new UIContainer();
+        final UIElement uiTextGroup = new UIElement();
         uiTextGroup.getStyle().getX().set(30);
         uiTextGroup.getStyle().getY().set(30);
         uiTextGroup.getStyle().getFont().set(font);

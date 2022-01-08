@@ -21,6 +21,8 @@ interface UINode : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
 
     fun render(context: RenderContext)
 
+    fun contains(x: Int, y: Int): Boolean
+
     fun onMouseClickEvent(event: ClickEvent) = false
 
     fun onMouseMoveEvent(event: MoveEvent) = Unit

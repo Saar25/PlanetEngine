@@ -7,11 +7,15 @@ object PositionValues {
     @JvmStatic
     fun relative() = object : PositionValue {
         override fun computeAxisX(container: UIChildNode): Int {
-            return container.parent.style.position.getX() + container.parent.style.alignment.getX(container)
+            return container.parent.style.position.getX() +
+                    container.parent.style.alignment.getX(container) +
+                    container.style.borders.left
         }
 
         override fun computeAxisY(container: UIChildNode): Int {
-            return container.parent.style.position.getY() + container.parent.style.alignment.getY(container)
+            return container.parent.style.position.getY() +
+                    container.parent.style.alignment.getY(container) +
+                    container.style.borders.top
         }
     }
 

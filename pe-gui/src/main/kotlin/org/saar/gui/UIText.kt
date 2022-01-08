@@ -82,4 +82,11 @@ class UIText(text: String = "") : UIChildNode {
     override fun render(context: RenderContext) {
         UILetterRenderer.render(context, this.letters)
     }
+
+    override fun contains(x: Int, y: Int): Boolean {
+        return x >= this.style.position.getX() &&
+                x <= this.style.position.getX() + this.style.width.get() &&
+                x >= this.style.position.getY() &&
+                x <= this.style.position.getY() + this.style.height.get()
+    }
 }

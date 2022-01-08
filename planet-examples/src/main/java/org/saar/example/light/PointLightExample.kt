@@ -26,8 +26,8 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
-import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.lwjgl.glfw.window.Window
@@ -100,7 +100,7 @@ fun main() {
 
     val uiDisplay = UIDisplay(window)
 
-    val uiTextGroup = UIContainer().apply {
+    val uiTextGroup = UIElement().apply {
         style.x.set(30)
         style.y.set(30)
         style.fontSize.set(32)

@@ -2,8 +2,8 @@ package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
-import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.font.FontLoader
 import org.saar.gui.style.value.LengthValues
@@ -29,7 +29,7 @@ object UIAlignmentExample {
             (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
         )
 
-        val container = UIContainer().apply {
+        val container = UIElement().apply {
             style.fontSize.set(48)
         }
         display.add(container)

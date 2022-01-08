@@ -3,12 +3,11 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.AlignmentValues
-import org.saar.gui.style.value.CoordinateValues.center
-import org.saar.gui.style.value.CoordinateValues.sub
 import org.saar.gui.style.value.LengthValues.pixels
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
@@ -28,33 +27,31 @@ object UISliderExample {
         }
 
         val uiText = UIText("Hello World!").apply {
-            style.x.value = center()
-            style.y.value = center()
             style.fontSize.set(48)
-            style.borderColour.set(Colours.PURPLE)
             style.fontColour.set(Colours.WHITE)
         }
         display.add(uiText)
 
+        val blockGap = UIElement().apply {
+            style.borderColour.set(Colours.PURPLE)
+        }
+
         val borderSize = UIText("Border size: 0").apply {
-            style.x.value = center()
-            style.y.value = sub(center(), 200)
             style.fontSize.set(48)
             style.fontColour.set(Colours.WHITE)
         }
         display.add(borderSize)
 
         val scrollbar = UISlider().apply {
-            style.x.value = center()
-            style.y.value = sub(center(), 300)
             style.width.value = pixels(500)
             style.height.value = pixels(50)
             dynamicValueProperty.addListener { e ->
-                uiText.style.borders.set(e.newValue.toInt())
+                blockGap.style.borders.set(e.newValue.toInt())
                 borderSize.text = "Border size: " + e.newValue.toInt()
             }
         }
         display.add(scrollbar)
+        display.add(blockGap)
 
         val keyboard = window.keyboard
 

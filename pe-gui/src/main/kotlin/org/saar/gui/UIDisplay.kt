@@ -26,4 +26,6 @@ class UIDisplay(private val window: Window) : UIParentNode {
         this.children.add(uiNode)
         uiNode.parent = this
     }
+
+    override fun contains(x: Int, y: Int) = true
 }

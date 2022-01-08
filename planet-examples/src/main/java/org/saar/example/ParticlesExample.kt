@@ -21,8 +21,8 @@ import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.util.Fps
-import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.AlignmentValues
@@ -57,7 +57,7 @@ fun main() {
 
     val uiDisplay = UIDisplay(window)
 
-    val uiContainer = UIContainer().apply {
+    val uiContainer = UIElement().apply {
         style.alignment.value = AlignmentValues.vertical
     }
 

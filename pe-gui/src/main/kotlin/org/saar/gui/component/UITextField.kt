@@ -19,15 +19,19 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    private val uiText = UIText().also { it.parent = this }
+    val uiBackground = UIText().apply {
 
-    override val children = listOf(this.uiText)
+    }
+
+    val uiText = UIText().apply {
+        this.text = text
+    }
+
+    override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }
 
     val text: String get() = this.uiText.text
 
     init {
-        this.uiText.text = text
-
         this.style.backgroundColour.set(Colours.WHITE)
         this.style.borderColour.set(Colours.DARK_GRAY)
         this.style.borders.set(2)

@@ -2,8 +2,8 @@ package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
-import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.center
@@ -24,7 +24,7 @@ object TextExample {
 
         val display = UIDisplay(window)
 
-        val container = UIContainer().apply {
+        val container = UIElement().apply {
             style.position.value = absolute()
             style.x.value = center()
             style.y.value = center()
