@@ -6,7 +6,7 @@ import org.saar.gui.style.value.PositionValues
 
 class Position(private val container: UIChildNode) : ReadonlyPosition {
 
-    var value: PositionValue = PositionValues.relative()
+    var value: PositionValue = PositionValues.relative
 
     override fun getX() = this.value.computeAxisX(this.container)
 

@@ -25,7 +25,7 @@ class UISlider : UIComponent() {
 
     private val uiThumb = UIBlock().apply {
         style.backgroundColour.set(Colours.DARK_GRAY)
-        style.position.value = PositionValues.absolute()
+        style.position.value = PositionValues.absolute
         style.width.set(20)
     }
 

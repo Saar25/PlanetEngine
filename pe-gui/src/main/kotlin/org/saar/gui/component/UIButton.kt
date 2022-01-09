@@ -23,7 +23,7 @@ class UIButton : UIComponent() {
 
     val uiText = UIText("Button").apply {
         style.fontSize.value = FontSizeValues.percent(48 / 100f)
-        style.position.value = absolute()
+        style.position.value = absolute
     }
 
     override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }

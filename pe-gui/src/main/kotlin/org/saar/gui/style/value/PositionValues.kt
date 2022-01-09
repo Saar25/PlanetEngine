@@ -5,7 +5,7 @@ import org.saar.gui.UIChildNode
 object PositionValues {
 
     @JvmStatic
-    fun relative() = object : PositionValue {
+    val relative = object : PositionValue {
         override fun computeAxisX(container: UIChildNode): Int {
             return container.parent.style.position.getX() +
                     container.parent.style.alignment.getX(container) +
@@ -22,7 +22,7 @@ object PositionValues {
     }
 
     @JvmStatic
-    fun absolute() = object : PositionValue {
+    val absolute = object : PositionValue {
         override fun computeAxisX(container: UIChildNode): Int {
             return container.parent.style.position.getX() + container.style.x.get()
         }

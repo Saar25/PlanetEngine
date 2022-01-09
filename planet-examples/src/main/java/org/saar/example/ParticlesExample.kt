@@ -64,7 +64,7 @@ fun main() {
     uiDisplay.add(uiContainer)
 
     val uiFps = UIText("Fps: ???").apply {
-        style.position.value = relative()
+        style.position.value = relative
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
         style.backgroundColour.set(Colours.BLACK)
@@ -72,7 +72,7 @@ fun main() {
     uiContainer.add(uiFps)
 
     val uiTime = UIText("Time: ???").apply {
-        style.position.value = relative()
+        style.position.value = relative
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
         style.backgroundColour.set(Colours.BLACK)

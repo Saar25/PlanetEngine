@@ -25,7 +25,7 @@ object TextExample {
         val display = UIDisplay(window)
 
         val container = UIElement().apply {
-            style.position.value = absolute()
+            style.position.value = absolute
             style.x.value = center()
             style.y.value = center()
             style.width.value = percent(90f)
