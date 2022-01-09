@@ -37,9 +37,17 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
 
     override val y: ReadonlyCoordinate = ReadonlyCoordinate { 0 }
 
-    override val width: ReadonlyLength = ReadonlyLength { uiDisplay.width }
+    override val width: ReadonlyLength = object : ReadonlyLength {
+        override fun get() = uiDisplay.width
 
-    override val height: ReadonlyLength = ReadonlyLength { uiDisplay.height }
+        override fun getMin() = uiDisplay.width
+    }
+
+    override val height: ReadonlyLength = object : ReadonlyLength {
+        override fun get() = uiDisplay.height
+
+        override fun getMin() = uiDisplay.height
+    }
 
     override val fontSize: ReadonlyFontSize = ReadonlyFontSize { 16 }
 

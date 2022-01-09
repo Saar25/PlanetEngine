@@ -26,9 +26,17 @@ class TextStyle(container: UIText) : Style {
 
     override val y: Coordinate = Coordinates.Y(container)
 
-    override val width: ReadonlyLength = ReadonlyLength { container.contentWidth }
+    override val width: ReadonlyLength = object : ReadonlyLength {
+        override fun get() = container.contentWidth
 
-    override val height: ReadonlyLength = ReadonlyLength { container.contentHeight }
+        override fun getMin() = container.contentWidth
+    }
+
+    override val height: ReadonlyLength = object : ReadonlyLength {
+        override fun get() = container.contentHeight
+
+        override fun getMin() = container.contentHeight
+    }
 
     override val fontSize: FontSize = FontSize(container)
 

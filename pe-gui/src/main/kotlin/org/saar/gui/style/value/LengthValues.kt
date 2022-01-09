@@ -6,12 +6,17 @@ import org.saar.gui.UIParentNode
 object LengthValues {
 
     @JvmStatic
-    val zero = LengthValue.Simple { _: UIParentNode, _: UIChildNode -> 0 }
+    val zero = pixels(0)
 
     @JvmStatic
     val inherit = object : LengthValue {
         override fun computeAxisX(parent: UIParentNode, container: UIChildNode) = parent.style.width.get()
+
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) = parent.style.height.get()
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) = 0
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) = 0
     }
 
     @JvmStatic
@@ -21,10 +26,22 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             parent.style.height.get() - container.style.borders.top - container.style.borders.bottom
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) = 0
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) = 0
     }
 
     @JvmStatic
-    fun pixels(pixels: Int) = LengthValue.Simple { _: UIParentNode, _: UIChildNode -> pixels }
+    fun pixels(pixels: Int) = object : LengthValue {
+        override fun computeAxisX(parent: UIParentNode, container: UIChildNode) = pixels
+
+        override fun computeAxisY(parent: UIParentNode, container: UIChildNode) = pixels
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) = pixels
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) = pixels
+    }
 
     @JvmStatic
     fun percent(percents: Float) = object : LengthValue {
@@ -33,6 +50,10 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             (parent.style.height.get() * percents / 100).toInt()
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) = 0
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) = 0
     }
 
     @JvmStatic
@@ -42,6 +63,12 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             (container.style.width.get() * ratio).toInt()
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) =
+            (container.style.height.getMin() * ratio).toInt()
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) =
+            (container.style.width.getMin() * ratio).toInt()
     }
 
     @JvmStatic
@@ -51,6 +78,12 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             a.computeAxisY(parent, container) + b.computeAxisY(parent, container)
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisX(parent, container) + b.computeMinAxisX(parent, container)
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisY(parent, container) + b.computeMinAxisY(parent, container)
     }
 
     @JvmStatic
@@ -60,6 +93,12 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             a.computeAxisY(parent, container) - b.computeAxisY(parent, container)
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisX(parent, container) - b.computeMinAxisX(parent, container)
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisY(parent, container) - b.computeMinAxisY(parent, container)
     }
 
     @JvmStatic
@@ -69,6 +108,12 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             a.computeAxisY(parent, container) + b
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisX(parent, container) + b
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisY(parent, container) + b
     }
 
     @JvmStatic
@@ -78,5 +123,11 @@ object LengthValues {
 
         override fun computeAxisY(parent: UIParentNode, container: UIChildNode) =
             a.computeAxisY(parent, container) - b
+
+        override fun computeMinAxisX(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisX(parent, container) - b
+
+        override fun computeMinAxisY(parent: UIParentNode, container: UIChildNode) =
+            a.computeMinAxisY(parent, container) - b
     }
 }

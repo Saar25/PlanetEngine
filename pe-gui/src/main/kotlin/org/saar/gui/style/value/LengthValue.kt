@@ -8,10 +8,7 @@ interface LengthValue {
 
     fun computeAxisY(parent: UIParentNode, container: UIChildNode): Int
 
-    fun interface Simple : LengthValue {
-        fun compute(parent: UIParentNode, container: UIChildNode): Int
+    fun computeMinAxisX(parent: UIParentNode, container: UIChildNode): Int
 
-        override fun computeAxisX(parent: UIParentNode, container: UIChildNode) = compute(parent, container)
-        override fun computeAxisY(parent: UIParentNode, container: UIChildNode) = compute(parent, container)
-    }
+    fun computeMinAxisY(parent: UIParentNode, container: UIChildNode): Int
 }
