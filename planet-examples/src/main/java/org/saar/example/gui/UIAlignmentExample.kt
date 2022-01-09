@@ -3,7 +3,9 @@ package org.saar.example.gui
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
+import org.saar.gui.style.Colours
 import org.saar.gui.style.value.LengthValues
 import org.saar.gui.style.value.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
@@ -24,7 +26,12 @@ object UIAlignmentExample {
         val display = UIDisplay(window).apply {
         }
 
-        display.add(UIButton().apply {
+        val container = UIElement().apply {
+            style.backgroundColour.set(Colours.BLUE)
+        }
+        display.add(container)
+
+        container.add(UIButton().apply {
             style.fontSize.set(98)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
@@ -32,7 +39,7 @@ object UIAlignmentExample {
             style.margin.set(5)
         })
 
-        display.add(UIButton().apply {
+        container.add(UIButton().apply {
             style.fontSize.set(48)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
@@ -40,7 +47,7 @@ object UIAlignmentExample {
             style.margin.set(5)
         })
 
-        display.add(UIButton().apply {
+        container.add(UIButton().apply {
             style.fontSize.set(48)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)

@@ -1,14 +1,14 @@
 package org.saar.example.gui
 
+import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
-import org.saar.gui.UIElement
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.LengthValues.percent
 
 class MyUIComponent : UIComponent() {
 
-    private val object1 = UIElement().apply {
+    private val object1 = UIBlock().apply {
         style.radiuses.set(20)
         style.borders.set(2)
         style.backgroundColour.set(Colours.CYAN)
@@ -16,7 +16,7 @@ class MyUIComponent : UIComponent() {
         style.width.value = percent(50f)
     }
 
-    private val object2 = UIElement().apply {
+    private val object2 = UIBlock().apply {
         style.radiuses.set(20)
         style.borders.set(2)
         style.backgroundColour.set(Colours.CYAN)

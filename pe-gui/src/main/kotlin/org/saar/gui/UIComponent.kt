@@ -25,8 +25,6 @@ abstract class UIComponent : UIChildNode, UIParentNode {
     var isMousePressed = false
         private set
 
-    override fun contains(x: Int, y: Int) = this.children.any { it.contains(x, y) }
-
     override fun onKeyPressEvent(event: KeyEvent) {
         val e = event.asKeyboardEvent()
         if (this.isSelected) onKeyPress(e)

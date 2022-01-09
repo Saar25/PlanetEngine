@@ -34,6 +34,7 @@ import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
+import org.saar.gui.UIBlock;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.UIElement;
 import org.saar.gui.UIText;
@@ -71,16 +72,16 @@ public class ReflectionExample {
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
-        final UIElement reflectionUiElement = new UIElement();
-        reflectionUiElement.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
-        reflectionUiElement.getStyle().getY().set(30);
-        reflectionUiElement.getStyle().getWidth().set(300);
-        reflectionUiElement.getStyle().getHeight().set(
+        final UIBlock reflectionUiBlock = new UIBlock();
+        reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
+        reflectionUiBlock.getStyle().getY().set(30);
+        reflectionUiBlock.getStyle().getWidth().set(300);
+        reflectionUiBlock.getStyle().getHeight().set(
                 LengthValues.ratio((float) HEIGHT / WIDTH));
-        reflectionUiElement.getStyle().getBorders().set(1);
-        reflectionUiElement.getStyle().getBorderColour().set(Colours.PURPLE);
+        reflectionUiBlock.getStyle().getBorders().set(1);
+        reflectionUiBlock.getStyle().getBorderColour().set(Colours.PURPLE);
 
-        uiDisplay.add(reflectionUiElement);
+        uiDisplay.add(reflectionUiBlock);
 
         final Font font = FontLoader.loadFont(
                 FontLoader.DEFAULT_FONT_FAMILY,
@@ -161,7 +162,7 @@ public class ReflectionExample {
 
             deferredRenderer.render().toMainScreen();
 
-            reflectionUiElement.setTexture(reflection.getReflectionMap());
+            reflectionUiBlock.setTexture(reflection.getReflectionMap());
             uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();

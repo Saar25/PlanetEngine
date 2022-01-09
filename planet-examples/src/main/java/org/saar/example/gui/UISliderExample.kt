@@ -2,8 +2,8 @@ package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
+import org.saar.gui.UIBlock
 import org.saar.gui.UIDisplay
-import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colours
@@ -33,7 +33,7 @@ object UISliderExample {
         }
         display.add(uiText)
 
-        val blockGap = UIElement().apply {
+        val blockGap = UIBlock().apply {
             style.borderColour.set(Colours.PURPLE)
             style.height.value = percent(50f)
         }

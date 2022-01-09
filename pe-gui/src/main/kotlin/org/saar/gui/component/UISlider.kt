@@ -2,8 +2,8 @@ package org.saar.gui.component
 
 import org.jproperty.type.FloatProperty
 import org.jproperty.type.SimpleFloatProperty
+import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
-import org.saar.gui.UIElement
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.CoordinateValues.percent
@@ -19,11 +19,11 @@ class UISlider : UIComponent() {
     val min: FloatProperty = SimpleFloatProperty(0f)
     val max: FloatProperty = SimpleFloatProperty(100f)
 
-    private val uiTruck = UIElement().apply {
+    private val uiTruck = UIBlock().apply {
         style.borders.set(2)
     }
 
-    private val uiThumb = UIElement().apply {
+    private val uiThumb = UIBlock().apply {
         style.backgroundColour.set(Colours.DARK_GRAY)
         style.position.value = PositionValues.absolute()
         style.width.set(20)

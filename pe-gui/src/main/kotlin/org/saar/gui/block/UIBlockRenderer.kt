@@ -10,7 +10,7 @@ import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UIElement
+import org.saar.gui.UIBlock
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -25,22 +25,22 @@ object UIBlockRenderer : Renderer {
     private val prototype = UIRendererPrototype()
     private val helper = RendererPrototypeHelper(this.prototype)
 
-    fun render(context: RenderContext, models: Iterable<UIElement>) {
+    fun render(context: RenderContext, models: Iterable<UIBlock>) {
         this.helper.render(context, models)
     }
 
-    fun render(context: RenderContext, uiElement: UIElement) {
-        this.helper.render(context) { doRender(context, uiElement) }
+    fun render(context: RenderContext, uiBlock: UIBlock) {
+        this.helper.render(context) { doRender(context, uiBlock) }
     }
 
-    private fun doRender(context: RenderContext, uiElement: UIElement) {
-        this.helper.render(context, uiElement)
+    private fun doRender(context: RenderContext, uiBlock: UIBlock) {
+        this.helper.render(context, uiBlock)
     }
 
     override fun delete() = this.helper.delete()
 }
 
-private class UIRendererPrototype : RendererPrototype<UIElement> {
+private class UIRendererPrototype : RendererPrototype<UIBlock> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
@@ -96,29 +96,29 @@ private class UIRendererPrototype : RendererPrototype<UIElement> {
         DepthTest.disable()
     }
 
-    override fun onInstanceDraw(context: RenderContext, uiElement: UIElement) {
-        hasTextureUniform.value = uiElement.texture != Texture2D.NULL
-        textureUniform.value = uiElement.texture
+    override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
+        hasTextureUniform.value = uiBlock.texture != Texture2D.NULL
+        textureUniform.value = uiBlock.texture
 
-        hasDiscardMapUniform.value = uiElement.discardMap != Texture2D.NULL
-        discardMapUniform.value = uiElement.discardMap
+        hasDiscardMapUniform.value = uiBlock.discardMap != Texture2D.NULL
+        discardMapUniform.value = uiBlock.discardMap
 
         // TODO: make these ivec4
         boundsUniform.value.set(
-            uiElement.style.position.getX().toFloat(),
-            uiElement.style.position.getY().toFloat(),
-            uiElement.style.width.get().toFloat(),
-            uiElement.style.height.get().toFloat()
+            uiBlock.style.position.getX().toFloat(),
+            uiBlock.style.position.getY().toFloat(),
+            uiBlock.style.width.get().toFloat(),
+            uiBlock.style.height.get().toFloat()
         )
 
         val vector4i = Vector4i()
-        bordersUniform.value.set(uiElement.style.borders.asVector4i(vector4i))
-        radiusesUniform.value.set(uiElement.style.radiuses.asVector4i(vector4i))
-        cornersColoursUniform.value = uiElement.style.backgroundColour.asVector4i(vector4i)
+        bordersUniform.value.set(uiBlock.style.borders.asVector4i(vector4i))
+        radiusesUniform.value.set(uiBlock.style.radiuses.asVector4i(vector4i))
+        cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
 
-        borderColourUniform.value = uiElement.style.borderColour.asInt()
-        colourModifierUniform.value.set(uiElement.style.colourModifier.multiply)
+        borderColourUniform.value = uiBlock.style.borderColour.asInt()
+        colourModifierUniform.value.set(uiBlock.style.colourModifier.multiply)
     }
 
-    override fun doInstanceDraw(context: RenderContext, uiElement: UIElement) = QuadMesh.draw()
+    override fun doInstanceDraw(context: RenderContext, uiBlock: UIBlock) = QuadMesh.draw()
 }

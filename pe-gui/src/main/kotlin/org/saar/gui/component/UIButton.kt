@@ -2,8 +2,8 @@ package org.saar.gui.component
 
 import org.jproperty.type.BooleanProperty
 import org.jproperty.type.SimpleBooleanProperty
+import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
-import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
@@ -17,7 +17,7 @@ class UIButton : UIComponent() {
 
     private var onAction: EventHandler<MouseEvent>? = null
 
-    val uiBackground = UIElement().apply {
+    val uiBackground = UIBlock().apply {
         style.borders.set(2)
     }
 

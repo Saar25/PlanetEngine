@@ -2,8 +2,8 @@ package org.saar.gui.component
 
 import org.jproperty.type.BooleanProperty
 import org.jproperty.type.SimpleBooleanProperty
+import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
-import org.saar.gui.UIElement
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.value.LengthValues
@@ -15,7 +15,7 @@ class UICheckbox : UIComponent() {
 
     private val checkedProperty: BooleanProperty = SimpleBooleanProperty()
 
-    private val uiChild = UIElement().apply {
+    private val uiChild = UIBlock().apply {
         style.borders.set(1)
     }
 

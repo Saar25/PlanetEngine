@@ -18,6 +18,8 @@ interface UIParentNode : UINode {
 
     override fun delete() = this.children.forEach { it.delete() }
 
+    override fun contains(x: Int, y: Int) = this.children.any { it.contains(x, y) }
+
     override fun onMouseClickEvent(event: ClickEvent): Boolean {
         return this.children.asReversed().any { it.onMouseClickEvent(event) }
     }
