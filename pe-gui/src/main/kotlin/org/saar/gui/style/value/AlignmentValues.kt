@@ -28,7 +28,9 @@ object AlignmentValues {
 
         override fun computeAxisY(parent: UIParentNode, child: UIChildNode): Int {
             return parent.children.takeWhile { it != child }.sumOf {
-                it.style.height.get() + it.style.borders.top + it.style.borders.bottom
+                it.style.height.get() +
+                        it.style.borders.top + it.style.borders.bottom +
+                        it.style.margin.top + it.style.margin.bottom
             }
         }
     }
