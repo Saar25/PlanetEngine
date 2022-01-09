@@ -1,6 +1,6 @@
 package org.saar.gui.style
 
-import org.saar.gui.UINode
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.alignment.ReadonlyAlignment
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
@@ -59,8 +59,8 @@ object NoStyle : ParentStyle {
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
 
     override val alignment: ReadonlyAlignment = object : ReadonlyAlignment {
-        override fun getX(child: UINode) = 0
+        override fun getX(child: UIChildNode) = 0
 
-        override fun getY(child: UINode) = 0
+        override fun getY(child: UIChildNode) = 0
     }
 }

@@ -9,7 +9,7 @@ class FontSize(private val container: UIChildNode) : ReadonlyFontSize {
     var value: FontSizeValue = FontSizeValues.inherit
 
     override fun get() = this.value.compute(
-        this.container.parent.style, this.container.style)
+        this.container.parent, this.container)
 
     fun set(value: FontSizeValue) {
         this.value = value
