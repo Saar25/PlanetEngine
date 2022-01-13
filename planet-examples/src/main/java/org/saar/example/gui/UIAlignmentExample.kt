@@ -34,7 +34,7 @@ object UIAlignmentExample {
         display.add(container)
 
         container.add(UIButton().apply {
-            style.fontSize.set(98)
+            style.fontSize.set(48)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
@@ -63,7 +63,6 @@ object UIAlignmentExample {
         display.add(container2)
 
         container2.add(UIButton().apply {
-            style.fontSize.set(98)
             style.width.value = LengthValues.pixels(200)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
