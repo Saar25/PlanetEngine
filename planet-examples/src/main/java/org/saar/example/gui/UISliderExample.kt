@@ -48,7 +48,7 @@ object UISliderExample {
         val scrollbar = UISlider().apply {
             style.width.value = pixels(500)
             style.height.value = pixels(50)
-            dynamicValueProperty.addListener { e ->
+            dynamicValueProperty.subscribe { e ->
                 blockGap.style.borders.set(e.newValue.toInt())
                 borderSize.text = "Border size: " + e.newValue.toInt()
             }

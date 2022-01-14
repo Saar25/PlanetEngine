@@ -52,7 +52,7 @@ object GuiExample {
                     style.width.value = percent(90f)
                     style.height.value = pixels(20)
 
-                    dynamicValueProperty.addListener { e ->
+                    dynamicValueProperty.subscribe { e ->
                         val percents = e.newValue.toFloat() / 2
                         uiButton.style.width.set(percent(percents))
                     }
@@ -68,7 +68,7 @@ object GuiExample {
             }
             add(uiContainer)
 
-            sizeUiSlider.dynamicValueProperty.addListener { e: ChangeEvent<out Number> ->
+            sizeUiSlider.dynamicValueProperty.subscribe { e: ChangeEvent<out Number> ->
                 val percents = e.newValue.toFloat() / 100 * 50 + 20
                 uiContainer.style.width.value = percent(percents)
             }

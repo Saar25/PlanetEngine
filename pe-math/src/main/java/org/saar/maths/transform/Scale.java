@@ -2,17 +2,14 @@ package org.saar.maths.transform;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.jproperty.ChangeEvent;
-import org.jproperty.ChangeEventBase;
-import org.jproperty.ChangeListener;
-import org.jproperty.ListenersHelper;
+import org.jproperty.*;
 import org.saar.maths.utils.Vector3;
 
 public class Scale implements ReadonlyScale {
 
     private final Vector3f value = Vector3.create();
 
-    private ListenersHelper<Vector3fc> helper = ListenersHelper.empty();
+    private SubscribersHelper<Vector3fc> helper = SubscribersHelper.empty();
 
     private Scale(Vector3fc value) {
         this.value.set(value);
@@ -81,13 +78,10 @@ public class Scale implements ReadonlyScale {
     }
 
     @Override
-    public void addListener(ChangeListener<? super Vector3fc> changeListener) {
-        this.helper = this.helper.addListener(changeListener);
-    }
+    public Subscription subscribe(Subscriber<? super Vector3fc> subscriber) {
+        this.helper = this.helper.addSubscriber(subscriber);
 
-    @Override
-    public void removeListener(ChangeListener<? super Vector3fc> changeListener) {
-        this.helper = this.helper.removeListener(changeListener);
+        return () -> this.helper = this.helper.removeSubscriber(subscriber);
     }
 
     @Override

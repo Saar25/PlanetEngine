@@ -25,7 +25,7 @@ class UICheckbox : UIComponent() {
         this.style.height.value = LengthValues.ratio(1f)
         this.style.borderColour.set(Colours.LIGHT_GRAY)
 
-        this.checkedProperty.addListener { checked ->
+        this.checkedProperty.subscribe { checked ->
             if (checked.newValue) {
                 this.uiChild.discardMap = discardMap
             } else {

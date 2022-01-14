@@ -3,21 +3,29 @@ package org.saar.maths.transform;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.jproperty.Subscription;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Vector3;
+
+import java.util.Arrays;
+import java.util.List;
 
 public final class SimpleTransform implements Transform {
 
     private final Matrix4f transformation = Matrix4.create();
+
+    private final List<Subscription> subscriptions;
 
     private final Position position = Position.create();
     private final Rotation rotation = Rotation.create();
     private final Scale scale = Scale.create();
 
     public SimpleTransform() {
-        getPosition().addListener(e -> updateTransformationMatrix());
-        getRotation().addListener(e -> updateTransformationMatrix());
-        getScale().addListener(e -> updateTransformationMatrix());
+        this.subscriptions = Arrays.asList(
+                getPosition().subscribe(e -> updateTransformationMatrix()),
+                getRotation().subscribe(e -> updateTransformationMatrix()),
+                getScale().subscribe(e -> updateTransformationMatrix())
+        );
     }
 
     private void updateTransformationMatrix() {
