@@ -1,5 +1,6 @@
 package org.saar.gui
 
+import org.jproperty.type.SimpleObjectProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer
@@ -13,7 +14,7 @@ class UIText(text: String = "") : UIChildNode {
 
     override val style = TextStyle(this)
 
-    override var parent: UIParentNode = UINullNode
+    override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
 
     private var isValid: Boolean = false
 

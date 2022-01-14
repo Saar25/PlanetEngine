@@ -1,5 +1,6 @@
 package org.saar.gui
 
+import org.jproperty.type.SimpleObjectProperty
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.event.asKeyboardEvent
@@ -15,7 +16,7 @@ import org.saar.lwjgl.glfw.input.mouse.MoveEvent
  */
 abstract class UIComponent : UIChildNode, UIParentNode {
 
-    final override var parent: UIParentNode = UINullNode
+    override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
 
     final override val style = ComponentStyle(this)
 

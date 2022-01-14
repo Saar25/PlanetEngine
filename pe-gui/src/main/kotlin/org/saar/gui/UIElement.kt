@@ -1,12 +1,13 @@
 package org.saar.gui
 
+import org.jproperty.type.SimpleObjectProperty
 import org.saar.gui.style.ElementStyle
 
 class UIElement : UIChildNode, UIParentNode {
 
     override val style = ElementStyle(this)
 
-    override var parent: UIParentNode = UINullNode
+    override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
 
     private val _children = mutableListOf<UINode>()
     override val children: List<UINode> = this._children
