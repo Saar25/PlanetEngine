@@ -9,7 +9,7 @@ import org.saar.gui.style.value.LengthValues.percent
 class MyUIComponent : UIComponent() {
 
     private val object1 = UIBlock().apply {
-        style.radiuses.set(20)
+        style.radius.set(20)
         style.borders.set(2)
         style.backgroundColour.set(Colours.CYAN)
         style.borderColour.set(Colours.LIGHT_GRAY)
@@ -17,7 +17,7 @@ class MyUIComponent : UIComponent() {
     }
 
     private val object2 = UIBlock().apply {
-        style.radiuses.set(20)
+        style.radius.set(20)
         style.borders.set(2)
         style.backgroundColour.set(Colours.CYAN)
         style.borderColour.set(Colours.LIGHT_GRAY)

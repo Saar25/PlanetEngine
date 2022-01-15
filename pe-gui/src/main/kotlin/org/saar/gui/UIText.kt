@@ -12,9 +12,9 @@ class UIText(text: String = "") : UIChildNode {
 
     constructor() : this("")
 
-    override val style = TextStyle(this)
-
     override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
+
+    override val style = TextStyle(this)
 
     private var isValid: Boolean = false
 

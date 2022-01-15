@@ -15,9 +15,9 @@ class UIBlock : UIChildNode {
 
     var discardMap: ReadOnlyTexture = Texture2D.NULL
 
-    override val style = BlockStyle(this)
-
     override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
+
+    override val style = BlockStyle(this)
 
     override fun render(context: RenderContext) = UIBlockRenderer.render(context, this)
 
@@ -27,12 +27,12 @@ class UIBlock : UIChildNode {
         val ew = style.width.get().toFloat()
         val eh = style.height.get().toFloat()
 
-        if (style.radiuses.isZero()) {
+        if (style.radius.isZero()) {
             return Maths.isBetween(x.toFloat(), ex, ex + ew) &&
                     Maths.isBetween(y.toFloat(), ey, ey + eh)
         }
 
-        val radius = style.radiuses.get(
+        val radius = style.radius.get(
             x > ex + ew / 2,
             y < ey + eh / 2
         ).toFloat()

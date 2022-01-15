@@ -62,7 +62,7 @@ object GuiExample {
                 val uiCheckbox = UICheckbox().apply {
                     style.width.value = pixels(20)
                     style.backgroundColour.set(Colour(48, 63, 159, 1f))
-                    style.radiuses.set(3)
+                    style.radius.set(3)
                 }
                 add(uiCheckbox)
             }

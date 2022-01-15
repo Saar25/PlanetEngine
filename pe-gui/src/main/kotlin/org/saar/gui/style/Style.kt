@@ -11,7 +11,7 @@ import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.ReadonlyMargin
 import org.saar.gui.style.position.ReadonlyPosition
-import org.saar.gui.style.redius.ReadonlyStyleRadiuses
+import org.saar.gui.style.redius.ReadonlyRadius
 
 interface Style {
 
@@ -39,7 +39,7 @@ interface Style {
 
     val borderColour: ReadonlyBorderColour
 
-    val radiuses: ReadonlyStyleRadiuses
+    val radius: ReadonlyRadius
 
     val backgroundColour: ReadonlyBackgroundColour
 }

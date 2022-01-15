@@ -14,7 +14,7 @@ import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
 import org.saar.gui.style.position.Position
-import org.saar.gui.style.redius.StyleRadiuses
+import org.saar.gui.style.redius.Radius
 
 class TextStyle(container: UIText) : Style {
 
@@ -50,7 +50,7 @@ class TextStyle(container: UIText) : Style {
 
     override val borderColour: BorderColour = BorderColour(container)
 
-    override val radiuses: StyleRadiuses = StyleRadiuses(container)
+    override val radius: Radius = Radius(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 

@@ -39,6 +39,7 @@ object UIAlignmentExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
             style.margin.set(5)
+            style.radius.set(10)
         })
 
         container.add(UIButton().apply {
@@ -47,6 +48,7 @@ object UIAlignmentExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
             style.margin.set(5)
+            style.radius.set(10)
         })
 
         container.add(UIButton().apply {
@@ -55,6 +57,7 @@ object UIAlignmentExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
             style.margin.set(5)
+            style.radius.set(10)
         })
 
         val container2 = UIElement().apply {
@@ -67,6 +70,7 @@ object UIAlignmentExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
             style.margin.set(5)
+            style.radius.set(10)
         })
 
         container2.add(UIButton().apply {
@@ -75,6 +79,7 @@ object UIAlignmentExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
             style.margin.set(5)
+            style.radius.set(10)
         })
 
         container2.add(UIButton().apply {
@@ -83,6 +88,7 @@ object UIAlignmentExample {
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
             style.margin.set(5)
+            style.radius.set(10)
         })
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {

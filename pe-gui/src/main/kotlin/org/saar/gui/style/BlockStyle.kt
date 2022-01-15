@@ -14,7 +14,7 @@ import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.margin.Margin
 import org.saar.gui.style.position.Position
-import org.saar.gui.style.redius.StyleRadiuses
+import org.saar.gui.style.redius.Radius
 import org.saar.gui.style.value.LengthValues
 
 class BlockStyle(container: UIBlock) : Style {
@@ -47,7 +47,7 @@ class BlockStyle(container: UIBlock) : Style {
 
     override val borderColour: BorderColour = BorderColour(container)
 
-    override val radiuses: StyleRadiuses = StyleRadiuses(container)
+    override val radius: Radius = Radius(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 }

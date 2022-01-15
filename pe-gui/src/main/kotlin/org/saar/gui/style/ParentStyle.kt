@@ -12,7 +12,7 @@ import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.ReadonlyMargin
 import org.saar.gui.style.position.ReadonlyPosition
-import org.saar.gui.style.redius.ReadonlyStyleRadiuses
+import org.saar.gui.style.redius.ReadonlyRadius
 
 interface ParentStyle : Style {
 
@@ -40,7 +40,7 @@ interface ParentStyle : Style {
 
     override val borderColour: ReadonlyBorderColour
 
-    override val radiuses: ReadonlyStyleRadiuses
+    override val radius: ReadonlyRadius
 
     override val backgroundColour: ReadonlyBackgroundColour
 

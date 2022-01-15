@@ -22,8 +22,8 @@ import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
 import org.saar.gui.style.position.ReadonlyPosition
-import org.saar.gui.style.redius.NoStyleRadiuses
-import org.saar.gui.style.redius.ReadonlyStyleRadiuses
+import org.saar.gui.style.redius.NoRadius
+import org.saar.gui.style.redius.ReadonlyRadius
 
 object NoStyle : ParentStyle {
 
@@ -55,7 +55,7 @@ object NoStyle : ParentStyle {
 
     override val borderColour: ReadonlyBorderColour = NoBorderColour
 
-    override val radiuses: ReadonlyStyleRadiuses = NoStyleRadiuses
+    override val radius: ReadonlyRadius = NoRadius
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
 
