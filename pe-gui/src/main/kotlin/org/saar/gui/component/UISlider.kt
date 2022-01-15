@@ -1,7 +1,7 @@
 package org.saar.gui.component
 
-import org.jproperty.type.FloatProperty
-import org.jproperty.type.SimpleFloatProperty
+import org.jproperty.property.FloatProperty
+import org.jproperty.property.SimpleFloatProperty
 import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent

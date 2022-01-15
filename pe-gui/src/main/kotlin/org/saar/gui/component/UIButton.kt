@@ -1,7 +1,6 @@
 package org.saar.gui.component
 
-import org.jproperty.type.BooleanProperty
-import org.jproperty.type.SimpleBooleanProperty
+import org.jproperty.property.SimpleBooleanProperty
 import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
@@ -13,7 +12,7 @@ import org.saar.gui.style.value.PositionValues.absolute
 
 class UIButton : UIComponent() {
 
-    private val pressedProperty: BooleanProperty = SimpleBooleanProperty()
+    private val pressedProperty = SimpleBooleanProperty()
 
     private var onAction: EventHandler<MouseEvent>? = null
 

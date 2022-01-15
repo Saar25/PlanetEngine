@@ -1,6 +1,6 @@
 package org.saar.gui
 
-import org.jproperty.type.SimpleObjectProperty
+import org.jproperty.property.SimpleObjectProperty
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.event.asKeyboardEvent

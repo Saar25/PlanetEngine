@@ -1,7 +1,7 @@
 package org.saar.gui.component
 
-import org.jproperty.type.BooleanProperty
-import org.jproperty.type.SimpleBooleanProperty
+import org.jproperty.Observable
+import org.jproperty.property.SimpleBooleanProperty
 import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
@@ -13,7 +13,7 @@ private val discardMap = Texture2D.of("/assets/gui/checkbox.png")
 
 class UICheckbox : UIComponent() {
 
-    private val checkedProperty: BooleanProperty = SimpleBooleanProperty()
+    private val checkedProperty = SimpleBooleanProperty()
 
     private val uiChild = UIBlock().apply {
         style.borders.set(1)
@@ -25,8 +25,8 @@ class UICheckbox : UIComponent() {
         this.style.height.value = LengthValues.ratio(1f)
         this.style.borderColour.set(Colours.LIGHT_GRAY)
 
-        this.checkedProperty.subscribe { checked ->
-            if (checked.newValue) {
+        this.checkedProperty.addListener { _: Observable ->
+            if (this.checkedProperty.get()) {
                 this.uiChild.discardMap = discardMap
             } else {
                 this.uiChild.discardMap = Texture2D.NULL

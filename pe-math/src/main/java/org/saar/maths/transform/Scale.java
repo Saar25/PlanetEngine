@@ -2,14 +2,12 @@ package org.saar.maths.transform;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.jproperty.*;
+import org.jproperty.value.ObservableValueBase;
 import org.saar.maths.utils.Vector3;
 
-public class Scale implements ReadonlyScale {
+public class Scale extends ObservableValueBase<Vector3fc> implements ReadonlyScale {
 
     private final Vector3f value = Vector3.create();
-
-    private SubscribersHelper<Vector3fc> helper = SubscribersHelper.empty();
 
     private Scale(Vector3fc value) {
         this.value.set(value);
@@ -71,17 +69,8 @@ public class Scale implements ReadonlyScale {
 
     private void onChange(Vector3fc old) {
         if (!old.equals(getValue())) {
-            final ChangeEvent<Vector3fc> event =
-                    new ChangeEventBase<>(this, old, getValue());
-            this.helper.fireEvent(event);
+            fireChangeEvent(old);
         }
-    }
-
-    @Override
-    public Subscription subscribe(Subscriber<? super Vector3fc> subscriber) {
-        this.helper = this.helper.addSubscriber(subscriber);
-
-        return () -> this.helper = this.helper.removeSubscriber(subscriber);
     }
 
     @Override

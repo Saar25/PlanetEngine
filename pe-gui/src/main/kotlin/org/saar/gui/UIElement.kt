@@ -1,6 +1,6 @@
 package org.saar.gui
 
-import org.jproperty.type.SimpleObjectProperty
+import org.jproperty.property.SimpleObjectProperty
 import org.saar.gui.style.ElementStyle
 
 class UIElement : UIChildNode, UIParentNode {

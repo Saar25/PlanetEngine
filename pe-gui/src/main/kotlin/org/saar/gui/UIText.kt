@@ -1,6 +1,6 @@
 package org.saar.gui
 
-import org.jproperty.type.SimpleObjectProperty
+import org.jproperty.property.SimpleObjectProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer

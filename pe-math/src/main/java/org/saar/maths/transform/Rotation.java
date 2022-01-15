@@ -4,17 +4,15 @@ import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.jproperty.*;
+import org.jproperty.value.ObservableValueBase;
 import org.saar.maths.Angle;
 import org.saar.maths.utils.Quaternion;
 import org.saar.maths.utils.Vector3;
 
-public class Rotation implements ReadonlyRotation {
+public class Rotation extends ObservableValueBase<Quaternionfc> implements ReadonlyRotation {
 
     private final Quaternionf value = Quaternion.create();
     private final Vector3f eulerAngles = Vector3.create();
-
-    private SubscribersHelper<Quaternionfc> helper = SubscribersHelper.empty();
 
     private Rotation(Quaternionfc value) {
         this.value.set(value);
@@ -93,9 +91,7 @@ public class Rotation implements ReadonlyRotation {
 
     private void onChange(Quaternionfc old) {
         if (!old.equals(getValue())) {
-            final ChangeEvent<Quaternionfc> event =
-                    new ChangeEventBase<>(this, old, getValue());
-            this.helper.fireEvent(event);
+            fireChangeEvent(old);
         }
     }
 
@@ -107,13 +103,6 @@ public class Rotation implements ReadonlyRotation {
             set(Quaternion.create().lookAlong(
                     direction, Vector3.UP).conjugate());
         }
-    }
-
-    @Override
-    public Subscription subscribe(Subscriber<? super Quaternionfc> subscriber) {
-        this.helper = this.helper.addSubscriber(subscriber);
-
-        return () -> this.helper = this.helper.removeSubscriber(subscriber);
     }
 
     @Override

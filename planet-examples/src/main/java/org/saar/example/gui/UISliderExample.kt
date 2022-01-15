@@ -1,5 +1,6 @@
 package org.saar.example.gui
 
+import org.jproperty.Observable
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIBlock
@@ -48,9 +49,9 @@ object UISliderExample {
         val scrollbar = UISlider().apply {
             style.width.value = pixels(500)
             style.height.value = pixels(50)
-            dynamicValueProperty.subscribe { e ->
-                blockGap.style.borders.set(e.newValue.toInt())
-                borderSize.text = "Border size: " + e.newValue.toInt()
+            dynamicValueProperty.addListener { _: Observable ->
+                blockGap.style.borders.set(dynamicValueProperty.intValue)
+                borderSize.text = "Border size: " + dynamicValueProperty.intValue
             }
         }
         display.add(scrollbar)

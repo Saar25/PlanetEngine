@@ -1,6 +1,6 @@
 package org.saar.gui
 
-import org.jproperty.type.SimpleObjectProperty
+import org.jproperty.property.SimpleObjectProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.BlockStyle

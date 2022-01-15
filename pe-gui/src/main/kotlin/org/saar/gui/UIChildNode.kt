@@ -1,6 +1,6 @@
 package org.saar.gui
 
-import org.jproperty.type.ObjectProperty
+import org.jproperty.property.ObjectProperty
 
 interface UIChildNode : UINode {
 

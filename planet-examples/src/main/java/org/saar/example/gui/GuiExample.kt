@@ -1,6 +1,6 @@
 package org.saar.example.gui
 
-import org.jproperty.ChangeEvent
+import org.jproperty.Observable
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
@@ -52,8 +52,8 @@ object GuiExample {
                     style.width.value = percent(90f)
                     style.height.value = pixels(20)
 
-                    dynamicValueProperty.subscribe { e ->
-                        val percents = e.newValue.toFloat() / 2
+                    dynamicValueProperty.addListener { _: Observable ->
+                        val percents = dynamicValueProperty.floatValue / 2
                         uiButton.style.width.set(percent(percents))
                     }
                 }
@@ -68,8 +68,8 @@ object GuiExample {
             }
             add(uiContainer)
 
-            sizeUiSlider.dynamicValueProperty.subscribe { e: ChangeEvent<out Number> ->
-                val percents = e.newValue.toFloat() / 100 * 50 + 20
+            sizeUiSlider.dynamicValueProperty.addListener { _: Observable ->
+                val percents = sizeUiSlider.dynamicValueProperty.floatValue / 100 * 50 + 20
                 uiContainer.style.width.value = percent(percents)
             }
         }
