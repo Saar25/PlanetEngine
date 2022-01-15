@@ -8,10 +8,10 @@ import org.saar.gui.component.UIButton
 import org.saar.gui.component.UICheckbox
 import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colour
-import org.saar.gui.style.value.AlignmentValues.vertical
-import org.saar.gui.style.value.LengthValues.percent
-import org.saar.gui.style.value.LengthValues.pixels
-import org.saar.gui.style.value.LengthValues.ratio
+import org.saar.gui.style.alignment.AlignmentValues.vertical
+import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.pixels
+import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils

@@ -1,8 +1,5 @@
 package org.saar.gui.style.length
 
-import org.saar.gui.style.value.LengthValue
-import org.saar.gui.style.value.LengthValues
-
 abstract class Length : ReadonlyLength {
 
     var value: LengthValue = LengthValues.fit

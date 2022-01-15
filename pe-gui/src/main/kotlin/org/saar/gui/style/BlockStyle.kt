@@ -15,7 +15,7 @@ import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.margin.Margin
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.Radius
-import org.saar.gui.style.value.LengthValues
+import org.saar.gui.style.length.LengthValues
 
 class BlockStyle(container: UIBlock) : Style {
 

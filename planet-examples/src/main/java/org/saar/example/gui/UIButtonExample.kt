@@ -10,9 +10,9 @@ import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.font.FontLoader
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.center
-import org.saar.gui.style.value.LengthValues.percent
-import org.saar.gui.style.value.LengthValues.ratio
+import org.saar.gui.style.coordinate.CoordinateValues.center
+import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils

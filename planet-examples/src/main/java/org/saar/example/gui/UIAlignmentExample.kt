@@ -6,9 +6,9 @@ import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.AlignmentValues
-import org.saar.gui.style.value.LengthValues
-import org.saar.gui.style.value.LengthValues.ratio
+import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.length.LengthValues
+import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils

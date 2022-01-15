@@ -6,13 +6,11 @@ object Coordinates {
 
     class X(private val container: UIChildNode) : Coordinate() {
 
-        override fun get(): Int = this.value.computeAxisX(
-            this.container.parent, this.container)
+        override fun get(): Int = this.value.computeAxisX(this.container)
     }
 
     class Y(private val container: UIChildNode) : Coordinate() {
 
-        override fun get(): Int = this.value.computeAxisY(
-            this.container.parent, this.container)
+        override fun get(): Int = this.value.computeAxisY(this.container)
     }
 }

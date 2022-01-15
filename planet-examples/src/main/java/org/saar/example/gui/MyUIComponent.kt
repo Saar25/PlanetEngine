@@ -4,7 +4,7 @@ import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.percent
 
 class MyUIComponent : UIComponent() {
 

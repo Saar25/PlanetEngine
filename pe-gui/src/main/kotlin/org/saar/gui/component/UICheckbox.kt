@@ -6,7 +6,7 @@ import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.LengthValues
+import org.saar.gui.style.length.LengthValues
 import org.saar.lwjgl.opengl.texture.Texture2D
 
 private val discardMap = Texture2D.of("/assets/gui/checkbox.png")

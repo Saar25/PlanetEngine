@@ -1,8 +1,6 @@
 package org.saar.gui.style.alignment
 
 import org.saar.gui.UIChildNode
-import org.saar.gui.style.value.AlignmentValue
-import org.saar.gui.style.value.AlignmentValues
 
 object NoAlignment : ReadonlyAlignment {
     override val value: AlignmentValue = AlignmentValues.none

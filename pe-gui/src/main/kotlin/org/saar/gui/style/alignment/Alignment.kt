@@ -2,8 +2,6 @@ package org.saar.gui.style.alignment
 
 import org.saar.gui.UIChildNode
 import org.saar.gui.UIParentNode
-import org.saar.gui.style.value.AlignmentValue
-import org.saar.gui.style.value.AlignmentValues
 
 class Alignment(private val container: UIParentNode) : ReadonlyAlignment {
 

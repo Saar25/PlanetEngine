@@ -2,18 +2,16 @@ package org.saar.gui.style.colourmodifier
 
 import org.joml.Vector4fc
 import org.saar.gui.UIChildNode
-import org.saar.gui.style.value.StyleVector4fValue
-import org.saar.gui.style.value.StyleVector4fValues
 import org.saar.maths.utils.Vector4
 
 class ColourModifier(private val container: UIChildNode) : ReadonlyColourModifier {
 
-    private var multiplyValue: StyleVector4fValue = StyleVector4fValues.inherit
+    private var multiplyValue: ColourModifierValue = ColourModifierValues.inherit
 
     override var multiply: Vector4fc
-        get() = this.multiplyValue.compute(this.container.parent.style.colourModifier.multiply)
+        get() = this.multiplyValue.compute(this.container)
         set(value) {
-            this.multiplyValue = StyleVector4fValues.of(value)
+            this.multiplyValue = ColourModifierValues.of(value)
         }
 
     fun set(multiply: Vector4fc) {
@@ -32,7 +30,7 @@ class ColourModifier(private val container: UIChildNode) : ReadonlyColourModifie
         this.multiply = Vector4.of(all, all, all, 1f)
     }
 
-    fun set(multiplyValue: StyleVector4fValue) {
+    fun set(multiplyValue: ColourModifierValue) {
         this.multiplyValue = multiplyValue
     }
 }

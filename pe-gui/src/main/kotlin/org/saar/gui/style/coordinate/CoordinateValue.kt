@@ -1,8 +1,8 @@
-package org.saar.gui.style.value
+package org.saar.gui.style.coordinate
 
 import org.saar.gui.UIChildNode
 
-interface PositionValue {
+interface CoordinateValue {
     fun computeAxisX(container: UIChildNode): Int
 
     fun computeAxisY(container: UIChildNode): Int

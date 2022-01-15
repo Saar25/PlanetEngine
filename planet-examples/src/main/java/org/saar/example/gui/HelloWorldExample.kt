@@ -5,7 +5,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.center
+import org.saar.gui.style.coordinate.CoordinateValues.center
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils

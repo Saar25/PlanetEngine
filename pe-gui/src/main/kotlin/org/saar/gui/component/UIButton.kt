@@ -7,8 +7,8 @@ import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.FontSizeValues
-import org.saar.gui.style.value.PositionValues.absolute
+import org.saar.gui.style.fontsize.FontSizeValues
+import org.saar.gui.style.position.PositionValues.absolute
 
 class UIButton : UIComponent() {
 

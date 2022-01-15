@@ -6,8 +6,8 @@ import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.percent
-import org.saar.gui.style.value.PositionValues
+import org.saar.gui.style.coordinate.CoordinateValues.percent
+import org.saar.gui.style.position.PositionValues
 import org.saar.maths.utils.Maths
 
 class UISlider : UIComponent() {

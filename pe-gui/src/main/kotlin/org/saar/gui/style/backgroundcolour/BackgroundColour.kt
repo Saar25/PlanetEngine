@@ -2,38 +2,36 @@ package org.saar.gui.style.backgroundcolour
 
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
-import org.saar.gui.style.value.StyleColourValue
-import org.saar.gui.style.value.StyleColourValues
 
 class BackgroundColour(private val container: UIChildNode) : ReadonlyBackgroundColour {
 
-    var topRightValue: StyleColourValue = StyleColourValues.inherit
-    var topLeftValue: StyleColourValue = StyleColourValues.inherit
-    var bottomRightValue: StyleColourValue = StyleColourValues.inherit
-    var bottomLeftValue: StyleColourValue = StyleColourValues.inherit
+    var topRightValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var topLeftValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var bottomRightValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var bottomLeftValue: BackgroundColourValue = BackgroundColourValues.inherit
 
     override var topRight: Colour
-        get() = this.topRightValue.compute(this.container.parent.style.backgroundColour.topRight)
+        get() = this.topRightValue.computeTopRight(this.container)
         set(value) {
-            this.topRightValue = StyleColourValues.of(value)
+            this.topRightValue = BackgroundColourValues.of(value)
         }
 
     override var topLeft: Colour
-        get() = this.topLeftValue.compute(this.container.parent.style.backgroundColour.topLeft)
+        get() = this.topLeftValue.computeTopLeft(this.container)
         set(value) {
-            this.topLeftValue = StyleColourValues.of(value)
+            this.topLeftValue = BackgroundColourValues.of(value)
         }
 
     override var bottomRight: Colour
-        get() = this.bottomRightValue.compute(this.container.parent.style.backgroundColour.bottomRight)
+        get() = this.bottomRightValue.computeBottomRight(this.container)
         set(value) {
-            this.bottomRightValue = StyleColourValues.of(value)
+            this.bottomRightValue = BackgroundColourValues.of(value)
         }
 
     override var bottomLeft: Colour
-        get() = this.bottomLeftValue.compute(this.container.parent.style.backgroundColour.bottomLeft)
+        get() = this.bottomLeftValue.computeBottomLeft(this.container)
         set(value) {
-            this.bottomLeftValue = StyleColourValues.of(value)
+            this.bottomLeftValue = BackgroundColourValues.of(value)
         }
 
     fun set(colour: Colour) {
@@ -43,7 +41,7 @@ class BackgroundColour(private val container: UIChildNode) : ReadonlyBackgroundC
         this.bottomLeft = colour
     }
 
-    fun set(colourValue: StyleColourValue) {
+    fun set(colourValue: BackgroundColourValue) {
         this.topRightValue = colourValue
         this.topLeftValue = colourValue
         this.bottomRightValue = colourValue

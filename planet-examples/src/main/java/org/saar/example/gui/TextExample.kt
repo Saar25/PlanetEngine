@@ -6,9 +6,9 @@ import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.center
-import org.saar.gui.style.value.LengthValues.percent
-import org.saar.gui.style.value.PositionValues.absolute
+import org.saar.gui.style.coordinate.CoordinateValues.center
+import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.position.PositionValues.absolute
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
