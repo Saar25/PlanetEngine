@@ -18,7 +18,7 @@ object AlignmentValues {
             return parent.children.takeWhile { it != child }.sumOf {
                 it.style.width.get() +
                         it.style.borders.left.get() + it.style.borders.right.get() +
-                        it.style.margin.left + it.style.margin.right
+                        it.style.margin.left.get() + it.style.margin.right.get()
             }
         }
 
@@ -37,7 +37,7 @@ object AlignmentValues {
             return parent.children.takeWhile { it != child }.sumOf {
                 it.style.height.get() +
                         it.style.borders.top.get() + it.style.borders.bottom.get() +
-                        it.style.margin.top + it.style.margin.bottom
+                        it.style.margin.top.get() + it.style.margin.bottom.get()
             }
         }
     }

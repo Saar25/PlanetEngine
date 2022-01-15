@@ -10,14 +10,14 @@ object PositionValues {
             return container.parent.style.position.getX() +
                     container.parent.style.alignment.getX(container) +
                     container.style.borders.left.get() +
-                    container.style.margin.left
+                    container.style.margin.left.get()
         }
 
         override fun computeAxisY(container: UIChildNode): Int {
             return container.parent.style.position.getY() +
                     container.parent.style.alignment.getY(container) +
                     container.style.borders.top.get() +
-                    container.style.margin.top
+                    container.style.margin.top.get()
         }
     }
 
