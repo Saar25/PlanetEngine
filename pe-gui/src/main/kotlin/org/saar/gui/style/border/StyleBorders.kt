@@ -1,52 +1,56 @@
 package org.saar.gui.style.border
 
+import org.jproperty.constant.ConstantIntegerProperty
+import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
-import org.saar.gui.style.value.StyleIntValue
-import org.saar.gui.style.value.StyleIntValues
 
 class StyleBorders(private val container: UIChildNode) : ReadonlyStyleBorders {
 
-    var topValue: StyleIntValue = StyleIntValues.none
-    var rightValue: StyleIntValue = StyleIntValues.none
-    var bottomValue: StyleIntValue = StyleIntValues.none
-    var leftValue: StyleIntValue = StyleIntValues.none
-
-    override var top: Int
-        get() = this.topValue.compute(this.container.parent.style.borders.top)
+    var topValue: StyleBorderValue = StyleBorderValues.none
         set(value) {
-            this.topValue = StyleIntValues.pixels(value)
+            this.top = value.buildTop(this.container)
+            field = value
         }
 
-    override var right: Int
-        get() = this.rightValue.compute(this.container.parent.style.borders.right)
+    var rightValue: StyleBorderValue = StyleBorderValues.none
         set(value) {
-            this.rightValue = StyleIntValues.pixels(value)
+            this.right = value.buildRight(this.container)
+            field = value
         }
 
-    override var bottom: Int
-        get() = this.bottomValue.compute(this.container.parent.style.borders.bottom)
+    var bottomValue: StyleBorderValue = StyleBorderValues.none
         set(value) {
-            this.bottomValue = StyleIntValues.pixels(value)
+            this.bottom = value.buildBottom(this.container)
+            field = value
         }
 
-    override var left: Int
-        get() = this.leftValue.compute(this.container.parent.style.borders.left)
+    var leftValue: StyleBorderValue = StyleBorderValues.none
         set(value) {
-            this.leftValue = StyleIntValues.pixels(value)
+            this.left = value.buildLeft(this.container)
+            field = value
         }
+
+
+    override var top: ObservableIntegerValue = ConstantIntegerProperty(0)
+
+    override var right: ObservableIntegerValue = ConstantIntegerProperty(0)
+
+    override var bottom: ObservableIntegerValue = ConstantIntegerProperty(0)
+
+    override var left: ObservableIntegerValue = ConstantIntegerProperty(0)
 
     fun set(top: Int, right: Int, bottom: Int, left: Int) {
-        this.top = top
-        this.right = right
-        this.bottom = bottom
-        this.left = left
+        this.top = ConstantIntegerProperty(top)
+        this.right = ConstantIntegerProperty(right)
+        this.bottom = ConstantIntegerProperty(bottom)
+        this.left = ConstantIntegerProperty(left)
     }
 
     fun set(all: Int) {
         set(all, all, all, all)
     }
 
-    fun set(value: StyleIntValue) {
+    fun set(value: StyleBorderValue) {
         this.topValue = value
         this.rightValue = value
         this.bottomValue = value

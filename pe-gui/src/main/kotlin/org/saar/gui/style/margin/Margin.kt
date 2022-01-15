@@ -14,19 +14,19 @@ class Margin(private val container: UIChildNode) : ReadonlyMargin {
 
     override val top: Int
         get() = this.topValue.compute(
-            this.container.parent.style.borders.top)
+            this.container.parent.style.margin.top)
 
     override val right: Int
         get() = this.rightValue.compute(
-            this.container.parent.style.borders.right)
+            this.container.parent.style.margin.right)
 
     override val bottom: Int
         get() = this.bottomValue.compute(
-            this.container.parent.style.borders.bottom)
+            this.container.parent.style.margin.bottom)
 
     override val left: Int
         get() = this.leftValue.compute(
-            this.container.parent.style.borders.left)
+            this.container.parent.style.margin.left)
 
     fun set(top: StyleIntValue, right: StyleIntValue, bottom: StyleIntValue, left: StyleIntValue) {
         this.topValue = top
