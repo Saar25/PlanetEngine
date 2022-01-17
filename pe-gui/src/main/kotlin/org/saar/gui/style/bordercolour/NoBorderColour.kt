@@ -1,11 +1,11 @@
 package org.saar.gui.style.bordercolour
 
-import org.saar.gui.style.Colour
+import org.jproperty.constant.ConstantObjectProperty
 import org.saar.gui.style.Colours
 
 object NoBorderColour : ReadonlyBorderColour {
 
-    override val colour: Colour = Colours.BLACK
+    override val colour = ConstantObjectProperty(Colours.BLACK)
 
-    override fun toString() = "[Corners: ${this.colour}]"
+    override fun toString() = "[BorderColour: ${this.colour}]"
 }
