@@ -3,13 +3,13 @@ package org.saar.gui.style
 import org.saar.gui.UIComponent
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
-import org.saar.gui.style.border.NoStyleBorders
-import org.saar.gui.style.border.ReadonlyStyleBorders
+import org.saar.gui.style.border.NoBorders
+import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
-import org.saar.gui.style.font.StyleFont
+import org.saar.gui.style.font.FontFamily
 import org.saar.gui.style.fontcolour.FontColour
 import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.Length
@@ -36,11 +36,11 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
 
     override val fontColour: FontColour = FontColour(container)
 
-    override val font: StyleFont = StyleFont(container)
+    override val font: FontFamily = FontFamily(container)
 
     override val colourModifier: ColourModifier = ColourModifier(container)
 
-    override val borders: ReadonlyStyleBorders = NoStyleBorders
+    override val borders: ReadonlyBorders = NoBorders
 
     override val borderColour: BorderColour = BorderColour(container)
 

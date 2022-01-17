@@ -3,10 +3,10 @@ package org.saar.gui.style.margin
 import org.jproperty.constant.ConstantIntegerProperty
 import org.saar.gui.UIChildNode
 
-object StyleMarginValues {
+object MarginValues {
 
     @JvmStatic
-    val inherit: StyleMarginValue = object : StyleMarginValue {
+    val inherit: MarginValue = object : MarginValue {
         override fun buildTop(container: UIChildNode) = container.parent.style.margin.top
 
         override fun buildRight(container: UIChildNode) = container.parent.style.margin.right
@@ -17,7 +17,7 @@ object StyleMarginValues {
     }
 
     @JvmStatic
-    val none: StyleMarginValue = object : StyleMarginValue {
+    val none: MarginValue = object : MarginValue {
         override fun buildTop(container: UIChildNode) = ConstantIntegerProperty(0)
 
         override fun buildRight(container: UIChildNode) = ConstantIntegerProperty(0)
@@ -28,7 +28,7 @@ object StyleMarginValues {
     }
 
     @JvmStatic
-    fun pixels(value: Int): StyleMarginValue = object : StyleMarginValue {
+    fun pixels(value: Int): MarginValue = object : MarginValue {
         override fun buildTop(container: UIChildNode) = ConstantIntegerProperty(value)
 
         override fun buildRight(container: UIChildNode) = ConstantIntegerProperty(value)

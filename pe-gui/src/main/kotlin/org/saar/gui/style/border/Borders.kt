@@ -4,27 +4,27 @@ import org.jproperty.constant.ConstantIntegerProperty
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 
-class StyleBorders(private val container: UIChildNode) : ReadonlyStyleBorders {
+class Borders(private val container: UIChildNode) : ReadonlyBorders {
 
-    var topValue: StyleBorderValue = StyleBorderValues.none
+    var topValue: BorderValue = BorderValues.none
         set(value) {
             this.top = value.buildTop(this.container)
             field = value
         }
 
-    var rightValue: StyleBorderValue = StyleBorderValues.none
+    var rightValue: BorderValue = BorderValues.none
         set(value) {
             this.right = value.buildRight(this.container)
             field = value
         }
 
-    var bottomValue: StyleBorderValue = StyleBorderValues.none
+    var bottomValue: BorderValue = BorderValues.none
         set(value) {
             this.bottom = value.buildBottom(this.container)
             field = value
         }
 
-    var leftValue: StyleBorderValue = StyleBorderValues.none
+    var leftValue: BorderValue = BorderValues.none
         set(value) {
             this.left = value.buildLeft(this.container)
             field = value
@@ -50,14 +50,14 @@ class StyleBorders(private val container: UIChildNode) : ReadonlyStyleBorders {
         set(all, all, all, all)
     }
 
-    fun set(value: StyleBorderValue) {
+    fun set(value: BorderValue) {
         this.topValue = value
         this.rightValue = value
         this.bottomValue = value
         this.leftValue = value
     }
 
-    fun set(borders: StyleBorders) {
+    fun set(borders: Borders) {
         this.topValue = borders.topValue
         this.rightValue = borders.rightValue
         this.bottomValue = borders.bottomValue

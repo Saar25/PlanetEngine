@@ -3,10 +3,10 @@ package org.saar.gui.style.border
 import org.jproperty.constant.ConstantIntegerProperty
 import org.saar.gui.UIChildNode
 
-object StyleBorderValues {
+object BorderValues {
 
     @JvmStatic
-    val inherit: StyleBorderValue = object : StyleBorderValue {
+    val inherit: BorderValue = object : BorderValue {
         override fun buildTop(container: UIChildNode) = container.parent.style.borders.top
 
         override fun buildRight(container: UIChildNode) = container.parent.style.borders.right
@@ -17,7 +17,7 @@ object StyleBorderValues {
     }
 
     @JvmStatic
-    val none: StyleBorderValue = object : StyleBorderValue {
+    val none: BorderValue = object : BorderValue {
         override fun buildTop(container: UIChildNode) = ConstantIntegerProperty(0)
 
         override fun buildRight(container: UIChildNode) = ConstantIntegerProperty(0)
@@ -28,7 +28,7 @@ object StyleBorderValues {
     }
 
     @JvmStatic
-    fun pixels(value: Int): StyleBorderValue = object : StyleBorderValue {
+    fun pixels(value: Int): BorderValue = object : BorderValue {
         override fun buildTop(container: UIChildNode) = ConstantIntegerProperty(value)
 
         override fun buildRight(container: UIChildNode) = ConstantIntegerProperty(value)

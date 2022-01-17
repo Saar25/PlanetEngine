@@ -3,29 +3,29 @@ package org.saar.gui.style.margin
 import org.jproperty.constant.ConstantIntegerProperty
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
-import org.saar.gui.style.margin.StyleMarginValues.pixels
+import org.saar.gui.style.margin.MarginValues.pixels
 
 class Margin(private val container: UIChildNode) : ReadonlyMargin {
 
-    var topValue: StyleMarginValue = StyleMarginValues.none
+    var topValue: MarginValue = MarginValues.none
         set(value) {
             this.top = value.buildTop(this.container)
             field = value
         }
 
-    var rightValue: StyleMarginValue = StyleMarginValues.none
+    var rightValue: MarginValue = MarginValues.none
         set(value) {
             this.right = value.buildRight(this.container)
             field = value
         }
 
-    var bottomValue: StyleMarginValue = StyleMarginValues.none
+    var bottomValue: MarginValue = MarginValues.none
         set(value) {
             this.bottom = value.buildBottom(this.container)
             field = value
         }
 
-    var leftValue: StyleMarginValue = StyleMarginValues.none
+    var leftValue: MarginValue = MarginValues.none
         set(value) {
             this.left = value.buildLeft(this.container)
             field = value
@@ -39,7 +39,7 @@ class Margin(private val container: UIChildNode) : ReadonlyMargin {
 
     override var left: ObservableIntegerValue = ConstantIntegerProperty(0)
 
-    fun set(top: StyleMarginValue, right: StyleMarginValue, bottom: StyleMarginValue, left: StyleMarginValue) {
+    fun set(top: MarginValue, right: MarginValue, bottom: MarginValue, left: MarginValue) {
         this.topValue = top
         this.rightValue = right
         this.bottomValue = bottom
@@ -51,7 +51,7 @@ class Margin(private val container: UIChildNode) : ReadonlyMargin {
 
     fun set(all: Int) = set(all, all, all, all)
 
-    fun set(all: StyleMarginValue) = set(all, all, all, all)
+    fun set(all: MarginValue) = set(all, all, all, all)
 
     fun set(borders: Margin) = set(
         borders.topValue, borders.rightValue,

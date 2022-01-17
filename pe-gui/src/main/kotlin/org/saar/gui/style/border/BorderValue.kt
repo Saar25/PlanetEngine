@@ -3,7 +3,7 @@ package org.saar.gui.style.border
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 
-interface StyleBorderValue {
+interface BorderValue {
     fun buildTop(container: UIChildNode): ObservableIntegerValue
 
     fun buildRight(container: UIChildNode): ObservableIntegerValue

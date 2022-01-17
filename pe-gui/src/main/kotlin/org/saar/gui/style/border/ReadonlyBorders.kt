@@ -4,7 +4,7 @@ import org.joml.Vector4i
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.style.StyleProperty
 
-interface ReadonlyStyleBorders : StyleProperty {
+interface ReadonlyBorders : StyleProperty {
 
     val top: ObservableIntegerValue
     val right: ObservableIntegerValue

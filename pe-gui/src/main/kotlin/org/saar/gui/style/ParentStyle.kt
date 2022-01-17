@@ -2,11 +2,11 @@ package org.saar.gui.style
 
 import org.saar.gui.style.alignment.ReadonlyAlignment
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
-import org.saar.gui.style.border.ReadonlyStyleBorders
+import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
-import org.saar.gui.style.font.ReadonlyStyleFont
+import org.saar.gui.style.font.ReadonlyFontFamily
 import org.saar.gui.style.fontcolour.ReadonlyFontColour
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
@@ -32,11 +32,11 @@ interface ParentStyle : Style {
 
     override val fontColour: ReadonlyFontColour
 
-    override val font: ReadonlyStyleFont
+    override val font: ReadonlyFontFamily
 
     override val colourModifier: ReadonlyColourModifier
 
-    override val borders: ReadonlyStyleBorders
+    override val borders: ReadonlyBorders
 
     override val borderColour: ReadonlyBorderColour
 
