@@ -77,7 +77,7 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
         this.bitmapBoundsUniform.value = uiLetter.character.bitmapBox.toVector4i()
 
         val bounds = uiLetter.character.localBox.toVector4f()
-            .mul(uiLetter.style.fontSize.get() / uiLetter.font.size)
+            .mul(uiLetter.style.fontSize.size.get() / uiLetter.font.size)
             .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
 
         this.boundsUniform.value.set(

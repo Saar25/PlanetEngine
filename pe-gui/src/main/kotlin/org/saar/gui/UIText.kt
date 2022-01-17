@@ -36,7 +36,7 @@ class UIText(text: String = "") : UIChildNode {
         this.maxWidth = this.parent.style.width.get()
 
         val font = this.style.font.get()
-        val fontScale = this.style.fontSize.get() / font.size
+        val fontScale = this.style.fontSize.size.get() / font.size
         val offset = Vector2.of(0f, font.lineHeight * fontScale)
 
         var contentWidth = 0f

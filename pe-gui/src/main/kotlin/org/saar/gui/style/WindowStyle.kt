@@ -15,6 +15,7 @@ import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.font.ReadonlyFontFamily
 import org.saar.gui.style.fontcolour.NoFontColour
 import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontsize.NoFontSize
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
@@ -49,7 +50,7 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
         override fun getMin() = uiDisplay.height
     }
 
-    override val fontSize: ReadonlyFontSize = ReadonlyFontSize { 16 }
+    override val fontSize: ReadonlyFontSize = NoFontSize
 
     override val fontColour: ReadonlyFontColour = NoFontColour
 

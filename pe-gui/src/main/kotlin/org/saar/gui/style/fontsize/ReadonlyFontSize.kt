@@ -1,6 +1,9 @@
 package org.saar.gui.style.fontsize
 
-fun interface ReadonlyFontSize {
+import org.jproperty.value.ObservableIntegerValue
 
-    fun get(): Int
+interface ReadonlyFontSize {
+
+    val size: ObservableIntegerValue
+
 }
