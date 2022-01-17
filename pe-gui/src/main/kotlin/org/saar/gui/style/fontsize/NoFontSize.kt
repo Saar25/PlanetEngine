@@ -4,5 +4,5 @@ import org.jproperty.constant.ConstantInteger
 
 object NoFontSize : ReadonlyFontSize {
 
-    override val size = ConstantInteger(0)
+    override val size = ConstantInteger(16)
 }
