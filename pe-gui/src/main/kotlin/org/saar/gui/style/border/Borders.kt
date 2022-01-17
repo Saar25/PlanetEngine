@@ -1,42 +1,42 @@
 package org.saar.gui.style.border
 
-import org.jproperty.value.ObservableIntegerValue
+import org.jproperty.binding.IntegerWrapper
 import org.saar.gui.UIChildNode
 
 class Borders(private val container: UIChildNode) : ReadonlyBorders {
 
     var topValue: BorderValue = BorderValues.none
         set(value) {
-            this.top = value.buildTop(this.container)
+            this.top.set(value.buildTop(this.container))
             field = value
         }
 
     var rightValue: BorderValue = BorderValues.none
         set(value) {
-            this.right = value.buildRight(this.container)
+            this.right.set(value.buildRight(this.container))
             field = value
         }
 
     var bottomValue: BorderValue = BorderValues.none
         set(value) {
-            this.bottom = value.buildBottom(this.container)
+            this.bottom.set(value.buildBottom(this.container))
             field = value
         }
 
     var leftValue: BorderValue = BorderValues.none
         set(value) {
-            this.left = value.buildLeft(this.container)
+            this.left.set(value.buildLeft(this.container))
             field = value
         }
 
 
-    override var top: ObservableIntegerValue = this.topValue.buildTop(this.container)
+    override val top = IntegerWrapper(this.topValue.buildTop(this.container))
 
-    override var right: ObservableIntegerValue = this.rightValue.buildRight(this.container)
+    override val right = IntegerWrapper(this.rightValue.buildRight(this.container))
 
-    override var bottom: ObservableIntegerValue = this.bottomValue.buildBottom(this.container)
+    override val bottom = IntegerWrapper(this.bottomValue.buildBottom(this.container))
 
-    override var left: ObservableIntegerValue = this.leftValue.buildLeft(this.container)
+    override val left = IntegerWrapper(this.leftValue.buildLeft(this.container))
 
     fun set(top: Int, right: Int, bottom: Int, left: Int) {
         this.topValue = BorderValues.pixels(top)

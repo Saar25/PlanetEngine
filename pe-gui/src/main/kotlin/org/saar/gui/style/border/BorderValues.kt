@@ -1,19 +1,24 @@
 package org.saar.gui.style.border
 
 import org.jproperty.constant.ConstantInteger
+import org.jproperty.flatMapToInteger
 import org.saar.gui.UIChildNode
 
 object BorderValues {
 
     @JvmStatic
     val inherit: BorderValue = object : BorderValue {
-        override fun buildTop(container: UIChildNode) = container.parent.style.borders.top
+        override fun buildTop(container: UIChildNode) =
+            container.parentProperty.flatMapToInteger { it.style.borders.top }
 
-        override fun buildRight(container: UIChildNode) = container.parent.style.borders.right
+        override fun buildRight(container: UIChildNode) =
+            container.parentProperty.flatMapToInteger { it.style.borders.right }
 
-        override fun buildBottom(container: UIChildNode) = container.parent.style.borders.bottom
+        override fun buildBottom(container: UIChildNode) =
+            container.parentProperty.flatMapToInteger { it.style.borders.bottom }
 
-        override fun buildLeft(container: UIChildNode) = container.parent.style.borders.left
+        override fun buildLeft(container: UIChildNode) =
+            container.parentProperty.flatMapToInteger { it.style.borders.left }
     }
 
     @JvmStatic

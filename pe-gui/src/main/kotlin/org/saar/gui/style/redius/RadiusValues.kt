@@ -1,7 +1,7 @@
 package org.saar.gui.style.redius
 
 import org.jproperty.constant.ConstantInteger
-import org.jproperty.mapToInteger
+import org.jproperty.flatMapToInteger
 import org.saar.gui.UIChildNode
 
 object RadiusValues {
@@ -9,16 +9,16 @@ object RadiusValues {
     @JvmStatic
     val inherit: RadiusValue = object : RadiusValue {
         override fun buildTopRight(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.radius.topRight.get() }
+            container.parentProperty.flatMapToInteger { it.style.radius.topRight }
 
         override fun buildTopLeft(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.radius.topLeft.get() }
+            container.parentProperty.flatMapToInteger { it.style.radius.topLeft }
 
         override fun buildBottomRight(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.radius.bottomRight.get() }
+            container.parentProperty.flatMapToInteger { it.style.radius.bottomRight }
 
         override fun buildBottomLeft(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.radius.bottomLeft.get() }
+            container.parentProperty.flatMapToInteger { it.style.radius.bottomLeft }
     }
 
     @JvmStatic

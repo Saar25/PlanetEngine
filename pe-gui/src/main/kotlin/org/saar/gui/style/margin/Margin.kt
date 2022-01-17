@@ -1,6 +1,6 @@
 package org.saar.gui.style.margin
 
-import org.jproperty.value.ObservableIntegerValue
+import org.jproperty.binding.IntegerWrapper
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.margin.MarginValues.pixels
 
@@ -8,35 +8,35 @@ class Margin(private val container: UIChildNode) : ReadonlyMargin {
 
     var topValue: MarginValue = MarginValues.none
         set(value) {
-            this.top = value.buildTop(this.container)
+            this.top.set(value.buildTop(this.container))
             field = value
         }
 
     var rightValue: MarginValue = MarginValues.none
         set(value) {
-            this.right = value.buildRight(this.container)
+            this.right.set(value.buildRight(this.container))
             field = value
         }
 
     var bottomValue: MarginValue = MarginValues.none
         set(value) {
-            this.bottom = value.buildBottom(this.container)
+            this.bottom.set(value.buildBottom(this.container))
             field = value
         }
 
     var leftValue: MarginValue = MarginValues.none
         set(value) {
-            this.left = value.buildLeft(this.container)
+            this.left.set(value.buildLeft(this.container))
             field = value
         }
 
-    override var top: ObservableIntegerValue = this.topValue.buildTop(this.container)
+    override val top = IntegerWrapper(this.topValue.buildTop(this.container))
 
-    override var right: ObservableIntegerValue = this.rightValue.buildRight(this.container)
+    override val right = IntegerWrapper(this.rightValue.buildRight(this.container))
 
-    override var bottom: ObservableIntegerValue = this.bottomValue.buildBottom(this.container)
+    override val bottom = IntegerWrapper(this.bottomValue.buildBottom(this.container))
 
-    override var left: ObservableIntegerValue = this.leftValue.buildLeft(this.container)
+    override val left = IntegerWrapper(this.leftValue.buildLeft(this.container))
 
     fun set(top: MarginValue, right: MarginValue, bottom: MarginValue, left: MarginValue) {
         this.topValue = top

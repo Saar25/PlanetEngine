@@ -1,13 +1,14 @@
 package org.saar.gui.style.fontsize
 
 import org.jproperty.constant.ConstantInteger
+import org.jproperty.flatMapToInteger
 import org.jproperty.mapToInteger
 
 object FontSizeValues {
 
     @JvmStatic
     val inherit: FontSizeValue = FontSizeValue { container ->
-        container.parentProperty.mapToInteger { it.style.fontSize.size.get() }
+        container.parentProperty.flatMapToInteger { it.style.fontSize.size }
     }
 
     @JvmStatic

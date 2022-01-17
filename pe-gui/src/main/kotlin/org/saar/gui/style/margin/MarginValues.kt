@@ -1,7 +1,7 @@
 package org.saar.gui.style.margin
 
 import org.jproperty.constant.ConstantInteger
-import org.jproperty.mapToInteger
+import org.jproperty.flatMapToInteger
 import org.saar.gui.UIChildNode
 
 object MarginValues {
@@ -9,16 +9,16 @@ object MarginValues {
     @JvmStatic
     val inherit: MarginValue = object : MarginValue {
         override fun buildTop(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.margin.top.get() }
+            container.parentProperty.flatMapToInteger { it.style.margin.top }
 
         override fun buildRight(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.margin.right.get() }
+            container.parentProperty.flatMapToInteger { it.style.margin.right }
 
         override fun buildBottom(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.margin.bottom.get() }
+            container.parentProperty.flatMapToInteger { it.style.margin.bottom }
 
         override fun buildLeft(container: UIChildNode) =
-            container.parentProperty.mapToInteger { it.style.margin.left.get() }
+            container.parentProperty.flatMapToInteger { it.style.margin.left }
     }
 
     @JvmStatic
