@@ -1,9 +1,10 @@
 package org.saar.gui.style.font
 
-import org.saar.gui.font.Font
+import org.jproperty.constant.ConstantObjectProperty
 import org.saar.gui.font.FontLoader
 
 object NoFontFamily : ReadonlyFontFamily {
 
-    override fun get(): Font = FontLoader.DEFAULT_FONT
+    override val family = ConstantObjectProperty(FontLoader.DEFAULT_FONT)
+
 }

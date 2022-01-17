@@ -1,7 +1,6 @@
 package org.saar.gui.style
 
 import org.saar.gui.UIDisplay
-import org.saar.gui.font.FontLoader
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
@@ -12,6 +11,7 @@ import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.colourmodifier.NoColourModifier
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.font.NoFontFamily
 import org.saar.gui.style.font.ReadonlyFontFamily
 import org.saar.gui.style.fontcolour.NoFontColour
 import org.saar.gui.style.fontcolour.ReadonlyFontColour
@@ -54,7 +54,7 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
 
     override val fontColour: ReadonlyFontColour = NoFontColour
 
-    override val font: ReadonlyFontFamily = ReadonlyFontFamily { FontLoader.DEFAULT_FONT }
+    override val font: ReadonlyFontFamily = NoFontFamily
 
     override val colourModifier: ReadonlyColourModifier = NoColourModifier
 

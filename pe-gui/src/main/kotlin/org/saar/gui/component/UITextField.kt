@@ -41,7 +41,7 @@ class UITextField(text: String = "") : UIComponent() {
     override fun onKeyRepeat(event: KeyboardEvent) = changeTextByKeyboard(event)
 
     private fun changeTextByKeyboard(event: KeyboardEvent) {
-        val font = this.style.font.value.compute(this)
+        val font = this.style.font.value.build(this)
 
         this.uiText.text = when {
             event.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
@@ -54,7 +54,7 @@ class UITextField(text: String = "") : UIComponent() {
             event.keyCode == GLFW.GLFW_KEY_ENTER -> {
                 this.text + '\n'
             }
-            font.characters.any { it.char == event.keyCode.toChar() } -> {
+            font.value.characters.any { it.char == event.keyCode.toChar() } -> {
                 this.text + when {
                     event.modifiers.isShift() -> {
                         characterShiftMap.getOrDefault(

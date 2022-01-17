@@ -35,7 +35,7 @@ class UIText(text: String = "") : UIChildNode {
     private fun updateLetters() {
         this.maxWidth = this.parent.style.width.get()
 
-        val font = this.style.font.get()
+        val font = this.style.font.family.value
         val fontScale = this.style.fontSize.size.get() / font.size
         val offset = Vector2.of(0f, font.lineHeight * fontScale)
 

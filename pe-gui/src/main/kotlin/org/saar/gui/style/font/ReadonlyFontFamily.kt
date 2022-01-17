@@ -1,8 +1,10 @@
 package org.saar.gui.style.font
 
+import org.jproperty.ObservableValue
 import org.saar.gui.font.Font
 
-fun interface ReadonlyFontFamily {
+interface ReadonlyFontFamily {
 
-    fun get(): Font
+    val family: ObservableValue<Font>
+
 }
