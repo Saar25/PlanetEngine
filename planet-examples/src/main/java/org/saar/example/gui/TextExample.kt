@@ -30,6 +30,7 @@ object TextExample {
             style.y.value = center()
             style.width.value = percent(90f)
             style.height.value = percent(90f)
+            style.fontColour.set(Colours.WHITE)
         }
 
         display.add(container)
@@ -73,7 +74,6 @@ object TextExample {
         val textElement = UIText(text).apply {
             style.x.value = center()
             style.y.value = center()
-            style.fontColour.set(Colours.WHITE)
             style.fontSize.set(24)
         }
         container.add(textElement)
