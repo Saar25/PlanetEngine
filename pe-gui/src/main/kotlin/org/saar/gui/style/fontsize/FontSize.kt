@@ -1,6 +1,5 @@
 package org.saar.gui.style.fontsize
 
-import org.jproperty.constant.ConstantIntegerProperty
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 
@@ -12,7 +11,7 @@ class FontSize(private val container: UIChildNode) : ReadonlyFontSize {
             field = value
         }
 
-    override var size: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var size: ObservableIntegerValue = this.value.build(this.container)
 
     fun set(value: FontSizeValue) {
         this.value = value

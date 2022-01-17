@@ -1,6 +1,5 @@
 package org.saar.gui.style.border
 
-import org.jproperty.constant.ConstantIntegerProperty
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 
@@ -31,19 +30,19 @@ class Borders(private val container: UIChildNode) : ReadonlyBorders {
         }
 
 
-    override var top: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var top: ObservableIntegerValue = this.topValue.buildTop(this.container)
 
-    override var right: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var right: ObservableIntegerValue = this.rightValue.buildRight(this.container)
 
-    override var bottom: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var bottom: ObservableIntegerValue = this.bottomValue.buildBottom(this.container)
 
-    override var left: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var left: ObservableIntegerValue = this.leftValue.buildLeft(this.container)
 
     fun set(top: Int, right: Int, bottom: Int, left: Int) {
-        this.top = ConstantIntegerProperty(top)
-        this.right = ConstantIntegerProperty(right)
-        this.bottom = ConstantIntegerProperty(bottom)
-        this.left = ConstantIntegerProperty(left)
+        this.topValue = BorderValues.pixels(top)
+        this.rightValue = BorderValues.pixels(right)
+        this.bottomValue = BorderValues.pixels(bottom)
+        this.leftValue = BorderValues.pixels(left)
     }
 
     fun set(all: Int) {

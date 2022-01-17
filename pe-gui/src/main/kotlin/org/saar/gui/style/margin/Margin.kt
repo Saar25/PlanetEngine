@@ -1,6 +1,5 @@
 package org.saar.gui.style.margin
 
-import org.jproperty.constant.ConstantIntegerProperty
 import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.margin.MarginValues.pixels
@@ -31,13 +30,13 @@ class Margin(private val container: UIChildNode) : ReadonlyMargin {
             field = value
         }
 
-    override var top: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var top: ObservableIntegerValue = this.topValue.buildTop(this.container)
 
-    override var right: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var right: ObservableIntegerValue = this.rightValue.buildRight(this.container)
 
-    override var bottom: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var bottom: ObservableIntegerValue = this.bottomValue.buildBottom(this.container)
 
-    override var left: ObservableIntegerValue = ConstantIntegerProperty(0)
+    override var left: ObservableIntegerValue = this.leftValue.buildLeft(this.container)
 
     fun set(top: MarginValue, right: MarginValue, bottom: MarginValue, left: MarginValue) {
         this.topValue = top
