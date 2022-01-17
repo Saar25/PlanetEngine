@@ -1,13 +1,13 @@
 package org.saar.gui.style.backgroundcolour
 
-import org.saar.gui.style.Colour
+import org.jproperty.constant.ConstantObjectProperty
 import org.saar.gui.style.Colours
 
 object NoBackgroundColour : ReadonlyBackgroundColour {
 
-    override val topRight: Colour = Colours.TRANSPARENT
-    override val topLeft: Colour = Colours.TRANSPARENT
-    override val bottomRight: Colour = Colours.TRANSPARENT
-    override val bottomLeft: Colour = Colours.TRANSPARENT
+    override val topRight = ConstantObjectProperty(Colours.TRANSPARENT)
+    override val topLeft = ConstantObjectProperty(Colours.TRANSPARENT)
+    override val bottomRight = ConstantObjectProperty(Colours.TRANSPARENT)
+    override val bottomLeft = ConstantObjectProperty(Colours.TRANSPARENT)
 
 }

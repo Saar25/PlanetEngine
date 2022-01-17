@@ -1,14 +1,17 @@
 package org.saar.gui.style.backgroundcolour
 
+import org.jproperty.ObservableValue
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 
 interface BackgroundColourValue {
-    fun computeTopRight(container: UIChildNode): Colour
 
-    fun computeTopLeft(container: UIChildNode): Colour
+    fun buildTopRight(container: UIChildNode): ObservableValue<Colour>
 
-    fun computeBottomRight(container: UIChildNode): Colour
+    fun buildTopLeft(container: UIChildNode): ObservableValue<Colour>
 
-    fun computeBottomLeft(container: UIChildNode): Colour
+    fun buildBottomRight(container: UIChildNode): ObservableValue<Colour>
+
+    fun buildBottomLeft(container: UIChildNode): ObservableValue<Colour>
+
 }

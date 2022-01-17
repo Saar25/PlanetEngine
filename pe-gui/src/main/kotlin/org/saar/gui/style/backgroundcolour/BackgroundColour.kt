@@ -1,44 +1,48 @@
 package org.saar.gui.style.backgroundcolour
 
+import org.jproperty.ObservableValue
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 
 class BackgroundColour(private val container: UIChildNode) : ReadonlyBackgroundColour {
 
     var topRightValue: BackgroundColourValue = BackgroundColourValues.inherit
+        set(value) {
+            this.topRight = value.buildTopRight(this.container)
+            field = value
+        }
+
     var topLeftValue: BackgroundColourValue = BackgroundColourValues.inherit
+        set(value) {
+            this.topLeft = value.buildTopLeft(this.container)
+            field = value
+        }
+
     var bottomRightValue: BackgroundColourValue = BackgroundColourValues.inherit
+        set(value) {
+            this.bottomRight = value.buildBottomRight(this.container)
+            field = value
+        }
+
     var bottomLeftValue: BackgroundColourValue = BackgroundColourValues.inherit
-
-    override var topRight: Colour
-        get() = this.topRightValue.computeTopRight(this.container)
         set(value) {
-            this.topRightValue = BackgroundColourValues.of(value)
+            this.bottomLeft = value.buildBottomLeft(this.container)
+            field = value
         }
 
-    override var topLeft: Colour
-        get() = this.topLeftValue.computeTopLeft(this.container)
-        set(value) {
-            this.topLeftValue = BackgroundColourValues.of(value)
-        }
+    override var topRight: ObservableValue<Colour> = this.topRightValue.buildTopRight(this.container)
 
-    override var bottomRight: Colour
-        get() = this.bottomRightValue.computeBottomRight(this.container)
-        set(value) {
-            this.bottomRightValue = BackgroundColourValues.of(value)
-        }
+    override var topLeft: ObservableValue<Colour> = this.topLeftValue.buildTopLeft(this.container)
 
-    override var bottomLeft: Colour
-        get() = this.bottomLeftValue.computeBottomLeft(this.container)
-        set(value) {
-            this.bottomLeftValue = BackgroundColourValues.of(value)
-        }
+    override var bottomRight: ObservableValue<Colour> = this.bottomRightValue.buildBottomRight(this.container)
+
+    override var bottomLeft: ObservableValue<Colour> = this.bottomLeftValue.buildBottomLeft(this.container)
 
     fun set(colour: Colour) {
-        this.topRight = colour
-        this.topLeft = colour
-        this.bottomRight = colour
-        this.bottomLeft = colour
+        this.topRightValue = BackgroundColourValues.of(colour)
+        this.topLeftValue = BackgroundColourValues.of(colour)
+        this.bottomRightValue = BackgroundColourValues.of(colour)
+        this.bottomLeftValue = BackgroundColourValues.of(colour)
     }
 
     fun set(colourValue: BackgroundColourValue) {
