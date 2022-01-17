@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.github.saar25</groupId>
             <artifactId>JProperty</artifactId>
-            <version>1.1.2</version>
+            <version>1.1.4</version>
         </dependency>
     </dependencies>
 

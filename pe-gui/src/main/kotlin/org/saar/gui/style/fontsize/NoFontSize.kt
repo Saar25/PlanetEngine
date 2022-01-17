@@ -1,8 +1,8 @@
 package org.saar.gui.style.fontsize
 
-import org.jproperty.constant.ConstantIntegerProperty
+import org.jproperty.constant.ConstantInteger
 
 object NoFontSize : ReadonlyFontSize {
 
-    override val size = ConstantIntegerProperty(0)
+    override val size = ConstantInteger(0)
 }

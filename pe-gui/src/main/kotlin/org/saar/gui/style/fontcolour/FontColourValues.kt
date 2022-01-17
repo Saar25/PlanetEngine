@@ -1,6 +1,6 @@
 package org.saar.gui.style.fontcolour
 
-import org.jproperty.constant.ConstantObjectProperty
+import org.jproperty.constant.ConstantObject
 import org.jproperty.map
 import org.saar.gui.style.Colour
 
@@ -12,6 +12,6 @@ object FontColourValues {
     }
 
     @JvmStatic
-    fun of(value: Colour): FontColourValue = FontColourValue { ConstantObjectProperty(value) }
+    fun of(value: Colour): FontColourValue = FontColourValue { ConstantObject(value) }
 
 }

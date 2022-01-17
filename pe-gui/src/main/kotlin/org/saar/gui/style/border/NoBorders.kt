@@ -1,10 +1,10 @@
 package org.saar.gui.style.border
 
-import org.jproperty.constant.ConstantIntegerProperty
+import org.jproperty.constant.ConstantInteger
 
 object NoBorders : ReadonlyBorders {
-    override val top = ConstantIntegerProperty(0)
-    override val right = ConstantIntegerProperty(0)
-    override val bottom = ConstantIntegerProperty(0)
-    override val left = ConstantIntegerProperty(0)
+    override val top = ConstantInteger(0)
+    override val right = ConstantInteger(0)
+    override val bottom = ConstantInteger(0)
+    override val left = ConstantInteger(0)
 }

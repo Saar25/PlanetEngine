@@ -13,7 +13,12 @@ public final class SimpleTransform implements Transform {
     private final Rotation rotation = Rotation.create();
     private final Scale scale = Scale.create();
 
-    private final ObjectBinding<Matrix4f> transformation = new ObjectBinding<>(this.position, this.rotation, this.scale) {
+    private final ObjectBinding<Matrix4f> transformation = new ObjectBinding<>() {
+
+        {
+            bind(SimpleTransform.this.position, SimpleTransform.this.rotation, SimpleTransform.this.scale);
+        }
+
         @Override
         protected Matrix4f compute() {
             return Matrix4.ofTransformation(
@@ -21,6 +26,11 @@ public final class SimpleTransform implements Transform {
                     getRotation().getValue(),
                     getScale().getValue(),
                     Matrix4.create());
+        }
+
+        @Override
+        public void dispose() {
+            unbind(SimpleTransform.this.position, SimpleTransform.this.rotation, SimpleTransform.this.scale);
         }
     };
 

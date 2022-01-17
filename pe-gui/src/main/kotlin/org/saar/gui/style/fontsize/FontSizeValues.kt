@@ -1,6 +1,6 @@
 package org.saar.gui.style.fontsize
 
-import org.jproperty.constant.ConstantIntegerProperty
+import org.jproperty.constant.ConstantInteger
 import org.jproperty.mapToInteger
 
 object FontSizeValues {
@@ -11,10 +11,10 @@ object FontSizeValues {
     }
 
     @JvmStatic
-    val none: FontSizeValue = FontSizeValue { ConstantIntegerProperty(0) }
+    val none: FontSizeValue = FontSizeValue { ConstantInteger(0) }
 
     @JvmStatic
-    fun pixels(value: Int): FontSizeValue = FontSizeValue { ConstantIntegerProperty(value) }
+    fun pixels(value: Int): FontSizeValue = FontSizeValue { ConstantInteger(value) }
 
     @JvmStatic
     fun percent(value: Float): FontSizeValue = FontSizeValue { container ->

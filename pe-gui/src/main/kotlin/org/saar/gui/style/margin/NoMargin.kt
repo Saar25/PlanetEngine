@@ -1,10 +1,10 @@
 package org.saar.gui.style.margin
 
-import org.jproperty.constant.ConstantIntegerProperty
+import org.jproperty.constant.ConstantInteger
 
 object NoMargin : ReadonlyMargin {
-    override val top = ConstantIntegerProperty(0)
-    override val right = ConstantIntegerProperty(0)
-    override val bottom = ConstantIntegerProperty(0)
-    override val left = ConstantIntegerProperty(0)
+    override val top = ConstantInteger(0)
+    override val right = ConstantInteger(0)
+    override val bottom = ConstantInteger(0)
+    override val left = ConstantInteger(0)
 }
