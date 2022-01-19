@@ -34,14 +34,33 @@ object LengthValues {
 
     @JvmStatic
     val fit = object : LengthValue {
+        private var calculatingX = false
+        private var calculatingY = false
+
         override fun computeAxisX(container: UIChildNode): Int {
-            return if (container !is UIParentNode || container.children.isEmpty()) 0
+            if (this.calculatingX) {
+                return container.parent.style.width.get()
+            }
+            this.calculatingX = true
+
+            val result = if (container !is UIParentNode || container.children.isEmpty()) 0
             else container.children.maxOf { it.style.position.getX() + it.style.width.getMin() } - container.style.position.getX()
+
+            this.calculatingX = false
+            return result
         }
 
         override fun computeAxisY(container: UIChildNode): Int {
-            return if (container !is UIParentNode || container.children.isEmpty()) 0
+            if (this.calculatingY) {
+                return container.parent.style.height.get()
+            }
+            this.calculatingY = true
+
+            val result = if (container !is UIParentNode || container.children.isEmpty()) 0
             else container.children.maxOf { it.style.position.getY() + it.style.height.getMin() } - container.style.position.getY()
+
+            this.calculatingY = false
+            return result
         }
 
         override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)

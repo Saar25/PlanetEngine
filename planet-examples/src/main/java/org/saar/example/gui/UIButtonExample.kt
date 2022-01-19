@@ -7,10 +7,8 @@ import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
-import org.saar.gui.component.UITextField
 import org.saar.gui.font.FontLoader
 import org.saar.gui.style.Colours
-import org.saar.gui.style.coordinate.CoordinateValues.center
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
@@ -26,8 +24,6 @@ object UIButtonExample {
     fun main(args: Array<String>) {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-        val keyboard = window.keyboard
-
         val display = UIDisplay(window)
 
         val font = FontLoader.loadFont(FontLoader.DEFAULT_FONT_FAMILY, 48f, 512, 512,
@@ -40,26 +36,11 @@ object UIButtonExample {
         display.add(container)
 
         val uiButton = UIButton().apply {
-            style.x.value = center()
-            style.y.value = center()
             style.width.value = percent(50f)
             style.height.value = ratio(.5f)
             setOnAction { println("Clicked!") }
         }
         container.add(uiButton)
-
-        val text = """
-            Lwjgl!!, some symbols?
-            5! = 1 * 2 * 3 * 4 * 5 = 120.
-            write here
-        """.trimIndent()
-
-        val writeable = UITextField(text).apply {
-            style.x.value = center()
-            style.width.value = percent(50f)
-            style.height.value = percent(50f)
-        }
-        container.add(writeable)
 
         val uiFps = UIText("").apply {
             style.fontColour.set(Colours.WHITE)
@@ -69,11 +50,13 @@ object UIButtonExample {
 
         val fps = Fps()
 
+        val keyboard = window.keyboard
+
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            container.update()
+            display.update()
 
             GlUtils.clear(GlBuffer.COLOUR)
-            container.render(RenderContext(null))
+            display.render(RenderContext(null))
 
             window.swapBuffers()
             window.pollEvents()
@@ -82,10 +65,8 @@ object UIButtonExample {
             fps.update()
         }
 
-        println(writeable.text)
-
         font.delete()
-        container.delete()
+        display.delete()
         window.destroy()
     }
 }
