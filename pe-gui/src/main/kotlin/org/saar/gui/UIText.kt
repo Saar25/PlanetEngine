@@ -1,6 +1,5 @@
 package org.saar.gui
 
-import org.jproperty.property.SimpleObjectProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer
@@ -12,7 +11,7 @@ class UIText(text: String = "") : UIChildNode {
 
     constructor() : this("")
 
-    override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
+    override var parent: UIParentNode = UINullNode
 
     override val style = TextStyle(this)
 
@@ -35,8 +34,8 @@ class UIText(text: String = "") : UIChildNode {
     private fun updateLetters() {
         this.maxWidth = this.parent.style.width.get()
 
-        val font = this.style.font.family.value
-        val fontScale = this.style.fontSize.size.get() / font.size
+        val font = this.style.font.family
+        val fontScale = this.style.fontSize.size / font.size
         val offset = Vector2.of(0f, font.lineHeight * fontScale)
 
         var contentWidth = 0f

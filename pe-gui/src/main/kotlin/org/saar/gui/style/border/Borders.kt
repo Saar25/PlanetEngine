@@ -1,42 +1,24 @@
 package org.saar.gui.style.border
 
-import org.jproperty.binding.IntegerWrapper
 import org.saar.gui.UIChildNode
 
 class Borders(private val container: UIChildNode) : ReadonlyBorders {
 
     var topValue: BorderValue = BorderValues.none
-        set(value) {
-            this.top.set(value.buildTop(this.container))
-            field = value
-        }
 
     var rightValue: BorderValue = BorderValues.none
-        set(value) {
-            this.right.set(value.buildRight(this.container))
-            field = value
-        }
 
     var bottomValue: BorderValue = BorderValues.none
-        set(value) {
-            this.bottom.set(value.buildBottom(this.container))
-            field = value
-        }
 
     var leftValue: BorderValue = BorderValues.none
-        set(value) {
-            this.left.set(value.buildLeft(this.container))
-            field = value
-        }
 
+    override val top get() = this.topValue.computeTop(this.container)
 
-    override val top = IntegerWrapper(this.topValue.buildTop(this.container))
+    override val right get() = this.rightValue.computeRight(this.container)
 
-    override val right = IntegerWrapper(this.rightValue.buildRight(this.container))
+    override val bottom get() = this.bottomValue.computeBottom(this.container)
 
-    override val bottom = IntegerWrapper(this.bottomValue.buildBottom(this.container))
-
-    override val left = IntegerWrapper(this.leftValue.buildLeft(this.container))
+    override val left get() = this.leftValue.computeLeft(this.container)
 
     fun set(top: Int, right: Int, bottom: Int, left: Int) {
         this.topValue = BorderValues.pixels(top)

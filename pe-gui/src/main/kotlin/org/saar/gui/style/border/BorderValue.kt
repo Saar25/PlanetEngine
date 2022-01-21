@@ -1,14 +1,13 @@
 package org.saar.gui.style.border
 
-import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 
 interface BorderValue {
-    fun buildTop(container: UIChildNode): ObservableIntegerValue
+    fun computeTop(container: UIChildNode): Int
 
-    fun buildRight(container: UIChildNode): ObservableIntegerValue
+    fun computeRight(container: UIChildNode): Int
 
-    fun buildBottom(container: UIChildNode): ObservableIntegerValue
+    fun computeBottom(container: UIChildNode): Int
 
-    fun buildLeft(container: UIChildNode): ObservableIntegerValue
+    fun computeLeft(container: UIChildNode): Int
 }

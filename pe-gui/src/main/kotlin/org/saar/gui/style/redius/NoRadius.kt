@@ -1,12 +1,10 @@
 package org.saar.gui.style.redius
 
-import org.jproperty.constant.ConstantInteger
-
 object NoRadius : ReadonlyRadius {
-    override val topRight = ConstantInteger(0)
-    override val topLeft = ConstantInteger(0)
-    override val bottomRight = ConstantInteger(0)
-    override val bottomLeft = ConstantInteger(0)
+    override val topRight = 0
+    override val topLeft = 0
+    override val bottomRight = 0
+    override val bottomLeft = 0
 
     override fun isZero(): Boolean = true
 }

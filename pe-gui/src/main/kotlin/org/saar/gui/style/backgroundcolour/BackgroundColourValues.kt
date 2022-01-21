@@ -1,8 +1,5 @@
 package org.saar.gui.style.backgroundcolour
 
-import org.jproperty.ObservableValue
-import org.jproperty.constant.ConstantObject
-import org.jproperty.map
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 
@@ -10,28 +7,24 @@ object BackgroundColourValues {
 
     @JvmStatic
     val inherit: BackgroundColourValue = object : BackgroundColourValue {
-        override fun buildTopRight(container: UIChildNode): ObservableValue<Colour> =
-            container.parentProperty.map { it.style.backgroundColour.topRight.value }
+        override fun computeTopRight(container: UIChildNode) = container.parent.style.backgroundColour.topRight
 
-        override fun buildTopLeft(container: UIChildNode): ObservableValue<Colour> =
-            container.parentProperty.map { it.style.backgroundColour.topLeft.value }
+        override fun computeTopLeft(container: UIChildNode) = container.parent.style.backgroundColour.topLeft
 
-        override fun buildBottomRight(container: UIChildNode): ObservableValue<Colour> =
-            container.parentProperty.map { it.style.backgroundColour.bottomRight.value }
+        override fun computeBottomRight(container: UIChildNode) = container.parent.style.backgroundColour.bottomRight
 
-        override fun buildBottomLeft(container: UIChildNode): ObservableValue<Colour> =
-            container.parentProperty.map { it.style.backgroundColour.bottomLeft.value }
+        override fun computeBottomLeft(container: UIChildNode) = container.parent.style.backgroundColour.bottomLeft
     }
 
     @JvmStatic
     fun of(value: Colour): BackgroundColourValue = object : BackgroundColourValue {
-        override fun buildTopRight(container: UIChildNode) = ConstantObject(value)
+        override fun computeTopRight(container: UIChildNode) = value
 
-        override fun buildTopLeft(container: UIChildNode) = ConstantObject(value)
+        override fun computeTopLeft(container: UIChildNode) = value
 
-        override fun buildBottomRight(container: UIChildNode) = ConstantObject(value)
+        override fun computeBottomRight(container: UIChildNode) = value
 
-        override fun buildBottomLeft(container: UIChildNode) = ConstantObject(value)
+        override fun computeBottomLeft(container: UIChildNode) = value
     }
 
 }

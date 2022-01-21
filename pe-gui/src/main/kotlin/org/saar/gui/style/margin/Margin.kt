@@ -1,42 +1,25 @@
 package org.saar.gui.style.margin
 
-import org.jproperty.binding.IntegerWrapper
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.margin.MarginValues.pixels
 
 class Margin(private val container: UIChildNode) : ReadonlyMargin {
 
     var topValue: MarginValue = MarginValues.none
-        set(value) {
-            this.top.set(value.buildTop(this.container))
-            field = value
-        }
 
     var rightValue: MarginValue = MarginValues.none
-        set(value) {
-            this.right.set(value.buildRight(this.container))
-            field = value
-        }
 
     var bottomValue: MarginValue = MarginValues.none
-        set(value) {
-            this.bottom.set(value.buildBottom(this.container))
-            field = value
-        }
 
     var leftValue: MarginValue = MarginValues.none
-        set(value) {
-            this.left.set(value.buildLeft(this.container))
-            field = value
-        }
 
-    override val top = IntegerWrapper(this.topValue.buildTop(this.container))
+    override val top get() = this.topValue.computeTop(this.container)
 
-    override val right = IntegerWrapper(this.rightValue.buildRight(this.container))
+    override val right get() = this.rightValue.computeRight(this.container)
 
-    override val bottom = IntegerWrapper(this.bottomValue.buildBottom(this.container))
+    override val bottom get() = this.bottomValue.computeBottom(this.container)
 
-    override val left = IntegerWrapper(this.leftValue.buildLeft(this.container))
+    override val left get() = this.leftValue.computeLeft(this.container)
 
     fun set(top: MarginValue, right: MarginValue, bottom: MarginValue, left: MarginValue) {
         this.topValue = top

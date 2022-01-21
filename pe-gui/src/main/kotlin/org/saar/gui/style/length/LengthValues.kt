@@ -22,10 +22,10 @@ object LengthValues {
     @JvmStatic
     val fill = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) =
-            container.parent.style.width.get() - container.style.borders.left.get() - container.style.borders.right.get()
+            container.parent.style.width.get() - container.style.borders.left - container.style.borders.right
 
         override fun computeAxisY(container: UIChildNode) =
-            container.parent.style.height.get() - container.style.borders.top.get() - container.style.borders.bottom.get()
+            container.parent.style.height.get() - container.style.borders.top - container.style.borders.bottom
 
         override fun computeMinAxisX(container: UIChildNode) = 0
 
@@ -101,57 +101,5 @@ object LengthValues {
         override fun computeMinAxisX(container: UIChildNode) = (container.style.height.getMin() * ratio).toInt()
 
         override fun computeMinAxisY(container: UIChildNode) = (container.style.width.getMin() * ratio).toInt()
-    }
-
-    @JvmStatic
-    fun add(a: LengthValue, b: LengthValue) = object : LengthValue {
-        override fun computeAxisX(container: UIChildNode) =
-            a.computeAxisX(container) + b.computeAxisX(container)
-
-        override fun computeAxisY(container: UIChildNode) =
-            a.computeAxisY(container) + b.computeAxisY(container)
-
-        override fun computeMinAxisX(container: UIChildNode) =
-            a.computeMinAxisX(container) + b.computeMinAxisX(container)
-
-        override fun computeMinAxisY(container: UIChildNode) =
-            a.computeMinAxisY(container) + b.computeMinAxisY(container)
-    }
-
-    @JvmStatic
-    fun sub(a: LengthValue, b: LengthValue) = object : LengthValue {
-        override fun computeAxisX(container: UIChildNode) =
-            a.computeAxisX(container) - b.computeAxisX(container)
-
-        override fun computeAxisY(container: UIChildNode) =
-            a.computeAxisY(container) - b.computeAxisY(container)
-
-        override fun computeMinAxisX(container: UIChildNode) =
-            a.computeMinAxisX(container) - b.computeMinAxisX(container)
-
-        override fun computeMinAxisY(container: UIChildNode) =
-            a.computeMinAxisY(container) - b.computeMinAxisY(container)
-    }
-
-    @JvmStatic
-    fun add(a: LengthValue, b: Int) = object : LengthValue {
-        override fun computeAxisX(container: UIChildNode) = a.computeAxisX(container) + b
-
-        override fun computeAxisY(container: UIChildNode) = a.computeAxisY(container) + b
-
-        override fun computeMinAxisX(container: UIChildNode) = a.computeMinAxisX(container) + b
-
-        override fun computeMinAxisY(container: UIChildNode) = a.computeMinAxisY(container) + b
-    }
-
-    @JvmStatic
-    fun sub(a: LengthValue, b: Int) = object : LengthValue {
-        override fun computeAxisX(container: UIChildNode) = a.computeAxisX(container) - b
-
-        override fun computeAxisY(container: UIChildNode) = a.computeAxisY(container) - b
-
-        override fun computeMinAxisX(container: UIChildNode) = a.computeMinAxisX(container) - b
-
-        override fun computeMinAxisY(container: UIChildNode) = a.computeMinAxisY(container) - b
     }
 }

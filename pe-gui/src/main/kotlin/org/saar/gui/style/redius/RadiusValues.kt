@@ -1,46 +1,40 @@
 package org.saar.gui.style.redius
 
-import org.jproperty.constant.ConstantInteger
-import org.jproperty.flatMapToInteger
 import org.saar.gui.UIChildNode
 
 object RadiusValues {
 
     @JvmStatic
     val inherit: RadiusValue = object : RadiusValue {
-        override fun buildTopRight(container: UIChildNode) =
-            container.parentProperty.flatMapToInteger { it.style.radius.topRight }
+        override fun computeTopRight(container: UIChildNode) = container.parent.style.radius.topRight
 
-        override fun buildTopLeft(container: UIChildNode) =
-            container.parentProperty.flatMapToInteger { it.style.radius.topLeft }
+        override fun computeTopLeft(container: UIChildNode) = container.parent.style.radius.topLeft
 
-        override fun buildBottomRight(container: UIChildNode) =
-            container.parentProperty.flatMapToInteger { it.style.radius.bottomRight }
+        override fun computeBottomRight(container: UIChildNode) = container.parent.style.radius.bottomRight
 
-        override fun buildBottomLeft(container: UIChildNode) =
-            container.parentProperty.flatMapToInteger { it.style.radius.bottomLeft }
+        override fun computeBottomLeft(container: UIChildNode) = container.parent.style.radius.bottomLeft
     }
 
     @JvmStatic
     val none: RadiusValue = object : RadiusValue {
-        override fun buildTopRight(container: UIChildNode) = ConstantInteger(0)
+        override fun computeTopRight(container: UIChildNode) = 0
 
-        override fun buildTopLeft(container: UIChildNode) = ConstantInteger(0)
+        override fun computeTopLeft(container: UIChildNode) = 0
 
-        override fun buildBottomRight(container: UIChildNode) = ConstantInteger(0)
+        override fun computeBottomRight(container: UIChildNode) = 0
 
-        override fun buildBottomLeft(container: UIChildNode) = ConstantInteger(0)
+        override fun computeBottomLeft(container: UIChildNode) = 0
     }
 
     @JvmStatic
     fun pixels(value: Int): RadiusValue = object : RadiusValue {
-        override fun buildTopRight(container: UIChildNode) = ConstantInteger(value)
+        override fun computeTopRight(container: UIChildNode) = value
 
-        override fun buildTopLeft(container: UIChildNode) = ConstantInteger(value)
+        override fun computeTopLeft(container: UIChildNode) = value
 
-        override fun buildBottomRight(container: UIChildNode) = ConstantInteger(value)
+        override fun computeBottomRight(container: UIChildNode) = value
 
-        override fun buildBottomLeft(container: UIChildNode) = ConstantInteger(value)
+        override fun computeBottomLeft(container: UIChildNode) = value
     }
 
 }

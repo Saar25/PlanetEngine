@@ -1,14 +1,13 @@
 package org.saar.gui.style.redius
 
-import org.jproperty.value.ObservableIntegerValue
 import org.saar.gui.UIChildNode
 
 interface RadiusValue {
-    fun buildTopRight(container: UIChildNode): ObservableIntegerValue
+    fun computeTopRight(container: UIChildNode): Int
 
-    fun buildTopLeft(container: UIChildNode): ObservableIntegerValue
+    fun computeTopLeft(container: UIChildNode): Int
 
-    fun buildBottomRight(container: UIChildNode): ObservableIntegerValue
+    fun computeBottomRight(container: UIChildNode): Int
 
-    fun buildBottomLeft(container: UIChildNode): ObservableIntegerValue
+    fun computeBottomLeft(container: UIChildNode): Int
 }

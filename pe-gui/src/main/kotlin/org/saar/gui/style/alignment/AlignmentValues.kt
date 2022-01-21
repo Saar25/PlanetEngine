@@ -17,8 +17,8 @@ object AlignmentValues {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             return container.children.takeWhile { it != child }.sumOf {
                 it.style.width.get() +
-                        it.style.borders.left.get() + it.style.borders.right.get() +
-                        it.style.margin.left.get() + it.style.margin.right.get()
+                        it.style.borders.left + it.style.borders.right +
+                        it.style.margin.left + it.style.margin.right
             }
         }
 
@@ -32,8 +32,8 @@ object AlignmentValues {
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
             return container.children.takeWhile { it != child }.sumOf {
                 it.style.height.get() +
-                        it.style.borders.top.get() + it.style.borders.bottom.get() +
-                        it.style.margin.top.get() + it.style.margin.bottom.get()
+                        it.style.borders.top + it.style.borders.bottom +
+                        it.style.margin.top + it.style.margin.bottom
             }
         }
     }

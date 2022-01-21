@@ -1,6 +1,5 @@
 package org.saar.gui
 
-import org.jproperty.property.SimpleObjectProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.BlockStyle
@@ -15,7 +14,7 @@ class UIBlock : UIChildNode {
 
     var discardMap: ReadOnlyTexture = Texture2D.NULL
 
-    override val parentProperty = SimpleObjectProperty<UIParentNode>(UINullNode)
+    override var parent: UIParentNode = UINullNode
 
     override val style = BlockStyle(this)
 
