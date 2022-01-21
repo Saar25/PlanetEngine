@@ -86,7 +86,7 @@ class UIText(text: String = "") : UIChildNode {
     override fun contains(x: Int, y: Int): Boolean {
         return x >= this.style.position.getX() &&
                 x <= this.style.position.getX() + this.style.width.get() &&
-                x >= this.style.position.getY() &&
-                x <= this.style.position.getY() + this.style.height.get()
+                y >= this.style.position.getY() &&
+                y <= this.style.position.getY() + this.style.height.get()
     }
 }
