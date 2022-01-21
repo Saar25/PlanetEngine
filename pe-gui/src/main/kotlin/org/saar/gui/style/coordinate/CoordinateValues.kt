@@ -28,7 +28,7 @@ object CoordinateValues {
     }
 
     @JvmStatic
-    fun center() = object : CoordinateValue {
+    val center = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) =
             (container.parent.style.width.get() - container.style.width.get()) / 2
 

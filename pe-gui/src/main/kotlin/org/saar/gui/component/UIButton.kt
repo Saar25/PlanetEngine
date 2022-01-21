@@ -7,6 +7,7 @@ import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
+import org.saar.gui.style.coordinate.CoordinateValues.center
 import org.saar.gui.style.fontsize.FontSizeValues
 import org.saar.gui.style.position.PositionValues.absolute
 
@@ -23,6 +24,8 @@ class UIButton : UIComponent() {
     val uiText = UIText("Button").apply {
         style.fontSize.value = FontSizeValues.percent(48 / 100f)
         style.position.value = absolute
+        style.x.value = center
+        style.y.value = center
     }
 
     override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }

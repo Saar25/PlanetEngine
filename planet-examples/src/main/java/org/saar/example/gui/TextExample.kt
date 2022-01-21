@@ -26,8 +26,8 @@ object TextExample {
 
         val container = UIElement().apply {
             style.position.value = absolute
-            style.x.value = center()
-            style.y.value = center()
+            style.x.value = center
+            style.y.value = center
             style.width.value = percent(90f)
             style.height.value = percent(90f)
             style.fontColour.set(Colours.WHITE)
@@ -72,8 +72,8 @@ object TextExample {
         """.trimIndent().replace('\n', ' ')
 
         val textElement = UIText(text).apply {
-            style.x.value = center()
-            style.y.value = center()
+            style.x.value = center
+            style.y.value = center
             style.fontSize.set(24)
         }
         container.add(textElement)
