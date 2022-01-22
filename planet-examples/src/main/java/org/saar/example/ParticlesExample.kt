@@ -26,6 +26,7 @@ import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.position.PositionValues.relative
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
@@ -59,12 +60,12 @@ fun main() {
 
     val uiContainer = UIElement().apply {
         style.alignment.value = AlignmentValues.vertical
+        style.width.value = LengthValues.fill
     }
 
     uiDisplay.add(uiContainer)
 
     val uiFps = UIText("Fps: ???").apply {
-        style.position.value = relative
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
         style.backgroundColour.set(Colours.BLACK)
@@ -72,7 +73,6 @@ fun main() {
     uiContainer.add(uiFps)
 
     val uiTime = UIText("Time: ???").apply {
-        style.position.value = relative
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
         style.backgroundColour.set(Colours.BLACK)

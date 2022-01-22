@@ -12,7 +12,9 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIBlock
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -94,6 +96,8 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()
+        ProvokingVertex.setFirst()
+        CullFace.disable()
     }
 
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
