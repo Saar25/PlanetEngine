@@ -1,16 +1,17 @@
 package org.saar.gui
 
-import org.saar.gui.block.UIBlock
 import org.saar.gui.style.WindowStyle
 import org.saar.lwjgl.glfw.window.Window
 
-class UIDisplay(private val window: Window) : UIParentElement {
+class UIDisplay(private val window: Window) : UIParentNode {
 
-    override val children = mutableListOf<UIElement>()
+    override val children = mutableListOf<UINode>()
 
-    override val style = WindowStyle(this.window)
+    override val style = WindowStyle(this)
 
-    override val uiBlock = UIBlock(this.style)
+    val width get() = this.window.width
+
+    val height get() = this.window.height
 
     init {
         this.window.mouse.addClickListener(this::onMouseClickEvent)
@@ -21,8 +22,10 @@ class UIDisplay(private val window: Window) : UIParentElement {
         this.window.keyboard.addKeyRepeatListener(this::onKeyRepeatEvent)
     }
 
-    fun add(uiNode: UIChildElement) {
+    fun add(uiNode: UIChildNode) {
         this.children.add(uiNode)
         uiNode.parent = this
     }
+
+    override fun contains(x: Int, y: Int) = true
 }

@@ -1,11 +1,10 @@
 package org.saar.gui.style.fontcolour
 
-import org.saar.gui.style.Colour
 import org.saar.gui.style.Colours
 
 object NoFontColour : ReadonlyFontColour {
 
-    override val colour: Colour = Colours.BLACK
+    override val colour = Colours.BLACK
 
-    override fun toString() = "[Corners: ${this.colour}]"
+    override fun toString() = "[FontColour: $colour]"
 }

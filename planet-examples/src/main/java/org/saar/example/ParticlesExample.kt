@@ -22,8 +22,12 @@ import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.util.Fps
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Colours
+import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.length.LengthValues
+import org.saar.gui.style.position.PositionValues.relative
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -54,23 +58,26 @@ fun main() {
 
     val uiDisplay = UIDisplay(window)
 
-    val uiFps = UITextElement("Fps: ???").apply {
-        style.fontSize.set(30)
-        style.fontColour.set(Colours.WHITE)
-        style.x.set(30)
-        style.y.set(30)
-        style.backgroundColour.set(Colours.BLACK)
+    val uiContainer = UIElement().apply {
+        style.alignment.value = AlignmentValues.vertical
+        style.width.value = LengthValues.fill
     }
-    uiDisplay.add(uiFps)
 
-    val uiTime = UITextElement("Time: ???").apply {
+    uiDisplay.add(uiContainer)
+
+    val uiFps = UIText("Fps: ???").apply {
         style.fontSize.set(30)
         style.fontColour.set(Colours.WHITE)
-        style.x.set(30)
-        style.y.set(60)
         style.backgroundColour.set(Colours.BLACK)
     }
-    uiDisplay.add(uiTime)
+    uiContainer.add(uiFps)
+
+    val uiTime = UIText("Time: ???").apply {
+        style.fontSize.set(30)
+        style.fontColour.set(Colours.WHITE)
+        style.backgroundColour.set(Colours.BLACK)
+    }
+    uiContainer.add(uiTime)
 
     val particlesComponents = NodeComponentGroup(MyParticlesComponent())
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
@@ -98,8 +105,8 @@ fun main() {
         window.swapBuffers()
         window.pollEvents()
 
-        uiFps.uiText.text = "Fps: ${fps.fps().format(2)}"
-        uiTime.uiText.text = "Time: $time"
+        uiFps.text = "Fps: ${fps.fps().format(2)}"
+        uiTime.text = "Time: $time"
         fps.update()
     }
 

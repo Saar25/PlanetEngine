@@ -1,10 +1,8 @@
 package org.saar.gui.component
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.renderer.RenderContext
-import org.saar.gui.UIBlockElement
 import org.saar.gui.UIComponent
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.style.Colours
 
@@ -21,24 +19,21 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    private val uiBackground = UIBlockElement().also {
-        it.parent = this
-        it.style.backgroundColour.set(Colours.WHITE)
-        it.style.borderColour.set(Colours.DARK_GRAY)
-        it.style.borders.set(2)
+    val uiBackground = UIText().apply {
+        style.borders.set(2)
     }
-    private val uiTextElement = UITextElement().also { it.parent = this }
 
-    override val children = listOf(this.uiBackground, this.uiTextElement)
+    val uiText = UIText().apply {
+        this.text = text
+    }
 
-    val text: String get() = this.uiTextElement.uiText.text
+    override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }
+
+    val text: String get() = this.uiText.text
 
     init {
-        this.uiTextElement.uiText.text = text
-    }
-
-    override fun renderText(context: RenderContext) {
-        this.uiTextElement.render(context)
+        this.style.backgroundColour.set(Colours.WHITE)
+        this.style.borderColour.set(Colours.DARK_GRAY)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)
@@ -46,9 +41,9 @@ class UITextField(text: String = "") : UIComponent() {
     override fun onKeyRepeat(event: KeyboardEvent) = changeTextByKeyboard(event)
 
     private fun changeTextByKeyboard(event: KeyboardEvent) {
-        val font = this.style.font.value.compute(this.parent.style, this.style)
+        val font = this.style.font.value.compute(this)
 
-        this.uiTextElement.uiText.text = when {
+        this.uiText.text = when {
             event.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
                 if (event.modifiers.isCtrl()) {
                     this.text.dropLast(this.text.length - this.text.lastIndexOfAny(charArrayOf(' ', '\n')))

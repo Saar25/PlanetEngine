@@ -1,6 +1,7 @@
 package org.saar.gui.style.fontsize
 
-fun interface ReadonlyFontSize {
+interface ReadonlyFontSize {
 
-    fun get(): Int
+    val size: Int
+
 }
