@@ -78,6 +78,16 @@ public class World {
         return chunk.getBlock(lx, y, lz);
     }
 
+    public int getHeight(int x, int z) {
+        final int cx = worldToChunkCoordinate(x);
+        final int cz = worldToChunkCoordinate(z);
+        final IChunk chunk = getChunk(cx, cz);
+
+        final int lx = x - cx * 16;
+        final int lz = z - cz * 16;
+        return chunk.getHeight(lx, lz);
+    }
+
     public void setBlock(int x, int y, int z, Block block) {
         final int cx = worldToChunkCoordinate(x);
         final int cz = worldToChunkCoordinate(z);

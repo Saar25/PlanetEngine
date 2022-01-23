@@ -9,4 +9,5 @@ interface ChunkVertex : Vertex {
     val blockId: Int
     val vertexId: Int
     val textureInc: Boolean
+    val shadow: Int
 }

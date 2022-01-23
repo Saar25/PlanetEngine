@@ -5,6 +5,7 @@ uniform ivec4 u_rayCastedFace;
 // Vertex outputs
 flat in int v_id;
 flat in int v_dir;
+flat in int v_shw;
 in vec2 v_uvCoords;
 in vec3 v_position;
 
@@ -18,6 +19,7 @@ void main(void) {
     f_colour = texture(u_atlas, v_uvCoords);
     if (f_colour.a < .5) discard;
     f_colour *= lights[v_dir];
+    f_colour *= 1 - v_shw / 10.0;
 
     if (u_rayCastedFace.w >= 0) {
         int glow = ((v_position.x >= u_rayCastedFace.x) && (v_position.x <= u_rayCastedFace.x + 1))

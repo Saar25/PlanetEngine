@@ -24,7 +24,8 @@ class ChunkMeshPrototype(
                 (vertex.y and 0xFF shl 16) or
                 (vertex.blockId and 0xFF shl 8) or
                 (vertex.vertexId and 7 shl 5) or
-                (vertex.textureInc.toInt() shl 4)
+                (vertex.textureInc.toInt() shl 4) or
+                (vertex.shadow and 15)
         this.dataBuffer.writer.writeInt(data)
     }
 
@@ -36,7 +37,8 @@ class ChunkMeshPrototype(
             y = data shr 16 and 0xFF,
             blockId = data shr 8 and 0xFF,
             vertexId = data shr 5 and 7,
-            textureInc = data shr 4 and 1 == 1
+            textureInc = data shr 4 and 1 == 1,
+            shadow = data and 15
         )
     }
 }

@@ -3,6 +3,8 @@ package org.saar.minecraft;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
+import org.joml.Vector3i;
+import org.joml.Vector3ic;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
@@ -18,6 +20,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class Chunk implements IChunk, Model {
 
+    private static final Vector3ic[] blockDirection = new Vector3i[]{
+            new Vector3i(+1, 0, 0),
+            new Vector3i(-1, 0, 0),
+            new Vector3i(0, +1, 0),
+            new Vector3i(0, -1, 0),
+            new Vector3i(0, 0, +1),
+            new Vector3i(0, 0, -1),
+    };
+
     private final Vector2i position;
     private final Block[] blocks;
 
@@ -28,6 +39,7 @@ public class Chunk implements IChunk, Model {
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
+    private int[] shadows = {0, 1, 2, 4, 8};
 
     public Chunk(int x, int z) {
         this.position = new Vector2i(x, z);
@@ -66,6 +78,15 @@ public class Chunk implements IChunk, Model {
         return 0;
     }
 
+    private int findHeight(int x, int z) {
+        for (int i = 255; i >= 0; i--) {
+            if (blocks[index(x, i, z)] != Blocks.AIR) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     @Override
     public Block getBlock(int x, int y, int z) {
         if (isInRange(x, y, z)) {
@@ -90,9 +111,14 @@ public class Chunk implements IChunk, Model {
             }
             this.blocks[index] = block;
 
-            final int heightIndex = index(x, z);
-            this.heights[heightIndex] = Math.max(this.heights[heightIndex], y);
             this.bounds.addBlock(getPosition().x() * 16 + x, y, getPosition().y() * 16 + z);
+
+            final int heightIndex = index(x, z);
+            if (block == Blocks.AIR && this.heights[heightIndex] == y) {
+                this.heights[heightIndex] = findHeight(x, y);
+            } else if (this.heights[heightIndex] <= y) {
+                this.heights[heightIndex] = y;
+            }
         }
     }
 
@@ -122,7 +148,6 @@ public class Chunk implements IChunk, Model {
         }
         this.waterMesh = FutureMesh.unloaded(writeMesh(world, this.waterBlocks));
     }
-
 
     @NotNull
     @Override
@@ -176,10 +201,30 @@ public class Chunk implements IChunk, Model {
         return GlThreadQueue.getInstance().supply(() -> {
             final ChunkMeshBuilder builder = ChunkMeshBuilder.fixed(faceCount);
             for (BlockFaceContainer b : blockFaceContainers) {
+                final int shadow = getShadow(world, b);
                 final int faceId = b.getBlock().getFaces().faceId(b.getDirection());
-                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection());
+                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection(), shadow);
             }
             return builder;
         });
+    }
+
+    private int getShadow(World world, BlockFaceContainer b) {
+        final Vector3ic direction = blockDirection[b.getDirection()];
+        final int x = b.getX() + direction.x() + getPosition().x() * 16;
+        final int y = b.getY() + direction.y();
+        final int z = b.getZ() + direction.z() + getPosition().y() * 16;
+
+        int shadow = 0;
+        for (int i = -2; i <= 2; i++) {
+            for (int j = -2; j <= 2; j++) {
+                if (world.getHeight(x + i, z + j) >= y) {
+                    final int pi = 2 - Math.abs(i);
+                    final int pj = 2 - Math.abs(j);
+                    shadow += shadows[pi + pj];
+                }
+            }
+        }
+        return shadow * 8 / 40;
     }
 }

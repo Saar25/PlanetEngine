@@ -34,6 +34,7 @@ uniform ivec2 u_dimensions;
 // Vertex outputs
 flat out int v_id;
 flat out int v_dir;
+flat out int v_shw;
 out vec2 v_uvCoords;
 out vec3 v_position;
 
@@ -44,6 +45,7 @@ float g_z;
 int g_id;
 int g_vId;
 int g_tex;
+int g_shw;
 
 // Methods declaration
 void init_globals(void);
@@ -53,6 +55,7 @@ void main(void) {
 
     v_id = g_id;
     v_dir = directionMap[g_vId];
+    v_shw = g_shw;
 
     vec2 uvCoordsOffset = vec2(g_id % u_dimensions.x, g_id / u_dimensions.y);
     int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + g_tex) % 4);
@@ -73,4 +76,5 @@ void init_globals(void) {
     g_id  =   int(in_data >> 0x08u & 0xFFu);
     g_vId =   int(in_data >> 0x05u & 0x07u);
     g_tex =   int(in_data >> 0x04u & 0x01u);
+    g_shw =   int(in_data >> 0x00u & 0x0Fu);
 }

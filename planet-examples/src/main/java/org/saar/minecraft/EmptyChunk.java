@@ -13,6 +13,11 @@ public class EmptyChunk implements IChunk {
     }
 
     @Override
+    public int getHeight(int x, int z) {
+        return 0;
+    }
+
+    @Override
     public Block getBlock(int x, int y, int z) {
         return Blocks.AIR;
     }

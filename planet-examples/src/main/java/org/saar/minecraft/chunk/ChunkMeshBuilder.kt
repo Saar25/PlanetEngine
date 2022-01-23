@@ -18,13 +18,13 @@ class ChunkMeshBuilder private constructor(
         intArrayOf(0, 4, 5, 1)
     )
 
-    fun addBlock(x: Int, y: Int, z: Int, id: Int) = repeat(6) { addFace(x, y, z, id, it) }
+    fun addBlock(x: Int, y: Int, z: Int, id: Int, shadow: Int) = repeat(6) { addFace(x, y, z, id, it, shadow) }
 
-    fun addFace(x: Int, y: Int, z: Int, id: Int, face: Int) {
+    fun addFace(x: Int, y: Int, z: Int, id: Int, face: Int, shadow: Int) {
         val faceIds = this.vertexIds[face]
         for (index in this.indices) {
             val vertex = Chunks.vertex(
-                x, y, z, id, faceIds[index], face == 0)
+                x, y, z, id, faceIds[index], face == 0, shadow)
             this.builder.addVertex(vertex)
         }
     }
