@@ -21,7 +21,13 @@ import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.gui.UIBlock;
 import org.saar.gui.UIDisplay;
+import org.saar.gui.UIElement;
+import org.saar.gui.UIText;
+import org.saar.gui.style.Colour;
 import org.saar.gui.style.Colours;
+import org.saar.gui.style.coordinate.CoordinateValues;
+import org.saar.gui.style.length.LengthValues;
+import org.saar.gui.style.position.PositionValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.input.mouse.MouseButton;
@@ -55,7 +61,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 3;
+    private static final int WORLD_RADIUS = 8;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
@@ -69,12 +75,24 @@ public class Minecraft {
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
+        final UIElement uiTextContainer = new UIElement();
+        uiTextContainer.getStyle().getWidth().set(LengthValues.getFill());
+        uiTextContainer.getStyle().getMargin().set(10);
+        uiDisplay.add(uiTextContainer);
+
+        final UIText uiFps = new UIText("Fps: ???");
+        uiFps.getStyle().getFontSize().set(40);
+        uiTextContainer.add(uiFps);
+
         final UIBlock square = new UIBlock();
         square.getStyle().getBorderColour().set(Colours.DARK_GRAY);
         square.getStyle().getBorders().set(2);
-        square.getStyle().getWidth().set(12);
-        square.getStyle().getHeight().set(12);
-
+        square.getStyle().getWidth().set(6);
+        square.getStyle().getHeight().set(6);
+        square.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .2f));
+        square.getStyle().getX().set(CoordinateValues.getCenter());
+        square.getStyle().getY().set(CoordinateValues.getCenter());
+        square.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiDisplay.add(square);
 
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
@@ -123,12 +141,12 @@ public class Minecraft {
 
         final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
                 geometryPass, uiGeometryPass, fxaaPass);
-        final ForwardRenderingPipeline underwater = new ForwardRenderingPipeline(
-                geometryPass, underwaterPass, uiGeometryPass, fxaaPass);
 
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera, pipeline);
 
         final Fps fps = new Fps();
+
+        long lastFpsUpdate = System.currentTimeMillis();
 
         long lastBlockPlace = System.currentTimeMillis();
 
@@ -144,6 +162,7 @@ public class Minecraft {
             GlThreadQueue.getInstance().run();
             camera.update();
             renderNode.update();
+            uiDisplay.update();
 
             if (world.getBlock(camera.getTransform().getPosition()) == Blocks.WATER) {
                 final ReadOnlyTexture2D rendererTexture = renderingPath.render().getBuffers().getAlbedo();
@@ -154,6 +173,10 @@ public class Minecraft {
                 renderingPath.render().toMainScreen();
             }
 
+            if (System.currentTimeMillis() - lastFpsUpdate >= 500) {
+                uiFps.setText(String.format("Fps: %.3f", fps.fps()));
+                lastFpsUpdate = System.currentTimeMillis();
+            }
             window.swapBuffers();
             window.pollEvents();
 
@@ -236,10 +259,6 @@ public class Minecraft {
                 PolygonMode.set(Face.FRONT_AND_BACK, PolygonModeValue.FILL);
             }
 
-            square.getStyle().getX().set(window.getWidth() / 2 - 6);
-            square.getStyle().getY().set(window.getHeight() / 2 - 6);
-
-            System.out.print("\r" + String.format("%.3f", fps.fps()));
             fps.update();
         }
 
