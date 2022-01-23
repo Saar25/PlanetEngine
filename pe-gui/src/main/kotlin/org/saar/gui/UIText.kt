@@ -7,11 +7,15 @@ import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
 import kotlin.properties.Delegates
 
-class UIText(val parent: UITextElement, text: String) {
+class UIText(text: String = "") : UIChildNode {
+
+    constructor() : this("")
+
+    override var parent: UIParentNode = UINullNode
+
+    override val style = TextStyle(this)
 
     private var isValid: Boolean = false
-
-    val style: TextStyle get() = this.parent.style
 
     var contentWidth: Int = 0
         private set
@@ -28,10 +32,10 @@ class UIText(val parent: UITextElement, text: String) {
     private var letters = emptyList<UILetter>()
 
     private fun updateLetters() {
-        this.maxWidth = this.parent.parent.style.width.get()
+        this.maxWidth = this.parent.style.width.get()
 
-        val font = this.style.font.get()
-        val fontScale = this.style.fontSize.get() / font.size
+        val font = this.style.font.family
+        val fontScale = this.style.fontSize.size / font.size
         val offset = Vector2.of(0f, font.lineHeight * fontScale)
 
         var contentWidth = 0f
@@ -63,9 +67,9 @@ class UIText(val parent: UITextElement, text: String) {
         this.contentHeight = offset.y.toInt()
     }
 
-    fun update() {
-        if (this.maxWidth != this.parent.parent.style.width.get()) {
-            this.maxWidth = this.parent.parent.style.width.get()
+    override fun update() {
+        if (this.maxWidth != this.parent.style.width.get()) {
+            this.maxWidth = this.parent.style.width.get()
             this.isValid = false
         }
 
@@ -75,7 +79,14 @@ class UIText(val parent: UITextElement, text: String) {
         }
     }
 
-    fun render(context: RenderContext) {
+    override fun render(context: RenderContext) {
         UILetterRenderer.render(context, this.letters)
+    }
+
+    override fun contains(x: Int, y: Int): Boolean {
+        return x >= this.style.position.getX() &&
+                x <= this.style.position.getX() + this.style.width.get() &&
+                y >= this.style.position.getY() &&
+                y <= this.style.position.getY() + this.style.height.get()
     }
 }

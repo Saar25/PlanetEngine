@@ -1,42 +1,45 @@
 package org.saar.gui.style
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.style.backgroundcolour.BackgroundColour
-import org.saar.gui.style.border.StyleBorders
-import org.saar.gui.style.bordercolour.BorderColour
-import org.saar.gui.style.colourmodifier.ColourModifier
-import org.saar.gui.style.coordinate.Coordinate
-import org.saar.gui.style.coordinate.Coordinates
-import org.saar.gui.style.font.StyleFont
-import org.saar.gui.style.fontcolour.FontColour
-import org.saar.gui.style.fontsize.FontSize
-import org.saar.gui.style.length.Length
-import org.saar.gui.style.length.Lengths
-import org.saar.gui.style.redius.StyleRadiuses
+import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.border.ReadonlyBorders
+import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
+import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.font.ReadonlyFontFamily
+import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontsize.ReadonlyFontSize
+import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.position.ReadonlyPosition
+import org.saar.gui.style.redius.ReadonlyRadius
 
-class Style(container: UIChildElement) : IStyle {
+interface Style {
 
-    override val x: Coordinate = Coordinates.X(container)
+    val position: ReadonlyPosition
 
-    override val y: Coordinate = Coordinates.Y(container)
+    val margin: ReadonlyMargin
 
-    override val width: Length = Lengths.Width(container)
+    val x: ReadonlyCoordinate
 
-    override val height: Length = Lengths.Height(container)
+    val y: ReadonlyCoordinate
 
-    override val fontSize: FontSize = FontSize(container)
+    val width: ReadonlyLength
 
-    override val fontColour: FontColour = FontColour(container)
+    val height: ReadonlyLength
 
-    override val font: StyleFont = StyleFont(container)
+    val fontSize: ReadonlyFontSize
 
-    override val colourModifier: ColourModifier = ColourModifier(container)
+    val fontColour: ReadonlyFontColour
 
-    override val borders: StyleBorders = StyleBorders(container)
+    val font: ReadonlyFontFamily
 
-    override val borderColour: BorderColour = BorderColour(container)
+    val colourModifier: ReadonlyColourModifier
 
-    override val radiuses: StyleRadiuses = StyleRadiuses(container)
+    val borders: ReadonlyBorders
 
-    override val backgroundColour: BackgroundColour = BackgroundColour(container)
+    val borderColour: ReadonlyBorderColour
+
+    val radius: ReadonlyRadius
+
+    val backgroundColour: ReadonlyBackgroundColour
 }

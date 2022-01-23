@@ -7,10 +7,12 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthFunction
 import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -19,8 +21,6 @@ import org.saar.lwjgl.opengl.shaders.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilTest
-import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object ParticlesDeferredRenderer : RendererPrototypeWrapper<ParticlesModel>(ParticlesDeferredRendererPrototype())
@@ -62,8 +62,8 @@ private class ParticlesDeferredRendererPrototype : RendererPrototype<ParticlesMo
     override fun vertexAttributes() = arrayOf("in_position", "in_age")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setProvokingVertexFirst()
-        GlUtils.setCullFace(GlCullFace.NONE)
+        ProvokingVertex.setFirst();
+        CullFace.disable()
         BlendTest.applyAlpha()
         DepthTest.apply(this.depthState)
         StencilTest.disable()

@@ -5,10 +5,8 @@ import org.saar.core.camera.projection.NullProjection;
 import org.saar.core.common.r2d.*;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
-import org.saar.core.renderer.RenderingPath;
-import org.saar.core.renderer.SimpleRenderingPath;
 import org.saar.core.renderer.p2d.GeometryPass2D;
-import org.saar.core.renderer.p2d.RenderingBuffers2D;
+import org.saar.core.renderer.p2d.RenderingPath2D;
 import org.saar.core.renderer.p2d.RenderingPipeline2D;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -37,8 +35,7 @@ public class PostProcessingExample {
                 new GaussianBlurPostProcessor(11, 2)
         );
 
-        final RenderingPath<RenderingBuffers2D> renderingPath =
-                new SimpleRenderingPath<>(camera, pipeline);
+        final RenderingPath2D renderingPath = new RenderingPath2D(camera, pipeline);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {

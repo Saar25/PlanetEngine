@@ -3,34 +3,40 @@ package org.saar.maths.transform;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.jproperty.binding.ObjectBinding;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Vector3;
 
 public final class SimpleTransform implements Transform {
 
-    private final Matrix4f transformation = Matrix4.create();
-
     private final Position position = Position.create();
     private final Rotation rotation = Rotation.create();
     private final Scale scale = Scale.create();
 
-    public SimpleTransform() {
-        getPosition().addListener(e -> updateTransformationMatrix());
-        getRotation().addListener(e -> updateTransformationMatrix());
-        getScale().addListener(e -> updateTransformationMatrix());
-    }
+    private final ObjectBinding<Matrix4f> transformation = new ObjectBinding<>() {
 
-    private void updateTransformationMatrix() {
-        Matrix4.ofTransformation(
-                getPosition().getValue(),
-                getRotation().getValue(),
-                getScale().getValue(),
-                this.transformation);
-    }
+        {
+            bind(SimpleTransform.this.position, SimpleTransform.this.rotation, SimpleTransform.this.scale);
+        }
+
+        @Override
+        protected Matrix4f compute() {
+            return Matrix4.ofTransformation(
+                    getPosition().getValue(),
+                    getRotation().getValue(),
+                    getScale().getValue(),
+                    Matrix4.create());
+        }
+
+        @Override
+        public void dispose() {
+            unbind(SimpleTransform.this.position, SimpleTransform.this.rotation, SimpleTransform.this.scale);
+        }
+    };
 
     @Override
     public Matrix4fc getTransformationMatrix() {
-        return this.transformation;
+        return this.transformation.getValue();
     }
 
     @Override

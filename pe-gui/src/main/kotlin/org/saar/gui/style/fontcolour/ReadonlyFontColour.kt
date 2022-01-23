@@ -8,4 +8,5 @@ interface ReadonlyFontColour : StyleProperty {
     val colour: Colour
 
     fun asInt() = this.colour.asInt()
+
 }

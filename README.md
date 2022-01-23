@@ -89,11 +89,11 @@ the rendering pipeline consists of some primary interfaces
 
 represents a vertex of the mesh
 
-```java
-public interface Vertex3D extends Vertex {
-    Vector3fc getPosition3f();
-    Vector3fc getNormal3f();
-    Vector3fc getColour3f();
+```kotlin
+interface Vertex3D : Vertex {
+    val position3f: Vector3fc
+    val normal3f: Vector3fc
+    val colour3f: Vector3fc
 }
 ```
 
@@ -101,9 +101,9 @@ public interface Vertex3D extends Vertex {
 
 represents an instance (used for instance rendering)
 
-```java
-public interface Instance3D extends Instance {
-    Transform getTransform();
+```kotlin
+interface Instance3D : Instance {
+    val transform: Transform
 }
 ```
 
@@ -166,10 +166,9 @@ override fun vertexAttributes() = arrayOf(
 
 // Being called before rendering
 override fun onRenderCycle(context: RenderContext) {
-    GlUtils.setCullFace(context.hints.cullFace)
-    GlUtils.enableAlphaBlending()
-    GlUtils.enableDepthTest()
-    GlUtils.setProvokingVertexFirst()
+    ProvokingVertex.setFirst();
+    BlendTest.disable()
+    DepthTest.enable()
 }
 
 // Being called before each instance draw
@@ -178,7 +177,7 @@ override fun onInstanceDraw(context: RenderContext, model: Model3D) {
     val p = context.camera.projection.matrix
     val m = model.transform.transformationMatrix
 
-    this.mvpMatrixUniform.value = p.mul(v, Matrix4.create()).mul(m)
+    this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
 }
 ```
 

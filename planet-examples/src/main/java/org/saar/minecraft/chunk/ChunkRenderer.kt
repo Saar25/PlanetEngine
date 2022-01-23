@@ -10,15 +10,16 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
+import org.saar.lwjgl.opengl.constants.Face
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
-import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 import org.saar.minecraft.Chunk
 import org.saar.minecraft.World
@@ -104,15 +105,14 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
 
     override fun onRenderCycle(context: RenderContext) {
         DepthTest.enable()
-        GlUtils.setCullFace(GlCullFace.BACK)
-        GlUtils.setProvokingVertexFirst()
+        ProvokingVertex.setFirst()
+        CullFace.set(true, Face.BACK)
         BlendTest.disable()
         ClipPlaneTest.disable()
 
-
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        projectionViewUniform.value = p.mul(v, Matrix4.create())
+        this.projectionViewUniform.value = p.mul(v, Matrix4.create())
     }
 
     override fun onInstanceDraw(context: RenderContext, chunk: Chunk) {

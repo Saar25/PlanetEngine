@@ -1,8 +1,8 @@
 package org.saar.maths.transform;
 
 import org.joml.Vector3fc;
-import org.jproperty.ReadOnlyProperty;
+import org.jproperty.ObservableValue;
 
-public interface ReadonlyScale extends ReadOnlyProperty<Vector3fc> {
+public interface ReadonlyScale extends ObservableValue<Vector3fc> {
 
 }

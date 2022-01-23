@@ -8,12 +8,12 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object DeferredRenderer3D : RendererPrototypeWrapper<Model3D>(DeferredRendererPrototype3D())
@@ -41,7 +41,7 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
         "in_position", "in_colour", "in_transformation")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setProvokingVertexFirst()
+        ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
 

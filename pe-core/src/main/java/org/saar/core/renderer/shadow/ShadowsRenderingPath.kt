@@ -6,16 +6,18 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
+import org.saar.lwjgl.opengl.constants.Face
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.lwjgl.opengl.utils.GlCullFace
 import org.saar.lwjgl.opengl.utils.GlUtils
 
 class ShadowsRenderingPath(
     quality: ShadowsQuality,
     projection: OrthographicProjection,
     light: IDirectionalLight,
-    private val renderNode: ShadowsRenderNode) : RenderingPath<ShadowsBuffers> {
+    private val renderNode: ShadowsRenderNode,
+) : RenderingPath<ShadowsBuffers> {
 
     val camera: ShadowsCamera = ShadowsCamera(projection).apply {
         transform.rotation.lookAlong(light.direction)
@@ -34,7 +36,7 @@ class ShadowsRenderingPath(
 
         val context = RenderContext(this.camera)
 
-        GlUtils.setCullFace(GlCullFace.FRONT)
+        CullFace.set(true, Face.FRONT)
         this.renderNode.renderShadows(context)
 
         return RenderingOutput(this.screen, this.prototype.buffers)

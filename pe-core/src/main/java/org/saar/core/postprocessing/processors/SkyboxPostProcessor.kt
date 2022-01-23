@@ -7,6 +7,7 @@ import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendFunction
+import org.saar.lwjgl.opengl.blend.BlendState
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.blend.BlendValue
 import org.saar.lwjgl.opengl.shaders.GlslVersion
@@ -23,12 +24,13 @@ class SkyboxPostProcessor(cubeMap: CubeMapTexture) : PostProcessor {
     private val prototype = SkyboxPostProcessorPrototype(cubeMap)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    private val blendFunction = BlendFunction(
-        BlendValue.ONE_MINUS_DST_ALPHA, BlendValue.DST_ALPHA)
+    private val blendState = BlendState(
+        BlendFunction(BlendValue.ONE_MINUS_DST_ALPHA, BlendValue.DST_ALPHA)
+    )
 
     override fun prepare(context: RenderContext, buffers: PostProcessingBuffers) {
         StencilTest.disable()
-        BlendTest.apply(this.blendFunction)
+        BlendTest.apply(this.blendState)
     }
 
     override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {

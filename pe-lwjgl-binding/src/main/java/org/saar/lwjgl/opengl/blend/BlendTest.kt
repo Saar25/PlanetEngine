@@ -4,45 +4,54 @@ import org.lwjgl.opengl.GL11
 
 object BlendTest {
 
-    private val ALPHA = BlendFunction(BlendValue.SRC_ALPHA, BlendValue.ONE_MINUS_SRC_ALPHA)
-    private val ADDITIVE = BlendFunction(BlendValue.SRC_ALPHA, BlendValue.ONE)
+    private val ALPHA = BlendState(
+        function = BlendFunction(BlendValue.SRC_ALPHA, BlendValue.ONE_MINUS_SRC_ALPHA),
+    )
 
-    private val DEFAULTS = BlendFunction(BlendValue.ONE, BlendValue.ZERO)
+    private val ADDITIVE = BlendState(
+        function = BlendFunction(BlendValue.SRC_ALPHA, BlendValue.ONE),
+    )
 
-    private var current: BlendFunction = DEFAULTS
-    private var enabled: Boolean = false
+    private val DEFAULTS = BlendState(
+        enabled = false,
+        function = BlendFunction(BlendValue.ONE, BlendValue.ZERO),
+    )
+
+    private const val target = GL11.GL_BLEND
+
+    private var current: BlendState = DEFAULTS
 
     @JvmStatic
-    fun enable() {
-        if (!this.enabled) {
-            GL11.glEnable(GL11.GL_BLEND)
-            this.enabled = true
+    fun enable() = apply(enabled = true)
+
+    @JvmStatic
+    fun disable() = apply(enabled = false)
+
+    @JvmStatic
+    fun apply(state: BlendState) {
+        if (state.enabled != this.current.enabled) {
+            setEnabled(state.enabled)
         }
-    }
-
-    @JvmStatic
-    fun disable() {
-        if (this.enabled) {
-            GL11.glDisable(GL11.GL_BLEND)
-            this.enabled = false
-        }
-    }
-
-    @JvmStatic
-    fun apply(state: BlendFunction) {
-        enable()
-        if (state != this.current) {
-            setFunction(state)
+        if (state.function != this.current.function) {
+            setFunction(state.function)
         }
 
         this.current = state
     }
 
     @JvmStatic
+    fun apply(
+        enabled: Boolean = current.enabled,
+        function: BlendFunction = current.function,
+    ) = apply(BlendState(enabled, function))
+
+    @JvmStatic
     fun applyAlpha() = apply(ALPHA)
 
     @JvmStatic
     fun applyAdditive() = apply(ADDITIVE)
+
+    private fun setEnabled(enabled: Boolean) = if (enabled) GL11.glEnable(this.target) else GL11.glDisable(this.target)
 
     private fun setFunction(function: BlendFunction) = GL11.glBlendFunc(
         function.source.value, function.destination.value)

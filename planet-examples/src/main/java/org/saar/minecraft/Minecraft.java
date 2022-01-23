@@ -19,7 +19,7 @@ import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
 import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
-import org.saar.gui.UIBlockElement;
+import org.saar.gui.UIBlock;
 import org.saar.gui.UIDisplay;
 import org.saar.gui.style.Colours;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -28,13 +28,15 @@ import org.saar.lwjgl.glfw.input.mouse.MouseButton;
 import org.saar.lwjgl.glfw.input.mouse.MouseCursor;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
+import org.saar.lwjgl.opengl.constants.Face;
+import org.saar.lwjgl.opengl.polygonmode.PolygonMode;
+import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.texture.parameter.*;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 import org.saar.lwjgl.opengl.texture.values.WrapValue;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
@@ -67,7 +69,7 @@ public class Minecraft {
 
         final UIDisplay uiDisplay = new UIDisplay(window);
 
-        final UIBlockElement square = new UIBlockElement();
+        final UIBlock square = new UIBlock();
         square.getStyle().getBorderColour().set(Colours.DARK_GRAY);
         square.getStyle().getBorders().set(2);
         square.getStyle().getWidth().set(12);
@@ -229,9 +231,9 @@ public class Minecraft {
             }
 
             if (keyboard.isKeyPressed('R')) {
-                GlUtils.drawPolygonLine();
+                PolygonMode.set(Face.FRONT_AND_BACK, PolygonModeValue.LINE);
             } else {
-                GlUtils.drawPolygonFill();
+                PolygonMode.set(Face.FRONT_AND_BACK, PolygonModeValue.FILL);
             }
 
             square.getStyle().getX().set(window.getWidth() / 2 - 6);
