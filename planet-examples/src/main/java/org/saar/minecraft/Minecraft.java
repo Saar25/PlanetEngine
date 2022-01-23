@@ -1,7 +1,6 @@
 package org.saar.minecraft;
 
 import org.joml.SimplexNoise;
-import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.joml.Vector4i;
 import org.lwjgl.glfw.GLFW;
@@ -44,7 +43,6 @@ import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 import org.saar.lwjgl.opengl.texture.values.WrapValue;
 import org.saar.maths.transform.Position;
-import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
 import org.saar.minecraft.chunk.WaterRenderNode;
@@ -61,7 +59,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 8;
+    private static final int WORLD_RADIUS = 3;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
@@ -95,12 +93,6 @@ public class Minecraft {
         square.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiDisplay.add(square);
 
-        final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
-        final NodeComponentGroup cameraComponents = new NodeComponentGroup(
-                new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY)
-        );
-        final Camera camera = new Camera(projection, cameraComponents);
-        final Player player = new Player(camera);
 
         final WorldGenerator generator = WorldGenerationPipeline
                 .pipe(new TerrainGenerator(80))
@@ -108,6 +100,15 @@ public class Minecraft {
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
         final World world = new World(generator, THREAD_COUNT);
+
+        final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
+        final NodeComponentGroup cameraComponents = new NodeComponentGroup(
+                new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                new PlayerMovementComponent(window.getKeyboard(), world, SPEED, FLY_MODE)
+        );
+        final Camera camera = new Camera(projection, cameraComponents);
+        final Player player = new Player(camera);
+
         world.generateAround(camera.getTransform().getPosition(), WORLD_RADIUS);
 
         final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
@@ -179,46 +180,6 @@ public class Minecraft {
             }
             window.swapBuffers();
             window.pollEvents();
-
-            final Vector3f direction = Vector3.create();
-            if (keyboard.isKeyPressed('W')) {
-                direction.add(0, 0, -1);
-            }
-            if (keyboard.isKeyPressed('A')) {
-                direction.add(-1, 0, 0);
-            }
-            if (keyboard.isKeyPressed('S')) {
-                direction.add(0, 0, +1);
-            }
-            if (keyboard.isKeyPressed('D')) {
-                direction.add(+1, 0, 0);
-            }
-
-            direction.rotate(camera.getTransform().getRotation().getValue()).y = 0;
-
-            final float speed = keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) ? SPEED * 5 : SPEED;
-
-            if (!FLY_MODE) {
-                if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-                    player.jump(world);
-                }
-                if (direction.lengthSquared() > 0) {
-                    direction.normalize(speed);
-                }
-                player.move(world, direction, (float) fps.delta());
-            } else {
-                if (direction.lengthSquared() > 0) {
-                    direction.normalize(speed);
-                }
-
-                if (keyboard.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-                    direction.add(0, -SPEED, 0);
-                }
-                if (keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-                    direction.add(0, +SPEED, 0);
-                }
-                player.fly(world, direction);
-            }
 
             final BlockFaceContainer rayCast = player.rayCast(world);
             if (rayCast != null && rayCast.getBlock().isCollideable()) {
