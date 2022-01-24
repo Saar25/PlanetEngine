@@ -39,10 +39,11 @@ import org.saar.lwjgl.opengl.polygonmode.PolygonMode;
 import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
-import org.saar.lwjgl.opengl.texture.parameter.*;
+import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter;
+import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
+import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
-import org.saar.lwjgl.opengl.texture.values.WrapValue;
 import org.saar.maths.transform.Position;
 import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
@@ -77,12 +78,24 @@ public class Minecraft {
         final UIDisplay uiDisplay = new UIDisplay(window);
 
         final UIElement uiTextContainer = new UIElement();
-        uiTextContainer.getStyle().getWidth().set(LengthValues.getFill());
+        uiTextContainer.getStyle().getWidth().set(LengthValues.percent(20));
+        uiTextContainer.getStyle().getHeight().set(LengthValues.percent(20));
         uiTextContainer.getStyle().getMargin().set(10);
         uiDisplay.add(uiTextContainer);
 
+        final UIBlock uiTextBackground = new UIBlock();
+        uiTextBackground.getStyle().getPosition().setValue(PositionValues.getAbsolute());
+        uiTextBackground.getStyle().getWidth().setValue(LengthValues.getFill());
+        uiTextBackground.getStyle().getHeight().setValue(LengthValues.getFill());
+        uiTextBackground.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .8f));
+        uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
+        uiTextBackground.getStyle().getBorders().set(2);
+        uiTextBackground.getStyle().getRadius().set(5);
+        uiTextContainer.add(uiTextBackground);
+
         final UIText uiFps = new UIText("Fps: ???");
         uiFps.getStyle().getFontSize().set(40);
+        uiFps.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiTextContainer.add(uiFps);
 
         final UIBlock square = new UIBlock();
@@ -129,11 +142,8 @@ public class Minecraft {
         final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
         textureAtlas.applyParameters(
                 new TextureMagFilterParameter(MagFilterValue.NEAREST),
-                new TextureMinFilterParameter(MinFilterValue.NEAREST_MIPMAP_LINEAR),
-                new TextureAnisotropicFilterParameter(4),
-                new TextureSWrapParameter(WrapValue.CLAMP_TO_BORDER),
-                new TextureTWrapParameter(WrapValue.CLAMP_TO_BORDER),
-                new TextureBorderColourParameter(0, 0, 0, 0)
+                new TextureMinFilterParameter(MinFilterValue.LINEAR_MIPMAP_LINEAR),
+                new TextureAnisotropicFilterParameter(8)
         );
         textureAtlas.generateMipmap();
 
