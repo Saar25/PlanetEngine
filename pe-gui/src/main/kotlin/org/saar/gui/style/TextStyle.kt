@@ -30,12 +30,16 @@ class TextStyle(container: UIText) : Style {
         override fun get() = container.contentWidth
 
         override fun getMin() = container.contentWidth
+
+        override fun getMax() = container.contentWidth
     }
 
     override val height: ReadonlyLength = object : ReadonlyLength {
         override fun get() = container.contentHeight
 
         override fun getMin() = container.contentHeight
+
+        override fun getMax() = container.contentHeight
     }
 
     override val fontSize: FontSize = FontSize(container)

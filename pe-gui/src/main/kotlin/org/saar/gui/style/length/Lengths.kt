@@ -9,6 +9,8 @@ object Lengths {
         override fun get(): Int = this.value.computeAxisX(this.container)
 
         override fun getMin(): Int = this.value.computeMinAxisX(this.container)
+
+        override fun getMax(): Int = this.value.computeMaxAxisX(this.container)
     }
 
     class Height(private val container: UIChildNode) : Length() {
@@ -16,5 +18,7 @@ object Lengths {
         override fun get(): Int = this.value.computeAxisY(this.container)
 
         override fun getMin(): Int = this.value.computeMinAxisY(this.container)
+
+        override fun getMax(): Int = this.value.computeMaxAxisY(this.container)
     }
 }

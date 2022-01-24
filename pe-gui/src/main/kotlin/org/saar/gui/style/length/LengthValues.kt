@@ -10,62 +10,55 @@ object LengthValues {
 
     @JvmStatic
     val inherit = object : LengthValue {
-        override fun computeAxisX(container: UIChildNode) = container.parent.style.width.get()
+        override fun computeAxisX(container: UIChildNode) = container.parent.style.width.getMax()
 
-        override fun computeAxisY(container: UIChildNode) = container.parent.style.height.get()
+        override fun computeAxisY(container: UIChildNode) = container.parent.style.height.getMax()
 
         override fun computeMinAxisX(container: UIChildNode) = 0
 
         override fun computeMinAxisY(container: UIChildNode) = 0
+
+        override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
+
+        override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
     @JvmStatic
     val fill = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) =
-            container.parent.style.width.get() - container.style.borders.left - container.style.borders.right
+            container.parent.style.width.getMax() - container.style.borders.left - container.style.borders.right
 
         override fun computeAxisY(container: UIChildNode) =
-            container.parent.style.height.get() - container.style.borders.top - container.style.borders.bottom
+            container.parent.style.height.getMax() - container.style.borders.top - container.style.borders.bottom
 
         override fun computeMinAxisX(container: UIChildNode) = 0
 
         override fun computeMinAxisY(container: UIChildNode) = 0
+
+        override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
+
+        override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
     @JvmStatic
     val fit = object : LengthValue {
-        private var calculatingX = false
-        private var calculatingY = false
-
         override fun computeAxisX(container: UIChildNode): Int {
-            if (this.calculatingX) {
-                return container.parent.style.width.get()
-            }
-            this.calculatingX = true
-
-            val result = if (container !is UIParentNode || container.children.isEmpty()) 0
+            return if (container !is UIParentNode || container.children.isEmpty()) 0
             else container.children.maxOf { it.style.position.getX() + it.style.width.getMin() } - container.style.position.getX()
-
-            this.calculatingX = false
-            return result
         }
 
         override fun computeAxisY(container: UIChildNode): Int {
-            if (this.calculatingY) {
-                return container.parent.style.height.get()
-            }
-            this.calculatingY = true
-
-            val result = if (container !is UIParentNode || container.children.isEmpty()) 0
+            return if (container !is UIParentNode || container.children.isEmpty()) 0
             else container.children.maxOf { it.style.position.getY() + it.style.height.getMin() } - container.style.position.getY()
-
-            this.calculatingY = false
-            return result
         }
 
         override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
 
         override fun computeMinAxisY(container: UIChildNode) = computeAxisY(container)
+
+        override fun computeMaxAxisX(container: UIChildNode) = fill.computeMaxAxisX(container)
+
+        override fun computeMaxAxisY(container: UIChildNode) = fill.computeMaxAxisY(container)
     }
 
     @JvmStatic
@@ -74,22 +67,30 @@ object LengthValues {
 
         override fun computeAxisY(container: UIChildNode) = pixels
 
-        override fun computeMinAxisX(container: UIChildNode) = pixels
+        override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
 
-        override fun computeMinAxisY(container: UIChildNode) = pixels
+        override fun computeMinAxisY(container: UIChildNode) = computeAxisY(container)
+
+        override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
+
+        override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
     @JvmStatic
     fun percent(percents: Float) = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) =
-            (container.parent.style.width.get() * percents / 100).toInt()
+            (container.parent.style.width.getMax() * percents / 100).toInt()
 
         override fun computeAxisY(container: UIChildNode) =
-            (container.parent.style.height.get() * percents / 100).toInt()
+            (container.parent.style.height.getMax() * percents / 100).toInt()
 
         override fun computeMinAxisX(container: UIChildNode) = 0
 
         override fun computeMinAxisY(container: UIChildNode) = 0
+
+        override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
+
+        override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
     @JvmStatic
@@ -98,8 +99,12 @@ object LengthValues {
 
         override fun computeAxisY(container: UIChildNode) = (container.style.width.get() * ratio).toInt()
 
-        override fun computeMinAxisX(container: UIChildNode) = (container.style.height.getMin() * ratio).toInt()
+        override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
 
-        override fun computeMinAxisY(container: UIChildNode) = (container.style.width.getMin() * ratio).toInt()
+        override fun computeMinAxisY(container: UIChildNode) = computeAxisY(container)
+
+        override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
+
+        override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 }

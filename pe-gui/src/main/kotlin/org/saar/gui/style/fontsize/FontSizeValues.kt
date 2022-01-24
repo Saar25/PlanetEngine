@@ -12,9 +12,9 @@ object FontSizeValues {
     fun pixels(value: Int): FontSizeValue = FontSizeValue { value }
 
     @JvmStatic
-    fun percent(value: Float): FontSizeValue = FontSizeValue { (it.parent.style.height.get() * value).toInt() }
+    fun percent(value: Float): FontSizeValue = FontSizeValue { (it.parent.style.height.getMax() * value).toInt() }
 
     @JvmStatic
-    fun percentWidth(value: Float): FontSizeValue = FontSizeValue { (it.parent.style.width.get() * value).toInt() }
+    fun percentWidth(value: Float): FontSizeValue = FontSizeValue { (it.parent.style.width.getMax() * value).toInt() }
 
 }
