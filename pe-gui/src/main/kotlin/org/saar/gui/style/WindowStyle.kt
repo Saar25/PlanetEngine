@@ -42,12 +42,16 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
         override fun get() = uiDisplay.width
 
         override fun getMin() = uiDisplay.width
+
+        override fun getMax() = uiDisplay.width
     }
 
     override val height: ReadonlyLength = object : ReadonlyLength {
         override fun get() = uiDisplay.height
 
         override fun getMin() = uiDisplay.height
+
+        override fun getMax() = uiDisplay.height
     }
 
     override val fontSize: ReadonlyFontSize = NoFontSize

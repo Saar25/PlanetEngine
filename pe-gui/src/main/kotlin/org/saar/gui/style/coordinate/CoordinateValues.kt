@@ -21,19 +21,19 @@ object CoordinateValues {
     @JvmStatic
     fun percent(percents: Float) = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) =
-            (container.parent.style.width.get() * percents / 100).toInt()
+            (container.parent.style.width.getMax() * percents / 100).toInt()
 
         override fun computeAxisY(container: UIChildNode) =
-            (container.parent.style.height.get() * percents / 100).toInt()
+            (container.parent.style.height.getMax() * percents / 100).toInt()
     }
 
     @JvmStatic
     val center = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) =
-            (container.parent.style.width.get() - container.style.width.get()) / 2
+            (container.parent.style.width.getMax() - container.style.width.get()) / 2
 
         override fun computeAxisY(container: UIChildNode) =
-            (container.parent.style.height.get() - container.style.height.get()) / 2
+            (container.parent.style.height.getMax() - container.style.height.get()) / 2
     }
 
     @JvmStatic
@@ -46,28 +46,28 @@ object CoordinateValues {
     @JvmStatic
     fun percentCenter(percents: Float) = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) =
-            (container.parent.style.width.get() * percents / 100).toInt() - container.style.width.get() / 2
+            (container.parent.style.width.getMax() * percents / 100).toInt() - container.style.width.get() / 2
 
         override fun computeAxisY(container: UIChildNode) =
-            (container.parent.style.height.get() * percents / 100).toInt() - container.style.height.get() / 2
+            (container.parent.style.height.getMax() * percents / 100).toInt() - container.style.height.get() / 2
     }
 
     @JvmStatic
     fun pixelsEnd(pixels: Int) = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) =
-            container.parent.style.width.get() - pixels - container.style.width.get()
+            container.parent.style.width.getMax() - pixels - container.style.width.get()
 
         override fun computeAxisY(container: UIChildNode) =
-            container.parent.style.height.get() - pixels - container.style.height.get()
+            container.parent.style.height.getMax() - pixels - container.style.height.get()
     }
 
     @JvmStatic
     fun percentEnd(percents: Float) = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) =
-            (container.parent.style.width.get() * percents / 100).toInt() - container.style.width.get()
+            (container.parent.style.width.getMax() * percents / 100).toInt() - container.style.width.get()
 
         override fun computeAxisY(container: UIChildNode) =
-            (container.parent.style.height.get() * percents / 100).toInt() - container.style.height.get()
+            (container.parent.style.height.getMax() * percents / 100).toInt() - container.style.height.get()
     }
 
     @JvmStatic

@@ -32,7 +32,7 @@ class UIText(text: String = "") : UIChildNode {
     private var letters = emptyList<UILetter>()
 
     private fun updateLetters() {
-        this.maxWidth = this.parent.style.width.get()
+        this.maxWidth = this.parent.style.width.getMax()
 
         val font = this.style.font.family
         val fontScale = this.style.fontSize.size / font.size
@@ -68,8 +68,8 @@ class UIText(text: String = "") : UIChildNode {
     }
 
     override fun update() {
-        if (this.maxWidth != this.parent.style.width.get()) {
-            this.maxWidth = this.parent.style.width.get()
+        if (this.maxWidth != this.parent.style.width.getMax()) {
+            this.maxWidth = this.parent.style.width.getMax()
             this.isValid = false
         }
 

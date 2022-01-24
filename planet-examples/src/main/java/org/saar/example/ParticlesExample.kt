@@ -60,7 +60,6 @@ fun main() {
 
     val uiContainer = UIElement().apply {
         style.alignment.value = AlignmentValues.vertical
-        style.width.value = LengthValues.fill
     }
 
     uiDisplay.add(uiContainer)

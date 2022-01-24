@@ -5,4 +5,6 @@ interface ReadonlyLength {
     fun get(): Int
 
     fun getMin(): Int
+
+    fun getMax(): Int
 }
