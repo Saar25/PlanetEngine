@@ -39,6 +39,7 @@ uniform int u_transitionId;
 // Vertex outputs
 flat out int v_id;
 flat out int v_dir;
+flat out int v_shw;
 out vec2 v_uvCoords1;
 out vec2 v_uvCoords2;
 
@@ -49,6 +50,7 @@ float g_z;
 int g_id;
 int g_vId;
 int g_tex;
+int g_shw;
 
 // Methods declaration
 void init_globals(void);
@@ -58,6 +60,7 @@ void main(void) {
 
     v_id = g_id;
     v_dir = directionMap[g_vId];
+    v_shw = g_shw;
 
     int transitionId = v_dir == TOP_DIR ? u_transitionId : 0;
 
@@ -86,4 +89,5 @@ void init_globals(void) {
     g_id  =   int(in_data >> 0x08u & 0xFFu);
     g_vId =   int(in_data >> 0x05u & 0x07u);
     g_tex =   int(in_data >> 0x04u & 0x01u);
+    g_shw =   int(in_data >> 0x00u & 0x0Fu);
 }

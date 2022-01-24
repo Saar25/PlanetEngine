@@ -79,7 +79,7 @@ public class Minecraft {
 
         final UIElement uiTextContainer = new UIElement();
         uiTextContainer.getStyle().getWidth().set(LengthValues.percent(20));
-        uiTextContainer.getStyle().getHeight().set(LengthValues.percent(20));
+        uiTextContainer.getStyle().getHeight().set(LengthValues.percent(10));
         uiTextContainer.getStyle().getMargin().set(10);
         uiDisplay.add(uiTextContainer);
 
