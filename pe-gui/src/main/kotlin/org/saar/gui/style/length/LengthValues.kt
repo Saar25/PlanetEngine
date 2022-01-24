@@ -26,10 +26,14 @@ object LengthValues {
     @JvmStatic
     val fill = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) =
-            container.parent.style.width.getMax() - container.style.borders.left - container.style.borders.right
+            container.parent.style.width.get() -
+                    container.style.borders.left - container.style.borders.right -
+                    container.style.margin.left - container.style.margin.right
 
         override fun computeAxisY(container: UIChildNode) =
-            container.parent.style.height.getMax() - container.style.borders.top - container.style.borders.bottom
+            container.parent.style.height.get() -
+                    container.style.borders.top - container.style.borders.bottom -
+                    container.style.margin.top - container.style.margin.bottom
 
         override fun computeMinAxisX(container: UIChildNode) = 0
 
