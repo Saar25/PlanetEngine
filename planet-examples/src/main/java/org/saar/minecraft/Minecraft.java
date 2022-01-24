@@ -28,7 +28,6 @@ import org.saar.gui.UIText;
 import org.saar.gui.style.Colour;
 import org.saar.gui.style.Colours;
 import org.saar.gui.style.coordinate.CoordinateValues;
-import org.saar.gui.style.length.LengthValues;
 import org.saar.gui.style.position.PositionValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -80,15 +79,11 @@ public class Minecraft {
         final UIDisplay uiDisplay = new UIDisplay(window);
 
         final UIElement uiTextContainer = new UIElement();
-        uiTextContainer.getStyle().getWidth().set(LengthValues.percent(20));
-        uiTextContainer.getStyle().getHeight().set(LengthValues.percent(10));
         uiTextContainer.getStyle().getMargin().set(10);
         uiDisplay.add(uiTextContainer);
 
         final UIBlock uiTextBackground = new UIBlock();
         uiTextBackground.getStyle().getPosition().setValue(PositionValues.getAbsolute());
-        uiTextBackground.getStyle().getWidth().setValue(LengthValues.getFill());
-        uiTextBackground.getStyle().getHeight().setValue(LengthValues.getFill());
         uiTextBackground.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .5f));
         uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
         uiTextBackground.getStyle().getBorders().set(2);
