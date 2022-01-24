@@ -9,12 +9,14 @@ import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.MouseRotationComponent;
 import org.saar.core.common.components.VelocityComponent;
+import org.saar.core.fog.Fog;
+import org.saar.core.fog.FogDistance;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
 import org.saar.core.renderer.forward.ForwardRenderingPath;
 import org.saar.core.renderer.forward.ForwardRenderingPipeline;
+import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
 import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.screen.MainScreen;
@@ -37,7 +39,6 @@ import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.constants.Face;
 import org.saar.lwjgl.opengl.polygonmode.PolygonMode;
 import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue;
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
@@ -45,6 +46,7 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 import org.saar.maths.transform.Position;
+import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
 import org.saar.minecraft.chunk.WaterRenderNode;
@@ -160,13 +162,15 @@ public class Minecraft {
                 new WaterRenderNode(world)
         );
 
-        final UnderwaterPostProcessor underwaterPass = new UnderwaterPostProcessor();
-        final ForwardGeometryPass geometryPass = new ForwardGeometryPass(renderNode);
-        final GeometryPass2D uiGeometryPass = new GeometryPass2D(uiDisplay);
-        final FxaaPostProcessor fxaaPass = new FxaaPostProcessor();
+        final Fog fog = new Fog(Vector3.of(.0f, .5f, .7f), WORLD_RADIUS * 15, WORLD_RADIUS * 16);
 
         final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
-                geometryPass, uiGeometryPass, fxaaPass);
+                new ForwardGeometryPass(renderNode),
+                new UnderwaterPostProcessor(world),
+                new FogRenderPass(fog, FogDistance.XZ),
+                new GeometryPass2D(uiDisplay),
+                new FxaaPostProcessor()
+        );
 
         final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera, pipeline);
 
@@ -190,14 +194,7 @@ public class Minecraft {
             renderNode.update();
             uiDisplay.update();
 
-            if (world.getBlock(camera.getTransform().getPosition()) == Blocks.WATER) {
-                final ReadOnlyTexture2D rendererTexture = renderingPath.render().getBuffers().getAlbedo();
-
-                MainScreen.INSTANCE.setAsDraw();
-                underwaterPass.render(new RenderContext(camera), () -> rendererTexture);
-            } else {
-                renderingPath.render().toMainScreen();
-            }
+            renderingPath.render().toMainScreen();
 
             if (System.currentTimeMillis() - lastFpsUpdate >= 500) {
                 uiFps.setText(String.format("Fps: %.3f", fps.fps()));
@@ -251,7 +248,6 @@ public class Minecraft {
         textureAtlas.delete();
         world.delete();
 
-        underwaterPass.delete();
         renderingPath.delete();
         window.destroy();
     }

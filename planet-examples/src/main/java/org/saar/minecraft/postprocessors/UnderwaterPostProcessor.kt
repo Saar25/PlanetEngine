@@ -10,19 +10,20 @@ import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
 import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
+import org.saar.minecraft.Blocks
+import org.saar.minecraft.World
 
-class UnderwaterPostProcessor : PostProcessor {
+class UnderwaterPostProcessor(private val world: World) : PostProcessor {
 
     private val prototype = UnderwaterPostProcessorPrototype()
     private val wrapper = RenderPassPrototypeWrapper(prototype)
 
-    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
-        this.prototype.textureUniform.value = buffers.albedo
+    override fun render(context: RenderContext, buffers: PostProcessingBuffers) {
+        if (world.getBlock(context.camera.transform.position) === Blocks.WATER)
+            this.wrapper.render { this.prototype.textureUniform.value = buffers.albedo }
     }
 
-    override fun delete() {
-        this.wrapper.delete()
-    }
+    override fun delete() = this.wrapper.delete()
 }
 
 private class UnderwaterPostProcessorPrototype : RenderPassPrototype {
