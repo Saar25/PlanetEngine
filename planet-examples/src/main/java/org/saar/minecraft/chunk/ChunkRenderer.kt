@@ -23,6 +23,9 @@ import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.minecraft.Chunk
 import org.saar.minecraft.World
+import kotlin.math.abs
+
+private const val TRANSITION_TIME: Int = 1000
 
 private fun FrustumIntersection.testChunk(chunk: Chunk) = testAab(
     chunk.bounds.min.x().toFloat(),
@@ -71,6 +74,9 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
     private val projectionViewUniform = Mat4UniformValue("u_projectionView")
 
     @UniformProperty
+    private val glowTransitionUniform = FloatUniformValue("u_glowTransition")
+
+    @UniformProperty
     private val atlasUniform = object : TextureUniform() {
         override val unit = 0
 
@@ -113,6 +119,9 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.projectionViewUniform.value = p.mul(v, Matrix4.create())
+
+        val time = System.currentTimeMillis() % TRANSITION_TIME
+        this.glowTransitionUniform.value = abs(time - TRANSITION_TIME / 2f) / TRANSITION_TIME / 2f
     }
 
     override fun onInstanceDraw(context: RenderContext, chunk: Chunk) {

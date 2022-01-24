@@ -1,6 +1,7 @@
 // Uniforms
 uniform sampler2D u_atlas;
 uniform ivec4 u_rayCastedFace;
+uniform float u_glowTransition;
 
 // Vertex outputs
 flat in int v_id;
@@ -26,6 +27,6 @@ void main(void) {
         && ((v_position.y >= u_rayCastedFace.y) && (v_position.y <= u_rayCastedFace.y + 1))
         && ((v_position.z >= u_rayCastedFace.z) && (v_position.z <= u_rayCastedFace.z + 1)) ? 1 : 0;
 
-        f_colour *= glow + 1;
+        f_colour.rgb += vec3(glow * u_glowTransition / 2);
     }
 }
