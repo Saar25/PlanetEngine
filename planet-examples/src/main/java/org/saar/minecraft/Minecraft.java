@@ -8,6 +8,7 @@ import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.MouseRotationComponent;
+import org.saar.core.common.components.VelocityComponent;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContext;
@@ -47,6 +48,8 @@ import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
 import org.saar.minecraft.chunk.WaterRenderNode;
 import org.saar.minecraft.chunk.WaterRenderer;
+import org.saar.minecraft.components.*;
+import org.saar.minecraft.entity.HitBoxes;
 import org.saar.minecraft.entity.Player;
 import org.saar.minecraft.generator.*;
 import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
@@ -55,7 +58,7 @@ import org.saar.minecraft.threading.GlThreadQueue;
 public class Minecraft {
 
     private static final int WIDTH = 1200;
-    private static final int HEIGHT = 741;
+    private static final int HEIGHT = 700;
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
@@ -102,10 +105,22 @@ public class Minecraft {
         final World world = new World(generator, THREAD_COUNT);
 
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
-        final NodeComponentGroup cameraComponents = new NodeComponentGroup(
-                new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
-                new PlayerMovementComponent(window.getKeyboard(), world, SPEED, FLY_MODE)
-        );
+        final NodeComponentGroup cameraComponents = FLY_MODE ?
+                new NodeComponentGroup(
+                        new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                        new PlayerWalkingComponent(window.getKeyboard(), SPEED),
+                        new PlayerFlyingComponent(window.getKeyboard(), SPEED),
+                        new CollisionComponent(world, HitBoxes.getPlayer()),
+                        new VelocityComponent()
+                ) :
+                new NodeComponentGroup(
+                        new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                        new PlayerWalkingComponent(window.getKeyboard(), SPEED),
+                        new GravityComponent(world),
+                        new PlayerJumpComponent(world, window.getKeyboard()),
+                        new CollisionComponent(world, HitBoxes.getPlayer()),
+                        new VelocityComponent()
+                );
         final Camera camera = new Camera(projection, cameraComponents);
         final Player player = new Player(camera);
 
