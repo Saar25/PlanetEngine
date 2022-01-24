@@ -64,7 +64,7 @@ public final class RayCasting {
 
             if (block.getBlock().isCollideable()) {
                 final int face = enterFace(o, d, p);
-                return new BlockFaceContainer((int) p.x, (int) p.y, (int) p.z, block.getBlock(), face);
+                return new BlockFaceContainer((int) p.x, (int) p.y, (int) p.z, block.getBlock(), face, -1);
             }
             final int xCmp = t.z < t.x || t.y < t.x ? 0 : 1;
             final int yCmp = t.x < t.y || t.z < t.y ? 0 : 1;

@@ -191,8 +191,9 @@ public class Chunk implements IChunk, Model {
 
             for (int i = 0; i < around.length; i++) {
                 if (around[i].isTransparent() && !(around[i] == Blocks.WATER && b.getBlock() == Blocks.WATER)) {
+                    final int shadow = getShadow(world, b, i);
                     final BlockFaceContainer face = new BlockFaceContainer(
-                            b.getX(), b.getY(), b.getZ(), b.getBlock(), i);
+                            b.getX(), b.getY(), b.getZ(), b.getBlock(), i, shadow);
                     blockFaceContainers.add(face);
                 }
             }
@@ -202,16 +203,15 @@ public class Chunk implements IChunk, Model {
         return GlThreadQueue.getInstance().supply(() -> {
             final ChunkMeshBuilder builder = ChunkMeshBuilder.fixed(faceCount);
             for (BlockFaceContainer b : blockFaceContainers) {
-                final int shadow = getShadow(world, b);
                 final int faceId = b.getBlock().getFaces().faceId(b.getDirection());
-                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection(), shadow);
+                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection(), b.getShadow());
             }
             return builder;
         });
     }
 
-    private int getShadow(World world, BlockFaceContainer b) {
-        final Vector3ic direction = blockDirection[b.getDirection()];
+    private int getShadow(World world, BlockContainer b, int dir) {
+        final Vector3ic direction = blockDirection[dir];
         final int x = b.getX() + direction.x() + getPosition().x() * 16;
         final int y = b.getY() + direction.y();
         final int z = b.getZ() + direction.z() + getPosition().y() * 16;

@@ -8,11 +8,13 @@ public class BlockFaceContainer {
     private final Vector3ic position;
     private final Block block;
     private final int direction;
+    private final int shadow;
 
-    public BlockFaceContainer(int x, int y, int z, Block block, int direction) {
+    public BlockFaceContainer(int x, int y, int z, Block block, int direction, int shadow) {
         this.position = new Vector3i(x, y, z);
         this.block = block;
         this.direction = direction;
+        this.shadow = shadow;
     }
 
     public int getX() {
@@ -37,5 +39,9 @@ public class BlockFaceContainer {
 
     public int getDirection() {
         return this.direction;
+    }
+
+    public int getShadow() {
+        return this.shadow;
     }
 }
