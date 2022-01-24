@@ -63,7 +63,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 3;
+    private static final int WORLD_RADIUS = 8;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
@@ -79,7 +79,7 @@ public class Minecraft {
 
         final UIElement uiTextContainer = new UIElement();
         uiTextContainer.getStyle().getWidth().set(LengthValues.percent(20));
-        uiTextContainer.getStyle().getHeight().set(LengthValues.percent(20));
+        uiTextContainer.getStyle().getHeight().set(LengthValues.percent(10));
         uiTextContainer.getStyle().getMargin().set(10);
         uiDisplay.add(uiTextContainer);
 
@@ -87,7 +87,7 @@ public class Minecraft {
         uiTextBackground.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiTextBackground.getStyle().getWidth().setValue(LengthValues.getFill());
         uiTextBackground.getStyle().getHeight().setValue(LengthValues.getFill());
-        uiTextBackground.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .8f));
+        uiTextBackground.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .5f));
         uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
         uiTextBackground.getStyle().getBorders().set(2);
         uiTextBackground.getStyle().getRadius().set(5);

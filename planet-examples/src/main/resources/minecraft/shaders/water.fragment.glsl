@@ -8,6 +8,7 @@ uniform float u_transitionCross;
 // Vertex outputs
 flat in int v_id;
 flat in int v_dir;
+flat in int v_shw;
 in vec2 v_uvCoords1;
 in vec2 v_uvCoords2;
 
@@ -24,5 +25,6 @@ void main(void) {
     f_colour = mix(colour1, colour2, transitionCross);
 
     f_colour.xyz *= lights[v_dir];
+    f_colour *= 1 - v_shw / 10.0;
     f_colour.a = .7;
 }
