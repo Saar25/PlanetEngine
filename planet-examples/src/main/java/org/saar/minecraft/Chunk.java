@@ -20,6 +20,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class Chunk implements IChunk, Model {
 
+    private static final int[] shadows = {0, 1, 2, 4, 8};
+
     private static final Vector3ic[] blockDirection = new Vector3i[]{
             new Vector3i(+1, 0, 0),
             new Vector3i(-1, 0, 0),
@@ -39,7 +41,6 @@ public class Chunk implements IChunk, Model {
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
-    private int[] shadows = {0, 1, 2, 4, 8};
 
     public Chunk(int x, int z) {
         this.position = new Vector2i(x, z);
@@ -115,8 +116,8 @@ public class Chunk implements IChunk, Model {
 
             final int heightIndex = index(x, z);
             if (block == Blocks.AIR && this.heights[heightIndex] == y) {
-                this.heights[heightIndex] = findHeight(x, y);
-            } else if (this.heights[heightIndex] <= y) {
+                this.heights[heightIndex] = findHeight(x, z);
+            } else if (this.heights[heightIndex] < y) {
                 this.heights[heightIndex] = y;
             }
         }
