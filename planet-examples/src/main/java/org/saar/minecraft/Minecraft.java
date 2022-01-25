@@ -82,6 +82,7 @@ public class Minecraft {
         final UIElement uiTextContainer = new UIElement();
         uiTextContainer.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
         uiTextContainer.getStyle().getMargin().set(10);
+        uiTextContainer.getStyle().getFontSize().set(24);
         uiDisplay.add(uiTextContainer);
 
         final UIBlock uiTextBackground = new UIBlock();
@@ -90,7 +91,6 @@ public class Minecraft {
         uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
         uiTextBackground.getStyle().getBorders().set(2);
         uiTextBackground.getStyle().getRadius().set(5);
-        uiTextBackground.getStyle().getFontSize().set(40);
         uiTextContainer.add(uiTextBackground);
 
         final UIText uiFps = new UIText("Fps: ???");
@@ -195,13 +195,6 @@ public class Minecraft {
             camera.update();
             renderNode.update();
             uiDisplay.update();
-
-            System.out.println(uiTextContainer.getStyle().getWidth().get());
-            System.out.println(uiTextContainer.getStyle().getWidth().getMin());
-            System.out.println(uiTextContainer.getStyle().getWidth().getMax());
-            System.out.println(uiTextContainer.getStyle().getHeight().get());
-            System.out.println(uiTextContainer.getStyle().getHeight().getMin());
-            System.out.println(uiTextContainer.getStyle().getHeight().getMax());
 
             renderingPath.render().toMainScreen();
 
