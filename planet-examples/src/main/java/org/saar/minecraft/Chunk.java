@@ -20,8 +20,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class Chunk implements IChunk, Model {
 
-    private static final int[] shadows = {0, 1, 2, 4, 8};
-
     private static final Vector3ic[] blockDirection = new Vector3i[]{
             new Vector3i(+1, 0, 0),
             new Vector3i(-1, 0, 0),
@@ -32,21 +30,22 @@ public class Chunk implements IChunk, Model {
     };
 
     private final Vector2i position;
-    private final Block[] blocks;
+
+    private final Block[] blocks = new Block[16 * 16 * 256];
+    private final int[] heights = new int[16 * 16];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
     private final List<BlockContainer> waterBlocks = new ArrayList<>();
     private final ChunkBounds bounds = new ChunkBounds();
-    private final int[] heights;
+    private final boolean shadows;
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
 
-    public Chunk(int x, int z) {
+    public Chunk(int x, int z, boolean shadows) {
         this.position = new Vector2i(x, z);
-        this.blocks = new Block[16 * 16 * 256];
         Arrays.fill(this.blocks, Blocks.AIR);
-        this.heights = new int[16 * 16];
+        this.shadows = shadows;
     }
 
     private static int index(int x, int y, int z) {
@@ -211,6 +210,10 @@ public class Chunk implements IChunk, Model {
     }
 
     private int getShadow(World world, BlockContainer b, int dir) {
+        if (!this.shadows) {
+            return 0;
+        }
+
         final Vector3ic direction = blockDirection[dir];
         final int x = b.getX() + direction.x() + getPosition().x() * 16;
         final int y = b.getY() + direction.y();
@@ -222,7 +225,7 @@ public class Chunk implements IChunk, Model {
                 if (world.getHeight(x + i, z + j) >= y) {
                     final int pi = 2 - Math.abs(i);
                     final int pj = 2 - Math.abs(j);
-                    shadow += shadows[pi + pj];
+                    shadow += Math.pow(2, pi + pj - 1);
                 }
             }
         }

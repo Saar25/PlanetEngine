@@ -119,7 +119,7 @@ public class Minecraft {
                 .then(new WaterGenerator(80))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
-        final World world = new World(generator, THREAD_COUNT);
+        final World world = new World(generator, THREAD_COUNT, true);
 
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
         final NodeComponentGroup cameraComponents = FLY_MODE ?

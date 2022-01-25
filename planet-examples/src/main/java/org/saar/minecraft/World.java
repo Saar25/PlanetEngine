@@ -17,10 +17,12 @@ public class World {
 
     private final List<Chunk> chunks = new ArrayList<>();
     private final WorldGenerator generator;
+    private final boolean shadows;
 
-    public World(WorldGenerator generator, int threads) {
+    public World(WorldGenerator generator, int threads, boolean shadows) {
         this.generator = generator;
         this.executorService = Executors.newFixedThreadPool(threads);
+        this.shadows = shadows;
     }
 
     public static int worldToChunkCoordinate(int w) {
@@ -137,7 +139,7 @@ public class World {
 
         for (int x = cx - radius; x < cx + radius; x++) {
             for (int z = cz - radius; z < cz + radius; z++) {
-                if (!hasChunk(x, z)) chunks.add(new Chunk(x, z));
+                if (!hasChunk(x, z)) chunks.add(new Chunk(x, z, this.shadows));
             }
         }
 
