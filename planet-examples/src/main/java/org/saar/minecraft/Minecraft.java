@@ -11,12 +11,14 @@ import org.saar.core.common.components.MouseRotationComponent;
 import org.saar.core.common.components.VelocityComponent;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
+import org.saar.core.light.DirectionalLight;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
+import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.screen.MainScreen;
@@ -68,6 +70,7 @@ public class Minecraft {
     private static final int WORLD_RADIUS = 4;
     private static final int THREAD_COUNT = 5;
 
+    private static final boolean SHADOWS_HQ = false;
     private static final boolean FLY_MODE = true;
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
@@ -113,13 +116,12 @@ public class Minecraft {
         square.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiDisplay.add(square);
 
-
         final WorldGenerator generator = WorldGenerationPipeline
                 .pipe(new TerrainGenerator(80))
                 .then(new WaterGenerator(80))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
-        final World world = new World(generator, THREAD_COUNT, true);
+        final World world = new World(generator, THREAD_COUNT, !SHADOWS_HQ);
 
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
         final NodeComponentGroup cameraComponents = FLY_MODE ?
@@ -164,10 +166,15 @@ public class Minecraft {
                 new WaterRenderNode(world)
         );
 
+        final DirectionalLight sun = new DirectionalLight();
+        sun.getDirection().set(-1f, -1f, -1f);
+        sun.getColour().set(1f, 1f, 1f);
+
         final Fog fog = new Fog(Vector3.of(.0f, .5f, .7f), WORLD_RADIUS * 15, WORLD_RADIUS * 16);
 
         final DeferredRenderingPipeline pipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
+                new LightRenderPass(sun),
                 new UnderwaterPostProcessor(world),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new GeometryPass2D(uiDisplay),
@@ -211,6 +218,7 @@ public class Minecraft {
                     World.worldToChunkCoordinate((int) camera.getTransform().getPosition().getX()),
                     World.worldToChunkCoordinate((int) camera.getTransform().getPosition().getZ()))
             );
+
             window.swapBuffers();
             window.pollEvents();
 

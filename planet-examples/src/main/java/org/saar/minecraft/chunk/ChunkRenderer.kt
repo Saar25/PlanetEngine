@@ -74,6 +74,9 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
     private val projectionViewUniform = Mat4UniformValue("u_projectionView")
 
     @UniformProperty
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
+    @UniformProperty
     private val glowTransitionUniform = FloatUniformValue("u_glowTransition")
 
     @UniformProperty
@@ -109,6 +112,8 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
 
     override fun vertexAttributes() = arrayOf("in_data")
 
+    override fun fragmentOutputs() = arrayOf("f_colour", "f_normalSpecular")
+
     override fun onRenderCycle(context: RenderContext) {
         DepthTest.enable()
         ProvokingVertex.setFirst()
@@ -119,6 +124,8 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.projectionViewUniform.value = p.mul(v, Matrix4.create())
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
         val time = System.currentTimeMillis() % TRANSITION_TIME
         this.glowTransitionUniform.value = abs(time - TRANSITION_TIME / 2f) / TRANSITION_TIME / 2f

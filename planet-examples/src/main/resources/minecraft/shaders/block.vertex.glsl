@@ -23,11 +23,21 @@ const int[] directionMap = int[](
 5, 3, 1, 4, 2, 0, -1, -1
 );
 
+const vec3[] directions = vec3[](
+vec3(+1, 0, 0),
+vec3(-1, 0, 0),
+vec3(0, +1, 0),
+vec3(0, -1, 0),
+vec3(0, 0, +1),
+vec3(0, 0, -1)
+);
+
 // Per Vertex attibutes
 layout (location = 0) in uint in_data;
 
 // Uniforms
 uniform mat4 u_projectionView;
+uniform mat4 u_normalMatrix;
 uniform ivec2 u_chunkCoordinate;
 uniform ivec2 u_dimensions;
 
@@ -35,6 +45,7 @@ uniform ivec2 u_dimensions;
 flat out int v_id;
 flat out int v_dir;
 flat out int v_shw;
+flat out vec3 v_normal;
 out vec2 v_uvCoords;
 out vec3 v_position;
 
@@ -64,6 +75,8 @@ void main(void) {
     v_position = vec3(g_x, g_y, g_z) + vertexMap[g_vId];
     v_position.x += u_chunkCoordinate.x * 16;
     v_position.z += u_chunkCoordinate.y * 16;
+
+    v_normal = (u_normalMatrix * vec4(directions[v_dir], 0)).xyz;
 
     gl_Position = u_projectionView * vec4(v_position, 1.0);
 }

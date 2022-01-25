@@ -9,11 +9,13 @@ uniform float u_transitionCross;
 flat in int v_id;
 flat in int v_dir;
 flat in int v_shw;
+flat in vec3 v_normal;
 in vec2 v_uvCoords1;
 in vec2 v_uvCoords2;
 
 // Fragment outputs
 layout (location = 0) out vec4 f_colour;
+layout (location = 1) out vec4 f_normalSpecular;
 
 const float[] lights = float[]( .75, .75, 1.0, .25, .50, .50 );
 
@@ -27,4 +29,6 @@ void main(void) {
     f_colour.xyz *= lights[v_dir];
     f_colour *= 1 - v_shw / 10.0;
     f_colour.a = .7;
+
+    f_normalSpecular = vec4(v_normal, 1);
 }

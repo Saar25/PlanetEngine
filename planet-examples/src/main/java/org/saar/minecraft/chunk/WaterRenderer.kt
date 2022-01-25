@@ -62,6 +62,9 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val projectionViewUniform = Mat4UniformValue("u_projectionView")
 
+    @UniformProperty
+    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val atlasUniform = object : TextureUniform() {
         override val unit = 0
@@ -108,6 +111,8 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
 
     override fun vertexAttributes() = arrayOf("in_data")
 
+    override fun fragmentOutputs() = arrayOf("f_colour", "f_normalSpecular")
+
     override fun onRenderCycle(context: RenderContext) {
         DepthTest.enable()
         CullFace.set(true, Face.BACK)
@@ -119,6 +124,8 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
         this.projectionViewUniform.value = p.mul(v, Matrix4.create())
+
+        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
         val time = System.currentTimeMillis()
         this.transitionCross.value = (time % TRANSITION_TIME) / TRANSITION_TIME.toFloat()
