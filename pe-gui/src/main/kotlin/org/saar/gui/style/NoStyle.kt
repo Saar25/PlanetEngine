@@ -21,6 +21,7 @@ import org.saar.gui.style.length.NoLength
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.position.PositionValues
 import org.saar.gui.style.position.ReadonlyPosition
 import org.saar.gui.style.redius.NoRadius
 import org.saar.gui.style.redius.ReadonlyRadius
@@ -28,6 +29,8 @@ import org.saar.gui.style.redius.ReadonlyRadius
 object NoStyle : ParentStyle {
 
     override val position: ReadonlyPosition = object : ReadonlyPosition {
+        override val value = PositionValues.absolute
+
         override fun getX() = 0
 
         override fun getY() = 0

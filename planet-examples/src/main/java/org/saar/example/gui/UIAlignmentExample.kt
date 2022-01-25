@@ -2,6 +2,7 @@ package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
+import org.saar.gui.UIBlock
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
@@ -9,6 +10,7 @@ import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.length.LengthValues.ratio
+import org.saar.gui.style.position.PositionValues
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -25,11 +27,12 @@ object UIAlignmentExample {
         val keyboard = window.keyboard
 
         val display = UIDisplay(window).apply {
-            style.alignment.value = AlignmentValues.vertical
+            style.alignment.value = AlignmentValues.horizontal
         }
 
         val container = UIElement().apply {
             style.backgroundColour.set(Colours.BLUE)
+            style.alignment.value = AlignmentValues.vertical
         }
         display.add(container)
 
@@ -62,8 +65,14 @@ object UIAlignmentExample {
 
         val container2 = UIElement().apply {
             style.backgroundColour.set(Colours.BLUE)
+            style.alignment.value = AlignmentValues.vertical
         }
         display.add(container2)
+
+        container2.add(UIBlock().apply {
+            style.backgroundColour.set(Colours.BLUE)
+            style.position.value = PositionValues.absolute
+        })
 
         container2.add(UIButton().apply {
             style.width.value = LengthValues.pixels(200)
