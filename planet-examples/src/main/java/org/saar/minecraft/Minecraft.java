@@ -13,11 +13,11 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
-import org.saar.core.renderer.forward.ForwardRenderingPath;
-import org.saar.core.renderer.forward.ForwardRenderingPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
 import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
@@ -65,7 +65,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 8;
+    private static final int WORLD_RADIUS = 4;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
@@ -159,22 +159,22 @@ public class Minecraft {
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
 
-        final ForwardRenderNodeGroup renderNode = new ForwardRenderNodeGroup(
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 new ChunkRenderNode(world),
                 new WaterRenderNode(world)
         );
 
         final Fog fog = new Fog(Vector3.of(.0f, .5f, .7f), WORLD_RADIUS * 15, WORLD_RADIUS * 16);
 
-        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
-                new ForwardGeometryPass(renderNode),
+        final DeferredRenderingPipeline pipeline = new DeferredRenderingPipeline(
+                new DeferredGeometryPass(renderNode),
                 new UnderwaterPostProcessor(world),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new GeometryPass2D(uiDisplay),
                 new FxaaPostProcessor()
         );
 
-        final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera, pipeline);
+        final DeferredRenderingPath renderingPath = new DeferredRenderingPath(camera, pipeline);
 
         final Fps fps = new Fps();
 
