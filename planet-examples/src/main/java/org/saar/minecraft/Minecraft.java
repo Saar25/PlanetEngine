@@ -27,6 +27,7 @@ import org.saar.gui.UIElement;
 import org.saar.gui.UIText;
 import org.saar.gui.style.Colour;
 import org.saar.gui.style.Colours;
+import org.saar.gui.style.alignment.AlignmentValues;
 import org.saar.gui.style.coordinate.CoordinateValues;
 import org.saar.gui.style.position.PositionValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -79,6 +80,7 @@ public class Minecraft {
         final UIDisplay uiDisplay = new UIDisplay(window);
 
         final UIElement uiTextContainer = new UIElement();
+        uiTextContainer.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
         uiTextContainer.getStyle().getMargin().set(10);
         uiDisplay.add(uiTextContainer);
 
@@ -88,12 +90,17 @@ public class Minecraft {
         uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
         uiTextBackground.getStyle().getBorders().set(2);
         uiTextBackground.getStyle().getRadius().set(5);
+        uiTextBackground.getStyle().getFontSize().set(40);
         uiTextContainer.add(uiTextBackground);
 
         final UIText uiFps = new UIText("Fps: ???");
-        uiFps.getStyle().getFontSize().set(40);
-        uiFps.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiTextContainer.add(uiFps);
+
+        final UIText uiPosition = new UIText("Position: ???");
+        uiTextContainer.add(uiPosition);
+
+        final UIText uiChunk = new UIText("Chunk: ???");
+        uiTextContainer.add(uiChunk);
 
         final UIBlock square = new UIBlock();
         square.getStyle().getBorderColour().set(Colours.DARK_GRAY);
@@ -139,7 +146,7 @@ public class Minecraft {
         final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
         textureAtlas.applyParameters(
                 new TextureMagFilterParameter(MagFilterValue.NEAREST),
-                new TextureMinFilterParameter(MinFilterValue.LINEAR_MIPMAP_LINEAR),
+                new TextureMinFilterParameter(MinFilterValue.NEAREST_MIPMAP_LINEAR),
                 new TextureAnisotropicFilterParameter(8)
         );
         textureAtlas.generateMipmap();
@@ -189,12 +196,28 @@ public class Minecraft {
             renderNode.update();
             uiDisplay.update();
 
+            System.out.println(uiTextContainer.getStyle().getWidth().get());
+            System.out.println(uiTextContainer.getStyle().getWidth().getMin());
+            System.out.println(uiTextContainer.getStyle().getWidth().getMax());
+            System.out.println(uiTextContainer.getStyle().getHeight().get());
+            System.out.println(uiTextContainer.getStyle().getHeight().getMin());
+            System.out.println(uiTextContainer.getStyle().getHeight().getMax());
+
             renderingPath.render().toMainScreen();
 
             if (System.currentTimeMillis() - lastFpsUpdate >= 500) {
                 uiFps.setText(String.format("Fps: %.3f", fps.fps()));
                 lastFpsUpdate = System.currentTimeMillis();
             }
+            uiPosition.setText(String.format("Position: (%.3f,%.3f,%.3f)",
+                    camera.getTransform().getPosition().getX(),
+                    camera.getTransform().getPosition().getY(),
+                    camera.getTransform().getPosition().getZ())
+            );
+            uiChunk.setText(String.format("Chunk (%d, %d)",
+                    World.worldToChunkCoordinate((int) camera.getTransform().getPosition().getX()),
+                    World.worldToChunkCoordinate((int) camera.getTransform().getPosition().getZ()))
+            );
             window.swapBuffers();
             window.pollEvents();
 

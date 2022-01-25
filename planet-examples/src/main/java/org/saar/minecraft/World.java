@@ -23,7 +23,7 @@ public class World {
         this.executorService = Executors.newFixedThreadPool(threads);
     }
 
-    private static int worldToChunkCoordinate(int w) {
+    public static int worldToChunkCoordinate(int w) {
         return w >= 0 ? w / 16 : (w + 1) / 16 - 1;
     }
 
