@@ -2,6 +2,7 @@ package org.saar.gui.style.length
 
 import org.saar.gui.UIChildNode
 import org.saar.gui.UIParentNode
+import org.saar.gui.style.alignment.AlignmentValues
 
 object LengthValues {
 
@@ -48,12 +49,37 @@ object LengthValues {
     val fit = object : LengthValue {
         override fun computeAxisX(container: UIChildNode): Int {
             return if (container !is UIParentNode || container.children.isEmpty()) 0
-            else container.children.maxOf { it.style.position.getX() + it.style.width.getMin() } - container.style.position.getX()
+            else if (container.style.alignment.value == AlignmentValues.horizontal)
+                container.children.sumOf {
+                    it.style.width.getMin() +
+                            it.style.borders.left + it.style.borders.right +
+                            it.style.margin.left + it.style.margin.right
+                }
+            else if (container.style.alignment.value == AlignmentValues.vertical)
+                container.children.maxOf {
+                    it.style.width.getMin() +
+                            it.style.borders.left + it.style.borders.right +
+                            it.style.margin.left + it.style.margin.right
+                }
+            else 0
+
         }
 
         override fun computeAxisY(container: UIChildNode): Int {
             return if (container !is UIParentNode || container.children.isEmpty()) 0
-            else container.children.maxOf { it.style.position.getY() + it.style.height.getMin() } - container.style.position.getY()
+            else if (container.style.alignment.value == AlignmentValues.vertical)
+                container.children.sumOf {
+                    it.style.height.getMin() +
+                            it.style.borders.top + it.style.borders.bottom +
+                            it.style.margin.top + it.style.margin.bottom
+                }
+            else if (container.style.alignment.value == AlignmentValues.horizontal)
+                container.children.maxOf {
+                    it.style.height.getMin() +
+                            it.style.borders.top + it.style.borders.bottom +
+                            it.style.margin.top + it.style.margin.bottom
+                }
+            else 0
         }
 
         override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
