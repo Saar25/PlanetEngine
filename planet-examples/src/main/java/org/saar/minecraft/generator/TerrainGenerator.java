@@ -19,10 +19,11 @@ public class TerrainGenerator implements WorldGenerator {
     }
 
     private static float noise(int x, int y, int z) {
-        final float noise = (SimplexNoise.noise(x / 32f, y / 32f, z / 32f)
-                + SimplexNoise.noise(x / 64f, y / 64f, z / 64f)
-                + SimplexNoise.noise(x / 128f, y / 128f, z / 128f)) / 3 * .5f + .5f;
-        return noise * smoothStep(y, 100, 60);
+        final float noise = (SimplexNoise.noise(x / 64f, y / 64f, z / 64f) / 2f
+                + SimplexNoise.noise(x / 128f, y / 128f, z / 128f) / 4f
+                + SimplexNoise.noise(x / 256f, y / 256f, z / 256f) / 8f
+        ) * .5f + .5f;
+        return noise * smoothStep(y, 150, 60);
     }
 
     @Override

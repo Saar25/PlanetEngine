@@ -72,7 +72,7 @@ public class MinecraftHQ {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 4;
+    private static final int WORLD_RADIUS = 8;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean SHADOWS_HQ = true;
@@ -161,7 +161,7 @@ public class MinecraftHQ {
         ChunkRenderer.INSTANCE.setAtlas(textureAtlas);
         WaterRenderer.INSTANCE.setAtlas(textureAtlas);
 
-        camera.getTransform().getPosition().set(0, 100, 0);
+        camera.getTransform().getPosition().set(0, 200, 0);
 
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
