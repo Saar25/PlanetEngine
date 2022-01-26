@@ -117,7 +117,6 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
     override fun onRenderCycle(context: RenderContext) {
         DepthTest.enable()
         ProvokingVertex.setFirst()
-        CullFace.set(true, Face.BACK)
         BlendTest.disable()
         ClipPlaneTest.disable()
 

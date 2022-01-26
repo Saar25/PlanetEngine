@@ -6,19 +6,25 @@ import org.joml.Vector4i;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
+import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.components.MouseRotationComponent;
 import org.saar.core.common.components.VelocityComponent;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
+import org.saar.core.light.DirectionalLight;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
-import org.saar.core.renderer.forward.ForwardRenderingPath;
-import org.saar.core.renderer.forward.ForwardRenderingPipeline;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredRenderingPath;
+import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
+import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
 import org.saar.core.renderer.p2d.GeometryPass2D;
+import org.saar.core.renderer.shadow.ShadowsQuality;
+import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.gui.UIBlock;
@@ -39,6 +45,7 @@ import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.constants.Face;
 import org.saar.lwjgl.opengl.polygonmode.PolygonMode;
 import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
@@ -58,7 +65,7 @@ import org.saar.minecraft.generator.*;
 import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
 import org.saar.minecraft.threading.GlThreadQueue;
 
-public class Minecraft {
+public class MinecraftHQ {
 
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
@@ -68,6 +75,7 @@ public class Minecraft {
     private static final int WORLD_RADIUS = 4;
     private static final int THREAD_COUNT = 5;
 
+    private static final boolean SHADOWS_HQ = true;
     private static final boolean FLY_MODE = true;
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
@@ -118,7 +126,7 @@ public class Minecraft {
                 .then(new WaterGenerator(80))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
-        final World world = new World(generator, THREAD_COUNT, true);
+        final World world = new World(generator, THREAD_COUNT, !SHADOWS_HQ);
 
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
         final NodeComponentGroup cameraComponents = FLY_MODE ?
@@ -158,22 +166,42 @@ public class Minecraft {
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
 
-        final ForwardRenderNodeGroup renderNode = new ForwardRenderNodeGroup(
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 new ChunkRenderNode(world),
                 new WaterRenderNode(world)
         );
 
+        final DirectionalLight sun = new DirectionalLight();
+        sun.getDirection().set(-.3f, -1f, -.7f);
+        sun.getColour().set(1f, 1f, 1f);
+
+        final int a = 50;
+        final OrthographicProjection shadowsProjection =
+                new SimpleOrthographicProjection(-a, a, -a, a, -a, a);
+
+        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
+                ShadowsQuality.HIGH, shadowsProjection, sun, new ChunkRenderNode(world)
+        );
+        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
+
+        final UIBlock uiShadowMap = new UIBlock();
+        uiShadowMap.setTexture(shadowMap);
+        uiShadowMap.getStyle().getWidth().set(200);
+        uiShadowMap.getStyle().getHeight().set(200);
+        uiDisplay.add(uiShadowMap);
+
         final Fog fog = new Fog(Vector3.of(.0f, .5f, .7f), WORLD_RADIUS * 15, WORLD_RADIUS * 16);
 
-        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
-                new ForwardGeometryPass(renderNode),
+        final DeferredRenderingPipeline pipeline = new DeferredRenderingPipeline(
+                new DeferredGeometryPass(renderNode),
+                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, sun),
                 new UnderwaterPostProcessor(world),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new GeometryPass2D(uiDisplay),
                 new FxaaPostProcessor()
         );
 
-        final ForwardRenderingPath renderingPath = new ForwardRenderingPath(camera, pipeline);
+        final DeferredRenderingPath renderingPath = new DeferredRenderingPath(camera, pipeline);
 
         final Fps fps = new Fps();
 
@@ -195,6 +223,8 @@ public class Minecraft {
             renderNode.update();
             uiDisplay.update();
 
+            shadowsRenderingPath.getCamera().getTransform().getPosition().set(camera.getTransform().getPosition());
+            shadowsRenderingPath.render();
             renderingPath.render().toMainScreen();
 
             if (System.currentTimeMillis() - lastFpsUpdate >= 5000) {
