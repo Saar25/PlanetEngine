@@ -88,10 +88,10 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
         override val value = 4
     }
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val transitionCross = FloatUniformValue("u_transitionCross")
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val transitionId = IntUniformValue("u_transitionId")
 
     @UniformProperty

@@ -66,6 +66,12 @@ int g_shw;
 // Methods declaration
 void init_globals(void);
 
+bool isTop(void) {
+    int vId = indexMap[(gl_VertexID) % 6];
+    return (vId == 0 && g_vId == 4) || (vId == 1 && g_vId == 6) ||
+    (vId == 2 && g_vId == 7) || (vId == 3 && g_vId == 5);
+}
+
 void main(void) {
     init_globals();
 
@@ -73,17 +79,21 @@ void main(void) {
     v_dir = directionMap[g_vId];
     v_shw = g_shw;
 
-    int transitionId = v_dir == TOP_DIR ? u_transitionId : 0;
-
     int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + g_tex) % 4);
 
-    int id1 = g_id + transitionId % u_texturesCount;
-    vec2 uvCoordsOffset1 = vec2(id1 % u_dimensions.x, g_id / u_dimensions.y);
-    v_uvCoords1 = (uvCoordsOffset1 + uvCoords[uvCoordIndex]) / u_dimensions;
+    if (isTop()) {
+        int id1 = g_id + (u_transitionId % u_texturesCount);
+        vec2 uvCoordsOffset1 = vec2(id1 % u_dimensions.x, id1 / u_dimensions.y);
+        v_uvCoords1 = (uvCoordsOffset1 + uvCoords[uvCoordIndex]) / u_dimensions;
 
-    int id2 = g_id + (transitionId + 1) % u_texturesCount;
-    vec2 uvCoordsOffset2 = vec2(id2 % u_dimensions.x, g_id / u_dimensions.y);
-    v_uvCoords2 = (uvCoordsOffset2 + uvCoords[uvCoordIndex]) / u_dimensions;
+        int id2 = g_id + ((u_transitionId + 1) % u_texturesCount);
+        vec2 uvCoordsOffset2 = vec2(id2 % u_dimensions.x, id2 / u_dimensions.y);
+        v_uvCoords2 = (uvCoordsOffset2 + uvCoords[uvCoordIndex]) / u_dimensions;
+    } else {
+        vec2 uvCoordsOffset2 = vec2(g_id % u_dimensions.x, g_id / u_dimensions.y);
+        v_uvCoords1 = (uvCoordsOffset2 + uvCoords[uvCoordIndex]) / u_dimensions;
+        v_uvCoords2 = v_uvCoords1;
+    }
 
     vec3 position = vec3(g_x, g_y, g_z) + vertexMap[g_vId];
     position.x += u_chunkCoordinate.x * 16;
