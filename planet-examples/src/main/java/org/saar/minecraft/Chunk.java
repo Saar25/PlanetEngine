@@ -245,15 +245,14 @@ public class Chunk implements IChunk, Model {
 
         int shadow = 0;
         for (int i = -2; i <= 2; i++) {
+            final int ai = Math.abs(i);
             for (int j = -2; j <= 2; j++) {
-                if (world.getSolidHeight(x + i, z + j) >= y) {
-                    final int pi = 2 - Math.abs(i);
-                    final int pj = 2 - Math.abs(j);
-                    shadow += Math.pow(2, pi + pj - 1);
-                } else if (world.getHeight(x + i, z + j) >= y) {
-                    final int pi = 2 - Math.abs(i);
-                    final int pj = 2 - Math.abs(j);
-                    shadow += Math.pow(2, pi + pj - 2);
+                final int aj = Math.abs(j);
+                final int minHeight = y + ai + aj;
+                if (world.getSolidHeight(x + i, z + j) >= minHeight) {
+                    shadow += Math.pow(2, 4 - ai - aj - 1);
+                } else if (world.getHeight(x + i, z + j) >= minHeight) {
+                    shadow += Math.pow(2, 4 - ai - aj - 2);
                 }
             }
         }
