@@ -42,7 +42,6 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
-import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
@@ -119,6 +118,7 @@ public class Minecraft {
         final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
         final NodeComponentGroup cameraComponents = FLY_MODE ?
                 new NodeComponentGroup(
+                        new GenerateAroundComponent(world, WORLD_RADIUS),
                         new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
                         new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
@@ -127,6 +127,7 @@ public class Minecraft {
                         new VelocityComponent()
                 ) :
                 new NodeComponentGroup(
+                        new GenerateAroundComponent(world, WORLD_RADIUS),
                         new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
                         new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
@@ -136,8 +137,6 @@ public class Minecraft {
                         new VelocityComponent()
                 );
         final Camera camera = new Camera(projection, cameraComponents);
-
-        world.generateAround(camera.getTransform().getPosition(), WORLD_RADIUS);
 
         final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
         textureAtlas.applyParameters(
@@ -151,9 +150,6 @@ public class Minecraft {
         WaterRenderer.INSTANCE.setAtlas(textureAtlas);
 
         camera.getTransform().getPosition().set(0, world.getHeight(0, 0) + 10, 0);
-
-        final Position lastWorldUpdatePosition = Position.of(
-                camera.getTransform().getPosition().getValue());
 
         final ForwardRenderNodeGroup renderNode = new ForwardRenderNodeGroup(
                 new ChunkRenderNode(world),
@@ -208,13 +204,6 @@ public class Minecraft {
 
             window.swapBuffers();
             window.pollEvents();
-
-            final float xChange = lastWorldUpdatePosition.getX() - camera.getTransform().getPosition().getX();
-            final float zChange = lastWorldUpdatePosition.getZ() - camera.getTransform().getPosition().getZ();
-            if (Math.abs(xChange) > WORLD_RADIUS * 2 || Math.abs(zChange) > WORLD_RADIUS * 2) {
-                lastWorldUpdatePosition.set(camera.getTransform().getPosition());
-                world.generateAround(lastWorldUpdatePosition, WORLD_RADIUS);
-            }
 
             if (keyboard.isKeyPressed('R')) {
                 PolygonMode.set(Face.FRONT_AND_BACK, PolygonModeValue.LINE);
