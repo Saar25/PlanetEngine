@@ -153,7 +153,7 @@ public class Minecraft {
         ChunkRenderer.INSTANCE.setAtlas(textureAtlas);
         WaterRenderer.INSTANCE.setAtlas(textureAtlas);
 
-        camera.getTransform().getPosition().set(0, 200, 0);
+        camera.getTransform().getPosition().set(0, world.getHeight(0, 0) + 10, 0);
 
         final Position lastWorldUpdatePosition = Position.of(
                 camera.getTransform().getPosition().getValue());
@@ -229,10 +229,13 @@ public class Minecraft {
                         lastBlockPlace = System.currentTimeMillis();
 
                         final Vector3i blockDirection = new Vector3i[]{
-                                new Vector3i(-1, 0, 0), new Vector3i(+1, 0, 0),
-                                new Vector3i(0, -1, 0), new Vector3i(0, +1, 0),
-                                new Vector3i(0, 0, -1), new Vector3i(0, 0, +1)}[rayCast.getDirection()]
-                                .add(rayCast.getPosition());
+                                new Vector3i(+1, 0, 0),
+                                new Vector3i(-1, 0, 0),
+                                new Vector3i(0, +1, 0),
+                                new Vector3i(0, -1, 0),
+                                new Vector3i(0, 0, +1),
+                                new Vector3i(0, 0, -1),
+                        }[rayCast.getDirection()].add(rayCast.getPosition());
                         world.setBlock(blockDirection.x, blockDirection.y, blockDirection.z, Blocks.STONE);
                     }
                 }

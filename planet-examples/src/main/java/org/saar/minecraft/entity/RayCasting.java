@@ -27,13 +27,13 @@ public final class RayCasting {
         float t1z = Math.min(tMinz, tMaxz);
 
         if (t1x >= t1y && t1x >= t1z)
-            return d.x() > 0 ? 0 : 1;
+            return d.x() < 0 ? 0 : 1;
 
         if (t1y >= t1z && t1y >= t1x)
-            return d.y() > 0 ? 2 : 3;
+            return d.y() < 0 ? 2 : 3;
 
         /*if (t1z >= t1x && t1z >= t1y)*/
-        return d.z() > 0 ? 4 : 5;
+        return d.z() < 0 ? 4 : 5;
     }
 
     public static BlockFaceContainer lookingAtFace(ICamera camera, World world, int maxSteps) {

@@ -81,4 +81,8 @@ object Blocks {
         override val isCollideable: Boolean = false
         override val faces: BlockFaces = BlockFaces(9, 13)
     }
+
+    val ALL: List<Block> = this.javaClass.declaredFields
+        .filter { it.type == Block::class.java }
+        .map { it.get(this) as Block }
 }

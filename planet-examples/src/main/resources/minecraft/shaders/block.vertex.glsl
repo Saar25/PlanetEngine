@@ -46,6 +46,7 @@ flat out int v_id;
 flat out int v_dir;
 flat out int v_shw;
 flat out vec3 v_normal;
+flat out ivec3 v_block;
 out vec2 v_uvCoords;
 out vec3 v_position;
 
@@ -72,9 +73,11 @@ void main(void) {
     int uvCoordIndex = ((indexMap[(gl_VertexID) % 6] + g_tex) % 4);
     v_uvCoords = (uvCoordsOffset + uvCoords[uvCoordIndex]) / u_dimensions;
 
-    v_position = vec3(g_x, g_y, g_z) + vertexMap[g_vId];
-    v_position.x += u_chunkCoordinate.x * 16;
-    v_position.z += u_chunkCoordinate.y * 16;
+    v_block = ivec3(g_x, g_y, g_z);
+    v_block.x += u_chunkCoordinate.x * 16;
+    v_block.z += u_chunkCoordinate.y * 16;
+
+    v_position = v_block + vertexMap[g_vId];
 
     v_normal = (u_normalMatrix * vec4(directions[v_dir], 0)).xyz;
 

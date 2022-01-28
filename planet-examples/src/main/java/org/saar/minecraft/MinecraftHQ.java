@@ -259,10 +259,13 @@ public class MinecraftHQ {
                         lastBlockPlace = System.currentTimeMillis();
 
                         final Vector3i blockDirection = new Vector3i[]{
-                                new Vector3i(-1, 0, 0), new Vector3i(+1, 0, 0),
-                                new Vector3i(0, -1, 0), new Vector3i(0, +1, 0),
-                                new Vector3i(0, 0, -1), new Vector3i(0, 0, +1)}[rayCast.getDirection()]
-                                .add(rayCast.getPosition());
+                                new Vector3i(+1, 0, 0),
+                                new Vector3i(-1, 0, 0),
+                                new Vector3i(0, +1, 0),
+                                new Vector3i(0, -1, 0),
+                                new Vector3i(0, 0, +1),
+                                new Vector3i(0, 0, -1),
+                        }[rayCast.getDirection()].add(rayCast.getPosition());
                         world.setBlock(blockDirection.x, blockDirection.y, blockDirection.z, Blocks.STONE);
                     }
                 }
