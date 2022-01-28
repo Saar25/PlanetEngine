@@ -122,8 +122,8 @@ public class MinecraftHQ {
         uiDisplay.add(square);
 
         final WorldGenerator generator = WorldGenerationPipeline
-                .pipe(new TerrainGenerator(80, 140, SimplexNoise::noise))
-                .then(new WaterGenerator(80))
+                .pipe(new TerrainGenerator(80, 140, (x, y, z) -> SimplexNoise.noise(x / 64f, y / 64f, z / 64f)))
+                .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
         final World world = new World(generator, THREAD_COUNT, !SHADOWS_HQ);
