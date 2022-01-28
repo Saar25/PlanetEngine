@@ -1,8 +1,6 @@
 package org.saar.minecraft;
 
 import org.joml.SimplexNoise;
-import org.joml.Vector3i;
-import org.joml.Vector4i;
 import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
@@ -32,7 +30,6 @@ import org.saar.gui.style.coordinate.CoordinateValues;
 import org.saar.gui.style.position.PositionValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.glfw.input.mouse.MouseButton;
 import org.saar.lwjgl.glfw.input.mouse.MouseCursor;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
@@ -53,7 +50,6 @@ import org.saar.minecraft.chunk.WaterRenderNode;
 import org.saar.minecraft.chunk.WaterRenderer;
 import org.saar.minecraft.components.*;
 import org.saar.minecraft.entity.HitBoxes;
-import org.saar.minecraft.entity.Player;
 import org.saar.minecraft.generator.*;
 import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
 import org.saar.minecraft.threading.GlThreadQueue;
@@ -124,6 +120,7 @@ public class Minecraft {
         final NodeComponentGroup cameraComponents = FLY_MODE ?
                 new NodeComponentGroup(
                         new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                        new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
                         new PlayerFlyingComponent(window.getKeyboard(), SPEED),
                         new CollisionComponent(world, HitBoxes.getPlayer()),
@@ -131,6 +128,7 @@ public class Minecraft {
                 ) :
                 new NodeComponentGroup(
                         new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                        new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
                         new GravityComponent(world),
                         new PlayerJumpComponent(world, window.getKeyboard()),
@@ -138,7 +136,6 @@ public class Minecraft {
                         new VelocityComponent()
                 );
         final Camera camera = new Camera(projection, cameraComponents);
-        final Player player = new Player(camera);
 
         world.generateAround(camera.getTransform().getPosition(), WORLD_RADIUS);
 
@@ -179,8 +176,6 @@ public class Minecraft {
 
         long lastFpsUpdate = System.currentTimeMillis();
 
-        long lastBlockPlace = System.currentTimeMillis();
-
         final Mouse mouse = window.getMouse();
         final Keyboard keyboard = window.getKeyboard();
 
@@ -213,35 +208,6 @@ public class Minecraft {
 
             window.swapBuffers();
             window.pollEvents();
-
-            final BlockFaceContainer rayCast = player.rayCast(world);
-            if (rayCast != null && rayCast.getBlock().isCollideable()) {
-                ChunkRenderer.INSTANCE.getRayCastedFace().setValue(new Vector4i(rayCast.getX(),
-                        rayCast.getY(), rayCast.getZ(), rayCast.getDirection()));
-
-                if (lastBlockPlace + MOUSE_DELAY <= System.currentTimeMillis()) {
-                    if (mouse.isButtonDown(MouseButton.getPRIMARY())) {
-                        lastBlockPlace = System.currentTimeMillis();
-
-                        world.setBlock(rayCast.getX(), rayCast.getY(), rayCast.getZ(), Blocks.AIR);
-                    }
-                    if (mouse.isButtonDown(MouseButton.getSECONDARY())) {
-                        lastBlockPlace = System.currentTimeMillis();
-
-                        final Vector3i blockDirection = new Vector3i[]{
-                                new Vector3i(+1, 0, 0),
-                                new Vector3i(-1, 0, 0),
-                                new Vector3i(0, +1, 0),
-                                new Vector3i(0, -1, 0),
-                                new Vector3i(0, 0, +1),
-                                new Vector3i(0, 0, -1),
-                        }[rayCast.getDirection()].add(rayCast.getPosition());
-                        world.setBlock(blockDirection.x, blockDirection.y, blockDirection.z, Blocks.STONE);
-                    }
-                }
-            } else {
-                ChunkRenderer.INSTANCE.getRayCastedFace().setValue(new Vector4i(0, 0, 0, -1));
-            }
 
             final float xChange = lastWorldUpdatePosition.getX() - camera.getTransform().getPosition().getX();
             final float zChange = lastWorldUpdatePosition.getZ() - camera.getTransform().getPosition().getZ();

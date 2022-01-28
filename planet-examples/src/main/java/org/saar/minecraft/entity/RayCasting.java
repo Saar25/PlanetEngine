@@ -2,7 +2,7 @@ package org.saar.minecraft.entity;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.saar.core.camera.ICamera;
+import org.saar.maths.transform.Transform;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.BlockContainer;
 import org.saar.minecraft.BlockFaceContainer;
@@ -36,11 +36,11 @@ public final class RayCasting {
         return d.z() < 0 ? 4 : 5;
     }
 
-    public static BlockFaceContainer lookingAtFace(ICamera camera, World world, int maxSteps) {
+    public static BlockFaceContainer lookingAtFace(Transform transform, World world, int maxSteps) {
         float big = 1E30f;
 
-        final Vector3f d = Vector3.of(camera.getTransform().getRotation().getDirection()).mul(-1).normalize();
-        final Vector3f o = Vector3.of(camera.getTransform().getPosition().getValue());
+        final Vector3f d = Vector3.of(transform.getRotation().getDirection()).mul(-1).normalize();
+        final Vector3f o = Vector3.of(transform.getPosition().getValue());
 
         final Vector3fc di = Vector3.of(1).div(d);
 
