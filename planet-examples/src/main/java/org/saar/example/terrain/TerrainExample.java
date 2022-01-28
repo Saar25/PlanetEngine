@@ -7,7 +7,7 @@ import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
-import org.saar.core.common.components.MouseRotationComponent;
+import org.saar.core.common.components.MouseDragRotationComponent;
 import org.saar.core.common.r3d.*;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
@@ -37,6 +37,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.texture.CubeMapTexture;
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder;
+import org.saar.maths.noise.LayeredNoise2f;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
@@ -62,7 +63,7 @@ public class TerrainExample {
                 new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
         final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
                 new KeyboardMovementScrollVelocityComponent(mouse),
-                new MouseRotationComponent(mouse, -.3f));
+                new MouseDragRotationComponent(mouse, -.3f));
 
         final Camera camera = new Camera(projection, components);
         camera.getTransform().getPosition().set(0, 0, 200);
@@ -70,7 +71,7 @@ public class TerrainExample {
 
         final LowPolyWorld world = new LowPolyWorld(new LowPolyTerrainConfiguration(
                 new DiamondMeshGenerator(64),
-                new NoiseHeightGenerator(SimplexNoise::noise),
+                new NoiseHeightGenerator(new LayeredNoise2f(SimplexNoise::noise, 2)),
                 new NormalColourGenerator(Vector3.upward(),
                         new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
                         new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
