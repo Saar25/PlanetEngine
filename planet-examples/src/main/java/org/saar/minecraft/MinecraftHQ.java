@@ -49,6 +49,7 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
+import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
@@ -116,48 +117,16 @@ public class MinecraftHQ {
         square.getStyle().getPosition().setValue(PositionValues.getAbsolute());
         uiDisplay.add(square);
 
-        final WorldGenerator generator = WorldGenerationPipeline
-                .pipe(new TerrainGenerator(80, 140, (x, y, z) -> SimplexNoise.noise(x / 64f, y / 64f, z / 64f)))
-                .then(new WaterGenerator(100))
-                .then(new TreesGenerator(SimplexNoise::noise))
-                .then(new BedrockGenerator());
-        final World world = new World(generator, THREAD_COUNT, !SHADOWS_HQ);
+        final World world = buildWorld();
+        world.generateAround(Position.of(0, 0, 0), WORLD_RADIUS);
 
-        final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
-        final NodeComponentGroup cameraComponents = FLY_MODE ?
-                new NodeComponentGroup(
-                        new GenerateAroundComponent(world, WORLD_RADIUS),
-                        new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
-                        new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
-                        new PlayerWalkingComponent(window.getKeyboard(), SPEED),
-                        new PlayerFlyingComponent(window.getKeyboard(), SPEED),
-                        new CollisionComponent(world, HitBoxes.getPlayer()),
-                        new VelocityComponent()
-                ) :
-                new NodeComponentGroup(
-                        new GenerateAroundComponent(world, WORLD_RADIUS),
-                        new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
-                        new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
-                        new PlayerWalkingComponent(window.getKeyboard(), SPEED),
-                        new GravityComponent(world),
-                        new PlayerJumpComponent(world, window.getKeyboard()),
-                        new CollisionComponent(world, HitBoxes.getPlayer()),
-                        new VelocityComponent()
-                );
-        final Camera camera = new Camera(projection, cameraComponents);
+        final Camera camera = buildCamera(window, world);
+        final int height = world.getHeight(0, 0) + 10;
+        camera.getTransform().getPosition().set(0, height, 0);
 
-        final Texture2D textureAtlas = Texture2D.of(TEXTURE_ATLAS_PATH);
-        textureAtlas.applyParameters(
-                new TextureMagFilterParameter(MagFilterValue.NEAREST),
-                new TextureMinFilterParameter(MinFilterValue.NEAREST_MIPMAP_LINEAR),
-                new TextureAnisotropicFilterParameter(8)
-        );
-        textureAtlas.generateMipmap();
-
-        ChunkRenderer.INSTANCE.setAtlas(textureAtlas);
-        WaterRenderer.INSTANCE.setAtlas(textureAtlas);
-
-        camera.getTransform().getPosition().set(0, 200, 0);
+        final Texture2D atlas = createAtlas();
+        ChunkRenderer.INSTANCE.setAtlas(atlas);
+        WaterRenderer.INSTANCE.setAtlas(atlas);
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 new ChunkRenderNode(world),
@@ -244,10 +213,55 @@ public class MinecraftHQ {
             fps.update();
         }
 
-        textureAtlas.delete();
+        atlas.delete();
         world.delete();
 
         renderingPath.delete();
         window.destroy();
+    }
+
+    private static World buildWorld() {
+        final WorldGenerator generator = WorldGenerationPipeline
+                .pipe(new TerrainGenerator(80, 140, (x, y, z) -> SimplexNoise.noise(x / 64f, y / 64f, z / 64f)))
+                .then(new WaterGenerator(100))
+                .then(new TreesGenerator(SimplexNoise::noise))
+                .then(new BedrockGenerator());
+        return new World(generator, THREAD_COUNT, !SHADOWS_HQ);
+    }
+
+    private static Camera buildCamera(Window window, World world) {
+        final Projection projection = new ScreenPerspectiveProjection(MainScreen.INSTANCE, 70, .20f, 500);
+        final NodeComponentGroup cameraComponents = FLY_MODE ?
+                new NodeComponentGroup(
+                        new GenerateAroundComponent(world, WORLD_RADIUS),
+                        new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                        new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
+                        new PlayerWalkingComponent(window.getKeyboard(), SPEED),
+                        new PlayerFlyingComponent(window.getKeyboard(), SPEED),
+                        new CollisionComponent(world, HitBoxes.getPlayer()),
+                        new VelocityComponent()
+                ) :
+                new NodeComponentGroup(
+                        new GenerateAroundComponent(world, WORLD_RADIUS),
+                        new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
+                        new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
+                        new PlayerWalkingComponent(window.getKeyboard(), SPEED),
+                        new GravityComponent(world),
+                        new PlayerJumpComponent(world, window.getKeyboard()),
+                        new CollisionComponent(world, HitBoxes.getPlayer()),
+                        new VelocityComponent()
+                );
+        return new Camera(projection, cameraComponents);
+    }
+
+    private static Texture2D createAtlas() throws Exception {
+        final Texture2D atlas = Texture2D.of(TEXTURE_ATLAS_PATH);
+        atlas.applyParameters(
+                new TextureMagFilterParameter(MagFilterValue.NEAREST),
+                new TextureMinFilterParameter(MinFilterValue.NEAREST_MIPMAP_LINEAR),
+                new TextureAnisotropicFilterParameter(8)
+        );
+        atlas.generateMipmap();
+        return atlas;
     }
 }
