@@ -26,7 +26,16 @@ void main(void) {
     f_colour *= 1 - v_shw / 10.0;
 
     if (v_block == u_rayCastedFace.xyz && v_dir == u_rayCastedFace.w) {
-        f_colour.rgb += vec3(u_glowTransition / 2);
+        vec2 local;
+        if (v_dir == 0 || v_dir == 1) {
+            local = v_position.yz - v_block.yz;
+        } else if (v_dir == 2 || v_dir == 3) {
+            local = v_position.xz - v_block.xz;
+        } else {
+            local = v_position.xy - v_block.xy;
+        }
+        vec2 a = abs(local - .5) * 2;
+        f_colour.rgb *= smoothstep(max(a.x, a.y), 1, .98);
     }
 
     f_normalSpecular = vec4(v_normal, 1);
