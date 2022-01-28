@@ -33,6 +33,7 @@ public class Chunk implements IChunk, Model {
 
     private final Block[] blocks = new Block[16 * 16 * 256];
     private final int[] heights = new int[16 * 16];
+    private final int[] solidHeights = new int[16 * 16];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
     private final List<BlockContainer> waterBlocks = new ArrayList<>();
@@ -70,6 +71,7 @@ public class Chunk implements IChunk, Model {
         return this.bounds;
     }
 
+    @Override
     public int getHeight(int x, int z) {
         if (isInRange(x, 0, z)) {
             final int heightIndex = index(x, z);
@@ -78,9 +80,27 @@ public class Chunk implements IChunk, Model {
         return 0;
     }
 
+    @Override
+    public int getSolidHeight(int x, int z) {
+        if (isInRange(x, 0, z)) {
+            final int heightIndex = index(x, z);
+            return this.solidHeights[heightIndex];
+        }
+        return 0;
+    }
+
     private int findHeight(int x, int z) {
         for (int i = 255; i >= 0; i--) {
             if (blocks[index(x, i, z)] != Blocks.AIR) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private int findSolidHeight(int x, int z) {
+        for (int i = 255; i >= 0; i--) {
+            if (blocks[index(x, i, z)].isSolid()) {
                 return i;
             }
         }
@@ -116,8 +136,12 @@ public class Chunk implements IChunk, Model {
             final int heightIndex = index(x, z);
             if (block == Blocks.AIR && this.heights[heightIndex] == y) {
                 this.heights[heightIndex] = findHeight(x, z);
+                this.solidHeights[heightIndex] = findSolidHeight(x, z);
             } else if (this.heights[heightIndex] < y) {
                 this.heights[heightIndex] = y;
+                if (block.isSolid()) {
+                    this.solidHeights[heightIndex] = findSolidHeight(x, z);
+                }
             }
         }
     }
@@ -222,10 +246,14 @@ public class Chunk implements IChunk, Model {
         int shadow = 0;
         for (int i = -2; i <= 2; i++) {
             for (int j = -2; j <= 2; j++) {
-                if (world.getHeight(x + i, z + j) >= y) {
+                if (world.getSolidHeight(x + i, z + j) >= y) {
                     final int pi = 2 - Math.abs(i);
                     final int pj = 2 - Math.abs(j);
                     shadow += Math.pow(2, pi + pj - 1);
+                } else if (world.getHeight(x + i, z + j) >= y) {
+                    final int pi = 2 - Math.abs(i);
+                    final int pj = 2 - Math.abs(j);
+                    shadow += Math.pow(2, pi + pj - 2);
                 }
             }
         }

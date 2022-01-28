@@ -114,8 +114,8 @@ public class Minecraft {
         uiDisplay.add(square);
 
         final WorldGenerator generator = WorldGenerationPipeline
-                .pipe(new TerrainGenerator(80))
-                .then(new WaterGenerator(80))
+                .pipe(new TerrainGenerator(100))
+                .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
         final World world = new World(generator, THREAD_COUNT, true);

@@ -29,7 +29,7 @@ public class TreesGenerator implements WorldGenerator {
                 if (noise(wx, wz) > .70f) {
                     final int y = chunk.getHeight(x, z) + 1;
                     final Block block = chunk.getBlock(x, y - 1, z);
-                    if (y > 60 && block.isSolid()) {
+                    if (y > 60 && (block == Blocks.GRASS || block == Blocks.DIRT)) {
                         for (int i = 0; i < 4; i++) {
                             chunk.setBlock(x, y + i, z, Blocks.TREE);
                         }

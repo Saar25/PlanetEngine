@@ -56,7 +56,7 @@ object Blocks {
     val LEAVES: Block = object : Block {
         override val id: Int = 5
         override val name: String = "leave"
-        override val isSolid: Boolean = false
+        override val isSolid: Boolean = true
         override val isTransparent: Boolean = true
         override val isCollideable: Boolean = true
         override val faces: BlockFaces = BlockFaces(7)
