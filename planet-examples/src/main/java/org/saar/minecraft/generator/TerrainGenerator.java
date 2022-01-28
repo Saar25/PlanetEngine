@@ -1,29 +1,29 @@
 package org.saar.minecraft.generator;
 
-import org.joml.SimplexNoise;
+import org.saar.maths.noise.Noise3f;
 import org.saar.maths.utils.Maths;
 import org.saar.minecraft.Blocks;
 import org.saar.minecraft.Chunk;
 
 public class TerrainGenerator implements WorldGenerator {
 
-    private final int waterLevel;
+    private final int minHeight;
+    private final int maxHeight;
+    private final Noise3f noise;
 
-    public TerrainGenerator(int waterLevel) {
-        this.waterLevel = waterLevel;
+    public TerrainGenerator(int minHeight, int maxHeight, Noise3f noise) {
+        this.minHeight = minHeight;
+        this.maxHeight = maxHeight;
+        this.noise = noise;
     }
 
-    private static float smoothStep(float value, float edge0, float edge1) {
-        final float t = Maths.clamp((value - edge0) / (edge1 - edge0), 0, 1);
+    private float smoothStep(float value) {
+        final float t = Maths.clamp((this.maxHeight - value) / (this.maxHeight - this.minHeight), 0, 1);
         return t * t * (3 - 2 * t);
     }
 
-    private static float noise(int x, int y, int z) {
-        final float noise = (SimplexNoise.noise(x / 64f, y / 64f, z / 64f) / 2f
-                + SimplexNoise.noise(x / 128f, y / 128f, z / 128f) / 4f
-                + SimplexNoise.noise(x / 256f, y / 256f, z / 256f) / 8f
-        ) * .5f + .5f;
-        return noise * smoothStep(y, 150, 60);
+    private float noise(int x, int y, int z) {
+        return (this.noise.noise(x, y, z) * .5f + .5f) * smoothStep(y);
     }
 
     @Override
@@ -32,16 +32,16 @@ public class TerrainGenerator implements WorldGenerator {
             for (int z = 0; z < 16; z++) {
                 final int wx = x + chunk.getPosition().x() * 16;
                 final int wz = z + chunk.getPosition().y() * 16;
-                for (int y = 0; y < 53; y++) {
+                for (int y = 0; y < this.minHeight; y++) {
                     final float noise = noise(wx, y, wz);
                     if (noise > .2f) {
                         chunk.setBlock(x, y, z, Blocks.STONE);
                     }
                 }
-                for (int y = 53; y < 120; y++) {
+                for (int y = this.minHeight; y <= this.maxHeight; y++) {
                     final float noise = noise(wx, y, wz);
                     if (noise > .2f) {
-                        if (y >= this.waterLevel - 1 && y > 60 && noise(wx, y + 1, wz) <= .2f) {
+                        if (noise(wx, y + 1, wz) <= .2f) {
                             chunk.setBlock(x, y, z, Blocks.GRASS);
                         } else if (noise(wx, y + 7, wz) <= .2f) {
                             chunk.setBlock(x, y, z, Blocks.DIRT);
