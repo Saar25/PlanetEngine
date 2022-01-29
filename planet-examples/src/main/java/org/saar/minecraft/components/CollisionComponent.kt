@@ -1,5 +1,6 @@
 package org.saar.minecraft.components
 
+import org.joml.Vector3ic
 import org.saar.core.common.components.TransformComponent
 import org.saar.core.common.components.VelocityComponent
 import org.saar.core.node.ComposableNode
@@ -27,5 +28,10 @@ class CollisionComponent(
         val ensured = this.hitBox.collideWithWorld(this.world, position, direction)
 
         this.velocityComponent.direction.set(ensured)
+    }
+
+    fun isCollidingBlock(block: Vector3ic): Boolean {
+        val position = this.transformComponent.transform.position
+        return this.hitBox.isCollidingBlock(position, block)
     }
 }

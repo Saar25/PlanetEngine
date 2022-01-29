@@ -2,6 +2,7 @@ package org.saar.minecraft.entity;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.joml.Vector3ic;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.ReadonlyPosition;
 import org.saar.maths.utils.Vector3;
@@ -30,10 +31,10 @@ public class HitBox {
     }
 
     private static void addVertices(List<Vector3fc> vertices, float radius, float height) {
-        vertices.add(Vector3.of(+radius, +radius - height, +radius));
-        vertices.add(Vector3.of(+radius, +radius - height, -radius));
-        vertices.add(Vector3.of(-radius, +radius - height, -radius));
-        vertices.add(Vector3.of(-radius, +radius - height, +radius));
+        vertices.add(Vector3.of(+radius, radius - height, +radius));
+        vertices.add(Vector3.of(+radius, radius - height, -radius));
+        vertices.add(Vector3.of(-radius, radius - height, -radius));
+        vertices.add(Vector3.of(-radius, radius - height, +radius));
     }
 
     public Vector3f collideWithWorld(World world, ReadonlyPosition cameraPosition, Vector3fc direction) {
@@ -46,5 +47,19 @@ public class HitBox {
             Collision.ensureDirection(world, vertexPosition, ensured);
         }
         return ensured;
+    }
+
+    public boolean isCollidingBlock(Position position, Vector3ic block) {
+        for (Vector3fc vertex : this.vertices) {
+            final Position vertexPosition = Position.create();
+            vertexPosition.set(position);
+            vertexPosition.add(vertex);
+
+            if (Collision.isCollidingBlock(vertexPosition, block)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

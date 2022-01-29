@@ -2,6 +2,7 @@ package org.saar.minecraft.entity;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.joml.Vector3ic;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.ReadonlyPosition;
 import org.saar.maths.utils.Maths;
@@ -16,6 +17,10 @@ public final class Collision {
     private Collision() {
         throw new AssertionError("Cannot create instance of class "
                 + getClass().getSimpleName());
+    }
+
+    private static boolean isBetween(float value, float min, float max) {
+        return value >= min && value <= max;
     }
 
     private static float safeClamp(float value, float max) {
@@ -61,5 +66,11 @@ public final class Collision {
                 direction.setComponent(i, safeClamp(direction.get(i), distance));
             }
         }
+    }
+
+    public static boolean isCollidingBlock(Position position, Vector3ic block) {
+        return isBetween(position.getX(), block.x(), block.x() + 1) &&
+                isBetween(position.getY(), block.y(), block.y() + 1) &&
+                isBetween(position.getZ(), block.z(), block.z() + 1);
     }
 }

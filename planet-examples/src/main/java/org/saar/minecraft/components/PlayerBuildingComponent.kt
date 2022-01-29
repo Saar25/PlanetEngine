@@ -30,9 +30,11 @@ class PlayerBuildingComponent(
     )
 
     private lateinit var transformComponent: TransformComponent
+    private lateinit var collisionComponent: CollisionComponent
 
     override fun start(node: ComposableNode) {
         this.transformComponent = node.components.get()
+        this.collisionComponent = node.components.get()
     }
 
     override fun update(node: ComposableNode) {
@@ -53,7 +55,9 @@ class PlayerBuildingComponent(
                 if (this.mouse.isButtonDown(MouseButton.SECONDARY)) {
                     this.lastBuild = System.currentTimeMillis()
                     val position = Vector3i(this.directions[rayCast.direction]).add(rayCast.position)
-                    this.world.setBlock(position.x, position.y, position.z, Blocks.STONE)
+                    if (!this.collisionComponent.isCollidingBlock(position)) {
+                        this.world.setBlock(position.x, position.y, position.z, Blocks.STONE)
+                    }
                 }
             }
         }
