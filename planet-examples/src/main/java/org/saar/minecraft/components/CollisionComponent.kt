@@ -34,4 +34,9 @@ class CollisionComponent(
         val position = this.transformComponent.transform.position
         return this.hitBox.isCollidingBlock(position, block)
     }
+
+    fun isOnBlock(): Boolean {
+        val position = this.transformComponent.transform.position
+        return this.hitBox.isOnBlock(this.world, position)
+    }
 }

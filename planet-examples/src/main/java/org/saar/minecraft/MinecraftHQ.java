@@ -246,8 +246,8 @@ public class MinecraftHQ {
                         new MouseRotationComponent(window.getMouse(), -MOUSE_SENSITIVITY),
                         new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
-                        new GravityComponent(world),
-                        new PlayerJumpComponent(world, window.getKeyboard()),
+                        new GravityComponent(),
+                        new PlayerJumpComponent(window.getKeyboard()),
                         new CollisionComponent(world, HitBoxes.getPlayer()),
                         new VelocityComponent()
                 );

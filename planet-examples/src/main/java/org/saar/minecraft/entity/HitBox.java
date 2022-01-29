@@ -6,6 +6,7 @@ import org.joml.Vector3ic;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.ReadonlyPosition;
 import org.saar.maths.utils.Vector3;
+import org.saar.minecraft.Block;
 import org.saar.minecraft.World;
 
 import java.util.ArrayList;
@@ -60,6 +61,21 @@ public class HitBox {
             }
         }
 
+        return false;
+    }
+
+    public boolean isOnBlock(World world, Position position) {
+        for (Vector3fc vertex : this.vertices) {
+            final Block block = world.getBlock(
+                    (int) Math.floor(vertex.x() + position.getX()),
+                    (int) Math.floor(vertex.y() + position.getY() - 0.01f),
+                    (int) Math.floor(vertex.z() + position.getZ())
+            );
+
+            if (block.isCollideable()) {
+                return true;
+            }
+        }
         return false;
     }
 }
