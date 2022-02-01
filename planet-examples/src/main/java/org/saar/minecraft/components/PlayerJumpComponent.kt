@@ -6,6 +6,7 @@ import org.saar.core.common.components.VelocityComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
+import kotlin.math.min
 
 class PlayerJumpComponent(private val keyboard: Keyboard) : NodeComponent {
 
@@ -20,8 +21,13 @@ class PlayerJumpComponent(private val keyboard: Keyboard) : NodeComponent {
     }
 
     override fun update(node: ComposableNode) {
-        if (this.keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE) && this.collisionComponent.isOnBlock()) {
-            this.velocityComponent.direction.y = .25f
+        if (this.keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+            if (this.collisionComponent.isInsideWater()) {
+                this.velocityComponent.direction.y += .02f
+                this.velocityComponent.direction.y = min(this.velocityComponent.direction.y, .20f)
+            } else if (this.collisionComponent.isOnBlock()) {
+                this.velocityComponent.direction.y = .20f
+            }
         }
     }
 }

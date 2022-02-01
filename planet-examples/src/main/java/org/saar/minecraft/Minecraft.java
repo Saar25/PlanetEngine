@@ -42,6 +42,7 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
+import org.saar.maths.noise.LayeredNoise3f;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
@@ -176,7 +177,7 @@ public class Minecraft {
 
     private static World buildWorld() {
         final WorldGenerator generator = WorldGenerationPipeline
-                .pipe(new TerrainGenerator(80, 140, (x, y, z) -> SimplexNoise.noise(x / 64f, y / 64f, z / 64f)))
+                .pipe(new TerrainGenerator(50, 200, new LayeredNoise3f((x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f), 5)))
                 .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
@@ -202,6 +203,7 @@ public class Minecraft {
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
                         new GravityComponent(),
                         new PlayerJumpComponent(window.getKeyboard()),
+                        new WaterFloatingComponent(),
                         new CollisionComponent(world, HitBoxes.getPlayer()),
                         new VelocityComponent()
                 );

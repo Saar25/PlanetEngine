@@ -7,6 +7,7 @@ import org.saar.maths.transform.Position;
 import org.saar.maths.transform.ReadonlyPosition;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.Block;
+import org.saar.minecraft.Blocks;
 import org.saar.minecraft.World;
 
 import java.util.ArrayList;
@@ -57,6 +58,20 @@ public class HitBox {
             vertexPosition.add(vertex);
 
             if (Collision.isCollidingBlock(vertexPosition, block)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isInsideWater(World world, Position position) {
+        for (Vector3fc vertex : this.vertices) {
+            final Position vertexPosition = Position.create();
+            vertexPosition.set(position);
+            vertexPosition.add(vertex);
+
+            if (world.getBlock(vertexPosition) == Blocks.WATER) {
                 return true;
             }
         }
