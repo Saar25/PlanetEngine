@@ -9,12 +9,14 @@ public class BlockFaceContainer {
     private final Block block;
     private final int direction;
     private final int shadow;
+    private final boolean[] ambientOcclusion;
 
-    public BlockFaceContainer(int x, int y, int z, Block block, int direction, int shadow) {
+    public BlockFaceContainer(int x, int y, int z, Block block, int direction, int shadow, boolean[] ambientOcclusion) {
         this.position = new Vector3i(x, y, z);
         this.block = block;
         this.direction = direction;
         this.shadow = shadow;
+        this.ambientOcclusion = ambientOcclusion;
     }
 
     public int getX() {
@@ -43,5 +45,9 @@ public class BlockFaceContainer {
 
     public int getShadow() {
         return this.shadow;
+    }
+
+    public boolean[] getAmbientOcclusion() {
+        return this.ambientOcclusion;
     }
 }

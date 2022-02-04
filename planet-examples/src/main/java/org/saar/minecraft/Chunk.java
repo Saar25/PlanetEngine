@@ -29,6 +29,15 @@ public class Chunk implements IChunk, Model {
             new Vector3i(0, 0, -1),
     };
 
+    private static final int[][] orders = new int[][]{
+            {1, 3, 7, 0, 3, 5, 0, 2, 4, 1, 2, 6},
+            {1, 2, 6, 0, 2, 4, 0, 3, 5, 1, 3, 7},
+            {1, 3, 7, 0, 3, 5, 0, 2, 4, 1, 2, 6},
+            {1, 3, 7, 0, 3, 5, 0, 2, 4, 1, 2, 6},
+            {0, 3, 5, 0, 2, 4, 1, 2, 6, 1, 3, 7},
+            {1, 3, 7, 1, 2, 6, 0, 2, 4, 0, 3, 5},
+    };
+
     private final Vector2i position;
 
     private final Block[] blocks = new Block[16 * 16 * 256];
@@ -215,8 +224,9 @@ public class Chunk implements IChunk, Model {
             for (int i = 0; i < around.length; i++) {
                 if (around[i].isTransparent() && !(around[i] == Blocks.WATER && b.getBlock() == Blocks.WATER)) {
                     final int shadow = getShadow(world, b, i);
+                    final boolean[] ao = getAmbientOcclusion(world, b, i);
                     final BlockFaceContainer face = new BlockFaceContainer(
-                            b.getX(), b.getY(), b.getZ(), b.getBlock(), i, shadow);
+                            b.getX(), b.getY(), b.getZ(), b.getBlock(), i, shadow, ao);
                     blockFaceContainers.add(face);
                 }
             }
@@ -227,10 +237,40 @@ public class Chunk implements IChunk, Model {
             final ChunkMeshBuilder builder = ChunkMeshBuilder.fixed(faceCount);
             for (BlockFaceContainer b : blockFaceContainers) {
                 final int faceId = b.getBlock().getFaces().faceId(b.getDirection());
-                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId, b.getDirection(), b.getShadow());
+                builder.addFace(b.getX(), b.getY(), b.getZ(), faceId,
+                        b.getDirection(), b.getShadow(), b.getAmbientOcclusion());
             }
             return builder;
         });
+    }
+
+    private boolean[] getAmbientOcclusion(World world, BlockContainer b, int dir) {
+        final Vector3ic direction = blockDirection[dir];
+        final Vector3ic d1 = blockDirection[(dir / 2 * 2 + 2) % 6];
+        final Vector3ic d2 = blockDirection[(dir / 2 * 2 + 3) % 6];
+        final Vector3ic d3 = blockDirection[(dir / 2 * 2 + 4) % 6];
+        final Vector3ic d4 = blockDirection[(dir / 2 * 2 + 5) % 6];
+        final int x = getPosition().x() * 16 + b.getX() + direction.x();
+        final int y = b.getY() + direction.y();
+        final int z = getPosition().y() * 16 + b.getZ() + direction.z();
+        final Block[] blocks = {
+                world.getBlock(x + d1.x(), y + d1.y(), z + d1.z()),
+                world.getBlock(x + d2.x(), y + d2.y(), z + d2.z()),
+                world.getBlock(x + d3.x(), y + d3.y(), z + d3.z()),
+                world.getBlock(x + d4.x(), y + d4.y(), z + d4.z()),
+                world.getBlock(x + d1.x() + d3.x(), y + d1.y() + d3.y(), z + d1.z() + d3.z()),
+                world.getBlock(x + d1.x() + d4.x(), y + d1.y() + d4.y(), z + d1.z() + d4.z()),
+                world.getBlock(x + d2.x() + d3.x(), y + d2.y() + d3.y(), z + d2.z() + d3.z()),
+                world.getBlock(x + d2.x() + d4.x(), y + d2.y() + d4.y(), z + d2.z() + d4.z()),
+        };
+        final int[] order = orders[dir];
+
+        return new boolean[]{
+                blocks[order[0]].isSolid() || blocks[order[1]].isSolid() || blocks[order[2]].isSolid(),
+                blocks[order[3]].isSolid() || blocks[order[4]].isSolid() || blocks[order[5]].isSolid(),
+                blocks[order[6]].isSolid() || blocks[order[7]].isSolid() || blocks[order[8]].isSolid(),
+                blocks[order[9]].isSolid() || blocks[order[10]].isSolid() || blocks[order[11]].isSolid(),
+        };
     }
 
     private int getShadow(World world, BlockContainer b, int dir) {

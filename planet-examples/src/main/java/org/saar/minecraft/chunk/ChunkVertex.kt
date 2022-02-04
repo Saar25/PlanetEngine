@@ -9,4 +9,5 @@ interface ChunkVertex : Vertex {
     val blockId: Int
     val direction: Int
     val shadow: Int
+    val ao: Boolean
 }

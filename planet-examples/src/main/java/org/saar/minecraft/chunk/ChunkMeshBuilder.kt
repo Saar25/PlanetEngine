@@ -7,12 +7,15 @@ class ChunkMeshBuilder private constructor(
     private val builder: ArraysMeshBuilder<ChunkVertex>,
 ) : MeshBuilder {
 
-    fun addBlock(x: Int, y: Int, z: Int, id: Int, shadow: Int) = repeat(6) { addFace(x, y, z, id, it, shadow) }
+    private val indexMap = arrayOf(0, 1, 2, 0, 2, 3)
 
-    fun addFace(x: Int, y: Int, z: Int, id: Int, face: Int, shadow: Int) {
+    fun addBlock(x: Int, y: Int, z: Int, id: Int, shadow: Int) =
+        repeat(6) { addFace(x, y, z, id, it, shadow, BooleanArray(4)) }
+
+    fun addFace(x: Int, y: Int, z: Int, id: Int, face: Int, shadow: Int, ao: BooleanArray) {
         repeat(6) {
             val vertex = Chunks.vertex(
-                x, y, z, id, face, shadow)
+                x, y, z, id, face, shadow, ao[indexMap[it]])
             this.builder.addVertex(vertex)
         }
     }
