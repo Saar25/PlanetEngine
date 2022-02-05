@@ -43,6 +43,7 @@ public class Chunk implements IChunk, Model {
     private final Block[] blocks = new Block[16 * 16 * 256];
     private final int[] heights = new int[16 * 16];
     private final int[] solidHeights = new int[16 * 16];
+    private final int[] lights = new int[16 * 16 * 256];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
     private final List<BlockContainer> waterBlocks = new ArrayList<>();
@@ -92,15 +93,16 @@ public class Chunk implements IChunk, Model {
     @Override
     public int getSolidHeight(int x, int z) {
         if (isInRange(x, 0, z)) {
-            final int heightIndex = index(x, z);
-            return this.solidHeights[heightIndex];
+            final int index = index(x, z);
+            return this.solidHeights[index];
         }
         return 0;
     }
 
     private int findHeight(int x, int z) {
         for (int i = 255; i >= 0; i--) {
-            if (blocks[index(x, i, z)] != Blocks.AIR) {
+            final int index = index(x, i, z);
+            if (this.blocks[index] != Blocks.AIR) {
                 return i;
             }
         }
@@ -109,11 +111,18 @@ public class Chunk implements IChunk, Model {
 
     private int findSolidHeight(int x, int z) {
         for (int i = 255; i >= 0; i--) {
-            if (blocks[index(x, i, z)].isSolid()) {
+            final int index = index(x, i, z);
+            if (this.blocks[index].isSolid()) {
                 return i;
             }
         }
         return 0;
+    }
+
+    @Override
+    public int getLight(int x, int y, int z) {
+        final int index = index(x, y, z);
+        return this.lights[index];
     }
 
     @Override

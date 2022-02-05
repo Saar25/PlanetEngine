@@ -63,6 +63,16 @@ public class World {
         return new BlockContainer(x, y, z, getBlock(x, y, z));
     }
 
+    public int getLight(int x, int y, int z) {
+        final int cx = worldToChunkCoordinate(x);
+        final int cz = worldToChunkCoordinate(z);
+        final IChunk chunk = getChunk(cx, cz);
+
+        final int lx = x - cx * 16;
+        final int lz = z - cz * 16;
+        return chunk.getLight(lx, y, lz);
+    }
+
     public Block getBlock(Position position) {
         final int x = (int) Math.floor(position.getX());
         final int y = (int) Math.floor(position.getY());

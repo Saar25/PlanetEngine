@@ -23,6 +23,11 @@ public class EmptyChunk implements IChunk {
     }
 
     @Override
+    public int getLight(int x, int y, int z) {
+        return 0;
+    }
+
+    @Override
     public Block getBlock(int x, int y, int z) {
         return Blocks.AIR;
     }

@@ -6,6 +6,8 @@ public interface IChunk {
 
     int getSolidHeight(int x, int z);
 
+    int getLight(int x, int y, int z);
+
     Block getBlock(int x, int y, int z);
 
     void setBlock(int x, int y, int z, Block block);
