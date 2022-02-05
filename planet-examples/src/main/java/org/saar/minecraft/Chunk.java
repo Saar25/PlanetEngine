@@ -38,25 +38,26 @@ public class Chunk implements IChunk, Model {
             {1, 3, 7, 1, 2, 6, 0, 2, 4, 0, 3, 5},
     };
 
+    private final World world;
     private final Vector2i position;
 
     private final Block[] blocks = new Block[16 * 16 * 256];
     private final int[] heights = new int[16 * 16];
     private final int[] solidHeights = new int[16 * 16];
-    private final int[] lights = new int[16 * 16 * 256];
+    private final byte[] lights = new byte[16 * 16 * 256];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
     private final List<BlockContainer> waterBlocks = new ArrayList<>();
     private final ChunkBounds bounds = new ChunkBounds();
-    private final boolean shadows;
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
 
-    public Chunk(int x, int z, boolean shadows) {
+    public Chunk(World world, int x, int z) {
+        this.world = world;
         this.position = new Vector2i(x, z);
         Arrays.fill(this.blocks, Blocks.AIR);
-        this.shadows = shadows;
+        Arrays.fill(this.lights, (byte) 0xF);
     }
 
     private static int index(int x, int y, int z) {
@@ -119,6 +120,41 @@ public class Chunk implements IChunk, Model {
         return 0;
     }
 
+    public int calculateLight(int x, int y, int z) {
+        final int index = index(x, y, z);
+
+        if (this.blocks[index] != Blocks.AIR) {
+            return 0;
+        } else {
+            int max = this.getLight(x, y + 1, z);
+            for (Vector3ic direction : blockDirection) {
+                int bx = x + direction.x() + getPosition().x() * 16;
+                int by = y + direction.y();
+                int bz = z + direction.z() + getPosition().y() * 16;
+                final int light = Math.max(0, this.world.getLight(bx, by, bz) - 1);
+                if (max < light) max = light;
+            }
+            return max;
+        }
+    }
+
+    @Override
+    public void updateLight(int x, int y, int z) {
+        int light = calculateLight(x, y, z);
+        final int index = index(x, y, z);
+
+        if (this.lights[index] != light) {
+            this.lights[index] = (byte) light;
+
+            for (Vector3ic direction : blockDirection) {
+                int bx = x + direction.x() + getPosition().x() * 16;
+                int by = y + direction.y();
+                int bz = z + direction.z() + getPosition().y() * 16;
+                this.world.updateLight(bx, by, bz);
+            }
+        }
+    }
+
     @Override
     public int getLight(int x, int y, int z) {
         final int index = index(x, y, z);
@@ -163,19 +199,21 @@ public class Chunk implements IChunk, Model {
                     this.solidHeights[heightIndex] = findSolidHeight(x, z);
                 }
             }
+
+            updateLight(x, y, z);
         }
     }
 
-    private Block[] blocksAround(World world, int x, int y, int z) {
+    private Block[] blocksAround(int x, int y, int z) {
         final int wx = x + getPosition().x() * 16;
         final int wz = z + getPosition().y() * 16;
 
-        final Block xPos = x == 0xF ? world.getBlock(wx + 1, y, wz) : getBlock(x + 1, y, z);
-        final Block xNeg = x == 0x0 ? world.getBlock(wx - 1, y, wz) : getBlock(x - 1, y, z);
+        final Block xPos = x == 0xF ? this.world.getBlock(wx + 1, y, wz) : getBlock(x + 1, y, z);
+        final Block xNeg = x == 0x0 ? this.world.getBlock(wx - 1, y, wz) : getBlock(x - 1, y, z);
         final Block yPos = getBlock(x, y + 1, z);
         final Block yNeg = getBlock(x, y - 1, z);
-        final Block zPos = z == 0xF ? world.getBlock(wx, y, wz + 1) : getBlock(x, y, z + 1);
-        final Block zNeg = z == 0x0 ? world.getBlock(wx, y, wz - 1) : getBlock(x, y, z - 1);
+        final Block zPos = z == 0xF ? this.world.getBlock(wx, y, wz + 1) : getBlock(x, y, z + 1);
+        final Block zNeg = z == 0x0 ? this.world.getBlock(wx, y, wz - 1) : getBlock(x, y, z - 1);
         return new Block[]{xPos, xNeg, yPos, yNeg, zPos, zNeg};
     }
 
@@ -184,13 +222,13 @@ public class Chunk implements IChunk, Model {
             final Mesh mesh = this.mesh;
             GlThreadQueue.getInstance().supply(mesh::delete);
         }
-        this.mesh = FutureMesh.unloaded(writeMesh(world, this.opaqueBlocks));
+        this.mesh = FutureMesh.unloaded(writeMesh(this.opaqueBlocks));
 
         if (this.waterMesh != null) {
             final Mesh mesh = this.waterMesh;
             GlThreadQueue.getInstance().supply(mesh::delete);
         }
-        this.waterMesh = FutureMesh.unloaded(writeMesh(world, this.waterBlocks));
+        this.waterMesh = FutureMesh.unloaded(writeMesh(this.waterBlocks));
     }
 
     @NotNull
@@ -227,17 +265,17 @@ public class Chunk implements IChunk, Model {
         }
     }
 
-    private CompletableFuture<ChunkMeshBuilder> writeMesh(World world, List<BlockContainer> blocks) {
+    private CompletableFuture<ChunkMeshBuilder> writeMesh(List<BlockContainer> blocks) {
         final List<BlockFaceContainer> blockFaceContainers = new ArrayList<>();
         for (BlockContainer b : blocks) {
-            final Block[] around = blocksAround(world, b.getX(), b.getY(), b.getZ());
+            final Block[] around = blocksAround(b.getX(), b.getY(), b.getZ());
 
             for (int i = 0; i < around.length; i++) {
                 if (around[i].isTransparent() && !(around[i] == Blocks.WATER && b.getBlock() == Blocks.WATER)) {
-                    final int shadow = getShadow(world, b, i);
-                    final boolean[] ao = getAmbientOcclusion(world, b, i);
+                    final int light = getLight(b, i);
+                    final boolean[] ao = getAmbientOcclusion(b, i);
                     final BlockFaceContainer face = new BlockFaceContainer(
-                            b.getX(), b.getY(), b.getZ(), b.getBlock(), i, shadow, ao);
+                            b.getX(), b.getY(), b.getZ(), b.getBlock(), i, light, ao);
                     blockFaceContainers.add(face);
                 }
             }
@@ -249,13 +287,13 @@ public class Chunk implements IChunk, Model {
             for (BlockFaceContainer b : blockFaceContainers) {
                 final int faceId = b.getBlock().getFaces().faceId(b.getDirection());
                 builder.addFace(b.getX(), b.getY(), b.getZ(), faceId,
-                        b.getDirection(), b.getShadow(), b.getAmbientOcclusion());
+                        b.getDirection(), b.getLight(), b.getAmbientOcclusion());
             }
             return builder;
         });
     }
 
-    private boolean[] getAmbientOcclusion(World world, BlockContainer b, int dir) {
+    private boolean[] getAmbientOcclusion(BlockContainer b, int dir) {
         final Vector3ic direction = blockDirection[dir];
         final Vector3ic d1 = blockDirection[(dir / 2 * 2 + 2) % 6];
         final Vector3ic d2 = blockDirection[(dir / 2 * 2 + 3) % 6];
@@ -265,14 +303,14 @@ public class Chunk implements IChunk, Model {
         final int y = b.getY() + direction.y();
         final int z = getPosition().y() * 16 + b.getZ() + direction.z();
         final Block[] blocks = {
-                world.getBlock(x + d1.x(), y + d1.y(), z + d1.z()),
-                world.getBlock(x + d2.x(), y + d2.y(), z + d2.z()),
-                world.getBlock(x + d3.x(), y + d3.y(), z + d3.z()),
-                world.getBlock(x + d4.x(), y + d4.y(), z + d4.z()),
-                world.getBlock(x + d1.x() + d3.x(), y + d1.y() + d3.y(), z + d1.z() + d3.z()),
-                world.getBlock(x + d1.x() + d4.x(), y + d1.y() + d4.y(), z + d1.z() + d4.z()),
-                world.getBlock(x + d2.x() + d3.x(), y + d2.y() + d3.y(), z + d2.z() + d3.z()),
-                world.getBlock(x + d2.x() + d4.x(), y + d2.y() + d4.y(), z + d2.z() + d4.z()),
+                this.world.getBlock(x + d1.x(), y + d1.y(), z + d1.z()),
+                this.world.getBlock(x + d2.x(), y + d2.y(), z + d2.z()),
+                this.world.getBlock(x + d3.x(), y + d3.y(), z + d3.z()),
+                this.world.getBlock(x + d4.x(), y + d4.y(), z + d4.z()),
+                this.world.getBlock(x + d1.x() + d3.x(), y + d1.y() + d3.y(), z + d1.z() + d3.z()),
+                this.world.getBlock(x + d1.x() + d4.x(), y + d1.y() + d4.y(), z + d1.z() + d4.z()),
+                this.world.getBlock(x + d2.x() + d3.x(), y + d2.y() + d3.y(), z + d2.z() + d3.z()),
+                this.world.getBlock(x + d2.x() + d4.x(), y + d2.y() + d4.y(), z + d2.z() + d4.z()),
         };
         final int[] order = orders[dir];
 
@@ -284,29 +322,12 @@ public class Chunk implements IChunk, Model {
         };
     }
 
-    private int getShadow(World world, BlockContainer b, int dir) {
-        if (!this.shadows) {
-            return 0;
-        }
-
+    private int getLight(BlockContainer b, int dir) {
         final Vector3ic direction = blockDirection[dir];
-        final int x = b.getX() + direction.x() + getPosition().x() * 16;
+        final int x = b.getX() + direction.x();
         final int y = b.getY() + direction.y();
-        final int z = b.getZ() + direction.z() + getPosition().y() * 16;
-
-        int shadow = 0;
-        for (int i = -2; i <= 2; i++) {
-            final int ai = Math.abs(i);
-            for (int j = -2; j <= 2; j++) {
-                final int aj = Math.abs(j);
-                final int minHeight = y + ai + aj;
-                if (world.getSolidHeight(x + i, z + j) >= minHeight) {
-                    shadow += Math.pow(2, 4 - ai - aj - 1);
-                } else if (world.getHeight(x + i, z + j) >= minHeight) {
-                    shadow += Math.pow(2, 4 - ai - aj - 2);
-                }
-            }
-        }
-        return shadow * 8 / 40;
+        final int z = b.getZ() + direction.z();
+        return x >= 0 && x <= 0xF && z >= 0 && z <= 0xF ? this.lights[index(x, y, z)]
+                : this.world.getLight(x + getPosition().x(), y, z + getPosition().y());
     }
 }

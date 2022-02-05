@@ -24,7 +24,7 @@ class ChunkMeshPrototype(
                 (vertex.y and 0xFF shl 16) or
                 (vertex.blockId and 0xFF shl 8) or
                 (vertex.direction and 7 shl 5) or
-                (vertex.shadow and 0x0F shl 1) or
+                (vertex.light and 0x0F shl 1) or
                 (vertex.ao.toInt() and 1)
         this.dataBuffer.writer.writeInt(data)
     }
@@ -37,7 +37,7 @@ class ChunkMeshPrototype(
             y = data shr 16 and 0xFF,
             blockId = data shr 8 and 0xFF,
             direction = data shr 5 and 7,
-            shadow = data shr 1 and 0x0F,
+            light = data shr 1 and 0x0F,
             ao = data and 1 == 1
         )
     }

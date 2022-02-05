@@ -49,7 +49,7 @@ uniform ivec2 u_dimensions;
 // Vertex outputs
 flat out int v_id;
 flat out int v_dir;
-flat out int v_shw;
+flat out int v_lit;
 flat out vec3 v_normal;
 flat out ivec3 v_block;
 smooth out float v_ao;
@@ -62,7 +62,7 @@ float g_y;
 float g_z;
 int g_id;
 int g_dir;
-int g_shw;
+int g_lit;
 float g_ao;
 
 // Methods declaration
@@ -73,7 +73,7 @@ void main(void) {
 
     v_id = g_id;
     v_dir = g_dir;
-    v_shw = g_shw;
+    v_lit = g_lit;
     v_ao = g_ao;
 
     int index = indexMap[gl_VertexID % 6];
@@ -100,6 +100,6 @@ void init_globals(void) {
     g_y   = float(in_data >> 0x10u & 0xFFu);
     g_id  =   int(in_data >> 0x08u & 0xFFu);
     g_dir =   int(in_data >> 0x05u & 0x07u);
-    g_shw =   int(in_data >> 0x01u & 0x0Fu);
+    g_lit =   int(in_data >> 0x01u & 0x0Fu);
     g_ao  = float(in_data >> 0x00u & 0x01u);
 }

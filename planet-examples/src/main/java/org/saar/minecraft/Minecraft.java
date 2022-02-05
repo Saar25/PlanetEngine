@@ -181,7 +181,7 @@ public class Minecraft {
                 .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
-        return new World(generator, THREAD_COUNT, true);
+        return new World(generator, THREAD_COUNT);
     }
 
     private static Camera buildCamera(Window window, World world) {

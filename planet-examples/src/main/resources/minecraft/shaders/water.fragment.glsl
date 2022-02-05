@@ -7,7 +7,7 @@ uniform float u_transitionCross;
 
 // Vertex outputs
 flat in int v_dir;
-flat in int v_shw;
+flat in int v_lit;
 flat in vec3 v_normal;
 smooth in float v_ao;
 in vec2 v_uvCoords1;
@@ -29,7 +29,7 @@ void main(void) {
     }
 
     f_colour.rgb *= lights[v_dir];
-    f_colour.rgb *= 1 - v_shw / 10.0;
+    f_colour.rgb *= (v_lit + 5) / 20.0;
     f_colour.rgb *= 1 - pow(v_ao * .9, 4);
     f_colour.a = .7;
 

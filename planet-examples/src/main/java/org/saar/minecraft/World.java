@@ -17,12 +17,10 @@ public class World {
 
     private final List<Chunk> chunks = new ArrayList<>();
     private final WorldGenerator generator;
-    private final boolean shadows;
 
-    public World(WorldGenerator generator, int threads, boolean shadows) {
+    public World(WorldGenerator generator, int threads) {
         this.generator = generator;
         this.executorService = Executors.newFixedThreadPool(threads);
-        this.shadows = shadows;
     }
 
     public static int worldToChunkCoordinate(int w) {
@@ -61,6 +59,16 @@ public class World {
         final int y = (int) Math.floor(wy);
         final int z = (int) Math.floor(wz);
         return new BlockContainer(x, y, z, getBlock(x, y, z));
+    }
+
+    public void updateLight(int x, int y, int z) {
+        final int cx = worldToChunkCoordinate(x);
+        final int cz = worldToChunkCoordinate(z);
+        final IChunk chunk = getChunk(cx, cz);
+
+        final int lx = x - cx * 16;
+        final int lz = z - cz * 16;
+        chunk.updateLight(lx, y, lz);
     }
 
     public int getLight(int x, int y, int z) {
@@ -159,7 +167,7 @@ public class World {
 
         for (int x = cx - radius; x < cx + radius; x++) {
             for (int z = cz - radius; z < cz + radius; z++) {
-                if (!hasChunk(x, z)) chunks.add(new Chunk(x, z, this.shadows));
+                if (!hasChunk(x, z)) chunks.add(new Chunk(this, x, z));
             }
         }
 

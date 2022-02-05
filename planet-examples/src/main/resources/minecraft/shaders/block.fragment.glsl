@@ -6,7 +6,7 @@ uniform float u_glowTransition;
 // Vertex outputs
 flat in int v_id;
 flat in int v_dir;
-flat in int v_shw;
+flat in int v_lit;
 flat in vec3 v_normal;
 flat in ivec3 v_block;
 smooth in float v_ao;
@@ -24,7 +24,7 @@ void main(void) {
     f_colour = texture(u_atlas, v_uvCoords);
     if (f_colour.a < .5) discard;
     f_colour.rgb *= lights[v_dir];
-    f_colour.rgb *= 1 - v_shw / 10.0;
+    f_colour.rgb *= (v_lit + 5) / 20.0;
     f_colour.rgb *= 1 - pow(v_ao * .9, 4);
 
     if (v_block == u_rayCastedFace.xyz && v_dir == u_rayCastedFace.w) {

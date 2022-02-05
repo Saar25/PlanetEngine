@@ -71,7 +71,6 @@ public class MinecraftHQ {
     private static final int WORLD_RADIUS = 8;
     private static final int THREAD_COUNT = 5;
 
-    private static final boolean SHADOWS_HQ = true;
     private static final boolean FLY_MODE = true;
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
@@ -226,7 +225,7 @@ public class MinecraftHQ {
                 .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
-        return new World(generator, THREAD_COUNT, !SHADOWS_HQ);
+        return new World(generator, THREAD_COUNT);
     }
 
     private static Camera buildCamera(Window window, World world) {
