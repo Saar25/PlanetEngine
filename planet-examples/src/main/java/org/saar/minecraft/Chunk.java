@@ -132,6 +132,8 @@ public class Chunk implements IChunk, Model {
             if (this.blocks[index] != Blocks.AIR) {
                 this.opaqueBlocks.removeIf(bc -> bc.
                         getPosition().equals(x, y, z));
+                this.waterBlocks.removeIf(bc -> bc.
+                        getPosition().equals(x, y, z));
             }
             if (block == Blocks.WATER) {
                 this.waterBlocks.add(new BlockContainer(x, y, z, block));
