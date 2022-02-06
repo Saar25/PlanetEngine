@@ -61,14 +61,15 @@ public class World {
         return new BlockContainer(x, y, z, getBlock(x, y, z));
     }
 
-    public void updateLight(int x, int y, int z) {
+    public void updateLight(int x, int y, int z, int light) {
         final int cx = worldToChunkCoordinate(x);
         final int cz = worldToChunkCoordinate(z);
         final IChunk chunk = getChunk(cx, cz);
-
-        final int lx = x - cx * 16;
-        final int lz = z - cz * 16;
-        chunk.updateLight(lx, y, lz);
+        if (chunk instanceof Chunk) {
+            final int lx = x - cx * 16;
+            final int lz = z - cz * 16;
+            ((Chunk) chunk).updateLight(lx, y, lz, light);
+        }
     }
 
     public int getLight(int x, int y, int z) {

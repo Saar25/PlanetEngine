@@ -8,8 +8,6 @@ public interface IChunk {
 
     int getLight(int x, int y, int z);
 
-    void updateLight(int x, int y, int z);
-
     Block getBlock(int x, int y, int z);
 
     void setBlock(int x, int y, int z, Block block);

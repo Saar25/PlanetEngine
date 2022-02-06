@@ -120,54 +120,71 @@ public class Chunk implements IChunk, Model {
         return 0;
     }
 
-    public int calculateLight(int x, int y, int z) {
-        final int index = index(x, y, z);
-
-        if (this.blocks[index] != Blocks.AIR) {
-            return 0;
-        } else {
-            int max = this.getLight(x, y + 1, z);
-            for (Vector3ic direction : blockDirection) {
-                int bx = x + direction.x() + getPosition().x() * 16;
-                int by = y + direction.y();
-                int bz = z + direction.z() + getPosition().y() * 16;
-                final int light = Math.max(0, this.world.getLight(bx, by, bz) - 1);
-                if (max < light) max = light;
-            }
-            return max;
+    private int calculateLight(int x, int y, int z) {
+        if (getBlock(x, y, z) != Blocks.AIR) return 0;
+        int max = getLight(x, y + 1, z);
+        for (Vector3ic direction : blockDirection) {
+            final int light = getLight(
+                    x + direction.x(),
+                    y + direction.y(),
+                    z + direction.z()
+            );
+            max = Math.max(max, light - 1);
         }
+        return max;
     }
 
-    @Override
     public void updateLight(int x, int y, int z) {
-        int light = calculateLight(x, y, z);
-        final int index = index(x, y, z);
+        updateLight(x, y, z, calculateLight(x, y, z));
+    }
 
-        if (this.lights[index] != light) {
-            this.lights[index] = (byte) light;
+    public void updateLight(int x, int y, int z, int light) {
+        if (y < 0 || y > 0xFF) return;
+        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            this.world.updateLight(wx, y, wz, light);
+        } else {
+            final int index = index(x, y, z);
+            if (this.lights[index] == light) return;
 
-            for (Vector3ic direction : blockDirection) {
-                int bx = x + direction.x() + getPosition().x() * 16;
-                int by = y + direction.y();
-                int bz = z + direction.z() + getPosition().y() * 16;
-                this.world.updateLight(bx, by, bz);
-            }
+            final int calcLight = calculateLight(x, y, z);
+            if (this.lights[index] == calcLight) return;
+
+            this.lights[index] = (byte) calcLight;
+
+            updateLight(x, y - 1, z, calcLight);
+            updateLight(x, y + 1, z, Math.max(calcLight - 1, 0));
+            updateLight(x - 1, y, z, Math.max(calcLight - 1, 0));
+            updateLight(x + 1, y, z, Math.max(calcLight - 1, 0));
+            updateLight(x, y, z - 1, Math.max(calcLight - 1, 0));
+            updateLight(x, y, z + 1, Math.max(calcLight - 1, 0));
         }
     }
 
     @Override
     public int getLight(int x, int y, int z) {
+        if (y < 0) return 0;
+        if (y > 0xFF) return 0xF;
+        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            return this.world.getLight(wx, y, wz);
+        }
         final int index = index(x, y, z);
         return this.lights[index];
     }
 
     @Override
     public Block getBlock(int x, int y, int z) {
-        if (isInRange(x, y, z)) {
-            final int index = index(x, y, z);
-            return this.blocks[index];
+        if (y < 0 || y > 0xFF) return Blocks.AIR;
+        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            return this.world.getBlock(wx, y, wz);
         }
-        return Blocks.AIR;
+        final int index = index(x, y, z);
+        return this.blocks[index];
     }
 
     @Override
@@ -199,21 +216,17 @@ public class Chunk implements IChunk, Model {
                     this.solidHeights[heightIndex] = findSolidHeight(x, z);
                 }
             }
-
             updateLight(x, y, z);
         }
     }
 
     private Block[] blocksAround(int x, int y, int z) {
-        final int wx = x + getPosition().x() * 16;
-        final int wz = z + getPosition().y() * 16;
-
-        final Block xPos = x == 0xF ? this.world.getBlock(wx + 1, y, wz) : getBlock(x + 1, y, z);
-        final Block xNeg = x == 0x0 ? this.world.getBlock(wx - 1, y, wz) : getBlock(x - 1, y, z);
+        final Block xPos = getBlock(x + 1, y, z);
+        final Block xNeg = getBlock(x - 1, y, z);
         final Block yPos = getBlock(x, y + 1, z);
         final Block yNeg = getBlock(x, y - 1, z);
-        final Block zPos = z == 0xF ? this.world.getBlock(wx, y, wz + 1) : getBlock(x, y, z + 1);
-        final Block zNeg = z == 0x0 ? this.world.getBlock(wx, y, wz - 1) : getBlock(x, y, z - 1);
+        final Block zPos = getBlock(x, y, z + 1);
+        final Block zNeg = getBlock(x, y, z - 1);
         return new Block[]{xPos, xNeg, yPos, yNeg, zPos, zNeg};
     }
 
@@ -327,7 +340,6 @@ public class Chunk implements IChunk, Model {
         final int x = b.getX() + direction.x();
         final int y = b.getY() + direction.y();
         final int z = b.getZ() + direction.z();
-        return x >= 0 && x <= 0xF && z >= 0 && z <= 0xF ? this.lights[index(x, y, z)]
-                : this.world.getLight(x + getPosition().x(), y, z + getPosition().y());
+        return getLight(x, y, z);
     }
 }
