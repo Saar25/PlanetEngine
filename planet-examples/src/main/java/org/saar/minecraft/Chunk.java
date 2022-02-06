@@ -8,14 +8,10 @@ import org.joml.Vector3ic;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
-import org.saar.minecraft.chunk.ChunkBounds;
-import org.saar.minecraft.chunk.ChunkHeights;
-import org.saar.minecraft.chunk.ChunkLights;
-import org.saar.minecraft.chunk.ChunkMeshBuilder;
+import org.saar.minecraft.chunk.*;
 import org.saar.minecraft.threading.GlThreadQueue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -42,14 +38,10 @@ public class Chunk implements IChunk, Model {
     private final World world;
     private final Vector2i position;
 
-    private final Block[] blocks = new Block[16 * 16 * 256];
-
-    private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
-    private final List<BlockContainer> waterBlocks = new ArrayList<>();
-
-    private final ChunkBounds bounds = new ChunkBounds();
+    private final ChunkBlocks blocks = new ChunkBlocks(this);
     private final ChunkHeights heights = new ChunkHeights(this);
     private final ChunkLights lights = new ChunkLights(this);
+    private final ChunkBounds bounds = new ChunkBounds();
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
@@ -58,11 +50,6 @@ public class Chunk implements IChunk, Model {
     public Chunk(World world, int x, int z) {
         this.world = world;
         this.position = new Vector2i(x, z);
-        Arrays.fill(this.blocks, Blocks.AIR);
-    }
-
-    private static int index(int x, int y, int z) {
-        return ((x & 0xF) << 12) | ((z & 0xF) << 8) | (y & 0xFF);
     }
 
     public Vector2ic getPosition() {
@@ -81,10 +68,6 @@ public class Chunk implements IChunk, Model {
             return this.world.getHeight(wx, wz);
         }
         return this.heights.getHeight(x, z);
-    }
-
-    public void updateLight(int x, int y, int z) {
-        this.lights.updateLight(x, y, z);
     }
 
     public void updateLight(int x, int y, int z, int light) {
@@ -119,8 +102,7 @@ public class Chunk implements IChunk, Model {
             final int wz = z + getPosition().y() * 16;
             return this.world.getBlock(wx, y, wz);
         }
-        final int index = index(x, y, z);
-        return this.blocks[index];
+        return this.blocks.getBlock(x, y, z);
     }
 
     @Override
@@ -131,21 +113,11 @@ public class Chunk implements IChunk, Model {
             final int wz = z + getPosition().y() * 16;
             this.world.setBlock(wx, y, wz, block);
         } else {
-            final int index = index(x, y, z);
-            if (this.blocks[index] != Blocks.AIR) {
-                this.opaqueBlocks.removeIf(bc -> bc.
-                        getPosition().equals(x, y, z));
-                this.waterBlocks.removeIf(bc -> bc.
-                        getPosition().equals(x, y, z));
-            }
-            if (block == Blocks.WATER) {
-                this.waterBlocks.add(new BlockContainer(x, y, z, block));
-            } else if (block != Blocks.AIR) {
-                this.opaqueBlocks.add(new BlockContainer(x, y, z, block));
-            }
-            this.blocks[index] = block;
+            this.blocks.setBlock(x, y, z, block);
 
-            this.bounds.addBlock(getPosition().x() * 16 + x, y, getPosition().y() * 16 + z);
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            this.bounds.addBlock(wx, y, wz);
 
             if (block != Blocks.AIR) {
                 this.heights.addBlock(x, y, z);
@@ -153,7 +125,7 @@ public class Chunk implements IChunk, Model {
                 this.heights.removeBlock(x, y, z);
             }
 
-            updateLight(x, y, z);
+            this.lights.updateLight(x, y, z);
 
             this.meshUpdateNeeded = true;
             if (x == 0) {
@@ -191,13 +163,13 @@ public class Chunk implements IChunk, Model {
             final Mesh mesh = this.mesh;
             GlThreadQueue.getInstance().supply(mesh::delete);
         }
-        this.mesh = FutureMesh.unloaded(writeMesh(this.opaqueBlocks));
+        this.mesh = FutureMesh.unloaded(writeMesh(this.blocks.getOpaque()));
 
         if (this.waterMesh != null) {
             final Mesh mesh = this.waterMesh;
             GlThreadQueue.getInstance().supply(mesh::delete);
         }
-        this.waterMesh = FutureMesh.unloaded(writeMesh(this.waterBlocks));
+        this.waterMesh = FutureMesh.unloaded(writeMesh(this.blocks.getWater()));
     }
 
     @NotNull
