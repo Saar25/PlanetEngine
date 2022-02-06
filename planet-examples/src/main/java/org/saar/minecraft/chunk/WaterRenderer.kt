@@ -11,7 +11,6 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
-import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
@@ -115,7 +114,7 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
 
     override fun onRenderCycle(context: RenderContext) {
         DepthTest.enable()
-        CullFace.set(true, Face.BACK)
+        CullFace.disable()
         ProvokingVertex.setFirst()
         ClipPlaneTest.disable()
         BlendTest.applyAlpha()

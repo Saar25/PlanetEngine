@@ -194,7 +194,7 @@ public class Chunk implements IChunk, Model {
 
             for (int i = 0; i < around.length; i++) {
                 if (around[i].isTransparent() && !(around[i] == Blocks.WATER && b.getBlock() == Blocks.WATER)) {
-                    final int light = getLight(b, i);
+                    final int light = getLight(b, i) >> 4;
                     final boolean[] ao = getAmbientOcclusion(b, i);
                     final BlockFaceContainer face = new BlockFaceContainer(
                             b.getX(), b.getY(), b.getZ(), b.getBlock(), i, light, ao);
