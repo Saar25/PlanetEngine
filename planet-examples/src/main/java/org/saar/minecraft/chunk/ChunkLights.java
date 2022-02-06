@@ -1,6 +1,5 @@
 package org.saar.minecraft.chunk;
 
-import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.saar.minecraft.Blocks;
 import org.saar.minecraft.Chunk;
@@ -8,15 +7,6 @@ import org.saar.minecraft.Chunk;
 import java.util.Arrays;
 
 public class ChunkLights {
-
-    private static final Vector3ic[] blockDirection = new Vector3i[]{
-            new Vector3i(+1, 0, 0),
-            new Vector3i(-1, 0, 0),
-            new Vector3i(0, +1, 0),
-            new Vector3i(0, -1, 0),
-            new Vector3i(0, 0, +1),
-            new Vector3i(0, 0, -1),
-    };
 
     private final Chunk chunk;
 
@@ -34,7 +24,7 @@ public class ChunkLights {
     private int calculateLight(int x, int y, int z) {
         if (this.chunk.getBlock(x, y, z) != Blocks.AIR) return 0;
         int max = this.chunk.getLight(x, y + 1, z);
-        for (Vector3ic direction : blockDirection) {
+        for (Vector3ic direction : ChunkConstants.blockDirections) {
             final int light = this.chunk.getLight(
                     x + direction.x(),
                     y + direction.y(),

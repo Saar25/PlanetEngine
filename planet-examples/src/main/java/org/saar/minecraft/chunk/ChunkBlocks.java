@@ -3,7 +3,6 @@ package org.saar.minecraft.chunk;
 import org.saar.minecraft.Block;
 import org.saar.minecraft.BlockContainer;
 import org.saar.minecraft.Blocks;
-import org.saar.minecraft.Chunk;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,15 +10,12 @@ import java.util.List;
 
 public class ChunkBlocks {
 
-    private final Chunk chunk;
-
     private final Block[] blocks = new Block[16 * 16 * 256];
 
     private final List<BlockContainer> opaque = new ArrayList<>();
     private final List<BlockContainer> water = new ArrayList<>();
 
-    public ChunkBlocks(Chunk chunk) {
-        this.chunk = chunk;
+    public ChunkBlocks() {
         Arrays.fill(this.blocks, Blocks.AIR);
     }
 

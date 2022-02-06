@@ -3,7 +3,6 @@ package org.saar.minecraft;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
-import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
@@ -17,28 +16,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class Chunk implements IChunk, Model {
 
-    private static final Vector3ic[] blockDirection = new Vector3i[]{
-            new Vector3i(+1, 0, 0),
-            new Vector3i(-1, 0, 0),
-            new Vector3i(0, +1, 0),
-            new Vector3i(0, -1, 0),
-            new Vector3i(0, 0, +1),
-            new Vector3i(0, 0, -1),
-    };
-
-    private static final int[][] orders = new int[][]{
-            {1, 3, 7, 0, 3, 5, 0, 2, 4, 1, 2, 6},
-            {1, 2, 6, 0, 2, 4, 0, 3, 5, 1, 3, 7},
-            {1, 3, 7, 0, 3, 5, 0, 2, 4, 1, 2, 6},
-            {1, 3, 7, 0, 3, 5, 0, 2, 4, 1, 2, 6},
-            {0, 3, 5, 0, 2, 4, 1, 2, 6, 1, 3, 7},
-            {1, 3, 7, 1, 2, 6, 0, 2, 4, 0, 3, 5},
-    };
-
     private final World world;
     private final Vector2i position;
 
-    private final ChunkBlocks blocks = new ChunkBlocks(this);
+    private final ChunkBlocks blocks = new ChunkBlocks();
     private final ChunkHeights heights = new ChunkHeights(this);
     private final ChunkLights lights = new ChunkLights(this);
     private final ChunkBounds bounds = new ChunkBounds();
@@ -235,11 +216,11 @@ public class Chunk implements IChunk, Model {
     }
 
     private boolean[] getAmbientOcclusion(BlockContainer b, int dir) {
-        final Vector3ic direction = blockDirection[dir];
-        final Vector3ic d1 = blockDirection[(dir / 2 * 2 + 2) % 6];
-        final Vector3ic d2 = blockDirection[(dir / 2 * 2 + 3) % 6];
-        final Vector3ic d3 = blockDirection[(dir / 2 * 2 + 4) % 6];
-        final Vector3ic d4 = blockDirection[(dir / 2 * 2 + 5) % 6];
+        final Vector3ic direction = ChunkConstants.blockDirections[dir];
+        final Vector3ic d1 = ChunkConstants.blockDirections[(dir / 2 * 2 + 2) % 6];
+        final Vector3ic d2 = ChunkConstants.blockDirections[(dir / 2 * 2 + 3) % 6];
+        final Vector3ic d3 = ChunkConstants.blockDirections[(dir / 2 * 2 + 4) % 6];
+        final Vector3ic d4 = ChunkConstants.blockDirections[(dir / 2 * 2 + 5) % 6];
         final int x = getPosition().x() * 16 + b.getX() + direction.x();
         final int y = b.getY() + direction.y();
         final int z = getPosition().y() * 16 + b.getZ() + direction.z();
@@ -253,7 +234,7 @@ public class Chunk implements IChunk, Model {
                 this.world.getBlock(x + d2.x() + d3.x(), y + d2.y() + d3.y(), z + d2.z() + d3.z()),
                 this.world.getBlock(x + d2.x() + d4.x(), y + d2.y() + d4.y(), z + d2.z() + d4.z()),
         };
-        final int[] order = orders[dir];
+        final int[] order = ChunkConstants.ambientOcclusionOrders[dir];
 
         return new boolean[]{
                 blocks[order[0]].isSolid() || blocks[order[1]].isSolid() || blocks[order[2]].isSolid(),
@@ -264,7 +245,7 @@ public class Chunk implements IChunk, Model {
     }
 
     private int getLight(BlockContainer b, int dir) {
-        final Vector3ic direction = blockDirection[dir];
+        final Vector3ic direction = ChunkConstants.blockDirections[dir];
         final int x = b.getX() + direction.x();
         final int y = b.getY() + direction.y();
         final int z = b.getZ() + direction.z();
