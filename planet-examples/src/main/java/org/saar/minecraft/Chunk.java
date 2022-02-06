@@ -9,6 +9,7 @@ import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
 import org.saar.minecraft.chunk.ChunkBounds;
+import org.saar.minecraft.chunk.ChunkHeights;
 import org.saar.minecraft.chunk.ChunkMeshBuilder;
 import org.saar.minecraft.threading.GlThreadQueue;
 
@@ -41,12 +42,13 @@ public class Chunk implements IChunk, Model {
     private final Vector2i position;
 
     private final Block[] blocks = new Block[16 * 16 * 256];
-    private final int[] heights = new int[16 * 16];
     private final byte[] lights = new byte[16 * 16 * 256];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
     private final List<BlockContainer> waterBlocks = new ArrayList<>();
+
     private final ChunkBounds bounds = new ChunkBounds();
+    private final ChunkHeights heights = new ChunkHeights(this);
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
@@ -61,10 +63,6 @@ public class Chunk implements IChunk, Model {
 
     private static int index(int x, int y, int z) {
         return ((x & 0xF) << 12) | ((z & 0xF) << 8) | (y & 0xFF);
-    }
-
-    private static int index(int x, int z) {
-        return ((x & 0xF) << 4) | (z & 0xF);
     }
 
     public Vector2ic getPosition() {
@@ -82,18 +80,7 @@ public class Chunk implements IChunk, Model {
             final int wz = z + getPosition().y() * 16;
             return this.world.getHeight(wx, wz);
         }
-        final int heightIndex = index(x, z);
-        return this.heights[heightIndex];
-    }
-
-    private int findHeight(int x, int z) {
-        for (int i = 255; i >= 0; i--) {
-            final int index = index(x, i, z);
-            if (this.blocks[index] != Blocks.AIR) {
-                return i;
-            }
-        }
-        return 0;
+        return this.heights.getHeight(x, z);
     }
 
     private int calculateLight(int x, int y, int z) {
@@ -189,12 +176,12 @@ public class Chunk implements IChunk, Model {
 
             this.bounds.addBlock(getPosition().x() * 16 + x, y, getPosition().y() * 16 + z);
 
-            final int heightIndex = index(x, z);
-            if (block == Blocks.AIR && this.heights[heightIndex] == y) {
-                this.heights[heightIndex] = findHeight(x, z);
-            } else if (this.heights[heightIndex] < y) {
-                this.heights[heightIndex] = y;
+            if (block != Blocks.AIR) {
+                this.heights.addBlock(x, y, z);
+            } else {
+                this.heights.removeBlock(x, y, z);
             }
+
             updateLight(x, y, z);
 
             this.meshUpdateNeeded = true;
