@@ -8,7 +8,6 @@ import org.joml.Vector3ic;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
-import org.saar.maths.utils.Maths;
 import org.saar.minecraft.chunk.ChunkBounds;
 import org.saar.minecraft.chunk.ChunkMeshBuilder;
 import org.saar.minecraft.threading.GlThreadQueue;
@@ -43,7 +42,6 @@ public class Chunk implements IChunk, Model {
 
     private final Block[] blocks = new Block[16 * 16 * 256];
     private final int[] heights = new int[16 * 16];
-    private final int[] solidHeights = new int[16 * 16];
     private final byte[] lights = new byte[16 * 16 * 256];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
@@ -69,12 +67,6 @@ public class Chunk implements IChunk, Model {
         return ((x & 0xF) << 4) | (z & 0xF);
     }
 
-    private static boolean isInRange(int x, int y, int z) {
-        return Maths.isInside(x, 0, 15) &&
-                Maths.isInside(z, 0, 15) &&
-                Maths.isInside(y, 0, 255);
-    }
-
     public Vector2ic getPosition() {
         return this.position;
     }
@@ -85,36 +77,19 @@ public class Chunk implements IChunk, Model {
 
     @Override
     public int getHeight(int x, int z) {
-        if (isInRange(x, 0, z)) {
-            final int heightIndex = index(x, z);
-            return this.heights[heightIndex];
+        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            return this.world.getHeight(wx, wz);
         }
-        return 0;
-    }
-
-    @Override
-    public int getSolidHeight(int x, int z) {
-        if (isInRange(x, 0, z)) {
-            final int index = index(x, z);
-            return this.solidHeights[index];
-        }
-        return 0;
+        final int heightIndex = index(x, z);
+        return this.heights[heightIndex];
     }
 
     private int findHeight(int x, int z) {
         for (int i = 255; i >= 0; i--) {
             final int index = index(x, i, z);
             if (this.blocks[index] != Blocks.AIR) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    private int findSolidHeight(int x, int z) {
-        for (int i = 255; i >= 0; i--) {
-            final int index = index(x, i, z);
-            if (this.blocks[index].isSolid()) {
                 return i;
             }
         }
@@ -192,7 +167,12 @@ public class Chunk implements IChunk, Model {
 
     @Override
     public void setBlock(int x, int y, int z, Block block) {
-        if (isInRange(x, y, z)) {
+        if (y < 0 || y > 0xFF) return;
+        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            this.world.setBlock(wx, y, wz, block);
+        } else {
             final int index = index(x, y, z);
             if (this.blocks[index] != Blocks.AIR) {
                 this.opaqueBlocks.removeIf(bc -> bc.
@@ -212,12 +192,8 @@ public class Chunk implements IChunk, Model {
             final int heightIndex = index(x, z);
             if (block == Blocks.AIR && this.heights[heightIndex] == y) {
                 this.heights[heightIndex] = findHeight(x, z);
-                this.solidHeights[heightIndex] = findSolidHeight(x, z);
             } else if (this.heights[heightIndex] < y) {
                 this.heights[heightIndex] = y;
-                if (block.isSolid()) {
-                    this.solidHeights[heightIndex] = findSolidHeight(x, z);
-                }
             }
             updateLight(x, y, z);
 

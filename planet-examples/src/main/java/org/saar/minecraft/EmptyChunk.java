@@ -18,11 +18,6 @@ public class EmptyChunk implements IChunk {
     }
 
     @Override
-    public int getSolidHeight(int x, int z) {
-        return 0;
-    }
-
-    @Override
     public int getLight(int x, int y, int z) {
         return 0;
     }
