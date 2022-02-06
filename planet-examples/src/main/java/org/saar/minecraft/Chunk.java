@@ -52,6 +52,7 @@ public class Chunk implements IChunk, Model {
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
+    private boolean meshUpdateNeeded = false;
 
     public Chunk(World world, int x, int z) {
         this.world = world;
@@ -151,6 +152,8 @@ public class Chunk implements IChunk, Model {
             final int calcLight = calculateLight(x, y, z);
             if (this.lights[index] == calcLight) return;
 
+            this.meshUpdateNeeded = true;
+
             this.lights[index] = (byte) calcLight;
 
             updateLight(x, y - 1, z, calcLight);
@@ -217,6 +220,22 @@ public class Chunk implements IChunk, Model {
                 }
             }
             updateLight(x, y, z);
+
+            this.meshUpdateNeeded = true;
+            if (x == 0) {
+                final IChunk chunk = world.getChunk(getPosition().x() - 1, getPosition().y());
+                if (chunk instanceof Chunk) ((Chunk) chunk).meshUpdateNeeded = true;
+            } else if (x == 0xF) {
+                final IChunk chunk = world.getChunk(getPosition().x() + 1, getPosition().y());
+                if (chunk instanceof Chunk) ((Chunk) chunk).meshUpdateNeeded = true;
+            }
+            if (z == 0) {
+                final IChunk chunk = world.getChunk(getPosition().x(), getPosition().y() - 1);
+                if (chunk instanceof Chunk) ((Chunk) chunk).meshUpdateNeeded = true;
+            } else if (z == 0xF) {
+                final IChunk chunk = world.getChunk(getPosition().x(), getPosition().y() + 1);
+                if (chunk instanceof Chunk) ((Chunk) chunk).meshUpdateNeeded = true;
+            }
         }
     }
 
@@ -231,6 +250,9 @@ public class Chunk implements IChunk, Model {
     }
 
     public void updateMesh(World world) {
+        if (!this.meshUpdateNeeded) return;
+        this.meshUpdateNeeded = false;
+
         if (this.mesh != null) {
             final Mesh mesh = this.mesh;
             GlThreadQueue.getInstance().supply(mesh::delete);

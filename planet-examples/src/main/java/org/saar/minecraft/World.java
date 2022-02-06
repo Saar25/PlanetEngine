@@ -130,10 +130,10 @@ public class World {
 
         this.executorService.submit(() -> {
             chunk.updateMesh(this);
-            if (lx == 0x0) getChunk(cx - 1, cz).updateMesh(this);
-            if (lx == 0xF) getChunk(cx + 1, cz).updateMesh(this);
-            if (lz == 0x0) getChunk(cx, cz - 1).updateMesh(this);
-            if (lz == 0xF) getChunk(cx, cz + 1).updateMesh(this);
+            getChunk(cx - 1, cz).updateMesh(this);
+            getChunk(cx + 1, cz).updateMesh(this);
+            getChunk(cx, cz - 1).updateMesh(this);
+            getChunk(cx, cz + 1).updateMesh(this);
         });
     }
 
