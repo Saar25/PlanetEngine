@@ -10,6 +10,7 @@ import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
 import org.saar.minecraft.chunk.ChunkBounds;
 import org.saar.minecraft.chunk.ChunkHeights;
+import org.saar.minecraft.chunk.ChunkLights;
 import org.saar.minecraft.chunk.ChunkMeshBuilder;
 import org.saar.minecraft.threading.GlThreadQueue;
 
@@ -42,13 +43,13 @@ public class Chunk implements IChunk, Model {
     private final Vector2i position;
 
     private final Block[] blocks = new Block[16 * 16 * 256];
-    private final byte[] lights = new byte[16 * 16 * 256];
 
     private final List<BlockContainer> opaqueBlocks = new ArrayList<>();
     private final List<BlockContainer> waterBlocks = new ArrayList<>();
 
     private final ChunkBounds bounds = new ChunkBounds();
     private final ChunkHeights heights = new ChunkHeights(this);
+    private final ChunkLights lights = new ChunkLights(this);
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
@@ -58,7 +59,6 @@ public class Chunk implements IChunk, Model {
         this.world = world;
         this.position = new Vector2i(x, z);
         Arrays.fill(this.blocks, Blocks.AIR);
-        Arrays.fill(this.lights, (byte) 0xF);
     }
 
     private static int index(int x, int y, int z) {
@@ -83,22 +83,8 @@ public class Chunk implements IChunk, Model {
         return this.heights.getHeight(x, z);
     }
 
-    private int calculateLight(int x, int y, int z) {
-        if (getBlock(x, y, z) != Blocks.AIR) return 0;
-        int max = getLight(x, y + 1, z);
-        for (Vector3ic direction : blockDirection) {
-            final int light = getLight(
-                    x + direction.x(),
-                    y + direction.y(),
-                    z + direction.z()
-            );
-            max = Math.max(max, light - 1);
-        }
-        return max;
-    }
-
     public void updateLight(int x, int y, int z) {
-        updateLight(x, y, z, calculateLight(x, y, z));
+        this.lights.updateLight(x, y, z);
     }
 
     public void updateLight(int x, int y, int z, int light) {
@@ -108,22 +94,8 @@ public class Chunk implements IChunk, Model {
             final int wz = z + getPosition().y() * 16;
             this.world.updateLight(wx, y, wz, light);
         } else {
-            final int index = index(x, y, z);
-            if (this.lights[index] == light) return;
-
-            final int calcLight = calculateLight(x, y, z);
-            if (this.lights[index] == calcLight) return;
-
             this.meshUpdateNeeded = true;
-
-            this.lights[index] = (byte) calcLight;
-
-            updateLight(x, y - 1, z, calcLight);
-            updateLight(x, y + 1, z, Math.max(calcLight - 1, 0));
-            updateLight(x - 1, y, z, Math.max(calcLight - 1, 0));
-            updateLight(x + 1, y, z, Math.max(calcLight - 1, 0));
-            updateLight(x, y, z - 1, Math.max(calcLight - 1, 0));
-            updateLight(x, y, z + 1, Math.max(calcLight - 1, 0));
+            this.lights.updateLight(x, y, z, light);
         }
     }
 
@@ -136,8 +108,7 @@ public class Chunk implements IChunk, Model {
             final int wz = z + getPosition().y() * 16;
             return this.world.getLight(wx, y, wz);
         }
-        final int index = index(x, y, z);
-        return this.lights[index];
+        return this.lights.getLight(x, y, z);
     }
 
     @Override
