@@ -74,12 +74,22 @@ object Blocks {
 
     @JvmField
     val WATER: Block = object : Block {
-        override val id: Int = 4
+        override val id: Int = 7
         override val name: String = "bedrock"
         override val isSolid: Boolean = false
         override val isTransparent: Boolean = true
         override val isCollideable: Boolean = false
         override val faces: BlockFaces = BlockFaces(9, 13)
+    }
+
+    @JvmField
+    val SAND: Block = object : Block {
+        override val id: Int = 8
+        override val name: String = "water"
+        override val isSolid: Boolean = true
+        override val isTransparent: Boolean = false
+        override val isCollideable: Boolean = true
+        override val faces: BlockFaces = BlockFaces(14)
     }
 
     val ALL: List<Block> = this.javaClass.declaredFields
