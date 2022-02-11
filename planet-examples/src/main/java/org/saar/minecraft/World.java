@@ -119,11 +119,11 @@ public class World {
         chunk.setBlock(lx, y, lz, block);
 
         this.executorService.submit(() -> {
-            chunk.updateMesh(this);
-            getChunk(cx - 1, cz).updateMesh(this);
-            getChunk(cx + 1, cz).updateMesh(this);
-            getChunk(cx, cz - 1).updateMesh(this);
-            getChunk(cx, cz + 1).updateMesh(this);
+            chunk.updateMesh();
+            getChunk(cx - 1, cz).updateMesh();
+            getChunk(cx + 1, cz).updateMesh();
+            getChunk(cx, cz - 1).updateMesh();
+            getChunk(cx, cz + 1).updateMesh();
         });
     }
 
@@ -180,6 +180,6 @@ public class World {
                         getChunk(c.getPosition().x(), c.getPosition().y() - 1),
                         getChunk(c.getPosition().x() + 1, c.getPosition().y()),
                         getChunk(c.getPosition().x() - 1, c.getPosition().y()))
-                ).distinct().forEach(c -> c.updateMesh(this)));
+                ).distinct().forEach(c -> c.updateMesh()));
     }
 }

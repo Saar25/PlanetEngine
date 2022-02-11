@@ -10,5 +10,5 @@ public interface IChunk {
 
     void setBlock(int x, int y, int z, Block block);
 
-    void updateMesh(World world);
+    void updateMesh();
 }

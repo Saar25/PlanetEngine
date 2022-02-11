@@ -136,7 +136,7 @@ public class Chunk implements IChunk, Model {
         return new Block[]{xPos, xNeg, yPos, yNeg, zPos, zNeg};
     }
 
-    public void updateMesh(World world) {
+    public void updateMesh() {
         if (!this.meshUpdateNeeded) return;
         this.meshUpdateNeeded = false;
 

@@ -32,6 +32,6 @@ public class EmptyChunk implements IChunk {
     }
 
     @Override
-    public void updateMesh(World world) {
+    public void updateMesh() {
     }
 }
