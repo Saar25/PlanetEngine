@@ -138,7 +138,7 @@ public class World {
         this.executorService.shutdown();
     }
 
-    public void generateAround(Position position, int radius) {
+    public CompletableFuture<Void> generateAround(Position position, int radius) {
         final int px = (int) position.getX();
         final int pz = (int) position.getZ();
         final int cx = worldToChunkCoordinate(px);
@@ -174,12 +174,12 @@ public class World {
                     this.executorService));
         }
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() ->
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() ->
                 chunks.stream().flatMap(c -> Stream.of(c,
                         getChunk(c.getPosition().x(), c.getPosition().y() + 1),
                         getChunk(c.getPosition().x(), c.getPosition().y() - 1),
                         getChunk(c.getPosition().x() + 1, c.getPosition().y()),
                         getChunk(c.getPosition().x() - 1, c.getPosition().y()))
-                ).distinct().forEach(c -> c.updateMesh()));
+                ).distinct().forEach(IChunk::updateMesh));
     }
 }

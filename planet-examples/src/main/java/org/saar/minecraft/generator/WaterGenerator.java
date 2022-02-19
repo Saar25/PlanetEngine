@@ -19,9 +19,6 @@ public class WaterGenerator implements WorldGenerator {
                 while (chunk.getBlock(x, y, z) == Blocks.AIR) {
                     chunk.setBlock(x, y--, z, Blocks.WATER);
                 }
-                if (y < this.waterLevel && chunk.getBlock(x, y, z) == Blocks.GRASS) {
-                    chunk.setBlock(x, y, z, Blocks.DIRT);
-                }
             }
         }
     }

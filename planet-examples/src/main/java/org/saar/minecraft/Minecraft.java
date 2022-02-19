@@ -43,6 +43,7 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 import org.saar.maths.noise.LayeredNoise3f;
+import org.saar.maths.noise.Noise3f;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
 import org.saar.minecraft.chunk.ChunkRenderNode;
@@ -54,6 +55,8 @@ import org.saar.minecraft.entity.HitBoxes;
 import org.saar.minecraft.generator.*;
 import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
 import org.saar.minecraft.threading.GlThreadQueue;
+
+import java.util.concurrent.CompletableFuture;
 
 public class Minecraft {
 
@@ -111,7 +114,12 @@ public class Minecraft {
         uiDisplay.add(square);
 
         final World world = buildWorld();
-        world.generateAround(Position.of(0, 0, 0), WORLD_RADIUS);
+        final CompletableFuture<Void> worldGeneratingFuture =
+                world.generateAround(Position.of(0, 0, 0), WORLD_RADIUS);
+        while (!worldGeneratingFuture.isDone()) {
+            window.swapBuffers();
+            window.pollEvents();
+        }
 
         final Camera camera = buildCamera(window, world);
         final int height = world.getHeight(0, 0) + 10;
@@ -176,8 +184,9 @@ public class Minecraft {
     }
 
     private static World buildWorld() {
+        final Noise3f noise3f = (x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f);
         final WorldGenerator generator = WorldGenerationPipeline
-                .pipe(new TerrainGenerator(50, 200, new LayeredNoise3f((x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f), 5)))
+                .pipe(new TerrainGenerator(60, 140, new LayeredNoise3f(noise3f, 5)))
                 .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise))
                 .then(new BedrockGenerator());
