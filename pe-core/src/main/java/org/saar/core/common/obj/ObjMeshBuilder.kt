@@ -7,6 +7,8 @@ class ObjMeshBuilder private constructor(
     private val builder: ElementsMeshBuilder<ObjVertex>,
 ) : MeshBuilder {
 
+    override fun delete() = this.builder.delete()
+
     fun addIndex(index: Int) = this.builder.addIndex(index)
 
     fun addVertex(vertex: ObjVertex) = this.builder.addVertex(vertex)

@@ -16,6 +16,12 @@ abstract class InstancedElementsMeshBuilder<V : Vertex, I : Instance> internal c
         this.prototype.allocateIndices(indices)
     }
 
+    override fun delete() {
+        this.prototype.deleteVertices()
+        this.prototype.deleteInstances()
+        this.prototype.deleteIndices()
+    }
+
     open fun init() = Unit
 
     abstract fun addInstance(instance: I)

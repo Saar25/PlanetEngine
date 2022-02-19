@@ -10,6 +10,9 @@ interface VertexMeshPrototype<V : Vertex> {
     fun readVertex(): V
 }
 
+fun <V : Vertex> VertexMeshPrototype<V>.deleteVertices() =
+    this.vertexBuffers.forEach { it.delete() }
+
 fun <V : Vertex> VertexMeshPrototype<V>.setVertexPosition(position: Int) =
     this.vertexBuffers.forEach { it.setPosition(position) }
 

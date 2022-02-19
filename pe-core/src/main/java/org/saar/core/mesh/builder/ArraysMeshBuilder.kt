@@ -5,6 +5,7 @@ import org.saar.core.mesh.Meshes
 import org.saar.core.mesh.Vertex
 import org.saar.core.mesh.prototype.VertexMeshPrototype
 import org.saar.core.mesh.prototype.allocateVertices
+import org.saar.core.mesh.prototype.deleteVertices
 import org.saar.core.mesh.prototype.writeVertices
 
 abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
@@ -13,6 +14,10 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
 
     protected fun allocate(vertices: Int) {
         this.prototype.allocateVertices(vertices)
+    }
+
+    override fun delete() {
+        this.prototype.deleteVertices()
     }
 
     abstract fun addVertex(vertex: V)

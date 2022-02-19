@@ -9,6 +9,8 @@ class ParticlesMeshBuilder private constructor(
     private val prototype: ParticlesMeshPrototype,
 ) : MeshBuilder {
 
+    override fun delete() = this.builder.delete()
+
     fun addInstance(instance: ParticlesInstance) = this.builder.addInstance(instance)
 
     override fun load() = ParticlesMesh(this.builder.load(), this.prototype)
