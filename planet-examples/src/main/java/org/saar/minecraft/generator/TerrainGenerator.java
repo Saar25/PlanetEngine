@@ -33,18 +33,22 @@ public class TerrainGenerator implements WorldGenerator {
                 final int height = height(wx, wz);
 
                 for (int y = 0; y < height - 8; y++) {
-                    chunk.setBlock(x, y, z, Blocks.STONE);
+                    chunk.setBlockIfEmpty(x, y, z, Blocks.STONE);
                 }
-                for (int y = height - 8; y < height; y++) {
-                    chunk.setBlock(x, y, z, Blocks.DIRT);
-                }
-                chunk.setBlock(x, height, z, Blocks.GRASS);
 
                 if (height < 102) {
                     final int sandLevel = Math.min(102 - height, 4);
-                    for (int y = height - sandLevel; y <= height; y++) {
-                        chunk.setBlock(x, y, z, Blocks.SAND);
+                    for (int y = height - 8; y < height - sandLevel; y++) {
+                        chunk.setBlockIfEmpty(x, y, z, Blocks.DIRT);
                     }
+                    for (int y = height - sandLevel; y <= height; y++) {
+                        chunk.setBlockIfEmpty(x, y, z, Blocks.SAND);
+                    }
+                } else {
+                    for (int y = height - 8; y < height; y++) {
+                        chunk.setBlockIfEmpty(x, y, z, Blocks.DIRT);
+                    }
+                    chunk.setBlockIfEmpty(x, height, z, Blocks.GRASS);
                 }
             }
         }

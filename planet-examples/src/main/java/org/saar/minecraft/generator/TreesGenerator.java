@@ -31,12 +31,12 @@ public class TreesGenerator implements WorldGenerator {
                     final Block block = chunk.getBlock(x, y - 1, z);
                     if (y > 60 && (block == Blocks.GRASS || block == Blocks.DIRT)) {
                         for (int i = 0; i < 4; i++) {
-                            chunk.setBlock(x, y + i, z, Blocks.TREE);
+                            chunk.setBlockIfEmpty(x, y + i, z, Blocks.TREE);
                         }
                         for (int ty = 0; ty < 3; ty++) {
                             for (int tx = -ty; tx <= ty; tx++) {
                                 for (int tz = -ty; tz <= ty; tz++) {
-                                    chunk.setBlock(x + tx, y + (3 - ty) + 3, z + tz, Blocks.LEAVES);
+                                    chunk.setBlockIfEmpty(x + tx, y + (3 - ty) + 3, z + tz, Blocks.LEAVES);
                                 }
                             }
                         }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 public class World {
@@ -164,17 +165,19 @@ public class World {
 
         chunks.sort(Comparator.comparingInt(c -> (int) c.getPosition().distanceSquared(cx, cz)));
 
-        final List<CompletableFuture<Void>> futures = new ArrayList<>(chunks.size());
+        getChunks().addAll(chunks);
 
-        for (Chunk chunk : chunks) {
-            addChunk(chunk);
+        final Stream<CompletableFuture<Void>> futures = chunks.stream().map(chunk -> CompletableFuture
+                .runAsync(() -> this.generator.generateChunk(chunk), this.executorService)
+                .exceptionally(f -> {
+                    System.err.println("Failed to generate chunk " +
+                            chunk.getPosition().x() + ", " +
+                            chunk.getPosition().y() + " ");
+                    f.printStackTrace();
+                    return null;
+                }));
 
-            futures.add(CompletableFuture.runAsync(
-                    () -> this.generator.generateChunk(chunk),
-                    this.executorService));
-        }
-
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() ->
+        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() ->
                 chunks.stream().flatMap(c -> Stream.of(c,
                         getChunk(c.getPosition().x(), c.getPosition().y() + 1),
                         getChunk(c.getPosition().x(), c.getPosition().y() - 1),

@@ -186,10 +186,10 @@ public class Minecraft {
     private static World buildWorld() {
         final Noise3f noise3f = (x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f);
         final WorldGenerator generator = WorldGenerationPipeline
-                .pipe(new TerrainGenerator(60, 140, new LayeredNoise3f(noise3f, 5)))
+                .pipe(new BedrockGenerator())
+                .then(new TerrainGenerator(60, 140, new LayeredNoise3f(noise3f, 5)))
                 .then(new WaterGenerator(100))
-                .then(new TreesGenerator(SimplexNoise::noise))
-                .then(new BedrockGenerator());
+                .then(new TreesGenerator(SimplexNoise::noise));
         return new World(generator, THREAD_COUNT);
     }
 

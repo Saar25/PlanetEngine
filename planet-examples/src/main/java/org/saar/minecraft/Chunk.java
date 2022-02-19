@@ -86,6 +86,12 @@ public class Chunk implements IChunk, Model {
         return this.blocks.getBlock(x, y, z);
     }
 
+    public void setBlockIfEmpty(int x, int y, int z, Block block) {
+        if (getBlock(x, y, z) == Blocks.AIR) {
+            setBlock(x, y, z, block);
+        }
+    }
+
     @Override
     public void setBlock(int x, int y, int z, Block block) {
         if (y < 0 || y > 0xFF) return;
