@@ -7,6 +7,8 @@ class ChunkMeshBuilder private constructor(
     private val builder: ArraysMeshBuilder<ChunkVertex>,
 ) : MeshBuilder {
 
+    override fun delete() = this.builder.delete()
+
     private val indexMap = arrayOf(0, 1, 2, 0, 2, 3)
 
     fun addBlock(x: Int, y: Int, z: Int, id: Int, shadow: Int) =

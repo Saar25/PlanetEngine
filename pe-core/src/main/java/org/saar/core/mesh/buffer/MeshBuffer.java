@@ -19,6 +19,10 @@ public abstract class MeshBuffer {
 
     public abstract void loadInVao(WritableVao vao);
 
+    public void delete() {
+        this.buffer.close();
+    }
+
     protected void allocate(int capacity) {
         if (this.buffer != null) {
             this.buffer.close();

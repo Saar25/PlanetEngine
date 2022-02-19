@@ -9,6 +9,9 @@ interface IndexedMeshPrototype {
     fun readIndex(): Int
 }
 
+fun IndexedMeshPrototype.deleteIndices() =
+    this.indexBuffers.forEach { it.delete() }
+
 fun IndexedMeshPrototype.setIndexPosition(position: Int) =
     this.indexBuffers.forEach { it.setPosition(position) }
 

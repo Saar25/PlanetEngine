@@ -5,6 +5,7 @@ import org.saar.core.mesh.InstancedArraysMesh
 import org.saar.core.mesh.Meshes
 import org.saar.core.mesh.prototype.InstancedMeshPrototype
 import org.saar.core.mesh.prototype.allocateInstances
+import org.saar.core.mesh.prototype.deleteInstances
 import org.saar.core.mesh.prototype.writeInstances
 import org.saar.lwjgl.opengl.constants.RenderMode
 
@@ -12,7 +13,13 @@ abstract class InstancedMeshBuilder<I : Instance> internal constructor(
     protected val prototype: InstancedMeshPrototype<I>,
 ) : MeshBuilder {
 
-    protected fun allocate(instances: Int) = this.prototype.allocateInstances(instances)
+    protected fun allocate(instances: Int) {
+        this.prototype.allocateInstances(instances)
+    }
+
+    override fun delete() {
+        this.prototype.deleteInstances()
+    }
 
     abstract fun addInstance(instance: I)
 

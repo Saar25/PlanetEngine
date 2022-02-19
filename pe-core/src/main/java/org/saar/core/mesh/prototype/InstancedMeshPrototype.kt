@@ -10,6 +10,9 @@ interface InstancedMeshPrototype<I : Instance> {
     fun readInstance(): I
 }
 
+fun <V : Instance> InstancedMeshPrototype<V>.deleteInstances() =
+    this.instanceBuffers.forEach { it.delete() }
+
 fun <I : Instance> InstancedMeshPrototype<I>.setInstancePosition(position: Int) =
     this.instanceBuffers.forEach { it.setPosition(position) }
 

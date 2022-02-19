@@ -14,6 +14,11 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
         this.prototype.allocateIndices(indices)
     }
 
+    override fun delete() {
+        this.prototype.deleteVertices()
+        this.prototype.deleteIndices()
+    }
+
     abstract fun addVertex(vertex: V)
     abstract fun addIndex(index: Int)
 

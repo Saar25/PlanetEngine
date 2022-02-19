@@ -7,6 +7,8 @@ class NormalMappedMeshBuilder private constructor(
     private val builder: ElementsMeshBuilder<NormalMappedVertex>,
 ) : MeshBuilder {
 
+    override fun delete() = this.builder.delete()
+
     fun addIndex(index: Int) = this.builder.addIndex(index)
 
     fun addVertex(vertex: NormalMappedVertex) = this.builder.addVertex(vertex)

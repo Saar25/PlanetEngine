@@ -11,6 +11,8 @@ class MeshBuilder3D private constructor(
         this.builder.init()
     }
 
+    override fun delete() = this.builder.delete()
+
     fun addIndex(index: Int) = this.builder.addIndex(index)
 
     fun addVertex(vertex: Vertex3D) = this.builder.addVertex(vertex)

@@ -7,6 +7,8 @@ class FlatReflectedMeshBuilder private constructor(
     private val builder: ElementsMeshBuilder<FlatReflectedVertex>,
 ) : MeshBuilder {
 
+    override fun delete() = this.builder.delete()
+
     fun addIndex(index: Int) = this.builder.addIndex(index)
 
     fun addVertex(vertex: FlatReflectedVertex) = this.builder.addVertex(vertex)

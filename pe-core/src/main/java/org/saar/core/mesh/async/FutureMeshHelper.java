@@ -7,14 +7,6 @@ import java.util.concurrent.CompletableFuture;
 
 abstract class FutureMeshHelper implements Mesh {
 
-    public abstract FutureMeshHelper next();
-
-    @Override
-    public abstract void draw();
-
-    @Override
-    public abstract void delete();
-
     public static FutureMeshHelper create(CompletableFuture<? extends Mesh> task) {
         return new Running(task);
     }
@@ -22,6 +14,14 @@ abstract class FutureMeshHelper implements Mesh {
     public static FutureMeshHelper unloaded(CompletableFuture<? extends UnloadedMesh> task) {
         return new Unloaded(task);
     }
+
+    public abstract FutureMeshHelper next();
+
+    @Override
+    public abstract void draw();
+
+    @Override
+    public abstract void delete();
 
     private static class Running extends FutureMeshHelper {
 
@@ -74,7 +74,7 @@ abstract class FutureMeshHelper implements Mesh {
 
         @Override
         public void delete() {
-            this.task.thenAccept(mesh -> mesh.load().delete());
+            this.task.thenAccept(UnloadedMesh::delete);
         }
     }
 
