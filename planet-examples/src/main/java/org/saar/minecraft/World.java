@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 public class World {
@@ -62,14 +61,14 @@ public class World {
         return new BlockContainer(x, y, z, getBlock(x, y, z));
     }
 
-    public void updateLight(int x, int y, int z, int light) {
+    public void setLight(int x, int y, int z, byte value) {
         final int cx = worldToChunkCoordinate(x);
         final int cz = worldToChunkCoordinate(z);
         final IChunk chunk = getChunk(cx, cz);
         if (chunk instanceof Chunk) {
             final int lx = x - cx * 16;
             final int lz = z - cz * 16;
-            ((Chunk) chunk).updateLight(lx, y, lz, light);
+            ((Chunk) chunk).setLight(lx, y, lz, value);
         }
     }
 

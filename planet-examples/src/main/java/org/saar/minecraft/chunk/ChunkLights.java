@@ -1,9 +1,13 @@
 package org.saar.minecraft.chunk;
 
+import org.saar.minecraft.Block;
 import org.saar.minecraft.Blocks;
 import org.saar.minecraft.Chunk;
+import org.saar.minecraft.EmptyChunk;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ChunkLights {
 
@@ -20,15 +24,6 @@ public class ChunkLights {
         return ((x & 0xF) << 12) | ((z & 0xF) << 8) | (y & 0xFF);
     }
 
-    private void updateAround(int x, int y, int z, int calcLight) {
-        this.chunk.updateLight(x, y - 1, z, calcLight);
-        this.chunk.updateLight(x, y + 1, z, Math.max(calcLight - 0x10, 0));
-        this.chunk.updateLight(x - 1, y, z, Math.max(calcLight - 0x10, 0));
-        this.chunk.updateLight(x + 1, y, z, Math.max(calcLight - 0x10, 0));
-        this.chunk.updateLight(x, y, z - 1, Math.max(calcLight - 0x10, 0));
-        this.chunk.updateLight(x, y, z + 1, Math.max(calcLight - 0x10, 0));
-    }
-
     private int calculateLight(int x, int y, int z) {
         if (this.chunk.getBlock(x, y, z) == Blocks.AIR) {
             int max = this.chunk.getLight(x, y + 1, z);
@@ -38,7 +33,7 @@ public class ChunkLights {
             max = Math.max(max, this.chunk.getLight(x, y, z - 1) - 0x10);
             max = Math.max(max, this.chunk.getLight(x, y, z + 1) - 0x10);
             return Math.max(max, 0);
-        } else if (this.chunk.getBlock(x, y, z) == Blocks.WATER) {
+        }/* else if (this.chunk.getBlock(x, y, z) == Blocks.WATER) {
             int max = this.chunk.getLight(x, y + 1, z) - 0xA;
             max = Math.max(max, this.chunk.getLight(x, y - 1, z) - 0xA);
             max = Math.max(max, this.chunk.getLight(x - 1, y, z) - 0xA);
@@ -46,23 +41,73 @@ public class ChunkLights {
             max = Math.max(max, this.chunk.getLight(x, y, z - 1) - 0xA);
             max = Math.max(max, this.chunk.getLight(x, y, z + 1) - 0xA);
             return Math.max(max, 0);
-        }
+        }*/
         return 0;
     }
 
     public void updateLight(int x, int y, int z) {
-        updateLight(x, y, z, calculateLight(x, y, z));
+        final int light = calculateLight(x, y, z);
+        updateLight(x, y, z, light);
     }
 
     public void updateLight(int x, int y, int z, int light) {
-        final int index = index(x, y, z);
-        if (getLight(index) == light) return;
+        final Queue<LightNode> addBfs = new LinkedList<>();
 
-        final int calcLight = calculateLight(x, y, z);
-        if (getLight(index) == calcLight) return;
+        if (this.chunk.getBlock(x, y, z) != Blocks.AIR) {
+            final Queue<LightNode> remBfs = new LinkedList<>();
 
-        this.lights[index] = (byte) calcLight;
-        updateAround(x, y, z, calcLight);
+            remBfs.add(new LightNode(x, y, z, getLight(x, y, z)));
+            this.chunk.setLight(x, y, z, (byte) 0);
+
+            while (!remBfs.isEmpty()) {
+                final LightNode n = remBfs.poll();
+                removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level, 0));
+                removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - 0x10, 0));
+                removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - 0x10, 0));
+                removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - 0x10, 0));
+                removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - 0x10, 0));
+                removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - 0x10, 0));
+            }
+        } else {
+            addBfs.add(new LightNode(x, y, z, light));
+            this.chunk.setLight(x, y, z, (byte) light);
+        }
+
+        while (!addBfs.isEmpty()) {
+            final LightNode n = addBfs.poll();
+            spreadLight(addBfs, n.x, n.y - 1, n.z, n.level);
+            spreadLight(addBfs, n.x, n.y + 1, n.z, n.level - 0x10);
+            spreadLight(addBfs, n.x + 1, n.y, n.z, n.level - 0x10);
+            spreadLight(addBfs, n.x - 1, n.y, n.z, n.level - 0x10);
+            spreadLight(addBfs, n.x, n.y, n.z + 1, n.level - 0x10);
+            spreadLight(addBfs, n.x, n.y, n.z - 1, n.level - 0x10);
+        }
+    }
+
+    private void spreadLight(Queue<LightNode> addBfs, int x, int y, int z, int spread) {
+        if (y < 0 || y > 255 || this.chunk.getRelativeChunk(x, z) == EmptyChunk.getInstance()) return;
+        if (spread < 0) return;
+
+        final int light = this.chunk.getLight(x, y, z);
+        final Block block = this.chunk.getBlock(x, y, z);
+        if (block == Blocks.AIR && light < spread) {
+            this.chunk.setLight(x, y, z, (byte) spread);
+
+            addBfs.add(new LightNode(x, y, z, spread));
+        }
+    }
+
+    private void removeLight(Queue<LightNode> addBfs, Queue<LightNode> remBfs, int x, int y, int z, int spread) {
+        if (y < 0 || y > 255 || this.chunk.getRelativeChunk(x, z) == EmptyChunk.getInstance()) return;
+
+        final int light = this.chunk.getLight(x, y, z);
+        if (light != 0 && light <= spread) {
+            this.chunk.setLight(x, y, z, (byte) 0);
+
+            remBfs.add(new LightNode(x, y, z, spread));
+        } else if (light > spread) {
+            addBfs.add(new LightNode(x, y, z, light));
+        }
     }
 
     public int getLight(int x, int y, int z) {
@@ -72,5 +117,34 @@ public class ChunkLights {
 
     private int getLight(int index) {
         return this.lights[index] & 0xFF;
+    }
+
+    public void setLight(int x, int y, int z, byte level) {
+        final int index = index(x, y, z);
+        this.lights[index] = level;
+    }
+
+    private static class LightNode {
+        public final int x;
+        public final int y;
+        public final int z;
+        public final int level;
+
+        public LightNode(int x, int y, int z, int level) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.level = level;
+        }
+
+        @Override
+        public String toString() {
+            return "LightNode{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    ", z=" + z +
+                    ", level=" + level +
+                    '}';
+        }
     }
 }

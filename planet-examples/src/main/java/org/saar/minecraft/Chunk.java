@@ -7,6 +7,7 @@ import org.joml.Vector3ic;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
+import org.saar.maths.transform.Position;
 import org.saar.minecraft.chunk.*;
 import org.saar.minecraft.threading.GlThreadQueue;
 
@@ -41,6 +42,12 @@ public class Chunk implements IChunk, Model {
         return this.bounds;
     }
 
+    public IChunk getRelativeChunk(int x, int z) {
+        final int wx = x + getPosition().x() * 16;
+        final int wz = z + getPosition().y() * 16;
+        return this.world.getChunk(Position.of(wx, 0, wz));
+    }
+
     @Override
     public int getHeight(int x, int z) {
         if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
@@ -49,18 +56,6 @@ public class Chunk implements IChunk, Model {
             return this.world.getHeight(wx, wz);
         }
         return this.heights.getHeight(x, z);
-    }
-
-    public void updateLight(int x, int y, int z, int light) {
-        if (y < 0 || y > 0xFF) return;
-        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
-            final int wx = x + getPosition().x() * 16;
-            final int wz = z + getPosition().y() * 16;
-            this.world.updateLight(wx, y, wz, light);
-        } else {
-            this.meshUpdateNeeded = true;
-            this.lights.updateLight(x, y, z, light);
-        }
     }
 
     @Override
@@ -73,6 +68,18 @@ public class Chunk implements IChunk, Model {
             return this.world.getLight(wx, y, wz);
         }
         return this.lights.getLight(x, y, z);
+    }
+
+    public void setLight(int x, int y, int z, byte value) {
+        if (y < 0 || y > 0xFF) return;
+        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
+            final int wx = x + getPosition().x() * 16;
+            final int wz = z + getPosition().y() * 16;
+            this.world.setLight(wx, y, wz, value);
+        } else {
+            this.meshUpdateNeeded = true;
+            this.lights.setLight(x, y, z, value);
+        }
     }
 
     @Override
