@@ -24,24 +24,32 @@ public class ChunkLights {
         return ((x & 0xF) << 12) | ((z & 0xF) << 8) | (y & 0xFF);
     }
 
+    private int lightPropagation(Block block) {
+        if (block == Blocks.AIR) return 0x10;
+        if (block == Blocks.WATER) return 0x0A;
+        return 0xFF;
+    }
+
+    private int downLightPropagation(Block block) {
+        if (block == Blocks.AIR) return 0x0;
+        if (block == Blocks.WATER) return 0x0A;
+        return 0xFF;
+    }
+
     private int calculateLight(int x, int y, int z) {
-        if (this.chunk.getBlock(x, y, z) == Blocks.AIR) {
-            int max = this.chunk.getLight(x, y + 1, z);
-            max = Math.max(max, this.chunk.getLight(x, y - 1, z) - 0x10);
-            max = Math.max(max, this.chunk.getLight(x - 1, y, z) - 0x10);
-            max = Math.max(max, this.chunk.getLight(x + 1, y, z) - 0x10);
-            max = Math.max(max, this.chunk.getLight(x, y, z - 1) - 0x10);
-            max = Math.max(max, this.chunk.getLight(x, y, z + 1) - 0x10);
-            return Math.max(max, 0);
-        }/* else if (this.chunk.getBlock(x, y, z) == Blocks.WATER) {
-            int max = this.chunk.getLight(x, y + 1, z) - 0xA;
-            max = Math.max(max, this.chunk.getLight(x, y - 1, z) - 0xA);
-            max = Math.max(max, this.chunk.getLight(x - 1, y, z) - 0xA);
-            max = Math.max(max, this.chunk.getLight(x + 1, y, z) - 0xA);
-            max = Math.max(max, this.chunk.getLight(x, y, z - 1) - 0xA);
-            max = Math.max(max, this.chunk.getLight(x, y, z + 1) - 0xA);
-            return Math.max(max, 0);
-        }*/
+        final Block block = this.chunk.getBlock(x, y, z);
+        final int p = lightPropagation(block);
+        final int d = downLightPropagation(block);
+        if (block == Blocks.AIR || block == Blocks.WATER) {
+            int max = 0;
+            max = Math.max(max, this.chunk.getLight(x, y + 1, z) - d);
+            max = Math.max(max, this.chunk.getLight(x, y - 1, z) - p);
+            max = Math.max(max, this.chunk.getLight(x - 1, y, z) - p);
+            max = Math.max(max, this.chunk.getLight(x + 1, y, z) - p);
+            max = Math.max(max, this.chunk.getLight(x, y, z - 1) - p);
+            max = Math.max(max, this.chunk.getLight(x, y, z + 1) - p);
+            return max;
+        }
         return 0;
     }
 
@@ -69,12 +77,12 @@ public class ChunkLights {
         final Queue<LightNode> spreadBfs = new LinkedList<>();
         final Queue<LightNode> removeBfs = new LinkedList<>();
 
-        if (this.chunk.getBlock(x, y, z) != Blocks.AIR) {
-            removeBfs.add(new LightNode(x, y, z, getLight(x, y, z)));
-            this.chunk.setLight(x, y, z, (byte) 0);
-        } else {
+        if (this.chunk.getBlock(x, y, z).isTransparent()) {
             spreadBfs.add(new LightNode(x, y, z, light));
             this.chunk.setLight(x, y, z, (byte) light);
+        } else {
+            removeBfs.add(new LightNode(x, y, z, getLight(x, y, z)));
+            this.chunk.setLight(x, y, z, (byte) 0);
         }
 
         removeLight(spreadBfs, removeBfs);
@@ -85,24 +93,30 @@ public class ChunkLights {
     private void removeLight(Queue<LightNode> addBfs, Queue<LightNode> remBfs) {
         while (!remBfs.isEmpty()) {
             final LightNode n = remBfs.poll();
-            removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level, 0));
-            removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - 0x10, 0));
-            removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - 0x10, 0));
-            removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - 0x10, 0));
-            removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - 0x10, 0));
-            removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - 0x10, 0));
+            final Block block = this.chunk.getBlock(n.x, n.y, n.z);
+            final int p = lightPropagation(block);
+            final int d = downLightPropagation(block);
+            removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level - d, 0));
+            removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - p, 0));
+            removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - p, 0));
+            removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - p, 0));
+            removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - p, 0));
+            removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - p, 0));
         }
     }
 
     private void spreadLight(Queue<LightNode> spreadBfs) {
         while (!spreadBfs.isEmpty()) {
             final LightNode n = spreadBfs.poll();
-            spreadLight(spreadBfs, n.x, n.y - 1, n.z, n.level);
-            spreadLight(spreadBfs, n.x, n.y + 1, n.z, n.level - 0x10);
-            spreadLight(spreadBfs, n.x + 1, n.y, n.z, n.level - 0x10);
-            spreadLight(spreadBfs, n.x - 1, n.y, n.z, n.level - 0x10);
-            spreadLight(spreadBfs, n.x, n.y, n.z + 1, n.level - 0x10);
-            spreadLight(spreadBfs, n.x, n.y, n.z - 1, n.level - 0x10);
+            final Block block = this.chunk.getBlock(n.x, n.y, n.z);
+            final int p = lightPropagation(block);
+            final int d = downLightPropagation(block);
+            spreadLight(spreadBfs, n.x, n.y - 1, n.z, n.level - d);
+            spreadLight(spreadBfs, n.x, n.y + 1, n.z, n.level - p);
+            spreadLight(spreadBfs, n.x + 1, n.y, n.z, n.level - p);
+            spreadLight(spreadBfs, n.x - 1, n.y, n.z, n.level - p);
+            spreadLight(spreadBfs, n.x, n.y, n.z + 1, n.level - p);
+            spreadLight(spreadBfs, n.x, n.y, n.z - 1, n.level - p);
         }
     }
 
@@ -112,7 +126,7 @@ public class ChunkLights {
 
         final int light = this.chunk.getLight(x, y, z);
         final Block block = this.chunk.getBlock(x, y, z);
-        if (block == Blocks.AIR && light < spread) {
+        if (block.isTransparent() && light < spread) {
             this.chunk.setLight(x, y, z, (byte) spread);
 
             addBfs.add(new LightNode(x, y, z, spread));
