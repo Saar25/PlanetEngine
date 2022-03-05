@@ -50,37 +50,44 @@ public class ChunkLights {
         updateLight(x, y, z, light);
     }
 
-    public void updateLight(int x, int y, int z, int light) {
-        final Queue<LightNode> addBfs = new LinkedList<>();
+    private void updateLight(int x, int y, int z, int light) {
+        final Queue<LightNode> spreadBfs = new LinkedList<>();
+        final Queue<LightNode> removeBfs = new LinkedList<>();
 
         if (this.chunk.getBlock(x, y, z) != Blocks.AIR) {
-            final Queue<LightNode> remBfs = new LinkedList<>();
-
-            remBfs.add(new LightNode(x, y, z, getLight(x, y, z)));
             this.chunk.setLight(x, y, z, (byte) 0);
-
-            while (!remBfs.isEmpty()) {
-                final LightNode n = remBfs.poll();
-                removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level, 0));
-                removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - 0x10, 0));
-                removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - 0x10, 0));
-                removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - 0x10, 0));
-                removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - 0x10, 0));
-                removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - 0x10, 0));
-            }
+            removeBfs.add(new LightNode(x, y, z, getLight(x, y, z)));
         } else {
-            addBfs.add(new LightNode(x, y, z, light));
             this.chunk.setLight(x, y, z, (byte) light);
+            spreadBfs.add(new LightNode(x, y, z, light));
         }
 
-        while (!addBfs.isEmpty()) {
-            final LightNode n = addBfs.poll();
-            spreadLight(addBfs, n.x, n.y - 1, n.z, n.level);
-            spreadLight(addBfs, n.x, n.y + 1, n.z, n.level - 0x10);
-            spreadLight(addBfs, n.x + 1, n.y, n.z, n.level - 0x10);
-            spreadLight(addBfs, n.x - 1, n.y, n.z, n.level - 0x10);
-            spreadLight(addBfs, n.x, n.y, n.z + 1, n.level - 0x10);
-            spreadLight(addBfs, n.x, n.y, n.z - 1, n.level - 0x10);
+        removeLight(spreadBfs, removeBfs);
+        spreadLight(spreadBfs);
+    }
+
+
+    private void removeLight(Queue<LightNode> addBfs, Queue<LightNode> remBfs) {
+        while (!remBfs.isEmpty()) {
+            final LightNode n = remBfs.poll();
+            removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level, 0));
+            removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - 0x10, 0));
+            removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - 0x10, 0));
+            removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - 0x10, 0));
+            removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - 0x10, 0));
+            removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - 0x10, 0));
+        }
+    }
+
+    private void spreadLight(Queue<LightNode> spreadBfs) {
+        while (!spreadBfs.isEmpty()) {
+            final LightNode n = spreadBfs.poll();
+            spreadLight(spreadBfs, n.x, n.y - 1, n.z, n.level);
+            spreadLight(spreadBfs, n.x, n.y + 1, n.z, n.level - 0x10);
+            spreadLight(spreadBfs, n.x + 1, n.y, n.z, n.level - 0x10);
+            spreadLight(spreadBfs, n.x - 1, n.y, n.z, n.level - 0x10);
+            spreadLight(spreadBfs, n.x, n.y, n.z + 1, n.level - 0x10);
+            spreadLight(spreadBfs, n.x, n.y, n.z - 1, n.level - 0x10);
         }
     }
 
