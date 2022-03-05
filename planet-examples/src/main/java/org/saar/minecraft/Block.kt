@@ -6,5 +6,6 @@ interface Block {
     val isSolid: Boolean
     val isTransparent: Boolean
     val isCollideable: Boolean
+    val lightPropagation: LightPropagation get() = LightPropagation.NONE
     val faces: BlockFaces
 }

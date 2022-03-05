@@ -9,6 +9,7 @@ object Blocks {
         override val isSolid: Boolean = false
         override val isTransparent: Boolean = true
         override val isCollideable: Boolean = false
+        override val lightPropagation = LightPropagation(0x10, 0x00)
         override val faces: BlockFaces = BlockFaces(0)
     }
 
@@ -79,6 +80,7 @@ object Blocks {
         override val isSolid: Boolean = false
         override val isTransparent: Boolean = true
         override val isCollideable: Boolean = false
+        override val lightPropagation = LightPropagation(0x0A, 0x0A)
         override val faces: BlockFaces = BlockFaces(9, 13)
     }
 

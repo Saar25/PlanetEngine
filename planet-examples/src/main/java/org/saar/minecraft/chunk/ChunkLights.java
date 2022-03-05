@@ -1,9 +1,9 @@
 package org.saar.minecraft.chunk;
 
 import org.saar.minecraft.Block;
-import org.saar.minecraft.Blocks;
 import org.saar.minecraft.Chunk;
 import org.saar.minecraft.EmptyChunk;
+import org.saar.minecraft.LightPropagation;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -24,30 +24,17 @@ public class ChunkLights {
         return ((x & 0xF) << 12) | ((z & 0xF) << 8) | (y & 0xFF);
     }
 
-    private int lightPropagation(Block block) {
-        if (block == Blocks.AIR) return 0x10;
-        if (block == Blocks.WATER) return 0x0A;
-        return 0xFF;
-    }
-
-    private int downLightPropagation(Block block) {
-        if (block == Blocks.AIR) return 0x0;
-        if (block == Blocks.WATER) return 0x0A;
-        return 0xFF;
-    }
-
     private int calculateLight(int x, int y, int z) {
         final Block block = this.chunk.getBlock(x, y, z);
-        final int p = lightPropagation(block);
-        final int d = downLightPropagation(block);
-        if (block == Blocks.AIR || block == Blocks.WATER) {
+        final LightPropagation p = block.getLightPropagation();
+        if (block.isTransparent()) {
             int max = 0;
-            max = Math.max(max, this.chunk.getLight(x, y + 1, z) - d);
-            max = Math.max(max, this.chunk.getLight(x, y - 1, z) - p);
-            max = Math.max(max, this.chunk.getLight(x - 1, y, z) - p);
-            max = Math.max(max, this.chunk.getLight(x + 1, y, z) - p);
-            max = Math.max(max, this.chunk.getLight(x, y, z - 1) - p);
-            max = Math.max(max, this.chunk.getLight(x, y, z + 1) - p);
+            max = Math.max(max, this.chunk.getLight(x, y + 1, z) - p.getDown());
+            max = Math.max(max, this.chunk.getLight(x, y - 1, z) - p.getSide());
+            max = Math.max(max, this.chunk.getLight(x - 1, y, z) - p.getSide());
+            max = Math.max(max, this.chunk.getLight(x + 1, y, z) - p.getSide());
+            max = Math.max(max, this.chunk.getLight(x, y, z - 1) - p.getSide());
+            max = Math.max(max, this.chunk.getLight(x, y, z + 1) - p.getSide());
             return max;
         }
         return 0;
@@ -94,14 +81,13 @@ public class ChunkLights {
         while (!remBfs.isEmpty()) {
             final LightNode n = remBfs.poll();
             final Block block = this.chunk.getBlock(n.x, n.y, n.z);
-            final int p = lightPropagation(block);
-            final int d = downLightPropagation(block);
-            removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level - d, 0));
-            removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - p, 0));
-            removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - p, 0));
-            removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - p, 0));
-            removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - p, 0));
-            removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - p, 0));
+            final LightPropagation p = block.getLightPropagation();
+            removeLight(addBfs, remBfs, n.x, n.y - 1, n.z, Math.max(n.level - p.getDown(), 0));
+            removeLight(addBfs, remBfs, n.x, n.y + 1, n.z, Math.max(n.level - p.getSide(), 0));
+            removeLight(addBfs, remBfs, n.x + 1, n.y, n.z, Math.max(n.level - p.getSide(), 0));
+            removeLight(addBfs, remBfs, n.x - 1, n.y, n.z, Math.max(n.level - p.getSide(), 0));
+            removeLight(addBfs, remBfs, n.x, n.y, n.z + 1, Math.max(n.level - p.getSide(), 0));
+            removeLight(addBfs, remBfs, n.x, n.y, n.z - 1, Math.max(n.level - p.getSide(), 0));
         }
     }
 
@@ -109,14 +95,13 @@ public class ChunkLights {
         while (!spreadBfs.isEmpty()) {
             final LightNode n = spreadBfs.poll();
             final Block block = this.chunk.getBlock(n.x, n.y, n.z);
-            final int p = lightPropagation(block);
-            final int d = downLightPropagation(block);
-            spreadLight(spreadBfs, n.x, n.y - 1, n.z, n.level - d);
-            spreadLight(spreadBfs, n.x, n.y + 1, n.z, n.level - p);
-            spreadLight(spreadBfs, n.x + 1, n.y, n.z, n.level - p);
-            spreadLight(spreadBfs, n.x - 1, n.y, n.z, n.level - p);
-            spreadLight(spreadBfs, n.x, n.y, n.z + 1, n.level - p);
-            spreadLight(spreadBfs, n.x, n.y, n.z - 1, n.level - p);
+            final LightPropagation p = block.getLightPropagation();
+            spreadLight(spreadBfs, n.x, n.y - 1, n.z, n.level - p.getDown());
+            spreadLight(spreadBfs, n.x, n.y + 1, n.z, n.level - p.getSide());
+            spreadLight(spreadBfs, n.x + 1, n.y, n.z, n.level - p.getSide());
+            spreadLight(spreadBfs, n.x - 1, n.y, n.z, n.level - p.getSide());
+            spreadLight(spreadBfs, n.x, n.y, n.z + 1, n.level - p.getSide());
+            spreadLight(spreadBfs, n.x, n.y, n.z - 1, n.level - p.getSide());
         }
     }
 
