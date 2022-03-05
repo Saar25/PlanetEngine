@@ -5,7 +5,8 @@ import org.saar.lwjgl.glfw.window.Window
 
 class UIDisplay(private val window: Window) : UIParentNode {
 
-    override val children = mutableListOf<UINode>()
+    private val _children = mutableListOf<UINode>()
+    override val children: List<UINode> = this._children
 
     override val style = WindowStyle(this)
 
@@ -23,8 +24,15 @@ class UIDisplay(private val window: Window) : UIParentNode {
     }
 
     fun add(uiNode: UIChildNode) {
-        this.children.add(uiNode)
-        uiNode.parent = this
+        if (this._children.add(uiNode)) {
+            uiNode.parent = this
+        }
+    }
+
+    fun remove(uiNode: UIChildNode) {
+        if (this._children.remove(uiNode)) {
+            uiNode.parent = UINullNode
+        }
     }
 
     override fun contains(x: Int, y: Int) = true

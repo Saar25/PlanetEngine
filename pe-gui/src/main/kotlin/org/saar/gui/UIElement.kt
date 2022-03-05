@@ -12,7 +12,14 @@ class UIElement : UIChildNode, UIParentNode {
     override val children: List<UINode> = this._children
 
     fun add(uiNode: UIChildNode) {
-        this._children.add(uiNode)
-        uiNode.parent = this
+        if (this._children.add(uiNode)) {
+            uiNode.parent = this
+        }
+    }
+
+    fun remove(uiNode: UIChildNode) {
+        if (this._children.remove(uiNode)) {
+            uiNode.parent = UINullNode
+        }
     }
 }
