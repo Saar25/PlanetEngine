@@ -70,11 +70,11 @@ public class ChunkLights {
         final Queue<LightNode> removeBfs = new LinkedList<>();
 
         if (this.chunk.getBlock(x, y, z) != Blocks.AIR) {
-            this.chunk.setLight(x, y, z, (byte) 0);
             removeBfs.add(new LightNode(x, y, z, getLight(x, y, z)));
+            this.chunk.setLight(x, y, z, (byte) 0);
         } else {
-            this.chunk.setLight(x, y, z, (byte) light);
             spreadBfs.add(new LightNode(x, y, z, light));
+            this.chunk.setLight(x, y, z, (byte) light);
         }
 
         removeLight(spreadBfs, removeBfs);
