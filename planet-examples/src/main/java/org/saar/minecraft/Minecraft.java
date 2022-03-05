@@ -1,7 +1,6 @@
 package org.saar.minecraft;
 
 import org.joml.SimplexNoise;
-import org.lwjgl.glfw.GLFW;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
@@ -19,14 +18,12 @@ import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
 import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
-import org.saar.gui.UIBlock;
-import org.saar.gui.UIDisplay;
-import org.saar.gui.UIElement;
-import org.saar.gui.UIText;
+import org.saar.gui.*;
 import org.saar.gui.style.Colour;
 import org.saar.gui.style.Colours;
 import org.saar.gui.style.alignment.AlignmentValues;
 import org.saar.gui.style.coordinate.CoordinateValues;
+import org.saar.gui.style.length.LengthValues;
 import org.saar.gui.style.position.PositionValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -72,6 +69,8 @@ public class Minecraft {
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
 
+    private static boolean uiMode = false;
+
     public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
@@ -92,6 +91,8 @@ public class Minecraft {
         uiTextBackground.getStyle().getBorders().set(2);
         uiTextBackground.getStyle().getRadius().set(5);
         uiTextContainer.add(uiTextBackground);
+
+        final UIChildNode inventory = buildInventory();
 
         final UIText uiFps = new UIText("Fps: ???");
         uiTextContainer.add(uiFps);
@@ -138,10 +139,18 @@ public class Minecraft {
         final Mouse mouse = window.getMouse();
         final Keyboard keyboard = window.getKeyboard();
 
-        keyboard.onKeyPress(GLFW.GLFW_KEY_ESCAPE).perform(e ->
-                mouse.setCursor(mouse.getCursor() == MouseCursor.DISABLED
-                        ? MouseCursor.NORMAL : MouseCursor.DISABLED));
         mouse.hide();
+
+        keyboard.onKeyPress('E').perform(e -> {
+            uiMode = !uiMode;
+            if (uiMode) {
+                mouse.setCursor(MouseCursor.NORMAL);
+                uiDisplay.add(inventory);
+            } else {
+                mouse.setCursor(MouseCursor.DISABLED);
+                uiDisplay.remove(inventory);
+            }
+        });
 
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             GlThreadQueue.getInstance().run();
@@ -181,6 +190,47 @@ public class Minecraft {
 
         renderingPath.delete();
         window.destroy();
+    }
+
+    private static UIChildNode buildInventory() {
+        final UIElement uiInventory = new UIElement();
+        uiInventory.getStyle().getPosition().setValue(PositionValues.getAbsolute());
+        uiInventory.getStyle().getX().set(CoordinateValues.getCenter());
+        uiInventory.getStyle().getY().set(CoordinateValues.getCenter());
+        uiInventory.getStyle().getWidth().set(LengthValues.percent(50));
+        uiInventory.getStyle().getHeight().set(LengthValues.ratio(.8f));
+        uiInventory.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
+
+        final UIBlock background = new UIBlock();
+        background.getStyle().getPosition().setValue(PositionValues.getAbsolute());
+        background.getStyle().getBackgroundColour().set(Colours.GRAY);
+        background.getStyle().getBorderColour().set(Colours.TRANSPARENT);
+        background.getStyle().getRadius().set(10);
+        uiInventory.add(background);
+
+        final UIElement uiTop = new UIElement();
+        uiTop.getStyle().getHeight().set(LengthValues.percent(40));
+        uiInventory.add(uiTop);
+
+        final UIElement uiItems = new UIElement();
+        uiItems.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
+        for (int row = 0; row < 4; row++) {
+            final UIElement uiItemsRow = new UIElement();
+            uiItemsRow.getStyle().getWidth().set(LengthValues.percent(100));
+            if (row == 3) uiItemsRow.getStyle().getMargin().set(10, 0, 0, 0);
+            for (int col = 0; col < 9; col++) {
+                final UIBlock uiBlock = new UIBlock();
+                uiBlock.getStyle().getWidth().setValue(LengthValues.percent(10));
+                uiBlock.getStyle().getHeight().setValue(LengthValues.ratio(1));
+                uiBlock.getStyle().getBorderColour().set(Colours.DARK_GRAY);
+                uiBlock.getStyle().getBorders().set(3);
+                uiItemsRow.add(uiBlock);
+            }
+            uiItems.add(uiItemsRow);
+        }
+        uiInventory.add(uiItems);
+
+        return uiInventory;
     }
 
     private static World buildWorld() {
