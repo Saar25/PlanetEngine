@@ -167,7 +167,7 @@ public class World {
         getChunks().addAll(chunks);
 
         final Stream<CompletableFuture<Void>> futures = chunks.stream().map(chunk -> CompletableFuture
-                .runAsync(() -> this.generator.generateChunk(chunk), this.executorService)
+                .runAsync(() -> chunk.generate(this.generator), this.executorService)
                 .exceptionally(f -> {
                     System.err.println("Failed to generate chunk " +
                             chunk.getPosition().x() + ", " +

@@ -45,6 +45,21 @@ public class ChunkLights {
         return 0;
     }
 
+    public void recalculateLight() {
+        Arrays.fill(this.lights, (byte) 0);
+
+        final Queue<LightNode> spreadBfs = new LinkedList<>();
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                if (this.chunk.getBlock(x, 0xFF, z).isTransparent()) {
+                    spreadBfs.add(new LightNode(x, 0xFF, z, 0xFF));
+                }
+            }
+        }
+
+        spreadLight(spreadBfs);
+    }
+
     public void updateLight(int x, int y, int z) {
         final int light = calculateLight(x, y, z);
         updateLight(x, y, z, light);

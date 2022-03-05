@@ -9,6 +9,7 @@ import org.saar.core.mesh.Model;
 import org.saar.core.mesh.async.FutureMesh;
 import org.saar.maths.transform.Position;
 import org.saar.minecraft.chunk.*;
+import org.saar.minecraft.generator.WorldGenerator;
 import org.saar.minecraft.threading.GlThreadQueue;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Chunk implements IChunk, Model {
     private final ChunkHeights heights = new ChunkHeights(this);
     private final ChunkLights lights = new ChunkLights(this);
     private final ChunkBounds bounds = new ChunkBounds();
+    private boolean generating = false;
 
     private Mesh mesh = null;
     private Mesh waterMesh = null;
@@ -99,6 +101,13 @@ public class Chunk implements IChunk, Model {
         }
     }
 
+    public void generate(WorldGenerator generator) {
+        this.generating = true;
+        generator.generateChunk(this);
+        this.lights.recalculateLight();
+        this.generating = false;
+    }
+
     @Override
     public void setBlock(int x, int y, int z, Block block) {
         if (y < 0 || y > 0xFF) return;
@@ -119,7 +128,9 @@ public class Chunk implements IChunk, Model {
                 this.heights.removeBlock(x, y, z);
             }
 
-            this.lights.updateLight(x, y, z);
+            if (!this.generating) {
+                this.lights.updateLight(x, y, z);
+            }
 
             this.meshUpdateNeeded = true;
             if (x == 0) {
