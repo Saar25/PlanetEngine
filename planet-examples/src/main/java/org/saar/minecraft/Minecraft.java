@@ -39,7 +39,6 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
-import org.saar.maths.noise.LayeredNoise3f;
 import org.saar.maths.noise.Noise3f;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector3;
@@ -237,7 +236,7 @@ public class Minecraft {
         final Noise3f noise3f = (x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f);
         final WorldGenerator generator = WorldGenerationPipeline
                 .pipe(new BedrockGenerator())
-                .then(new Terrain3DGenerator(60, 140, new LayeredNoise3f(noise3f, 2)))
+                .then(new Terrain3DGenerator(60, 140, noise3f))
                 .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise));
         return new World(generator, THREAD_COUNT);
