@@ -62,7 +62,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 5;
+    private static final int WORLD_RADIUS = 8;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
@@ -237,7 +237,7 @@ public class Minecraft {
         final Noise3f noise3f = (x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f);
         final WorldGenerator generator = WorldGenerationPipeline
                 .pipe(new BedrockGenerator())
-                .then(new TerrainGenerator(60, 140, new LayeredNoise3f(noise3f, 5)))
+                .then(new Terrain3DGenerator(60, 140, new LayeredNoise3f(noise3f, 2)))
                 .then(new WaterGenerator(100))
                 .then(new TreesGenerator(SimplexNoise::noise));
         return new World(generator, THREAD_COUNT);

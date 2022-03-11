@@ -35,20 +35,20 @@ public class Terrain3DGenerator implements WorldGenerator {
                 for (int y = 0; y < this.minHeight; y++) {
                     final float noise = noise(wx, y, wz);
                     if (noise > .2f) {
-                        chunk.setBlock(x, y, z, Blocks.STONE);
+                        chunk.setBlockIfEmpty(x, y, z, Blocks.STONE);
                     }
                 }
                 for (int y = this.minHeight; y <= this.maxHeight; y++) {
                     final float noise = noise(wx, y, wz);
                     if (noise > .2f) {
                         if (y <= 100 && noise(wx, y + 10, wz) <= .2f) {
-                            chunk.setBlock(x, y, z, Blocks.SAND);
+                            chunk.setBlockIfEmpty(x, y, z, Blocks.SAND);
                         } else if (noise(wx, y + 1, wz) <= .2f) {
-                            chunk.setBlock(x, y, z, Blocks.GRASS);
+                            chunk.setBlockIfEmpty(x, y, z, Blocks.GRASS);
                         } else if (noise(wx, y + 7, wz) <= .2f) {
-                            chunk.setBlock(x, y, z, Blocks.DIRT);
+                            chunk.setBlockIfEmpty(x, y, z, Blocks.DIRT);
                         } else {
-                            chunk.setBlock(x, y, z, Blocks.STONE);
+                            chunk.setBlockIfEmpty(x, y, z, Blocks.STONE);
                         }
                     }
                 }
