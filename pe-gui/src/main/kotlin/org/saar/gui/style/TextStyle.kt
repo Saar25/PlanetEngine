@@ -4,6 +4,7 @@ import org.saar.gui.UIText
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
+import org.saar.gui.style.boxsizing.BoxSizing
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
@@ -41,6 +42,8 @@ class TextStyle(container: UIText) : Style {
 
         override fun getMax() = container.contentHeight
     }
+
+    override val boxSizing: BoxSizing = BoxSizing(container)
 
     override val fontSize: FontSize = FontSize(container)
 

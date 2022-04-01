@@ -7,9 +7,7 @@ import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.coordinate.CoordinateValues.center
-import org.saar.gui.style.fontsize.FontSizeValues
-import org.saar.gui.style.position.PositionValues.absolute
+import org.saar.gui.style.position.PositionValues
 
 class UIButton : UIComponent() {
 
@@ -18,15 +16,11 @@ class UIButton : UIComponent() {
     private var onAction: EventHandler<MouseEvent>? = null
 
     val uiBackground = UIBlock().apply {
-        style.borders.set(2)
+        style.borders.set(24)
+        style.position.value = PositionValues.absolute
     }
 
-    val uiText = UIText("Button").apply {
-        style.fontSize.value = FontSizeValues.percent(48 / 100f)
-        style.position.value = absolute
-        style.x.value = center
-        style.y.value = center
-    }
+    val uiText = UIText("Button")
 
     override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }
 

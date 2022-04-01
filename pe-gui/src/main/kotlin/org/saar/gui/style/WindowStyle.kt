@@ -10,6 +10,8 @@ import org.saar.gui.style.border.NoBorders
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.NoBorderColour
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.boxsizing.BoxSizing
+import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.NoColourModifier
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
@@ -58,6 +60,8 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
 
         override fun getMax() = uiDisplay.height
     }
+
+    override val boxSizing: ReadonlyBoxSizing = BoxSizing(uiDisplay)
 
     override val fontSize: ReadonlyFontSize = NoFontSize
 

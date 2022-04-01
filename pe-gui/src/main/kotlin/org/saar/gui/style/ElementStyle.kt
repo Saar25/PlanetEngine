@@ -7,6 +7,8 @@ import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
+import org.saar.gui.style.boxsizing.BoxSizing
+import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
@@ -32,6 +34,8 @@ class ElementStyle(container: UIElement) : ParentStyle {
     override val width: Length = Lengths.Width(container)
 
     override val height: Length = Lengths.Height(container)
+
+    override val boxSizing: ReadonlyBoxSizing = BoxSizing(container)
 
     override val fontSize: FontSize = FontSize(container)
 

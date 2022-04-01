@@ -3,6 +3,7 @@ package org.saar.gui.style
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.font.ReadonlyFontFamily
@@ -26,6 +27,8 @@ interface Style {
     val width: ReadonlyLength
 
     val height: ReadonlyLength
+
+    val boxSizing: ReadonlyBoxSizing
 
     val fontSize: ReadonlyFontSize
 
