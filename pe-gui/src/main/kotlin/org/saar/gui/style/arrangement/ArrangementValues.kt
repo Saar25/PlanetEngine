@@ -84,7 +84,6 @@ object ArrangementValues {
             val total = container.style.height.get()
             val children = container.children.totalHeight()
             val gap = (total - children) / (container.children.size - 1)
-            println("$total $children $gap")
 
             val before = container.children.takeWhile { it != child }
             return gap * before.size + before.totalHeight()

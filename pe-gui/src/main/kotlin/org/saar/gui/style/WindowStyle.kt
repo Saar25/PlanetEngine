@@ -3,6 +3,7 @@ package org.saar.gui.style
 import org.saar.gui.UIDisplay
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.arrangement.Arrangement
+import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.NoBorders
@@ -77,4 +78,6 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
     override val alignment: Alignment = Alignment(uiDisplay)
 
     override val arrangement: Arrangement = Arrangement(uiDisplay)
+
+    override val axisAlignment: AxisAlignment = AxisAlignment(uiDisplay)
 }

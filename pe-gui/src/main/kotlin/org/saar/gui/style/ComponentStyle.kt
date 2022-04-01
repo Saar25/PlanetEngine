@@ -3,6 +3,7 @@ package org.saar.gui.style
 import org.saar.gui.UIComponent
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.arrangement.Arrangement
+import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.NoBorders
 import org.saar.gui.style.border.ReadonlyBorders
@@ -52,4 +53,6 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
     override val alignment: Alignment = Alignment(container)
 
     override val arrangement: Arrangement = Arrangement(container)
+
+    override val axisAlignment: AxisAlignment = AxisAlignment(container)
 }
