@@ -10,13 +10,12 @@ import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
-import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.length.LengthValues.percent
-import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.gui.style.position.PositionValues
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
+import kotlin.concurrent.thread
 
 object UIAlignmentExample {
 
@@ -43,8 +42,6 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                style.width.value = LengthValues.pixels(200)
-                style.height.value = ratio(.5f)
                 setOnAction { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
@@ -52,8 +49,6 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                style.width.value = LengthValues.pixels(200)
-                style.height.value = ratio(.5f)
                 setOnAction { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
@@ -61,8 +56,6 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                style.width.value = LengthValues.pixels(200)
-                style.height.value = ratio(.5f)
                 setOnAction { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
@@ -82,8 +75,7 @@ object UIAlignmentExample {
             })
 
             add(UIButton().apply {
-                style.width.value = LengthValues.pixels(200)
-                style.height.value = ratio(.5f)
+                style.fontSize.set(48)
                 setOnAction { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
@@ -91,8 +83,6 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                style.width.value = LengthValues.pixels(200)
-                style.height.value = ratio(.5f)
                 setOnAction { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
@@ -100,8 +90,6 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                style.width.value = LengthValues.pixels(200)
-                style.height.value = ratio(.5f)
                 setOnAction { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)

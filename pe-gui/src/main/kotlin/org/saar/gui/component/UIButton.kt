@@ -16,7 +16,7 @@ class UIButton : UIComponent() {
     private var onAction: EventHandler<MouseEvent>? = null
 
     val uiBackground = UIBlock().apply {
-        style.borders.set(24)
+        style.borders.set(2)
         style.position.value = PositionValues.absolute
     }
 
