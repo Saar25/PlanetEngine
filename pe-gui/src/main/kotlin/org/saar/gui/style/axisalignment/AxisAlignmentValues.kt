@@ -5,21 +5,21 @@ import org.saar.gui.UIParentNode
 
 object AxisAlignmentValues {
 
-    @JvmStatic
+    @JvmField
     val none = object : AxisAlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) = 0
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode) = 0
     }
 
-    @JvmStatic
+    @JvmField
     val start = object : AxisAlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) = 0
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode) = 0
     }
 
-    @JvmStatic
+    @JvmField
     val end = object : AxisAlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) =
             container.style.width.get() - child.style.width.get()
@@ -28,7 +28,7 @@ object AxisAlignmentValues {
             container.style.height.get() - child.style.height.get()
     }
 
-    @JvmStatic
+    @JvmField
     val center = object : AxisAlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int =
             (container.style.width.get() - child.style.width.get()) / 2

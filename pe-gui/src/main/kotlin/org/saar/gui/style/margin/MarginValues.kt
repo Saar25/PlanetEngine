@@ -4,7 +4,7 @@ import org.saar.gui.UIChildNode
 
 object MarginValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: MarginValue = object : MarginValue {
         override fun computeTop(container: UIChildNode) = container.parent.style.margin.top
 
@@ -15,7 +15,7 @@ object MarginValues {
         override fun computeLeft(container: UIChildNode) = container.parent.style.margin.left
     }
 
-    @JvmStatic
+    @JvmField
     val none: MarginValue = object : MarginValue {
         override fun computeTop(container: UIChildNode) = 0
 

@@ -7,7 +7,7 @@ import org.saar.gui.style.position.PositionValues
 
 object ArrangementValues {
 
-    @JvmStatic
+    @JvmField
     val none = object : ArrangementValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) = 0
 
@@ -30,7 +30,7 @@ object ArrangementValues {
                     it.style.margin.top + it.style.margin.bottom
         }
 
-    @JvmStatic
+    @JvmField
     val start = object : ArrangementValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             return container.children.takeWhile { it != child }.totalWidth()
@@ -41,7 +41,7 @@ object ArrangementValues {
         }
     }
 
-    @JvmStatic
+    @JvmField
     val end = object : ArrangementValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             return container.style.width.get() - child.style.width.get() -
@@ -54,7 +54,7 @@ object ArrangementValues {
         }
     }
 
-    @JvmStatic
+    @JvmField
     val center = object : ArrangementValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val children = container.children.totalWidth()
@@ -69,7 +69,7 @@ object ArrangementValues {
         }
     }
 
-    @JvmStatic
+    @JvmField
     val spaceBetween = object : ArrangementValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.width.get()
@@ -90,7 +90,7 @@ object ArrangementValues {
         }
     }
 
-    @JvmStatic
+    @JvmField
     val spaceAround = object : ArrangementValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.width.get()

@@ -6,10 +6,10 @@ import org.saar.gui.style.alignment.AlignmentValues
 
 object LengthValues {
 
-    @JvmStatic
+    @JvmField
     val zero = pixels(0)
 
-    @JvmStatic
+    @JvmField
     val inherit = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) = container.parent.style.width.getMax()
 
@@ -24,7 +24,7 @@ object LengthValues {
         override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
-    @JvmStatic
+    @JvmField
     val fill = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) =
             container.parent.style.width.get() -
@@ -45,7 +45,7 @@ object LengthValues {
         override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
-    @JvmStatic
+    @JvmField
     val fit = object : LengthValue {
         override fun computeAxisX(container: UIChildNode): Int {
             return if (container !is UIParentNode || container.children.isEmpty()) 0

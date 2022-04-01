@@ -4,7 +4,7 @@ import org.joml.Vector4fc
 
 object ColourModifierValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: ColourModifierValue = ColourModifierValue { it.parent.style.colourModifier.multiply }
 
     @JvmStatic

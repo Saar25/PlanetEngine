@@ -74,9 +74,9 @@ public class ReflectionExample {
         ClearColour.set(.2f, .2f, .2f);
 
         final UIDisplay uiDisplay = new UIDisplay(window);
-        uiDisplay.getStyle().getAlignment().setValue(AlignmentValues.getHorizontal());
-        uiDisplay.getStyle().getArrangement().setValue(ArrangementValues.getSpaceAround());
-        uiDisplay.getStyle().getAxisAlignment().setValue(AxisAlignmentValues.getCenter());
+        uiDisplay.getStyle().getAlignment().setValue(AlignmentValues.horizontal);
+        uiDisplay.getStyle().getArrangement().setValue(ArrangementValues.spaceAround);
+        uiDisplay.getStyle().getAxisAlignment().setValue(AxisAlignmentValues.center);
 
         final UIBlock reflectionUiBlock = new UIBlock();
         reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
@@ -97,7 +97,7 @@ public class ReflectionExample {
         uiTextGroup.getStyle().getFont().set(font);
         uiTextGroup.getStyle().getFontSize().set(22);
         uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
-        uiTextGroup.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
+        uiTextGroup.getStyle().getAlignment().setValue(AlignmentValues.vertical);
 
         final UIText uiFps = new UIText("Fps: ???");
         uiTextGroup.add(uiFps);

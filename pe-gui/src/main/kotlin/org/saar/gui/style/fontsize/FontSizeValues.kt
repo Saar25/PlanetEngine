@@ -2,10 +2,10 @@ package org.saar.gui.style.fontsize
 
 object FontSizeValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: FontSizeValue = FontSizeValue { it.parent.style.fontSize.size }
 
-    @JvmStatic
+    @JvmField
     val none: FontSizeValue = FontSizeValue { 0 }
 
     @JvmStatic

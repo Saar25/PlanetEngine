@@ -4,7 +4,7 @@ import org.saar.gui.style.Colour
 
 object FontColourValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: FontColourValue = FontColourValue { container ->
         container.parent.style.fontColour.colour
     }

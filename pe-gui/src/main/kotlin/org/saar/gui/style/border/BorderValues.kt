@@ -4,7 +4,7 @@ import org.saar.gui.UIChildNode
 
 object BorderValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: BorderValue = object : BorderValue {
         override fun computeTop(container: UIChildNode) = container.parent.style.borders.top
 
@@ -15,7 +15,7 @@ object BorderValues {
         override fun computeLeft(container: UIChildNode) = container.parent.style.borders.left
     }
 
-    @JvmStatic
+    @JvmField
     val none: BorderValue = object : BorderValue {
         override fun computeTop(container: UIChildNode) = 0
 
