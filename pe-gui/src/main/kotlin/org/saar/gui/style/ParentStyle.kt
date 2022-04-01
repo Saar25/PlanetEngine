@@ -1,6 +1,7 @@
 package org.saar.gui.style
 
 import org.saar.gui.style.alignment.ReadonlyAlignment
+import org.saar.gui.style.arrangement.ReadonlyArrangement
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
@@ -45,4 +46,6 @@ interface ParentStyle : Style {
     override val backgroundColour: ReadonlyBackgroundColour
 
     val alignment: ReadonlyAlignment
+
+    val arrangement: ReadonlyArrangement
 }

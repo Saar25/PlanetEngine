@@ -2,6 +2,7 @@ package org.saar.gui.style
 
 import org.saar.gui.UIElement
 import org.saar.gui.style.alignment.Alignment
+import org.saar.gui.style.arrangement.Arrangement
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
@@ -48,4 +49,6 @@ class ElementStyle(container: UIElement) : ParentStyle {
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
     override val alignment: Alignment = Alignment(container)
+
+    override val arrangement: Arrangement = Arrangement(container)
 }

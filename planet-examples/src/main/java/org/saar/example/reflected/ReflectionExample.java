@@ -42,6 +42,7 @@ import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;
 import org.saar.gui.style.alignment.AlignmentValues;
+import org.saar.gui.style.arrangement.ArrangementValues;
 import org.saar.gui.style.coordinate.CoordinateValues;
 import org.saar.gui.style.length.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -72,6 +73,8 @@ public class ReflectionExample {
         ClearColour.set(.2f, .2f, .2f);
 
         final UIDisplay uiDisplay = new UIDisplay(window);
+        uiDisplay.getStyle().getAlignment().setValue(AlignmentValues.getHorizontal());
+        uiDisplay.getStyle().getArrangement().setValue(ArrangementValues.getSpaceAround());
 
         final UIBlock reflectionUiBlock = new UIBlock();
         reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));

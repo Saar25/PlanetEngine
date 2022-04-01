@@ -2,6 +2,8 @@ package org.saar.gui.style
 
 import org.saar.gui.style.alignment.NoAlignment
 import org.saar.gui.style.alignment.ReadonlyAlignment
+import org.saar.gui.style.arrangement.NoArrangement
+import org.saar.gui.style.arrangement.ReadonlyArrangement
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
 import org.saar.gui.style.border.NoBorders
@@ -63,4 +65,6 @@ object NoStyle : ParentStyle {
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
 
     override val alignment: ReadonlyAlignment = NoAlignment
+
+    override val arrangement: ReadonlyArrangement = NoArrangement
 }
