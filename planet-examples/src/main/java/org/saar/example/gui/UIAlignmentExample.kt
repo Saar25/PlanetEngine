@@ -8,7 +8,10 @@ import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.arrangement.ArrangementValues
+import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.length.LengthValues
+import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.gui.style.position.PositionValues
 import org.saar.lwjgl.glfw.window.Window
@@ -27,78 +30,84 @@ object UIAlignmentExample {
         val keyboard = window.keyboard
 
         val display = UIDisplay(window).apply {
-            style.alignment.value = AlignmentValues.horizontal
+            style.alignment.value = AlignmentValues.vertical
+            style.arrangement.value = ArrangementValues.spaceAround
+            style.axisAlignment.value = AxisAlignmentValues.center
         }
 
         val container = UIElement().apply {
             style.backgroundColour.set(Colours.BLUE)
-            style.alignment.value = AlignmentValues.vertical
+            style.alignment.value = AlignmentValues.horizontal
+            style.arrangement.value = ArrangementValues.spaceAround
+            style.width.value = percent(100f)
+
+            add(UIButton().apply {
+                style.fontSize.set(48)
+                style.width.value = LengthValues.pixels(200)
+                style.height.value = ratio(.5f)
+                setOnAction { println("Clicked!") }
+                style.margin.set(5)
+                style.radius.set(10)
+            })
+
+            add(UIButton().apply {
+                style.fontSize.set(48)
+                style.width.value = LengthValues.pixels(200)
+                style.height.value = ratio(.5f)
+                setOnAction { println("Clicked!") }
+                style.margin.set(5)
+                style.radius.set(10)
+            })
+
+            add(UIButton().apply {
+                style.fontSize.set(48)
+                style.width.value = LengthValues.pixels(200)
+                style.height.value = ratio(.5f)
+                setOnAction { println("Clicked!") }
+                style.margin.set(5)
+                style.radius.set(10)
+            })
         }
         display.add(container)
 
-        container.add(UIButton().apply {
-            style.fontSize.set(48)
-            style.width.value = LengthValues.pixels(200)
-            style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
-            style.margin.set(5)
-            style.radius.set(10)
-        })
-
-        container.add(UIButton().apply {
-            style.fontSize.set(48)
-            style.width.value = LengthValues.pixels(200)
-            style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
-            style.margin.set(5)
-            style.radius.set(10)
-        })
-
-        container.add(UIButton().apply {
-            style.fontSize.set(48)
-            style.width.value = LengthValues.pixels(200)
-            style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
-            style.margin.set(5)
-            style.radius.set(10)
-        })
-
         val container2 = UIElement().apply {
             style.backgroundColour.set(Colours.BLUE)
-            style.alignment.value = AlignmentValues.vertical
+            style.alignment.value = AlignmentValues.horizontal
+            style.arrangement.value = ArrangementValues.spaceAround
+            style.width.value = percent(100f)
+
+            add(UIBlock().apply {
+                style.backgroundColour.set(Colours.BLUE)
+                style.position.value = PositionValues.absolute
+            })
+
+            add(UIButton().apply {
+                style.width.value = LengthValues.pixels(200)
+                style.height.value = ratio(.5f)
+                setOnAction { println("Clicked!") }
+                style.margin.set(5)
+                style.radius.set(10)
+            })
+
+            add(UIButton().apply {
+                style.fontSize.set(48)
+                style.width.value = LengthValues.pixels(200)
+                style.height.value = ratio(.5f)
+                setOnAction { println("Clicked!") }
+                style.margin.set(5)
+                style.radius.set(10)
+            })
+
+            add(UIButton().apply {
+                style.fontSize.set(48)
+                style.width.value = LengthValues.pixels(200)
+                style.height.value = ratio(.5f)
+                setOnAction { println("Clicked!") }
+                style.margin.set(5)
+                style.radius.set(10)
+            })
         }
         display.add(container2)
-
-        container2.add(UIBlock().apply {
-            style.backgroundColour.set(Colours.BLUE)
-            style.position.value = PositionValues.absolute
-        })
-
-        container2.add(UIButton().apply {
-            style.width.value = LengthValues.pixels(200)
-            style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
-            style.margin.set(5)
-            style.radius.set(10)
-        })
-
-        container2.add(UIButton().apply {
-            style.fontSize.set(48)
-            style.width.value = LengthValues.pixels(200)
-            style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
-            style.margin.set(5)
-            style.radius.set(10)
-        })
-
-        container2.add(UIButton().apply {
-            style.fontSize.set(48)
-            style.width.value = LengthValues.pixels(200)
-            style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
-            style.margin.set(5)
-            style.radius.set(10)
-        })
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()

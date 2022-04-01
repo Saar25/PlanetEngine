@@ -5,6 +5,7 @@ import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.pixels
 
 class MyUIComponent : UIComponent() {
 
@@ -14,6 +15,7 @@ class MyUIComponent : UIComponent() {
         style.backgroundColour.set(Colours.CYAN)
         style.borderColour.set(Colours.LIGHT_GRAY)
         style.width.value = percent(50f)
+        style.height.value = pixels(100)
     }
 
     private val object2 = UIBlock().apply {
@@ -22,14 +24,10 @@ class MyUIComponent : UIComponent() {
         style.backgroundColour.set(Colours.CYAN)
         style.borderColour.set(Colours.LIGHT_GRAY)
         style.width.value = percent(50f)
+        style.height.value = pixels(100)
     }
 
     override val children = listOf(this.object1, this.object2).onEach { it.parent = this }
-
-    init {
-        this.style.width.set(percent(80f))
-        this.style.height.set(percent(80f))
-    }
 
     override fun onMousePress(event: MouseEvent) {
         println("Mouse pressed!")

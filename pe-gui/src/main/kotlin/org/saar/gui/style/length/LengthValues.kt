@@ -114,9 +114,9 @@ object LengthValues {
         override fun computeAxisY(container: UIChildNode) =
             (container.parent.style.height.getMax() * percents / 100).toInt()
 
-        override fun computeMinAxisX(container: UIChildNode) = 0
+        override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
 
-        override fun computeMinAxisY(container: UIChildNode) = 0
+        override fun computeMinAxisY(container: UIChildNode) = computeAxisY(container)
 
         override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
 
