@@ -6,6 +6,7 @@ import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.style.Colours
+import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.position.PositionValues
 
 private val characterShiftMap = mapOf(

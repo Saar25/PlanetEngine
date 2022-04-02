@@ -14,6 +14,8 @@ import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.padding.NoPadding
+import org.saar.gui.style.padding.ReadonlyPadding
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.Radius
 
@@ -22,6 +24,8 @@ class TextStyle(container: UIText) : Style {
     override val position: Position = Position(container)
 
     override val margin: ReadonlyMargin = NoMargin
+
+    override val padding: ReadonlyPadding = NoPadding
 
     override val x: Coordinate = Coordinates.X(container)
 

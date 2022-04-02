@@ -24,6 +24,10 @@ class UIButton : UIComponent() {
 
     override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }
 
+    init {
+        style.padding.set(30, 100)
+    }
+
     fun setOnAction(onAction: EventHandler<MouseEvent>) {
         this.onAction = onAction
     }

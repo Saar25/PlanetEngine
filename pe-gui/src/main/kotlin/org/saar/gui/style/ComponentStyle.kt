@@ -19,6 +19,7 @@ import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.margin.Margin
+import org.saar.gui.style.padding.Padding
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.Radius
 
@@ -27,6 +28,8 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
     override val position: Position = Position(container)
 
     override val margin: Margin = Margin(container)
+
+    override val padding: Padding = Padding(container)
 
     override val x: Coordinate = Coordinates.X(container)
 

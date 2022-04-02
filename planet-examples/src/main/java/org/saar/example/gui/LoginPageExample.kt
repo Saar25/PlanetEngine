@@ -15,7 +15,6 @@ import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.border.BorderValues
 import org.saar.gui.style.coordinate.CoordinateValues
-import org.saar.gui.style.length.LengthValues.fill
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.pixels
 import org.saar.gui.style.position.PositionValues

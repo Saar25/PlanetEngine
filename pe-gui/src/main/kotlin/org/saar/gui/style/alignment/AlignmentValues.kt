@@ -15,18 +15,18 @@ object AlignmentValues {
     @JvmField
     val horizontal = object : AlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) =
-            container.style.arrangement.getX(child)
+            container.style.arrangement.getX(child) + container.style.padding.left
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode) =
-            container.style.axisAlignment.getY(child)
+            container.style.axisAlignment.getY(child) + container.style.padding.top
     }
 
     @JvmField
     val vertical = object : AlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) =
-            container.style.axisAlignment.getX(child)
+            container.style.axisAlignment.getX(child) + container.style.padding.left
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode) =
-            container.style.arrangement.getY(child)
+            container.style.arrangement.getY(child) + container.style.padding.top
     }
 }

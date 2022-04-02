@@ -27,6 +27,8 @@ import org.saar.gui.style.length.NoLength
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.padding.NoPadding
+import org.saar.gui.style.padding.ReadonlyPadding
 import org.saar.gui.style.position.PositionValues
 import org.saar.gui.style.position.ReadonlyPosition
 import org.saar.gui.style.redius.NoRadius
@@ -43,6 +45,8 @@ object NoStyle : ParentStyle {
     }
 
     override val margin: ReadonlyMargin = NoMargin
+
+    override val padding: ReadonlyPadding = NoPadding
 
     override val x: ReadonlyCoordinate = ReadonlyCoordinate { 0 }
 
