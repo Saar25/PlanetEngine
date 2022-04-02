@@ -4,6 +4,7 @@ import org.saar.gui.UIChildNode
 import org.saar.gui.UINode
 import org.saar.gui.UIParentNode
 import org.saar.gui.style.position.PositionValues
+import kotlin.math.max
 
 object ArrangementValues {
 
@@ -76,7 +77,8 @@ object ArrangementValues {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.width.get()
             val children = container.children.totalWidth()
-            val gap = (total - children) / (container.children.countRelative() - 1)
+            val relatives = max(1, container.children.countRelative() - 1)
+            val gap = (total - children) / relatives
 
             val before = container.children.takeWhile { it != child }
             return gap * before.countRelative() + before.totalWidth()
@@ -85,7 +87,8 @@ object ArrangementValues {
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.height.get()
             val children = container.children.totalHeight()
-            val gap = (total - children) / (container.children.countRelative() - 1)
+            val relatives = max(1, container.children.countRelative() - 1)
+            val gap = (total - children) / relatives
 
             val before = container.children.takeWhile { it != child }
             return gap * before.countRelative() + before.totalHeight()
@@ -97,7 +100,8 @@ object ArrangementValues {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.width.get()
             val children = container.children.totalWidth()
-            val gap = (total - children) / (container.children.countRelative() * 2)
+            val relatives = max(1, container.children.countRelative() * 2)
+            val gap = (total - children) / relatives
 
             val before = container.children.takeWhile { it != child }
             return gap * (before.countRelative() * 2 + 1) + before.totalWidth()
@@ -106,7 +110,8 @@ object ArrangementValues {
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.height.get()
             val children = container.children.totalHeight()
-            val gap = (total - children) / (container.children.countRelative() * 2)
+            val relatives = max(1, container.children.countRelative() * 2)
+            val gap = (total - children) / relatives
 
             val before = container.children.takeWhile { it != child }
             return gap * (before.countRelative() * 2 + 1) + before.totalHeight()

@@ -15,7 +15,6 @@ import org.saar.gui.style.position.PositionValues
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
-import kotlin.concurrent.thread
 
 object UIAlignmentExample {
 
