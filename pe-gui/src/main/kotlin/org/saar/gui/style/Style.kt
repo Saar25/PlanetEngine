@@ -1,6 +1,7 @@
 package org.saar.gui.style
 
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
@@ -48,4 +49,6 @@ interface Style {
     val radius: ReadonlyRadius
 
     val backgroundColour: ReadonlyBackgroundColour
+
+    val backgroundImage: ReadonlyBackgroundImage
 }

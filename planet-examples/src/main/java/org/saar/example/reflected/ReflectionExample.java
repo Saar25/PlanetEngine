@@ -165,7 +165,7 @@ public class ReflectionExample {
 
             deferredRenderer.render().toMainScreen();
 
-            reflectionUiBlock.setTexture(reflection.getReflectionMap());
+            reflectionUiBlock.getStyle().getBackgroundImage().set(reflection.getReflectionMap());
             uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();

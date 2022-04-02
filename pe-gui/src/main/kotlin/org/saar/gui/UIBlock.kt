@@ -10,8 +10,6 @@ import org.saar.maths.utils.Maths
 
 class UIBlock : UIChildNode {
 
-    var texture: ReadOnlyTexture = Texture2D.NULL
-
     var discardMap: ReadOnlyTexture = Texture2D.NULL
 
     override var parent: UIParentNode = UINullNode
@@ -53,7 +51,7 @@ class UIBlock : UIChildNode {
     }
 
     override fun delete() {
-        this.texture.delete()
+        this.style.backgroundImage.texture.delete()
         this.discardMap.delete()
     }
 }

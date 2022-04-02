@@ -2,6 +2,7 @@ package org.saar.gui.style
 
 import org.saar.gui.UIBlock
 import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.backgroundimage.BackgroundImage
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.boxsizing.BoxSizing
@@ -57,4 +58,6 @@ class BlockStyle(container: UIBlock) : Style {
     override val radius: Radius = Radius(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
+
+    override val backgroundImage: BackgroundImage = BackgroundImage(container)
 }

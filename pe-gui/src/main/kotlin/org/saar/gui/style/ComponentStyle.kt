@@ -5,6 +5,7 @@ import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.arrangement.Arrangement
 import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.backgroundimage.BackgroundImage
 import org.saar.gui.style.border.NoBorders
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.BorderColour
@@ -56,6 +57,8 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
     override val radius: Radius = Radius(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
+
+    override val backgroundImage: BackgroundImage = BackgroundImage(container)
 
     override val alignment: Alignment = Alignment(container)
 

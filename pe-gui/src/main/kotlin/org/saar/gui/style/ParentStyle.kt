@@ -4,8 +4,10 @@ import org.saar.gui.style.alignment.ReadonlyAlignment
 import org.saar.gui.style.arrangement.ReadonlyArrangement
 import org.saar.gui.style.axisalignment.ReadonlyAxisAlignment
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.font.ReadonlyFontFamily
@@ -33,6 +35,8 @@ interface ParentStyle : Style {
 
     override val height: ReadonlyLength
 
+    override val boxSizing: ReadonlyBoxSizing
+
     override val fontSize: ReadonlyFontSize
 
     override val fontColour: ReadonlyFontColour
@@ -48,6 +52,8 @@ interface ParentStyle : Style {
     override val radius: ReadonlyRadius
 
     override val backgroundColour: ReadonlyBackgroundColour
+
+    override val backgroundImage: ReadonlyBackgroundImage
 
     val alignment: ReadonlyAlignment
 

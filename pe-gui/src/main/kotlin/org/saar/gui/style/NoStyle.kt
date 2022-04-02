@@ -8,6 +8,8 @@ import org.saar.gui.style.axisalignment.NoAxisAlignment
 import org.saar.gui.style.axisalignment.ReadonlyAxisAlignment
 import org.saar.gui.style.backgroundcolour.NoBackgroundColour
 import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundimage.NoBackgroundImage
+import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.NoBorders
 import org.saar.gui.style.border.ReadonlyBorders
 import org.saar.gui.style.bordercolour.NoBorderColour
@@ -73,6 +75,8 @@ object NoStyle : ParentStyle {
     override val radius: ReadonlyRadius = NoRadius
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
+
+    override val backgroundImage: ReadonlyBackgroundImage = NoBackgroundImage
 
     override val alignment: ReadonlyAlignment = NoAlignment
 

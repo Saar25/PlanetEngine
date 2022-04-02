@@ -2,6 +2,8 @@ package org.saar.gui.style
 
 import org.saar.gui.UIText
 import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.backgroundimage.NoBackgroundImage
+import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.boxsizing.BoxSizing
@@ -65,4 +67,5 @@ class TextStyle(container: UIText) : Style {
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
+    override val backgroundImage: ReadonlyBackgroundImage = NoBackgroundImage
 }

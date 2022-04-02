@@ -5,6 +5,7 @@ import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.arrangement.Arrangement
 import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.backgroundimage.BackgroundImage
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.boxsizing.BoxSizing
@@ -55,6 +56,8 @@ class ElementStyle(container: UIElement) : ParentStyle {
     override val radius: Radius = Radius(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
+
+    override val backgroundImage: BackgroundImage = BackgroundImage(container)
 
     override val alignment: Alignment = Alignment(container)
 

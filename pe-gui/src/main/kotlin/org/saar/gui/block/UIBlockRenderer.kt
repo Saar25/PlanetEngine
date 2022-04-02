@@ -101,8 +101,8 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
     }
 
     override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
-        hasTextureUniform.value = uiBlock.texture != Texture2D.NULL
-        textureUniform.value = uiBlock.texture
+        hasTextureUniform.value = uiBlock.style.backgroundImage.texture != Texture2D.NULL
+        textureUniform.value = uiBlock.style.backgroundImage.texture
 
         hasDiscardMapUniform.value = uiBlock.discardMap != Texture2D.NULL
         discardMapUniform.value = uiBlock.discardMap
