@@ -1,5 +1,6 @@
 package org.saar.example.gui
 
+import org.jproperty.InvalidationListener
 import org.lwjgl.glfw.GLFW
 import org.saar.core.painting.painters.FBMPainter
 import org.saar.core.renderer.RenderContext
@@ -44,6 +45,11 @@ object LoginPageExample {
                 }
             }
 
+            val badCredentials = UIText("").apply {
+                style.fontSize.value = 32.px
+                style.fontColour.set(Colours.RED)
+            }
+
             val username = UITextField("username")
 
             +UIElement().apply {
@@ -60,6 +66,8 @@ object LoginPageExample {
                     style.width.value = 350.px
                     style.backgroundColour.set(Colours.parse("#e0e0e0"))
                     style.padding.set(10.px)
+
+                    textProperty.addListener(InvalidationListener { badCredentials.text = "" })
                 }
             }
 
@@ -79,13 +87,11 @@ object LoginPageExample {
                     style.width.value = 350.px
                     style.backgroundColour.set(Colours.parse("#e0e0e0"))
                     style.padding.set(10.px)
+
+                    textProperty.addListener(InvalidationListener { badCredentials.text = "" })
                 }
             }
 
-            val badCredentials = UIText("").apply {
-                style.fontSize.value = 32.px
-                style.fontColour.set(Colours.RED)
-            }
             +badCredentials
 
             +UIButton("Login").apply {

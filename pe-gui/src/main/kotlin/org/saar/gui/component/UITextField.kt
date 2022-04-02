@@ -19,11 +19,13 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    val uiText = UIText(text)
+    private val uiText = UIText(text)
 
     override val children = listOf(this.uiText).onEach { it.parent = this }
 
-    val text: String get() = this.uiText.text
+    val textProperty by this.uiText::textProperty
+
+    var text: String by this.uiText::text
 
     init {
         this.style.borders.set(2)
@@ -38,10 +40,10 @@ class UITextField(text: String = "") : UIComponent() {
     private fun changeTextByKeyboard(event: KeyboardEvent) {
         val font = this.style.font.value.compute(this)
 
-        this.uiText.text = when {
+        this.text = when {
             event.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
                 if (event.modifiers.isCtrl()) {
-                    this.text.dropLast(this.text.length - this.text.lastIndexOfAny(charArrayOf(' ', '\n')))
+                    this.text.dropLastWhile { it == ' ' }.dropLastWhile { it != ' ' }
                 } else {
                     this.text.dropLast(1)
                 }
