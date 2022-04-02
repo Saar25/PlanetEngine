@@ -1,10 +1,12 @@
 package org.saar.gui.component
 
 import org.lwjgl.glfw.GLFW
+import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.style.Colours
+import org.saar.gui.style.position.PositionValues
 
 private val characterShiftMap = mapOf(
     96 to '~', 49 to '!', 50 to '@',
@@ -19,8 +21,9 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    val uiBackground = UIText().apply {
-        style.borders.set(2)
+    val uiBackground = UIBlock().apply {
+        this.style.borders.set(2)
+        this.style.position.value = PositionValues.absolute
     }
 
     val uiText = UIText().apply {

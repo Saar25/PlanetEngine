@@ -4,10 +4,10 @@ object Colours {
 
     @JvmStatic
     fun parse(value: String): Colour {
-        val hex = if (value.startsWith("#")) value.substring(1) else value
+        val hex = value.removePrefix("#")
         return when (hex.length) {
-            6 -> parsePackedRGB(value.toInt(16))
-            8 -> parsePackedRGBA(value.toInt(16))
+            6 -> parsePackedRGB(hex.toInt(16))
+            8 -> parsePackedRGBA(hex.toInt(16))
             else -> throw IllegalArgumentException("Cannot parse colour $value")
         }
     }
