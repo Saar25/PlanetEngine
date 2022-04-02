@@ -6,8 +6,7 @@ import org.saar.gui.style.arrangement.Arrangement
 import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
 import org.saar.gui.style.backgroundimage.BackgroundImage
-import org.saar.gui.style.border.NoBorders
-import org.saar.gui.style.border.ReadonlyBorders
+import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
 import org.saar.gui.style.boxsizing.BoxSizing
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
@@ -51,7 +50,7 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
 
     override val colourModifier: ColourModifier = ColourModifier(container)
 
-    override val borders: ReadonlyBorders = NoBorders
+    override val borders: Borders = Borders(container)
 
     override val borderColour: BorderColour = BorderColour(container)
 

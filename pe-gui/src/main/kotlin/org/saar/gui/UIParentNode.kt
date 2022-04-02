@@ -1,6 +1,7 @@
 package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.ParentStyle
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
@@ -12,7 +13,10 @@ interface UIParentNode : UINode {
 
     val children: List<UINode>
 
-    override fun render(context: RenderContext) = this.children.forEach { it.render(context) }
+    override fun render(context: RenderContext) {
+        UIBlockRenderer.render(context, this)
+        this.children.forEach { it.render(context) }
+    }
 
     override fun update() = this.children.forEach { it.update() }
 

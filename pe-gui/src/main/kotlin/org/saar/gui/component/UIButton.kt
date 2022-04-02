@@ -1,13 +1,11 @@
 package org.saar.gui.component
 
 import org.jproperty.property.SimpleBooleanProperty
-import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.position.PositionValues
 
 class UIButton : UIComponent() {
 
@@ -15,17 +13,13 @@ class UIButton : UIComponent() {
 
     private var onAction: EventHandler<MouseEvent>? = null
 
-    val uiBackground = UIBlock().apply {
-        style.borders.set(2)
-        style.position.value = PositionValues.absolute
-    }
-
     val uiText = UIText("Button")
 
-    override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }
+    override val children = listOf(this.uiText).onEach { it.parent = this }
 
     init {
         style.padding.set(30, 100)
+        style.borders.set(2)
     }
 
     fun setOnAction(onAction: EventHandler<MouseEvent>) {
@@ -36,6 +30,7 @@ class UIButton : UIComponent() {
         if (event.button.isPrimary) {
             this.pressedProperty.set(true)
             this.style.colourModifier.set(1.5f)
+            println(style.colourModifier.multiply)
         }
     }
 
@@ -45,6 +40,7 @@ class UIButton : UIComponent() {
                 this.pressedProperty.set(false)
                 this.onAction?.handle(event)
             }
+            println(style.colourModifier.multiply)
             this.style.colourModifier.set(1f)
         }
     }
@@ -53,6 +49,7 @@ class UIButton : UIComponent() {
 
     override fun onMouseExit(event: MouseEvent) {
         this.pressedProperty.set(false)
+        println(style.colourModifier.multiply)
         this.style.colourModifier.set(1f)
     }
 
