@@ -61,7 +61,7 @@ public class Minecraft {
     private static final float SPEED = .1f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
-    private static final int WORLD_RADIUS = 8;
+    private static final int WORLD_RADIUS = 5;
     private static final int THREAD_COUNT = 5;
 
     private static final boolean FLY_MODE = true;
@@ -78,20 +78,15 @@ public class Minecraft {
         final UIDisplay uiDisplay = new UIDisplay(window);
 
         final UIElement uiTextContainer = new UIElement();
-        uiTextContainer.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
-        uiTextContainer.getStyle().getMargin().set(10);
+        uiTextContainer.getStyle().getAlignment().setValue(AlignmentValues.vertical);
         uiTextContainer.getStyle().getFontSize().set(24);
+        uiTextContainer.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .5f));
+        uiTextContainer.getStyle().getBorderColour().set(Colours.BLACK);
+        uiTextContainer.getStyle().getBorders().set(2);
+        uiTextContainer.getStyle().getRadius().set(5);
+        uiTextContainer.getStyle().getMargin().set(10);
+        uiTextContainer.getStyle().getPadding().set(10);
         uiDisplay.add(uiTextContainer);
-
-        final UIBlock uiTextBackground = new UIBlock();
-        uiTextBackground.getStyle().getPosition().setValue(PositionValues.getAbsolute());
-        uiTextBackground.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .5f));
-        uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
-        uiTextBackground.getStyle().getBorders().set(2);
-        uiTextBackground.getStyle().getRadius().set(5);
-        uiTextContainer.add(uiTextBackground);
-
-        final UIChildNode inventory = buildInventory();
 
         final UIText uiFps = new UIText("Fps: ???");
         uiTextContainer.add(uiFps);
@@ -102,15 +97,17 @@ public class Minecraft {
         final UIText uiChunk = new UIText("Chunk: ???");
         uiTextContainer.add(uiChunk);
 
+        final UIChildNode inventory = buildInventory();
+
         final UIBlock square = new UIBlock();
         square.getStyle().getBorderColour().set(Colours.DARK_GRAY);
         square.getStyle().getBorders().set(2);
         square.getStyle().getWidth().set(6);
         square.getStyle().getHeight().set(6);
         square.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .2f));
-        square.getStyle().getX().set(CoordinateValues.getCenter());
-        square.getStyle().getY().set(CoordinateValues.getCenter());
-        square.getStyle().getPosition().setValue(PositionValues.getAbsolute());
+        square.getStyle().getX().set(CoordinateValues.center);
+        square.getStyle().getY().set(CoordinateValues.center);
+        square.getStyle().getPosition().setValue(PositionValues.absolute);
         uiDisplay.add(square);
 
         final World world = buildWorld();
@@ -193,26 +190,23 @@ public class Minecraft {
 
     private static UIChildNode buildInventory() {
         final UIElement uiInventory = new UIElement();
-        uiInventory.getStyle().getPosition().setValue(PositionValues.getAbsolute());
-        uiInventory.getStyle().getX().set(CoordinateValues.getCenter());
-        uiInventory.getStyle().getY().set(CoordinateValues.getCenter());
+        uiInventory.getStyle().getPosition().setValue(PositionValues.absolute);
+        uiInventory.getStyle().getX().set(CoordinateValues.center);
+        uiInventory.getStyle().getY().set(CoordinateValues.center);
         uiInventory.getStyle().getWidth().set(LengthValues.percent(50));
         uiInventory.getStyle().getHeight().set(LengthValues.ratio(.8f));
-        uiInventory.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
-
-        final UIBlock background = new UIBlock();
-        background.getStyle().getPosition().setValue(PositionValues.getAbsolute());
-        background.getStyle().getBackgroundColour().set(Colours.GRAY);
-        background.getStyle().getBorderColour().set(Colours.TRANSPARENT);
-        background.getStyle().getRadius().set(10);
-        uiInventory.add(background);
+        uiInventory.getStyle().getAlignment().setValue(AlignmentValues.vertical);
+        uiInventory.getStyle().getRadius().set(10);
+        uiInventory.getStyle().getPadding().set(10);
+        uiInventory.getStyle().getBorderColour().set(Colours.TRANSPARENT);
+        uiInventory.getStyle().getBackgroundColour().set(Colours.GRAY);
 
         final UIElement uiTop = new UIElement();
         uiTop.getStyle().getHeight().set(LengthValues.percent(40));
         uiInventory.add(uiTop);
 
         final UIElement uiItems = new UIElement();
-        uiItems.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
+        uiItems.getStyle().getAlignment().setValue(AlignmentValues.vertical);
         for (int row = 0; row < 4; row++) {
             final UIElement uiItemsRow = new UIElement();
             uiItemsRow.getStyle().getWidth().set(LengthValues.percent(100));

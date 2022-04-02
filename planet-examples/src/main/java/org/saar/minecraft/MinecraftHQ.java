@@ -83,13 +83,13 @@ public class MinecraftHQ {
         final UIDisplay uiDisplay = new UIDisplay(window);
 
         final UIElement uiTextContainer = new UIElement();
-        uiTextContainer.getStyle().getAlignment().setValue(AlignmentValues.getVertical());
+        uiTextContainer.getStyle().getAlignment().setValue(AlignmentValues.vertical);
         uiTextContainer.getStyle().getMargin().set(10);
         uiTextContainer.getStyle().getFontSize().set(24);
         uiDisplay.add(uiTextContainer);
 
         final UIBlock uiTextBackground = new UIBlock();
-        uiTextBackground.getStyle().getPosition().setValue(PositionValues.getAbsolute());
+        uiTextBackground.getStyle().getPosition().setValue(PositionValues.absolute);
         uiTextBackground.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .5f));
         uiTextBackground.getStyle().getBorderColour().set(Colours.BLACK);
         uiTextBackground.getStyle().getBorders().set(2);
@@ -111,9 +111,9 @@ public class MinecraftHQ {
         square.getStyle().getWidth().set(6);
         square.getStyle().getHeight().set(6);
         square.getStyle().getBackgroundColour().set(new Colour(255, 255, 255, .2f));
-        square.getStyle().getX().set(CoordinateValues.getCenter());
-        square.getStyle().getY().set(CoordinateValues.getCenter());
-        square.getStyle().getPosition().setValue(PositionValues.getAbsolute());
+        square.getStyle().getX().set(CoordinateValues.center);
+        square.getStyle().getY().set(CoordinateValues.center);
+        square.getStyle().getPosition().setValue(PositionValues.absolute);
         uiDisplay.add(square);
 
         final World world = buildWorld();
@@ -146,7 +146,7 @@ public class MinecraftHQ {
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
         final UIBlock uiShadowMap = new UIBlock();
-        uiShadowMap.setTexture(shadowMap);
+        uiShadowMap.getStyle().getBackgroundImage().set(shadowMap);
         uiShadowMap.getStyle().getWidth().set(200);
         uiShadowMap.getStyle().getHeight().set(200);
         uiDisplay.add(uiShadowMap);
