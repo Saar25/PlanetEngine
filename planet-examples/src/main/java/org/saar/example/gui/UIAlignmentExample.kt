@@ -66,7 +66,7 @@ object UIAlignmentExample {
         val container2 = UIElement().apply {
             style.backgroundColour.set(Colours.BLUE)
             style.alignment.value = AlignmentValues.horizontal
-            style.arrangement.value = ArrangementValues.spaceAround
+            style.arrangement.value = ArrangementValues.spaceEvenly
             style.width.value = percent(100f)
 
             add(UIBlock().apply {

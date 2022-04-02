@@ -100,7 +100,7 @@ object ArrangementValues {
             val gap = (total - children) / (container.children.countRelative() * 2)
 
             val before = container.children.takeWhile { it != child }
-            return gap + 2 * gap * before.countRelative() + before.totalWidth()
+            return gap * (before.countRelative() * 2 + 1) + before.totalWidth()
         }
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
@@ -109,7 +109,28 @@ object ArrangementValues {
             val gap = (total - children) / (container.children.countRelative() * 2)
 
             val before = container.children.takeWhile { it != child }
-            return gap + 2 * gap * before.countRelative() + before.totalHeight()
+            return gap * (before.countRelative() * 2 + 1) + before.totalHeight()
+        }
+    }
+
+    @JvmField
+    val spaceEvenly = object : ArrangementValue {
+        override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
+            val total = container.style.width.get()
+            val children = container.children.totalWidth()
+            val gap = (total - children) / (container.children.countRelative() + 1)
+
+            val before = container.children.takeWhile { it != child }
+            return gap * (before.countRelative() + 1) + before.totalWidth()
+        }
+
+        override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
+            val total = container.style.height.get()
+            val children = container.children.totalHeight()
+            val gap = (total - children) / (container.children.countRelative() + 1)
+
+            val before = container.children.takeWhile { it != child }
+            return gap * (before.countRelative() + 1) + before.totalHeight()
         }
     }
 }
