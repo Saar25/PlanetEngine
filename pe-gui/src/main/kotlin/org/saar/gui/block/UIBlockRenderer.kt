@@ -10,7 +10,7 @@ import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UIBlock
+import org.saar.gui.UINode
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -27,22 +27,22 @@ object UIBlockRenderer : Renderer {
     private val prototype = UIRendererPrototype()
     private val helper = RendererPrototypeHelper(this.prototype)
 
-    fun render(context: RenderContext, models: Iterable<UIBlock>) {
+    fun render(context: RenderContext, models: Iterable<UINode>) {
         this.helper.render(context, models)
     }
 
-    fun render(context: RenderContext, uiBlock: UIBlock) {
+    fun render(context: RenderContext, uiBlock: UINode) {
         this.helper.render(context) { doRender(context, uiBlock) }
     }
 
-    private fun doRender(context: RenderContext, uiBlock: UIBlock) {
+    private fun doRender(context: RenderContext, uiBlock: UINode) {
         this.helper.render(context, uiBlock)
     }
 
     override fun delete() = this.helper.delete()
 }
 
-private class UIRendererPrototype : RendererPrototype<UIBlock> {
+private class UIRendererPrototype : RendererPrototype<UINode> {
 
     @UniformProperty
     private val resolutionUniform = object : Vec2iUniform() {
@@ -100,12 +100,12 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         CullFace.disable()
     }
 
-    override fun onInstanceDraw(context: RenderContext, uiBlock: UIBlock) {
-        hasTextureUniform.value = uiBlock.texture != Texture2D.NULL
-        textureUniform.value = uiBlock.texture
+    override fun onInstanceDraw(context: RenderContext, uiBlock: UINode) {
+        hasTextureUniform.value = uiBlock.style.backgroundImage.texture != Texture2D.NULL
+        textureUniform.value = uiBlock.style.backgroundImage.texture
 
-        hasDiscardMapUniform.value = uiBlock.discardMap != Texture2D.NULL
-        discardMapUniform.value = uiBlock.discardMap
+        hasDiscardMapUniform.value = uiBlock.style.discardMap.texture != Texture2D.NULL
+        discardMapUniform.value = uiBlock.style.discardMap.texture
 
         // TODO: make these ivec4
         boundsUniform.value.set(
@@ -124,5 +124,5 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         colourModifierUniform.value.set(uiBlock.style.colourModifier.multiply)
     }
 
-    override fun doInstanceDraw(context: RenderContext, uiBlock: UIBlock) = QuadMesh.draw()
+    override fun doInstanceDraw(context: RenderContext, uiBlock: UINode) = QuadMesh.draw()
 }

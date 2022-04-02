@@ -1,6 +1,7 @@
 package org.saar.example.gui
 
 import org.jproperty.Observable
+import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
@@ -9,6 +10,8 @@ import org.saar.gui.component.UICheckbox
 import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colour
 import org.saar.gui.style.alignment.AlignmentValues.vertical
+import org.saar.gui.style.arrangement.ArrangementValues.spaceBetween
+import org.saar.gui.style.axisalignment.AxisAlignmentValues.center
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.pixels
 import org.saar.gui.style.length.LengthValues.ratio
@@ -26,6 +29,7 @@ object GuiExample {
 
         val display = UIDisplay(window).apply {
             style.alignment.value = vertical
+            style.arrangement.value = spaceBetween
 
             val sizeUiSlider = UISlider().apply {
                 style.width.value = percent(90f)
@@ -35,7 +39,8 @@ object GuiExample {
 
             val uiContainer = UIElement().apply {
                 style.width.value = percent(50f)
-                style.height.value = ratio(1f)
+                style.alignment.value = vertical
+                style.axisAlignment.value = center
 
                 val uiComponent = MyUIComponent().apply {
                 }
@@ -54,7 +59,7 @@ object GuiExample {
 
                     dynamicValueProperty.addListener { _: Observable ->
                         val percents = dynamicValueProperty.floatValue / 2
-                        uiButton.style.width.set(percent(percents))
+                        uiButton.style.width.value = percent(percents)
                     }
                 }
                 add(uiSlider)
@@ -76,7 +81,7 @@ object GuiExample {
 
         val keyboard = window.keyboard
 
-        while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
+        while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             GlUtils.clear(GlBuffer.COLOUR)
 
             display.update()

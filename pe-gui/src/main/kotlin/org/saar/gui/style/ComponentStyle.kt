@@ -2,19 +2,25 @@ package org.saar.gui.style
 
 import org.saar.gui.UIComponent
 import org.saar.gui.style.alignment.Alignment
+import org.saar.gui.style.arrangement.Arrangement
+import org.saar.gui.style.axisalignment.AxisAlignment
 import org.saar.gui.style.backgroundcolour.BackgroundColour
-import org.saar.gui.style.border.NoBorders
-import org.saar.gui.style.border.ReadonlyBorders
+import org.saar.gui.style.backgroundimage.BackgroundImage
+import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
+import org.saar.gui.style.boxsizing.BoxSizing
+import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
+import org.saar.gui.style.discardmap.DiscardMap
 import org.saar.gui.style.font.FontFamily
 import org.saar.gui.style.fontcolour.FontColour
 import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.margin.Margin
+import org.saar.gui.style.padding.Padding
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.Radius
 
@@ -24,6 +30,8 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
 
     override val margin: Margin = Margin(container)
 
+    override val padding: Padding = Padding(container)
+
     override val x: Coordinate = Coordinates.X(container)
 
     override val y: Coordinate = Coordinates.Y(container)
@@ -31,6 +39,8 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
     override val width: Length = Lengths.Width(container)
 
     override val height: Length = Lengths.Height(container)
+
+    override val boxSizing: ReadonlyBoxSizing = BoxSizing(container)
 
     override val fontSize: FontSize = FontSize(container)
 
@@ -40,7 +50,7 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
 
     override val colourModifier: ColourModifier = ColourModifier(container)
 
-    override val borders: ReadonlyBorders = NoBorders
+    override val borders: Borders = Borders(container)
 
     override val borderColour: BorderColour = BorderColour(container)
 
@@ -48,5 +58,13 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
+    override val backgroundImage: BackgroundImage = BackgroundImage(container)
+
+    override val discardMap: DiscardMap = DiscardMap(container)
+
     override val alignment: Alignment = Alignment(container)
+
+    override val arrangement: Arrangement = Arrangement(container)
+
+    override val axisAlignment: AxisAlignment = AxisAlignment(container)
 }

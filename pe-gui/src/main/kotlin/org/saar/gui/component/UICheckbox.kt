@@ -1,11 +1,11 @@
 package org.saar.gui.component
 
-import org.jproperty.Observable
 import org.jproperty.property.SimpleBooleanProperty
 import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
+import org.saar.gui.style.discardmap.DiscardMapValue
 import org.saar.gui.style.length.LengthValues
 import org.saar.lwjgl.opengl.texture.Texture2D
 
@@ -25,12 +25,8 @@ class UICheckbox : UIComponent() {
         this.style.height.value = LengthValues.ratio(1f)
         this.style.borderColour.set(Colours.LIGHT_GRAY)
 
-        this.checkedProperty.addListener { _: Observable ->
-            if (this.checkedProperty.get()) {
-                this.uiChild.discardMap = discardMap
-            } else {
-                this.uiChild.discardMap = Texture2D.NULL
-            }
+        this.uiChild.style.discardMap.value = DiscardMapValue {
+            if (this.checkedProperty.get()) discardMap else Texture2D.NULL
         }
     }
 

@@ -2,17 +2,24 @@ package org.saar.gui.style
 
 import org.saar.gui.UIText
 import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.backgroundimage.NoBackgroundImage
+import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.Borders
 import org.saar.gui.style.bordercolour.BorderColour
+import org.saar.gui.style.boxsizing.BoxSizing
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
+import org.saar.gui.style.discardmap.NoDiscardMap
+import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.FontFamily
 import org.saar.gui.style.fontcolour.FontColour
 import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.padding.NoPadding
+import org.saar.gui.style.padding.ReadonlyPadding
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.Radius
 
@@ -21,6 +28,8 @@ class TextStyle(container: UIText) : Style {
     override val position: Position = Position(container)
 
     override val margin: ReadonlyMargin = NoMargin
+
+    override val padding: ReadonlyPadding = NoPadding
 
     override val x: Coordinate = Coordinates.X(container)
 
@@ -42,6 +51,8 @@ class TextStyle(container: UIText) : Style {
         override fun getMax() = container.contentHeight
     }
 
+    override val boxSizing: BoxSizing = BoxSizing(container)
+
     override val fontSize: FontSize = FontSize(container)
 
     override val fontColour: FontColour = FontColour(container)
@@ -58,4 +69,7 @@ class TextStyle(container: UIText) : Style {
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
+    override val backgroundImage: ReadonlyBackgroundImage = NoBackgroundImage
+
+    override val discardMap: ReadonlyDiscardMap = NoDiscardMap
 }

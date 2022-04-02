@@ -5,10 +5,10 @@ import org.saar.gui.font.FontLoader
 
 object FontFamilyValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: FontFamilyValue = FontFamilyValue { it.parent.style.font.family }
 
-    @JvmStatic
+    @JvmField
     val default: FontFamilyValue = FontFamilyValue { FontLoader.DEFAULT_FONT }
 
     @JvmStatic

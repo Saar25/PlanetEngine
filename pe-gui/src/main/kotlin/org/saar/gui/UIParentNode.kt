@@ -1,6 +1,7 @@
 package org.saar.gui
 
 import org.saar.core.renderer.RenderContext
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.ParentStyle
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 import org.saar.lwjgl.glfw.input.mouse.ClickEvent
@@ -12,13 +13,17 @@ interface UIParentNode : UINode {
 
     val children: List<UINode>
 
-    override fun render(context: RenderContext) = this.children.forEach { it.render(context) }
+    override fun render(context: RenderContext) {
+        UIBlockRenderer.render(context, this)
+        this.children.forEach { it.render(context) }
+    }
 
     override fun update() = this.children.forEach { it.update() }
 
     override fun delete() = this.children.forEach { it.delete() }
 
-    override fun contains(x: Int, y: Int) = this.children.any { it.contains(x, y) }
+    override fun contains(x: Int, y: Int) =
+        MouseDetection.contains(this, x, y) || this.children.any { it.contains(x, y) }
 
     override fun onMouseClickEvent(event: ClickEvent): Boolean {
         return this.children.asReversed().any { it.onMouseClickEvent(event) }

@@ -5,7 +5,7 @@ import org.saar.gui.style.Colour
 
 object BackgroundColourValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: BackgroundColourValue = object : BackgroundColourValue {
         override fun computeTopRight(container: UIChildNode) = container.parent.style.backgroundColour.topRight
 

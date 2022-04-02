@@ -1,34 +1,28 @@
 package org.saar.gui.component
 
 import org.jproperty.property.SimpleBooleanProperty
-import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.coordinate.CoordinateValues.center
-import org.saar.gui.style.fontsize.FontSizeValues
-import org.saar.gui.style.position.PositionValues.absolute
 
-class UIButton : UIComponent() {
+class UIButton(text: String = "") : UIComponent() {
 
     private val pressedProperty = SimpleBooleanProperty()
 
     private var onAction: EventHandler<MouseEvent>? = null
 
-    val uiBackground = UIBlock().apply {
-        style.borders.set(2)
-    }
+    val uiText = UIText(text)
 
-    val uiText = UIText("Button").apply {
-        style.fontSize.value = FontSizeValues.percent(48 / 100f)
-        style.position.value = absolute
-        style.x.value = center
-        style.y.value = center
-    }
+    override val children = listOf(this.uiText).onEach { it.parent = this }
 
-    override val children = listOf(this.uiBackground, this.uiText).onEach { it.parent = this }
+    val text: String get() = this.uiText.text
+
+    init {
+        this.style.padding.set(30, 100)
+        this.style.borders.set(2)
+    }
 
     fun setOnAction(onAction: EventHandler<MouseEvent>) {
         this.onAction = onAction

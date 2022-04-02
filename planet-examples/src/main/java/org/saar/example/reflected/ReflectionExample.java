@@ -41,6 +41,9 @@ import org.saar.gui.UIText;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;
+import org.saar.gui.style.alignment.AlignmentValues;
+import org.saar.gui.style.arrangement.ArrangementValues;
+import org.saar.gui.style.axisalignment.AxisAlignmentValues;
 import org.saar.gui.style.coordinate.CoordinateValues;
 import org.saar.gui.style.length.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -71,6 +74,9 @@ public class ReflectionExample {
         ClearColour.set(.2f, .2f, .2f);
 
         final UIDisplay uiDisplay = new UIDisplay(window);
+        uiDisplay.getStyle().getAlignment().setValue(AlignmentValues.horizontal);
+        uiDisplay.getStyle().getArrangement().setValue(ArrangementValues.spaceAround);
+        uiDisplay.getStyle().getAxisAlignment().setValue(AxisAlignmentValues.center);
 
         final UIBlock reflectionUiBlock = new UIBlock();
         reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
@@ -88,21 +94,18 @@ public class ReflectionExample {
                 22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
 
         final UIElement uiTextGroup = new UIElement();
-        uiTextGroup.getStyle().getX().set(30);
-        uiTextGroup.getStyle().getY().set(30);
         uiTextGroup.getStyle().getFont().set(font);
         uiTextGroup.getStyle().getFontSize().set(22);
         uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
+        uiTextGroup.getStyle().getAlignment().setValue(AlignmentValues.vertical);
 
         final UIText uiFps = new UIText("Fps: ???");
         uiTextGroup.add(uiFps);
 
         final UIText uiSpeed = new UIText("Speed: ???");
-        uiSpeed.getStyle().getY().set((int) font.getSize());
         uiTextGroup.add(uiSpeed);
 
         final UIText uiDelta = new UIText("Delta: ???");
-        uiDelta.getStyle().getY().set((int) font.getSize() * 2);
         uiTextGroup.add(uiDelta);
 
         uiDisplay.add(uiTextGroup);
@@ -162,7 +165,7 @@ public class ReflectionExample {
 
             deferredRenderer.render().toMainScreen();
 
-            reflectionUiBlock.setTexture(reflection.getReflectionMap());
+            reflectionUiBlock.getStyle().getBackgroundImage().set(reflection.getReflectionMap());
             uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();

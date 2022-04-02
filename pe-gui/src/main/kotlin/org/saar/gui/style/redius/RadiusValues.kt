@@ -4,7 +4,7 @@ import org.saar.gui.UIChildNode
 
 object RadiusValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: RadiusValue = object : RadiusValue {
         override fun computeTopRight(container: UIChildNode) = container.parent.style.radius.topRight
 
@@ -15,7 +15,7 @@ object RadiusValues {
         override fun computeBottomLeft(container: UIChildNode) = container.parent.style.radius.bottomLeft
     }
 
-    @JvmStatic
+    @JvmField
     val none: RadiusValue = object : RadiusValue {
         override fun computeTopRight(container: UIChildNode) = 0
 
@@ -36,5 +36,4 @@ object RadiusValues {
 
         override fun computeBottomLeft(container: UIChildNode) = value
     }
-
 }

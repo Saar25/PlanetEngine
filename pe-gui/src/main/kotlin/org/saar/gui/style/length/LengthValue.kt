@@ -23,7 +23,7 @@ interface LengthValue {
     /**
      * Compute the min width of the given node
      * Call this method from the parent node
-     * The computed value should not depend on the parent
+     * The computed value should not depend on the parent but may use parent's max
      *
      * @param container the node
      * @return the min width of the node in pixels
@@ -33,7 +33,7 @@ interface LengthValue {
     /**
      * Compute the min height of the given node
      * Call this method from the parent node
-     * The computed value should not depend on the parent
+     * The computed value should not depend on the parent but may use parent's max
      *
      * @param container the node
      * @return the min height of the node in pixels

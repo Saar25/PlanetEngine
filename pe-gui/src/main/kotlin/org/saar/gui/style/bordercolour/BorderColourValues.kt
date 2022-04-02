@@ -4,7 +4,7 @@ import org.saar.gui.style.Colour
 
 object BorderColourValues {
 
-    @JvmStatic
+    @JvmField
     val inherit: BorderColourValue = BorderColourValue { it.parent.style.borderColour.colour }
 
     @JvmStatic

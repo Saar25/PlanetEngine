@@ -6,10 +6,10 @@ import org.saar.gui.style.alignment.AlignmentValues
 
 object LengthValues {
 
-    @JvmStatic
+    @JvmField
     val zero = pixels(0)
 
-    @JvmStatic
+    @JvmField
     val inherit = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) = container.parent.style.width.getMax()
 
@@ -24,7 +24,7 @@ object LengthValues {
         override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
-    @JvmStatic
+    @JvmField
     val fill = object : LengthValue {
         override fun computeAxisX(container: UIChildNode) =
             container.parent.style.width.get() -
@@ -45,28 +45,27 @@ object LengthValues {
         override fun computeMaxAxisY(container: UIChildNode) = computeAxisY(container)
     }
 
-    @JvmStatic
+    @JvmField
     val fit = object : LengthValue {
         override fun computeAxisX(container: UIChildNode): Int {
-            return if (container !is UIParentNode || container.children.isEmpty()) 0
-            else if (container.style.alignment.value == AlignmentValues.horizontal)
-                container.children.sumOf {
-                    it.style.width.getMin() +
-                            it.style.borders.left + it.style.borders.right +
-                            it.style.margin.left + it.style.margin.right
-                }
-            else if (container.style.alignment.value == AlignmentValues.vertical)
-                container.children.maxOf {
-                    it.style.width.getMin() +
-                            it.style.borders.left + it.style.borders.right +
-                            it.style.margin.left + it.style.margin.right
-                }
-            else 0
-
+            return container.style.padding.left + container.style.padding.right +
+                    if (container !is UIParentNode || container.children.isEmpty()) 0
+                    else if (container.style.alignment.value == AlignmentValues.horizontal)
+                        container.children.sumOf {
+                            it.style.width.getMin() +
+                                    it.style.margin.left + it.style.margin.right
+                        }
+                    else if (container.style.alignment.value == AlignmentValues.vertical)
+                        container.children.maxOf {
+                            it.style.width.getMin() +
+                                    it.style.margin.left + it.style.margin.right
+                        }
+                    else 0
         }
 
         override fun computeAxisY(container: UIChildNode): Int {
-            return if (container !is UIParentNode || container.children.isEmpty()) 0
+            return container.style.padding.top + container.style.padding.bottom +
+                    if (container !is UIParentNode || container.children.isEmpty()) 0
             else if (container.style.alignment.value == AlignmentValues.vertical)
                 container.children.sumOf {
                     it.style.height.getMin() +
@@ -114,9 +113,9 @@ object LengthValues {
         override fun computeAxisY(container: UIChildNode) =
             (container.parent.style.height.getMax() * percents / 100).toInt()
 
-        override fun computeMinAxisX(container: UIChildNode) = 0
+        override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
 
-        override fun computeMinAxisY(container: UIChildNode) = 0
+        override fun computeMinAxisY(container: UIChildNode) = computeAxisY(container)
 
         override fun computeMaxAxisX(container: UIChildNode) = computeAxisX(container)
 

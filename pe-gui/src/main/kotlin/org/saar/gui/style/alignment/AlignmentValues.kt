@@ -2,44 +2,31 @@ package org.saar.gui.style.alignment
 
 import org.saar.gui.UIChildNode
 import org.saar.gui.UIParentNode
-import org.saar.gui.style.position.PositionValues
 
 object AlignmentValues {
 
-    @JvmStatic
+    @JvmField
     val none = object : AlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode) = 0
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode) = 0
     }
 
-    @JvmStatic
+    @JvmField
     val horizontal = object : AlignmentValue {
-        override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
-            return container.children.takeWhile { it != child }
-                .filter { it.style.position.value == PositionValues.relative }
-                .sumOf {
-                    it.style.width.get() +
-                            it.style.borders.left + it.style.borders.right +
-                            it.style.margin.left + it.style.margin.right
-                }
-        }
+        override fun computeAxisX(container: UIParentNode, child: UIChildNode) =
+            container.style.arrangement.getX(child) + container.style.padding.left
 
-        override fun computeAxisY(container: UIParentNode, child: UIChildNode) = 0
+        override fun computeAxisY(container: UIParentNode, child: UIChildNode) =
+            container.style.axisAlignment.getY(child) + container.style.padding.top
     }
 
-    @JvmStatic
+    @JvmField
     val vertical = object : AlignmentValue {
-        override fun computeAxisX(container: UIParentNode, child: UIChildNode) = 0
+        override fun computeAxisX(container: UIParentNode, child: UIChildNode) =
+            container.style.axisAlignment.getX(child) + container.style.padding.left
 
-        override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
-            return container.children.takeWhile { it != child }
-                .filter { it.style.position.value == PositionValues.relative }
-                .sumOf {
-                    it.style.height.get() +
-                            it.style.borders.top + it.style.borders.bottom +
-                            it.style.margin.top + it.style.margin.bottom
-                }
-        }
+        override fun computeAxisY(container: UIParentNode, child: UIChildNode) =
+            container.style.arrangement.getY(child) + container.style.padding.top
     }
 }

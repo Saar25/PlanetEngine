@@ -4,11 +4,20 @@ import org.saar.gui.UIChildNode
 
 object CoordinateValues {
 
-    @JvmStatic
+    @JvmField
     val zero = object : CoordinateValue {
         override fun computeAxisX(container: UIChildNode) = 0
 
         override fun computeAxisY(container: UIChildNode) = 0
+    }
+
+    @JvmField
+    val center = object : CoordinateValue {
+        override fun computeAxisX(container: UIChildNode) =
+            (container.parent.style.width.getMax() - container.style.width.get()) / 2
+
+        override fun computeAxisY(container: UIChildNode) =
+            (container.parent.style.height.getMax() - container.style.height.get()) / 2
     }
 
     @JvmStatic
@@ -25,15 +34,6 @@ object CoordinateValues {
 
         override fun computeAxisY(container: UIChildNode) =
             (container.parent.style.height.getMax() * percents / 100).toInt()
-    }
-
-    @JvmStatic
-    val center = object : CoordinateValue {
-        override fun computeAxisX(container: UIChildNode) =
-            (container.parent.style.width.getMax() - container.style.width.get()) / 2
-
-        override fun computeAxisY(container: UIChildNode) =
-            (container.parent.style.height.getMax() - container.style.height.get()) / 2
     }
 
     @JvmStatic
