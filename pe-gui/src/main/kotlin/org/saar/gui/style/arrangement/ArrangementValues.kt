@@ -16,6 +16,8 @@ object ArrangementValues {
 
     private fun Iterable<UINode>.onlyRelative() = filter { it.style.position.value == PositionValues.relative }
 
+    private fun Iterable<UINode>.countRelative() = count { it.style.position.value == PositionValues.relative }
+
     private fun Iterable<UINode>.totalWidth() =
         onlyRelative().sumOf {
             it.style.width.get() +
@@ -74,19 +76,19 @@ object ArrangementValues {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.width.get()
             val children = container.children.totalWidth()
-            val gap = (total - children) / (container.children.size - 1)
+            val gap = (total - children) / (container.children.countRelative() - 1)
 
             val before = container.children.takeWhile { it != child }
-            return gap * before.size + before.totalWidth()
+            return gap * before.countRelative() + before.totalWidth()
         }
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.height.get()
             val children = container.children.totalHeight()
-            val gap = (total - children) / (container.children.size - 1)
+            val gap = (total - children) / (container.children.countRelative() - 1)
 
             val before = container.children.takeWhile { it != child }
-            return gap * before.size + before.totalHeight()
+            return gap * before.countRelative() + before.totalHeight()
         }
     }
 
@@ -95,19 +97,19 @@ object ArrangementValues {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.width.get()
             val children = container.children.totalWidth()
-            val gap = (total - children) / (container.children.size * 2)
+            val gap = (total - children) / (container.children.countRelative() * 2)
 
             val before = container.children.takeWhile { it != child }
-            return gap + 2 * gap * before.size + before.totalWidth()
+            return gap + 2 * gap * before.countRelative() + before.totalWidth()
         }
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int {
             val total = container.style.height.get()
             val children = container.children.totalHeight()
-            val gap = (total - children) / (container.children.size * 2)
+            val gap = (total - children) / (container.children.countRelative() * 2)
 
             val before = container.children.takeWhile { it != child }
-            return gap + 2 * gap * before.size + before.totalHeight()
+            return gap + 2 * gap * before.countRelative() + before.totalHeight()
         }
     }
 }
