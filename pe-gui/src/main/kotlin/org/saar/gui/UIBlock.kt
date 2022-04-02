@@ -3,14 +3,10 @@ package org.saar.gui
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.BlockStyle
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
-import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.maths.objects.Rectangle
 import org.saar.maths.utils.Maths
 
 class UIBlock : UIChildNode {
-
-    var discardMap: ReadOnlyTexture = Texture2D.NULL
 
     override var parent: UIParentNode = UINullNode
 
@@ -52,6 +48,6 @@ class UIBlock : UIChildNode {
 
     override fun delete() {
         this.style.backgroundImage.texture.delete()
-        this.discardMap.delete()
+        this.style.discardMap.texture.delete()
     }
 }

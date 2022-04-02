@@ -10,6 +10,8 @@ import org.saar.gui.style.boxsizing.BoxSizing
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
+import org.saar.gui.style.discardmap.NoDiscardMap
+import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.FontFamily
 import org.saar.gui.style.fontcolour.FontColour
 import org.saar.gui.style.fontsize.FontSize
@@ -68,4 +70,6 @@ class TextStyle(container: UIText) : Style {
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
     override val backgroundImage: ReadonlyBackgroundImage = NoBackgroundImage
+
+    override val discardMap: ReadonlyDiscardMap = NoDiscardMap
 }

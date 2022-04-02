@@ -10,6 +10,7 @@ import org.saar.gui.style.bordercolour.ReadonlyBorderColour
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.ReadonlyFontFamily
 import org.saar.gui.style.fontcolour.ReadonlyFontColour
 import org.saar.gui.style.fontsize.ReadonlyFontSize
@@ -54,6 +55,8 @@ interface ParentStyle : Style {
     override val backgroundColour: ReadonlyBackgroundColour
 
     override val backgroundImage: ReadonlyBackgroundImage
+
+    override val discardMap: ReadonlyDiscardMap
 
     val alignment: ReadonlyAlignment
 

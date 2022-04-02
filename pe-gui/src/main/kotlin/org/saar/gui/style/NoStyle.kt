@@ -19,6 +19,8 @@ import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.NoColourModifier
 import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.discardmap.NoDiscardMap
+import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.NoFontFamily
 import org.saar.gui.style.font.ReadonlyFontFamily
 import org.saar.gui.style.fontcolour.NoFontColour
@@ -77,6 +79,8 @@ object NoStyle : ParentStyle {
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
 
     override val backgroundImage: ReadonlyBackgroundImage = NoBackgroundImage
+
+    override val discardMap: ReadonlyDiscardMap = NoDiscardMap
 
     override val alignment: ReadonlyAlignment = NoAlignment
 

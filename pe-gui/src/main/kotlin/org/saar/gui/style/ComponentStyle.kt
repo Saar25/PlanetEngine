@@ -14,6 +14,7 @@ import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
 import org.saar.gui.style.colourmodifier.ColourModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
+import org.saar.gui.style.discardmap.DiscardMap
 import org.saar.gui.style.font.FontFamily
 import org.saar.gui.style.fontcolour.FontColour
 import org.saar.gui.style.fontsize.FontSize
@@ -59,6 +60,8 @@ class ComponentStyle(container: UIComponent) : ParentStyle {
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 
     override val backgroundImage: BackgroundImage = BackgroundImage(container)
+
+    override val discardMap: DiscardMap = DiscardMap(container)
 
     override val alignment: Alignment = Alignment(container)
 

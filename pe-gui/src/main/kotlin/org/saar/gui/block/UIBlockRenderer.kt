@@ -104,8 +104,8 @@ private class UIRendererPrototype : RendererPrototype<UIBlock> {
         hasTextureUniform.value = uiBlock.style.backgroundImage.texture != Texture2D.NULL
         textureUniform.value = uiBlock.style.backgroundImage.texture
 
-        hasDiscardMapUniform.value = uiBlock.discardMap != Texture2D.NULL
-        discardMapUniform.value = uiBlock.discardMap
+        hasDiscardMapUniform.value = uiBlock.style.discardMap.texture != Texture2D.NULL
+        discardMapUniform.value = uiBlock.style.discardMap.texture
 
         // TODO: make these ivec4
         boundsUniform.value.set(
