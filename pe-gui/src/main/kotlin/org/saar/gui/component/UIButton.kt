@@ -7,19 +7,21 @@ import org.saar.gui.event.EventHandler
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 
-class UIButton : UIComponent() {
+class UIButton(text: String = "") : UIComponent() {
 
     private val pressedProperty = SimpleBooleanProperty()
 
     private var onAction: EventHandler<MouseEvent>? = null
 
-    val uiText = UIText("Button")
+    val uiText = UIText(text)
 
     override val children = listOf(this.uiText).onEach { it.parent = this }
 
+    val text: String get() = this.uiText.text
+
     init {
-        style.padding.set(30, 100)
-        style.borders.set(2)
+        this.style.padding.set(30, 100)
+        this.style.borders.set(2)
     }
 
     fun setOnAction(onAction: EventHandler<MouseEvent>) {

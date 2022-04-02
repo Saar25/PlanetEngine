@@ -36,74 +36,59 @@ object LoginPageExample {
             style.arrangement.value = ArrangementValues.spaceEvenly
             style.axisAlignment.value = AxisAlignmentValues.center
 
-            val uiTitleContainer = UIElement().apply {
-                val uiText = UIText("Login Page").apply {
+            +UIElement().apply {
+                +UIText("Login Page").apply {
                     style.fontSize.set(48)
                     style.fontColour.set(Colours.WHITE)
                 }
-                add(uiText)
 
-                val uiBlock = UIBlock().apply {
+                +UIBlock().apply {
                     style.position.value = PositionValues.absolute
                     style.borders.leftValue = BorderValues.pixels(4)
                     style.borderColour.set(Colours.BLACK)
                     style.margin.set(-5)
                 }
-                add(uiBlock)
             }
-            add(uiTitleContainer)
 
-            val uiUsernameContainer = UIElement().apply {
+            +UIElement().apply {
                 style.fontSize.set(48)
                 style.width.value = percent(50f)
 
-                val uiUsernameTitle = UIText("Username: ").apply {
+                +UIText("Username: ").apply {
                     style.position.value = PositionValues.absolute
                     style.x.value = CoordinateValues.pixels(-210)
                     style.fontColour.set(Colours.WHITE)
                 }
-                add(uiUsernameTitle)
 
-                val uiUsername = UITextField("Enter username here").apply {
+                +UITextField("Enter username here").apply {
                     style.height.value = pixels(50)
                     style.width.value = percent(100f)
                     style.backgroundColour.set(Colours.parse("#e0e0e0"))
                 }
-                add(uiUsername)
             }
-            add(uiUsernameContainer)
 
-            val uiPasswordContainer = UIElement().apply {
+            +UIElement().apply {
                 style.fontSize.set(48)
                 style.width.value = percent(50f)
 
-                val uiPasswordTitle = UIText("Password: ").apply {
+                +UIText("Password: ").apply {
                     style.position.value = PositionValues.absolute
                     style.x.value = CoordinateValues.pixels(-210)
                     style.fontColour.set(Colours.WHITE)
                 }
-                add(uiPasswordTitle)
 
-                val uiPassword = UITextField("Enter password here").apply {
+                +UITextField("Enter password here").apply {
                     style.height.value = pixels(50)
                     style.width.value = percent(100f)
                     style.backgroundColour.set(Colours.parse("#e0e0e0"))
                 }
-                add(uiPassword)
             }
-            add(uiPasswordContainer)
 
-            val uiLogin = UIButton().apply {
-                uiText.text = "Login"
+            +UIButton("Login").apply {
                 style.fontSize.set(48)
                 style.fontColour.set(Colours.WHITE)
                 style.backgroundColour.set(Colours.parse("#030303"))
-
-                setOnAction {
-                    //                    println("Login successfully \"${uiUsername.text}\" \"${uiPassword.text}\"")
-                }
             }
-            add(uiLogin)
         }
 
         val background = FBMPainter()
