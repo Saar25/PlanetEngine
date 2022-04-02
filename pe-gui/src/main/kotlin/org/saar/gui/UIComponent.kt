@@ -19,25 +19,33 @@ abstract class UIComponent : UIChildNode, UIParentNode {
 
     final override val style = ComponentStyle(this)
 
+    override var activeElement: UINode
+        get() = super.activeElement
+        set(value) {
+            super.activeElement = value
+        }
+
     var isMouseHover = false
         private set
 
     var isMousePressed = false
         private set
 
+    val isFocused: Boolean get() = this.activeElement == this
+
     override fun onKeyPressEvent(event: KeyEvent) {
         val e = event.asKeyboardEvent()
-        if (this.isSelected) onKeyPress(e)
+        if (this.isFocused) onKeyPress(e)
     }
 
     override fun onKeyReleaseEvent(event: KeyEvent) {
         val e = event.asKeyboardEvent()
-        if (this.isSelected) onKeyRelease(e)
+        if (this.isFocused) onKeyRelease(e)
     }
 
     override fun onKeyRepeatEvent(event: KeyEvent) {
         val e = event.asKeyboardEvent()
-        if (this.isSelected) onKeyRepeat(e)
+        if (this.isFocused) onKeyRepeat(e)
     }
 
     final override fun onMouseMoveEvent(event: MoveEvent) {
@@ -64,14 +72,14 @@ abstract class UIComponent : UIChildNode, UIParentNode {
         val e = event.asMouseEvent()
         if (event.isDown && this.isMouseHover) {
             mousePress(e)
-            this.isSelected = true
+            this.activeElement = this
             return true
         } else if (this.isMousePressed) {
             mouseRelease(e)
-            this.isSelected = true
+            this.activeElement = this
             return true
         }
-        this.isSelected = false
+        this.activeElement = UINullNode
         return false
     }
 
@@ -98,13 +106,6 @@ abstract class UIComponent : UIChildNode, UIParentNode {
     private fun mouseMove(event: MouseEvent) = onMouseMove(event)
 
     private fun mouseDrag(event: MouseEvent) = onMouseDrag(event)
-
-    /**
-     * Returns whether the ui component is currently selected
-     *
-     * @return true if selected, false otherwise
-     */
-    var isSelected: Boolean = false
 
     /**
      * Invoked when a key has been pressed while the component in focused

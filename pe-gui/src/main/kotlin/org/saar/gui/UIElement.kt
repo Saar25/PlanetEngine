@@ -8,4 +8,10 @@ class UIElement : UIChildNode, UIMutableParent() {
 
     override val style = ElementStyle(this)
 
+    override var activeElement: UINode
+        get() = super.activeElement
+        set(value) {
+            super.activeElement = value
+        }
+
 }

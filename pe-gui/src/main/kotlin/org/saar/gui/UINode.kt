@@ -13,6 +13,8 @@ interface UINode : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
 
     val style: Style
 
+    var activeElement: UINode
+
     override fun renderDeferred(context: RenderContext) = render(context)
 
     override fun renderForward(context: RenderContext) = render(context)

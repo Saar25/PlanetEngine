@@ -11,6 +11,8 @@ interface UIParentNode : UINode {
 
     override val style: ParentStyle
 
+    override var activeElement: UINode
+
     val children: List<UINode>
 
     override fun render(context: RenderContext) {

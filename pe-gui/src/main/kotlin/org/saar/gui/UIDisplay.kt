@@ -7,6 +7,8 @@ class UIDisplay(private val window: Window) : UIMutableParent() {
 
     override val style = WindowStyle(this)
 
+    override var activeElement: UINode = UINullNode
+
     val width get() = this.window.width
 
     val height get() = this.window.height
