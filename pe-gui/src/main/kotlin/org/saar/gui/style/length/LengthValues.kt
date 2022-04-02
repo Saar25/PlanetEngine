@@ -66,19 +66,19 @@ object LengthValues {
         override fun computeAxisY(container: UIChildNode): Int {
             return container.style.padding.top + container.style.padding.bottom +
                     if (container !is UIParentNode || container.children.isEmpty()) 0
-            else if (container.style.alignment.value == AlignmentValues.vertical)
-                container.children.sumOf {
-                    it.style.height.getMin() +
-                            it.style.borders.top + it.style.borders.bottom +
-                            it.style.margin.top + it.style.margin.bottom
-                }
-            else if (container.style.alignment.value == AlignmentValues.horizontal)
-                container.children.maxOf {
-                    it.style.height.getMin() +
-                            it.style.borders.top + it.style.borders.bottom +
-                            it.style.margin.top + it.style.margin.bottom
-                }
-            else 0
+                    else if (container.style.alignment.value == AlignmentValues.vertical)
+                        container.children.sumOf {
+                            it.style.height.getMin() +
+                                    it.style.borders.top + it.style.borders.bottom +
+                                    it.style.margin.top + it.style.margin.bottom
+                        }
+                    else if (container.style.alignment.value == AlignmentValues.horizontal)
+                        container.children.maxOf {
+                            it.style.height.getMin() +
+                                    it.style.borders.top + it.style.borders.bottom +
+                                    it.style.margin.top + it.style.margin.bottom
+                        }
+                    else 0
         }
 
         override fun computeMinAxisX(container: UIChildNode) = computeAxisX(container)
