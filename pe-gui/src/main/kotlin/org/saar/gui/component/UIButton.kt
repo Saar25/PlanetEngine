@@ -30,7 +30,6 @@ class UIButton : UIComponent() {
         if (event.button.isPrimary) {
             this.pressedProperty.set(true)
             this.style.colourModifier.set(1.5f)
-            println(style.colourModifier.multiply)
         }
     }
 
@@ -40,7 +39,6 @@ class UIButton : UIComponent() {
                 this.pressedProperty.set(false)
                 this.onAction?.handle(event)
             }
-            println(style.colourModifier.multiply)
             this.style.colourModifier.set(1f)
         }
     }
@@ -49,7 +47,6 @@ class UIButton : UIComponent() {
 
     override fun onMouseExit(event: MouseEvent) {
         this.pressedProperty.set(false)
-        println(style.colourModifier.multiply)
         this.style.colourModifier.set(1f)
     }
 
