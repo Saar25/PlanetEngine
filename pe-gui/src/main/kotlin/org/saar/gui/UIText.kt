@@ -39,7 +39,8 @@ class UIText(text: String = "") : UIChildNode {
     }
 
     private val contentWidthProperty = this.lettersProperty.map { letters ->
-        if (letters.isNotEmpty()) letters.maxOf { it.offset.x() + it.character.xAdvance }.toInt() else 0
+        val scale = this.style.fontSize.size / this.style.font.family.size
+        if (letters.isNotEmpty()) letters.maxOf { it.offset.x() + it.character.xAdvance * scale }.toInt() else 0
     }
 
     private val contentHeightProperty = this.lettersProperty.map { letters ->

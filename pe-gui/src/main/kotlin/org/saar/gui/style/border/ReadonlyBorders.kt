@@ -11,5 +11,5 @@ interface ReadonlyBorders : StyleProperty {
     val left: Int
 
     fun asVector4i(vector4i: Vector4i): Vector4i = vector4i.set(
-        this.top, this.right, this.bottom, this.left)
+        this.left, this.top, this.right, this.bottom)
 }

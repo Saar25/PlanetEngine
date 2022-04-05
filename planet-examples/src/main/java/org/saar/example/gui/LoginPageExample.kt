@@ -36,7 +36,7 @@ object LoginPageExample {
 
             +UIElement().apply {
                 style.padding.set(15.px)
-                style.borders.leftValue = 4.px
+                style.borders.bottomValue = 4.px
                 style.borderColour.set(Colours.BLACK)
 
                 +UIText("Login Page").apply {
