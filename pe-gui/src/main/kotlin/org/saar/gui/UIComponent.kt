@@ -4,10 +4,6 @@ import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.ComponentStyle
 
-/**
- * This class represent a UI component
- * it contains multiple UIBlock object and handles user events
- */
 abstract class UIComponent : UIChildNode, UIParentNode {
 
     override var parent: UIParentNode = UINullNode
@@ -28,31 +24,36 @@ abstract class UIComponent : UIChildNode, UIParentNode {
 
     val isFocused: Boolean get() = this.activeElement == this
 
-    override fun onKeyPressEvent(event: KeyboardEvent) {
+    final override fun onKeyPressEvent(event: KeyboardEvent) {
         if (this.isFocused) onKeyPress(event)
+        else this.activeElement.onKeyPressEvent(event)
     }
 
-    override fun onKeyReleaseEvent(event: KeyboardEvent) {
+    final override fun onKeyReleaseEvent(event: KeyboardEvent) {
         if (this.isFocused) onKeyRelease(event)
+        else this.activeElement.onKeyReleaseEvent(event)
     }
 
-    override fun onKeyRepeatEvent(event: KeyboardEvent) {
+    final override fun onKeyRepeatEvent(event: KeyboardEvent) {
         if (this.isFocused) onKeyRepeat(event)
+        else this.activeElement.onKeyRepeatEvent(event)
     }
 
     final override fun onMouseMoveEvent(event: MouseEvent) {
         val inside = contains(event.x, event.y)
 
         if (inside && !this.isMouseHover) {
-            mouseEnter(event)
+            this.isMouseHover = true
+            onMouseEnter(event)
         } else if (!inside && this.isMouseHover) {
-            mouseExit(event)
+            this.isMouseHover = false
+            onMouseExit(event)
         }
 
         if (inside && !event.button.isPrimary) {
-            mouseMove(event)
+            onMouseMove(event)
         } else if (event.button.isPrimary && this.isMousePressed) {
-            mouseDrag(event)
+            onMouseDrag(event)
         }
     }
 
@@ -77,20 +78,6 @@ abstract class UIComponent : UIChildNode, UIParentNode {
         this.activeElement = UINullNode
         return false
     }
-
-    private fun mouseEnter(event: MouseEvent) {
-        this.isMouseHover = true
-        onMouseEnter(event)
-    }
-
-    private fun mouseExit(event: MouseEvent) {
-        this.isMouseHover = false
-        onMouseExit(event)
-    }
-
-    private fun mouseMove(event: MouseEvent) = onMouseMove(event)
-
-    private fun mouseDrag(event: MouseEvent) = onMouseDrag(event)
 
     /**
      * Invoked when a key has been pressed while the component in focused
