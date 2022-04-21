@@ -17,8 +17,6 @@ class UIButton(text: String = "") : UIComponent() {
 
     override val children = listOf(this.uiText).onEach { it.parent = this }
 
-    val text: String get() = this.uiText.text
-
     init {
         this.style.padding.set(30, 100)
         this.style.borders.set(2)

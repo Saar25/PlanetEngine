@@ -1,5 +1,8 @@
 package org.saar.example
 
+import org.jproperty.ChangeListener
+import org.jproperty.property.SimpleFloatProperty
+import org.jproperty.property.SimpleIntegerProperty
 import org.lwjgl.glfw.GLFW
 import org.saar.core.camera.Camera
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
@@ -26,8 +29,6 @@ import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
-import org.saar.gui.style.length.LengthValues
-import org.saar.gui.style.position.PositionValues.relative
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -56,27 +57,28 @@ fun main() {
         transform.lookAt(Position.of(0f, 0f, 0f))
     }
 
-    val uiDisplay = UIDisplay(window)
+    val timeProperty = SimpleIntegerProperty()
+    val fpsProperty = SimpleFloatProperty()
 
-    val uiContainer = UIElement().apply {
-        style.alignment.value = AlignmentValues.vertical
+    val uiDisplay = UIDisplay(window).apply {
+        +UIElement().apply {
+            style.alignment.value = AlignmentValues.vertical
+            style.fontSize.set(30)
+            style.fontColour.set(Colours.WHITE)
+
+            +UIText().apply {
+                style.backgroundColour.set(Colours.BLACK)
+
+                fpsProperty.addListener(ChangeListener { text = "Fps: ${it.newValue.format(2)}" })
+            }
+
+            +UIText().apply {
+                style.backgroundColour.set(Colours.BLACK)
+
+                timeProperty.addListener(ChangeListener { text = "Time: ${it.newValue}" })
+            }
+        }
     }
-
-    uiDisplay.add(uiContainer)
-
-    val uiFps = UIText("Fps: ???").apply {
-        style.fontSize.set(30)
-        style.fontColour.set(Colours.WHITE)
-        style.backgroundColour.set(Colours.BLACK)
-    }
-    uiContainer.add(uiFps)
-
-    val uiTime = UIText("Time: ???").apply {
-        style.fontSize.set(30)
-        style.fontColour.set(Colours.WHITE)
-        style.backgroundColour.set(Colours.BLACK)
-    }
-    uiContainer.add(uiTime)
 
     val particlesComponents = NodeComponentGroup(MyParticlesComponent())
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
@@ -104,8 +106,8 @@ fun main() {
         window.swapBuffers()
         window.pollEvents()
 
-        uiFps.text = "Fps: ${fps.fps().format(2)}"
-        uiTime.text = "Time: $time"
+        timeProperty.value = time
+        fpsProperty.value = fps.fps()
         fps.update()
     }
 

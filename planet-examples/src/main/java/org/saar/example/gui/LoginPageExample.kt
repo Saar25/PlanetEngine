@@ -1,5 +1,6 @@
 package org.saar.example.gui
 
+import org.jproperty.InvalidationListener
 import org.lwjgl.glfw.GLFW
 import org.saar.core.painting.painters.FBMPainter
 import org.saar.core.renderer.RenderContext
@@ -9,11 +10,11 @@ import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.style.Colours
-import org.saar.gui.style.alignment.AlignmentValues
-import org.saar.gui.style.arrangement.ArrangementValues
+import org.saar.gui.style.alignment.AlignmentValues.vertical
+import org.saar.gui.style.arrangement.ArrangementValues.spaceBetween
+import org.saar.gui.style.arrangement.ArrangementValues.spaceEvenly
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.percent
-import org.saar.gui.style.position.PositionValues
 import org.saar.gui.style.px
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
@@ -29,59 +30,86 @@ object LoginPageExample {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
         val display = UIDisplay(window).apply {
-            style.alignment.value = AlignmentValues.vertical
-            style.arrangement.value = ArrangementValues.spaceEvenly
+            style.alignment.value = vertical
+            style.arrangement.value = spaceEvenly
             style.axisAlignment.value = AxisAlignmentValues.center
 
             +UIElement().apply {
-                style.padding.set(10.px)
-                style.borders.leftValue = 4.px
+                style.padding.set(15.px)
+                style.borders.bottomValue = 4.px
                 style.borderColour.set(Colours.BLACK)
 
                 +UIText("Login Page").apply {
-                    style.fontSize.value = 48.px
+                    style.fontSize.value = 96.px
                     style.fontColour.set(Colours.WHITE)
                 }
             }
 
+            val badCredentials = UIText("").apply {
+                style.fontSize.value = 32.px
+                style.fontColour.set(Colours.RED)
+            }
+
+            val username = UITextField("username")
+
             +UIElement().apply {
                 style.fontSize.value = 48.px
-                style.width.value = 50.percent
+                style.width.value = 75.percent
+                style.arrangement.value = spaceBetween
+                style.axisAlignment.value = AxisAlignmentValues.center
 
                 +UIText("Username: ").apply {
-                    style.position.value = PositionValues.absolute
-                    style.x.value = (-210).px
                     style.fontColour.set(Colours.WHITE)
                 }
 
-                +UITextField("Enter username here").apply {
-                    style.height.value = 50.px
-                    style.width.value = 100.percent
+                +username.apply {
+                    style.width.value = 350.px
                     style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    style.padding.set(10.px)
+
+                    textProperty.addListener(InvalidationListener { badCredentials.text = "" })
                 }
             }
+
+            val password = UITextField("password")
 
             +UIElement().apply {
                 style.fontSize.value = 48.px
-                style.width.value = 50.percent
+                style.width.value = 75.percent
+                style.arrangement.value = spaceBetween
+                style.axisAlignment.value = AxisAlignmentValues.center
 
                 +UIText("Password: ").apply {
-                    style.position.value = PositionValues.absolute
-                    style.x.value = (-210).px
                     style.fontColour.set(Colours.WHITE)
                 }
 
-                +UITextField("Enter password here").apply {
-                    style.height.value = 50.px
-                    style.width.value = 100.percent
+                +password.apply {
+                    style.width.value = 350.px
                     style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    style.padding.set(10.px)
+
+                    textProperty.addListener(InvalidationListener { badCredentials.text = "" })
                 }
             }
+
+            +badCredentials
 
             +UIButton("Login").apply {
                 style.fontSize.value = 48.px
                 style.fontColour.set(Colours.WHITE)
-                style.backgroundColour.set(Colours.parse("#030303"))
+                style.borderColour.set(Colours.WHITE)
+                style.borders.set(1.px)
+                style.backgroundColour.set(Colours.parse("#212121"))
+
+                setOnAction {
+                    if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {
+                        badCredentials.text = "Noice"
+                        badCredentials.style.fontColour.set(Colours.GREEN)
+                    } else {
+                        badCredentials.text = "Bad username or password!"
+                        badCredentials.style.fontColour.set(Colours.RED)
+                    }
+                }
             }
         }
 

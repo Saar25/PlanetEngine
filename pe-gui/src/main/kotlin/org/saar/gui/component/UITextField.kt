@@ -19,16 +19,24 @@ private val characterShiftMap = mapOf(
 
 class UITextField(text: String = "") : UIComponent() {
 
-    val uiText = UIText(text)
+    private val uiText = UIText(text)
 
-    override val children = listOf(this.uiText).onEach { it.parent = this }
+    private val uiCaret = UICaret(this.uiText)
 
-    val text: String get() = this.uiText.text
+    val textProperty by this.uiText::textProperty
+
+    var text: String by this.uiText::text
+
+    override val children = listOf(this.uiText, this.uiCaret).onEach { it.parent = this }
 
     init {
         this.style.borders.set(2)
         this.style.backgroundColour.set(Colours.WHITE)
         this.style.borderColour.set(Colours.DARK_GRAY)
+    }
+
+    override fun update() {
+        this.uiCaret.style.backgroundColour.set(Colours.BLACK)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)
@@ -38,19 +46,23 @@ class UITextField(text: String = "") : UIComponent() {
     private fun changeTextByKeyboard(event: KeyboardEvent) {
         val font = this.style.font.value.compute(this)
 
-        this.uiText.text = when {
+        val index = this.uiCaret.index
+        val text = this.text.substring(0, index)
+        val after = this.text.substring(index)
+
+        val newText = when {
             event.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
                 if (event.modifiers.isCtrl()) {
-                    this.text.dropLast(this.text.length - this.text.lastIndexOfAny(charArrayOf(' ', '\n')))
+                    text.dropLastWhile { it == ' ' }.dropLastWhile { it != ' ' }
                 } else {
-                    this.text.dropLast(1)
+                    text.dropLast(1)
                 }
             }
             event.keyCode == GLFW.GLFW_KEY_ENTER -> {
-                this.text + '\n'
+                text + '\n'
             }
             font.characters.any { it.char == event.keyCode.toChar() } -> {
-                this.text + when {
+                text + when {
                     event.modifiers.isShift() -> {
                         characterShiftMap.getOrDefault(
                             event.keyCode, event.keyCode.toChar().uppercaseChar())
@@ -64,8 +76,15 @@ class UITextField(text: String = "") : UIComponent() {
                 }
             }
             else -> {
-                this.text
+                text
             }
         }
+
+        this.text = newText + after
+        this.uiCaret.index = when (event.keyCode) {
+            GLFW.GLFW_KEY_LEFT -> index - 1
+            GLFW.GLFW_KEY_RIGHT -> index + 1
+            else -> index + (newText.length - text.length)
+        }.coerceIn(0, this.text.length)
     }
 }
