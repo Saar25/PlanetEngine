@@ -2,12 +2,7 @@ package org.saar.gui
 
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
-import org.saar.gui.event.asKeyboardEvent
-import org.saar.gui.event.asMouseEvent
 import org.saar.gui.style.ComponentStyle
-import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 
 /**
  * This class represent a UI component
@@ -33,64 +28,54 @@ abstract class UIComponent : UIChildNode, UIParentNode {
 
     val isFocused: Boolean get() = this.activeElement == this
 
-    override fun onKeyPressEvent(event: KeyEvent) {
-        val e = event.asKeyboardEvent()
-        if (this.isFocused) onKeyPress(e)
+    override fun onKeyPressEvent(event: KeyboardEvent) {
+        if (this.isFocused) onKeyPress(event)
     }
 
-    override fun onKeyReleaseEvent(event: KeyEvent) {
-        val e = event.asKeyboardEvent()
-        if (this.isFocused) onKeyRelease(e)
+    override fun onKeyReleaseEvent(event: KeyboardEvent) {
+        if (this.isFocused) onKeyRelease(event)
     }
 
-    override fun onKeyRepeatEvent(event: KeyEvent) {
-        val e = event.asKeyboardEvent()
-        if (this.isFocused) onKeyRepeat(e)
+    override fun onKeyRepeatEvent(event: KeyboardEvent) {
+        if (this.isFocused) onKeyRepeat(event)
     }
 
-    final override fun onMouseMoveEvent(event: MoveEvent) {
-        val e = event.asMouseEvent()
-        val x = event.mouse.xPos
-        val y = event.mouse.yPos
+    final override fun onMouseMoveEvent(event: MouseEvent) {
+        val inside = contains(event.x, event.y)
 
-        val mouseInside = contains(x, y)
-
-        if (mouseInside && !this.isMouseHover) {
-            mouseEnter(e)
-        } else if (!mouseInside && this.isMouseHover) {
-            mouseExit(e)
+        if (inside && !this.isMouseHover) {
+            mouseEnter(event)
+        } else if (!inside && this.isMouseHover) {
+            mouseExit(event)
         }
 
-        if (mouseInside && !e.button.isPrimary) {
-            mouseMove(e)
-        } else if (e.button.isPrimary && this.isMousePressed) {
-            mouseDrag(e)
+        if (inside && !event.button.isPrimary) {
+            mouseMove(event)
+        } else if (event.button.isPrimary && this.isMousePressed) {
+            mouseDrag(event)
         }
     }
 
-    final override fun onMouseClickEvent(event: ClickEvent): Boolean {
-        val e = event.asMouseEvent()
-        if (event.isDown && this.isMouseHover) {
-            mousePress(e)
+    final override fun onMousePressEvent(event: MouseEvent): Boolean {
+        if (this.isMouseHover) {
+            this.isMousePressed = true
             this.activeElement = this
-            return true
-        } else if (this.isMousePressed) {
-            mouseRelease(e)
-            this.activeElement = this
+            onMousePress(event)
             return true
         }
         this.activeElement = UINullNode
         return false
     }
 
-    private fun mousePress(event: MouseEvent) {
-        this.isMousePressed = true
-        onMousePress(event)
-    }
-
-    private fun mouseRelease(event: MouseEvent) {
-        this.isMousePressed = false
-        onMouseRelease(event)
+    final override fun onMouseReleaseEvent(event: MouseEvent): Boolean {
+        if (this.isMousePressed) {
+            this.isMousePressed = false
+            this.activeElement = this
+            onMouseRelease(event)
+            return true
+        }
+        this.activeElement = UINullNode
+        return false
     }
 
     private fun mouseEnter(event: MouseEvent) {

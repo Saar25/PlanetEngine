@@ -4,10 +4,9 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.p2d.RenderNode2D
+import org.saar.gui.event.KeyboardEvent
+import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Style
-import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent
 
 interface UINode : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
 
@@ -25,14 +24,16 @@ interface UINode : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
 
     fun contains(x: Int, y: Int): Boolean
 
-    fun onMouseClickEvent(event: ClickEvent) = false
+    fun onMousePressEvent(event: MouseEvent) = false
 
-    fun onMouseMoveEvent(event: MoveEvent) = Unit
+    fun onMouseReleaseEvent(event: MouseEvent) = false
 
-    fun onKeyPressEvent(event: KeyEvent) = Unit
+    fun onMouseMoveEvent(event: MouseEvent) = Unit
 
-    fun onKeyReleaseEvent(event: KeyEvent) = Unit
+    fun onKeyPressEvent(event: KeyboardEvent) = Unit
 
-    fun onKeyRepeatEvent(event: KeyEvent) = Unit
+    fun onKeyReleaseEvent(event: KeyboardEvent) = Unit
+
+    fun onKeyRepeatEvent(event: KeyboardEvent) = Unit
 
 }
