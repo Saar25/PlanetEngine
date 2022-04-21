@@ -3,15 +3,15 @@ package org.saar.gui.style.margin
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.margin.MarginValues.pixels
 
-class Margin(private val container: UIChildNode) : ReadonlyMargin {
+class Margin(private val container: UIChildNode, default: MarginValue = MarginValues.none) : ReadonlyMargin {
 
-    var topValue: MarginValue = MarginValues.none
+    var topValue: MarginValue = default
 
-    var rightValue: MarginValue = MarginValues.none
+    var rightValue: MarginValue = default
 
-    var bottomValue: MarginValue = MarginValues.none
+    var bottomValue: MarginValue = default
 
-    var leftValue: MarginValue = MarginValues.none
+    var leftValue: MarginValue = default
 
     override val top get() = this.topValue.computeTop(this.container)
 

@@ -4,9 +4,9 @@ import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 import org.saar.gui.style.fontcolour.FontColourValues.of
 
-class FontColour(private val container: UIChildNode) : ReadonlyFontColour {
+class FontColour(private val container: UIChildNode, default: FontColourValue = FontColourValues.inherit) : ReadonlyFontColour {
 
-    var value: FontColourValue = FontColourValues.inherit
+    var value: FontColourValue = default
 
     override val colour get() = this.value.compute(this.container)
 

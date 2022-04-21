@@ -4,9 +4,9 @@ import org.joml.Vector4fc
 import org.saar.gui.UIChildNode
 import org.saar.maths.utils.Vector4
 
-class ColourModifier(private val container: UIChildNode) : ReadonlyColourModifier {
+class ColourModifier(private val container: UIChildNode, default: ColourModifierValue = ColourModifierValues.inherit) : ReadonlyColourModifier {
 
-    private var multiplyValue: ColourModifierValue = ColourModifierValues.inherit
+    private var multiplyValue: ColourModifierValue = default
 
     override var multiply: Vector4fc
         get() = this.multiplyValue.compute(this.container)

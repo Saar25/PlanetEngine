@@ -3,9 +3,9 @@ package org.saar.gui.style.discardmap
 import org.saar.gui.UIChildNode
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
-class DiscardMap(private val container: UIChildNode) : ReadonlyDiscardMap {
+class DiscardMap(private val container: UIChildNode, default: DiscardMapValue = DiscardMapValues.inherit) : ReadonlyDiscardMap {
 
-    var value: DiscardMapValue = DiscardMapValues.inherit
+    var value: DiscardMapValue = default
 
     override val texture get() = this.value.compute(this.container)
 
