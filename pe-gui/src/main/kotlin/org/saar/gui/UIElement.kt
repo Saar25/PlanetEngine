@@ -2,7 +2,7 @@ package org.saar.gui
 
 import org.saar.gui.style.ElementStyle
 
-class UIElement : UIChildNode, UIMutableParent() {
+open class UIElement : UIChildNode, UIMutableParent() {
 
     override var parent: UIParentNode = UINullNode
 

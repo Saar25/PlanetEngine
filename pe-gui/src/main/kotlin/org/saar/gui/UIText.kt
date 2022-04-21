@@ -28,7 +28,7 @@ class UIText(text: String = "") : UIChildNode {
 
     private val maxWidthProperty = SimpleIntegerProperty()
 
-    private val lettersProperty = object : ObjectBinding<List<UILetter>>() {
+    val lettersProperty = object : ObjectBinding<List<UILetter>>() {
         init {
             bind(this@UIText.textProperty, this@UIText.maxWidthProperty)
         }

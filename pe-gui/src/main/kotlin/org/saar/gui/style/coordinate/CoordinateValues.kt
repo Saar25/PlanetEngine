@@ -1,5 +1,6 @@
 package org.saar.gui.style.coordinate
 
+import org.jproperty.value.ObservableNumberValue
 import org.saar.gui.UIChildNode
 
 object CoordinateValues {
@@ -96,5 +97,12 @@ object CoordinateValues {
         override fun computeAxisX(container: UIChildNode) = a.computeAxisX(container) - b
 
         override fun computeAxisY(container: UIChildNode) = a.computeAxisY(container) - b
+    }
+
+    @JvmStatic
+    fun from(value: ObservableNumberValue) = object : CoordinateValue {
+        override fun computeAxisX(container: UIChildNode) = value.intValue
+
+        override fun computeAxisY(container: UIChildNode) = value.intValue
     }
 }
