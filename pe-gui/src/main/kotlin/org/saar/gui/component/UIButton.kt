@@ -3,7 +3,7 @@ package org.saar.gui.component
 import org.jproperty.property.SimpleBooleanProperty
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
-import org.saar.gui.event.EventHandler
+import org.saar.gui.event.EventListener
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
 
@@ -11,7 +11,7 @@ class UIButton(text: String = "") : UIComponent() {
 
     private val pressedProperty = SimpleBooleanProperty()
 
-    private var onAction: EventHandler<MouseEvent>? = null
+    private var onAction: EventListener<MouseEvent>? = null
 
     val uiText = UIText(text)
 
@@ -22,7 +22,7 @@ class UIButton(text: String = "") : UIComponent() {
         this.style.borders.set(2)
     }
 
-    fun setOnAction(onAction: EventHandler<MouseEvent>) {
+    fun setOnAction(onAction: EventListener<MouseEvent>) {
         this.onAction = onAction
     }
 
