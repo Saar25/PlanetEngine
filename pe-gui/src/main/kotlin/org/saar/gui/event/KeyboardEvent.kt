@@ -4,11 +4,13 @@ import org.saar.lwjgl.glfw.input.Modifiers
 import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
 
 class KeyboardEvent(
-    val keyCode: Int,
+    val code: Int,
+    val key: Int,
     val modifiers: Modifiers = Modifiers(0),
 )
 
 fun KeyEvent.asKeyboardEvent() = KeyboardEvent(
-    keyCode = this.keyCode,
+    code = this.code,
+    key = this.key,
     modifiers = this.modifiers,
 )

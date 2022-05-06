@@ -34,13 +34,9 @@ class BlockStyle(container: UIBlock) : Style {
 
     override val y: Coordinate = Coordinates.Y(container)
 
-    override val width: Length = Lengths.Width(container).apply {
-        value = LengthValues.fill
-    }
+    override val width: Length = Lengths.Width(container, LengthValues.fill)
 
-    override val height: Length = Lengths.Height(container).apply {
-        value = LengthValues.fill
-    }
+    override val height: Length = Lengths.Height(container, LengthValues.fill)
 
     override val boxSizing: ReadonlyBoxSizing = BoxSizing(container)
 

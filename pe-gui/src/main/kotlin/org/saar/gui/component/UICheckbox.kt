@@ -37,7 +37,7 @@ class UICheckbox : UIComponent() {
     }
 
     override fun onMouseRelease(event: MouseEvent) {
-        if (event.button.isPrimary && isMouseHover) {
+        if (event.button.isPrimary && isMouseOver) {
             val current = this.checkedProperty.get()
             this.checkedProperty.set(!current)
 

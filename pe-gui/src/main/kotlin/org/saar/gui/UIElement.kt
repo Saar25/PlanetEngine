@@ -4,15 +4,11 @@ import org.saar.gui.style.ElementStyle
 
 open class UIElement : UIChildNode, UIMutableParent {
 
-    override var activeElement: UINode
-        get() = super.activeElement
-        set(value) {
-            super.activeElement = value
-        }
-
     override var parent: UIParentNode = UINullNode
 
     override val style = ElementStyle(this)
+
+    override val uiInputHelper = UIInputHelper(this)
 
     private val _children = mutableListOf<UINode>()
     override val children: List<UINode> = this._children

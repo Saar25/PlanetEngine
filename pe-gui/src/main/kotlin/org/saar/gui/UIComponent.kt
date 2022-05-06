@@ -10,73 +10,22 @@ abstract class UIComponent : UIChildNode, UIParentNode {
 
     final override val style = ComponentStyle(this)
 
-    override var activeElement: UINode
-        get() = super.activeElement
-        set(value) {
-            super.activeElement = value
-        }
 
-    var isMouseHover = false
-        private set
+    final override val uiInputHelper = UIInputHelper(this)
 
-    var isMousePressed = false
-        private set
+    init {
+        this.uiInputHelper.addMousePressEventListener(::onMousePress)
+        this.uiInputHelper.addMouseReleaseEventListener(::onMouseRelease)
 
-    val isFocused: Boolean get() = this.activeElement == this
+        this.uiInputHelper.addMouseEnterEventListener(::onMouseEnter)
+        this.uiInputHelper.addMouseExitEventListener(::onMouseExit)
 
-    final override fun onKeyPressEvent(event: KeyboardEvent) {
-        if (this.isFocused) onKeyPress(event)
-        else this.activeElement.onKeyPressEvent(event)
-    }
+        this.uiInputHelper.addMouseMoveEventListener(::onMouseMove)
+        this.uiInputHelper.addMouseDragEventListener(::onMouseDrag)
 
-    final override fun onKeyReleaseEvent(event: KeyboardEvent) {
-        if (this.isFocused) onKeyRelease(event)
-        else this.activeElement.onKeyReleaseEvent(event)
-    }
-
-    final override fun onKeyRepeatEvent(event: KeyboardEvent) {
-        if (this.isFocused) onKeyRepeat(event)
-        else this.activeElement.onKeyRepeatEvent(event)
-    }
-
-    final override fun onMouseMoveEvent(event: MouseEvent) {
-        val inside = contains(event.x, event.y)
-
-        if (inside && !this.isMouseHover) {
-            this.isMouseHover = true
-            onMouseEnter(event)
-        } else if (!inside && this.isMouseHover) {
-            this.isMouseHover = false
-            onMouseExit(event)
-        }
-
-        if (inside && !event.button.isPrimary) {
-            onMouseMove(event)
-        } else if (event.button.isPrimary && this.isMousePressed) {
-            onMouseDrag(event)
-        }
-    }
-
-    final override fun onMousePressEvent(event: MouseEvent): Boolean {
-        if (this.isMouseHover) {
-            this.isMousePressed = true
-            this.activeElement = this
-            onMousePress(event)
-            return true
-        }
-        this.activeElement = UINullNode
-        return false
-    }
-
-    final override fun onMouseReleaseEvent(event: MouseEvent): Boolean {
-        if (this.isMousePressed) {
-            this.isMousePressed = false
-            this.activeElement = this
-            onMouseRelease(event)
-            return true
-        }
-        this.activeElement = UINullNode
-        return false
+        this.uiInputHelper.addKeyPressEventListener(::onKeyPress)
+        this.uiInputHelper.addKeyReleaseEventListener(::onKeyRelease)
+        this.uiInputHelper.addKeyRepeatEventListener(::onKeyRepeat)
     }
 
     /**
