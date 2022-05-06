@@ -6,16 +6,8 @@ import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.MouseRotationComponent;
 import org.saar.core.common.components.VelocityComponent;
-import org.saar.core.fog.Fog;
-import org.saar.core.fog.FogDistance;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.renderer.forward.ForwardRenderNodeGroup;
-import org.saar.core.renderer.forward.ForwardRenderingPath;
-import org.saar.core.renderer.forward.ForwardRenderingPipeline;
-import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.renderer.forward.passes.ForwardGeometryPass;
-import org.saar.core.renderer.p2d.GeometryPass2D;
+import org.saar.core.renderer.RenderingPath;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.gui.*;
@@ -41,15 +33,11 @@ import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 import org.saar.maths.noise.Noise3f;
 import org.saar.maths.transform.Position;
-import org.saar.maths.utils.Vector3;
-import org.saar.minecraft.chunk.ChunkRenderNode;
 import org.saar.minecraft.chunk.ChunkRenderer;
-import org.saar.minecraft.chunk.WaterRenderNode;
 import org.saar.minecraft.chunk.WaterRenderer;
 import org.saar.minecraft.components.*;
 import org.saar.minecraft.entity.HitBoxes;
 import org.saar.minecraft.generator.*;
-import org.saar.minecraft.postprocessors.UnderwaterPostProcessor;
 import org.saar.minecraft.threading.GlThreadQueue;
 
 import java.util.concurrent.CompletableFuture;
@@ -63,6 +51,8 @@ public class Minecraft {
     private static final float MOUSE_SENSITIVITY = .2f;
     private static final int WORLD_RADIUS = 5;
     private static final int THREAD_COUNT = 5;
+
+    private static final boolean HIGH_QUALITY = false;
 
     private static final boolean FLY_MODE = true;
 
@@ -122,11 +112,15 @@ public class Minecraft {
         final int height = world.getHeight(0, 0) + 10;
         camera.getTransform().getPosition().set(0, height, 0);
 
+        final MinecraftRendering rendering = HIGH_QUALITY
+                ? new MinecraftDeferredRendering(uiDisplay, world, camera, WORLD_RADIUS)
+                : new MinecraftForwardRendering(uiDisplay, world, camera, WORLD_RADIUS);
+
         final Texture2D atlas = createAtlas();
         ChunkRenderer.INSTANCE.setAtlas(atlas);
         WaterRenderer.INSTANCE.setAtlas(atlas);
 
-        final ForwardRenderingPath renderingPath = buildRenderingPath(uiDisplay, world, camera);
+        final RenderingPath<?> renderingPath = rendering.buildRenderingPath();
 
         final Fps fps = new Fps();
 
@@ -153,6 +147,7 @@ public class Minecraft {
             camera.update();
             uiDisplay.update();
 
+            rendering.update();
             renderingPath.render().toMainScreen();
 
             if (System.currentTimeMillis() - lastFpsUpdate >= 5000) {
@@ -260,25 +255,6 @@ public class Minecraft {
                         new VelocityComponent()
                 );
         return new Camera(projection, cameraComponents);
-    }
-
-    private static ForwardRenderingPath buildRenderingPath(UIDisplay uiDisplay, World world, Camera camera) {
-        final ForwardRenderNodeGroup renderNode = new ForwardRenderNodeGroup(
-                new ChunkRenderNode(world),
-                new WaterRenderNode(world)
-        );
-
-        final Fog fog = new Fog(Vector3.of(.0f, .5f, .7f), WORLD_RADIUS * 15, WORLD_RADIUS * 16);
-
-        final ForwardRenderingPipeline pipeline = new ForwardRenderingPipeline(
-                new ForwardGeometryPass(renderNode),
-                new UnderwaterPostProcessor(world),
-                new FogRenderPass(fog, FogDistance.XZ),
-                new GeometryPass2D(uiDisplay),
-                new FxaaPostProcessor()
-        );
-
-        return new ForwardRenderingPath(camera, pipeline);
     }
 
     private static Texture2D createAtlas() throws Exception {
