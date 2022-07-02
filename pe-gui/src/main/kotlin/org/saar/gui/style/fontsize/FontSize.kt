@@ -2,9 +2,9 @@ package org.saar.gui.style.fontsize
 
 import org.saar.gui.UIChildNode
 
-class FontSize(private val container: UIChildNode) : ReadonlyFontSize {
+class FontSize(private val container: UIChildNode, default: FontSizeValue = FontSizeValues.inherit) : ReadonlyFontSize {
 
-    var value: FontSizeValue = FontSizeValues.inherit
+    var value: FontSizeValue = default
 
     override val size get() = this.value.compute(this.container)
 

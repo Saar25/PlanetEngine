@@ -2,15 +2,15 @@ package org.saar.gui.style.border
 
 import org.saar.gui.UIChildNode
 
-class Borders(private val container: UIChildNode) : ReadonlyBorders {
+class Borders(private val container: UIChildNode, default: BorderValue = BorderValues.none) : ReadonlyBorders {
 
-    var topValue: BorderValue = BorderValues.none
+    var topValue: BorderValue = default
 
-    var rightValue: BorderValue = BorderValues.none
+    var rightValue: BorderValue = default
 
-    var bottomValue: BorderValue = BorderValues.none
+    var bottomValue: BorderValue = default
 
-    var leftValue: BorderValue = BorderValues.none
+    var leftValue: BorderValue = default
 
     override val top get() = this.topValue.computeTop(this.container)
 

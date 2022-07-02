@@ -10,6 +10,8 @@ class UIBlock : UIChildNode {
 
     override val style = BlockStyle(this)
 
+    override val uiInputHelper = UIInputHelper(this)
+
     override fun render(context: RenderContext) = UIBlockRenderer.render(context, this)
 
     override fun contains(x: Int, y: Int) = MouseDetection.contains(this, x, y)

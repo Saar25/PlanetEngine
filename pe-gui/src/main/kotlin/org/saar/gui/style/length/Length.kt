@@ -1,8 +1,8 @@
 package org.saar.gui.style.length
 
-abstract class Length : ReadonlyLength {
+abstract class Length(default: LengthValue = LengthValues.fit) : ReadonlyLength {
 
-    var value: LengthValue = LengthValues.fit
+    var value: LengthValue = default
 
     fun set(value: LengthValue) {
         this.value = value

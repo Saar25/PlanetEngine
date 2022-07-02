@@ -16,6 +16,8 @@ class UIText(text: String = "") : UIChildNode {
 
     override var parent: UIParentNode = UINullNode
 
+    override val uiInputHelper = UIInputHelper(this)
+
     override val style = TextStyle(this)
 
     val textProperty = SimpleObjectProperty(text)

@@ -17,6 +17,18 @@ private val characterShiftMap = mapOf(
     32 to ' ', 39 to '"'
 )
 
+private val characterNumLockMap = mapOf(
+    GLFW.GLFW_KEY_KP_0 to GLFW.GLFW_KEY_INSERT,
+    GLFW.GLFW_KEY_KP_1 to GLFW.GLFW_KEY_END,
+    GLFW.GLFW_KEY_KP_2 to GLFW.GLFW_KEY_DOWN,
+    GLFW.GLFW_KEY_KP_3 to GLFW.GLFW_KEY_PAGE_DOWN,
+    GLFW.GLFW_KEY_KP_4 to GLFW.GLFW_KEY_LEFT,
+    GLFW.GLFW_KEY_KP_6 to GLFW.GLFW_KEY_RIGHT,
+    GLFW.GLFW_KEY_KP_7 to GLFW.GLFW_KEY_HOME,
+    GLFW.GLFW_KEY_KP_8 to GLFW.GLFW_KEY_UP,
+    GLFW.GLFW_KEY_KP_9 to GLFW.GLFW_KEY_PAGE_UP,
+)
+
 class UITextField(text: String = "") : UIComponent() {
 
     private val uiText = UIText(text)
@@ -51,29 +63,18 @@ class UITextField(text: String = "") : UIComponent() {
         val after = this.text.substring(index)
 
         val newText = when {
-            event.keyCode == GLFW.GLFW_KEY_BACKSPACE -> {
+            event.code == GLFW.GLFW_KEY_BACKSPACE -> {
                 if (event.modifiers.isCtrl()) {
                     text.dropLastWhile { it == ' ' }.dropLastWhile { it != ' ' }
                 } else {
                     text.dropLast(1)
                 }
             }
-            event.keyCode == GLFW.GLFW_KEY_ENTER -> {
+            event.code == GLFW.GLFW_KEY_ENTER -> {
                 text + '\n'
             }
-            font.characters.any { it.char == event.keyCode.toChar() } -> {
-                text + when {
-                    event.modifiers.isShift() -> {
-                        characterShiftMap.getOrDefault(
-                            event.keyCode, event.keyCode.toChar().uppercaseChar())
-                    }
-                    event.modifiers.isCapsLock() -> {
-                        event.keyCode.toChar().uppercaseChar()
-                    }
-                    else -> {
-                        event.keyCode.toChar().lowercaseChar()
-                    }
-                }
+            font.characters.any { it.char == event.code.toChar() } -> {
+                text + event.key.toChar()
             }
             else -> {
                 text
@@ -81,7 +82,11 @@ class UITextField(text: String = "") : UIComponent() {
         }
 
         this.text = newText + after
-        this.uiCaret.index = when (event.keyCode) {
+        this.uiCaret.index = when (event.code) {
+            GLFW.GLFW_KEY_PAGE_DOWN -> 0
+            GLFW.GLFW_KEY_HOME -> 0
+            GLFW.GLFW_KEY_PAGE_UP -> this.text.length
+            GLFW.GLFW_KEY_END -> this.text.length
             GLFW.GLFW_KEY_LEFT -> index - 1
             GLFW.GLFW_KEY_RIGHT -> index + 1
             else -> index + (newText.length - text.length)

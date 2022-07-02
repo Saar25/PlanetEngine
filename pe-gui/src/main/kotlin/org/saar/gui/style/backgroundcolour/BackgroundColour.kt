@@ -3,15 +3,18 @@ package org.saar.gui.style.backgroundcolour
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
 
-class BackgroundColour(private val container: UIChildNode) : ReadonlyBackgroundColour {
+class BackgroundColour(
+    private val container: UIChildNode,
+    default: BackgroundColourValue = BackgroundColourValues.inherit,
+) : ReadonlyBackgroundColour {
 
-    var topRightValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var topRightValue: BackgroundColourValue = default
 
-    var topLeftValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var topLeftValue: BackgroundColourValue = default
 
-    var bottomRightValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var bottomRightValue: BackgroundColourValue = default
 
-    var bottomLeftValue: BackgroundColourValue = BackgroundColourValues.inherit
+    var bottomLeftValue: BackgroundColourValue = default
 
     override val topRight get() = this.topRightValue.computeTopRight(this.container)
 

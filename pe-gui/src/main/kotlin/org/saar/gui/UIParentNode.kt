@@ -10,8 +10,6 @@ interface UIParentNode : UINode {
 
     override val style: ParentStyle
 
-    override var activeElement: UINode
-
     val children: List<UINode>
 
     override fun render(context: RenderContext) {
@@ -26,27 +24,36 @@ interface UIParentNode : UINode {
     override fun contains(x: Int, y: Int) =
         MouseDetection.contains(this, x, y) || this.children.any { it.contains(x, y) }
 
-    override fun onMousePressEvent(event: MouseEvent): Boolean {
-        return this.children.asReversed().any { it.onMousePressEvent(event) }
-    }
-
-    override fun onMouseReleaseEvent(event: MouseEvent): Boolean {
-        return this.children.asReversed().any { it.onMouseReleaseEvent(event) }
-    }
-
-    override fun onMouseMoveEvent(event: MouseEvent) {
-        this.children.asReversed().forEach { it.onMouseMoveEvent(event) }
-    }
-
     override fun onKeyPressEvent(event: KeyboardEvent) {
-        this.children.asReversed().forEach { it.onKeyPressEvent(event) }
+        this.uiInputHelper.onKeyPressEvent(event)
+        this.children.forEach { it.onKeyPressEvent(event) }
     }
 
     override fun onKeyReleaseEvent(event: KeyboardEvent) {
-        this.children.asReversed().forEach { it.onKeyReleaseEvent(event) }
+        this.uiInputHelper.onKeyReleaseEvent(event)
+        this.children.forEach { it.onKeyReleaseEvent(event) }
     }
 
     override fun onKeyRepeatEvent(event: KeyboardEvent) {
-        this.children.asReversed().forEach { it.onKeyRepeatEvent(event) }
+        this.uiInputHelper.onKeyRepeatEvent(event)
+        this.children.forEach { it.onKeyRepeatEvent(event) }
+    }
+
+    override fun onMouseMoveEvent(event: MouseEvent) {
+        val inside = contains(event.x, event.y)
+        this.uiInputHelper.onMouseMoveEvent(event, inside)
+        this.children.forEach { it.onMouseMoveEvent(event) }
+    }
+
+    override fun onMousePressEvent(event: MouseEvent): Boolean {
+        return this.uiInputHelper.onMousePressEvent(event).also {
+            this.children.forEach { it.onMousePressEvent(event) }
+        }
+    }
+
+    override fun onMouseReleaseEvent(event: MouseEvent): Boolean {
+        return this.uiInputHelper.onMouseReleaseEvent(event).also {
+            this.children.forEach { it.onMouseReleaseEvent(event) }
+        }
     }
 }

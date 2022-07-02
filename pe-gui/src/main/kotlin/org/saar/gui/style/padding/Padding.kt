@@ -3,15 +3,15 @@ package org.saar.gui.style.padding
 import org.saar.gui.UIChildNode
 import org.saar.gui.style.padding.PaddingValues.pixels
 
-class Padding(private val container: UIChildNode) : ReadonlyPadding {
+class Padding(private val container: UIChildNode, default: PaddingValue = PaddingValues.none) : ReadonlyPadding {
 
-    var topValue: PaddingValue = PaddingValues.none
+    var topValue: PaddingValue = default
 
-    var rightValue: PaddingValue = PaddingValues.none
+    var rightValue: PaddingValue = default
 
-    var bottomValue: PaddingValue = PaddingValues.none
+    var bottomValue: PaddingValue = default
 
-    var leftValue: PaddingValue = PaddingValues.none
+    var leftValue: PaddingValue = default
 
     override val top get() = this.topValue.computeTop(this.container)
 

@@ -2,15 +2,15 @@ package org.saar.gui.style.redius
 
 import org.saar.gui.UIChildNode
 
-class Radius(private val container: UIChildNode) : ReadonlyRadius {
+class Radius(private val container: UIChildNode, default: RadiusValue = RadiusValues.none) : ReadonlyRadius {
 
-    var topRightValue: RadiusValue = RadiusValues.none
+    var topRightValue: RadiusValue = default
 
-    var topLeftValue: RadiusValue = RadiusValues.none
+    var topLeftValue: RadiusValue = default
 
-    var bottomRightValue: RadiusValue = RadiusValues.none
+    var bottomRightValue: RadiusValue = default
 
-    var bottomLeftValue: RadiusValue = RadiusValues.none
+    var bottomLeftValue: RadiusValue = default
 
     override val topRight get() = this.topRightValue.computeTopRight(this.container)
 

@@ -4,7 +4,7 @@ import org.saar.gui.UIChildNode
 
 object Lengths {
 
-    class Width(private val container: UIChildNode) : Length() {
+    class Width(private val container: UIChildNode, default: LengthValue = LengthValues.fit) : Length(default) {
 
         override fun get(): Int = this.value.computeAxisX(this.container)
 
@@ -13,7 +13,7 @@ object Lengths {
         override fun getMax(): Int = this.value.computeMaxAxisX(this.container)
     }
 
-    class Height(private val container: UIChildNode) : Length() {
+    class Height(private val container: UIChildNode, default: LengthValue = LengthValues.fit) : Length(default) {
 
         override fun get(): Int = this.value.computeAxisY(this.container)
 

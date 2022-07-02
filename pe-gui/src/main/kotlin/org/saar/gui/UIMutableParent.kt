@@ -1,21 +1,12 @@
 package org.saar.gui
 
-abstract class UIMutableParent : UIParentNode {
+interface UIMutableParent : UIParentNode {
 
-    private val _children = mutableListOf<UINode>()
-    override val children: List<UINode> = this._children
+    override val children: List<UINode>
 
-    fun add(uiNode: UIChildNode) {
-        if (this._children.add(uiNode)) {
-            uiNode.parent = this
-        }
-    }
+    fun add(uiNode: UIChildNode)
 
-    fun remove(uiNode: UIChildNode) {
-        if (this._children.remove(uiNode)) {
-            uiNode.parent = UINullNode
-        }
-    }
+    fun remove(uiNode: UIChildNode)
 
     operator fun UIChildNode.unaryPlus() = this@UIMutableParent.add(this@unaryPlus)
 }

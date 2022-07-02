@@ -12,7 +12,13 @@ interface UINode : RenderNode2D, ForwardRenderNode, DeferredRenderNode {
 
     val style: Style
 
-    var activeElement: UINode
+    val uiInputHelper: UIInputHelper
+
+    val isMouseOver get() = this.uiInputHelper.isMouseOver
+
+    val isMousePressed get() = this.uiInputHelper.isMousePressed
+
+    val isFocused: Boolean get() = this.uiInputHelper.isFocused
 
     override fun renderDeferred(context: RenderContext) = render(context)
 
