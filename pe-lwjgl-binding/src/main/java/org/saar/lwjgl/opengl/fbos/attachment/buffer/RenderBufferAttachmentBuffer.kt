@@ -5,7 +5,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.allocation.RenderBufferAllocationSt
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer
 
 class RenderBufferAttachmentBuffer(
-    private val attachmentIndex: AttachmentIndex,
     private val renderBuffer: RenderBuffer,
     private val allocation: RenderBufferAllocationStrategy,
 ) : AttachmentBuffer {
@@ -15,7 +14,7 @@ class RenderBufferAttachmentBuffer(
     override fun allocateMultisample(width: Int, height: Int, samples: Int) =
         this.allocation.allocate(this.renderBuffer)
 
-    override fun attachToFbo(attachment: Int) = this.renderBuffer.attachToFbo(this.attachmentIndex.get())
+    override fun attachToFbo(index: AttachmentIndex) = this.renderBuffer.attachToFbo(index.get())
 
     override fun delete() = this.renderBuffer.delete()
 }

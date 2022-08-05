@@ -10,7 +10,6 @@ import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 
 class TextureAttachmentBuffer @JvmOverloads constructor(
-    private val attachmentIndex: AttachmentIndex,
     private val texture: MutableTexture2D,
     private val allocation: TextureAllocationStrategy,
     private val level: Int = 0,
@@ -35,7 +34,7 @@ class TextureAttachmentBuffer @JvmOverloads constructor(
 
     override fun allocateMultisample(width: Int, height: Int, samples: Int) = this.allocation.allocate(this.texture)
 
-    override fun attachToFbo(attachment: Int) = this.texture.attachToFbo(this.attachmentIndex.get(), this.level)
+    override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.get(), this.level)
 
     override fun delete() = this.texture.delete()
 }
