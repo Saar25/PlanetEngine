@@ -6,8 +6,6 @@ public interface Attachment {
 
     void init();
 
-    void initMS();
-
     void delete();
 
 }

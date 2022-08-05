@@ -24,12 +24,6 @@ public abstract class AttachmentBase implements Attachment {
     }
 
     @Override
-    public final void initMS() {
-        this.buffer.allocate();
-        this.buffer.attachToFbo(this.index);
-    }
-
-    @Override
     public final void delete() {
         this.buffer.delete();
     }

@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
-import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
@@ -56,7 +56,7 @@ public class InstancedModelExample {
 
         shadersProgram.bind();
 
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
+        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);

@@ -5,7 +5,7 @@ import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
+import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -33,7 +33,7 @@ public class RendererExample {
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
         final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
+        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
         fbo.addAttachment(attachment);
         fbo.setDrawAttachments(attachment);
@@ -44,7 +44,7 @@ public class RendererExample {
             fbo.bind();
             fbo.resize(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
-            attachment.initMS();
+            attachment.init();
         });
 
         final Keyboard keyboard = window.getKeyboard();
