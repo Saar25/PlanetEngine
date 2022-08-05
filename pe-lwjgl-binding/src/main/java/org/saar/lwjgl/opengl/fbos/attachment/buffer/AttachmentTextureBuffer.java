@@ -3,7 +3,7 @@ package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
@@ -47,7 +47,7 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
 
     @Override
     public void attachToFbo(AttachmentIndex index) {
-        this.texture.attachToFbo(index.get(), 0);
+        this.texture.attachToFbo(index.getValue(), 0);
     }
 
     @Override

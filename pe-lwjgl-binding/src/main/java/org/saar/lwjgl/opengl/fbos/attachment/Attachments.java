@@ -15,7 +15,7 @@ public final class Attachments {
     }
 
     public static void readAttachment(Attachment attachment) {
-        Attachments.readBuffer(attachment.getIndex().get());
+        Attachments.readBuffer(attachment.getIndex().getValue());
     }
 
     public static void drawBuffers(int... buffers) {
@@ -30,7 +30,7 @@ public final class Attachments {
         final int[] buffer = new int[attachments.length];
         for (int i = 0; i < attachments.length; i++) {
             final Attachment attachment = attachments[i];
-            buffer[i] = attachment.getIndex().get();
+            buffer[i] = attachment.getIndex().getValue();
         }
         return buffer;
     }

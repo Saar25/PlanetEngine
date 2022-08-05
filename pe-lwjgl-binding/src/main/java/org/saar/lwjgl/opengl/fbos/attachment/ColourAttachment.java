@@ -4,31 +4,32 @@ import org.saar.lwjgl.opengl.constants.ColourFormatType;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.index.ColourAttachmentIndex;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
-public class ColourAttachment extends AttachmentBase implements Attachment {
+public class ColourAttachment extends AttachmentBase implements Attachment, IColourAttachment {
 
-    private final AttachmentIndex index;
+    private final ColourAttachmentIndex index;
 
-    public ColourAttachment(AttachmentIndex index, AttachmentBuffer buffer) {
+    public ColourAttachment(ColourAttachmentIndex index, AttachmentBuffer buffer) {
         super(buffer);
         this.index = index;
     }
 
     public ColourAttachment(int index, AttachmentBuffer buffer) {
-        super(buffer);
-        this.index = AttachmentIndex.ofColour(index);
+        this(new ColourAttachmentIndex(index), buffer);
     }
 
     public static ColourAttachment withTexture(int index, MutableTexture2D texture, ColourFormatType iFormat) {
         final AttachmentBuffer buffer = new AttachmentTextureBuffer(texture, iFormat.get());
-        return new ColourAttachment(AttachmentIndex.ofColour(index), buffer);
+        return new ColourAttachment(new ColourAttachmentIndex(index), buffer);
     }
 
     public static ColourAttachment withRenderBuffer(int index, RenderBuffer renderBuffer, ColourFormatType iFormat) {
         final AttachmentBuffer buffer = new AttachmentRenderBuffer(renderBuffer, iFormat.get());
-        return new ColourAttachment(AttachmentIndex.ofColour(index), buffer);
+        final ColourAttachmentIndex attachmentIndex = new ColourAttachmentIndex(index);
+        return new ColourAttachment(attachmentIndex, buffer);
     }
 
     public static ColourAttachment withRenderBuffer(int index, ColourFormatType iFormat) {
@@ -36,7 +37,7 @@ public class ColourAttachment extends AttachmentBase implements Attachment {
     }
 
     @Override
-    public AttachmentIndex getIndex() {
+    public ColourAttachmentIndex getIndex() {
         return this.index;
     }
 }

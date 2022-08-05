@@ -21,9 +21,9 @@ import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentIndex
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer
+import org.saar.lwjgl.opengl.fbos.attachment.index.ColourAttachmentIndex
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -94,7 +94,7 @@ private class MyScreenPrototype : ScreenPrototype {
 
     @ScreenImageProperty(draw = true, read = true)
     private val colourImage = ColourScreenImage(ColourAttachment(
-        AttachmentIndex.ofColour(0),
+        ColourAttachmentIndex(0),
         AttachmentTextureBuffer(this.image, InternalFormat.R8)
     ))
 

@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex;
 
 public interface AttachmentBuffer {
 

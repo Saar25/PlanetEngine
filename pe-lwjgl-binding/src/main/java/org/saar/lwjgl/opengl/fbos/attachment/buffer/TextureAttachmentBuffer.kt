@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.fbos.attachment.buffer
 
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentIndex
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex
 import org.saar.lwjgl.opengl.fbos.attachment.allocation.TextureAllocationStrategy
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter
@@ -32,7 +32,7 @@ class TextureAttachmentBuffer @JvmOverloads constructor(
 
     override fun allocate(width: Int, height: Int) = this.allocation.allocate(this.texture, width, height)
 
-    override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.get(), this.level)
+    override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.value, this.level)
 
     override fun delete() = this.texture.delete()
 }

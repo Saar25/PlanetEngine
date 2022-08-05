@@ -6,12 +6,14 @@ import org.saar.lwjgl.opengl.constants.FormatType;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentRenderBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbos.attachment.index.BasicAttachmentIndex;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
 public class DepthAttachment extends AttachmentBase implements Attachment {
 
-    private final AttachmentIndex index = AttachmentIndex.ofDepth();
+    private final AttachmentIndex index = new BasicAttachmentIndex(AttachmentType.STENCIL);
 
     public DepthAttachment(AttachmentBuffer buffer) {
         super(buffer);

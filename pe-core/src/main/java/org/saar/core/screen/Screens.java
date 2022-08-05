@@ -65,7 +65,7 @@ public final class Screens {
 
     private static ColourAttachment[] toColourAttachments(List<ColourScreenImage> images) {
         return images.stream().map(ColourScreenImage::getAttachment)
-                .sorted(Comparator.comparingInt(a -> a.getIndex().get()))
+                .sorted(Comparator.comparingInt(a -> a.getIndex().getValue()))
                 .toArray(ColourAttachment[]::new);
     }
 }

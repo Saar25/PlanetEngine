@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment.buffer;
 
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 
 public class AttachmentRenderBuffer implements AttachmentBuffer {
@@ -21,7 +21,7 @@ public class AttachmentRenderBuffer implements AttachmentBuffer {
 
     @Override
     public void attachToFbo(AttachmentIndex index) {
-        this.renderBuffer.attachToFbo(index.get());
+        this.renderBuffer.attachToFbo(index.getValue());
     }
 
     @Override
