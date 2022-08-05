@@ -1,10 +1,12 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
+import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
+
 public interface Attachment {
 
     AttachmentIndex getIndex();
 
-    void init();
+    void init(ReadOnlyFbo fbo);
 
     void delete();
 

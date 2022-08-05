@@ -15,7 +15,7 @@ public class AttachmentRenderBuffer implements AttachmentBuffer {
     }
 
     @Override
-    public void allocate() {
+    public void allocate(int width, int height) {
         throw new UnsupportedOperationException("Deprecated");
     }
 

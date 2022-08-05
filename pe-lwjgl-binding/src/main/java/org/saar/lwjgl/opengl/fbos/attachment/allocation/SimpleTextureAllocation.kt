@@ -6,8 +6,6 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class SimpleTextureAllocation(
-    private val width: Int,
-    private val height: Int,
     private val internalFormat: InternalFormat,
     private val format: FormatType,
     private val dataType: DataType,
@@ -15,8 +13,8 @@ class SimpleTextureAllocation(
     private val border: Int = 0,
 ) : TextureAllocationStrategy {
 
-    override fun allocate(texture: MutableTexture2D) {
-        texture.allocate(this.level, this.internalFormat, this.width,
-            this.height, this.border, this.format, this.dataType, null)
+    override fun allocate(texture: MutableTexture2D, width: Int, height: Int) {
+        texture.allocate(this.level, this.internalFormat, width,
+            height, this.border, this.format, this.dataType, null)
     }
 }

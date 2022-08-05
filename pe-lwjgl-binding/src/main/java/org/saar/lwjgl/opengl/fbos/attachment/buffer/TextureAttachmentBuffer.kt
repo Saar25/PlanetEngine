@@ -30,7 +30,7 @@ class TextureAttachmentBuffer @JvmOverloads constructor(
         }
     }
 
-    override fun allocate() = this.allocation.allocate(this.texture)
+    override fun allocate(width: Int, height: Int) = this.allocation.allocate(this.texture, width, height)
 
     override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.get(), this.level)
 

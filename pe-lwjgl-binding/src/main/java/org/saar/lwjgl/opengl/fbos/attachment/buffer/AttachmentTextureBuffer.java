@@ -41,7 +41,7 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
     }
 
     @Override
-    public void allocate() {
+    public void allocate(int width, int height) {
         throw new UnsupportedOperationException("Deprecated");
     }
 

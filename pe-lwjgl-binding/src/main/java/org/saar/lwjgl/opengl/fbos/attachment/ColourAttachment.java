@@ -9,8 +9,16 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
 public class ColourAttachment extends AttachmentBase implements Attachment {
 
+    private final AttachmentIndex index;
+
     public ColourAttachment(AttachmentIndex index, AttachmentBuffer buffer) {
-        super(index, buffer);
+        super(buffer);
+        this.index = index;
+    }
+
+    public ColourAttachment(int index, AttachmentBuffer buffer) {
+        super(buffer);
+        this.index = AttachmentIndex.ofColour(index);
     }
 
     public static ColourAttachment withTexture(int index, MutableTexture2D texture, ColourFormatType iFormat) {
@@ -25,5 +33,10 @@ public class ColourAttachment extends AttachmentBase implements Attachment {
 
     public static ColourAttachment withRenderBuffer(int index, ColourFormatType iFormat) {
         return withRenderBuffer(index, RenderBuffer.create(), iFormat);
+    }
+
+    @Override
+    public AttachmentIndex getIndex() {
+        return this.index;
     }
 }

@@ -11,22 +11,29 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 
 public class DepthStencilAttachment extends AttachmentBase implements Attachment {
 
-    public DepthStencilAttachment(AttachmentIndex index, AttachmentBuffer buffer) {
-        super(index, buffer);
+    private final AttachmentIndex index = AttachmentIndex.ofDepthStencil();
+
+    public DepthStencilAttachment(AttachmentBuffer buffer) {
+        super(buffer);
     }
 
     public static DepthStencilAttachment withTexture(MutableTexture2D texture, DepthStencilFormatType iFormat, DataType dataType) {
         final AttachmentTextureBuffer buffer = new AttachmentTextureBuffer(
                 texture, iFormat.get(), FormatType.DEPTH_STENCIL, dataType);
-        return new DepthStencilAttachment(AttachmentIndex.ofDepthStencil(), buffer);
+        return new DepthStencilAttachment(buffer);
     }
 
     public static DepthStencilAttachment withRenderBuffer(RenderBuffer renderBuffer, DepthStencilFormatType iFormat) {
         final AttachmentBuffer buffer = new AttachmentRenderBuffer(renderBuffer, iFormat.get());
-        return new DepthStencilAttachment(AttachmentIndex.ofDepthStencil(), buffer);
+        return new DepthStencilAttachment(buffer);
     }
 
     public static DepthStencilAttachment withRenderBuffer(DepthStencilFormatType iFormat) {
         return withRenderBuffer(RenderBuffer.create(), iFormat);
+    }
+
+    @Override
+    public AttachmentIndex getIndex() {
+        return this.index;
     }
 }

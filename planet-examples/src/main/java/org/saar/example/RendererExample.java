@@ -44,7 +44,7 @@ public class RendererExample {
             fbo.bind();
             fbo.resize(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
-            attachment.init();
+            attachment.init(fbo);
         });
 
         final Keyboard keyboard = window.getKeyboard();
