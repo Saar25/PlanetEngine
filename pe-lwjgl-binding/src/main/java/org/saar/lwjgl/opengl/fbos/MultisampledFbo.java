@@ -32,7 +32,7 @@ public class MultisampledFbo implements IFbo {
     @Override
     public void addAttachment(Attachment attachment) {
         bind();
-        attachment.initMS(this, this.samples);
+        attachment.initMS();
     }
 
     public void blitToScreen() {

@@ -32,7 +32,7 @@ public class Fbo implements IFbo {
     @Override
     public void addAttachment(Attachment attachment) {
         bind();
-        attachment.init(this);
+        attachment.init();
     }
 
     @Override

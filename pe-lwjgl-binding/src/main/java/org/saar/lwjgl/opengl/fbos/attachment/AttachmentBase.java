@@ -1,6 +1,5 @@
 package org.saar.lwjgl.opengl.fbos.attachment;
 
-import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 
 public abstract class AttachmentBase implements Attachment {
@@ -19,13 +18,13 @@ public abstract class AttachmentBase implements Attachment {
     }
 
     @Override
-    public final void init(ReadOnlyFbo fbo) {
+    public final void init() {
         this.buffer.allocate();
         this.buffer.attachToFbo(this.index);
     }
 
     @Override
-    public final void initMS(ReadOnlyFbo fbo, int samples) {
+    public final void initMS() {
         this.buffer.allocate();
         this.buffer.attachToFbo(this.index);
     }
