@@ -41,13 +41,8 @@ public class AttachmentTextureBuffer implements AttachmentBuffer {
     }
 
     @Override
-    public void allocate(int width, int height) {
-        this.texture.allocate(0, this.iFormat, width, height, 0, this.format, this.dataType, null);
-    }
-
-    @Override
-    public void allocateMultisample(int width, int height, int samples) {
-        this.texture.allocateMultisample(samples, this.iFormat, width, height, true);
+    public void allocate() {
+        throw new UnsupportedOperationException("Deprecated");
     }
 
     @Override

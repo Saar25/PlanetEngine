@@ -20,13 +20,13 @@ public abstract class AttachmentBase implements Attachment {
 
     @Override
     public final void init(ReadOnlyFbo fbo) {
-        this.buffer.allocate(fbo.getWidth(), fbo.getHeight());
+        this.buffer.allocate();
         this.buffer.attachToFbo(this.index);
     }
 
     @Override
     public final void initMS(ReadOnlyFbo fbo, int samples) {
-        this.buffer.allocateMultisample(fbo.getWidth(), fbo.getHeight(), samples);
+        this.buffer.allocate();
         this.buffer.attachToFbo(this.index);
     }
 

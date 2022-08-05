@@ -9,10 +9,7 @@ class RenderBufferAttachmentBuffer(
     private val allocation: RenderBufferAllocationStrategy,
 ) : AttachmentBuffer {
 
-    override fun allocate(width: Int, height: Int) = this.allocation.allocate(this.renderBuffer)
-
-    override fun allocateMultisample(width: Int, height: Int, samples: Int) =
-        this.allocation.allocate(this.renderBuffer)
+    override fun allocate() = this.allocation.allocate(this.renderBuffer)
 
     override fun attachToFbo(index: AttachmentIndex) = this.renderBuffer.attachToFbo(index.get())
 

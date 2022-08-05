@@ -15,13 +15,8 @@ public class AttachmentRenderBuffer implements AttachmentBuffer {
     }
 
     @Override
-    public void allocate(int width, int height) {
-        this.renderBuffer.loadStorage(width, height, this.iFormat);
-    }
-
-    @Override
-    public void allocateMultisample(int width, int height, int samples) {
-        this.renderBuffer.loadStorageMultisample(width, height, this.iFormat, samples);
+    public void allocate() {
+        throw new UnsupportedOperationException("Deprecated");
     }
 
     @Override
