@@ -4,8 +4,6 @@ import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.core.screen.image.ScreenImage
-import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleTextureAllocation
@@ -18,7 +16,8 @@ class ScreenPrototype2D : RenderingPathScreenPrototype<RenderingBuffers2D> {
 
     @ScreenImageProperty(draw = true, read = true)
     private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment(0, TextureAttachmentBuffer(
-        this.colourTexture, SimpleTextureAllocation(InternalFormat.RGB16F, FormatType.RGB, DataType.U_BYTE))))
+        this.colourTexture, SimpleTextureAllocation(InternalFormat.RGB16F)
+    )))
 
     override val buffers = object : RenderingBuffers2D {
         override val albedo = colourTexture

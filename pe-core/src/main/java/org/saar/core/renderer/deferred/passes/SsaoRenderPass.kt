@@ -19,9 +19,6 @@ import org.saar.core.screen.Screens
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.constants.ColourFormatType
-import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
@@ -53,7 +50,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
         @ScreenImageProperty(draw = true, read = true)
         private val colourImage = ColourScreenImage(ColourAttachment(0, TextureAttachmentBuffer(
-            ssaoTexture, SimpleTextureAllocation(InternalFormat.R16F, FormatType.RED, DataType.U_BYTE)
+            ssaoTexture, SimpleTextureAllocation(InternalFormat.R16F)
         )))
     }, Fbo.create(0, 0))
 
@@ -63,8 +60,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     private fun createNoiseTexture(): MutableTexture2D {
         val painter = Random2fPainter()
         val texture = painter.renderToTexture(
-            this.noiseTextureSize, this.noiseTextureSize,
-            InternalFormat.RG16F, FormatType.RG, DataType.U_BYTE)
+            this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F)
         painter.delete()
 
         texture.applyParameters(arrayOf<TextureParameter>(
