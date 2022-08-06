@@ -13,11 +13,13 @@ import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.constants.DepthFormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleRenderBufferAllocation;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -35,8 +37,12 @@ public class ObjRendererExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
+        colorAttachment = new ColourAttachment(0,
+                new RenderBufferAttachmentBuffer(RenderBuffer.create(),
+                        new SimpleRenderBufferAllocation(InternalFormat.RGBA8)));
+        depthAttachment = new DepthAttachment(
+                new RenderBufferAttachmentBuffer(RenderBuffer.create(),
+                        new SimpleRenderBufferAllocation(InternalFormat.DEPTH24)));
 
         final Keyboard keyboard = window.getKeyboard();
 

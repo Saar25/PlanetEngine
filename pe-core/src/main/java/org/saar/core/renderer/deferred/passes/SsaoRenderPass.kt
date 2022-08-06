@@ -20,8 +20,13 @@ import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.ColourFormatType
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.FormatType
+import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleTextureAllocation
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -47,8 +52,9 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
         @ScreenImageProperty(draw = true, read = true)
-        private val colourImage = ColourScreenImage(ColourAttachment
-            .withTexture(0, ssaoTexture, ColourFormatType.R16F))
+        private val colourImage = ColourScreenImage(ColourAttachment(0, TextureAttachmentBuffer(
+            ssaoTexture, SimpleTextureAllocation(InternalFormat.R16F, FormatType.RED, DataType.U_BYTE)
+        )))
     }, Fbo.create(0, 0))
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)
@@ -58,7 +64,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
         val painter = Random2fPainter()
         val texture = painter.renderToTexture(
             this.noiseTextureSize, this.noiseTextureSize,
-            ColourFormatType.RG16F)
+            InternalFormat.RG16F, FormatType.RG, DataType.U_BYTE)
         painter.delete()
 
         texture.applyParameters(arrayOf<TextureParameter>(
@@ -112,10 +118,12 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     }
 }
 
-private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
-                                      val kernel: Array<Vector3f>,
-                                      val noiseTextureSize: Int,
-                                      val radius: Float) : RenderPassPrototype {
+private class SsaoRenderPassPrototype(
+    val noiseTexture: MutableTexture2D,
+    val kernel: Array<Vector3f>,
+    val noiseTextureSize: Int,
+    val radius: Float,
+) : RenderPassPrototype {
 
     @UniformProperty
     val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 0)

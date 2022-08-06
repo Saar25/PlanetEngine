@@ -4,9 +4,14 @@ import org.saar.core.common.r2d.*;
 import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledRenderBufferAllocation;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.RenderBufferAllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
@@ -32,7 +37,9 @@ public class RendererExample {
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
-        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
+        final RenderBufferAllocationStrategy allocation = new MultisampledRenderBufferAllocation(InternalFormat.RGBA8, 4);
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), allocation);
+        final ColourAttachment attachment = new ColourAttachment(0, buffer);
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
         fbo.addAttachment(attachment);

@@ -1,13 +1,11 @@
-package org.saar.lwjgl.opengl.fbos.attachment.buffer;
+package org.saar.lwjgl.opengl.fbos.attachment.buffer
 
-import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex
 
-public interface AttachmentBuffer {
+interface AttachmentBuffer {
+    fun allocate(width: Int, height: Int)
 
-    void allocate(int width, int height);
+    fun attachToFbo(index: AttachmentIndex)
 
-    void attachToFbo(AttachmentIndex index);
-
-    void delete();
-
+    fun delete()
 }

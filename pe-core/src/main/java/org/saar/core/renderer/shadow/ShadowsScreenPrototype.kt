@@ -4,8 +4,11 @@ import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.DepthScreenImage
 import org.saar.core.screen.image.ScreenImage
-import org.saar.lwjgl.opengl.constants.DepthFormatType
+import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleRenderBufferAllocation
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer
+import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.*
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
@@ -24,8 +27,9 @@ class ShadowsScreenPrototype : RenderingPathScreenPrototype<ShadowsBuffers> {
     }
 
     @ScreenImageProperty
-    private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment
-        .withTexture(depthTexture, DepthFormatType.COMPONENT24))
+    private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment(
+        RenderBufferAttachmentBuffer(RenderBuffer.create(),
+            SimpleRenderBufferAllocation(InternalFormat.DEPTH24))))
 
     override val buffers = object : ShadowsBuffers {
         override val depth = depthTexture

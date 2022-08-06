@@ -19,11 +19,13 @@ import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer
-import org.saar.lwjgl.opengl.fbos.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleTextureAllocation
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
 import org.saar.lwjgl.opengl.shaders.ShaderCode
@@ -94,8 +96,8 @@ private class MyScreenPrototype : ScreenPrototype {
 
     @ScreenImageProperty(draw = true, read = true)
     private val colourImage = ColourScreenImage(ColourAttachment(
-        ColourAttachmentIndex(0),
-        AttachmentTextureBuffer(this.image, InternalFormat.R8)
+        0, TextureAttachmentBuffer(this.image, SimpleTextureAllocation(
+            InternalFormat.R8, FormatType.RED, DataType.U_BYTE))
     ))
 
     val buffers = object : RenderingBuffers2D {
