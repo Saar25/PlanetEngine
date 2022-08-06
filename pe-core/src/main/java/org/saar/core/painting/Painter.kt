@@ -6,7 +6,7 @@ import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleTextureAllocation
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
@@ -24,9 +24,9 @@ interface Painter : RenderPass<RenderPassBuffers> {
 fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFormat): MutableTexture2D {
     return MutableTexture2D.create().also { texture ->
         val fbo = Fbo.create(width, height).apply {
-            val allocation = SimpleTextureAllocation(internalFormat)
-            val buffer = TextureAttachmentBuffer(texture, allocation)
-            val attachment = ColourAttachment(0, buffer)
+            val attachment = ColourAttachment(0,
+                TextureAttachmentBuffer(texture, internalFormat),
+                SimpleAllocationStrategy())
             addAttachment(attachment)
             setDrawAttachments(attachment)
             setReadAttachment(attachment)

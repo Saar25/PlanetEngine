@@ -7,8 +7,8 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledRenderBufferAllocation;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.RenderBufferAllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.AllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
@@ -37,9 +37,9 @@ public class RendererExample {
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
-        final RenderBufferAllocationStrategy allocation = new MultisampledRenderBufferAllocation(InternalFormat.RGBA8, 4);
-        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), allocation);
-        final ColourAttachment attachment = new ColourAttachment(0, buffer);
+        final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
         fbo.addAttachment(attachment);

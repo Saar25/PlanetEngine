@@ -10,8 +10,9 @@ import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.RenderBufferAllocationStrategy;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleRenderBufferAllocation;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.AllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
@@ -62,9 +63,10 @@ public class InstancedModelExample {
 
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        final RenderBufferAllocationStrategy allocation = new SimpleRenderBufferAllocation(InternalFormat.RGBA8);
-        final RenderBufferAttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), allocation);
-        final ColourAttachment attachment = new ColourAttachment(0, buffer);
+        final AllocationStrategy allocation = new SimpleAllocationStrategy();
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
+
         fbo.addAttachment(attachment);
         fbo.setReadAttachment(attachment);
         fbo.setDrawAttachments(attachment);

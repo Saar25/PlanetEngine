@@ -22,7 +22,7 @@ import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.Fbo
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleTextureAllocation
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.shaders.GlslVersion
 import org.saar.lwjgl.opengl.shaders.Shader
@@ -93,9 +93,9 @@ private class MyScreenPrototype : ScreenPrototype {
     val image = MutableTexture2D.create()
 
     @ScreenImageProperty(draw = true, read = true)
-    private val colourImage = ColourScreenImage(ColourAttachment(0, TextureAttachmentBuffer(
-        this.image, SimpleTextureAllocation(InternalFormat.R8))
-    ))
+    private val colourImage = ColourScreenImage(ColourAttachment(0,
+        TextureAttachmentBuffer(this.image, InternalFormat.R8),
+        SimpleAllocationStrategy()))
 
     val buffers = object : RenderingBuffers2D {
         override val albedo = image

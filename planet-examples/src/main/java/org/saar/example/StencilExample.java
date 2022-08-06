@@ -15,8 +15,8 @@ import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbos.Fbo;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.StencilAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledRenderBufferAllocation;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.RenderBufferAllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.AllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
@@ -89,17 +89,15 @@ public class StencilExample {
         final Fbo fbo = Fbo.create(width, height);
         final SimpleScreen screen = new SimpleScreen(fbo);
 
-        final RenderBufferAllocationStrategy stencilAllocation = new MultisampledRenderBufferAllocation(InternalFormat.STENCIL_INDEX8, 4);
-        final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), stencilAllocation);
-        final StencilAttachment stencilAttachment = new StencilAttachment(stencilBuffer);
+        final AllocationStrategy stencilAllocation = new MultisampledAllocationStrategy(4);
+        final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.STENCIL_INDEX8);
+        final StencilAttachment stencilAttachment = new StencilAttachment(stencilBuffer, stencilAllocation);
         final ScreenImage screenImage = new StencilScreenImage(stencilAttachment);
         screen.addScreenImage(screenImage);
 
-        final RenderBufferAllocationStrategy colourAllocation = new MultisampledRenderBufferAllocation(
-                InternalFormat.RGBA8, 4);
-        final RenderBufferAttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(
-                RenderBuffer.create(), colourAllocation);
-        final ColourAttachment colourAttachment = new ColourAttachment(0, colourBuffer);
+        final AllocationStrategy colourAllocation = new MultisampledAllocationStrategy(4);
+        final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        final ColourAttachment colourAttachment = new ColourAttachment(0, colourBuffer, colourAllocation);
         final ColourScreenImage colourImage = new ColourScreenImage(colourAttachment);
         screen.addScreenImage(colourImage);
         screen.setReadImages(colourImage);

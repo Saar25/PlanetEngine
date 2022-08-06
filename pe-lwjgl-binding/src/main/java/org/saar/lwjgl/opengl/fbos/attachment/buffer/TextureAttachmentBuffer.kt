@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbos.attachment.buffer
 
+import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.TextureAllocationStrategy
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
@@ -9,10 +9,9 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 
-class TextureAttachmentBuffer @JvmOverloads constructor(
+class TextureAttachmentBuffer(
     private val texture: MutableTexture2D,
-    private val allocation: TextureAllocationStrategy,
-    private val level: Int = 0,
+    private val internalFormat: InternalFormat,
 ) : AttachmentBuffer {
 
     companion object {
@@ -30,9 +29,13 @@ class TextureAttachmentBuffer @JvmOverloads constructor(
         }
     }
 
-    override fun allocate(width: Int, height: Int) = this.allocation.allocate(this.texture, width, height)
+    override fun allocate(width: Int, height: Int) =
+        this.texture.allocate(0, this.internalFormat, width, height)
 
-    override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.value, this.level)
+    override fun allocateMultisampled(width: Int, height: Int, samples: Int) =
+        this.texture.allocateMultisample(samples, this.internalFormat, width, height, true)
+
+    override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.value, 0)
 
     override fun delete() = this.texture.delete()
 }

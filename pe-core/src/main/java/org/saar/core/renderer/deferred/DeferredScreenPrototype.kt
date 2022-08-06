@@ -8,7 +8,7 @@ import org.saar.core.screen.image.ScreenImage
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleTextureAllocation
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
@@ -21,19 +21,19 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
     private val depthTexture = MutableTexture2D.create()
 
     @ScreenImageProperty(draw = true, read = true)
-    private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment(0, TextureAttachmentBuffer(
-        this.colourTexture, SimpleTextureAllocation(InternalFormat.RGBA16F)
-    )))
+    private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment(0,
+        TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGBA16F),
+        SimpleAllocationStrategy()))
 
     @ScreenImageProperty(draw = true)
-    private val normalSpecularImage: ScreenImage = ColourScreenImage(ColourAttachment(1, TextureAttachmentBuffer(
-        this.normalSpecularTexture, SimpleTextureAllocation(InternalFormat.RGBA16F)
-    )))
+    private val normalSpecularImage: ScreenImage = ColourScreenImage(ColourAttachment(1,
+        TextureAttachmentBuffer(this.normalSpecularTexture, InternalFormat.RGBA16F),
+        SimpleAllocationStrategy()))
 
     @ScreenImageProperty
-    private val depthImage: ScreenImage = DepthStencilScreenImage(DepthStencilAttachment(TextureAttachmentBuffer(
-        this.depthTexture, SimpleTextureAllocation(InternalFormat.DEPTH24_STENCIL8)
-    )))
+    private val depthImage: ScreenImage = DepthStencilScreenImage(DepthStencilAttachment(
+        TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8),
+        SimpleAllocationStrategy()))
 
     override val buffers = object : DeferredRenderingBuffers {
         override val albedo = colourTexture
