@@ -22,7 +22,7 @@ class TextureAttachmentBuffer(
     }
 
 
-    init {
+    private fun configureTexture() {
         this.texture.applyParameters(defaultParameters)
         if (this.texture.width > 0 && this.texture.height > 0) {
             this.texture.generateMipmap()
@@ -30,10 +30,10 @@ class TextureAttachmentBuffer(
     }
 
     override fun allocate(width: Int, height: Int) =
-        this.texture.allocate(0, this.internalFormat, width, height)
+        this.texture.allocate(0, this.internalFormat, width, height).also { configureTexture() }
 
     override fun allocateMultisampled(width: Int, height: Int, samples: Int) =
-        this.texture.allocateMultisample(samples, this.internalFormat, width, height, true)
+        this.texture.allocateMultisample(samples, this.internalFormat, width, height, true).also { configureTexture() }
 
     override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.value, 0)
 

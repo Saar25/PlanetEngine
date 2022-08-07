@@ -9,11 +9,12 @@ import java.nio.ByteBuffer;
 
 public class MutableTexture2D implements WritableTexture2D {
 
-    private static final TextureTarget target = TextureTarget.TEXTURE_2D;
 
     private final TextureObject texture;
     private int width;
     private int height;
+
+    private TextureTarget target = TextureTarget.TEXTURE_2D;
 
     public MutableTexture2D(TextureObject texture) {
         this.texture = texture;
@@ -25,20 +26,25 @@ public class MutableTexture2D implements WritableTexture2D {
     }
 
     public void allocate(int level, InternalFormat internalFormat, int width, int height) {
-        allocate(level, internalFormat, width, height, 0, FormatType.RGBA, DataType.U_BYTE, null);
+        if (internalFormat == InternalFormat.DEPTH24_STENCIL8) {
+            allocate(level, internalFormat, width, height, 0, FormatType.DEPTH_STENCIL, DataType.U_INT_24_8, null);
+        } else {
+            allocate(level, internalFormat, width, height, 0, FormatType.RGBA, DataType.U_BYTE, null);
+        }
     }
 
     public void allocate(int level, InternalFormat internalFormat, int width,
                          int height, int border, FormatType format, DataType type, ByteBuffer data) {
-        this.texture.allocateMutable(MutableTexture2D.target, level,
-                internalFormat, width, height, border, format, type, data);
+        this.texture.allocateMutable(this.target, level, internalFormat,
+                width, height, border, format, type, data);
         this.width = width;
         this.height = height;
     }
 
     public void allocateMultisample(int samples, InternalFormat internalFormat, int width,
                                     int height, boolean fixedSampleLocations) {
-        this.texture.allocateMutableMultisample(MutableTexture2D.target, samples,
+        this.target = TextureTarget.TEXTURE_2D_MULTISAMPLE;
+        this.texture.allocateMutableMultisample(this.target, samples,
                 internalFormat, width, height, fixedSampleLocations);
         this.width = width;
         this.height = height;
@@ -46,17 +52,17 @@ public class MutableTexture2D implements WritableTexture2D {
 
     @Override
     public void applyParameters(TextureParameter... parameters) {
-        this.texture.applyParameters(MutableTexture2D.target, parameters);
+        this.texture.applyParameters(this.target, parameters);
     }
 
     @Override
     public void generateMipmap() {
-        this.texture.generateMipmap(MutableTexture2D.target);
+        this.texture.generateMipmap(this.target);
     }
 
     @Override
     public void load(int level, int xOffset, int yOffset, int width, int height, FormatType format, DataType type, ByteBuffer data) {
-        this.texture.load(MutableTexture2D.target, level, xOffset, yOffset, width, height, format, type, data);
+        this.texture.load(this.target, level, xOffset, yOffset, width, height, format, type, data);
     }
 
     @Override
@@ -71,17 +77,17 @@ public class MutableTexture2D implements WritableTexture2D {
 
     @Override
     public void bind(int unit) {
-        this.texture.bind(MutableTexture2D.target, unit);
+        this.texture.bind(this.target, unit);
     }
 
     @Override
     public void bind() {
-        this.texture.bind(MutableTexture2D.target);
+        this.texture.bind(this.target);
     }
 
     @Override
     public void unbind() {
-        this.texture.unbind(MutableTexture2D.target);
+        this.texture.unbind(this.target);
     }
 
     @Override

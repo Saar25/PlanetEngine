@@ -8,19 +8,19 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy;
+import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 
 public class MyScreenPrototype implements ScreenPrototype {
 
-    @ScreenImageProperty
+    @ScreenImageProperty(draw = true, read = true)
     private final ScreenImage colourImage = new ColourScreenImage(new ColourAttachment(0,
             new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8),
-            new SimpleAllocationStrategy()));
+            new MultisampledAllocationStrategy(4)));
 
-    @ScreenImageProperty
+    @ScreenImageProperty(draw = true)
     private final ScreenImage depthImage = new DepthScreenImage(new DepthAttachment(
             new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.DEPTH24),
-            new SimpleAllocationStrategy()));
+            new MultisampledAllocationStrategy(4)));
 }
