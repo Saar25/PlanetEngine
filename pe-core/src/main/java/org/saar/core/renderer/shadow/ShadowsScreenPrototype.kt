@@ -7,8 +7,7 @@ import org.saar.core.screen.image.ScreenImage
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment
 import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer
-import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer
+import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.*
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
@@ -28,7 +27,7 @@ class ShadowsScreenPrototype : RenderingPathScreenPrototype<ShadowsBuffers> {
 
     @ScreenImageProperty
     private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment(
-        RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.DEPTH24),
+        TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24),
         SimpleAllocationStrategy()))
 
     override val buffers = object : ShadowsBuffers {
