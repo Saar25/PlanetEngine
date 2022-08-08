@@ -11,23 +11,30 @@ public class MutableTexture2D implements WritableTexture2D {
 
 
     private final TextureObject texture;
+    private final TextureTarget target;
     private int width;
     private int height;
 
-    private TextureTarget target = TextureTarget.TEXTURE_2D;
-
-    public MutableTexture2D(TextureObject texture) {
+    private MutableTexture2D(TextureObject texture, TextureTarget target) {
         this.texture = texture;
+        this.target = target;
     }
 
     public static MutableTexture2D create() {
         final TextureObject texture = TextureObject.create();
-        return new MutableTexture2D(texture);
+        return new MutableTexture2D(texture, TextureTarget.TEXTURE_2D);
+    }
+
+    public static MutableTexture2D createMultisample() {
+        final TextureObject texture = TextureObject.create();
+        return new MutableTexture2D(texture, TextureTarget.TEXTURE_2D_MULTISAMPLE);
     }
 
     public void allocate(int level, InternalFormat internalFormat, int width, int height) {
         if (internalFormat == InternalFormat.DEPTH24_STENCIL8) {
             allocate(level, internalFormat, width, height, 0, FormatType.DEPTH_STENCIL, DataType.U_INT_24_8, null);
+        } else if (internalFormat == InternalFormat.DEPTH24) {
+            allocate(level, internalFormat, width, height, 0, FormatType.DEPTH_COMPONENT, DataType.U_BYTE, null);
         } else {
             allocate(level, internalFormat, width, height, 0, FormatType.RGBA, DataType.U_BYTE, null);
         }
@@ -43,7 +50,6 @@ public class MutableTexture2D implements WritableTexture2D {
 
     public void allocateMultisample(int samples, InternalFormat internalFormat, int width,
                                     int height, boolean fixedSampleLocations) {
-        this.target = TextureTarget.TEXTURE_2D_MULTISAMPLE;
         this.texture.allocateMutableMultisample(this.target, samples,
                 internalFormat, width, height, fixedSampleLocations);
         this.width = width;
