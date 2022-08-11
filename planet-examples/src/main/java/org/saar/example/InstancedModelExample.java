@@ -15,7 +15,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
@@ -64,7 +63,7 @@ public class InstancedModelExample {
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
         final AllocationStrategy allocation = new SimpleAllocationStrategy();
-        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
 
         fbo.addAttachment(attachment);

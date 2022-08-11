@@ -11,7 +11,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
-import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
@@ -38,7 +37,7 @@ public class RendererExample {
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
-        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 

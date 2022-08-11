@@ -9,6 +9,8 @@ class RenderBufferAttachmentBuffer(
     private val internalFormat: InternalFormat,
 ) : AttachmentBuffer {
 
+    constructor(internalFormat: InternalFormat) : this(RenderBuffer.create(), internalFormat)
+
     override fun allocate(width: Int, height: Int) =
         this.renderBuffer.loadStorage(width, height, this.internalFormat)
 

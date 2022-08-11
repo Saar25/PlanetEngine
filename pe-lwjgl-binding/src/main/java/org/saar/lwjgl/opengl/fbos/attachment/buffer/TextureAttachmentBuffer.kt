@@ -14,13 +14,14 @@ class TextureAttachmentBuffer(
     private val internalFormat: InternalFormat,
 ) : AttachmentBuffer {
 
+    constructor(internalFormat: InternalFormat) : this(MutableTexture2D.create(), internalFormat)
+
     companion object {
         private val defaultParameters = arrayOf(
             TextureAnisotropicFilterParameter(4f),
             TextureMagFilterParameter(MagFilterValue.LINEAR),
             TextureMinFilterParameter(MinFilterValue.NEAREST))
     }
-
 
     private fun configureTexture() {
         this.texture.applyParameters(defaultParameters)

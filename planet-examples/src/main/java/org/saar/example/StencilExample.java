@@ -20,7 +20,6 @@ import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationSt
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
@@ -90,13 +89,13 @@ public class StencilExample {
         final SimpleScreen screen = new SimpleScreen(fbo);
 
         final AllocationStrategy stencilAllocation = new MultisampledAllocationStrategy(4);
-        final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.STENCIL_INDEX8);
+        final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(InternalFormat.STENCIL_INDEX8);
         final StencilAttachment stencilAttachment = new StencilAttachment(stencilBuffer, stencilAllocation);
         final ScreenImage screenImage = new StencilScreenImage(stencilAttachment);
         screen.addScreenImage(screenImage);
 
         final AllocationStrategy colourAllocation = new MultisampledAllocationStrategy(4);
-        final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final ColourAttachment colourAttachment = new ColourAttachment(0, colourBuffer, colourAllocation);
         final ColourScreenImage colourImage = new ColourScreenImage(colourAttachment);
         screen.addScreenImage(colourImage);

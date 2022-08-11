@@ -12,13 +12,14 @@ import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationSt
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.rbos.RenderBuffer;
 import org.saar.lwjgl.opengl.objects.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
 import org.saar.lwjgl.opengl.shaders.Shader;
 import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class MultisamplingExample {
 
@@ -53,8 +54,9 @@ public class MultisamplingExample {
 
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
-        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(RenderBuffer.create(), InternalFormat.RGBA8);
+        //        final AllocationStrategy allocation = new SimpleAllocationStrategy();
+        final AllocationStrategy allocation = new MultisampledAllocationStrategy(8);
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
 
         fbo.addAttachment(attachment);
@@ -65,6 +67,7 @@ public class MultisamplingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
+            GlUtils.clear(GlBuffer.COLOUR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
             fbo.blitToScreen();
 
