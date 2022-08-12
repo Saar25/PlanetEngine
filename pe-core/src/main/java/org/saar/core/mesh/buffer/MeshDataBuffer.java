@@ -1,7 +1,7 @@
 package org.saar.core.mesh.buffer;
 
-import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.opengl.attribute.Attributes;
+import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 

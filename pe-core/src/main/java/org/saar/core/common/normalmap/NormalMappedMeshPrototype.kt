@@ -4,7 +4,7 @@ import org.saar.core.mesh.buffer.MeshIndexBuffer
 import org.saar.core.mesh.buffer.MeshVertexBuffer
 import org.saar.core.mesh.prototype.IndexedVertexMeshPrototype
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.objects.attributes.Attributes
+import org.saar.lwjgl.opengl.attribute.Attributes
 
 class NormalMappedMeshPrototype(
     private val positionBuffer: MeshVertexBuffer,

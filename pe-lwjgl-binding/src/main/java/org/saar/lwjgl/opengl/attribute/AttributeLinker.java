@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects.attributes;
+package org.saar.lwjgl.opengl.attribute;
 
 public interface AttributeLinker {
 

@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.vaos;
 
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.objects.vbos.ReadOnlyVbo;
 
 public interface WritableVao extends ReadOnlyVao {

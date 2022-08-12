@@ -3,7 +3,7 @@ package org.saar.core.common.particles
 import org.saar.core.mesh.buffer.MeshInstanceBuffer
 import org.saar.core.mesh.prototype.InstancedMeshPrototype
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.objects.attributes.Attributes
+import org.saar.lwjgl.opengl.attribute.Attributes
 
 class ParticlesMeshPrototype(
     private val positionBuffer: MeshInstanceBuffer,

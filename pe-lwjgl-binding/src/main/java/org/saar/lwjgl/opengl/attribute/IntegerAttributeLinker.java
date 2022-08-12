@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects.attributes;
+package org.saar.lwjgl.opengl.attribute;
 
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.constants.DataType;

@@ -2,8 +2,8 @@ package org.saar.lwjgl.opengl.primitive;
 
 import org.lwjgl.opengl.GL20;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.opengl.attribute.Attributes;
+import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.util.DataWriter;
 
 public class GlInt extends GlPrimitiveBase implements GlPrimitive {

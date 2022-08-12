@@ -1,9 +1,9 @@
 package org.saar.core.mesh.writer
 
-import org.saar.lwjgl.opengl.objects.attributes.Attribute
-import org.saar.lwjgl.opengl.objects.attributes.AttributeLinker
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute
-import org.saar.lwjgl.opengl.objects.attributes.InstancedAttribute
+import org.saar.lwjgl.opengl.attribute.Attribute
+import org.saar.lwjgl.opengl.attribute.AttributeLinker
+import org.saar.lwjgl.opengl.attribute.IAttribute
+import org.saar.lwjgl.opengl.attribute.InstancedAttribute
 
 interface VertexDataWriter {
 

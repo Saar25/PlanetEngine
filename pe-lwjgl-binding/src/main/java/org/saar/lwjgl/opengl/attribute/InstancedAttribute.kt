@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects.attributes
+package org.saar.lwjgl.opengl.attribute
 
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL33

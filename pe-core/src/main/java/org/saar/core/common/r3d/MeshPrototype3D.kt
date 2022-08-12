@@ -5,7 +5,7 @@ import org.saar.core.mesh.buffer.MeshInstanceBuffer
 import org.saar.core.mesh.buffer.MeshVertexBuffer
 import org.saar.core.mesh.prototype.InstancedIndexedVertexMeshPrototype
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.objects.attributes.Attributes
+import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.maths.transform.SimpleTransform
 
 class MeshPrototype3D(
