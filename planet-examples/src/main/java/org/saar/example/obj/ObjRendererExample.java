@@ -19,7 +19,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbo.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
-import org.saar.lwjgl.opengl.fbo.rendertarget.AttachmentRenderTarget;
+import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -117,7 +117,7 @@ public class ObjRendererExample {
         final Fbo fbo = Fbo.create(width, height);
 
         fbo.addAttachment(colorAttachment);
-        final RenderTarget target = new AttachmentRenderTarget(colorAttachment);
+        final RenderTarget target = new IndexRenderTarget(colorAttachment.getIndex());
         fbo.setDrawTarget(target);
         fbo.setReadTarget(target);
 

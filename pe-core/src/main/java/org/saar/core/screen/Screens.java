@@ -10,7 +10,6 @@ import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.rendertarget.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,7 +36,8 @@ public final class Screens {
     public static SingleRenderTarget[] toRenderTargets(ScreenImage... images) {
         return Arrays.stream(images)
                 .map(ScreenImage::getAttachment)
-                .map(AttachmentRenderTarget::new)
+                .map(Attachment::getIndex)
+                .map(IndexRenderTarget::new)
                 .toArray(SingleRenderTarget[]::new);
     }
 
@@ -57,7 +57,7 @@ public final class Screens {
         final SingleRenderTarget[] renderTargets = drawScreenImages.stream()
                 .map(ColourScreenImage::getAttachment)
                 .sorted(Comparator.comparingInt(a -> a.getIndex().getValue()))
-                .map(AttachmentRenderTarget::new)
+                .map(IndexRenderTarget::new)
                 .toArray(SingleRenderTarget[]::new);
         final DrawRenderTarget target = new DrawRenderTargetComposite(renderTargets);
         fbo.setDrawTarget(target);
@@ -71,7 +71,7 @@ public final class Screens {
         }
 
         final Attachment attachment = readScreenImages.get(0).getAttachment();
-        final ReadRenderTarget target = new AttachmentRenderTarget(attachment);
+        final ReadRenderTarget target = new IndexRenderTarget(attachment.getIndex());
         fbo.setReadTarget(target);
     }
 }

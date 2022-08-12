@@ -32,7 +32,7 @@ public class SimpleScreen extends ScreenBase implements OffScreen {
 
     public void setReadImages(ColourScreenImage image) {
         final ColourAttachment attachment = image.getAttachment();
-        final ReadRenderTarget target = new AttachmentRenderTarget(attachment);
+        final ReadRenderTarget target = new IndexRenderTarget(attachment.getIndex());
         getFbo().setReadTarget(target);
     }
 
