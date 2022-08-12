@@ -1,5 +1,9 @@
 package org.saar.lwjgl.opengl.attribute
 
+import org.saar.lwjgl.opengl.attribute.divisor.InstancedAttributeDivisor
+import org.saar.lwjgl.opengl.attribute.divisor.NoAttributeDivisor
+import org.saar.lwjgl.opengl.attribute.pointer.FloatAttributePointer
+import org.saar.lwjgl.opengl.attribute.pointer.IntegerAttributePointer
 import org.saar.lwjgl.opengl.constants.DataType
 
 object Attributes {
@@ -10,35 +14,37 @@ object Attributes {
     }
 
     @JvmStatic
-    fun of(attributeIndex: Int, componentCount: Int, dataType: DataType, normalized: Boolean): IAttribute {
-        val linker: AttributeLinker = FloatAttributeLinker(
-            componentCount, dataType, normalized)
-        return Attribute(linker, attributeIndex)
+    fun of(index: Int, componentCount: Int, dataType: DataType, normalized: Boolean): IAttribute {
+        val linker = FloatAttributePointer(componentCount, dataType, normalized)
+        return Attribute(index, linker, NoAttributeDivisor())
     }
 
     @JvmStatic
     @JvmOverloads
-    fun ofInstanced(attributeIndex: Int, componentCount: Int, dataType: DataType,
-                    normalized: Boolean, instances: Int = 1): IAttribute {
-        val linker: AttributeLinker = FloatAttributeLinker(
-            componentCount, dataType, normalized)
-        return InstancedAttribute(linker, attributeIndex, instances)
+    fun ofInstanced(
+        index: Int, componentCount: Int, dataType: DataType,
+        normalized: Boolean, instances: Int = 1,
+    ): IAttribute {
+        val linker = FloatAttributePointer(componentCount, dataType, normalized)
+        val divisor = InstancedAttributeDivisor(instances)
+        return Attribute(index, linker, divisor)
     }
 
     @JvmStatic
-    fun ofInteger(attributeIndex: Int, componentCount: Int, dataType: DataType): IAttribute {
-        val linker: AttributeLinker = IntegerAttributeLinker(
-            componentCount, dataType)
-        return Attribute(linker, attributeIndex)
+    fun ofInteger(index: Int, componentCount: Int, dataType: DataType): IAttribute {
+        val linker = IntegerAttributePointer(componentCount, dataType)
+        return Attribute(index, linker, NoAttributeDivisor())
     }
 
     @JvmStatic
     @JvmOverloads
-    fun ofIntegerInstanced(attributeIndex: Int, componentCount: Int,
-                           dataType: DataType, instances: Int = 1): IAttribute {
-        val linker: AttributeLinker = IntegerAttributeLinker(
-            componentCount, dataType)
-        return InstancedAttribute(linker, attributeIndex, instances)
+    fun ofIntegerInstanced(
+        index: Int, componentCount: Int,
+        dataType: DataType, instances: Int = 1,
+    ): IAttribute {
+        val linker = IntegerAttributePointer(componentCount, dataType)
+        val divisor = InstancedAttributeDivisor(instances)
+        return Attribute(index, linker, divisor)
     }
 
 }

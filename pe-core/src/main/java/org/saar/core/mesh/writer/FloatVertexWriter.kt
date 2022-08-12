@@ -1,15 +1,16 @@
 package org.saar.core.mesh.writer
 
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.attribute.AttributeLinker
-import org.saar.lwjgl.opengl.attribute.FloatAttributeLinker
+import org.saar.lwjgl.opengl.attribute.pointer.AttributePointer
+import org.saar.lwjgl.opengl.attribute.pointer.FloatAttributePointer
 import org.saar.lwjgl.util.DataWriter
 
 class FloatVertexWriter(private val dataWriter: DataWriter) : VertexDataWriter {
 
-    val attributeLinker: AttributeLinker = FloatAttributeLinker(1, DataType.FLOAT, false)
+    val attributePointer: AttributePointer =
+        FloatAttributePointer(1, DataType.FLOAT, false)
 
-    override val attributeLinkers: List<AttributeLinker> = listOf(this.attributeLinker)
+    override val attributePointers: List<AttributePointer> = listOf(this.attributePointer)
 
     fun write(value: Float) = this.dataWriter.writeFloat(value)
 }

@@ -1,34 +1,23 @@
-package org.saar.lwjgl.opengl.attribute;
+package org.saar.lwjgl.opengl.attribute
 
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL20
+import org.saar.lwjgl.opengl.attribute.divisor.AttributeDivisor
+import org.saar.lwjgl.opengl.attribute.pointer.AttributePointer
 
-public class Attribute implements IAttribute {
+class Attribute(
+    private val index: Int,
+    private val linker: AttributePointer,
+    private val divisor: AttributeDivisor,
+) : IAttribute {
 
-    private final AttributeLinker linker;
-    private final int attributeIndex;
+    override fun enable() = GL20.glEnableVertexAttribArray(this.index)
 
-    public Attribute(AttributeLinker linker, int attributeIndex) {
-        this.linker = linker;
-        this.attributeIndex = attributeIndex;
+    override fun disable() = GL20.glDisableVertexAttribArray(this.index)
+
+    override fun link(stride: Int, offset: Int) {
+        this.linker.point(this.index, stride, offset)
+        this.divisor.divide(this.index)
     }
 
-    @Override
-    public void enable() {
-        GL20.glEnableVertexAttribArray(this.attributeIndex);
-    }
-
-    @Override
-    public void disable() {
-        GL20.glDisableVertexAttribArray(this.attributeIndex);
-    }
-
-    @Override
-    public void link(int stride, int offset) {
-        this.linker.link(this.attributeIndex, stride, offset);
-    }
-
-    @Override
-    public int getBytesPerVertex() {
-        return this.linker.getBytes();
-    }
+    override val bytesPerVertex get() = this.linker.bytesPerVertex
 }
