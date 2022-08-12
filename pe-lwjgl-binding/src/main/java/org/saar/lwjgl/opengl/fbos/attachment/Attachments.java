@@ -2,6 +2,9 @@ package org.saar.lwjgl.opengl.fbos.attachment;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.saar.lwjgl.opengl.fbos.attachment.index.AttachmentIndex;
+
+import java.util.Arrays;
 
 public final class Attachments {
 
@@ -11,27 +14,32 @@ public final class Attachments {
     }
 
     public static void drawAttachments(Attachment... attachments) {
-        Attachments.drawBuffers(attachmentsPoints(attachments));
+        final AttachmentIndex[] indices = Arrays.stream(attachments)
+                .map(Attachment::getIndex)
+                .toArray(AttachmentIndex[]::new);
+        drawAttachments(indices);
     }
 
     public static void readAttachment(Attachment attachment) {
-        Attachments.readBuffer(attachment.getIndex().getValue());
+        readAttachment(attachment.getIndex());
     }
 
-    public static void drawBuffers(int... buffers) {
+    public static void drawAttachments(AttachmentIndex... indices) {
+        final int[] buffers = Arrays.stream(indices)
+                .mapToInt(AttachmentIndex::getValue)
+                .toArray();
+        Attachments.drawBuffers(buffers);
+    }
+
+    public static void readAttachment(AttachmentIndex index) {
+        Attachments.readBuffer(index.getValue());
+    }
+
+    private static void drawBuffers(int... buffers) {
         GL20.glDrawBuffers(buffers);
     }
 
-    public static void readBuffer(int buffer) {
+    private static void readBuffer(int buffer) {
         GL11.glReadBuffer(buffer);
-    }
-
-    private static int[] attachmentsPoints(Attachment... attachments) {
-        final int[] buffer = new int[attachments.length];
-        for (int i = 0; i < attachments.length; i++) {
-            final Attachment attachment = attachments[i];
-            buffer[i] = attachment.getIndex().getValue();
-        }
-        return buffer;
     }
 }
