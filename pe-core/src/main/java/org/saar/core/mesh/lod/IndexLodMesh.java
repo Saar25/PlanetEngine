@@ -2,7 +2,7 @@ package org.saar.core.mesh.lod;
 
 import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
-import org.saar.lwjgl.opengl.objects.vaos.IVao;
+import org.saar.lwjgl.opengl.vaos.IVao;
 
 import java.util.ArrayList;
 import java.util.List;

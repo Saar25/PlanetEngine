@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects.vaos;
+package org.saar.lwjgl.opengl.vaos;
 
 import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
 import org.saar.lwjgl.opengl.objects.vbos.ReadOnlyVbo;

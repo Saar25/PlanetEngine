@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects.vaos;
+package org.saar.lwjgl.opengl.vaos;
 
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.objects.attributes.IAttribute;

@@ -9,7 +9,7 @@ import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall;
 import org.saar.lwjgl.opengl.objects.attributes.Attributes;
 import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
+import org.saar.lwjgl.opengl.vaos.Vao;
 import org.saar.lwjgl.opengl.objects.vbos.Vbo;
 import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
 import org.saar.lwjgl.opengl.objects.vbos.VboUsage;

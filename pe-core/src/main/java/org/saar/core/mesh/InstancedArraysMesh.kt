@@ -2,7 +2,7 @@ package org.saar.core.mesh
 
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
-import org.saar.lwjgl.opengl.objects.vaos.IVao
+import org.saar.lwjgl.opengl.vaos.IVao
 
 class InstancedArraysMesh(
     private val vao: IVao,

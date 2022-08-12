@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.objects.vaos;
+package org.saar.lwjgl.opengl.vaos;
 
 public interface IVao extends WritableVao {
 

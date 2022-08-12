@@ -1,7 +1,7 @@
 package org.saar.core.mesh
 
 import org.saar.lwjgl.opengl.drawcall.DrawCall
-import org.saar.lwjgl.opengl.objects.vaos.IVao
+import org.saar.lwjgl.opengl.vaos.IVao
 
 class DrawCallMesh(
     private val vao: IVao,

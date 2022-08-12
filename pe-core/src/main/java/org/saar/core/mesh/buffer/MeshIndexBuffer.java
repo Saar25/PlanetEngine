@@ -1,7 +1,7 @@
 package org.saar.core.mesh.buffer;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.vaos.WritableVao;
+import org.saar.lwjgl.opengl.vaos.WritableVao;
 import org.saar.lwjgl.opengl.objects.vbos.IVbo;
 import org.saar.lwjgl.opengl.objects.vbos.Vbo;
 import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
