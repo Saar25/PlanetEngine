@@ -17,7 +17,6 @@ import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
@@ -279,8 +278,7 @@ public class ReflectionExample {
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FogRenderPass(fog, FogDistance.XYZ),
-                new FxaaPostProcessor()
+                new FogRenderPass(fog, FogDistance.XYZ)
         );
 
         return new DeferredRenderingPath(camera, renderPassesPipeline);

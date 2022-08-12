@@ -13,7 +13,7 @@ public final class ScreenImagesLocator {
         this.fieldsLocator = new FieldsLocator(prototype);
     }
 
-    public List<ScreenImagePrototype> getScreenImages() {
+    public List<ScreenImagePrototype> getScreenImagePrototypes() {
         return this.fieldsLocator.getFilteredValues(ScreenImagePrototype.class, ScreenImageProperty.class);
     }
 

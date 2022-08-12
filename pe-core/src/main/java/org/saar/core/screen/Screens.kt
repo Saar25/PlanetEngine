@@ -5,7 +5,7 @@ import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.opengl.fbo.IFbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
@@ -15,17 +15,15 @@ import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 object Screens {
 
     @JvmStatic
-    fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo): OffScreen {
+    fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo, allocation: AllocationStrategy): OffScreen {
         val locator = ScreenImagesLocator(prototype)
         val screenImagesMap = mutableMapOf<AttachmentIndex, ScreenImage>()
-        val allocation = SimpleAllocationStrategy()
 
-        val screenImages = locator.screenImages.sortedBy { it.index.value }
+        val imagesPrototypes = locator.screenImagePrototypes.sortedBy { it.index.value }
+        val colourImagesPrototypes = imagesPrototypes.filter { it.index.type == AttachmentType.COLOUR }
+        val otherImagesPrototypes = imagesPrototypes.filter { it.index.type != AttachmentType.COLOUR }
 
-        val colourScreenImagePrototypes = screenImages.filter { it.index.type == AttachmentType.COLOUR }
-        val otherScreenImagePrototypes = screenImages.filter { it.index.type != AttachmentType.COLOUR }
-
-        colourScreenImagePrototypes.forEachIndexed { i, p ->
+        colourImagesPrototypes.forEachIndexed { i, p ->
             val index = ColourAttachmentIndex(i)
             val attachment = Attachment(p.buffer, allocation)
             fbo.addAttachment(index, attachment)
@@ -33,7 +31,7 @@ object Screens {
             screenImagesMap[index] = SimpleScreenImage(attachment)
         }
 
-        otherScreenImagePrototypes.forEach { p ->
+        otherImagesPrototypes.forEach { p ->
             val index = BasicAttachmentIndex(p.index.type)
             val attachment = Attachment(p.buffer, allocation)
             fbo.addAttachment(index, attachment)
@@ -41,8 +39,8 @@ object Screens {
             screenImagesMap[index] = SimpleScreenImage(attachment)
         }
 
-        setReadTarget(fbo, colourScreenImagePrototypes)
-        setDrawTargets(fbo, colourScreenImagePrototypes)
+        setReadTarget(fbo, colourImagesPrototypes)
+        setDrawTargets(fbo, colourImagesPrototypes)
 
         return ScreenPrototypeWrapper(fbo, screenImagesMap)
     }

@@ -8,6 +8,7 @@ import org.saar.lwjgl.opengl.constants.Comparator
 import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.stencil.*
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -24,7 +25,7 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
         StencilMask.UNCHANGED
     )
 
-    private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0))
+    private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0), SimpleAllocationStrategy())
 
     override fun render(): RenderingOutput<T> {
         this.screen.setAsDraw()

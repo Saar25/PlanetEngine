@@ -9,6 +9,7 @@ import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
@@ -27,7 +28,8 @@ class ShadowsRenderingPath(
     private val prototype = ShadowsScreenPrototype()
 
     private val screen = Screens.fromPrototype(this.prototype,
-        Fbo.create(quality.imageSize, quality.imageSize))
+        Fbo.create(quality.imageSize, quality.imageSize),
+        SimpleAllocationStrategy())
 
     override fun render(): RenderingOutput<ShadowsBuffers> {
         this.screen.setAsDraw()
