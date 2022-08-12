@@ -1,7 +1,7 @@
 package org.saar.core.mesh.buffer;
 
-import org.saar.lwjgl.opengl.vaos.WritableVao;
-import org.saar.lwjgl.opengl.objects.vbos.IVbo;
+import org.saar.lwjgl.opengl.vao.WritableVao;
+import org.saar.lwjgl.opengl.vbo.IVbo;
 import org.saar.lwjgl.util.DataReader;
 import org.saar.lwjgl.util.DataWriter;
 import org.saar.lwjgl.util.buffer.LwjglBuffer;

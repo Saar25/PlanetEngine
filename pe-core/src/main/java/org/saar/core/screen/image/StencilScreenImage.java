@@ -1,6 +1,6 @@
 package org.saar.core.screen.image;
 
-import org.saar.lwjgl.opengl.fbos.attachment.StencilAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.StencilAttachment;
 
 public class StencilScreenImage implements ScreenImage {
 

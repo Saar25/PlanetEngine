@@ -2,8 +2,8 @@ package org.saar.core.mesh.buffer;
 
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
-import org.saar.lwjgl.opengl.vaos.WritableVao;
-import org.saar.lwjgl.opengl.objects.vbos.IVbo;
+import org.saar.lwjgl.opengl.vao.WritableVao;
+import org.saar.lwjgl.opengl.vbo.IVbo;
 
 import java.util.ArrayList;
 import java.util.Collections;

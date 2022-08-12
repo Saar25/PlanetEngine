@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
-import org.saar.lwjgl.opengl.vaos.Vao
+import org.saar.lwjgl.opengl.vao.Vao
 
 object Meshes {
 

@@ -6,10 +6,10 @@ import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.DepthScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.MultisampledAllocationStrategy;
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.DepthAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 
 public class MyScreenPrototype implements ScreenPrototype {
 

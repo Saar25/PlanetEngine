@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
 import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.fbos.Fbo
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.stencil.*
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils

@@ -4,10 +4,10 @@ import org.saar.core.screen.exceptions.MissingDrawAttachmentsException;
 import org.saar.core.screen.exceptions.MissingReadAttachmentException;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.lwjgl.opengl.fbos.IFbo;
-import org.saar.lwjgl.opengl.fbos.ModifiableFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.IFbo;
+import org.saar.lwjgl.opengl.fbo.ModifiableFbo;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
 
 import java.util.Arrays;
 import java.util.Comparator;

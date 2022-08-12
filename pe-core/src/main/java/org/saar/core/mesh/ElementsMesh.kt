@@ -3,7 +3,7 @@ package org.saar.core.mesh
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
-import org.saar.lwjgl.opengl.vaos.IVao
+import org.saar.lwjgl.opengl.vao.IVao
 
 class ElementsMesh(
     private val vao: IVao,

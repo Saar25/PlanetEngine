@@ -1,6 +1,6 @@
 package org.saar.core.screen.image;
 
-import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.DepthStencilAttachment;
 
 public class DepthStencilScreenImage implements ScreenImage {
 

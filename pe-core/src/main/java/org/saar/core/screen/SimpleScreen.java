@@ -2,8 +2,8 @@ package org.saar.core.screen;
 
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.lwjgl.opengl.fbos.IFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.IFbo;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,9 +5,9 @@ import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.core.screen.image.ColourScreenImage
 import org.saar.core.screen.image.ScreenImage
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class ScreenPrototype2D : RenderingPathScreenPrototype<RenderingBuffers2D> {

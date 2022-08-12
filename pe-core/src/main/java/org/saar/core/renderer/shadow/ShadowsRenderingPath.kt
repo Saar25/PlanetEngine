@@ -8,7 +8,7 @@ import org.saar.core.renderer.RenderingPath
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
-import org.saar.lwjgl.opengl.fbos.Fbo
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 

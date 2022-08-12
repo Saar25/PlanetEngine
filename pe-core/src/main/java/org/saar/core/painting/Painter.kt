@@ -4,10 +4,10 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 interface Painter : RenderPass<RenderPassBuffers> {

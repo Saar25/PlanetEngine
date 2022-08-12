@@ -1,6 +1,6 @@
 package org.saar.core.screen.image;
 
-import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.DepthAttachment;
 
 public class DepthScreenImage implements ScreenImage {
 

@@ -8,18 +8,18 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
-import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.AllocationStrategy;
-import org.saar.lwjgl.opengl.fbos.attachment.allocation.SimpleAllocationStrategy;
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentBuffer;
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.attribute.Attributes;
-import org.saar.lwjgl.opengl.vaos.Vao;
-import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.vao.Vao;
+import org.saar.lwjgl.opengl.vbo.DataBuffer;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.ShadersProgram;
 
 public class InstancedModelExample {
 

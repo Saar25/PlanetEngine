@@ -1,7 +1,7 @@
 package org.saar.core.screen.image;
 
-import org.saar.lwjgl.opengl.fbos.ReadOnlyFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.ReadOnlyFbo;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 
 public interface ScreenImage {
 

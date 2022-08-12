@@ -9,10 +9,10 @@ import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
-import org.saar.lwjgl.opengl.vaos.Vao;
-import org.saar.lwjgl.opengl.objects.vbos.Vbo;
-import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
+import org.saar.lwjgl.opengl.vao.Vao;
+import org.saar.lwjgl.opengl.vbo.Vbo;
+import org.saar.lwjgl.opengl.vbo.VboTarget;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
 
 public class WeakMesh implements Mesh {

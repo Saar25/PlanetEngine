@@ -1,9 +1,9 @@
 package org.saar.core.mesh.buffer;
 
-import org.saar.lwjgl.opengl.objects.vbos.IVbo;
-import org.saar.lwjgl.opengl.objects.vbos.Vbo;
-import org.saar.lwjgl.opengl.objects.vbos.VboTarget;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
+import org.saar.lwjgl.opengl.vbo.IVbo;
+import org.saar.lwjgl.opengl.vbo.Vbo;
+import org.saar.lwjgl.opengl.vbo.VboTarget;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
 
 public class MeshVertexBuffer extends MeshDataBuffer {
 
