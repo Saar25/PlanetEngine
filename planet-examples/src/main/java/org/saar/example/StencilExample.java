@@ -3,11 +3,11 @@ package org.saar.example;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
 import org.saar.core.screen.SimpleScreen;
-import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.core.screen.image.StencilScreenImage;
+import org.saar.core.screen.image.SimpleScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.Comparator;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -19,16 +19,15 @@ import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
-import org.saar.lwjgl.opengl.attribute.Attributes;
-import org.saar.lwjgl.opengl.vao.Vao;
-import org.saar.lwjgl.opengl.vbo.DataBuffer;
-import org.saar.lwjgl.opengl.vbo.VboUsage;
 import org.saar.lwjgl.opengl.shader.Shader;
 import org.saar.lwjgl.opengl.shader.ShadersProgram;
 import org.saar.lwjgl.opengl.stencil.*;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.vao.Vao;
+import org.saar.lwjgl.opengl.vbo.DataBuffer;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
 
 public class StencilExample {
 
@@ -91,13 +90,13 @@ public class StencilExample {
         final AllocationStrategy stencilAllocation = new MultisampledAllocationStrategy(4);
         final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(InternalFormat.STENCIL_INDEX8);
         final StencilAttachment stencilAttachment = new StencilAttachment(stencilBuffer, stencilAllocation);
-        final ScreenImage screenImage = new StencilScreenImage(stencilAttachment);
+        final ScreenImage screenImage = new SimpleScreenImage(stencilAttachment);
         screen.addScreenImage(screenImage);
 
         final AllocationStrategy colourAllocation = new MultisampledAllocationStrategy(4);
         final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final ColourAttachment colourAttachment = new ColourAttachment(0, colourBuffer, colourAllocation);
-        final ColourScreenImage colourImage = new ColourScreenImage(colourAttachment);
+        final SimpleScreenImage colourImage = new SimpleScreenImage(colourAttachment);
         screen.addScreenImage(colourImage);
         screen.setReadImages(colourImage);
         screen.setDrawImages(colourImage);

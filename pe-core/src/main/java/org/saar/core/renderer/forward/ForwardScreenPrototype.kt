@@ -2,9 +2,8 @@ package org.saar.core.renderer.forward
 
 import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.ColourScreenImage
-import org.saar.core.screen.image.DepthScreenImage
 import org.saar.core.screen.image.ScreenImage
+import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbo.attachment.DepthAttachment
@@ -19,12 +18,12 @@ class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuff
     private val depthTexture = MutableTexture2D.create()
 
     @ScreenImageProperty
-    private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment(0,
+    private val colourImage: ScreenImage = SimpleScreenImage(ColourAttachment(0,
         TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16),
         SimpleAllocationStrategy()))
 
     @ScreenImageProperty
-    private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment(
+    private val depthImage: ScreenImage = SimpleScreenImage(DepthAttachment(
         TextureAttachmentBuffer(this.depthTexture, InternalFormat.RGB16),
         SimpleAllocationStrategy()))
 

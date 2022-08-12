@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.fbo;
 
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.ReadRenderTarget;
 
@@ -12,6 +13,8 @@ public interface ModifiableFbo extends ReadOnlyFbo {
      * @param attachment the attachment to add
      */
     void addAttachment(Attachment attachment);
+
+    void addAttachment(AttachmentIndex index, Attachment attachment);
 
     /**
      * Sets the draw target of the fbo

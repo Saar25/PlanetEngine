@@ -15,10 +15,14 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbo.attachment.DepthAttachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.texture.Texture2D;
@@ -116,13 +120,17 @@ public class ObjRendererExample {
     private static Fbo createFbo(int width, int height) {
         final Fbo fbo = Fbo.create(width, height);
 
-        fbo.addAttachment(colorAttachment);
-        final RenderTarget target = new IndexRenderTarget(colorAttachment.getIndex());
+        final AttachmentIndex colourIndex = new ColourAttachmentIndex(0);
+        final AttachmentIndex depthIndex = new BasicAttachmentIndex(AttachmentType.DEPTH);
+        final RenderTarget target = new IndexRenderTarget(colourIndex);
+
+        fbo.addAttachment(colourIndex, colorAttachment);
         fbo.setDrawTarget(target);
         fbo.setReadTarget(target);
+        fbo.addAttachment(depthIndex, depthAttachment);
 
-        fbo.addAttachment(depthAttachment);
         fbo.ensureStatus();
+
         return fbo;
     }
 

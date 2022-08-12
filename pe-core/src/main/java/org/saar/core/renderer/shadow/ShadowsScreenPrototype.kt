@@ -2,8 +2,8 @@ package org.saar.core.renderer.shadow
 
 import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.DepthScreenImage
 import org.saar.core.screen.image.ScreenImage
+import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.DepthAttachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
@@ -26,7 +26,7 @@ class ShadowsScreenPrototype : RenderingPathScreenPrototype<ShadowsBuffers> {
     }
 
     @ScreenImageProperty
-    private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment(
+    private val depthImage: ScreenImage = SimpleScreenImage(DepthAttachment(
         TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24),
         SimpleAllocationStrategy()))
 

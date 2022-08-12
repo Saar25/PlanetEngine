@@ -8,6 +8,7 @@ import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
@@ -25,12 +26,13 @@ interface Painter : RenderPass<RenderPassBuffers> {
 fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFormat): MutableTexture2D {
     return MutableTexture2D.create().also { texture ->
         val fbo = Fbo.create(width, height).apply {
-            val attachment = ColourAttachment(0,
-                TextureAttachmentBuffer(texture, internalFormat),
-                SimpleAllocationStrategy())
-            addAttachment(attachment)
-
+            val allocation = SimpleAllocationStrategy()
+            val buffer = TextureAttachmentBuffer(texture, internalFormat)
+            val attachment = ColourAttachment(0, buffer, allocation)
             val renderTarget = IndexRenderTarget(attachment.index)
+            val index = ColourAttachmentIndex(0)
+
+            addAttachment(index, attachment)
             setDrawTarget(renderTarget)
             setReadTarget(renderTarget)
         }
