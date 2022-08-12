@@ -6,10 +6,6 @@ import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.vao.linking.LinkingStrategy;
 import org.saar.lwjgl.opengl.vbo.ReadOnlyVbo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class Vao implements IVao {
 
     public static final IVao NULL = new Vao(0);
@@ -17,8 +13,6 @@ public class Vao implements IVao {
     public static final ReadOnlyVao EMPTY = Vao.create();
 
     private final int id;
-
-    private final List<IAttribute> attributes = new ArrayList<>();
 
     private boolean deleted = false;
 
@@ -32,26 +26,14 @@ public class Vao implements IVao {
     }
 
     @Override
-    public void enableAttributes() {
-        for (IAttribute attribute : this.attributes) {
-            attribute.enable();
-        }
-    }
-
-    @Override
-    public void disableAttributes() {
-        for (IAttribute attribute : this.attributes) {
-            attribute.disable();
-        }
-    }
-
-    @Override
     public void loadVbo(ReadOnlyVbo buffer, LinkingStrategy linking, IAttribute... attributes) {
         bind();
 
         buffer.bind();
         linking.link(attributes);
-        Collections.addAll(this.attributes, attributes);
+        for (IAttribute attribute : attributes) {
+            attribute.enable();
+        }
 
         unbind();
     }

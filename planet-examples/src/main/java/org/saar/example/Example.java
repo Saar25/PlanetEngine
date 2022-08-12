@@ -37,7 +37,6 @@ public class Example {
         shadersProgram.bind();
 
         vao.bind();
-        vao.enableAttributes();
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {

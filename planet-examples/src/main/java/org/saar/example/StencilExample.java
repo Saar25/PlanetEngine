@@ -68,13 +68,11 @@ public class StencilExample {
             StencilTest.apply(writeStencil);
 
             vao1.bind();
-            vao1.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             StencilTest.apply(readStencil);
 
             vao2.bind();
-            vao2.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             screen.copyTo(MainScreen.INSTANCE);

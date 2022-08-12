@@ -38,7 +38,6 @@ public class IndexLodMesh implements Mesh {
     @Override
     public void draw() {
         this.vao.bind();
-        this.vao.enableAttributes();
         final int index = getLod().get();
         this.drawCalls.get(index).doDrawCall();
     }

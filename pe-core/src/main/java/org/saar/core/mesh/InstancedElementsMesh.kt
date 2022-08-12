@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.vao.IVao
 
 class InstancedElementsMesh(
     private val vao: IVao,
-    var drawCall: InstancedElementsDrawCall
+    var drawCall: InstancedElementsDrawCall,
 ) : Mesh {
 
     fun set(
@@ -22,7 +22,6 @@ class InstancedElementsMesh(
 
     override fun draw() {
         this.vao.bind()
-        this.vao.enableAttributes()
         this.drawCall.doDrawCall()
     }
 

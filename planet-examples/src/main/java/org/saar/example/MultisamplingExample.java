@@ -54,7 +54,6 @@ public class MultisamplingExample {
         shadersProgram.bind();
 
         vao.bind();
-        vao.enableAttributes();
 
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
