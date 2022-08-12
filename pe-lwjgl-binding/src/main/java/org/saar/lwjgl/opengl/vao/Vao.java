@@ -2,11 +2,12 @@ package org.saar.lwjgl.opengl.vao;
 
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
-import org.saar.lwjgl.opengl.attribute.Attributes;
-import org.saar.lwjgl.opengl.vbo.ReadOnlyVbo;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.saar.lwjgl.opengl.vao.linking.LinkingStrategy;
+import org.saar.lwjgl.opengl.vbo.ReadOnlyVbo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Vao implements IVao {
@@ -45,27 +46,14 @@ public class Vao implements IVao {
     }
 
     @Override
-    public void loadVbo(ReadOnlyVbo buffer, IAttribute... attributes) {
+    public void loadVbo(ReadOnlyVbo buffer, LinkingStrategy linking, IAttribute... attributes) {
         bind();
-        buffer.bind();
-        linkAttributes(attributes);
-        unbind();
-    }
 
-    /**
-     * Link the attributes, assuming that the data in the vbo is stored as [v1data, v2data, v3data...]
-     * and not as [[positions], [texture coordinate], [normals], ...]
-     *
-     * @param attributes the attributes to link
-     */
-    private void linkAttributes(IAttribute... attributes) {
-        int offset = 0;
-        int stride = Attributes.sumBytes(attributes);
-        for (IAttribute attribute : attributes) {
-            attribute.link(stride, offset);
-            offset += attribute.getBytesPerVertex();
-            this.attributes.add(attribute);
-        }
+        buffer.bind();
+        linking.link(attributes);
+        Collections.addAll(this.attributes, attributes);
+
+        unbind();
     }
 
     @Override
