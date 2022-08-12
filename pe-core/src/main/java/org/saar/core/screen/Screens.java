@@ -7,9 +7,10 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbo.IFbo;
 import org.saar.lwjgl.opengl.fbo.ModifiableFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.rendertarget.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,8 +34,11 @@ public final class Screens {
         return new ScreenPrototypeWrapper(fbo, screenImages);
     }
 
-    public static Attachment[] toAttachments(ScreenImage... images) {
-        return Arrays.stream(images).map(ScreenImage::getAttachment).toArray(Attachment[]::new);
+    public static SingleRenderTarget[] toRenderTargets(ScreenImage... images) {
+        return Arrays.stream(images)
+                .map(ScreenImage::getAttachment)
+                .map(AttachmentRenderTarget::new)
+                .toArray(SingleRenderTarget[]::new);
     }
 
     private static void addAttachments(ModifiableFbo fbo, List<ScreenImage> screenImages) {
@@ -46,26 +50,28 @@ public final class Screens {
     private static void setDrawAttachments(ModifiableFbo fbo, ScreenImagesLocator locator) {
         final List<ColourScreenImage> drawScreenImages = locator.getDrawScreenImage();
 
-        if (drawScreenImages.size() <= 0) {
+        if (drawScreenImages.size() == 0) {
             throw new MissingDrawAttachmentsException("No draw attachments found in screen prototype");
         }
 
-        fbo.setDrawAttachments(toColourAttachments(drawScreenImages));
+        final SingleRenderTarget[] renderTargets = drawScreenImages.stream()
+                .map(ColourScreenImage::getAttachment)
+                .sorted(Comparator.comparingInt(a -> a.getIndex().getValue()))
+                .map(AttachmentRenderTarget::new)
+                .toArray(SingleRenderTarget[]::new);
+        final DrawRenderTarget target = new DrawRenderTargetComposite(renderTargets);
+        fbo.setDrawTarget(target);
     }
 
     private static void setReadAttachments(ModifiableFbo fbo, ScreenImagesLocator locator) {
         final List<ColourScreenImage> readScreenImages = locator.getReadScreenImages();
 
-        if (readScreenImages.size() <= 0) {
+        if (readScreenImages.size() == 0) {
             throw new MissingReadAttachmentException("No read attachment found in screen prototype");
         }
 
-        fbo.setReadAttachment(readScreenImages.get(0).getAttachment());
-    }
-
-    private static ColourAttachment[] toColourAttachments(List<ColourScreenImage> images) {
-        return images.stream().map(ColourScreenImage::getAttachment)
-                .sorted(Comparator.comparingInt(a -> a.getIndex().getValue()))
-                .toArray(ColourAttachment[]::new);
+        final Attachment attachment = readScreenImages.get(0).getAttachment();
+        final ReadRenderTarget target = new AttachmentRenderTarget(attachment);
+        fbo.setReadTarget(target);
     }
 }

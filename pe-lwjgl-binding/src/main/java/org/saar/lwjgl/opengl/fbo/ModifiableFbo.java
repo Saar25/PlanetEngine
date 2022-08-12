@@ -1,7 +1,8 @@
 package org.saar.lwjgl.opengl.fbo;
 
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget;
+import org.saar.lwjgl.opengl.fbo.rendertarget.ReadRenderTarget;
 
 public interface ModifiableFbo extends ReadOnlyFbo {
 
@@ -13,17 +14,17 @@ public interface ModifiableFbo extends ReadOnlyFbo {
     void addAttachment(Attachment attachment);
 
     /**
-     * Sets the read attachments of the fbo
+     * Sets the draw target of the fbo
      *
-     * @param attachment the read attachment
+     * @param target the draw target
      */
-    void setReadAttachment(ColourAttachment attachment);
+    void setDrawTarget(DrawRenderTarget target);
 
     /**
-     * Sets the draw attachments of the fbo
+     * Sets the read source of the fbo
      *
-     * @param attachments the draw attachments
+     * @param target the read source
      */
-    void setDrawAttachments(Attachment... attachments);
+    void setReadTarget(ReadRenderTarget target);
 
 }

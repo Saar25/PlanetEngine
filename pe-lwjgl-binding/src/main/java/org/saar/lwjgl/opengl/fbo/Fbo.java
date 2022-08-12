@@ -2,9 +2,9 @@ package org.saar.lwjgl.opengl.fbo;
 
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbo.attachment.Attachments;
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
 import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
+import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget;
+import org.saar.lwjgl.opengl.fbo.rendertarget.ReadRenderTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -36,15 +36,15 @@ public class Fbo implements IFbo {
     }
 
     @Override
-    public void setReadAttachment(ColourAttachment attachment) {
+    public void setReadTarget(ReadRenderTarget target) {
         bind();
-        Attachments.readAttachment(attachment);
+        target.setAsRead();
     }
 
     @Override
-    public void setDrawAttachments(Attachment... attachments) {
+    public void setDrawTarget(DrawRenderTarget target) {
         bind();
-        Attachments.drawAttachments(attachments);
+        target.setAsDraw();
     }
 
     public void blitToScreen() {

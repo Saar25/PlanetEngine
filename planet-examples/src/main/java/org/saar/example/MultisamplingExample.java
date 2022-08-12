@@ -2,6 +2,7 @@ package org.saar.example;
 
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
@@ -11,15 +12,16 @@ import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
-import org.saar.lwjgl.opengl.attribute.Attributes;
-import org.saar.lwjgl.opengl.vao.Vao;
-import org.saar.lwjgl.opengl.vbo.DataBuffer;
-import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.lwjgl.opengl.fbo.rendertarget.AttachmentRenderTarget;
+import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.shader.Shader;
 import org.saar.lwjgl.opengl.shader.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.vao.Vao;
+import org.saar.lwjgl.opengl.vbo.DataBuffer;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
 
 public class MultisamplingExample {
 
@@ -54,14 +56,14 @@ public class MultisamplingExample {
 
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        //        final AllocationStrategy allocation = new SimpleAllocationStrategy();
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(8);
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
+        final RenderTarget target = new AttachmentRenderTarget(attachment);
 
         fbo.addAttachment(attachment);
-        fbo.setReadAttachment(attachment);
-        fbo.setDrawAttachments(attachment);
+        fbo.setReadTarget(target);
+        fbo.setDrawTarget(target);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {

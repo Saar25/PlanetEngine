@@ -3,7 +3,8 @@ package org.saar.core.screen;
 import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbo.IFbo;
-import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.rendertarget.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,15 @@ public class SimpleScreen extends ScreenBase implements OffScreen {
     }
 
     public void setDrawImages(ScreenImage... images) {
-        final Attachment[] attachment = Screens.toAttachments(images);
-        getFbo().setDrawAttachments(attachment);
+        final SingleRenderTarget[] targets = Screens.toRenderTargets(images);
+        final DrawRenderTarget target = new DrawRenderTargetComposite(targets);
+        getFbo().setDrawTarget(target);
     }
 
     public void setReadImages(ColourScreenImage image) {
-        getFbo().setReadAttachment(image.getAttachment());
+        final ColourAttachment attachment = image.getAttachment();
+        final ReadRenderTarget target = new AttachmentRenderTarget(attachment);
+        getFbo().setReadTarget(target);
     }
 
     @Override
