@@ -5,7 +5,7 @@ import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
@@ -28,9 +28,9 @@ fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFor
         val fbo = Fbo.create(width, height).apply {
             val allocation = SimpleAllocationStrategy()
             val buffer = TextureAttachmentBuffer(texture, internalFormat)
-            val attachment = ColourAttachment(0, buffer, allocation)
-            val renderTarget = IndexRenderTarget(attachment.index)
+            val attachment = Attachment(buffer, allocation)
             val index = ColourAttachmentIndex(0)
+            val renderTarget = IndexRenderTarget(index)
 
             addAttachment(index, attachment)
             setDrawTarget(renderTarget)

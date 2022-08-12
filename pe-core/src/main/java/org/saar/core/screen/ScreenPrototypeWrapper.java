@@ -2,17 +2,18 @@ package org.saar.core.screen;
 
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbo.IFbo;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 
-import java.util.List;
+import java.util.Map;
 
 public class ScreenPrototypeWrapper extends ScreenBase implements OffScreen {
 
     private final IFbo fbo;
-    private final List<ScreenImage> attachments;
+    private final Map<AttachmentIndex, ScreenImage> images;
 
-    public ScreenPrototypeWrapper(IFbo fbo, List<ScreenImage> attachments) {
+    public ScreenPrototypeWrapper(IFbo fbo, Map<AttachmentIndex, ScreenImage> images) {
         this.fbo = fbo;
-        this.attachments = attachments;
+        this.images = images;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class ScreenPrototypeWrapper extends ScreenBase implements OffScreen {
     }
 
     @Override
-    protected List<ScreenImage> getScreenImages() {
-        return this.attachments;
+    protected Map<AttachmentIndex, ScreenImage> getScreenImages() {
+        return this.images;
     }
 }

@@ -11,19 +11,18 @@ import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
+import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -90,12 +89,11 @@ fun main() {
 }
 
 private class MyScreenPrototype : ScreenPrototype {
-    val image = MutableTexture2D.create()
+    val image: MutableTexture2D = MutableTexture2D.create()
 
-    @ScreenImageProperty(draw = true, read = true)
-    private val colourImage = SimpleScreenImage(ColourAttachment(0,
-        TextureAttachmentBuffer(this.image, InternalFormat.R8),
-        SimpleAllocationStrategy()))
+    @ScreenImageProperty
+    private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
+        TextureAttachmentBuffer(this.image, InternalFormat.R8), read = true)
 
     val buffers = object : RenderingBuffers2D {
         override val albedo = image

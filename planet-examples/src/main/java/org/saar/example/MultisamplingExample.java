@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
@@ -61,8 +61,8 @@ public class MultisamplingExample {
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(8);
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final AttachmentIndex attachmentIndex = new ColourAttachmentIndex(0);
-        final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
-        final RenderTarget target = new IndexRenderTarget(attachment.getIndex());
+        final Attachment attachment = new Attachment(buffer, allocation);
+        final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 
         fbo.addAttachment(attachmentIndex, attachment);
         fbo.setReadTarget(target);

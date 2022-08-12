@@ -14,16 +14,15 @@ import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
+import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -48,10 +47,9 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
-        @ScreenImageProperty(draw = true, read = true)
-        private val colourImage = SimpleScreenImage(ColourAttachment(0,
-            TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F),
-            SimpleAllocationStrategy()))
+        @ScreenImageProperty
+        private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
+            TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F), read = true)
     }, Fbo.create(0, 0))
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)

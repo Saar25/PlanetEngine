@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.fbo;
 
 import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.IAttachment;
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget;
@@ -31,15 +31,9 @@ public class Fbo implements IFbo {
     }
 
     @Override
-    public void addAttachment(Attachment attachment) {
+    public void addAttachment(AttachmentIndex index, IAttachment attachment) {
         bind();
-        attachment.init(this);
-    }
-
-    @Override
-    public void addAttachment(AttachmentIndex index, Attachment attachment) {
-        bind();
-        attachment.init(this);
+        attachment.init(this, index);
     }
 
     @Override

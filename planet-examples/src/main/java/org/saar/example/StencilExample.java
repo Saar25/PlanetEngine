@@ -13,12 +13,15 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbo.attachment.StencilAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
 import org.saar.lwjgl.opengl.shader.Shader;
 import org.saar.lwjgl.opengl.shader.ShadersProgram;
 import org.saar.lwjgl.opengl.stencil.*;
@@ -87,19 +90,21 @@ public class StencilExample {
         final Fbo fbo = Fbo.create(width, height);
         final SimpleScreen screen = new SimpleScreen(fbo);
 
+        final AttachmentIndex stencilIndex = new BasicAttachmentIndex(AttachmentType.STENCIL);
         final AllocationStrategy stencilAllocation = new MultisampledAllocationStrategy(4);
         final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(InternalFormat.STENCIL_INDEX8);
-        final StencilAttachment stencilAttachment = new StencilAttachment(stencilBuffer, stencilAllocation);
+        final Attachment stencilAttachment = new Attachment(stencilBuffer, stencilAllocation);
         final ScreenImage screenImage = new SimpleScreenImage(stencilAttachment);
-        screen.addScreenImage(screenImage);
+        screen.addScreenImage(stencilIndex, screenImage);
 
+        final AttachmentIndex colourIndex = new ColourAttachmentIndex(0);
         final AllocationStrategy colourAllocation = new MultisampledAllocationStrategy(4);
         final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
-        final ColourAttachment colourAttachment = new ColourAttachment(0, colourBuffer, colourAllocation);
-        final SimpleScreenImage colourImage = new SimpleScreenImage(colourAttachment);
-        screen.addScreenImage(colourImage);
-        screen.setReadImages(colourImage);
-        screen.setDrawImages(colourImage);
+        final Attachment attachment = new Attachment(colourBuffer, colourAllocation);
+        final SimpleScreenImage colourImage = new SimpleScreenImage(attachment);
+        screen.addScreenImage(colourIndex, colourImage);
+        screen.setReadImages(colourIndex);
+        screen.setDrawImages(colourIndex);
 
         fbo.ensureStatus();
 

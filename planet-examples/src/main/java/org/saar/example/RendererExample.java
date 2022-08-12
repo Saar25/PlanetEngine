@@ -6,7 +6,7 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
@@ -42,9 +42,9 @@ public class RendererExample {
 
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
-        final ColourAttachment attachment = new ColourAttachment(0, buffer, allocation);
+        final Attachment attachment = new Attachment(buffer, allocation);
         final AttachmentIndex attachmentIndex = new ColourAttachmentIndex(0);
-        final RenderTarget target = new IndexRenderTarget(attachment.getIndex());
+        final RenderTarget target = new IndexRenderTarget(attachmentIndex);
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
         fbo.addAttachment(attachmentIndex, attachment);
@@ -56,7 +56,7 @@ public class RendererExample {
             fbo.bind();
             fbo.resize(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
-            attachment.init(fbo);
+            attachment.init(fbo, attachmentIndex);
         });
 
         final Keyboard keyboard = window.getKeyboard();

@@ -3,15 +3,12 @@ package org.saar.core.screen;
 import org.saar.core.screen.image.ScreenImage;
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
 import org.saar.lwjgl.opengl.fbo.IFbo;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 
-import java.util.List;
+import java.util.Map;
 
 public abstract class ScreenBase implements Screen {
-
-    protected void init() {
-
-    }
 
     @Override
     public int getWidth() {
@@ -44,19 +41,19 @@ public abstract class ScreenBase implements Screen {
     protected void resize(int width, int height) {
         getFbo().bind();
         getFbo().resize(width, height);
-        for (ScreenImage screenImage : getScreenImages()) {
-            screenImage.init(getFbo());
+        for (Map.Entry<AttachmentIndex, ScreenImage> entry : getScreenImages().entrySet()) {
+            entry.getValue().init(getFbo(), entry.getKey());
         }
     }
 
     protected void delete() {
         getFbo().delete();
-        for (ScreenImage screenImage : getScreenImages()) {
+        for (ScreenImage screenImage : getScreenImages().values()) {
             screenImage.delete();
         }
     }
 
     protected abstract IFbo getFbo();
 
-    protected abstract List<ScreenImage> getScreenImages();
+    protected abstract Map<AttachmentIndex, ScreenImage> getScreenImages();
 }

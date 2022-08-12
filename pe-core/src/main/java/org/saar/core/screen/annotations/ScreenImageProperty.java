@@ -9,8 +9,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ScreenImageProperty {
 
-    boolean draw() default false;
-
-    boolean read() default false;
-
 }
