@@ -1,7 +1,7 @@
 package org.saar.core.mesh.builder
 
 import org.saar.core.mesh.Instance
-import org.saar.core.mesh.InstancedArraysMesh
+import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.Meshes
 import org.saar.core.mesh.prototype.InstancedMeshPrototype
 import org.saar.core.mesh.prototype.allocateInstances
@@ -23,7 +23,7 @@ abstract class InstancedMeshBuilder<I : Instance> internal constructor(
 
     abstract fun addInstance(instance: I)
 
-    abstract override fun load(): InstancedArraysMesh
+    abstract override fun load(): Mesh
 
     class Dynamic<I : Instance>(
         prototype: InstancedMeshPrototype<I>,
@@ -37,7 +37,7 @@ abstract class InstancedMeshBuilder<I : Instance> internal constructor(
             this.instances += instance
         }
 
-        override fun load(): InstancedArraysMesh {
+        override fun load(): Mesh {
             allocate(this.instances.size)
             this.prototype.writeInstances(this.instances)
             return Meshes.toInstancedArrayMesh(this.prototype,

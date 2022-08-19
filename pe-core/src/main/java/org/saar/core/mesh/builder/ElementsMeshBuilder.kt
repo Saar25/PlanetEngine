@@ -1,6 +1,6 @@
 package org.saar.core.mesh.builder
 
-import org.saar.core.mesh.ElementsMesh
+import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.Meshes
 import org.saar.core.mesh.Vertex
 import org.saar.core.mesh.prototype.*
@@ -22,7 +22,7 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
     abstract fun addVertex(vertex: V)
     abstract fun addIndex(index: Int)
 
-    abstract override fun load(): ElementsMesh
+    abstract override fun load(): Mesh
 
     class Dynamic<V : Vertex>(
         prototype: IndexedVertexMeshPrototype<V>,
@@ -39,7 +39,7 @@ abstract class ElementsMeshBuilder<V : Vertex> internal constructor(
             this.indices += index
         }
 
-        override fun load(): ElementsMesh {
+        override fun load(): Mesh {
             allocate(this.vertices.size, this.indices.size)
             this.prototype.writeVertices(this.vertices)
             this.prototype.writeIndices(this.indices)

@@ -1,6 +1,6 @@
 package org.saar.core.mesh.builder
 
-import org.saar.core.mesh.ArraysMesh
+import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.Meshes
 import org.saar.core.mesh.Vertex
 import org.saar.core.mesh.prototype.VertexMeshPrototype
@@ -22,7 +22,7 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
 
     abstract fun addVertex(vertex: V)
 
-    abstract override fun load(): ArraysMesh
+    abstract override fun load(): Mesh
 
     class Dynamic<V : Vertex>(
         prototype: VertexMeshPrototype<V>,
@@ -34,7 +34,7 @@ abstract class ArraysMeshBuilder<V : Vertex> internal constructor(
             this.vertices += vertex
         }
 
-        override fun load(): ArraysMesh {
+        override fun load(): Mesh {
             allocate(this.vertices.size)
             this.prototype.writeVertices(this.vertices)
             return Meshes.toArraysMesh(this.prototype, this.vertices.size)

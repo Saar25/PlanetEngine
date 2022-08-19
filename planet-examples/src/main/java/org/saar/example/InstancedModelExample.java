@@ -1,6 +1,6 @@
 package org.saar.example;
 
-import org.saar.core.mesh.InstancedArraysMesh;
+import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -8,6 +8,7 @@ import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
+import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
@@ -54,8 +55,8 @@ public class InstancedModelExample {
         vao.loadVbo(instanceBuffer, Attributes.ofInstanced(2, 1, DataType.FLOAT, false));
         instanceBuffer.delete();
 
-        final Mesh mesh = new InstancedArraysMesh(vao,
-                new InstancedArraysDrawCall(RenderMode.TRIANGLES, 3, 3));
+        final DrawCall drawCall = new InstancedArraysDrawCall(RenderMode.TRIANGLES, 3, 3);
+        final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),

@@ -15,18 +15,18 @@ import org.saar.lwjgl.opengl.vao.Vao
 object Meshes {
 
     @JvmStatic
-    fun toArraysMesh(prototype: VertexMeshPrototype<*>, vertices: Int): ArraysMesh {
+    fun toArraysMesh(prototype: VertexMeshPrototype<*>, vertices: Int): DrawCallMesh {
         val vao = Vao.create()
 
         prototype.vertexBuffers.forEach { it.store(0) }
         prototype.vertexBuffers.forEach { it.loadInVao(vao) }
 
-        return ArraysMesh(vao, ArraysDrawCall(
+        return DrawCallMesh(vao, ArraysDrawCall(
             RenderMode.TRIANGLES, 0, vertices))
     }
 
     @JvmStatic
-    fun toElementsMesh(prototype: IndexedVertexMeshPrototype<*>, indices: Int): ElementsMesh {
+    fun toElementsMesh(prototype: IndexedVertexMeshPrototype<*>, indices: Int): Mesh {
         val vao = Vao.create()
 
         prototype.vertexBuffers.forEach { it.store(0) }
@@ -35,7 +35,7 @@ object Meshes {
         prototype.indexBuffers.forEach { it.store(0) }
         prototype.indexBuffers.forEach { it.loadInVao(vao) }
 
-        return ElementsMesh(vao, ElementsDrawCall(
+        return DrawCallMesh(vao, ElementsDrawCall(
             RenderMode.TRIANGLES, indices, DataType.U_INT))
     }
 
@@ -43,13 +43,13 @@ object Meshes {
     fun toInstancedArrayMesh(
         prototype: InstancedMeshPrototype<*>, vertices: Int, instances: Int,
         renderMode: RenderMode = RenderMode.TRIANGLES,
-    ): InstancedArraysMesh {
+    ): Mesh {
         val vao = Vao.create()
 
         prototype.instanceBuffers.forEach { it.store(0) }
         prototype.instanceBuffers.forEach { it.loadInVao(vao) }
 
-        return InstancedArraysMesh(vao, InstancedArraysDrawCall(renderMode, vertices, instances))
+        return DrawCallMesh(vao, InstancedArraysDrawCall(renderMode, vertices, instances))
     }
 
     @JvmStatic
@@ -57,7 +57,7 @@ object Meshes {
         prototype: InstancedIndexedVertexMeshPrototype<*, *>,
         indices: Int,
         instances: Int,
-    ): InstancedElementsMesh {
+    ): Mesh {
         val vao = Vao.create()
 
         prototype.vertexBuffers.forEach { it.store(0) }
@@ -69,7 +69,8 @@ object Meshes {
         prototype.indexBuffers.forEach { it.store(0) }
         prototype.indexBuffers.forEach { it.loadInVao(vao) }
 
-        return InstancedElementsMesh(vao, InstancedElementsDrawCall(
-            RenderMode.TRIANGLES, indices, DataType.U_INT, instances))
+        val drawCall = InstancedElementsDrawCall(
+            RenderMode.TRIANGLES, indices, DataType.U_INT, instances)
+        return DrawCallMesh(vao, drawCall)
     }
 }
