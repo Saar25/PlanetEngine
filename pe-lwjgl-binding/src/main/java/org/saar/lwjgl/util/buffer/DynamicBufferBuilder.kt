@@ -11,4 +11,6 @@ class DynamicBufferBuilder : BufferBuilder {
 
     override fun build(): LwjglBuffer = LwjglByteBuffer.allocate(this.storage.size)
         .also { buffer -> this.storage.forEach { byte -> buffer.put(byte) } }
+
+    override fun delete() = this.storage.clear()
 }

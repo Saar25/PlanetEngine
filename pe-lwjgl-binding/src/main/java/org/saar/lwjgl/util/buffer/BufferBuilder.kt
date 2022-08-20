@@ -8,4 +8,6 @@ interface BufferBuilder {
 
     fun build(): LwjglBuffer
 
+    fun delete()
+
 }

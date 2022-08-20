@@ -9,4 +9,6 @@ class FixedBufferBuilder(capacity: Int) : BufferBuilder {
     override val writer: DataWriter = this.storage.writer
 
     override fun build(): LwjglBuffer = this.storage
+
+    override fun delete() = this.storage.close()
 }
