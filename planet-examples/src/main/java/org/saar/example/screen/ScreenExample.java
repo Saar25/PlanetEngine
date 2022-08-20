@@ -6,9 +6,9 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.obj.Obj;
-import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.screen.MainScreen;
@@ -89,7 +89,7 @@ public class ScreenExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
+            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {

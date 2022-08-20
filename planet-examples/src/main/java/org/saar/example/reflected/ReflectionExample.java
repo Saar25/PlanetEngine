@@ -10,11 +10,15 @@ import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
 import org.saar.core.common.components.MouseDragRotationComponent;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.obj.Obj;
+import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
+import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.renderer.RenderContext;
@@ -286,7 +290,7 @@ public class ReflectionExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
+            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -297,7 +301,7 @@ public class ReflectionExample {
 
     private static ObjModel loadStall() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
+            final Mesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -308,7 +312,7 @@ public class ReflectionExample {
 
     private static ObjModel loadDragon() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
+            final Mesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {

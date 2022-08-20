@@ -2,6 +2,7 @@ package org.saar.core.common.obj
 
 import org.joml.Vector2fc
 import org.joml.Vector3fc
+import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.buffer.MeshIndexBuffer
 import org.saar.core.mesh.buffer.MeshVertexBuffer
 
@@ -23,7 +24,7 @@ object Obj {
 
     @JvmStatic
     @JvmOverloads
-    fun mesh(vertices: Array<ObjVertex>, indices: IntArray, prototype: ObjMeshPrototype = meshPrototype()): ObjMesh {
+    fun mesh(vertices: Array<ObjVertex>, indices: IntArray, prototype: ObjMeshPrototype = meshPrototype()): Mesh {
         return ObjMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
             vertices.forEach(it::addVertex)
             indices.forEach(it::addIndex)
@@ -32,7 +33,7 @@ object Obj {
 
     @JvmStatic
     @JvmOverloads
-    fun mesh(file: String, prototype: ObjMeshPrototype = meshPrototype()): ObjMesh {
+    fun mesh(file: String, prototype: ObjMeshPrototype = meshPrototype()): Mesh {
         return ObjMeshLoader(file).use { loader ->
             mesh(loader.loadVertices(), loader.loadIndices(), prototype)
         }

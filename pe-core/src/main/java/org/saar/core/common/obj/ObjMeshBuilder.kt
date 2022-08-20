@@ -13,7 +13,7 @@ class ObjMeshBuilder private constructor(
 
     fun addVertex(vertex: ObjVertex) = this.builder.addVertex(vertex)
 
-    override fun load() = ObjMesh(this.builder.load())
+    override fun load() = this.builder.load()
 
     companion object {
         @JvmStatic
