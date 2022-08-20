@@ -3,14 +3,14 @@ package org.saar.core.common.obj
 import org.saar.core.mesh.buffer.MeshIndexBuffer
 import org.saar.core.mesh.buffer.MeshVertexBuffer
 import org.saar.core.mesh.prototype.IndexedVertexMeshPrototype
-import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
 
-class ObjMeshPrototype(
-    private val positionBuffer: MeshVertexBuffer,
-    private val uvCoordBuffer: MeshVertexBuffer,
-    private val normalBuffer: MeshVertexBuffer,
-    private val indexBuffer: MeshIndexBuffer,
+class ObjMeshBuffers(
+    val positionBuffer: MeshVertexBuffer,
+    val uvCoordBuffer: MeshVertexBuffer,
+    val normalBuffer: MeshVertexBuffer,
+    val indexBuffer: MeshIndexBuffer,
 ) : IndexedVertexMeshPrototype<ObjVertex> {
 
     constructor(vertexBuffer: MeshVertexBuffer, indexBuffer: MeshIndexBuffer) : this(

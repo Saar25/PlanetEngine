@@ -16,15 +16,15 @@ object Obj {
     }
 
     @JvmStatic
-    fun meshPrototype(): ObjMeshPrototype {
+    fun meshPrototype(): ObjMeshBuffers {
         val vertex = MeshVertexBuffer.createStatic()
         val index = MeshIndexBuffer.createStatic()
-        return ObjMeshPrototype(vertex, index)
+        return ObjMeshBuffers(vertex, index)
     }
 
     @JvmStatic
     @JvmOverloads
-    fun mesh(vertices: Array<ObjVertex>, indices: IntArray, prototype: ObjMeshPrototype = meshPrototype()): Mesh {
+    fun mesh(vertices: Array<ObjVertex>, indices: IntArray, prototype: ObjMeshBuffers = meshPrototype()): Mesh {
         return ObjMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
             vertices.forEach(it::addVertex)
             indices.forEach(it::addIndex)
@@ -33,7 +33,7 @@ object Obj {
 
     @JvmStatic
     @JvmOverloads
-    fun mesh(file: String, prototype: ObjMeshPrototype = meshPrototype()): Mesh {
+    fun mesh(file: String, prototype: ObjMeshBuffers = meshPrototype()): Mesh {
         return ObjMeshLoader(file).use { loader ->
             mesh(loader.loadVertices(), loader.loadIndices(), prototype)
         }

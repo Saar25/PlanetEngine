@@ -18,12 +18,12 @@ class ObjMeshBuilder private constructor(
     companion object {
         @JvmStatic
         @JvmOverloads
-        fun dynamic(prototype: ObjMeshPrototype = Obj.meshPrototype()) =
+        fun dynamic(prototype: ObjMeshBuffers = Obj.meshPrototype()) =
             ObjMeshBuilder(ElementsMeshBuilder.Dynamic(prototype))
 
         @JvmStatic
         @JvmOverloads
-        fun fixed(vertices: Int, indices: Int, prototype: ObjMeshPrototype = Obj.meshPrototype()) =
+        fun fixed(vertices: Int, indices: Int, prototype: ObjMeshBuffers = Obj.meshPrototype()) =
             ObjMeshBuilder(ElementsMeshBuilder.Fixed(vertices, indices, prototype))
     }
 }
