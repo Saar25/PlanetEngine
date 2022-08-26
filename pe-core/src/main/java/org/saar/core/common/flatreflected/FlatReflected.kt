@@ -3,6 +3,8 @@ package org.saar.core.common.flatreflected
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.builder.MeshBufferBuilder
+import org.saar.core.mesh.builder.writeIndices
+import org.saar.core.mesh.builder.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
@@ -23,11 +25,11 @@ object FlatReflected {
             FixedBufferBuilder(indices.size * 4),
             VboUsage.STATIC_DRAW)
 
-        val flatReflectedMeshBuilder = FlatReflectedMeshBuilder(indices.size,
-            vertexBufferBuilder, indexBufferBuilder)
+        val flatReflectedMeshBuilder = FlatReflectedMeshBuilder(
+            indices.size, vertexBufferBuilder, indexBufferBuilder)
 
-        vertices.forEach(flatReflectedMeshBuilder.writer::writeVertex)
-        indices.forEach(flatReflectedMeshBuilder.writer::writeIndex)
+        flatReflectedMeshBuilder.writer.writeVertices(vertices)
+        flatReflectedMeshBuilder.writer.writeIndices(indices)
 
         return flatReflectedMeshBuilder.load()
     }

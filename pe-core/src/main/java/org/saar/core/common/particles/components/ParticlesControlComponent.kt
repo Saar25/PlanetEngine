@@ -1,8 +1,6 @@
 package org.saar.core.common.particles.components
 
 import org.saar.core.common.particles.ParticlesInstance
-import org.saar.core.mesh.prototype.readInstance
-import org.saar.core.mesh.prototype.writeInstances
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 

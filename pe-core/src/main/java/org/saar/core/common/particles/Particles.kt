@@ -3,7 +3,7 @@ package org.saar.core.common.particles
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.builder.MeshBufferBuilder
-import org.saar.core.mesh.prototype.writeInstances
+import org.saar.core.mesh.builder.writeInstances
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 

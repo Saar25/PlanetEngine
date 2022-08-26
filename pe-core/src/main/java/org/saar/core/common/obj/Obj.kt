@@ -4,6 +4,8 @@ import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.builder.MeshBufferBuilder
+import org.saar.core.mesh.builder.writeIndices
+import org.saar.core.mesh.builder.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
@@ -30,8 +32,8 @@ object Obj {
             vertexBufferBuilder, vertexBufferBuilder,
             vertexBufferBuilder, indexBufferBuilder)
 
-        vertices.forEach(objMeshBuilder.writer::writeVertex)
-        indices.forEach(objMeshBuilder.writer::writeIndex)
+        objMeshBuilder.writer.writeVertices(vertices)
+        objMeshBuilder.writer.writeIndices(indices)
 
         return objMeshBuilder.load()
     }

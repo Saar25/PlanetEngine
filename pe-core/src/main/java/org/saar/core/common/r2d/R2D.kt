@@ -4,6 +4,8 @@ import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.builder.MeshBufferBuilder
+import org.saar.core.mesh.builder.writeIndices
+import org.saar.core.mesh.builder.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
@@ -28,8 +30,8 @@ object R2D {
         val meshBuilder2D = MeshBuilder2D(indices.size,
             vertexBufferBuilder, vertexBufferBuilder, indexBufferBuilder)
 
-        vertices.forEach(meshBuilder2D.writer::writeVertex)
-        indices.forEach(meshBuilder2D.writer::writeIndex)
+        meshBuilder2D.writer.writeVertices(vertices)
+        meshBuilder2D.writer.writeIndices(indices)
 
         return meshBuilder2D.load()
     }

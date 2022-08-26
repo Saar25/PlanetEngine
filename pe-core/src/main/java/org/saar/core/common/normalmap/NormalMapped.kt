@@ -4,6 +4,8 @@ import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.builder.MeshBufferBuilder
+import org.saar.core.mesh.builder.writeIndices
+import org.saar.core.mesh.builder.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 import org.saar.maths.utils.Vector3
@@ -41,8 +43,8 @@ object NormalMapped {
             vertexBufferBuilder, vertexBufferBuilder,
             vertexBufferBuilder, indexBufferBuilder)
 
-        vertices.forEach(normalMappedMeshBuilder.writer::writeVertex)
-        indices.forEach(normalMappedMeshBuilder.writer::writeIndex)
+        normalMappedMeshBuilder.writer.writeVertices(vertices)
+        normalMappedMeshBuilder.writer.writeIndices(indices)
 
         return normalMappedMeshBuilder.load()
     }

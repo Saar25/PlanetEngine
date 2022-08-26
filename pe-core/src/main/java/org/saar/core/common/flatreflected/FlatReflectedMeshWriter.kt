@@ -1,7 +1,7 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.mesh.prototype.IndexedMeshWriter
-import org.saar.core.mesh.prototype.VertexMeshWriter
+import org.saar.core.mesh.builder.IndexedMeshWriter
+import org.saar.core.mesh.builder.VertexMeshWriter
 import org.saar.lwjgl.util.DataWriter
 
 class FlatReflectedMeshWriter(

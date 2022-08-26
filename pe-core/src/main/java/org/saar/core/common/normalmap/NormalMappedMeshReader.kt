@@ -1,7 +1,7 @@
 package org.saar.core.common.normalmap
 
-import org.saar.core.mesh.prototype.IndexedMeshReader
-import org.saar.core.mesh.prototype.VertexMeshReader
+import org.saar.core.mesh.builder.IndexedMeshReader
+import org.saar.core.mesh.builder.VertexMeshReader
 import org.saar.lwjgl.util.DataReader
 
 class NormalMappedMeshReader(

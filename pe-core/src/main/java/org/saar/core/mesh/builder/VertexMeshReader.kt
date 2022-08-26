@@ -1,4 +1,4 @@
-package org.saar.core.mesh.prototype
+package org.saar.core.mesh.builder
 
 import org.saar.core.mesh.Vertex
 
