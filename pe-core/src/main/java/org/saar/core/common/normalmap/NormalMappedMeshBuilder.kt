@@ -21,7 +21,6 @@ class NormalMappedMeshBuilder(
     private val indexBufferBuilder: MeshBufferBuilder,
 ) : MeshBuilder {
 
-
     val writer = NormalMappedMeshWriter(
         this.positionBufferBuilder.writer,
         this.uvCoordBufferBuilder.writer,

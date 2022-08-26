@@ -225,7 +225,7 @@ public class ReflectionExample {
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
         };
-        final FlatReflectedMesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
+        final Mesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
 
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
         mirror.getTransform().getPosition().set(0, .1f, 0);

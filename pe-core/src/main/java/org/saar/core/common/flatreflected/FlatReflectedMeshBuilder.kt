@@ -1,29 +1,53 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.mesh.builder.ElementsMeshBuilder
+import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.builder.MeshBufferBuilder
 import org.saar.core.mesh.builder.MeshBuilder
+import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.VboTarget
 
-class FlatReflectedMeshBuilder private constructor(
-    private val builder: ElementsMeshBuilder<FlatReflectedVertex>,
+class FlatReflectedMeshBuilder(
+    private val indices: Int,
+    private val positionBufferBuilder: MeshBufferBuilder,
+    private val indexBufferBuilder: MeshBufferBuilder,
 ) : MeshBuilder {
 
-    override fun delete() = this.builder.delete()
+    val writer = FlatReflectedMeshWriter(
+        this.positionBufferBuilder.writer,
+        this.indexBufferBuilder.writer,
+    )
 
-    fun addIndex(index: Int) = this.builder.addIndex(index)
+    private val bufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.indexBufferBuilder,
+    ).distinct()
 
-    fun addVertex(vertex: FlatReflectedVertex) = this.builder.addVertex(vertex)
+    init {
+        this.positionBufferBuilder.addAttribute(
+            Attributes.of(0, 3, DataType.FLOAT, false))
+    }
 
-    override fun load() = FlatReflectedMesh(this.builder.load())
+    override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
-    companion object {
-        @JvmStatic
-        @JvmOverloads
-        fun dynamic(prototype: FlatReflectedMeshPrototype = FlatReflected.meshPrototype()) =
-            FlatReflectedMeshBuilder(ElementsMeshBuilder.Dynamic(prototype))
+    override fun load(): Mesh {
+        val vao = Vao.create()
 
-        @JvmStatic
-        @JvmOverloads
-        fun fixed(vertices: Int, indices: Int, prototype: FlatReflectedMeshPrototype = FlatReflected.meshPrototype()) =
-            FlatReflectedMeshBuilder(ElementsMeshBuilder.Fixed(vertices, indices, prototype))
+        val buffers = listOf(
+            this.positionBufferBuilder.build(VboTarget.ARRAY_BUFFER),
+            this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+        )
+
+        buffers.forEach {
+            it.store(0)
+            it.loadInVao(vao)
+        }
+
+        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        return DrawCallMesh(vao, drawCall)
     }
 }
