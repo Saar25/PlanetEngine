@@ -8,7 +8,10 @@ import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
 import org.saar.core.common.components.MouseDragRotationComponent;
-import org.saar.core.common.normalmap.*;
+import org.saar.core.common.normalmap.NormalMapped;
+import org.saar.core.common.normalmap.NormalMappedModel;
+import org.saar.core.common.normalmap.NormalMappedNode;
+import org.saar.core.common.normalmap.NormalMappedNodeBatch;
 import org.saar.core.common.obj.Obj;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
@@ -202,7 +205,7 @@ public class NormalMappingExample {
 
     private static NormalMappedModel loadBoulder() {
         try {
-            final NormalMappedMesh mesh = NormalMapped.mesh("/assets/boulder/boulder.model.obj");
+            final Mesh mesh = NormalMapped.mesh("/assets/boulder/boulder.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/boulder/boulder.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/boulder/boulder.diffuse.png");
             return new NormalMappedModel(mesh, texture, normalMap);
@@ -214,7 +217,7 @@ public class NormalMappingExample {
 
     private static NormalMappedModel loadBarrel() {
         try {
-            final NormalMappedMesh mesh = NormalMapped.mesh("/assets/barrel/barrel.model.obj");
+            final Mesh mesh = NormalMapped.mesh("/assets/barrel/barrel.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/barrel/barrel.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/barrel/barrel.diffuse.png");
             return new NormalMappedModel(mesh, texture, normalMap);
@@ -226,7 +229,7 @@ public class NormalMappingExample {
 
     private static NormalMappedModel loadCrate() {
         try {
-            final NormalMappedMesh mesh = NormalMapped.mesh("/assets/crate/crate.model.obj");
+            final Mesh mesh = NormalMapped.mesh("/assets/crate/crate.model.obj");
             final ReadOnlyTexture normalMap = Texture2D.of("/assets/crate/crate.normal.png");
             final ReadOnlyTexture texture = Texture2D.of("/assets/crate/crate.diffuse.png");
             return new NormalMappedModel(mesh, texture, normalMap);
