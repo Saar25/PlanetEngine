@@ -6,9 +6,8 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.r3d.*;
-import org.saar.core.mesh.buffer.MeshIndexBuffer;
-import org.saar.core.mesh.buffer.MeshInstanceBuffer;
-import org.saar.core.mesh.buffer.MeshVertexBuffer;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.mesh.builder.MeshBufferBuilder;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.util.Fps;
@@ -17,12 +16,14 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder;
 import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Quaternion;
 
 public class Renderer3DExample {
 
-    private static final boolean optimizeMesh = true;
+    private static final boolean optimizeMesh = false;
     private static final boolean singleBatch = true;
 
     private static final int WIDTH = 700;
@@ -80,7 +81,7 @@ public class Renderer3DExample {
     private static Model3D[] models() {
         final int cubesPerBatch = CUBES / BATCHES;
         final Model3D[] batches = new Model3D[BATCHES];
-        final Instance3D[] nodes = new Instance3D[cubesPerBatch];
+        final Instance3D[] instances = new Instance3D[cubesPerBatch];
         for (int i = 0; i < BATCHES; i++) {
             for (int j = 0; j < cubesPerBatch; j++) {
                 final Instance3D newNode = R3D.instance();
@@ -91,30 +92,81 @@ public class Renderer3DExample {
                 newNode.getTransform().getRotation().set(Quaternion.of(
                         (float) Math.random(), (float) Math.random(),
                         (float) Math.random(), (float) Math.random()).normalize());
-                nodes[j] = newNode;
+                instances[j] = newNode;
             }
-            final MeshPrototype3D prototype = optimizeMesh ? optimizedMesh() : unoptimizedMesh();
-            final Mesh3D mesh = R3D.mesh(nodes, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices, prototype);
+            final Mesh mesh = optimizeMesh
+                    ? optimizedMesh(instances)
+                    : unoptimizedMesh(instances);
             batches[i] = new Model3D(mesh);
         }
         return batches;
     }
 
-    private static MeshPrototype3D optimizedMesh() {
-        return new MeshPrototype3D(
-                MeshVertexBuffer.createStatic(),
-                MeshInstanceBuffer.createStatic(),
-                MeshIndexBuffer.createStatic()
-        );
+    private static Mesh optimizedMesh(Instance3D[] instances) {
+        final MeshBufferBuilder vertexBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 9 * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBufferBuilder instanceBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(instances.length * 16 * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBufferBuilder indexBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(ExamplesUtils.cubeIndices.length * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBuilder3D meshBuilder3D = new MeshBuilder3D(ExamplesUtils.cubeIndices.length, instances.length,
+                vertexBufferBuilder, vertexBufferBuilder, vertexBufferBuilder,
+                instanceBufferBuilder, indexBufferBuilder);
+
+        for (Vertex3D vertex : ExamplesUtils.cubeVertices) {
+            meshBuilder3D.getWriter().writeVertex(vertex);
+        }
+        for (Instance3D instance : instances) {
+            meshBuilder3D.getWriter().writeInstance(instance);
+        }
+        for (int index : ExamplesUtils.cubeIndices) {
+            meshBuilder3D.getWriter().writeIndex(index);
+        }
+
+        return meshBuilder3D.load();
     }
 
-    private static MeshPrototype3D unoptimizedMesh() {
-        return new MeshPrototype3D(
-                MeshVertexBuffer.createStatic(),
-                MeshVertexBuffer.createStatic(),
-                MeshVertexBuffer.createStatic(),
-                MeshInstanceBuffer.createStatic(),
-                MeshIndexBuffer.createStatic()
-        );
+    private static Mesh unoptimizedMesh(Instance3D[] instances) {
+        final MeshBufferBuilder positionBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBufferBuilder normalBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBufferBuilder colourBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBufferBuilder instanceBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(instances.length * 16 * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBufferBuilder indexBufferBuilder = new MeshBufferBuilder(
+                new FixedBufferBuilder(ExamplesUtils.cubeIndices.length * 4),
+                VboUsage.STATIC_DRAW);
+
+        final MeshBuilder3D meshBuilder3D = new MeshBuilder3D(ExamplesUtils.cubeIndices.length, instances.length,
+                positionBufferBuilder, normalBufferBuilder, colourBufferBuilder,
+                instanceBufferBuilder, indexBufferBuilder);
+
+        for (Vertex3D vertex : ExamplesUtils.cubeVertices) {
+            meshBuilder3D.getWriter().writeVertex(vertex);
+        }
+        for (Instance3D instance : instances) {
+            meshBuilder3D.getWriter().writeInstance(instance);
+        }
+        for (int index : ExamplesUtils.cubeIndices) {
+            meshBuilder3D.getWriter().writeIndex(index);
+        }
+
+        return meshBuilder3D.load();
     }
 }

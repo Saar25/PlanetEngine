@@ -5,7 +5,11 @@ import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardRotationComponent;
-import org.saar.core.common.r3d.*;
+import org.saar.core.common.r3d.Instance3D;
+import org.saar.core.common.r3d.Model3D;
+import org.saar.core.common.r3d.R3D;
+import org.saar.core.common.r3d.Renderer3D;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.example.ExamplesUtils;
@@ -82,7 +86,7 @@ public class ManyCubesExample {
                     a * SPACE, b * SPACE, c * SPACE);
             nodes[i] = newNode;
         }
-        final Mesh3D mesh = R3D.mesh(nodes,
+        final Mesh mesh = R3D.mesh(nodes,
                 ExamplesUtils.cubeVertices,
                 ExamplesUtils.cubeIndices);
         return new Model3D(mesh);

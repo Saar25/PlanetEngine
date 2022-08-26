@@ -15,6 +15,10 @@ class MeshBufferBuilder(private val bufferBuilder: BufferBuilder, private val us
 
     fun addAttribute(attribute: IAttribute) = this.attributes.add(attribute)
 
+    fun addAttributes(attributes: Iterable<IAttribute>) = this.attributes.addAll(attributes)
+
+    fun addAttributes(vararg attributes: IAttribute) = this.attributes.addAll(attributes)
+
     val writer: DataWriter = this.bufferBuilder.writer
 
     fun build(target: VboTarget): MeshBuffer {

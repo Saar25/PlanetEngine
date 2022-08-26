@@ -1,9 +1,13 @@
 package org.saar.core.common.r3d
 
 import org.joml.Vector3fc
-import org.saar.core.mesh.buffer.MeshIndexBuffer
-import org.saar.core.mesh.buffer.MeshInstanceBuffer
-import org.saar.core.mesh.buffer.MeshVertexBuffer
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.builder.MeshBufferBuilder
+import org.saar.core.mesh.prototype.writeIndices
+import org.saar.core.mesh.prototype.writeInstances
+import org.saar.core.mesh.prototype.writeVertices
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.transform.Transform
 
@@ -25,23 +29,27 @@ object R3D {
     }
 
     @JvmStatic
-    fun meshPrototype(): MeshPrototype3D {
-        val instance = MeshInstanceBuffer.createStatic()
-        val vertex = MeshVertexBuffer.createStatic()
-        val index = MeshIndexBuffer.createStatic()
-        return MeshPrototype3D(vertex, instance, index)
-    }
+    fun mesh(instances: Array<Instance3D>, vertices: Array<Vertex3D>, indices: IntArray): Mesh {
+        val vertexBufferBuilder = MeshBufferBuilder(
+            FixedBufferBuilder(vertices.size * 9 * 4),
+            VboUsage.STATIC_DRAW)
 
-    @JvmStatic
-    @JvmOverloads
-    fun mesh(
-        instances: Array<Instance3D>, vertices: Array<Vertex3D>,
-        indices: IntArray, prototype: MeshPrototype3D = meshPrototype(),
-    ): Mesh3D {
-        return MeshBuilder3D.fixed(instances.size, vertices.size, indices.size, prototype).also {
-            instances.forEach(it::addInstance)
-            vertices.forEach(it::addVertex)
-            indices.forEach(it::addIndex)
-        }.load()
+        val instanceBufferBuilder = MeshBufferBuilder(
+            FixedBufferBuilder(instances.size * 16 * 4),
+            VboUsage.STATIC_DRAW)
+
+        val indexBufferBuilder = MeshBufferBuilder(
+            FixedBufferBuilder(indices.size * 4),
+            VboUsage.STATIC_DRAW)
+
+        val meshBuilder3D = MeshBuilder3D(indices.size, instances.size,
+            vertexBufferBuilder, vertexBufferBuilder, vertexBufferBuilder,
+            instanceBufferBuilder, indexBufferBuilder)
+
+        meshBuilder3D.writer.writeVertices(vertices)
+        meshBuilder3D.writer.writeInstances(instances)
+        meshBuilder3D.writer.writeIndices(indices)
+
+        return meshBuilder3D.load()
     }
 }
