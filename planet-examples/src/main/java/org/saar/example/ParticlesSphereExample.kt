@@ -9,8 +9,6 @@ import org.saar.core.common.particles.Particles
 import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
 import org.saar.core.common.particles.components.ParticlesModelComponent
-import org.saar.core.mesh.prototype.readInstance
-import org.saar.core.mesh.prototype.writeInstance
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
@@ -99,7 +97,7 @@ private class MyParticlesSphereComponent : NodeComponent {
         this.modelComponent = node.components.get()
     }
 
-    override fun update(node: ComposableNode) {
+    override fun update(node: ComposableNode) = Unit /*{
         val now = System.currentTimeMillis().toInt()
 
         for (i in 0 until modelComponent.instancesCount) {
@@ -114,5 +112,5 @@ private class MyParticlesSphereComponent : NodeComponent {
                 modelComponent.model.mesh.prototype.writeInstance(i, Particles.instance(v, instance.birth))
             }
         }
-    }
+    }*/
 }

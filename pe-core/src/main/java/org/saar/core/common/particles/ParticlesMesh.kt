@@ -4,7 +4,6 @@ import org.saar.core.mesh.Mesh
 
 class ParticlesMesh internal constructor(
     private val mesh: Mesh,
-    val prototype: ParticlesMeshPrototype,
 ) : Mesh {
     override fun draw() = this.mesh.draw()
 

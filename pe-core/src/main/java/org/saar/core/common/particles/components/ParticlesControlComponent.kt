@@ -14,7 +14,7 @@ abstract class ParticlesControlComponent : NodeComponent {
         this.modelComponent = node.components.get()
     }
 
-    final override fun update(node: ComposableNode) {
+    final override fun update(node: ComposableNode) = Unit /*{
         val particles = (0 until this.modelComponent.instancesCount).map {
             mapInstance(it, this.modelComponent.model.mesh.prototype.readInstance(it))
         }
@@ -23,7 +23,7 @@ abstract class ParticlesControlComponent : NodeComponent {
         this.modelComponent.instancesCount = particles.size + newParticles.size
 
         this.modelComponent.model.mesh.prototype.writeInstances(0, particles + newParticles)
-    }
+    }*/
 
     abstract fun createParticles(): Collection<ParticlesInstance>
 

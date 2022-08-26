@@ -14,8 +14,6 @@ import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
 import org.saar.core.common.particles.components.ParticlesControlComponent
 import org.saar.core.common.particles.components.ParticlesModelComponent
-import org.saar.core.mesh.prototype.setInstancePosition
-import org.saar.core.mesh.prototype.writeInstance
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
@@ -153,7 +151,7 @@ private class MyParticlesComponent : NodeComponent {
         modelComponent.instancesCount = 10
     }
 
-    override fun update(node: ComposableNode) {
+    override fun update(node: ComposableNode) = Unit /*{
         modelComponent.model.mesh.prototype.setInstancePosition(0)
         for (i in 0 until modelComponent.instancesCount) {
             val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
@@ -163,5 +161,5 @@ private class MyParticlesComponent : NodeComponent {
         }
 
         modelComponent.instancesCount = (modelComponent.instancesCount + 1).coerceAtMost(PARTICLES)
-    }
+    }*/
 }
