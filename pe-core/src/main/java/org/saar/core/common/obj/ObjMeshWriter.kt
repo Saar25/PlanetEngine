@@ -1,7 +1,7 @@
 package org.saar.core.common.obj
 
-import org.saar.core.mesh.builder.IndexedMeshWriter
-import org.saar.core.mesh.builder.VertexMeshWriter
+import org.saar.core.mesh.writer.IndexedMeshWriter
+import org.saar.core.mesh.writer.VertexMeshWriter
 import org.saar.lwjgl.util.DataWriter
 
 class ObjMeshWriter(

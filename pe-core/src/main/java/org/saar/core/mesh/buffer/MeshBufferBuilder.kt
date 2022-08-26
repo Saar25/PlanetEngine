@@ -1,6 +1,5 @@
-package org.saar.core.mesh.builder
+package org.saar.core.mesh.buffer
 
-import org.saar.core.mesh.buffer.MeshBuffer
 import org.saar.lwjgl.opengl.attribute.IAttribute
 import org.saar.lwjgl.opengl.vbo.Vbo
 import org.saar.lwjgl.opengl.vbo.VboTarget

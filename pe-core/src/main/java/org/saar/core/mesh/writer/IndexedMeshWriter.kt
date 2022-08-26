@@ -1,4 +1,4 @@
-package org.saar.core.mesh.builder
+package org.saar.core.mesh.writer
 
 interface IndexedMeshWriter {
     fun writeIndex(index: Int)

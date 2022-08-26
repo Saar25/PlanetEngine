@@ -1,6 +1,6 @@
 package org.saar.core.common.particles
 
-import org.saar.core.mesh.builder.InstancedMeshWriter
+import org.saar.core.mesh.writer.InstancedMeshWriter
 import org.saar.lwjgl.util.DataWriter
 
 class ParticlesMeshWriter(

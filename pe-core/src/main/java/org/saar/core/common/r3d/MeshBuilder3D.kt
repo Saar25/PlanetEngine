@@ -2,8 +2,8 @@ package org.saar.core.common.r3d
 
 import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.builder.MeshBufferBuilder
-import org.saar.core.mesh.builder.MeshBuilder
+import org.saar.core.mesh.buffer.MeshBufferBuilder
+import org.saar.core.mesh.MeshBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode

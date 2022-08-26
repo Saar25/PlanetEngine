@@ -2,10 +2,10 @@ package org.saar.core.common.r3d
 
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.builder.MeshBufferBuilder
-import org.saar.core.mesh.builder.writeIndices
-import org.saar.core.mesh.builder.writeInstances
-import org.saar.core.mesh.builder.writeVertices
+import org.saar.core.mesh.buffer.MeshBufferBuilder
+import org.saar.core.mesh.writer.writeIndices
+import org.saar.core.mesh.writer.writeInstances
+import org.saar.core.mesh.writer.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 import org.saar.maths.transform.SimpleTransform

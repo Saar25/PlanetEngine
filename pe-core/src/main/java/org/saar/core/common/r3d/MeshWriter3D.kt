@@ -1,8 +1,8 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.mesh.builder.IndexedMeshWriter
-import org.saar.core.mesh.builder.InstancedMeshWriter
-import org.saar.core.mesh.builder.VertexMeshWriter
+import org.saar.core.mesh.writer.IndexedMeshWriter
+import org.saar.core.mesh.writer.InstancedMeshWriter
+import org.saar.core.mesh.writer.VertexMeshWriter
 import org.saar.lwjgl.util.DataWriter
 
 class MeshWriter3D(

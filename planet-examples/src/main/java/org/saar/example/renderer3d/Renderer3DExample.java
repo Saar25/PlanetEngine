@@ -7,7 +7,7 @@ import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.r3d.*;
 import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.builder.MeshBufferBuilder;
+import org.saar.core.mesh.buffer.MeshBufferBuilder;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.util.Fps;
