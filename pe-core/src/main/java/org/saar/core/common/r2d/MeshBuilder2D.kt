@@ -1,29 +1,61 @@
 package org.saar.core.common.r2d
 
-import org.saar.core.mesh.builder.ElementsMeshBuilder
+import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.builder.MeshBufferBuilder
 import org.saar.core.mesh.builder.MeshBuilder
+import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.VboTarget
 
-class MeshBuilder2D private constructor(
-    private val builder: ElementsMeshBuilder<Vertex2D>,
+class MeshBuilder2D(
+    private val indices: Int,
+    private val positionBufferBuilder: MeshBufferBuilder,
+    private val colourBufferBuilder: MeshBufferBuilder,
+    private val indexBufferBuilder: MeshBufferBuilder,
 ) : MeshBuilder {
 
-    override fun delete() = this.builder.delete()
+    val writer = MeshWriter2D(
+        this.positionBufferBuilder.writer,
+        this.colourBufferBuilder.writer,
+        this.indexBufferBuilder.writer,
+    )
 
-    fun addIndex(index: Int) = this.builder.addIndex(index)
+    private val bufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.colourBufferBuilder,
+        this.indexBufferBuilder,
+    ).distinct()
 
-    fun addVertex(vertex: Vertex2D) = this.builder.addVertex(vertex)
+    private val vertexBufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.colourBufferBuilder,
+    ).distinct()
 
-    override fun load() = Mesh2D(this.builder.load())
+    init {
+        this.positionBufferBuilder.addAttribute(
+            Attributes.of(0, 2, DataType.FLOAT, false))
+        this.colourBufferBuilder.addAttribute(
+            Attributes.of(1, 3, DataType.FLOAT, false))
+    }
 
-    companion object {
-        @JvmStatic
-        @JvmOverloads
-        fun dynamic(prototype: MeshPrototype2D = R2D.meshPrototype()) =
-            MeshBuilder2D(ElementsMeshBuilder.Dynamic(prototype))
+    override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
-        @JvmStatic
-        @JvmOverloads
-        fun fixed(vertices: Int, indices: Int, prototype: MeshPrototype2D = R2D.meshPrototype()) =
-            MeshBuilder2D(ElementsMeshBuilder.Fixed(vertices, indices, prototype))
+    override fun load(): Mesh {
+        val vao = Vao.create()
+
+        val buffers = this.vertexBufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) } +
+                this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+
+        buffers.forEach {
+            it.store(0)
+            it.loadInVao(vao)
+        }
+
+        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        return DrawCallMesh(vao, drawCall)
     }
 }

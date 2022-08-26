@@ -1,6 +1,10 @@
 package org.saar.example;
 
-import org.saar.core.common.r2d.*;
+import org.saar.core.common.r2d.Model2D;
+import org.saar.core.common.r2d.R2D;
+import org.saar.core.common.r2d.Renderer2D;
+import org.saar.core.common.r2d.Vertex2D;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -36,7 +40,7 @@ public class RendererExample {
                 R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
                 R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
-        final Mesh2D mesh = R2D.mesh(vertices, indices);
+        final Mesh mesh = R2D.mesh(vertices, indices);
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
