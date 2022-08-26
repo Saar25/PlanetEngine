@@ -1,29 +1,67 @@
 package org.saar.core.common.obj
 
-import org.saar.core.mesh.builder.ElementsMeshBuilder
+import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.builder.MeshBufferBuilder
 import org.saar.core.mesh.builder.MeshBuilder
+import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.VboTarget
 
-class ObjMeshBuilder private constructor(
-    private val builder: ElementsMeshBuilder<ObjVertex>,
+class ObjMeshBuilder(
+    private val indices: Int,
+    private val positionBufferBuilder: MeshBufferBuilder,
+    private val uvCoordBufferBuilder: MeshBufferBuilder,
+    private val normalBufferBuilder: MeshBufferBuilder,
+    private val indexBufferBuilder: MeshBufferBuilder,
 ) : MeshBuilder {
 
-    override fun delete() = this.builder.delete()
+    val writer = ObjMeshWriter(
+        this.positionBufferBuilder.writer,
+        this.uvCoordBufferBuilder.writer,
+        this.normalBufferBuilder.writer,
+        this.indexBufferBuilder.writer,
+    )
 
-    fun addIndex(index: Int) = this.builder.addIndex(index)
+    private val bufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.uvCoordBufferBuilder,
+        this.normalBufferBuilder,
+        this.indexBufferBuilder,
+    ).distinct()
 
-    fun addVertex(vertex: ObjVertex) = this.builder.addVertex(vertex)
+    private val vertexBufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.uvCoordBufferBuilder,
+        this.normalBufferBuilder,
+    ).distinct()
 
-    override fun load() = this.builder.load()
+    init {
+        this.positionBufferBuilder.addAttribute(
+            Attributes.of(0, 3, DataType.FLOAT, false))
+        this.uvCoordBufferBuilder.addAttribute(
+            Attributes.of(1, 2, DataType.FLOAT, false))
+        this.normalBufferBuilder.addAttribute(
+            Attributes.of(2, 3, DataType.FLOAT, false))
+    }
 
-    companion object {
-        @JvmStatic
-        @JvmOverloads
-        fun dynamic(prototype: ObjMeshBuffers = Obj.meshPrototype()) =
-            ObjMeshBuilder(ElementsMeshBuilder.Dynamic(prototype))
+    override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
-        @JvmStatic
-        @JvmOverloads
-        fun fixed(vertices: Int, indices: Int, prototype: ObjMeshBuffers = Obj.meshPrototype()) =
-            ObjMeshBuilder(ElementsMeshBuilder.Fixed(vertices, indices, prototype))
+    override fun load(): Mesh {
+        val vao = Vao.create()
+
+        val buffers = this.vertexBufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) } +
+                this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+
+        buffers.forEach {
+            it.store(0)
+            it.loadInVao(vao)
+        }
+
+        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        return DrawCallMesh(vao, drawCall)
     }
 }

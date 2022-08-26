@@ -3,8 +3,9 @@ package org.saar.core.common.obj
 import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.MeshIndexBuffer
-import org.saar.core.mesh.buffer.MeshVertexBuffer
+import org.saar.core.mesh.builder.MeshBufferBuilder
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
 object Obj {
 
@@ -16,26 +17,27 @@ object Obj {
     }
 
     @JvmStatic
-    fun meshPrototype(): ObjMeshBuffers {
-        val vertex = MeshVertexBuffer.createStatic()
-        val index = MeshIndexBuffer.createStatic()
-        return ObjMeshBuffers(vertex, index)
+    fun mesh(vertices: Array<ObjVertex>, indices: IntArray): Mesh {
+        val vertexBufferBuilder = MeshBufferBuilder(
+            FixedBufferBuilder(vertices.size * 8 * 4),
+            VboUsage.STATIC_DRAW)
+
+        val indexBufferBuilder = MeshBufferBuilder(
+            FixedBufferBuilder(indices.size * 4),
+            VboUsage.STATIC_DRAW)
+
+        val objMeshBuilder = ObjMeshBuilder(indices.size,
+            vertexBufferBuilder, vertexBufferBuilder,
+            vertexBufferBuilder, indexBufferBuilder)
+
+        vertices.forEach(objMeshBuilder.writer::writeVertex)
+        indices.forEach(objMeshBuilder.writer::writeIndex)
+
+        return objMeshBuilder.load()
     }
 
     @JvmStatic
-    @JvmOverloads
-    fun mesh(vertices: Array<ObjVertex>, indices: IntArray, prototype: ObjMeshBuffers = meshPrototype()): Mesh {
-        return ObjMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
-            vertices.forEach(it::addVertex)
-            indices.forEach(it::addIndex)
-        }.load()
-    }
-
-    @JvmStatic
-    @JvmOverloads
-    fun mesh(file: String, prototype: ObjMeshBuffers = meshPrototype()): Mesh {
-        return ObjMeshLoader(file).use { loader ->
-            mesh(loader.loadVertices(), loader.loadIndices(), prototype)
-        }
+    fun mesh(file: String) = ObjMeshLoader(file).use { loader ->
+        mesh(loader.loadVertices(), loader.loadIndices())
     }
 }

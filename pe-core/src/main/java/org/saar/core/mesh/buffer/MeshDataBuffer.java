@@ -4,6 +4,7 @@ import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.vao.WritableVao;
 import org.saar.lwjgl.opengl.vbo.IVbo;
+import org.saar.lwjgl.util.buffer.LwjglBuffer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,13 @@ public class MeshDataBuffer extends MeshBuffer {
 
     public MeshDataBuffer(IVbo vbo) {
         super(vbo);
+    }
+
+    public MeshDataBuffer(IVbo vbo, LwjglBuffer buffer, List<IAttribute> attributes) {
+        super(vbo);
+
+        this.buffer = buffer;
+        this.attributes.addAll(attributes);
     }
 
     public void allocateCount(int count) {
