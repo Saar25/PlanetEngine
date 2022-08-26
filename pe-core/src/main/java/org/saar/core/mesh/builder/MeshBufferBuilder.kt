@@ -1,7 +1,6 @@
 package org.saar.core.mesh.builder
 
 import org.saar.core.mesh.buffer.MeshBuffer
-import org.saar.core.mesh.buffer.MeshDataBuffer
 import org.saar.lwjgl.opengl.attribute.IAttribute
 import org.saar.lwjgl.opengl.vbo.Vbo
 import org.saar.lwjgl.opengl.vbo.VboTarget
@@ -24,7 +23,7 @@ class MeshBufferBuilder(private val bufferBuilder: BufferBuilder, private val us
     fun build(target: VboTarget): MeshBuffer {
         val vbo = Vbo.create(target, this.usage)
         val buffer = this.bufferBuilder.build()
-        return MeshDataBuffer(vbo, buffer, this.attributes)
+        return MeshBuffer(vbo, buffer, this.attributes)
     }
 
     fun delete() = this.bufferBuilder.delete()

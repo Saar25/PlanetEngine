@@ -1,33 +1,22 @@
 package org.saar.core.mesh.buffer;
 
+import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.vao.WritableVao;
 import org.saar.lwjgl.opengl.vbo.IVbo;
-import org.saar.lwjgl.util.DataReader;
-import org.saar.lwjgl.util.DataWriter;
 import org.saar.lwjgl.util.buffer.LwjglBuffer;
-import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
 
-public abstract class MeshBuffer {
+import java.util.List;
 
-    protected final IVbo vbo;
+public class MeshBuffer {
 
-    protected LwjglBuffer buffer = null;
+    private final IVbo vbo;
+    private final LwjglBuffer buffer;
+    private final List<IAttribute> attributes;
 
-    public MeshBuffer(IVbo vbo) {
+    public MeshBuffer(IVbo vbo, LwjglBuffer buffer, List<IAttribute> attributes) {
         this.vbo = vbo;
-    }
-
-    public abstract void loadInVao(WritableVao vao);
-
-    public void delete() {
-        this.buffer.close();
-    }
-
-    protected void allocate(int capacity) {
-        if (this.buffer != null) {
-            this.buffer.close();
-        }
-        this.buffer = LwjglByteBuffer.allocate(capacity);
+        this.buffer = buffer;
+        this.attributes = attributes;
     }
 
     public void store(long offset) {
@@ -35,11 +24,15 @@ public abstract class MeshBuffer {
         this.vbo.store(offset, this.buffer.asByteBuffer());
     }
 
-    public DataReader getReader() {
-        return this.buffer.getReader();
+    public void loadInVao(WritableVao vao) {
+        vao.loadVbo(this.vbo, attributesArray());
     }
 
-    public DataWriter getWriter() {
-        return this.buffer.getWriter();
+    private IAttribute[] attributesArray() {
+        return this.attributes.toArray(new IAttribute[0]);
+    }
+
+    public void delete() {
+        this.buffer.close();
     }
 }
