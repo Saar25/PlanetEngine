@@ -1,6 +1,5 @@
 package org.saar.core.common.particles.components
 
-import org.saar.core.mesh.prototype.storeInstances
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 
