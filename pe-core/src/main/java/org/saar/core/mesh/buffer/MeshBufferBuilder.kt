@@ -1,29 +1,14 @@
 package org.saar.core.mesh.buffer
 
-import org.saar.lwjgl.opengl.attribute.IAttribute
-import org.saar.lwjgl.opengl.vbo.Vbo
 import org.saar.lwjgl.opengl.vbo.VboTarget
-import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.DataWriter
-import org.saar.lwjgl.util.buffer.BufferBuilder
 
-class MeshBufferBuilder(private val bufferBuilder: BufferBuilder, private val usage: VboUsage) {
+interface MeshBufferBuilder {
 
-    private val attributes = mutableListOf<IAttribute>()
+    val writer: DataWriter
 
-    fun addAttribute(attribute: IAttribute) = this.attributes.add(attribute)
+    fun build(target: VboTarget): MeshBuffer
 
-    fun addAttributes(attributes: Iterable<IAttribute>) = this.attributes.addAll(attributes)
+    fun delete()
 
-    fun addAttributes(vararg attributes: IAttribute) = this.attributes.addAll(attributes)
-
-    val writer: DataWriter = this.bufferBuilder.writer
-
-    fun build(target: VboTarget): MeshBuffer {
-        val vbo = Vbo.create(target, this.usage)
-        val buffer = this.bufferBuilder.build()
-        return MeshBuffer(vbo, buffer, this.attributes)
-    }
-
-    fun delete() = this.bufferBuilder.delete()
 }

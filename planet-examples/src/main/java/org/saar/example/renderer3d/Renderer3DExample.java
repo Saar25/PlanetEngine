@@ -7,7 +7,8 @@ import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.r3d.*;
 import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.buffer.MeshBufferBuilder;
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder;
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.util.Fps;
@@ -103,15 +104,15 @@ public class Renderer3DExample {
     }
 
     private static Mesh optimizedMesh(Instance3D[] instances) {
-        final MeshBufferBuilder vertexBufferBuilder = new MeshBufferBuilder(
+        final DataMeshBufferBuilder vertexBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 9 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final MeshBufferBuilder instanceBufferBuilder = new MeshBufferBuilder(
+        final DataMeshBufferBuilder instanceBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(instances.length * 16 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final MeshBufferBuilder indexBufferBuilder = new MeshBufferBuilder(
+        final IndexMeshBufferBuilder indexBufferBuilder = new IndexMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeIndices.length * 4),
                 VboUsage.STATIC_DRAW);
 
@@ -133,23 +134,23 @@ public class Renderer3DExample {
     }
 
     private static Mesh unoptimizedMesh(Instance3D[] instances) {
-        final MeshBufferBuilder positionBufferBuilder = new MeshBufferBuilder(
+        final DataMeshBufferBuilder positionBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final MeshBufferBuilder normalBufferBuilder = new MeshBufferBuilder(
+        final DataMeshBufferBuilder normalBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final MeshBufferBuilder colourBufferBuilder = new MeshBufferBuilder(
+        final DataMeshBufferBuilder colourBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final MeshBufferBuilder instanceBufferBuilder = new MeshBufferBuilder(
+        final DataMeshBufferBuilder instanceBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(instances.length * 16 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final MeshBufferBuilder indexBufferBuilder = new MeshBufferBuilder(
+        final IndexMeshBufferBuilder indexBufferBuilder = new IndexMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeIndices.length * 4),
                 VboUsage.STATIC_DRAW);
 

@@ -2,7 +2,8 @@ package org.saar.core.common.r3d
 
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.MeshBufferBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.core.mesh.writer.writeIndices
 import org.saar.core.mesh.writer.writeInstances
 import org.saar.core.mesh.writer.writeVertices
@@ -30,15 +31,15 @@ object R3D {
 
     @JvmStatic
     fun mesh(instances: Array<Instance3D>, vertices: Array<Vertex3D>, indices: IntArray): Mesh {
-        val vertexBufferBuilder = MeshBufferBuilder(
+        val vertexBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(vertices.size * 9 * 4),
             VboUsage.STATIC_DRAW)
 
-        val instanceBufferBuilder = MeshBufferBuilder(
+        val instanceBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(instances.size * 16 * 4),
             VboUsage.STATIC_DRAW)
 
-        val indexBufferBuilder = MeshBufferBuilder(
+        val indexBufferBuilder = IndexMeshBufferBuilder(
             FixedBufferBuilder(indices.size * 4),
             VboUsage.STATIC_DRAW)
 

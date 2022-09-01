@@ -1,21 +1,18 @@
 package org.saar.core.mesh.buffer
 
-import org.saar.lwjgl.opengl.attribute.IAttribute
 import org.saar.lwjgl.opengl.vao.WritableVao
-import org.saar.lwjgl.opengl.vbo.IVbo
-import org.saar.lwjgl.util.buffer.LwjglBuffer
+import org.saar.lwjgl.util.DataReader
+import org.saar.lwjgl.util.DataWriter
 
-class MeshBuffer(
-    private val vbo: IVbo,
-    private val buffer: LwjglBuffer,
-    private val attributes: Collection<IAttribute>,
-) {
-    fun store(offset: Long) {
-        this.vbo.allocate(this.buffer.flip().limit().toLong())
-        this.vbo.store(offset, this.buffer.asByteBuffer())
-    }
+interface MeshBuffer {
 
-    fun loadInVao(vao: WritableVao) = vao.loadVbo(this.vbo, *this.attributes.toTypedArray())
+    val writer: DataWriter
 
-    fun delete() = this.buffer.close()
+    val reader: DataReader
+
+    fun store(offset: Long)
+
+    fun loadInVao(vao: WritableVao)
+
+    fun delete()
 }

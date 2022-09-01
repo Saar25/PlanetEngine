@@ -3,7 +3,8 @@ package org.saar.core.common.r2d
 import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.MeshBufferBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.core.mesh.writer.writeIndices
 import org.saar.core.mesh.writer.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
@@ -19,11 +20,11 @@ object R2D {
 
     @JvmStatic
     fun mesh(vertices: Array<Vertex2D>, indices: IntArray): Mesh {
-        val vertexBufferBuilder = MeshBufferBuilder(
+        val vertexBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(vertices.size * 5 * 4),
             VboUsage.STATIC_DRAW)
 
-        val indexBufferBuilder = MeshBufferBuilder(
+        val indexBufferBuilder = IndexMeshBufferBuilder(
             FixedBufferBuilder(indices.size * 4),
             VboUsage.STATIC_DRAW)
 

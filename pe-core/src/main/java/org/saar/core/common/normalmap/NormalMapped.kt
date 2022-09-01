@@ -3,7 +3,8 @@ package org.saar.core.common.normalmap
 import org.joml.Vector2fc
 import org.joml.Vector3fc
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.MeshBufferBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.core.mesh.writer.writeIndices
 import org.saar.core.mesh.writer.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
@@ -30,11 +31,11 @@ object NormalMapped {
 
     @JvmStatic
     fun mesh(vertices: Array<NormalMappedVertex>, indices: IntArray): Mesh {
-        val vertexBufferBuilder = MeshBufferBuilder(
+        val vertexBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(vertices.size * 14 * 4),
             VboUsage.STATIC_DRAW)
 
-        val indexBufferBuilder = MeshBufferBuilder(
+        val indexBufferBuilder = IndexMeshBufferBuilder(
             FixedBufferBuilder(indices.size * 4),
             VboUsage.STATIC_DRAW)
 

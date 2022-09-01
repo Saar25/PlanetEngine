@@ -2,7 +2,7 @@ package org.saar.core.common.particles
 
 import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.MeshBufferBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.MeshBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
@@ -13,8 +13,8 @@ import org.saar.lwjgl.opengl.vbo.VboTarget
 
 class ParticlesMeshBuilder(
     private val instances: Int,
-    private val positionBufferBuilder: MeshBufferBuilder,
-    private val birthBufferBuilder: MeshBufferBuilder,
+    private val positionBufferBuilder: DataMeshBufferBuilder,
+    private val birthBufferBuilder: DataMeshBufferBuilder,
 ) : MeshBuilder {
 
     val writer = ParticlesMeshWriter(

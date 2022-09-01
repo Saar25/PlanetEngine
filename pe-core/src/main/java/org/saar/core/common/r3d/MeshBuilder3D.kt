@@ -2,8 +2,9 @@ package org.saar.core.common.r3d
 
 import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.MeshBufferBuilder
 import org.saar.core.mesh.MeshBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -14,11 +15,11 @@ import org.saar.lwjgl.opengl.vbo.VboTarget
 class MeshBuilder3D(
     private val indices: Int,
     private val instances: Int,
-    private val positionBufferBuilder: MeshBufferBuilder,
-    private val normalBufferBuilder: MeshBufferBuilder,
-    private val colourBufferBuilder: MeshBufferBuilder,
-    private val transformBufferBuilder: MeshBufferBuilder,
-    private val indexBufferBuilder: MeshBufferBuilder,
+    private val positionBufferBuilder: DataMeshBufferBuilder,
+    private val normalBufferBuilder: DataMeshBufferBuilder,
+    private val colourBufferBuilder: DataMeshBufferBuilder,
+    private val transformBufferBuilder: DataMeshBufferBuilder,
+    private val indexBufferBuilder: IndexMeshBufferBuilder,
 ) : MeshBuilder {
 
     val writer = MeshWriter3D(
