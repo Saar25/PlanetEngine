@@ -16,6 +16,10 @@ class DataMeshBuffer(
 
     override val reader: BufferReader = this.buffer.reader
 
+    fun offset(index: Int) {
+        this.buffer.position(index)
+    }
+
     override fun store(offset: Long) {
         this.vbo.allocate(this.buffer.flip().limit().toLong())
         this.vbo.store(offset, this.buffer.asByteBuffer())
