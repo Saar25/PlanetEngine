@@ -1,7 +1,6 @@
 package org.saar.core.common.particles
 
 import org.joml.Vector3fc
-import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.writer.writeInstances
 import org.saar.lwjgl.opengl.vbo.VboUsage
@@ -19,7 +18,7 @@ object Particles {
     }
 
     @JvmStatic
-    fun mesh(instances: Array<ParticlesInstance>): Mesh {
+    fun mesh(instances: Array<ParticlesInstance>): ParticlesMesh {
         val instanceBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(instances.size * 4 * 4),
             VboUsage.STATIC_DRAW)

@@ -9,9 +9,10 @@ import org.saar.lwjgl.opengl.constants.DataType
 object Attributes {
 
     @JvmStatic
-    fun sumBytes(vararg attributes: IAttribute): Int {
-        return attributes.sumOf { it.bytesPerVertex }
-    }
+    fun sumBytes(vararg attributes: IAttribute) = attributes.sumOf { it.bytesPerVertex }
+
+    @JvmStatic
+    fun sumBytes(attributes: Iterable<IAttribute>) = attributes.sumOf { it.bytesPerVertex }
 
     @JvmStatic
     fun of(index: Int, componentCount: Int, dataType: DataType, normalized: Boolean): IAttribute {

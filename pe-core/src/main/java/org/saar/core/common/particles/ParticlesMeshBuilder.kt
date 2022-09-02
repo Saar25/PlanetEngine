@@ -1,9 +1,7 @@
 package org.saar.core.common.particles
 
-import org.saar.core.mesh.DrawCallMesh
-import org.saar.core.mesh.Mesh
-import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.MeshBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -37,17 +35,21 @@ class ParticlesMeshBuilder(
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
-    override fun load(): Mesh {
+    override fun load(): ParticlesMesh {
         val vao = Vao.create()
 
-        val buffers = this.bufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) }
+        val buffers = this.bufferBuilders.associateWith { it.build(VboTarget.ARRAY_BUFFER) }
 
         buffers.forEach {
-            it.store(0)
-            it.loadInVao(vao)
+            it.value.store(0)
+            it.value.loadInVao(vao)
         }
 
+        val meshBuffers = ParticlesMeshBuffers(
+            buffers[this.positionBufferBuilder]!!,
+            buffers[this.birthBufferBuilder]!!)
+
         val drawCall = InstancedArraysDrawCall(RenderMode.TRIANGLES, 0, 4, this.instances)
-        return DrawCallMesh(vao, drawCall)
+        return ParticlesMesh(vao, drawCall, meshBuffers)
     }
 }

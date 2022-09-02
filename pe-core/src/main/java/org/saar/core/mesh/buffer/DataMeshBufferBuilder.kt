@@ -22,7 +22,7 @@ class DataMeshBufferBuilder(
 
     override val writer: DataWriter = this.bufferBuilder.writer
 
-    override fun build(target: VboTarget): MeshBuffer {
+    override fun build(target: VboTarget): DataMeshBuffer {
         val vbo = Vbo.create(target, this.usage)
         val buffer = this.bufferBuilder.build()
         return DataMeshBuffer(vbo, buffer, this.attributes)

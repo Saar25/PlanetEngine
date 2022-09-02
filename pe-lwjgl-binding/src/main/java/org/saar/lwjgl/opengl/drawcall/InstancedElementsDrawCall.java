@@ -10,7 +10,7 @@ public class InstancedElementsDrawCall implements DrawCall {
     private final int count;
     private final DataType type;
     private final long indices;
-    private final int instances;
+    private int instances;
 
     public InstancedElementsDrawCall(RenderMode renderMode, int count, DataType type, long indices, int instances) {
         this.renderMode = renderMode;
@@ -46,6 +46,10 @@ public class InstancedElementsDrawCall implements DrawCall {
 
     public int getInstances() {
         return this.instances;
+    }
+
+    public void setInstances(int instances) {
+        this.instances = instances;
     }
 
     @Override

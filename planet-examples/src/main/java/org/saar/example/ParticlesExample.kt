@@ -151,15 +151,15 @@ private class MyParticlesComponent : NodeComponent {
         modelComponent.instancesCount = 10
     }
 
-    override fun update(node: ComposableNode) = Unit /*{
-        modelComponent.model.mesh.prototype.setInstancePosition(0)
+    override fun update(node: ComposableNode) {
         for (i in 0 until modelComponent.instancesCount) {
             val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
             if (Math.random() < .01 && v.lengthSquared() < 100) {
-                modelComponent.model.mesh.prototype.writeInstance(i, Particles.instance(v))
+                modelComponent.model.mesh.buffers.offset(i)
+                modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
             }
         }
 
         modelComponent.instancesCount = (modelComponent.instancesCount + 1).coerceAtMost(PARTICLES)
-    }*/
+    }
 }

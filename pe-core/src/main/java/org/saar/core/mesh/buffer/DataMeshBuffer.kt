@@ -1,5 +1,6 @@
 package org.saar.core.mesh.buffer
 
+import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.attribute.IAttribute
 import org.saar.lwjgl.opengl.vao.WritableVao
 import org.saar.lwjgl.opengl.vbo.IVbo
@@ -12,12 +13,14 @@ class DataMeshBuffer(
     private val buffer: LwjglBuffer,
     private val attributes: Collection<IAttribute>,
 ) : MeshBuffer {
+
     override val writer: BufferWriter = this.buffer.writer
 
     override val reader: BufferReader = this.buffer.reader
 
     fun offset(index: Int) {
-        this.buffer.position(index)
+        val bytes = Attributes.sumBytes(this.attributes)
+        this.buffer.position(bytes * index)
     }
 
     override fun store(offset: Long) {

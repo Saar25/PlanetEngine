@@ -5,6 +5,6 @@ import org.saar.core.node.NodeComponent
 
 class ParticlesModelComponent(val model: ParticlesModel) : NodeComponent {
 
-    var instancesCount: Int = 0
+    var instancesCount: Int by model.mesh::instancesCount
 
 }
