@@ -69,7 +69,7 @@ fun main() {
         NormalColourGenerator(Vector3.upward(),
             NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
             NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-        Vector2.of(1024f, 1024f), 100f
+        Vector2.of(1024f, 1024f)
     ))
 
     val lights = Array(100) {

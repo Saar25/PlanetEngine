@@ -37,18 +37,22 @@ private fun vertexNormal(configuration: LowPolyTerrainConfiguration,
 private fun buildModel(position: Vector2fc, configuration: LowPolyTerrainConfiguration): Model3D {
     val indices = configuration.meshGenerator.generateIndices()
     val vertices = configuration.meshGenerator.generateVertices().map {
+        val lx = it.x * configuration.dimensions.x
+        val lz = it.y * configuration.dimensions.y
         val height = configuration.heightGenerator.generateHeight(
-            it.x + position.x(), it.y + position.y())
+            lx + position.x() * configuration.dimensions.x,
+            lz + position.y() * configuration.dimensions.y)
 
-        val tPosition = Vector3.of(it.x, height, it.y)
-        val normal = vertexNormal(configuration, Vector3.of(tPosition).add(
-            position.x(), 0f, position.y()), .01f, .01f)
+        val lPosition = Vector3.of(lx, height, lz)
+        val wPosition = Vector3.of(lPosition).add(
+            position.x() * configuration.dimensions.x, 0f,
+            position.y() * configuration.dimensions.y)
 
-        tPosition.mul(configuration.dimensions.x, configuration.amplitude, configuration.dimensions.y)
+        val normal = vertexNormal(configuration, wPosition, .01f, .01f)
 
-        val colour = configuration.colourGenerator.generateColour(tPosition, normal)
+        val colour = configuration.colourGenerator.generateColour(wPosition, normal)
 
-        R3D.vertex(tPosition, normal, colour)
+        R3D.vertex(lPosition, normal, colour)
     }
 
     val mesh = R3D.mesh(arrayOf(R3D.instance()),

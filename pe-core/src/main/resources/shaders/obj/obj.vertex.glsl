@@ -17,7 +17,7 @@ vec4 calculatePosition() {
 }
 
 vec3 calculateNormal() {
-    return (u_normalMatrix * u_transformationMatrix * vec4(in_normal, 0.0)).xyz;
+    return (u_normalMatrix * vec4(in_normal, 0.0)).xyz;
 }
 
 void main(void) {
