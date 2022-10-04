@@ -49,7 +49,7 @@ void main(void) {
     vec2 offset1 = vec2(index_i / u_textureAtlasSize, index_i % u_textureAtlasSize) * scale;
     v_uvCoords1 = uvCoords[gl_VertexID] * scale + offset1;
 
-    vec2 offset2 = vec2((index_i + 1) / 4, (index_i + 1) % 4) * scale;
+    vec2 offset2 = vec2((index_i + 1) / u_textureAtlasSize, (index_i + 1) % u_textureAtlasSize) * scale;
     v_uvCoords2 = uvCoords[gl_VertexID] * scale + offset2;
 
     v_blend = index_f - index_i;

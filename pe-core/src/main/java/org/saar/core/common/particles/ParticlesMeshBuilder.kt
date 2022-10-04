@@ -49,7 +49,7 @@ class ParticlesMeshBuilder(
             buffers[this.positionBufferBuilder]!!,
             buffers[this.birthBufferBuilder]!!)
 
-        val drawCall = InstancedArraysDrawCall(RenderMode.TRIANGLES, 0, 4, this.instances)
+        val drawCall = InstancedArraysDrawCall(RenderMode.TRIANGLE_STRIP, 0, 4, this.instances)
         return ParticlesMesh(vao, drawCall, meshBuffers)
     }
 }
