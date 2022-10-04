@@ -4,7 +4,9 @@ import org.joml.SimplexNoise;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
+import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
+import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
 import org.saar.core.common.components.MouseDragRotationComponent;
@@ -29,14 +31,19 @@ import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
+import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
-import org.saar.core.renderer.deferred.passes.LightRenderPass;
+import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
+import org.saar.core.renderer.shadow.ShadowsQuality;
+import org.saar.core.renderer.shadow.ShadowsRenderNode;
+import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
+import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -45,6 +52,7 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
 import org.saar.lwjgl.opengl.texture.CubeMapTexture;
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.noise.LayeredNoise2f;
 import org.saar.maths.noise.MultipliedNoise2f;
@@ -102,7 +110,7 @@ public class ForestExample {
 
         final Mesh mesh = Obj.mesh("/assets/tree/tree.model.obj");
         final Texture2D texture = Texture2D.of("/assets/tree/tree.diffuse.png");
-        final ObjNodeBatch objNodeBatch = new ObjNodeBatch(IntStream.range(0, 1000).mapToObj(i -> {
+        final ObjNodeBatch treesNodeBatch = new ObjNodeBatch(IntStream.range(0, 1000).mapToObj(i -> {
             final ObjModel treeModel = new ObjModel(mesh, texture);
             final ObjNode tree = new ObjNode(treeModel);
             treeModel.getTransform().getScale().set(10);
@@ -122,9 +130,17 @@ public class ForestExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final CubeMapTexture cubeMap = createCubeMap();
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, cube2, objNodeBatch, world);
-        final DeferredRenderingPath renderingPath = buildRenderingPath(camera, renderNode, light, cubeMap);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world);
+
+        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
+                -1000, 1000, -1000, 1000, -1000, 1000);
+        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
+                ShadowsQuality.MEDIUM, shadowProjection, light, shadowsRenderNode);
+        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
+
+        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(cube, cube2, treesNodeBatch, world);
+        final RenderingPath<?> renderingPath = buildRenderingPath(camera,
+                renderNode, light, shadowsRenderingPath.getCamera(), shadowMap);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -160,18 +176,20 @@ public class ForestExample {
 
     private static DirectionalLight buildDirectionalLight() {
         final DirectionalLight light = new DirectionalLight();
-        light.getDirection().set(-1, -1, -1);
+        light.getDirection().set(-1, -.6, -1);
         light.getColour().set(1, 1, 1);
         return light;
     }
 
-    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            DirectionalLight light, CubeMapTexture cubeMap) {
+    private static DeferredRenderingPath buildRenderingPath(
+            ICamera camera, DeferredRenderNode renderNode, DirectionalLight light,
+            ICamera shadowCamera, ReadOnlyTexture2D shadowMap) throws IOException {
+        final CubeMapTexture cubeMap = createCubeMap();
         final Fog fog = new Fog(Vector3.of(0), 700, 1000);
 
         final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
-                new LightRenderPass(light),
+                new ShadowsRenderPass(shadowCamera, shadowMap, light),
                 new SsaoRenderPass(),
                 new FogRenderPass(fog, FogDistance.XZ),
                 new SkyboxPostProcessor(cubeMap),
