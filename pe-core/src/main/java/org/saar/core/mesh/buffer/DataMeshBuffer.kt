@@ -24,8 +24,9 @@ class DataMeshBuffer(
     }
 
     override fun store(offset: Long) {
-        this.vbo.allocate(this.buffer.flip().limit().toLong())
-        this.vbo.store(offset, this.buffer.asByteBuffer())
+        val bytes = Attributes.sumBytes(this.attributes)
+        this.vbo.allocate(this.buffer.clear().capacity().toLong())
+        this.vbo.store(offset * bytes, this.buffer.asByteBuffer())
     }
 
     override fun loadInVao(vao: WritableVao) = vao.loadVbo(this.vbo, *this.attributes.toTypedArray())

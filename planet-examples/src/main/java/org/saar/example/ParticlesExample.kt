@@ -47,7 +47,7 @@ fun main() {
 
     val cameraComponents = NodeComponentGroup(
         KeyboardMovementComponent(window.keyboard, 10f, 10f, 10f),
-        SmoothMouseRotationComponent(window.mouse, .3f)
+        SmoothMouseRotationComponent(window.mouse, -.3f)
     )
 
     val camera = Camera(ScreenPerspectiveProjection(70f, 1f, 1000f), cameraComponents).apply {
@@ -148,18 +148,18 @@ private class MyParticlesComponent : NodeComponent {
 
     override fun start(node: ComposableNode) {
         this.modelComponent = node.components.get()
-        modelComponent.instancesCount = 10
+        this.modelComponent.instancesCount = 10
     }
 
     override fun update(node: ComposableNode) {
-        for (i in 0 until modelComponent.instancesCount) {
+        for (i in 0 until this.modelComponent.instancesCount) {
             val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
             if (Math.random() < .01 && v.lengthSquared() < 100) {
-                modelComponent.model.mesh.buffers.offset(i)
-                modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
+                this.modelComponent.model.mesh.buffers.offset(i)
+                this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
             }
         }
 
-        modelComponent.instancesCount = (modelComponent.instancesCount + 1).coerceAtMost(PARTICLES)
+        this.modelComponent.instancesCount = (this.modelComponent.instancesCount + 1).coerceAtMost(PARTICLES)
     }
 }

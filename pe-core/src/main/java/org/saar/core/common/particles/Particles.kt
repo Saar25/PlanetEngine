@@ -21,7 +21,7 @@ object Particles {
     fun mesh(instances: Array<ParticlesInstance>): ParticlesMesh {
         val instanceBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(instances.size * 4 * 4),
-            VboUsage.STATIC_DRAW)
+            VboUsage.DYNAMIC_DRAW)
 
         val objMeshBuilder = ParticlesMeshBuilder(instances.size,
             instanceBufferBuilder, instanceBufferBuilder)

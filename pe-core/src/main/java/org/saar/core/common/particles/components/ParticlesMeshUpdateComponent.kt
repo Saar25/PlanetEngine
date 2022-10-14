@@ -12,6 +12,6 @@ class ParticlesMeshUpdateComponent : NodeComponent {
     }
 
     override fun update(node: ComposableNode) {
-        //this.modelComponent.model.mesh.prototype.storeInstances(0, this.modelComponent.instancesCount)
+        this.modelComponent.model.mesh.buffers.store(0)
     }
 }

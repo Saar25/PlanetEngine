@@ -1,5 +1,6 @@
 package org.saar.lwjgl.opengl.fbo.attachment.buffer
 
+import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
@@ -24,9 +25,13 @@ class TextureAttachmentBuffer(
     }
 
     private fun configureTexture() {
-        this.texture.applyParameters(defaultParameters)
-        if (this.texture.width > 0 && this.texture.height > 0) {
-            this.texture.generateMipmap()
+        if (this.internalFormat.formatType != FormatType.DEPTH_COMPONENT &&
+            this.internalFormat.formatType != FormatType.STENCIL_INDEX &&
+            this.internalFormat.formatType != FormatType.DEPTH_STENCIL) {
+            this.texture.applyParameters(defaultParameters)
+            if (this.texture.width > 0 && this.texture.height > 0) {
+                this.texture.generateMipmap()
+            }
         }
     }
 

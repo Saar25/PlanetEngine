@@ -20,4 +20,6 @@ class ParticlesMeshBuffers(
     val vertexBuffers = listOf(this.positionBuffer, this.birthBuffer).distinct()
 
     fun offset(index: Int) = this.vertexBuffers.forEach { it.offset(index) }
+
+    fun store(offset: Long) = this.vertexBuffers.forEach { it.store(offset) }
 }
