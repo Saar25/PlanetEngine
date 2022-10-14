@@ -3,17 +3,17 @@ package org.saar.example;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.glfw.window.WindowHints;
+import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
-import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.ShadersProgram;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.vao.Vao;
+import org.saar.lwjgl.opengl.vbo.DataBuffer;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
 
 public class WindowBuilderExample {
 
@@ -48,7 +48,6 @@ public class WindowBuilderExample {
         shadersProgram.bind();
 
         vao.bind();
-        vao.enableAttributes();
 
         final Keyboard keyboard = window.getKeyboard();
         keyboard.onKeyPress('K').perform(e -> window.setFullscreen());

@@ -1,29 +1,55 @@
 package org.saar.core.common.particles
 
-import org.saar.core.mesh.builder.InstancedMeshBuilder
-import org.saar.core.mesh.builder.MeshBuilder
+import org.saar.core.mesh.MeshBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.VboTarget
 
-class ParticlesMeshBuilder private constructor(
-    private val builder: InstancedMeshBuilder<ParticlesInstance>,
-    private val prototype: ParticlesMeshPrototype,
+class ParticlesMeshBuilder(
+    private val instances: Int,
+    private val positionBufferBuilder: DataMeshBufferBuilder,
+    private val birthBufferBuilder: DataMeshBufferBuilder,
 ) : MeshBuilder {
 
-    override fun delete() = this.builder.delete()
+    val writer = ParticlesMeshWriter(
+        this.positionBufferBuilder.writer,
+        this.birthBufferBuilder.writer,
+    )
 
-    fun addInstance(instance: ParticlesInstance) = this.builder.addInstance(instance)
+    private val bufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.birthBufferBuilder,
+    ).distinct()
 
-    override fun load() = ParticlesMesh(this.builder.load(), this.prototype)
+    init {
 
-    companion object {
-        @JvmStatic
-        @JvmOverloads
-        fun dynamic(prototype: ParticlesMeshPrototype = Particles.meshPrototype()) = ParticlesMeshBuilder(
-            InstancedMeshBuilder.Dynamic(prototype, RenderMode.TRIANGLE_STRIP, 4), prototype)
+        this.positionBufferBuilder.addAttribute(
+            Attributes.ofInstanced(0, 3, DataType.FLOAT, false))
+        this.birthBufferBuilder.addAttribute(
+            Attributes.ofIntegerInstanced(1, 1, DataType.INT))
+    }
 
-        @JvmStatic
-        @JvmOverloads
-        fun fixed(instances: Int, prototype: ParticlesMeshPrototype = Particles.meshPrototype()) = ParticlesMeshBuilder(
-            InstancedMeshBuilder.Fixed(prototype, RenderMode.TRIANGLE_STRIP, instances, 4), prototype)
+    override fun delete() = this.bufferBuilders.forEach { it.delete() }
+
+    override fun load(): ParticlesMesh {
+        val vao = Vao.create()
+
+        val buffers = this.bufferBuilders.associateWith { it.build(VboTarget.ARRAY_BUFFER) }
+
+        buffers.forEach {
+            it.value.store(0)
+            it.value.loadInVao(vao)
+        }
+
+        val meshBuffers = ParticlesMeshBuffers(
+            buffers[this.positionBufferBuilder]!!,
+            buffers[this.birthBufferBuilder]!!)
+
+        val drawCall = InstancedArraysDrawCall(RenderMode.TRIANGLE_STRIP, 0, 4, this.instances)
+        return ParticlesMesh(vao, drawCall, meshBuffers)
     }
 }

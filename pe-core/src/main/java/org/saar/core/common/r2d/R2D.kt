@@ -2,9 +2,13 @@ package org.saar.core.common.r2d
 
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.saar.core.common.r2d.MeshBuilder2D.Companion.fixed
-import org.saar.core.mesh.buffer.MeshIndexBuffer
-import org.saar.core.mesh.buffer.MeshVertexBuffer
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
+import org.saar.core.mesh.writer.writeIndices
+import org.saar.core.mesh.writer.writeVertices
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
 object R2D {
 
@@ -15,18 +19,21 @@ object R2D {
     }
 
     @JvmStatic
-    fun meshPrototype(): MeshPrototype2D {
-        val vertex = MeshVertexBuffer.createStatic()
-        val index = MeshIndexBuffer.createStatic()
-        return MeshPrototype2D(vertex, index)
-    }
+    fun mesh(vertices: Array<Vertex2D>, indices: IntArray): Mesh {
+        val vertexBufferBuilder = DataMeshBufferBuilder(
+            FixedBufferBuilder(vertices.size * 5 * 4),
+            VboUsage.STATIC_DRAW)
 
-    @JvmStatic
-    @JvmOverloads
-    fun mesh(vertices: Array<Vertex2D>, indices: IntArray, prototype: MeshPrototype2D = meshPrototype()): Mesh2D {
-        return fixed(vertices.size, indices.size, prototype).also {
-            vertices.forEach(it::addVertex)
-            indices.forEach(it::addIndex)
-        }.load()
+        val indexBufferBuilder = IndexMeshBufferBuilder(
+            FixedBufferBuilder(indices.size * 4),
+            VboUsage.STATIC_DRAW)
+
+        val meshBuilder2D = MeshBuilder2D(indices.size,
+            vertexBufferBuilder, vertexBufferBuilder, indexBufferBuilder)
+
+        meshBuilder2D.writer.writeVertices(vertices)
+        meshBuilder2D.writer.writeIndices(indices)
+
+        return meshBuilder2D.load()
     }
 }

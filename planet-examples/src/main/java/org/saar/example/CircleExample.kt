@@ -11,24 +11,24 @@ import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
+import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.ColourScreenImage
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.fbos.attachment.AttachmentIndex
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.buffer.AttachmentTextureBuffer
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.uniforms.IntUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -57,8 +57,10 @@ fun main() {
     BlendTest.enable()
     ClearColour.set(0f, 0f, 0f, 0f)
 
+    val fbo = Fbo.create(WIDTH, HEIGHT)
     val screenPrototype = MyScreenPrototype()
-    val screen = Screens.fromPrototype(screenPrototype, Fbo.create(WIDTH, HEIGHT))
+    val allocation = SimpleAllocationStrategy()
+    val screen = Screens.fromPrototype(screenPrototype, fbo, allocation)
 
     val painter = MyPostProcessor()
     val swizzle = SwizzlePostProcessor(Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)
@@ -90,13 +92,11 @@ fun main() {
 }
 
 private class MyScreenPrototype : ScreenPrototype {
-    val image = MutableTexture2D.create()
+    val image: MutableTexture2D = MutableTexture2D.create()
 
-    @ScreenImageProperty(draw = true, read = true)
-    private val colourImage = ColourScreenImage(ColourAttachment(
-        AttachmentIndex.ofColour(0),
-        AttachmentTextureBuffer(this.image, InternalFormat.R8)
-    ))
+    @ScreenImageProperty
+    private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
+        TextureAttachmentBuffer(this.image, InternalFormat.R8), read = true)
 
     val buffers = object : RenderingBuffers2D {
         override val albedo = image

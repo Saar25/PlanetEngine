@@ -2,15 +2,16 @@ package org.saar.core.mesh.writer
 
 import org.joml.Vector3fc
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.objects.attributes.AttributeLinker
-import org.saar.lwjgl.opengl.objects.attributes.FloatAttributeLinker
+import org.saar.lwjgl.opengl.attribute.pointer.AttributePointer
+import org.saar.lwjgl.opengl.attribute.pointer.FloatAttributePointer
 import org.saar.lwjgl.util.DataWriter
 
 class Vec3VertexWriter(private val dataWriter: DataWriter) : VertexDataWriter {
 
-    val attributeLinker: AttributeLinker = FloatAttributeLinker(3, DataType.FLOAT, false)
+    val attributePointer: AttributePointer =
+        FloatAttributePointer(3, DataType.FLOAT, false)
 
-    override val attributeLinkers: List<AttributeLinker> = listOf(this.attributeLinker)
+    override val attributePointers: List<AttributePointer> = listOf(this.attributePointer)
 
     fun write(value: Vector3fc) {
         write(value.x(), value.y(), value.z())

@@ -1,17 +1,20 @@
 package org.saar.core.common.particles
 
-import org.saar.core.mesh.InstancedArraysMesh
 import org.saar.core.mesh.Mesh
+import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
+import org.saar.lwjgl.opengl.vao.IVao
 
-class ParticlesMesh internal constructor(
-    private val mesh: InstancedArraysMesh,
-    val prototype: ParticlesMeshPrototype,
+class ParticlesMesh(
+    private val vao: IVao,
+    private val drawCall: InstancedArraysDrawCall,
+    val buffers: ParticlesMeshBuffers,
 ) : Mesh {
-    override fun draw() = this.mesh.draw()
+    override fun draw() {
+        this.vao.bind()
+        this.drawCall.doDrawCall()
+    }
 
-    override fun delete() = this.mesh.delete()
+    override fun delete() = this.vao.delete()
 
-    var instancesCount: Int
-        get() = this.mesh.drawCall.instances
-        set(value) = this.mesh.set(instances = value)
+    var instancesCount: Int by this.drawCall::instances
 }

@@ -10,14 +10,17 @@ import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
 import org.saar.core.common.components.MouseDragRotationComponent;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.obj.Obj;
+import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
+import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
@@ -222,7 +225,7 @@ public class ReflectionExample {
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
         };
-        final FlatReflectedMesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
+        final Mesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
 
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
         mirror.getTransform().getPosition().set(0, .1f, 0);
@@ -251,7 +254,7 @@ public class ReflectionExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
                 ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);
     }
@@ -279,8 +282,7 @@ public class ReflectionExample {
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FogRenderPass(fog, FogDistance.XYZ),
-                new FxaaPostProcessor()
+                new FogRenderPass(fog, FogDistance.XYZ)
         );
 
         return new DeferredRenderingPath(camera, renderPassesPipeline);
@@ -288,7 +290,7 @@ public class ReflectionExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
+            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -299,7 +301,7 @@ public class ReflectionExample {
 
     private static ObjModel loadStall() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
+            final Mesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -310,7 +312,7 @@ public class ReflectionExample {
 
     private static ObjModel loadDragon() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
+            final Mesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {

@@ -8,7 +8,10 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
 import org.saar.core.common.components.MouseDragRotationComponent;
-import org.saar.core.common.r3d.*;
+import org.saar.core.common.r3d.Instance3D;
+import org.saar.core.common.r3d.Model3D;
+import org.saar.core.common.r3d.Node3D;
+import org.saar.core.common.r3d.R3D;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
@@ -18,6 +21,7 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
@@ -131,7 +135,7 @@ public class TerrainExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(101, 0, 50);
-        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
                 ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);
     }

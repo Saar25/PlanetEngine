@@ -3,8 +3,8 @@ package org.saar.core.renderer;
 import org.saar.core.renderer.shaders.ShaderPropertiesLocator;
 import org.saar.core.renderer.uniforms.UniformPropertiesLocator;
 import org.saar.core.renderer.uniforms.UniformTrigger;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer;
 
 import java.util.List;
 

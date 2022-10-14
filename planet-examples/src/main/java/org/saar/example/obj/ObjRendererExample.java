@@ -1,23 +1,29 @@
 package org.saar.example.obj;
 
-import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardRotationComponent;
 import org.saar.core.common.obj.Obj;
-import org.saar.core.common.obj.ObjMesh;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.constants.DepthFormatType;
-import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
+import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
@@ -28,15 +34,20 @@ public class ObjRendererExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static ColourAttachment colorAttachment;
-    private static DepthAttachment depthAttachment;
-    private static MultisampledFbo fbo;
+    private static Attachment colorAttachment;
+    private static Attachment depthAttachment;
+    private static Fbo fbo;
 
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        colorAttachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        depthAttachment = DepthAttachment.withRenderBuffer(DepthFormatType.COMPONENT24);
+        colorAttachment = new Attachment(
+                new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
+                new SimpleAllocationStrategy());
+
+        depthAttachment = new Attachment(
+                new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
+                new SimpleAllocationStrategy());
 
         final Keyboard keyboard = window.getKeyboard();
 
@@ -96,7 +107,7 @@ public class ObjRendererExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
+            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -105,13 +116,20 @@ public class ObjRendererExample {
         return null;
     }
 
-    private static MultisampledFbo createFbo(int width, int height) {
-        final MultisampledFbo fbo = new MultisampledFbo(width, height, 8);
-        fbo.setDrawAttachments(colorAttachment);
-        fbo.setReadAttachment(colorAttachment);
-        fbo.addAttachment(colorAttachment);
-        fbo.addAttachment(depthAttachment);
+    private static Fbo createFbo(int width, int height) {
+        final Fbo fbo = Fbo.create(width, height);
+
+        final AttachmentIndex colourIndex = new ColourAttachmentIndex(0);
+        final AttachmentIndex depthIndex = new BasicAttachmentIndex(AttachmentType.DEPTH);
+        final RenderTarget target = new IndexRenderTarget(colourIndex);
+
+        fbo.addAttachment(colourIndex, colorAttachment);
+        fbo.setDrawTarget(target);
+        fbo.setReadTarget(target);
+        fbo.addAttachment(depthIndex, depthAttachment);
+
         fbo.ensureStatus();
+
         return fbo;
     }
 

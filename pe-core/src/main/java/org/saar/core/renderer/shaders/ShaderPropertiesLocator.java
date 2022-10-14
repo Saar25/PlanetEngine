@@ -1,8 +1,8 @@
 package org.saar.core.renderer.shaders;
 
 import org.saar.core.util.reflection.FieldsLocator;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShaderType;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.ShaderType;
 
 import java.util.List;
 

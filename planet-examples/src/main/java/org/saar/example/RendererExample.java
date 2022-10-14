@@ -1,12 +1,24 @@
 package org.saar.example;
 
-import org.saar.core.common.r2d.*;
+import org.saar.core.common.r2d.Model2D;
+import org.saar.core.common.r2d.R2D;
+import org.saar.core.common.r2d.Renderer2D;
+import org.saar.core.common.r2d.Vertex2D;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.renderer.RenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
-import org.saar.lwjgl.opengl.fbos.MultisampledFbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
+import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.maths.utils.Vector2;
@@ -28,23 +40,27 @@ public class RendererExample {
                 R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
                 R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
-        final Mesh2D mesh = R2D.mesh(vertices, indices);
+        final Mesh mesh = R2D.mesh(vertices, indices);
         final Model2D model = new Model2D(mesh);
         final Renderer2D renderer = Renderer2D.INSTANCE;
 
-        final ColourAttachment attachment = ColourAttachment.withRenderBuffer(0, ColourFormatType.RGBA8);
-        final MultisampledFbo fbo = new MultisampledFbo(WIDTH, HEIGHT, 8);
+        final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
+        final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
+        final Attachment attachment = new Attachment(buffer, allocation);
+        final AttachmentIndex attachmentIndex = new ColourAttachmentIndex(0);
+        final RenderTarget target = new IndexRenderTarget(attachmentIndex);
+        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        fbo.addAttachment(attachment);
-        fbo.setDrawAttachments(attachment);
-        fbo.setReadAttachment(attachment);
+        fbo.addAttachment(attachmentIndex, attachment);
+        fbo.setReadTarget(target);
+        fbo.setDrawTarget(target);
         fbo.ensureStatus();
 
         window.addResizeListener(e -> {
             fbo.bind();
             fbo.resize(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
-            attachment.initMS(fbo, 16);
+            attachment.init(fbo, attachmentIndex);
         });
 
         final Keyboard keyboard = window.getKeyboard();

@@ -9,8 +9,6 @@ import org.saar.core.common.particles.Particles
 import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
 import org.saar.core.common.particles.components.ParticlesModelComponent
-import org.saar.core.mesh.prototype.readInstance
-import org.saar.core.mesh.prototype.writeInstance
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
@@ -24,12 +22,14 @@ import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
+import java.lang.Math.random
+import kotlin.math.sqrt
 
 private const val WIDTH = 1200
 private const val HEIGHT = 700
-private const val PARTICLES = 50000
+private const val PARTICLES = 100000
 private const val RADIUS = 50f
-private const val LIFETIME = 16000
+private const val LIFETIME = 8000
 
 fun main() {
     val window = Window.builder("Lwjgl", WIDTH, HEIGHT, true)
@@ -49,7 +49,7 @@ fun main() {
         transform.position.set(0f, 0f, 100f)
     }
 
-    val particlesComponents = NodeComponentGroup(MyParticlesSphereComponent())
+    val particlesComponents = NodeComponentGroup(MyParticlesSphereComponent(), IncreaseParticlesCountComponent(10, 10))
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
 
     val pipeline = DeferredRenderingPipeline(
@@ -91,6 +91,35 @@ private fun buildParticlesModel(): ParticlesModel {
     return ParticlesModel(mesh, texture, 4, LIFETIME)
 }
 
+private class IncreaseParticlesCountComponent(
+    private val initialCount: Int,
+    private val increaseBy: Int
+) : NodeComponent {
+
+    private lateinit var modelComponent: ParticlesModelComponent
+
+    override fun start(node: ComposableNode) {
+        this.modelComponent = node.components.get()
+        this.modelComponent.instancesCount = this.initialCount
+        initializeParticles(0, this.initialCount)
+    }
+
+    override fun update(node: ComposableNode) {
+        val next = (this.modelComponent.instancesCount + this.increaseBy).coerceAtMost(PARTICLES)
+        initializeParticles(this.modelComponent.instancesCount, next)
+        this.modelComponent.instancesCount = next
+    }
+
+    private fun initializeParticles(from: Int, to: Int) {
+        this.modelComponent.model.mesh.buffers.offset(from)
+        for (i in from until to) {
+            val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
+                .normalize((RADIUS * sqrt(random())).toFloat())
+            this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
+        }
+    }
+}
+
 private class MyParticlesSphereComponent : NodeComponent {
 
     private lateinit var modelComponent: ParticlesModelComponent
@@ -102,16 +131,19 @@ private class MyParticlesSphereComponent : NodeComponent {
     override fun update(node: ComposableNode) {
         val now = System.currentTimeMillis().toInt()
 
-        for (i in 0 until modelComponent.instancesCount) {
-            val instance = this.modelComponent.model.mesh.prototype.readInstance(i)
+        for (i in 0 until this.modelComponent.instancesCount) {
+            this.modelComponent.model.mesh.buffers.offset(i)
+            val instance = this.modelComponent.model.mesh.buffers.reader.readInstance()
 
-            if (i == 0) print("\r ${instance.birth} $now")
             if (now - instance.birth >= LIFETIME) {
-                val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).normalize(RADIUS)
-                modelComponent.model.mesh.prototype.writeInstance(i, Particles.instance(v))
+                val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
+                    .normalize((RADIUS * sqrt(random())).toFloat())
+                this.modelComponent.model.mesh.buffers.offset(i)
+                this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
             } else {
                 val v = Vector3.of(instance.position3f).mul(1.001f)
-                modelComponent.model.mesh.prototype.writeInstance(i, Particles.instance(v, instance.birth))
+                this.modelComponent.model.mesh.buffers.offset(i)
+                this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v, instance.birth))
             }
         }
     }

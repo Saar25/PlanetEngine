@@ -1,11 +1,12 @@
 package org.saar.core.renderer.shadow
 
 import org.saar.core.renderer.RenderingPathScreenPrototype
+import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.DepthScreenImage
-import org.saar.core.screen.image.ScreenImage
-import org.saar.lwjgl.opengl.constants.DepthFormatType
-import org.saar.lwjgl.opengl.fbos.attachment.DepthAttachment
+import org.saar.lwjgl.opengl.constants.InternalFormat
+import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.*
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
@@ -24,8 +25,8 @@ class ShadowsScreenPrototype : RenderingPathScreenPrototype<ShadowsBuffers> {
     }
 
     @ScreenImageProperty
-    private val depthImage: ScreenImage = DepthScreenImage(DepthAttachment
-        .withTexture(depthTexture, DepthFormatType.COMPONENT24))
+    private val depthImage = ScreenImagePrototype(BasicAttachmentIndex(AttachmentType.DEPTH),
+        TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24))
 
     override val buffers = object : ShadowsBuffers {
         override val depth = depthTexture

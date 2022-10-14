@@ -1,8 +1,8 @@
 package org.saar.core.fog
 
-import org.saar.lwjgl.opengl.shaders.uniforms.FloatUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
+import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
+import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shader.uniforms.Vec3Uniform
 
 class FogUniformValue(name: String, var value: IFog) : UniformContainer {
 
