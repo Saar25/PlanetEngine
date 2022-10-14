@@ -25,13 +25,12 @@ class TextureAttachmentBuffer(
     }
 
     private fun configureTexture() {
+        this.texture.applyParameters(defaultParameters)
         if (this.internalFormat.formatType != FormatType.DEPTH_COMPONENT &&
             this.internalFormat.formatType != FormatType.STENCIL_INDEX &&
-            this.internalFormat.formatType != FormatType.DEPTH_STENCIL) {
-            this.texture.applyParameters(defaultParameters)
-            if (this.texture.width > 0 && this.texture.height > 0) {
-                this.texture.generateMipmap()
-            }
+            this.internalFormat.formatType != FormatType.DEPTH_STENCIL &&
+            this.texture.width > 0 && this.texture.height > 0) {
+            this.texture.generateMipmap()
         }
     }
 
