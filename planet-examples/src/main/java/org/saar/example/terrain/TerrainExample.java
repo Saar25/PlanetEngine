@@ -1,6 +1,7 @@
 package org.saar.example.terrain;
 
 import org.joml.SimplexNoise;
+import org.joml.Vector2i;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -12,10 +13,13 @@ import org.saar.core.common.r3d.Instance3D;
 import org.saar.core.common.r3d.Model3D;
 import org.saar.core.common.r3d.Node3D;
 import org.saar.core.common.r3d.R3D;
+import org.saar.core.common.terrain.World;
+import org.saar.core.common.terrain.colour.ColourGenerator;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
+import org.saar.core.common.terrain.height.HeightGenerator;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory;
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
@@ -75,29 +79,18 @@ public class TerrainExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final NoiseHeightGenerator heightGenerator = new NoiseHeightGenerator(
-                new MultipliedNoise2f(200,
-                        new SpreadNoise2f(50,
-                                new LayeredNoise2f(SimplexNoise::noise, 5)))
-        );
-        final LowPolyWorld world = new LowPolyWorld(new LowPolyTerrainConfiguration(
-                new DiamondMeshGenerator(64), heightGenerator,
-                new NormalColourGenerator(Vector3.upward(),
-                        new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-                        new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(256, 256)
-        ));
+        final LowPolyWorld world = buildWorld();
 
         for (int x = -5; x <= 5; x++) {
             for (int z = -5; z <= 5; z++) {
-                world.createTerrain(Vector2.of(x, z));
+                world.createTerrain(new Vector2i(x, z));
             }
         }
 
-        final Model3D cubeModel = buildCubeModel();
+        final Model3D cubeModel = buildCubeModel(world);
         final Node3D cube = new Node3D(cubeModel);
 
-        final Model3D cubeModel2 = buildCubeModel();
+        final Model3D cubeModel2 = buildCubeModel(world);
         cubeModel2.getTransform().getPosition().addX(-5);
         cubeModel2.getTransform().getPosition().addY(5);
         final Node3D cube2 = new Node3D(cubeModel2);
@@ -131,10 +124,28 @@ public class TerrainExample {
         window.destroy();
     }
 
-    private static Model3D buildCubeModel() {
+    private static LowPolyWorld buildWorld() {
+        final HeightGenerator heightGenerator = new NoiseHeightGenerator(
+                new MultipliedNoise2f(200, new SpreadNoise2f(50,
+                        new LayeredNoise2f(SimplexNoise::noise, 5)))
+        );
+
+        final ColourGenerator colourGenerator = new NormalColourGenerator(Vector3.upward(),
+                new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
+                new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)));
+
+        final LowPolyTerrainFactory terrainFactory = new LowPolyTerrainFactory(
+                new DiamondMeshGenerator(64), heightGenerator,
+                colourGenerator, Vector2.of(256, 256)
+        );
+
+        return new LowPolyWorld(terrainFactory);
+    }
+
+    private static Model3D buildCubeModel(World world) {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
-        cubeInstance.getTransform().getPosition().set(101, 0, 50);
+        cubeInstance.getTransform().getPosition().set(101, world.getHeight(101, 50), 50);
         final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
                 ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);

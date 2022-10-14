@@ -1,6 +1,7 @@
 package org.saar.example.light
 
 import org.joml.SimplexNoise
+import org.joml.Vector2i
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
@@ -11,8 +12,7 @@ import org.saar.core.common.r3d.R3D
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrain
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
@@ -36,6 +36,9 @@ import org.saar.gui.style.length.LengthValues.percent
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.maths.noise.LayeredNoise2f
+import org.saar.maths.noise.MultipliedNoise2f
+import org.saar.maths.noise.SpreadNoise2f
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
@@ -63,14 +66,17 @@ fun main() {
         transform.rotation.lookAlong(Vector3.of(0f, 0f, 1f))
     }
 
-    val terrain = LowPolyTerrain(Vector2.create(), LowPolyTerrainConfiguration(
-        DiamondMeshGenerator(256),
-        NoiseHeightGenerator(SimplexNoise::noise),
+    val heightGenerator = NoiseHeightGenerator(
+        MultipliedNoise2f(200, SpreadNoise2f(50, LayeredNoise2f(SimplexNoise::noise, 5)))
+    )
+    val terrainFactory = LowPolyTerrainFactory(
+        DiamondMeshGenerator(64), heightGenerator,
         NormalColourGenerator(Vector3.upward(),
             NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
             NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-        Vector2.of(1024f, 1024f)
-    ))
+        Vector2.of(256f, 256f)
+    )
+    val terrain = terrainFactory.create(Vector2i(0, 0))
 
     val lights = Array(100) {
         val lightComponents = NodeComponentGroup(

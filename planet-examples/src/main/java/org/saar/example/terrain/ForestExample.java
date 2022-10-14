@@ -1,6 +1,7 @@
 package org.saar.example.terrain;
 
 import org.joml.SimplexNoise;
+import org.joml.Vector2i;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -18,10 +19,12 @@ import org.saar.core.common.r3d.Instance3D;
 import org.saar.core.common.r3d.Model3D;
 import org.saar.core.common.r3d.Node3D;
 import org.saar.core.common.r3d.R3D;
+import org.saar.core.common.terrain.colour.ColourGenerator;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
+import org.saar.core.common.terrain.height.HeightGenerator;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration;
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory;
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld;
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator;
 import org.saar.core.fog.Fog;
@@ -89,22 +92,11 @@ public class ForestExample {
         camera.getTransform().getPosition().set(0, 0, 200);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
 
-        final NoiseHeightGenerator heightGenerator = new NoiseHeightGenerator(
-                new MultipliedNoise2f(200,
-                        new SpreadNoise2f(50,
-                                new LayeredNoise2f(SimplexNoise::noise, 5)))
-        );
-        final LowPolyWorld world = new LowPolyWorld(new LowPolyTerrainConfiguration(
-                new DiamondMeshGenerator(64), heightGenerator,
-                new NormalColourGenerator(Vector3.upward(),
-                        new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-                        new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-                Vector2.of(256, 256)
-        ));
+        final LowPolyWorld world = buildWorld();
 
         for (int x = -5; x <= 5; x++) {
             for (int z = -5; z <= 5; z++) {
-                world.createTerrain(Vector2.of(x, z));
+                world.createTerrain(new Vector2i(x, z));
             }
         }
 
@@ -116,7 +108,7 @@ public class ForestExample {
             treeModel.getTransform().getScale().set(10);
             final float x = (float) (Math.random() * 2000 - 1000);
             final float z = (float) (Math.random() * 2000 - 1000);
-            treeModel.getTransform().getPosition().set(x, heightGenerator.generateHeight(x, z) + 18, z);
+            treeModel.getTransform().getPosition().set(x, world.getHeight(x, z) + 18, z);
             return tree;
         }).toArray(ObjNode[]::new));
 
@@ -163,6 +155,24 @@ public class ForestExample {
         camera.delete();
         renderingPath.delete();
         window.destroy();
+    }
+
+    private static LowPolyWorld buildWorld() {
+        final HeightGenerator heightGenerator = new NoiseHeightGenerator(
+                new MultipliedNoise2f(200, new SpreadNoise2f(50,
+                        new LayeredNoise2f(SimplexNoise::noise, 5)))
+        );
+
+        final ColourGenerator colourGenerator = new NormalColourGenerator(Vector3.upward(),
+                new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
+                new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)));
+
+        final LowPolyTerrainFactory terrainFactory = new LowPolyTerrainFactory(
+                new DiamondMeshGenerator(64), heightGenerator,
+                colourGenerator, Vector2.of(256, 256)
+        );
+
+        return new LowPolyWorld(terrainFactory);
     }
 
     private static Model3D buildCubeModel() {

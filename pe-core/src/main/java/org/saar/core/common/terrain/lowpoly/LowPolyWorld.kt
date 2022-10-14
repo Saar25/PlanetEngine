@@ -1,38 +1,42 @@
 package org.saar.core.common.terrain.lowpoly
 
-import org.joml.Vector2fc
-import org.saar.core.common.r3d.Node3D
-import org.saar.core.common.r3d.NodeBatch3D
-import org.saar.core.node.ParentNode
+import org.joml.Vector2ic
+import org.saar.core.common.r3d.DeferredRenderer3D
+import org.saar.core.common.r3d.Renderer3D
+import org.saar.core.common.terrain.World
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
-class LowPolyWorld(private val configuration: LowPolyTerrainConfiguration) : ParentNode,
+class LowPolyWorld(private val factory: LowPolyTerrainFactory) : World,
     ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode {
 
-    private val batch = NodeBatch3D()
+    private val _children: MutableList<LowPolyTerrain> = mutableListOf()
+    override val children: List<LowPolyTerrain> = this._children
 
-    override val children: List<Node3D> = batch.children
+    override fun getHeight(x: Float, z: Float): Float {
+        return this.children.find { it.contains(x, z) }?.getHeight(x, z) ?: 0f
+    }
 
-    fun createTerrain(position: Vector2fc) {
-        this.batch.add(LowPolyTerrain(position, this.configuration))
+    fun createTerrain(position: Vector2ic) {
+        val terrain = this.factory.create(position)
+
+        this._children.add(terrain)
     }
 
     override fun renderForward(context: RenderContext) {
-        this.batch.renderForward(context)
+        val models = this.children.map { it.model }
+        Renderer3D.render(context, models)
     }
 
     override fun renderDeferred(context: RenderContext) {
-        this.batch.renderDeferred(context)
+        val models = this.children.map { it.model }
+        DeferredRenderer3D.render(context, models)
     }
 
     override fun renderShadows(context: RenderContext) {
-        this.batch.renderShadows(context)
-    }
-
-    override fun delete() {
-        this.batch.delete()
+        val models = this.children.map { it.model }
+        DeferredRenderer3D.render(context, models)
     }
 }

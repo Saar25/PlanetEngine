@@ -12,4 +12,12 @@ interface Terrain : Node {
      */
     fun getHeight(x: Float, z: Float): Float
 
+    /**
+     * Return whether the terrain contains the given coordinates
+     *
+     * @param x the x world coordinate
+     * @param z the z world coordinate
+     */
+    fun contains(x: Float, z: Float): Boolean
+
 }
