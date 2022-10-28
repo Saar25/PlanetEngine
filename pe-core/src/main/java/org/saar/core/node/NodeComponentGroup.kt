@@ -2,7 +2,9 @@ package org.saar.core.node
 
 import kotlin.reflect.KClass
 
-class NodeComponentGroup(private val components: List<NodeComponent>) {
+class NodeComponentGroup(components: List<NodeComponent>) {
+
+    private val components: MutableList<NodeComponent> = components.toMutableList()
 
     constructor(vararg components: NodeComponent) : this(listOf(*components))
 
@@ -21,6 +23,8 @@ class NodeComponentGroup(private val components: List<NodeComponent>) {
     inline fun <reified T : NodeComponent> getNullable(): T? = getNullable(T::class)
 
     inline fun <reified T : NodeComponent> get(): T = getNullable()!!
+
+    fun add(node: ComposableNode, component: NodeComponent) = this.components.add(component).also { component.start(node) }
 
     fun start(node: ComposableNode) = this.components.forEach { it.start(node) }
 

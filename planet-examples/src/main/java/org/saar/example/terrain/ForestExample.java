@@ -1,6 +1,5 @@
 package org.saar.example.terrain;
 
-import org.jetbrains.annotations.NotNull;
 import org.joml.SimplexNoise;
 import org.joml.Vector2i;
 import org.saar.core.camera.Camera;
@@ -33,8 +32,6 @@ import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
-import org.saar.core.node.ComposableNode;
-import org.saar.core.node.NodeComponent;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
@@ -91,31 +88,12 @@ public class ForestExample {
             }
         }
 
-        var a = new NodeComponent() {
-            public NodeComponent a = null;
-            @Override
-            public void start(@NotNull ComposableNode node) {
-                if (this.a != null) this.a.start(node);
-            }
-
-            @Override
-            public void update(@NotNull ComposableNode node) {
-                if (this.a != null) this.a.update(node);
-            }
-
-            @Override
-            public void delete(@NotNull ComposableNode node) {
-                if (this.a != null) this.a.delete(node);
-            }
-        };
-
         final NodeComponentGroup playerComponents = new NodeComponentGroup(
                 new VelocityComponent(),
                 new AccelerationComponent(),
                 new TerrainGravityComponent(world),
                 new TerrainJumpingComponent(world, keyboard, 5),
-                new TerrainWalkingComponent(world, keyboard, 5, 5),
-                a
+                new TerrainWalkingComponent(world, keyboard, 5, 5)
         );
         final Model3D playerModel = buildCubeModel();
         final Node3D player = new Node3D(playerModel, playerComponents);
@@ -126,8 +104,7 @@ public class ForestExample {
         );
         final Camera camera = new Camera(projection, components);
 
-        a.a = new BackFaceComponent(camera.getTransform(), .10f);
-        a.a.start(player);
+        player.getComponents().add(player, new BackFaceComponent(camera.getTransform(), .1f));
 
         final Mesh mesh = Obj.mesh("/assets/tree/tree.model.obj");
         final Texture2D texture = Texture2D.of("/assets/tree/tree.diffuse.png");
@@ -163,8 +140,8 @@ public class ForestExample {
                 renderNode, light, shadowsRenderingPath.getCamera(), shadowMap);
 
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            camera.update();
             renderNode.update();
+            camera.update();
 
             renderingPath.render().toMainScreen();
 
@@ -184,8 +161,8 @@ public class ForestExample {
         );
 
         final ColourGenerator colourGenerator = new NormalColourGenerator(Vector3.upward(),
-                new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-                new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)));
+                new NormalColour(0.2f, Vector3.of(.41f, .41f, .41f)),
+                new NormalColour(0.3f, Vector3.of(.07f, .52f, .06f)));
 
         final LowPolyTerrainFactory terrainFactory = new LowPolyTerrainFactory(
                 new DiamondMeshGenerator(64), heightGenerator,
