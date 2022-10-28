@@ -6,32 +6,26 @@ import org.saar.lwjgl.opengl.constants.Comparator
 object DepthTest {
 
     private val DEFAULTS = DepthState(
-        DepthFunction(Comparator.LESS),
-        DepthMask.WRITE
+        enabled = false,
+        function = DepthFunction(Comparator.LESS),
+        mask = DepthMask.WRITE
     )
 
+    private const val target = GL11.GL_DEPTH_TEST
+
     private var current: DepthState = DEFAULTS
-    private var enabled: Boolean = false
 
     @JvmStatic
-    fun enable() {
-        if (!this.enabled) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST)
-            this.enabled = true
-        }
-    }
+    fun enable() = apply(enabled = true)
 
     @JvmStatic
-    fun disable() {
-        if (this.enabled) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST)
-            this.enabled = false
-        }
-    }
+    fun disable() = apply(enabled = false)
 
     @JvmStatic
     fun apply(state: DepthState) {
-        enable()
+        if (state.enabled != current.enabled) {
+            setEnabled(state.enabled)
+        }
         if (state.function != current.function) {
             setFunction(state.function)
         }
@@ -43,10 +37,13 @@ object DepthTest {
     }
 
     @JvmStatic
-    fun apply(function: DepthFunction = current.function,
-              mask: DepthMask = current.mask) {
-        apply(DepthState(function, mask))
-    }
+    fun apply(
+        enabled: Boolean = current.enabled,
+        function: DepthFunction = current.function,
+        mask: DepthMask = current.mask,
+    ) = apply(DepthState(enabled, function, mask))
+
+    private fun setEnabled(enabled: Boolean) = if (enabled) GL11.glEnable(this.target) else GL11.glDisable(this.target)
 
     private fun setFunction(function: DepthFunction) = GL11.glDepthFunc(function.comparator.value)
 

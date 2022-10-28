@@ -22,8 +22,10 @@ public class Keyboard {
     }
 
     public void init() {
-        GLFW.glfwSetKeyCallback(window, (window, key, scanCode, action, mods) -> {
-            final KeyEvent event = new KeyEvent(key, new Modifiers(mods));
+        GLFW.glfwSetKeyCallback(window, (window, code, scanCode, action, mods) -> {
+            final Modifiers modifiers = new Modifiers(mods);
+            final int key = KeyMapper.mapToKey(code, modifiers);
+            final KeyEvent event = new KeyEvent(code, modifiers, key);
             if (action == KeyState.PRESS.get()) {
                 this.helperKeyPress.fireEvent(event);
             } else if (action == KeyState.RELEASE.get()) {
@@ -100,7 +102,15 @@ public class Keyboard {
 
     public OnAction<KeyEvent> onKeyPress(int keyCode) {
         return listener -> addKeyPressListener(e -> {
-            if (e.getKeyCode() == keyCode) {
+            if (e.getCode() == keyCode) {
+                listener.onEvent(e);
+            }
+        });
+    }
+
+    public OnAction<KeyEvent> onKeyRepeat(int keyCode) {
+        return listener -> addKeyRepeatListener(e -> {
+            if (e.getCode() == keyCode) {
                 listener.onEvent(e);
             }
         });
@@ -108,7 +118,7 @@ public class Keyboard {
 
     public OnAction<KeyEvent> onKeyRelease(int keyCode) {
         return listener -> addKeyReleaseListener(e -> {
-            if (e.getKeyCode() == keyCode) {
+            if (e.getCode() == keyCode) {
                 listener.onEvent(e);
             }
         });

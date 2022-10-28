@@ -1,42 +1,57 @@
 package org.saar.gui.style
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.style.backgroundcolour.BackgroundColour
-import org.saar.gui.style.border.StyleBorders
-import org.saar.gui.style.bordercolour.BorderColour
-import org.saar.gui.style.colourmodifier.ColourModifier
-import org.saar.gui.style.coordinate.Coordinate
-import org.saar.gui.style.coordinate.Coordinates
-import org.saar.gui.style.font.StyleFont
-import org.saar.gui.style.fontcolour.FontColour
-import org.saar.gui.style.fontsize.FontSize
-import org.saar.gui.style.length.Length
-import org.saar.gui.style.length.Lengths
-import org.saar.gui.style.redius.StyleRadiuses
+import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
+import org.saar.gui.style.border.ReadonlyBorders
+import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
+import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
+import org.saar.gui.style.coordinate.ReadonlyCoordinate
+import org.saar.gui.style.discardmap.ReadonlyDiscardMap
+import org.saar.gui.style.font.ReadonlyFontFamily
+import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontsize.ReadonlyFontSize
+import org.saar.gui.style.length.ReadonlyLength
+import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.padding.ReadonlyPadding
+import org.saar.gui.style.position.ReadonlyPosition
+import org.saar.gui.style.redius.ReadonlyRadius
 
-class Style(container: UIChildElement) : IStyle {
+interface Style {
 
-    override val x: Coordinate = Coordinates.X(container)
+    val position: ReadonlyPosition
 
-    override val y: Coordinate = Coordinates.Y(container)
+    val padding: ReadonlyPadding
 
-    override val width: Length = Lengths.Width(container)
+    val margin: ReadonlyMargin
 
-    override val height: Length = Lengths.Height(container)
+    val x: ReadonlyCoordinate
 
-    override val fontSize: FontSize = FontSize(container)
+    val y: ReadonlyCoordinate
 
-    override val fontColour: FontColour = FontColour(container)
+    val width: ReadonlyLength
 
-    override val font: StyleFont = StyleFont(container)
+    val height: ReadonlyLength
 
-    override val colourModifier: ColourModifier = ColourModifier(container)
+    val boxSizing: ReadonlyBoxSizing
 
-    override val borders: StyleBorders = StyleBorders(container)
+    val fontSize: ReadonlyFontSize
 
-    override val borderColour: BorderColour = BorderColour(container)
+    val fontColour: ReadonlyFontColour
 
-    override val radiuses: StyleRadiuses = StyleRadiuses(container)
+    val font: ReadonlyFontFamily
 
-    override val backgroundColour: BackgroundColour = BackgroundColour(container)
+    val colourModifier: ReadonlyColourModifier
+
+    val borders: ReadonlyBorders
+
+    val borderColour: ReadonlyBorderColour
+
+    val radius: ReadonlyRadius
+
+    val backgroundColour: ReadonlyBackgroundColour
+
+    val backgroundImage: ReadonlyBackgroundImage
+
+    val discardMap: ReadonlyDiscardMap
 }

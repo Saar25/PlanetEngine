@@ -1,19 +1,19 @@
 package org.saar.core.mesh.writer
 
-import org.saar.lwjgl.opengl.objects.attributes.Attribute
-import org.saar.lwjgl.opengl.objects.attributes.AttributeLinker
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute
-import org.saar.lwjgl.opengl.objects.attributes.InstancedAttribute
+import org.saar.lwjgl.opengl.attribute.*
+import org.saar.lwjgl.opengl.attribute.divisor.AttributeDivisor
+import org.saar.lwjgl.opengl.attribute.divisor.InstancedAttributeDivisor
+import org.saar.lwjgl.opengl.attribute.divisor.NoAttributeDivisor
+import org.saar.lwjgl.opengl.attribute.pointer.AttributePointer
 
 interface VertexDataWriter {
 
-    val attributeLinkers: List<AttributeLinker>
+    val attributePointers: List<AttributePointer>
 
-    fun toAttributes(index: Int): List<IAttribute> {
-        return this.attributeLinkers.mapIndexed { i, linker -> Attribute(linker, index + i) }
-    }
+    fun toAttributes(index: Int) = toAttributes(index, NoAttributeDivisor())
 
-    fun toInstanceAttributes(index: Int, instances: Int): List<IAttribute> {
-        return this.attributeLinkers.mapIndexed { i, linker -> InstancedAttribute(linker, index + i, instances) }
-    }
+    fun toInstanceAttributes(index: Int, instances: Int) = toAttributes(index, InstancedAttributeDivisor(instances))
+
+    private fun toAttributes(index: Int, divisor: AttributeDivisor) =
+        this.attributePointers.mapIndexed { i, linker -> Attribute(index + i, linker, divisor) }
 }

@@ -3,8 +3,8 @@ package org.saar.core.renderer
 import org.saar.core.renderer.shaders.ShadersHelper
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformWrapper
+import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper
 
 class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : Renderer {
 

@@ -9,7 +9,7 @@ import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.opengl.fbos.ScreenFbo;
+import org.saar.lwjgl.opengl.fbo.ScreenFbo;
 import org.saar.maths.objects.Dimensions;
 import org.saar.maths.objects.RectangleI;
 
@@ -113,9 +113,9 @@ public class Window {
 
         center();
         makeContextCurrent();
-        if (this.vSync) {
-            GLFW.glfwSwapInterval(1);
-        }
+
+        GLFW.glfwSwapInterval(this.vSync ? 1 : 0);
+
         GL.createCapabilities();
         GLUtil.setupDebugMessageCallback(System.err);
         setVisible(true);

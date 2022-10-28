@@ -1,19 +1,18 @@
 package org.saar.gui.style.fontsize
 
-import org.saar.gui.UIChildElement
-import org.saar.gui.style.value.FontSizeValue
-import org.saar.gui.style.value.FontSizeValues
+import org.saar.gui.UIChildNode
 
-class FontSize(private val container: UIChildElement) : ReadonlyFontSize {
+class FontSize(private val container: UIChildNode, default: FontSizeValue = FontSizeValues.inherit) : ReadonlyFontSize {
 
-    var value: FontSizeValue = FontSizeValues.inherit
+    var value: FontSizeValue = default
 
-    override fun get() = this.value.compute(
-        this.container.parent.style, this.container.style)
+    override val size get() = this.value.compute(this.container)
 
     fun set(value: FontSizeValue) {
         this.value = value
     }
 
-    fun set(pixels: Int) = set(FontSizeValues.pixels(pixels))
+    fun set(pixels: Int) {
+        this.value = FontSizeValues.pixels(pixels)
+    }
 }

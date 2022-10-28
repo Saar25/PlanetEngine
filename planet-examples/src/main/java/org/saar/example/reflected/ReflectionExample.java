@@ -1,6 +1,5 @@
 package org.saar.example.reflected;
 
-import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -9,15 +8,19 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
 import org.saar.core.common.components.KeyboardMovementComponent;
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
-import org.saar.core.common.components.MouseRotationComponent;
+import org.saar.core.common.components.MouseDragRotationComponent;
 import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.*;
+import org.saar.core.common.obj.Obj;
+import org.saar.core.common.obj.ObjModel;
+import org.saar.core.common.obj.ObjNode;
+import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.fog.Fog;
 import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.mesh.Mesh;
+import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
@@ -34,15 +37,18 @@ import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
-import org.saar.gui.UIBlockElement;
-import org.saar.gui.UIContainer;
+import org.saar.gui.UIBlock;
 import org.saar.gui.UIDisplay;
-import org.saar.gui.UITextElement;
+import org.saar.gui.UIElement;
+import org.saar.gui.UIText;
 import org.saar.gui.font.Font;
 import org.saar.gui.font.FontLoader;
 import org.saar.gui.style.Colours;
-import org.saar.gui.style.value.CoordinateValues;
-import org.saar.gui.style.value.LengthValues;
+import org.saar.gui.style.alignment.AlignmentValues;
+import org.saar.gui.style.arrangement.ArrangementValues;
+import org.saar.gui.style.axisalignment.AxisAlignmentValues;
+import org.saar.gui.style.coordinate.CoordinateValues;
+import org.saar.gui.style.length.LengthValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -71,38 +77,38 @@ public class ReflectionExample {
         ClearColour.set(.2f, .2f, .2f);
 
         final UIDisplay uiDisplay = new UIDisplay(window);
+        uiDisplay.getStyle().getAlignment().setValue(AlignmentValues.horizontal);
+        uiDisplay.getStyle().getArrangement().setValue(ArrangementValues.spaceAround);
+        uiDisplay.getStyle().getAxisAlignment().setValue(AxisAlignmentValues.center);
 
-        final UIBlockElement reflectionUiElement = new UIBlockElement();
-        reflectionUiElement.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
-        reflectionUiElement.getStyle().getY().set(30);
-        reflectionUiElement.getStyle().getWidth().set(300);
-        reflectionUiElement.getStyle().getHeight().set(
+        final UIBlock reflectionUiBlock = new UIBlock();
+        reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
+        reflectionUiBlock.getStyle().getY().set(30);
+        reflectionUiBlock.getStyle().getWidth().set(300);
+        reflectionUiBlock.getStyle().getHeight().set(
                 LengthValues.ratio((float) HEIGHT / WIDTH));
-        reflectionUiElement.getStyle().getBorders().set(1);
-        reflectionUiElement.getStyle().getBorderColour().set(Colours.PURPLE);
+        reflectionUiBlock.getStyle().getBorders().set(1);
+        reflectionUiBlock.getStyle().getBorderColour().set(Colours.PURPLE);
 
-        uiDisplay.add(reflectionUiElement);
+        uiDisplay.add(reflectionUiBlock);
 
         final Font font = FontLoader.loadFont(
                 FontLoader.DEFAULT_FONT_FAMILY,
                 22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
 
-        final UIContainer uiTextGroup = new UIContainer();
-        uiTextGroup.getStyle().getX().set(30);
-        uiTextGroup.getStyle().getY().set(30);
+        final UIElement uiTextGroup = new UIElement();
         uiTextGroup.getStyle().getFont().set(font);
         uiTextGroup.getStyle().getFontSize().set(22);
         uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
+        uiTextGroup.getStyle().getAlignment().setValue(AlignmentValues.vertical);
 
-        final UITextElement uiFps = new UITextElement("Fps: ???");
+        final UIText uiFps = new UIText("Fps: ???");
         uiTextGroup.add(uiFps);
 
-        final UITextElement uiSpeed = new UITextElement("Speed: ???");
-        uiSpeed.getStyle().getY().set((int) font.getSize());
+        final UIText uiSpeed = new UIText("Speed: ???");
         uiTextGroup.add(uiSpeed);
 
-        final UITextElement uiDelta = new UITextElement("Delta: ???");
-        uiDelta.getStyle().getY().set((int) font.getSize() * 2);
+        final UIText uiDelta = new UIText("Delta: ???");
         uiTextGroup.add(uiDelta);
 
         uiDisplay.add(uiTextGroup);
@@ -113,7 +119,7 @@ public class ReflectionExample {
                 new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
         final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
                 new KeyboardMovementScrollVelocityComponent(mouse),
-                new MouseRotationComponent(mouse, -.3f));
+                new MouseDragRotationComponent(mouse, -.3f));
 
         final Camera camera = new Camera(projection, components);
         camera.getTransform().getPosition().set(0, 25, 100);
@@ -162,15 +168,15 @@ public class ReflectionExample {
 
             deferredRenderer.render().toMainScreen();
 
-            reflectionUiElement.setTexture(reflection.getReflectionMap());
+            reflectionUiBlock.getStyle().getBackgroundImage().set(reflection.getReflectionMap());
             uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();
             window.pollEvents();
 
-            uiFps.getUiText().setText(String.format("Fps: %.2f", fps.fps()));
-            uiSpeed.getUiText().setText(String.format("Speed: %.2f", cameraMovementComponent.getVelocity().x()));
-            uiDelta.getUiText().setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
+            uiFps.setText(String.format("Fps: %.2f", fps.fps()));
+            uiSpeed.setText(String.format("Speed: %.2f", cameraMovementComponent.getVelocity().x()));
+            uiDelta.setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
 
             fps.update();
         }
@@ -219,7 +225,7 @@ public class ReflectionExample {
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
                 FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
         };
-        final FlatReflectedMesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
+        final Mesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
 
         final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
         mirror.getTransform().getPosition().set(0, .1f, 0);
@@ -248,7 +254,7 @@ public class ReflectionExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh3D cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
+        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
                 ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);
     }
@@ -276,8 +282,7 @@ public class ReflectionExample {
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FogRenderPass(fog, FogDistance.XYZ),
-                new FxaaPostProcessor()
+                new FogRenderPass(fog, FogDistance.XYZ)
         );
 
         return new DeferredRenderingPath(camera, renderPassesPipeline);
@@ -285,7 +290,7 @@ public class ReflectionExample {
 
     private static ObjModel loadCottage() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
+            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
             final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -296,7 +301,7 @@ public class ReflectionExample {
 
     private static ObjModel loadStall() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
+            final Mesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
             final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
@@ -307,7 +312,7 @@ public class ReflectionExample {
 
     private static ObjModel loadDragon() {
         try {
-            final ObjMesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
+            final Mesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
             final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {

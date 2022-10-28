@@ -2,8 +2,8 @@ package org.saar.core.light
 
 import org.joml.Vector3f
 import org.saar.core.camera.ICamera
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformContainer
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec3Uniform
+import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
+import org.saar.lwjgl.opengl.shader.uniforms.Vec3Uniform
 import org.saar.maths.utils.Vector4
 
 class ViewSpacePointLightUniform(name: String, var value: IPointLight) : UniformContainer {

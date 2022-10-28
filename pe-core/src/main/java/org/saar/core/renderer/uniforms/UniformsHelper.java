@@ -1,6 +1,6 @@
 package org.saar.core.renderer.uniforms;
 
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformWrapper;
+import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper;
 
 import java.util.ArrayList;
 import java.util.List;

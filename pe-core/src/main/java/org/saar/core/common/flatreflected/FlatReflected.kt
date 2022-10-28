@@ -1,8 +1,13 @@
 package org.saar.core.common.flatreflected
 
 import org.joml.Vector3fc
-import org.saar.core.mesh.buffer.MeshIndexBuffer
-import org.saar.core.mesh.buffer.MeshVertexBuffer
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
+import org.saar.core.mesh.writer.writeIndices
+import org.saar.core.mesh.writer.writeVertices
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
 object FlatReflected {
 
@@ -12,21 +17,21 @@ object FlatReflected {
     }
 
     @JvmStatic
-    fun meshPrototype(): FlatReflectedMeshPrototype {
-        val vertexBuffer = MeshVertexBuffer.createStatic()
-        val indexBuffer = MeshIndexBuffer.createStatic()
-        return FlatReflectedMeshPrototype(vertexBuffer, indexBuffer)
-    }
+    fun mesh(vertices: Array<FlatReflectedVertex>, indices: IntArray): Mesh {
+        val vertexBufferBuilder = DataMeshBufferBuilder(
+            FixedBufferBuilder(vertices.size * 3 * 4),
+            VboUsage.STATIC_DRAW)
 
-    @JvmStatic
-    @JvmOverloads
-    fun mesh(
-        vertices: Array<FlatReflectedVertex>, indices: IntArray,
-        prototype: FlatReflectedMeshPrototype = meshPrototype(),
-    ): FlatReflectedMesh {
-        return FlatReflectedMeshBuilder.fixed(vertices.size, indices.size, prototype).also {
-            vertices.forEach(it::addVertex)
-            indices.forEach(it::addIndex)
-        }.load()
+        val indexBufferBuilder = IndexMeshBufferBuilder(
+            FixedBufferBuilder(indices.size * 4),
+            VboUsage.STATIC_DRAW)
+
+        val flatReflectedMeshBuilder = FlatReflectedMeshBuilder(
+            indices.size, vertexBufferBuilder, indexBufferBuilder)
+
+        flatReflectedMeshBuilder.writer.writeVertices(vertices)
+        flatReflectedMeshBuilder.writer.writeIndices(indices)
+
+        return flatReflectedMeshBuilder.load()
     }
 }

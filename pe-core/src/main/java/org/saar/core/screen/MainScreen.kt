@@ -1,7 +1,7 @@
 package org.saar.core.screen
 
-import org.saar.lwjgl.opengl.fbos.FboBlitFilter
-import org.saar.lwjgl.opengl.fbos.ScreenFbo
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter
+import org.saar.lwjgl.opengl.fbo.ScreenFbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 
 object MainScreen : Screen {

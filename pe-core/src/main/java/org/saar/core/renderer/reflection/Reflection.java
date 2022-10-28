@@ -5,7 +5,7 @@ import org.joml.Vector3fc;
 import org.saar.core.camera.Camera;
 import org.saar.core.renderer.RenderingPath;
 import org.saar.core.renderer.renderpass.AlbedoBuffer;
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.objects.Planef;
 import org.saar.maths.transform.Rotation;
@@ -18,7 +18,7 @@ public class Reflection {
     private final Camera reflectionCamera;
     private final RenderingPath<? extends AlbedoBuffer> renderingPath;
 
-    private ReadOnlyTexture reflectionMap = Texture2D.NULL;
+    private ReadOnlyTexture2D reflectionMap = Texture2D.NULL;
 
     public Reflection(Planef plane, Camera camera, Camera reflectionCamera, RenderingPath<? extends AlbedoBuffer> renderingPath) {
         this.plane = plane;
@@ -46,7 +46,7 @@ public class Reflection {
         this.reflectionMap = this.renderingPath.render().getBuffers().getAlbedo();
     }
 
-    public ReadOnlyTexture getReflectionMap() {
+    public ReadOnlyTexture2D getReflectionMap() {
         return this.reflectionMap;
     }
 

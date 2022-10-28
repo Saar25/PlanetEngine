@@ -1,14 +1,16 @@
 package org.saar.example.gui
 
+import org.jproperty.Observable
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
+import org.saar.gui.UIBlock
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIText
 import org.saar.gui.component.UISlider
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.center
-import org.saar.gui.style.value.CoordinateValues.sub
-import org.saar.gui.style.value.LengthValues.pixels
+import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.pixels
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -22,33 +24,34 @@ object UISliderExample {
     fun main(args: Array<String>) {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-        val display = UIDisplay(window)
+        val display = UIDisplay(window).apply {
+            style.alignment.value = AlignmentValues.vertical
+        }
 
-        val writeable = UITextElement("Hello World!").apply {
-            style.x.value = center()
-            style.y.value = center()
+        val uiText = UIText("Hello World!").apply {
             style.fontSize.set(48)
-            style.borderColour.set(Colours.PURPLE)
             style.fontColour.set(Colours.WHITE)
         }
-        display.add(writeable)
+        display.add(uiText)
 
-        val borderSize = UITextElement("Border size: 0").apply {
-            style.x.value = center()
-            style.y.value = sub(center(), 200)
+        val blockGap = UIBlock().apply {
+            style.borderColour.set(Colours.PURPLE)
+            style.height.value = percent(50f)
+        }
+        display.add(blockGap)
+
+        val borderSize = UIText("Border size: 0").apply {
             style.fontSize.set(48)
             style.fontColour.set(Colours.WHITE)
         }
         display.add(borderSize)
 
         val scrollbar = UISlider().apply {
-            style.x.value = center()
-            style.y.value = sub(center(), 300)
             style.width.value = pixels(500)
             style.height.value = pixels(50)
-            dynamicValueProperty.addListener { e ->
-                writeable.style.borders.set(e.newValue.toInt())
-                borderSize.uiText.text = "Border size: " + e.newValue.toInt()
+            dynamicValueProperty.addListener { _: Observable ->
+                blockGap.style.borders.set(dynamicValueProperty.intValue)
+                borderSize.text = "Border size: " + dynamicValueProperty.intValue
             }
         }
         display.add(scrollbar)

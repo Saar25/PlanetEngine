@@ -1,15 +1,13 @@
 package org.saar.core.renderer.deferred
 
 import org.saar.core.renderer.RenderingPathScreenPrototype
+import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.ColourScreenImage
-import org.saar.core.screen.image.DepthStencilScreenImage
-import org.saar.core.screen.image.ScreenImage
-import org.saar.lwjgl.opengl.constants.ColourFormatType
-import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.DepthStencilFormatType
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.fbos.attachment.DepthStencilAttachment
+import org.saar.lwjgl.opengl.constants.InternalFormat
+import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBuffers> {
@@ -20,17 +18,20 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
 
     private val depthTexture = MutableTexture2D.create()
 
-    @ScreenImageProperty(draw = true, read = true)
-    private val colourImage: ScreenImage = ColourScreenImage(ColourAttachment
-        .withTexture(0, this.colourTexture, ColourFormatType.RGBA16F))
-
-    @ScreenImageProperty(draw = true)
-    private val normalSpecularImage: ScreenImage = ColourScreenImage(ColourAttachment
-        .withTexture(1, this.normalSpecularTexture, ColourFormatType.RGBA16F))
+    @ScreenImageProperty
+    private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
+        TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGBA16F), read = true
+    )
 
     @ScreenImageProperty
-    private val depthImage: ScreenImage = DepthStencilScreenImage(DepthStencilAttachment.withTexture(
-        this.depthTexture, DepthStencilFormatType.DEPTH24_STENCIL8, DataType.U_INT_24_8))
+    private val normalSpecularImage = ScreenImagePrototype(ColourAttachmentIndex(1),
+        TextureAttachmentBuffer(this.normalSpecularTexture, InternalFormat.RGBA16F)
+    )
+
+    @ScreenImageProperty
+    private val depthImage = ScreenImagePrototype(BasicAttachmentIndex(AttachmentType.DEPTH_STENCIL),
+        TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8)
+    )
 
     override val buffers = object : DeferredRenderingBuffers {
         override val albedo = colourTexture

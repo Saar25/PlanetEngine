@@ -1,18 +1,16 @@
 package org.saar.gui.style.coordinate
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 
 object Coordinates {
 
-    class X(private val container: UIChildElement) : Coordinate() {
+    class X(private val container: UIChildNode, default: CoordinateValue = CoordinateValues.zero) : Coordinate(default) {
 
-        override fun get(): Int = this.value.computeAxisX(
-            this.container.parent.style, this.container.style)
+        override fun get(): Int = this.value.computeAxisX(this.container)
     }
 
-    class Y(private val container: UIChildElement) : Coordinate() {
+    class Y(private val container: UIChildNode, default: CoordinateValue = CoordinateValues.zero) : Coordinate(default) {
 
-        override fun get(): Int = this.value.computeAxisY(
-            this.container.parent.style, this.container.style)
+        override fun get(): Int = this.value.computeAxisY(this.container)
     }
 }

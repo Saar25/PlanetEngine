@@ -1,6 +1,10 @@
 package org.saar.gui.style.length
 
-fun interface ReadonlyLength {
+interface ReadonlyLength {
 
     fun get(): Int
+
+    fun getMin(): Int
+
+    fun getMax(): Int
 }

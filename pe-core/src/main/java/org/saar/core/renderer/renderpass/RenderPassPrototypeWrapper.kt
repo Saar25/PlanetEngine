@@ -4,8 +4,8 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformWrapper
+import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper
 
 class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) {
 

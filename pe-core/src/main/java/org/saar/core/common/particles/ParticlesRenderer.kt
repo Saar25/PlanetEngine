@@ -7,22 +7,23 @@ import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.uniforms.IntUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.IntUniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilTest
-import org.saar.lwjgl.opengl.utils.GlCullFace
-import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.maths.utils.Matrix4
 
 object ParticlesRenderer : Renderer, RendererPrototypeWrapper<ParticlesModel>(ParticlesRendererPrototype())
 
 private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
+
     @UniformProperty
     private val viewMatrixTUniform = Mat4UniformValue("u_viewMatrixT")
 
@@ -56,8 +57,8 @@ private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
     override fun vertexAttributes() = arrayOf("in_position", "in_age")
 
     override fun onRenderCycle(context: RenderContext) {
-        GlUtils.setProvokingVertexFirst()
-        GlUtils.setCullFace(GlCullFace.NONE)
+        ProvokingVertex.setFirst();
+        CullFace.disable()
         BlendTest.applyAlpha()
         DepthTest.enable()
         StencilTest.enable()

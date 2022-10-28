@@ -5,6 +5,7 @@
 **/
 
 #include "/shaders/common/light/light"
+#include "/shaders/common/random/random"
 #include "/shaders/common/transform/transform"
 
 // Definitions
@@ -106,7 +107,8 @@ float calcShadowFactor(void) {
     vec2 inc = 1.0 / textureSize(u_shadowMap, 0);
     for (int row = -u_pcfRadius; row <= u_pcfRadius; row++){
         for (int col = -u_pcfRadius; col <= u_pcfRadius; col++){
-            vec2 offset = vec2(row, col) * inc;
+            vec2 random = vec2(random(fract(g_worldSpace.xy)), random(fract(g_worldSpace.yx)));
+            vec2 offset = vec2(row, col) * random * inc;
             vec2 coords = g_shadowMapCoords + offset;
             float depth = texture(u_shadowMap, coords).r;
             if (g_shadowDepth + SHADOW_BIAS > depth) {

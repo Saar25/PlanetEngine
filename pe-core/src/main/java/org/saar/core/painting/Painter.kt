@@ -3,9 +3,13 @@ package org.saar.core.painting
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassBuffers
-import org.saar.lwjgl.opengl.constants.ColourFormatType
-import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
+import org.saar.lwjgl.opengl.constants.InternalFormat
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 interface Painter : RenderPass<RenderPassBuffers> {
@@ -19,15 +23,18 @@ interface Painter : RenderPass<RenderPassBuffers> {
     override fun render(context: RenderContext, buffers: RenderPassBuffers) = render()
 }
 
-fun Painter.renderToTexture(width: Int, height: Int,
-                            colourFormatType: ColourFormatType = ColourFormatType.RGB8): MutableTexture2D {
+fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFormat): MutableTexture2D {
     return MutableTexture2D.create().also { texture ->
         val fbo = Fbo.create(width, height).apply {
-            val attachment = ColourAttachment.withTexture(0,
-                texture, colourFormatType)
-            addAttachment(attachment)
-            setDrawAttachments(attachment)
-            setReadAttachment(attachment)
+            val allocation = SimpleAllocationStrategy()
+            val buffer = TextureAttachmentBuffer(texture, internalFormat)
+            val attachment = Attachment(buffer, allocation)
+            val index = ColourAttachmentIndex(0)
+            val renderTarget = IndexRenderTarget(index)
+
+            addAttachment(index, attachment)
+            setDrawTarget(renderTarget)
+            setReadTarget(renderTarget)
         }
 
         fbo.bindAsDraw()

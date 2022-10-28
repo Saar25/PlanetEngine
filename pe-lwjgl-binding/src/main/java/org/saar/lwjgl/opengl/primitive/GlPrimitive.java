@@ -1,7 +1,7 @@
 package org.saar.lwjgl.opengl.primitive;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.util.DataWriter;
 
 public interface GlPrimitive {

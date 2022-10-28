@@ -1,7 +1,10 @@
 package org.saar.core.common.particles
 
 import org.joml.Vector3fc
-import org.saar.core.mesh.buffer.MeshInstanceBuffer
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.writer.writeInstances
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
 object Particles {
 
@@ -15,16 +18,16 @@ object Particles {
     }
 
     @JvmStatic
-    fun meshPrototype(): ParticlesMeshPrototype {
-        val instance = MeshInstanceBuffer.createDynamic()
-        return ParticlesMeshPrototype(instance)
-    }
+    fun mesh(instances: Array<ParticlesInstance>): ParticlesMesh {
+        val instanceBufferBuilder = DataMeshBufferBuilder(
+            FixedBufferBuilder(instances.size * 4 * 4),
+            VboUsage.DYNAMIC_DRAW)
 
-    @JvmStatic
-    @JvmOverloads
-    fun mesh(instances: Array<ParticlesInstance>, prototype: ParticlesMeshPrototype = meshPrototype()): ParticlesMesh {
-        return ParticlesMeshBuilder.fixed(instances.size, prototype).also {
-            instances.forEach(it::addInstance)
-        }.load()
+        val objMeshBuilder = ParticlesMeshBuilder(instances.size,
+            instanceBufferBuilder, instanceBufferBuilder)
+
+        objMeshBuilder.writer.writeInstances(instances)
+
+        return objMeshBuilder.load()
     }
 }

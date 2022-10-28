@@ -1,9 +1,9 @@
 package org.saar.core.common.components
 
-import org.saar.core.node.NodeComponent
 import org.saar.core.node.ComposableNode
+import org.saar.core.node.NodeComponent
 import org.saar.lwjgl.glfw.input.mouse.Mouse
-import org.saar.lwjgl.glfw.input.mouse.MouseButton
+import org.saar.lwjgl.glfw.input.mouse.MouseCursor
 import org.saar.maths.utils.Vector3
 
 class MouseRotationComponent(private val mouse: Mouse, private val velocity: Float) : NodeComponent {
@@ -18,7 +18,7 @@ class MouseRotationComponent(private val mouse: Mouse, private val velocity: Flo
     }
 
     override fun update(node: ComposableNode) {
-        if (this.mouse.isButtonDown(MouseButton.PRIMARY)) {
+        if (this.mouse.cursor != MouseCursor.NORMAL) {
             val toRotate = Vector3.zero()
             toRotate.y += this.mouse.xPos - this.xLast
             toRotate.x += this.mouse.yPos - this.yLast

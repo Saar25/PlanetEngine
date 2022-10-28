@@ -1,45 +1,27 @@
 package org.saar.gui
 
-import org.saar.core.renderer.RenderContext
-import org.saar.gui.block.UIBlock
-import org.saar.gui.block.UIBlockRenderer
-import org.saar.gui.style.IStyle
-import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent
+import org.saar.gui.style.ElementStyle
 
-interface UIElement {
+open class UIElement : UIChildNode, UIMutableParent {
 
-    val style: IStyle
+    override var parent: UIParentNode = UINullNode
 
-    val uiBlock: UIBlock
+    override val style = ElementStyle(this)
 
-    val children: List<UIElement> get() = emptyList()
+    override val uiInputHelper = UIInputHelper(this)
 
-    fun render(context: RenderContext) {
-        UIBlockRenderer.render(context, this.uiBlock)
-        renderText(context)
-        this.children.forEach { it.render(context) }
+    private val _children = mutableListOf<UINode>()
+    override val children: List<UINode> = this._children
+
+    override fun add(uiNode: UIChildNode) {
+        if (this._children.add(uiNode)) {
+            uiNode.parent = this
+        }
     }
 
-    fun renderText(context: RenderContext) {
-        children.forEach { it.renderText(context) }
+    override fun remove(uiNode: UIChildNode) {
+        if (this._children.remove(uiNode)) {
+            uiNode.parent = UINullNode
+        }
     }
-
-    fun onMouseClickEvent(event: ClickEvent) = false
-
-    fun onMouseMoveEvent(event: MoveEvent) = Unit
-
-    fun onKeyPressEvent(event: KeyEvent) = Unit
-
-    fun onKeyReleaseEvent(event: KeyEvent) = Unit
-
-    fun onKeyRepeatEvent(event: KeyEvent) = Unit
-
-    fun contains(mx: Int, my: Int) = this.uiBlock.inTouch(mx, my)
-
-    fun update() = Unit
-
-    fun delete() = Unit
-
 }

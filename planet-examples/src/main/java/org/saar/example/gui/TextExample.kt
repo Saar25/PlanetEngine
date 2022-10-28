@@ -2,12 +2,13 @@ package org.saar.example.gui
 
 import org.lwjgl.glfw.GLFW
 import org.saar.core.renderer.RenderContext
-import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.CoordinateValues.center
-import org.saar.gui.style.value.LengthValues.percent
+import org.saar.gui.style.coordinate.CoordinateValues.center
+import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.position.PositionValues.absolute
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
@@ -23,11 +24,13 @@ object TextExample {
 
         val display = UIDisplay(window)
 
-        val container = UIContainer().apply {
-            style.x.value = center()
-            style.y.value = center()
+        val container = UIElement().apply {
+            style.position.value = absolute
+            style.x.value = center
+            style.y.value = center
             style.width.value = percent(90f)
             style.height.value = percent(90f)
+            style.fontColour.set(Colours.WHITE)
         }
 
         display.add(container)
@@ -68,10 +71,9 @@ object TextExample {
             mattis sapien, nec ultricies mi nibh at ante. Quisque maximus porttitor dolor, non sagittis metus porttitor a.
         """.trimIndent().replace('\n', ' ')
 
-        val textElement = UITextElement(text).apply {
-            style.x.value = center()
-            style.y.value = center()
-            style.fontColour.set(Colours.WHITE)
+        val textElement = UIText(text).apply {
+            style.x.value = center
+            style.y.value = center
             style.fontSize.set(24)
         }
         container.add(textElement)

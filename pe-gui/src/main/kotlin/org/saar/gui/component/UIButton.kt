@@ -1,27 +1,28 @@
 package org.saar.gui.component
 
-import org.jproperty.type.BooleanProperty
-import org.jproperty.type.SimpleBooleanProperty
+import org.jproperty.property.SimpleBooleanProperty
 import org.saar.gui.UIComponent
-import org.saar.gui.UITextElement
-import org.saar.gui.event.EventHandler
+import org.saar.gui.UIText
+import org.saar.gui.event.EventListener
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.value.FontSizeValues
 
-class UIButton : UIComponent() {
+class UIButton(text: String = "") : UIComponent() {
 
-    private val pressedProperty: BooleanProperty = SimpleBooleanProperty()
+    private val pressedProperty = SimpleBooleanProperty()
 
-    private var onAction: EventHandler<MouseEvent>? = null
+    private var onAction: EventListener<MouseEvent>? = null
 
-    override val children = listOf(
-        UITextElement("Button").also { it.parent = this }.apply {
-            style.fontSize.value = FontSizeValues.percent(48 / 100f)
-        }
-    )
+    val uiText = UIText(text)
 
-    fun setOnAction(onAction: EventHandler<MouseEvent>) {
+    override val children = listOf(this.uiText).onEach { it.parent = this }
+
+    init {
+        this.style.padding.set(30, 100)
+        this.style.borders.set(2)
+    }
+
+    fun setOnAction(onAction: EventListener<MouseEvent>) {
         this.onAction = onAction
     }
 
@@ -52,6 +53,5 @@ class UIButton : UIComponent() {
     init {
         this.style.backgroundColour.set(Colours.GRAY)
         this.style.borderColour.set(Colours.DARK_GRAY)
-        this.style.borders.set(2)
     }
 }

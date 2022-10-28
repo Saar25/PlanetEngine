@@ -1,11 +1,8 @@
 package org.saar.gui.style.coordinate
 
-import org.saar.gui.style.value.CoordinateValue
-import org.saar.gui.style.value.CoordinateValues
+abstract class Coordinate(default: CoordinateValue = CoordinateValues.zero) : ReadonlyCoordinate {
 
-abstract class Coordinate : ReadonlyCoordinate {
-
-    var value: CoordinateValue = CoordinateValues.zero
+    var value: CoordinateValue = default
 
     fun set(value: CoordinateValue) {
         this.value = value
@@ -13,13 +10,5 @@ abstract class Coordinate : ReadonlyCoordinate {
 
     fun set(pixels: Int) {
         this.value = CoordinateValues.pixels(pixels)
-    }
-
-    fun add(value: CoordinateValue) {
-        this.value = CoordinateValues.add(this.value, value)
-    }
-
-    fun sub(value: CoordinateValue) {
-        this.value = CoordinateValues.sub(this.value, value)
     }
 }

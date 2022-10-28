@@ -8,7 +8,7 @@ public class InstancedArraysDrawCall implements DrawCall {
     private final RenderMode renderMode;
     private final int first;
     private final int count;
-    private final int instances;
+    private int instances;
 
     public InstancedArraysDrawCall(RenderMode renderMode, int first, int count, int instances) {
         this.renderMode = renderMode;
@@ -39,6 +39,10 @@ public class InstancedArraysDrawCall implements DrawCall {
 
     public int getInstances() {
         return this.instances;
+    }
+
+    public void setInstances(int instances) {
+        this.instances = instances;
     }
 
     @Override

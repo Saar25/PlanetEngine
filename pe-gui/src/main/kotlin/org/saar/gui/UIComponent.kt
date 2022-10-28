@@ -1,123 +1,32 @@
 package org.saar.gui
 
-import org.saar.gui.block.UIBlock
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
-import org.saar.gui.event.asKeyboardEvent
-import org.saar.gui.event.asMouseEvent
-import org.saar.gui.style.Style
-import org.saar.lwjgl.glfw.input.keyboard.KeyEvent
-import org.saar.lwjgl.glfw.input.mouse.ClickEvent
-import org.saar.lwjgl.glfw.input.mouse.MoveEvent
+import org.saar.gui.style.ComponentStyle
 
-/**
- * This class represent a UI component
- * it contains multiple UIBlock object and handles user events
- */
-abstract class UIComponent : UIChildElement {
+abstract class UIComponent : UIChildNode, UIParentNode {
 
-    final override var parent: UIElement = UINullElement
+    override var parent: UIParentNode = UINullNode
 
-    final override val style = Style(this)
+    final override val style = ComponentStyle(this)
 
-    final override val uiBlock = UIBlock(this.style)
 
-    var isMouseHover = false
-        private set
+    final override val uiInputHelper = UIInputHelper(this)
 
-    var isMousePressed = false
-        private set
+    init {
+        this.uiInputHelper.addMousePressEventListener(::onMousePress)
+        this.uiInputHelper.addMouseReleaseEventListener(::onMouseRelease)
 
-    final override fun update() = this.children.forEach { it.update() }
+        this.uiInputHelper.addMouseEnterEventListener(::onMouseEnter)
+        this.uiInputHelper.addMouseExitEventListener(::onMouseExit)
 
-    final override fun delete() = this.children.forEach { it.delete() }
+        this.uiInputHelper.addMouseMoveEventListener(::onMouseMove)
+        this.uiInputHelper.addMouseDragEventListener(::onMouseDrag)
 
-    override fun onKeyPressEvent(event: KeyEvent) {
-        val e = event.asKeyboardEvent()
-        if (this.isSelected) onKeyPress(e)
+        this.uiInputHelper.addKeyPressEventListener(::onKeyPress)
+        this.uiInputHelper.addKeyReleaseEventListener(::onKeyRelease)
+        this.uiInputHelper.addKeyRepeatEventListener(::onKeyRepeat)
     }
-
-    override fun onKeyReleaseEvent(event: KeyEvent) {
-        val e = event.asKeyboardEvent()
-        if (this.isSelected) onKeyRelease(e)
-    }
-
-    override fun onKeyRepeatEvent(event: KeyEvent) {
-        val e = event.asKeyboardEvent()
-        if (this.isSelected) onKeyRepeat(e)
-    }
-
-    final override fun onMouseMoveEvent(event: MoveEvent) {
-        val e = event.asMouseEvent()
-        val x = event.mouse.xPos
-        val y = event.mouse.yPos
-
-        val mouseInside = checkMouseInside(x, y)
-
-        if (mouseInside && !this.isMouseHover) {
-            mouseEnter(e)
-        } else if (!mouseInside && this.isMouseHover) {
-            mouseExit(e)
-        }
-
-        if (mouseInside && !e.button.isPrimary) {
-            mouseMove(e)
-        } else if (e.button.isPrimary && this.isMousePressed) {
-            mouseDrag(e)
-        }
-    }
-
-    final override fun onMouseClickEvent(event: ClickEvent): Boolean {
-        val e = event.asMouseEvent()
-        if (event.isDown && this.isMouseHover) {
-            mousePress(e)
-            this.isSelected = true
-            return true
-        } else if (this.isMousePressed) {
-            mouseRelease(e)
-            this.isSelected = true
-            return true
-        }
-        this.isSelected = false
-        return false
-    }
-
-    private fun mousePress(event: MouseEvent) {
-        this.isMousePressed = true
-        onMousePress(event)
-    }
-
-    private fun mouseRelease(event: MouseEvent) {
-        this.isMousePressed = false
-        onMouseRelease(event)
-    }
-
-    private fun mouseEnter(event: MouseEvent) {
-        this.isMouseHover = true
-        onMouseEnter(event)
-    }
-
-    private fun mouseExit(event: MouseEvent) {
-        this.isMouseHover = false
-        onMouseExit(event)
-    }
-
-    private fun mouseMove(event: MouseEvent) = onMouseMove(event)
-
-    private fun mouseDrag(event: MouseEvent) = onMouseDrag(event)
-
-    fun checkMouseInside(x: Int, y: Int): Boolean {
-        return if (this.children.isNotEmpty()) {
-            this.children.any { it.contains(x, y) }
-        } else this.uiBlock.inTouch(x, y)
-    }
-
-    /**
-     * Returns whether the ui component is currently selected
-     *
-     * @return true if selected, false otherwise
-     */
-    var isSelected: Boolean = false
 
     /**
      * Invoked when a key has been pressed while the component in focused

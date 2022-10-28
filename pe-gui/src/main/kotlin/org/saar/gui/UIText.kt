@@ -1,52 +1,74 @@
 package org.saar.gui
 
+import org.jproperty.binding.ObjectBinding
+import org.jproperty.map
+import org.jproperty.property.SimpleIntegerProperty
+import org.jproperty.property.SimpleObjectProperty
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer
 import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
-import kotlin.properties.Delegates
 
-class UIText(val parent: UITextElement, text: String) {
+class UIText(text: String = "") : UIChildNode {
 
-    private var isValid: Boolean = false
+    constructor() : this("")
 
-    val style: TextStyle get() = this.parent.style
+    override var parent: UIParentNode = UINullNode
 
-    var contentWidth: Int = 0
-        private set
+    override val uiInputHelper = UIInputHelper(this)
 
-    var contentHeight: Int = 0
-        private set
+    override val style = TextStyle(this)
 
-    private var maxWidth: Int = 0
+    val textProperty = SimpleObjectProperty(text)
 
-    var text: String by Delegates.observable(text) { _, _, _ ->
-        this.isValid = false
+    var text: String
+        get() = this.textProperty.value
+        set(value) {
+            this.textProperty.value = value
+        }
+
+    private val maxWidthProperty = SimpleIntegerProperty()
+
+    val lettersProperty = object : ObjectBinding<List<UILetter>>() {
+        init {
+            bind(this@UIText.textProperty, this@UIText.maxWidthProperty)
+        }
+
+        override fun compute() = newLetters(this@UIText.textProperty.value)
+
+        override fun dispose() = unbind(this@UIText.textProperty, this@UIText.maxWidthProperty)
     }
 
-    private var letters = emptyList<UILetter>()
+    private val contentWidthProperty = this.lettersProperty.map { letters ->
+        val scale = this.style.fontSize.size / this.style.font.family.size
+        if (letters.isNotEmpty()) letters.maxOf { it.offset.x() + it.character.xAdvance * scale }.toInt() else 0
+    }
 
-    private fun updateLetters() {
-        this.maxWidth = this.parent.parent.style.width.get()
+    private val contentHeightProperty = this.lettersProperty.map { letters ->
+        val default = this.style.font.family.lineHeight * this.style.fontSize.size / this.style.font.family.size
+        (if (letters.isNotEmpty()) letters.maxOf { it.offset.y() } else default).toInt()
+    }
 
-        val font = this.style.font.get()
-        val fontScale = this.style.fontSize.get() / font.size
+    val contentWidth: Int get() = this.contentWidthProperty.value
+
+    val contentHeight: Int get() = this.contentHeightProperty.value
+
+    private fun newLetters(text: String): List<UILetter> {
+        val font = this.style.font.family
+        val fontScale = this.style.fontSize.size / font.size
         val offset = Vector2.of(0f, font.lineHeight * fontScale)
+        val maxWidth = this.maxWidthProperty.intValue
+        val yAdvance = font.lineHeight * fontScale
 
-        var contentWidth = 0f
-
-        this.letters = this.text.mapNotNull { char ->
+        return text.mapNotNull { char ->
             val character = font.getCharacterOrDefault(char)
 
             val xAdvance = character.xAdvance * fontScale
-            val yAdvance = font.lineHeight * fontScale
 
-            if (this.maxWidth > 0 && offset.x + xAdvance > this.maxWidth) {
+            if (maxWidth > 0 && offset.x + xAdvance > maxWidth) {
                 offset.y += yAdvance
                 offset.x = 0f
-            } else if (char != '\n') {
-                contentWidth = contentWidth.coerceAtLeast(offset.x + xAdvance)
             }
 
             UILetter(this, font, character, Vector2.of(offset)).also {
@@ -58,24 +80,21 @@ class UIText(val parent: UITextElement, text: String) {
                 }
             }
         }
-
-        this.contentWidth = contentWidth.toInt()
-        this.contentHeight = offset.y.toInt()
     }
 
-    fun update() {
-        if (this.maxWidth != this.parent.parent.style.width.get()) {
-            this.maxWidth = this.parent.parent.style.width.get()
-            this.isValid = false
-        }
-
-        if (!this.isValid) {
-            updateLetters()
-            this.isValid = true
-        }
+    override fun update() {
+        val max = this.parent.style.width.getMax()
+        this.maxWidthProperty.value = max
     }
 
-    fun render(context: RenderContext) {
-        UILetterRenderer.render(context, this.letters)
+    override fun render(context: RenderContext) {
+        UILetterRenderer.render(context, this.lettersProperty.value)
+    }
+
+    override fun contains(x: Int, y: Int): Boolean {
+        return x >= this.style.position.getX() &&
+                x <= this.style.position.getX() + this.style.width.get() &&
+                y >= this.style.position.getY() &&
+                y <= this.style.position.getY() + this.style.height.get()
     }
 }

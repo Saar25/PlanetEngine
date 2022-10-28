@@ -14,18 +14,20 @@ import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
+import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
 import org.saar.core.screen.annotations.ScreenImageProperty
-import org.saar.core.screen.image.ColourScreenImage
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.constants.ColourFormatType
-import org.saar.lwjgl.opengl.fbos.Fbo
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.uniforms.*
+import org.saar.lwjgl.opengl.constants.InternalFormat
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.*
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
@@ -46,10 +48,10 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
-        @ScreenImageProperty(draw = true, read = true)
-        private val colourImage = ColourScreenImage(ColourAttachment
-            .withTexture(0, ssaoTexture, ColourFormatType.R16F))
-    }, Fbo.create(0, 0))
+        @ScreenImageProperty
+        private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
+            TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F), read = true)
+    }, Fbo.create(0, 0), SimpleAllocationStrategy())
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)
     private val multiplyPostProcessor = MultiplyPostProcessor(ssaoTexture, 1)
@@ -57,8 +59,7 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     private fun createNoiseTexture(): MutableTexture2D {
         val painter = Random2fPainter()
         val texture = painter.renderToTexture(
-            this.noiseTextureSize, this.noiseTextureSize,
-            ColourFormatType.RG16F)
+            this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F)
         painter.delete()
 
         texture.applyParameters(arrayOf<TextureParameter>(
@@ -112,10 +113,12 @@ class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
     }
 }
 
-private class SsaoRenderPassPrototype(val noiseTexture: MutableTexture2D,
-                                      val kernel: Array<Vector3f>,
-                                      val noiseTextureSize: Int,
-                                      val radius: Float) : RenderPassPrototype {
+private class SsaoRenderPassPrototype(
+    val noiseTexture: MutableTexture2D,
+    val kernel: Array<Vector3f>,
+    val noiseTextureSize: Int,
+    val radius: Float,
+) : RenderPassPrototype {
 
     @UniformProperty
     val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 0)

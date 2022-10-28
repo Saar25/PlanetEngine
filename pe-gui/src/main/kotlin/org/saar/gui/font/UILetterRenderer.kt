@@ -6,13 +6,14 @@ import org.saar.core.renderer.*
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.UITextElement
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.uniforms.*
+import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 
 object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter> {
@@ -22,10 +23,6 @@ object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter>
 
     override fun render(context: RenderContext, models: Iterable<UILetter>) {
         this.helper.render(context, models)
-    }
-
-    fun render(context: RenderContext, uiElement: UITextElement) {
-        this.helper.render(context) { uiElement.uiText.render(context) }
     }
 
     override fun delete() = this.helper.delete()
@@ -70,6 +67,8 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()
+        ProvokingVertex.setFirst()
+        CullFace.disable()
     }
 
     override fun onInstanceDraw(context: RenderContext, uiLetter: UILetter) {
@@ -82,12 +81,12 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
         this.bitmapBoundsUniform.value = uiLetter.character.bitmapBox.toVector4i()
 
         val bounds = uiLetter.character.localBox.toVector4f()
-            .mul(uiLetter.style.fontSize.get() / uiLetter.font.size)
+            .mul(uiLetter.style.fontSize.size / uiLetter.font.size)
             .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
 
         this.boundsUniform.value.set(
-            bounds.x() + uiLetter.style.x.get(),
-            bounds.y() + uiLetter.style.y.get(),
+            bounds.x() + uiLetter.style.position.getX(),
+            bounds.y() + uiLetter.style.position.getY(),
             bounds.z(),
             bounds.w())
 

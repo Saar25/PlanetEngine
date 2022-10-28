@@ -1,45 +1,33 @@
 package org.saar.example.gui
 
-import org.saar.gui.UIBlockElement
+import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.Colours
-import org.saar.gui.style.Style
-import org.saar.gui.style.value.CoordinateValues
-import org.saar.gui.style.value.CoordinateValues.center
-import org.saar.gui.style.value.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.percent
+import org.saar.gui.style.length.LengthValues.pixels
 
 class MyUIComponent : UIComponent() {
 
-    private val object1 = UIBlockElement()
-    private val object2 = UIBlockElement()
-
-    override val children = listOf(
-        object1.also { it.parent = this },
-        object2.also { it.parent = this }
-    )
-
-    init {
-        style.x.set(center())
-        style.y.set(50)
-        style.width.set(percent(80f))
-        style.height.set(percent(80f))
-
-        fun initChildStyle(style: Style) {
-            style.radiuses.set(20)
-            style.borders.set(2)
-            style.backgroundColour.set(Colours.CYAN)
-            style.borderColour.set(Colours.LIGHT_GRAY)
-        }
-
-        initChildStyle(object1.style)
-        initChildStyle(object2.style)
-
-        object1.style.width.set(percent(48f))
-
-        object2.style.x.set(CoordinateValues.percent(52f))
-        object2.style.width.set(percent(48f))
+    private val object1 = UIBlock().apply {
+        style.radius.set(20)
+        style.borders.set(2)
+        style.backgroundColour.set(Colours.CYAN)
+        style.borderColour.set(Colours.LIGHT_GRAY)
+        style.width.value = percent(50f)
+        style.height.value = pixels(100)
     }
+
+    private val object2 = UIBlock().apply {
+        style.radius.set(20)
+        style.borders.set(2)
+        style.backgroundColour.set(Colours.CYAN)
+        style.borderColour.set(Colours.LIGHT_GRAY)
+        style.width.value = percent(50f)
+        style.height.value = pixels(100)
+    }
+
+    override val children = listOf(this.object1, this.object2).onEach { it.parent = this }
 
     override fun onMousePress(event: MouseEvent) {
         println("Mouse pressed!")

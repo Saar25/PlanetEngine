@@ -1,49 +1,37 @@
 package org.saar.gui.style.backgroundcolour
 
-import org.saar.gui.UIChildElement
+import org.saar.gui.UIChildNode
 import org.saar.gui.style.Colour
-import org.saar.gui.style.value.StyleColourValue
-import org.saar.gui.style.value.StyleColourValues
 
-class BackgroundColour(private val container: UIChildElement) : ReadonlyBackgroundColour {
+class BackgroundColour(
+    private val container: UIChildNode,
+    default: BackgroundColourValue = BackgroundColourValues.inherit,
+) : ReadonlyBackgroundColour {
 
-    var topRightValue: StyleColourValue = StyleColourValues.inherit
-    var topLeftValue: StyleColourValue = StyleColourValues.inherit
-    var bottomRightValue: StyleColourValue = StyleColourValues.inherit
-    var bottomLeftValue: StyleColourValue = StyleColourValues.inherit
+    var topRightValue: BackgroundColourValue = default
 
-    override var topRight: Colour
-        get() = this.topRightValue.compute(this.container.parent.style.backgroundColour.topRight)
-        set(value) {
-            this.topRightValue = StyleColourValues.of(value)
-        }
+    var topLeftValue: BackgroundColourValue = default
 
-    override var topLeft: Colour
-        get() = this.topLeftValue.compute(this.container.parent.style.backgroundColour.topLeft)
-        set(value) {
-            this.topLeftValue = StyleColourValues.of(value)
-        }
+    var bottomRightValue: BackgroundColourValue = default
 
-    override var bottomRight: Colour
-        get() = this.bottomRightValue.compute(this.container.parent.style.backgroundColour.bottomRight)
-        set(value) {
-            this.bottomRightValue = StyleColourValues.of(value)
-        }
+    var bottomLeftValue: BackgroundColourValue = default
 
-    override var bottomLeft: Colour
-        get() = this.bottomLeftValue.compute(this.container.parent.style.backgroundColour.bottomLeft)
-        set(value) {
-            this.bottomLeftValue = StyleColourValues.of(value)
-        }
+    override val topRight get() = this.topRightValue.computeTopRight(this.container)
+
+    override val topLeft get() = this.topLeftValue.computeTopLeft(this.container)
+
+    override val bottomRight get() = this.bottomRightValue.computeBottomRight(this.container)
+
+    override val bottomLeft get() = this.bottomLeftValue.computeBottomLeft(this.container)
 
     fun set(colour: Colour) {
-        this.topRight = colour
-        this.topLeft = colour
-        this.bottomRight = colour
-        this.bottomLeft = colour
+        this.topRightValue = BackgroundColourValues.of(colour)
+        this.topLeftValue = BackgroundColourValues.of(colour)
+        this.bottomRightValue = BackgroundColourValues.of(colour)
+        this.bottomLeftValue = BackgroundColourValues.of(colour)
     }
 
-    fun set(colourValue: StyleColourValue) {
+    fun set(colourValue: BackgroundColourValue) {
         this.topRightValue = colourValue
         this.topLeftValue = colourValue
         this.bottomRightValue = colourValue

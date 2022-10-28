@@ -1,7 +1,7 @@
 package org.saar.example.light
 
 import org.joml.SimplexNoise
-import org.saar.core.node.NodeComponentGroup
+import org.joml.Vector2i
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
@@ -12,11 +12,11 @@ import org.saar.core.common.r3d.R3D
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrain
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrainConfiguration
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
+import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
@@ -26,13 +26,19 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
-import org.saar.gui.UIContainer
 import org.saar.gui.UIDisplay
-import org.saar.gui.UITextElement
+import org.saar.gui.UIElement
+import org.saar.gui.UIText
 import org.saar.gui.style.Colours
+import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.arrangement.ArrangementValues
+import org.saar.gui.style.length.LengthValues.percent
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.maths.noise.LayeredNoise2f
+import org.saar.maths.noise.MultipliedNoise2f
+import org.saar.maths.noise.SpreadNoise2f
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
@@ -52,7 +58,7 @@ fun main() {
     val components = NodeComponentGroup(
         KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
         KeyboardMovementScrollVelocityComponent(mouse),
-        MouseRotationComponent(mouse, -.3f)
+        MouseDragRotationComponent(mouse, -.3f)
     )
 
     val camera = Camera(projection, components).apply {
@@ -60,14 +66,17 @@ fun main() {
         transform.rotation.lookAlong(Vector3.of(0f, 0f, 1f))
     }
 
-    val terrain = LowPolyTerrain(Vector2.create(), LowPolyTerrainConfiguration(
-        DiamondMeshGenerator(256),
-        NoiseHeightGenerator(SimplexNoise::noise),
+    val heightGenerator = NoiseHeightGenerator(
+        MultipliedNoise2f(200, SpreadNoise2f(50, LayeredNoise2f(SimplexNoise::noise, 5)))
+    )
+    val terrainFactory = LowPolyTerrainFactory(
+        DiamondMeshGenerator(64), heightGenerator,
         NormalColourGenerator(Vector3.upward(),
             NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
             NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
-        Vector2.of(1024f, 1024f), 100f
-    ))
+        Vector2.of(256f, 256f)
+    )
+    val terrain = terrainFactory.create(Vector2i(0, 0))
 
     val lights = Array(100) {
         val lightComponents = NodeComponentGroup(
@@ -100,17 +109,19 @@ fun main() {
 
     val uiDisplay = UIDisplay(window)
 
-    val uiTextGroup = UIContainer().apply {
-        style.x.set(30)
-        style.y.set(30)
+    val uiTextGroup = UIElement().apply {
         style.fontSize.set(32)
         style.fontColour.set(Colours.WHITE)
+        style.width.value = percent(100f)
+        style.height.value = percent(100f)
+        style.alignment.value = AlignmentValues.horizontal
+        style.arrangement.value = ArrangementValues.spaceBetween
     }
 
-    val uiFps = UITextElement("Fps: ???")
+    val uiFps = UIText("Fps: ???")
     uiTextGroup.add(uiFps)
 
-    val uiDelta = UITextElement("Delta: ???").apply {
+    val uiDelta = UIText("Delta: ???").apply {
         style.y.set(32)
     }
     uiTextGroup.add(uiDelta)
@@ -130,8 +141,8 @@ fun main() {
         window.swapBuffers()
         window.pollEvents()
 
-        uiFps.uiText.text = "Fps: ${fps.fps().format(2)}"
-        uiDelta.uiText.text = "Delta: ${(fps.delta() * 1000).format(2)}"
+        uiFps.text = "Fps: ${fps.fps().format(2)}"
+        uiDelta.text = "Delta: ${(fps.delta() * 1000).format(2)}"
         fps.update()
     }
 
