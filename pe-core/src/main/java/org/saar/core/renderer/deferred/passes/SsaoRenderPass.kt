@@ -37,7 +37,7 @@ import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector3
 import kotlin.random.Random
 
-class SsaoRenderPass(val radius: Float = 10f) : DeferredRenderPass {
+class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
 
     private val noiseTextureSize = 64
     private val kernelSamplesSize = 32
