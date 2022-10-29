@@ -227,9 +227,9 @@ public class Chunk implements IChunk, Model {
             }
         }
 
-        final int faceCount = blockFaceContainers.size() * 6;
         return GlThreadQueue.getInstance().supply(() -> {
-            final ChunkMeshBuilder builder = ChunkMeshBuilder.fixed(faceCount);
+            final int vertices = blockFaceContainers.size() * 6;
+            final ChunkMeshBuilder builder = Chunks.meshBuilder(vertices);
             for (BlockFaceContainer b : blockFaceContainers) {
                 final int faceId = b.getBlock().getFaces().faceId(b.getDirection());
                 builder.addFace(b.getX(), b.getY(), b.getZ(), faceId,

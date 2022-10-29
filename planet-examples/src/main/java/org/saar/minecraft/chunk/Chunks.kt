@@ -1,6 +1,9 @@
 package org.saar.minecraft.chunk
 
-import org.saar.core.mesh.buffer.MeshVertexBuffer
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
 object Chunks {
 
@@ -17,5 +20,9 @@ object Chunks {
         }
 
     @JvmStatic
-    fun meshPrototype() = ChunkMeshPrototype(MeshVertexBuffer.createStatic())
+    fun meshBuilder(vertices: Int): ChunkMeshBuilder {
+        val bufferBuilder = FixedBufferBuilder(vertices * DataType.INT.bytes)
+        val meshBufferBuilder = DataMeshBufferBuilder(bufferBuilder, VboUsage.STATIC_DRAW)
+        return ChunkMeshBuilder(vertices, meshBufferBuilder)
+    }
 }

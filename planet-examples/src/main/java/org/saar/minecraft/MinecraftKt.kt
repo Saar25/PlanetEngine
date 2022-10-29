@@ -47,7 +47,7 @@ import kotlin.concurrent.fixedRateTimer
 private const val WIDTH = 1200
 private const val HEIGHT = 700
 
-private const val SPEED = .1f
+private const val SPEED = 5f
 private const val MOUSE_DELAY = 200
 private const val MOUSE_SENSITIVITY = .2f
 

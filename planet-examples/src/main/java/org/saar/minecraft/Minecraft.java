@@ -46,7 +46,7 @@ public class Minecraft {
 
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
-    private static final float SPEED = .1f;
+    private static final float SPEED = 5f;
     private static final int MOUSE_DELAY = 200;
     private static final float MOUSE_SENSITIVITY = .2f;
     private static final int WORLD_RADIUS = 5;
