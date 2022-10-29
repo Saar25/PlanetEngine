@@ -8,6 +8,7 @@ import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UICheckbox
 import org.saar.gui.component.UISlider
+import org.saar.gui.event.EventListener
 import org.saar.gui.style.Colour
 import org.saar.gui.style.alignment.AlignmentValues.vertical
 import org.saar.gui.style.arrangement.ArrangementValues.spaceBetween
@@ -49,7 +50,7 @@ object GuiExample {
                 val uiButton = UIButton().apply {
                     style.width.value = percent(10f)
                     style.height.value = ratio(.5f)
-                    setOnAction { println("Clicked!") }
+                    onAction = EventListener { println("Clicked!") }
                 }
                 add(uiButton)
 

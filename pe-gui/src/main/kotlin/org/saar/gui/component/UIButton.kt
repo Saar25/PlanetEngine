@@ -11,7 +11,7 @@ class UIButton(text: String = "") : UIComponent() {
 
     private val pressedProperty = SimpleBooleanProperty()
 
-    private var onAction: EventListener<MouseEvent>? = null
+    var onAction: EventListener<MouseEvent>? = null
 
     val uiText = UIText(text)
 
@@ -20,10 +20,6 @@ class UIButton(text: String = "") : UIComponent() {
     init {
         this.style.padding.set(30, 100)
         this.style.borders.set(2)
-    }
-
-    fun setOnAction(onAction: EventListener<MouseEvent>) {
-        this.onAction = onAction
     }
 
     override fun onMousePress(event: MouseEvent) {
