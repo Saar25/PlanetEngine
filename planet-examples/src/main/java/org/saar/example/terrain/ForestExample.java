@@ -2,6 +2,7 @@ package org.saar.example.terrain;
 
 import org.joml.SimplexNoise;
 import org.joml.Vector2i;
+import org.lwjgl.opengl.GL20;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
@@ -66,6 +67,8 @@ import org.saar.maths.utils.Vector3;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT;
+
 public class ForestExample {
 
     private static final int WIDTH = 1200;
@@ -73,6 +76,7 @@ public class ForestExample {
 
     public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+        GL20.glDisable(GL_DEBUG_OUTPUT);
 
         ClearColour.set(.0f, .7f, .8f);
 
@@ -104,7 +108,7 @@ public class ForestExample {
         );
         final Camera camera = new Camera(projection, components);
 
-        player.getComponents().add(player, new BackFaceComponent(camera.getTransform(), .1f));
+        player.getComponents().add(new BackFaceComponent(camera.getTransform(), .1f));
 
         final Mesh mesh = Obj.mesh("/assets/tree/tree.model.obj");
         final Texture2D texture = Texture2D.of("/assets/tree/tree.diffuse.png");
