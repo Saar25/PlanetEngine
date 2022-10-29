@@ -10,11 +10,11 @@ import org.saar.lwjgl.opengl.blend.BlendFunction
 import org.saar.lwjgl.opengl.blend.BlendState
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.blend.BlendValue
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniform
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.TextureUniform
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.maths.utils.Matrix4

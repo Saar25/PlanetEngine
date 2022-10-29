@@ -10,8 +10,8 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.primitive.GlFloat;
 import org.saar.lwjgl.opengl.primitive.GlFloat2;
 import org.saar.lwjgl.opengl.primitive.GlFloat3;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.ShadersProgram;
 
 public class WeakExample {
 

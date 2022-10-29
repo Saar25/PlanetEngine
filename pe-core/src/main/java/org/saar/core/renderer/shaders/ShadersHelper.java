@@ -1,8 +1,8 @@
 package org.saar.core.renderer.shaders;
 
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShaderCompileException;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.ShaderCompileException;
+import org.saar.lwjgl.opengl.shader.ShadersProgram;
 
 import java.util.ArrayList;
 import java.util.List;

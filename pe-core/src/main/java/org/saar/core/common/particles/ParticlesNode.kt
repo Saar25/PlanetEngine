@@ -23,10 +23,6 @@ class ParticlesNode(val model: ParticlesModel, components: NodeComponentGroup) :
         ParticlesMeshUpdateComponent(),
     )
 
-    init {
-        this.components.start(this)
-    }
-
     override fun renderForward(context: RenderContext) {
         ParticlesRenderer.render(context, this.model)
     }

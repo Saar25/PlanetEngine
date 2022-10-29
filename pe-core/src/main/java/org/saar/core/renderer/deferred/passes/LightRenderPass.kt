@@ -10,13 +10,13 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.uniforms.IntUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.shaders.uniforms.UniformArray
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.UniformArray
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
 

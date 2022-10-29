@@ -2,7 +2,11 @@ package org.saar.example.postprocessing;
 
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.projection.NullProjection;
-import org.saar.core.common.r2d.*;
+import org.saar.core.common.r2d.Model2D;
+import org.saar.core.common.r2d.Node2D;
+import org.saar.core.common.r2d.R2D;
+import org.saar.core.common.r2d.Vertex2D;
+import org.saar.core.mesh.Mesh;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
 import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor;
 import org.saar.core.renderer.p2d.GeometryPass2D;
@@ -59,7 +63,7 @@ public class PostProcessingExample {
         };
         final int[] indices = {0, 1, 2, 0, 2, 3};
 
-        final Mesh2D mesh = R2D.mesh(vertices, indices);
+        final Mesh mesh = R2D.mesh(vertices, indices);
         return new Model2D(mesh);
     }
 }

@@ -7,12 +7,12 @@ import org.saar.core.screen.MainScreen
 import org.saar.gui.style.Colour
 import org.saar.gui.style.Colours
 import org.saar.lwjgl.opengl.clear.ClearColour
-import org.saar.lwjgl.opengl.shaders.GlslVersion
-import org.saar.lwjgl.opengl.shaders.Shader
-import org.saar.lwjgl.opengl.shaders.ShaderCode
-import org.saar.lwjgl.opengl.shaders.ShadersProgram
-import org.saar.lwjgl.opengl.shaders.uniforms.UIntUniform
-import org.saar.lwjgl.opengl.shaders.uniforms.Vec2iUniform
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.lwjgl.opengl.shader.uniforms.UIntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniform
 import org.saar.maths.objects.Polygon
 
 class RenderGraphics : Graphics {

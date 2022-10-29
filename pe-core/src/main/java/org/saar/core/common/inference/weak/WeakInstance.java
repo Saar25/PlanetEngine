@@ -1,7 +1,7 @@
 package org.saar.core.common.inference.weak;
 
 import org.saar.core.mesh.Instance;
-import org.saar.lwjgl.opengl.objects.attributes.IAttribute;
+import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.primitive.GlPrimitive;
 import org.saar.lwjgl.util.DataWriter;
 

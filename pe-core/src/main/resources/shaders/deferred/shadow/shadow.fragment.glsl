@@ -5,6 +5,7 @@
 **/
 
 #include "/shaders/common/light/light"
+#include "/shaders/common/random/random"
 #include "/shaders/common/transform/transform"
 
 // Definitions
@@ -64,8 +65,8 @@ void main(void) {
 
     if (shadowFactor > 0) {
         vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
-        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular);
-        vec3 finalColour = g_colour * lightColour * shadowFactor;
+        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular, shadowFactor);
+        vec3 finalColour = g_colour * lightColour;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -106,7 +107,8 @@ float calcShadowFactor(void) {
     vec2 inc = 1.0 / textureSize(u_shadowMap, 0);
     for (int row = -u_pcfRadius; row <= u_pcfRadius; row++){
         for (int col = -u_pcfRadius; col <= u_pcfRadius; col++){
-            vec2 offset = vec2(row, col) * inc;
+            vec2 random = vec2(random(fract(g_worldSpace.xy)), random(fract(g_worldSpace.yx)));
+            vec2 offset = vec2(row, col) * random * inc;
             vec2 coords = g_shadowMapCoords + offset;
             float depth = texture(u_shadowMap, coords).r;
             if (g_shadowDepth + SHADOW_BIAS > depth) {
@@ -114,5 +116,5 @@ float calcShadowFactor(void) {
             }
         }
     }
-    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius + 1);
+    return 1 - shadowFactor / ((u_pcfRadius * 2 + 1) * (u_pcfRadius * 2 + 1));
 }

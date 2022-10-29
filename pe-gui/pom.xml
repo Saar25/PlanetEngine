@@ -11,6 +11,10 @@
 
     <artifactId>pe-gui</artifactId>
 
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.saar</groupId>

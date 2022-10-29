@@ -3,29 +3,34 @@ package org.saar.example;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
 import org.saar.core.screen.SimpleScreen;
-import org.saar.core.screen.image.ColourScreenImage;
 import org.saar.core.screen.image.ScreenImage;
-import org.saar.core.screen.image.StencilScreenImage;
+import org.saar.core.screen.image.SimpleScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.constants.ColourFormatType;
+import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.Comparator;
 import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.fbos.Fbo;
-import org.saar.lwjgl.opengl.fbos.attachment.ColourAttachment;
-import org.saar.lwjgl.opengl.fbos.attachment.StencilAttachment;
-import org.saar.lwjgl.opengl.objects.attributes.Attributes;
-import org.saar.lwjgl.opengl.objects.vaos.Vao;
-import org.saar.lwjgl.opengl.objects.vbos.DataBuffer;
-import org.saar.lwjgl.opengl.objects.vbos.VboUsage;
-import org.saar.lwjgl.opengl.shaders.Shader;
-import org.saar.lwjgl.opengl.shaders.ShadersProgram;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.shader.Shader;
+import org.saar.lwjgl.opengl.shader.ShadersProgram;
 import org.saar.lwjgl.opengl.stencil.*;
-import org.saar.lwjgl.opengl.texture.MutableTexture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
+import org.saar.lwjgl.opengl.vao.Vao;
+import org.saar.lwjgl.opengl.vbo.DataBuffer;
+import org.saar.lwjgl.opengl.vbo.VboUsage;
 
 public class StencilExample {
 
@@ -63,13 +68,11 @@ public class StencilExample {
             StencilTest.apply(writeStencil);
 
             vao1.bind();
-            vao1.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             StencilTest.apply(readStencil);
 
             vao2.bind();
-            vao2.enableAttributes();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             screen.copyTo(MainScreen.INSTANCE);
@@ -82,17 +85,26 @@ public class StencilExample {
     }
 
     private static Screen buildScreen(int width, int height) {
-        final SimpleScreen screen = new SimpleScreen(Fbo.create(width, height));
+        final Fbo fbo = Fbo.create(width, height);
+        final SimpleScreen screen = new SimpleScreen(fbo);
 
-        final ScreenImage screenImage = new StencilScreenImage(
-                StencilAttachment.withRenderBuffer());
-        screen.addScreenImage(screenImage);
+        final AttachmentIndex stencilIndex = new BasicAttachmentIndex(AttachmentType.STENCIL);
+        final AllocationStrategy stencilAllocation = new MultisampledAllocationStrategy(4);
+        final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(InternalFormat.STENCIL_INDEX8);
+        final Attachment stencilAttachment = new Attachment(stencilBuffer, stencilAllocation);
+        final ScreenImage screenImage = new SimpleScreenImage(stencilAttachment);
+        screen.addScreenImage(stencilIndex, screenImage);
 
-        final ColourScreenImage colourImage = new ColourScreenImage(ColourAttachment
-                .withTexture(0, MutableTexture2D.create(), ColourFormatType.RGBA8));
-        screen.addScreenImage(colourImage);
-        screen.setReadImages(colourImage);
-        screen.setDrawImages(colourImage);
+        final AttachmentIndex colourIndex = new ColourAttachmentIndex(0);
+        final AllocationStrategy colourAllocation = new MultisampledAllocationStrategy(4);
+        final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
+        final Attachment attachment = new Attachment(colourBuffer, colourAllocation);
+        final SimpleScreenImage colourImage = new SimpleScreenImage(attachment);
+        screen.addScreenImage(colourIndex, colourImage);
+        screen.setReadImages(colourIndex);
+        screen.setDrawImages(colourIndex);
+
+        fbo.ensureStatus();
 
         return screen;
     }
