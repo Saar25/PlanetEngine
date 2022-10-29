@@ -20,10 +20,7 @@ class ShadowsRenderingPath(
     private val renderNode: ShadowsRenderNode,
 ) : RenderingPath<ShadowsBuffers> {
 
-    val camera: ShadowsCamera = ShadowsCamera(projection).apply {
-        transform.rotation.lookAlong(light.direction)
-        transform.position.set(0f, 0f, 0f)
-    }
+    val camera: ShadowsCamera = ShadowsCamera(projection, light)
 
     private val prototype = ShadowsScreenPrototype()
 

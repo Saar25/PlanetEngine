@@ -1,5 +1,6 @@
 package org.saar.example.normalmapping;
 
+import org.jproperty.ChangeListener;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
@@ -32,6 +33,13 @@ import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
 import org.saar.example.ExamplesUtils;
+import org.saar.gui.UIChildNode;
+import org.saar.gui.UIDisplay;
+import org.saar.gui.UIElement;
+import org.saar.gui.UIText;
+import org.saar.gui.component.UISlider;
+import org.saar.gui.style.alignment.AlignmentValues;
+import org.saar.gui.style.axisalignment.AxisAlignmentValues;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
@@ -81,7 +89,8 @@ public class NormalMappingExample {
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch, nodeBatch3D);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(
+                nodeBatch3D, objNodeBatch, nodeBatch3D, normalMappedNodeBatch);
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
@@ -91,11 +100,14 @@ public class NormalMappingExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
                 nodeBatch3D, normalMappedNodeBatch, objNodeBatch);
 
+        final UIDisplay uiDisplay = buildUIDisplay(window, light);
+
         final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FxaaPostProcessor()
+                new FxaaPostProcessor(),
+                new DeferredGeometryPass(uiDisplay)
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
@@ -104,6 +116,7 @@ public class NormalMappingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
+            shadowsRenderingPath.render();
             deferredRenderer.render().toMainScreen();
 
             window.swapBuffers();
@@ -123,6 +136,43 @@ public class NormalMappingExample {
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
+    }
+
+    private static UIDisplay buildUIDisplay(Window window, DirectionalLight light) {
+        final UIDisplay uiDisplay = new UIDisplay(window);
+
+        final UIElement uiContainer = new UIElement();
+        uiContainer.getStyle().getPadding().set(40);
+        uiContainer.getStyle().getAlignment().setValue(AlignmentValues.vertical);
+
+        uiContainer.add(buildUiSlider(light, 0, "x: "));
+        uiContainer.add(buildUiSlider(light, 1, "y: "));
+        uiContainer.add(buildUiSlider(light, 2, "z: "));
+
+        uiDisplay.add(uiContainer);
+
+        return uiDisplay;
+    }
+
+    private static UIChildNode buildUiSlider(DirectionalLight light, int component, String text) {
+        final UIElement uiContainer = new UIElement();
+        uiContainer.getStyle().getMargin().set(10, 0, 0, 10);
+        uiContainer.getStyle().getAxisAlignment().setValue(AxisAlignmentValues.center);
+        uiContainer.getStyle().getFontSize().set(24);
+
+        uiContainer.add(new UIText(text));
+
+        final UISlider uiSlider = new UISlider();
+        uiSlider.getStyle().getWidth().set(200);
+        uiSlider.getStyle().getHeight().set(30);
+        uiSlider.getMin().set(-1f);
+        uiSlider.getMax().set(1f);
+        uiSlider.getDynamicValueProperty().addListener((ChangeListener<? super Number>) e ->
+                light.getDirection().setComponent(component, -e.getNewValue().floatValue()));
+
+        uiContainer.add(uiSlider);
+
+        return uiContainer;
     }
 
     private static NodeBatch3D buildNodeBatch3D() {
