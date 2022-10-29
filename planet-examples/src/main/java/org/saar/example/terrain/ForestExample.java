@@ -100,7 +100,7 @@ public class ForestExample {
 
         final NodeComponentGroup components = new NodeComponentGroup(
                 new MouseDragRotationComponent(mouse, -.3f),
-                new ThirdPersonViewComponent(player.getModel().getTransform(), 10f)
+                new ThirdPersonViewComponent(player.getModel().getTransform(), 5f)
         );
         final Camera camera = new Camera(projection, components);
 

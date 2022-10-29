@@ -65,8 +65,8 @@ void main(void) {
 
     if (shadowFactor > 0) {
         vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
-        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular);
-        vec3 finalColour = g_colour * lightColour * shadowFactor;
+        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular, shadowFactor);
+        vec3 finalColour = g_colour * lightColour;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -116,5 +116,5 @@ float calcShadowFactor(void) {
             }
         }
     }
-    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius + 1);
+    return 1 - shadowFactor / ((u_pcfRadius * 2 + 1) * (u_pcfRadius * 2 + 1));
 }
