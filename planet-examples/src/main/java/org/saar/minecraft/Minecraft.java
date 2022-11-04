@@ -54,7 +54,7 @@ public class Minecraft {
 
     private static final boolean HIGH_QUALITY = false;
 
-    private static final boolean FLY_MODE = true;
+    private static final boolean FLY_MODE = false;
 
     private static final String TEXTURE_ATLAS_PATH = "/minecraft/atlas.png";
 
@@ -240,8 +240,8 @@ public class Minecraft {
                         new PlayerBuildingComponent(window.getMouse(), world, MOUSE_DELAY),
                         new PlayerWalkingComponent(window.getKeyboard(), SPEED),
                         new PlayerFlyingComponent(window.getKeyboard(), SPEED),
-                        new CollisionComponent(world, HitBoxes.getPlayer()),
-                        new VelocityComponent()
+                        new VelocityComponent(),
+                        new CollisionComponent(world, HitBoxes.getPlayer())
                 ) :
                 new NodeComponentGroup(
                         new GenerateAroundComponent(world, WORLD_RADIUS),
@@ -251,8 +251,8 @@ public class Minecraft {
                         new GravityComponent(),
                         new PlayerJumpComponent(window.getKeyboard()),
                         new WaterFloatingComponent(),
-                        new CollisionComponent(world, HitBoxes.getPlayer()),
-                        new VelocityComponent()
+                        new VelocityComponent(),
+                        new CollisionComponent(world, HitBoxes.getPlayer())
                 );
         return new Camera(projection, cameraComponents);
     }

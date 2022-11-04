@@ -1,10 +1,11 @@
 package org.saar.minecraft.components
 
+import org.joml.Vector3f
 import org.joml.Vector3ic
 import org.saar.core.common.components.TransformComponent
-import org.saar.core.common.components.VelocityComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
+import org.saar.maths.transform.Position
 import org.saar.minecraft.World
 import org.saar.minecraft.entity.HitBox
 
@@ -14,20 +15,25 @@ class CollisionComponent(
 ) : NodeComponent {
 
     private lateinit var transformComponent: TransformComponent
-    private lateinit var velocityComponent: VelocityComponent
+
+    private val temp = Vector3f()
+    private val previousPosition = Position.create()
 
     override fun start(node: ComposableNode) {
         this.transformComponent = node.components.get()
-        this.velocityComponent = node.components.get()
+
+        this.previousPosition.set(this.transformComponent.transform.position)
     }
 
     override fun update(node: ComposableNode) {
         val position = this.transformComponent.transform.position
-        val direction = this.velocityComponent.direction
+        val direction = position.value.sub(this.previousPosition.value, this.temp)
 
-        val ensured = this.hitBox.collideWithWorld(this.world, position, direction)
+        val ensured = this.hitBox.collideWithWorld(this.world, this.previousPosition, direction)
 
-        this.velocityComponent.direction.set(ensured)
+        this.transformComponent.transform.position.set(ensured.add(this.previousPosition.value))
+
+        this.previousPosition.set(this.transformComponent.transform.position)
     }
 
     fun isCollidingBlock(block: Vector3ic): Boolean {

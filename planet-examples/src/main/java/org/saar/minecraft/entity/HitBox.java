@@ -83,7 +83,7 @@ public class HitBox {
         for (Vector3fc vertex : this.vertices) {
             final Block block = world.getBlock(
                     (int) Math.floor(vertex.x() + position.getX()),
-                    (int) Math.floor(vertex.y() + position.getY() - 0.01f),
+                    (int) Math.floor(vertex.y() + position.getY() - .1f),
                     (int) Math.floor(vertex.z() + position.getZ())
             );
 

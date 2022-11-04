@@ -21,11 +21,11 @@ class GravityComponent : NodeComponent {
     }
 
     override fun update(node: ComposableNode) {
-        if (this.collisionComponent.isOnBlock()) {
+        if (this.collisionComponent.isOnBlock() && this.velocityComponent.direction.y <= 0f) {
             this.velocityComponent.direction.y = 0f
         } else if (!this.collisionComponent.isInsideWater()) {
-            val delta = .98f * this.time.delta().toMillis() / 1000f
-            this.velocityComponent.direction.y -= delta
+            val delta = this.time.delta().toMillis() / 1000f
+            this.velocityComponent.direction.y -= 27f * delta
         }
 
         this.time.update()

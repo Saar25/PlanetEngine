@@ -17,8 +17,9 @@ class WaterFloatingComponent : NodeComponent {
 
     override fun update(node: ComposableNode) {
         if (this.collisionComponent.isInsideWater()) {
-            this.velocityComponent.direction.y -= .01f
-            this.velocityComponent.direction.y = max(this.velocityComponent.direction.y, -.05f)
+            this.velocityComponent.direction.y -= .1f
+            this.velocityComponent.direction.y =
+                max(this.velocityComponent.direction.y, -3f)
         }
     }
 }
