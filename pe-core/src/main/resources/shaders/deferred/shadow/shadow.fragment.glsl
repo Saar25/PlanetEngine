@@ -111,7 +111,7 @@ float calcShadowFactor(void) {
             vec2 offset = vec2(row, col) * random * inc;
             vec2 coords = g_shadowMapCoords + offset;
             float depth = texture(u_shadowMap, coords).r;
-            if (g_shadowDepth + SHADOW_BIAS > depth) {
+            if (g_shadowDepth > depth + SHADOW_BIAS) {
                 shadowFactor += 1.0;
             }
         }

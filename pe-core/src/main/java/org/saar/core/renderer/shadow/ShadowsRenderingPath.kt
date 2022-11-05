@@ -35,7 +35,7 @@ class ShadowsRenderingPath(
 
         val context = RenderContext(this.camera)
 
-        CullFace.set(true, Face.FRONT)
+        CullFace.set(true, Face.BACK)
         this.renderNode.renderShadows(context)
 
         return RenderingOutput(this.screen, this.prototype.buffers)
