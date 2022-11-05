@@ -11,6 +11,7 @@ uniform bool u_hasDiscardMap;
 uniform sampler2D u_discardMap;
 uniform ivec2 u_resolution;
 uniform vec4 u_radiuses;
+uniform float u_opacity;
 uniform uint u_borderColour;
 uniform vec4 u_colourModifier;
 
@@ -233,4 +234,6 @@ void main(void) {
     else {
         discard;
     }
+
+    fragColour.a *= u_opacity;
 }

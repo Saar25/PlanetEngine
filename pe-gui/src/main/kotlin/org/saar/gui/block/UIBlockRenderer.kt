@@ -62,6 +62,9 @@ private class UIRendererPrototype : RendererPrototype<UINode> {
     private val radiusesUniform = Vec4UniformValue("u_radiuses")
 
     @UniformProperty
+    private val opacityUniform = FloatUniformValue("u_opacity")
+
+    @UniformProperty
     private val borderColourUniform = UIntUniformValue("u_borderColour")
 
     @UniformProperty
@@ -119,6 +122,7 @@ private class UIRendererPrototype : RendererPrototype<UINode> {
         bordersUniform.value.set(uiBlock.style.borders.asVector4i(vector4i))
         radiusesUniform.value.set(uiBlock.style.radius.asVector4i(vector4i))
         cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
+        opacityUniform.value = uiBlock.style.opacity.opacity
 
         borderColourUniform.value = uiBlock.style.borderColour.asInt()
         colourModifierUniform.value.set(uiBlock.style.colourModifier.multiply)
