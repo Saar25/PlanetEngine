@@ -68,8 +68,7 @@ object GuiExample {
                 add(uiSlider)
 
                 val uiCheckbox = UICheckbox().apply {
-                    style.width.value = pixels(20)
-                    style.radius.set(3)
+                    style.width.value = pixels(30)
                 }
                 add(uiCheckbox)
             }

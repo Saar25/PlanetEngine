@@ -215,10 +215,9 @@ vec4 getBorderColour(void) {
 void main(void) {
     g_radius = getRadius(v_bounds, v_position);
 
-    if (getDiscardMapValue() < .1) {
-        discard;
-    }
-    else if (isInside(v_bounds)){
+    float discardMapValue = getDiscardMapValue();
+
+    if (isInside(v_bounds)){
         vec4 colour = getColour();
         vec4 borderColour = getBorderColour();
         float blendFactor = g_radiusAlpha * g_radiusAlpha;
@@ -235,5 +234,5 @@ void main(void) {
         discard;
     }
 
-    fragColour.a *= u_opacity;
+    fragColour.a *= u_opacity * discardMapValue;
 }
