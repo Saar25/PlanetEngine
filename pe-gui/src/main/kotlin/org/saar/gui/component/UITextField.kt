@@ -1,10 +1,10 @@
 package org.saar.gui.component
 
 import org.lwjgl.glfw.GLFW
+import org.saar.gui.Defaults
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.KeyboardEvent
-import org.saar.gui.style.Colours
 
 private val characterShiftMap = mapOf(
     96 to '~', 49 to '!', 50 to '@',
@@ -43,12 +43,12 @@ class UITextField(text: String = "") : UIComponent() {
 
     init {
         this.style.borders.set(2)
-        this.style.backgroundColour.set(Colours.WHITE)
-        this.style.borderColour.set(Colours.DARK_GRAY)
+        this.style.backgroundColour.set(Defaults.backgroundColour)
+        this.style.borderColour.set(Defaults.secondColour)
     }
 
     override fun update() {
-        this.uiCaret.style.backgroundColour.set(Colours.BLACK)
+        this.uiCaret.style.backgroundColour.set(Defaults.textColour)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)
@@ -70,12 +70,15 @@ class UITextField(text: String = "") : UIComponent() {
                     text.dropLast(1)
                 }
             }
+
             event.code == GLFW.GLFW_KEY_ENTER -> {
                 text + '\n'
             }
+
             font.characters.any { it.char == event.code.toChar() } -> {
                 text + event.key.toChar()
             }
+
             else -> {
                 text
             }

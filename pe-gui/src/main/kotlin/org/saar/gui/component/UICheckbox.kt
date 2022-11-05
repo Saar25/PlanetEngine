@@ -1,10 +1,10 @@
 package org.saar.gui.component
 
 import org.jproperty.property.SimpleBooleanProperty
+import org.saar.gui.Defaults
 import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
-import org.saar.gui.style.Colours
 import org.saar.gui.style.discardmap.DiscardMapValue
 import org.saar.gui.style.length.LengthValues
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -16,14 +16,15 @@ class UICheckbox : UIComponent() {
     private val checkedProperty = SimpleBooleanProperty()
 
     private val uiChild = UIBlock().apply {
-        style.borders.set(1)
+        style.borders.set(2)
+        style.radius.set(3)
     }
 
     override val children = listOf(this.uiChild).onEach { it.parent = this }
 
     init {
         this.style.height.value = LengthValues.ratio(1f)
-        this.style.borderColour.set(Colours.LIGHT_GRAY)
+        this.style.borderColour.set(Defaults.secondColour)
 
         this.uiChild.style.discardMap.value = DiscardMapValue {
             if (this.checkedProperty.get()) discardMap else Texture2D.NULL
