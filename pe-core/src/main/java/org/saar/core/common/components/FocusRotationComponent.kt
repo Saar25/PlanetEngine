@@ -3,7 +3,6 @@ package org.saar.core.common.components
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.maths.transform.ReadonlyPosition
-import org.saar.maths.transform.lookAt
 
 class FocusRotationComponent(private val focus: ReadonlyPosition) : NodeComponent {
 

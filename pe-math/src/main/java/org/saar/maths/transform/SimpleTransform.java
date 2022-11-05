@@ -54,7 +54,8 @@ public final class SimpleTransform implements Transform {
         return this.scale;
     }
 
-    public void lookAt(Position position) {
+    @Override
+    public void lookAt(ReadonlyPosition position) {
         final Vector3f direction = Vector3.sub(
                 position.getValue(), getPosition().getValue());
         getRotation().lookAlong(direction);
