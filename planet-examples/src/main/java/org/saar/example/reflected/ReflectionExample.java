@@ -22,7 +22,6 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -31,6 +30,7 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
+import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -147,6 +147,10 @@ public class ReflectionExample {
                 camera.getProjection(), reflectedTransform);
         final DeferredRenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
                 reflectionCamera, reflectionRenderNode, light);
+        final ReadOnlyTexture2D reflectionMap = reflectionRenderingPath
+                .getPrototype().getBuffers().getAlbedo();
+        mirrorModel.setReflectionMap(reflectionMap);
+        reflectionUiBlock.getStyle().getBackgroundImage().set(reflectionMap);
 
         final ShadowsRenderingPath shadowsRenderingPath =
                 buildShadowsRenderingPath(shadowsRenderNode, light);
@@ -155,7 +159,7 @@ public class ReflectionExample {
                 objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
 
         final DeferredRenderingPath deferredRenderer = buildRenderingPath(
-                camera, renderNode, shadowsRenderingPath, light);
+                camera, renderNode, shadowsRenderingPath, light, uiDisplay);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -164,14 +168,8 @@ public class ReflectionExample {
             uiDisplay.update();
 
             shadowsRenderingPath.render();
-
-            final ReadOnlyTexture2D reflectionMap = reflectionRenderingPath.render().getBuffers().getAlbedo();
-            mirrorModel.setReflectionMap(reflectionMap);
-
+            reflectionRenderingPath.render();
             deferredRenderer.render().toMainScreen();
-
-            reflectionUiBlock.getStyle().getBackgroundImage().set(reflectionMap);
-            uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();
             window.pollEvents();
@@ -277,7 +275,8 @@ public class ReflectionExample {
     }
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
+                                                            ShadowsRenderingPath shadowsRenderingPath,
+                                                            DirectionalLight light, UIDisplay uiDisplay) {
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
@@ -285,7 +284,8 @@ public class ReflectionExample {
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FogRenderPass(fog, FogDistance.XYZ)
+                new FogRenderPass(fog, FogDistance.XYZ),
+                new GeometryPass2D(uiDisplay)
         );
 
         return new DeferredRenderingPath(camera, renderPassesPipeline);
