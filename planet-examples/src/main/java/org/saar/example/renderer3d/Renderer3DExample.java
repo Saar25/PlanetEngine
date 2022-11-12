@@ -24,14 +24,14 @@ import org.saar.maths.utils.Quaternion;
 
 public class Renderer3DExample {
 
-    private static final boolean optimizeMesh = false;
+    private static final boolean optimizeMesh = true;
     private static final boolean singleBatch = true;
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static final int CUBES = 100_000;
-    private static final int AREA = 1000;
+    private static final int CUBES = 10_00;
+    private static final int AREA = 10;
     private static final int BATCHES = singleBatch ? 1 : 10_000;
 
     public static void main(String[] args) {
@@ -69,12 +69,12 @@ public class Renderer3DExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final NodeComponentGroup components = new NodeComponentGroup(
-                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+                new KeyboardMovementComponent(keyboard, 5f, 5f, 5f),
                 new KeyboardRotationComponent(keyboard, 50f));
 
         final Camera camera = new Camera(projection, components);
 
-        camera.getTransform().getPosition().set(0, 0, -1000);
+        camera.getTransform().getPosition().set(0, 0, -10);
         camera.getTransform().lookAt(Position.of(0, 0, 0));
         return camera;
     }
@@ -90,9 +90,9 @@ public class Renderer3DExample {
                 final float y = (float) (Math.random() * AREA - AREA / 2);
                 final float z = (float) (Math.random() * AREA - AREA / 2);
                 newNode.getTransform().getPosition().set(x, y, z);
-                newNode.getTransform().getRotation().set(Quaternion.of(
+/*                newNode.getTransform().getRotation().set(Quaternion.of(
                         (float) Math.random(), (float) Math.random(),
-                        (float) Math.random(), (float) Math.random()).normalize());
+                        (float) Math.random(), (float) Math.random()).normalize())*/;
                 instances[j] = newNode;
             }
             final Mesh mesh = optimizeMesh
