@@ -8,6 +8,8 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.constants.Face
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -38,6 +40,7 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
         ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
+        CullFace.set(enabled = true, face = Face.BACK)
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Model3D) {
