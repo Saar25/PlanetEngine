@@ -18,6 +18,7 @@ object FontLoader {
     @JvmField
     val DEFAULT_FONT_FAMILY =
         if (System.getProperty("os.name").contains("win")) "C:/Windows/Fonts/segoeui.ttf"
+        else if (System.getProperty("os.name").contains("Win")) "C:/Windows/Fonts/segoeui.ttf"
         else if (System.getProperty("os.name").contains("nux")) "/usr/share/fonts/truetype/ubuntu/Ubuntu-L.ttf"
         else if (System.getProperty("os.name").contains("nix")) "/usr/share/fonts/truetype/ubuntu/Ubuntu-L.ttf"
         else ""

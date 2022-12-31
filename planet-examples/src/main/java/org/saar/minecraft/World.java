@@ -1,6 +1,7 @@
 package org.saar.minecraft;
 
 import org.saar.maths.transform.Position;
+import org.saar.maths.transform.ReadonlyPosition;
 import org.saar.minecraft.generator.WorldGenerator;
 
 import java.util.ArrayList;
@@ -82,10 +83,10 @@ public class World {
         return chunk.getLight(lx, y, lz);
     }
 
-    public Block getBlock(Position position) {
-        final int x = (int) Math.floor(position.getX());
-        final int y = (int) Math.floor(position.getY());
-        final int z = (int) Math.floor(position.getZ());
+    public Block getBlock(ReadonlyPosition position) {
+        final int x = (int) Math.floor(position.getValue().x());
+        final int y = (int) Math.floor(position.getValue().y());
+        final int z = (int) Math.floor(position.getValue().z());
         return getBlock(x, y, z);
     }
 

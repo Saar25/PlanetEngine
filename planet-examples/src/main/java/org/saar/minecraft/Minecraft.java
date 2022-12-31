@@ -32,6 +32,7 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
 import org.saar.maths.noise.Noise3f;
+import org.saar.maths.noise.SpreadNoise2f;
 import org.saar.maths.transform.Position;
 import org.saar.minecraft.chunk.ChunkRenderer;
 import org.saar.minecraft.chunk.WaterRenderer;
@@ -222,7 +223,7 @@ public class Minecraft {
     }
 
     private static World buildWorld() {
-        final Noise3f noise3f = (x, y, z) -> SimplexNoise.noise(x / 32f, y / 32f, z / 32f);
+        final Noise3f noise3f = new SpreadNoise2f(32, SimplexNoise::noise);
         final WorldGenerator generator = WorldGenerationPipeline
                 .pipe(new BedrockGenerator())
                 .then(new Terrain3DGenerator(60, 140, noise3f))
