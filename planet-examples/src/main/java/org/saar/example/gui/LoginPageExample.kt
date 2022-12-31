@@ -101,6 +101,7 @@ object LoginPageExample {
                 style.borderColour.set(Colours.WHITE)
                 style.borders.set(1.px)
                 style.backgroundColour.set(Colours.parse("#212121"))
+                style.opacity.set(.6f)
 
                 onAction = EventListener {
                     if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {

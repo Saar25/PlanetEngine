@@ -1,5 +1,7 @@
 package org.saar.gui
 
+import org.saar.core.renderer.RenderContext
+import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.event.KeyboardEvent
 import org.saar.gui.event.MouseEvent
 import org.saar.gui.style.ComponentStyle
@@ -10,8 +12,9 @@ abstract class UIComponent : UIChildNode, UIParentNode {
 
     final override val style = ComponentStyle(this)
 
-
     final override val uiInputHelper = UIInputHelper(this)
+
+    protected open val renderSelf: Boolean = true
 
     init {
         this.uiInputHelper.addMousePressEventListener(::onMousePress)
@@ -26,6 +29,11 @@ abstract class UIComponent : UIChildNode, UIParentNode {
         this.uiInputHelper.addKeyPressEventListener(::onKeyPress)
         this.uiInputHelper.addKeyReleaseEventListener(::onKeyRelease)
         this.uiInputHelper.addKeyRepeatEventListener(::onKeyRepeat)
+    }
+
+    override fun render(context: RenderContext) {
+        if (renderSelf) UIBlockRenderer.render(context, this)
+        this.children.forEach { it.render(context) }
     }
 
     /**

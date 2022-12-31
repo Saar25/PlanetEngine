@@ -9,10 +9,10 @@ import org.saar.gui.component.UIButton
 import org.saar.gui.component.UICheckbox
 import org.saar.gui.component.UISlider
 import org.saar.gui.event.EventListener
-import org.saar.gui.style.Colour
 import org.saar.gui.style.alignment.AlignmentValues.vertical
 import org.saar.gui.style.arrangement.ArrangementValues.spaceBetween
 import org.saar.gui.style.axisalignment.AxisAlignmentValues.center
+import org.saar.gui.style.length.LengthValues.fill
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.pixels
 import org.saar.gui.style.length.LengthValues.ratio
@@ -31,10 +31,12 @@ object GuiExample {
         val display = UIDisplay(window).apply {
             style.alignment.value = vertical
             style.arrangement.value = spaceBetween
+            style.axisAlignment.value = center
 
             val sizeUiSlider = UISlider().apply {
-                style.width.value = percent(90f)
-                style.height.value = pixels(20)
+                style.width.value = fill
+                style.height.value = pixels(30)
+                style.margin.set(20)
             }
             add(sizeUiSlider)
 
@@ -56,7 +58,7 @@ object GuiExample {
 
                 val uiSlider = UISlider().apply {
                     style.width.value = percent(90f)
-                    style.height.value = pixels(20)
+                    style.height.value = pixels(40)
 
                     dynamicValueProperty.addListener { _: Observable ->
                         val percents = dynamicValueProperty.floatValue / 2
@@ -66,9 +68,7 @@ object GuiExample {
                 add(uiSlider)
 
                 val uiCheckbox = UICheckbox().apply {
-                    style.width.value = pixels(20)
-                    style.backgroundColour.set(Colour(48, 63, 159, 1f))
-                    style.radius.set(3)
+                    style.width.value = pixels(30)
                 }
                 add(uiCheckbox)
             }
