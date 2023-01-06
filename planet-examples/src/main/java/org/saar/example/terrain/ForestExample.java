@@ -131,22 +131,30 @@ public class ForestExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(cube, cube2, player, treesNodeBatch, world);
+        final ShadowsRenderNode staticShadowsRenderNode = new ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(player);
 
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.MEDIUM, shadowProjection, light, shadowsRenderNode);
+                ShadowsQuality.MEDIUM, shadowProjection, light, shadowsRenderNode, staticShadowsRenderNode);
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
         final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(cube, cube2, player, treesNodeBatch, world);
         final RenderingPath<?> renderingPath = buildRenderingPath(camera,
                 renderNode, light, shadowsRenderingPath.getCamera(), shadowMap);
 
+        long last = System.currentTimeMillis();
+
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            long delta = System.currentTimeMillis() - last;
+            last = System.currentTimeMillis();
+            System.out.print("\r --->" + delta);
+
             renderNode.update();
             camera.update();
 
+            shadowsRenderingPath.render();
             renderingPath.render().toMainScreen();
 
             window.swapBuffers();

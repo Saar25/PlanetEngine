@@ -3,6 +3,7 @@ package org.saar.maths.transform;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.jproperty.ObservableValue;
 import org.jproperty.binding.ObjectBinding;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Vector3;
@@ -33,6 +34,10 @@ public final class SimpleTransform implements Transform {
             unbind(SimpleTransform.this.position, SimpleTransform.this.rotation, SimpleTransform.this.scale);
         }
     };
+
+    public ObservableValue<Matrix4f> getTransformation() {
+        return this.transformation;
+    }
 
     @Override
     public Matrix4fc getTransformationMatrix() {
