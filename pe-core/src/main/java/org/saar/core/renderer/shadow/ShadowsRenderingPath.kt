@@ -46,11 +46,12 @@ class ShadowsRenderingPath @JvmOverloads constructor(
     }
 
     override fun render(): RenderingOutput<ShadowsBuffers> {
+        this.screen.setAsDraw()
+        GlUtils.clear(GlBuffer.DEPTH)
+
         validateStaticMap()
 
-        this.screen.setAsDraw()
         CullFace.set(true, Face.BACK)
-
         val context = RenderContext(this.camera)
         this.dynamicNode.renderShadows(context)
 
