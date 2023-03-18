@@ -14,11 +14,11 @@ class LowPolyTerrain(private val position: Vector2ic,
                      model: Model3D) :
     Node3D(model), Terrain {
 
-    override fun getHeight(x: Float, z: Float): Float {
-        return this.heightGenerator.generateHeight(x, z)
+    override fun getHeight(x: Float, y: Float, z: Float): Float {
+        return this.heightGenerator.generate(x, y, z)
     }
 
-    override fun contains(x: Float, z: Float): Boolean {
+    override fun contains(x: Float, y: Float, z: Float): Boolean {
         val wxs = this.position.x() * this.dimensions.x()
         val wzs = this.position.y() * this.dimensions.y()
         val wxe = wxs + this.dimensions.x()

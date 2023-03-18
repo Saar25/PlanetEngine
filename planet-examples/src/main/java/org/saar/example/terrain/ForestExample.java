@@ -117,7 +117,7 @@ public class ForestExample {
             final ObjNode tree = new ObjNode(treeModel);
             final float x = (float) (Math.random() * 200 - 100);
             final float z = (float) (Math.random() * 200 - 100);
-            treeModel.getTransform().getPosition().set(x, world.getHeight(x, z) + 2, z);
+            treeModel.getTransform().getPosition().set(x, world.getHeight(x, 0, z) + 2, z);
             return tree;
         }).toArray(ObjNode[]::new));
 

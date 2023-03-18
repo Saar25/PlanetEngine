@@ -145,7 +145,7 @@ public class TerrainExample {
     private static Model3D buildCubeModel(World world) {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
-        cubeInstance.getTransform().getPosition().set(101, world.getHeight(101, 50), 50);
+        cubeInstance.getTransform().getPosition().set(101, world.getHeight(101, 0, 50), 50);
         final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
                 ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);
