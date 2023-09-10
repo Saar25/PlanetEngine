@@ -9,7 +9,9 @@ class DeferredRenderingPath(
     pipeline: DeferredRenderingPipeline,
 ) : RenderingPath<DeferredRenderingBuffers> {
 
-    private val path = SimpleRenderingPath(camera, pipeline, DeferredScreenPrototype())
+    val prototype = DeferredScreenPrototype()
+
+    private val path = SimpleRenderingPath(camera, pipeline, this.prototype)
 
     override fun render() = this.path.render()
 

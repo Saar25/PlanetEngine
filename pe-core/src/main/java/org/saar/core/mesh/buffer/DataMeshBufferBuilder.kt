@@ -16,10 +16,6 @@ class DataMeshBufferBuilder(
 
     fun addAttribute(attribute: IAttribute) = this.attributes.add(attribute)
 
-    fun addAttributes(attributes: Iterable<IAttribute>) = this.attributes.addAll(attributes)
-
-    fun addAttributes(vararg attributes: IAttribute) = this.attributes.addAll(attributes)
-
     override val writer: DataWriter = this.bufferBuilder.writer
 
     override fun build(target: VboTarget): DataMeshBuffer {

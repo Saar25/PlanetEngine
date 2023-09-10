@@ -1,10 +1,10 @@
 package org.saar.core.camera
 
 import org.joml.Matrix4fc
-import org.saar.maths.transform.Transform
+import org.saar.maths.transform.ReadonlyTransform
 
 interface ICamera {
-    val transform: Transform
+    val transform: ReadonlyTransform
     val projection: Projection
     val viewMatrix: Matrix4fc
 }

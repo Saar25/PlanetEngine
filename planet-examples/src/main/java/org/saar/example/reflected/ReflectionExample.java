@@ -3,6 +3,7 @@ package org.saar.example.reflected;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
+import org.saar.core.camera.ReadonlyCamera;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
@@ -21,7 +22,6 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
@@ -30,7 +30,7 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.renderer.reflection.Reflection;
+import org.saar.core.renderer.p2d.GeometryPass2D;
 import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
@@ -59,6 +59,8 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
+import org.saar.maths.transform.ReadonlyTransform;
+import org.saar.maths.transform.ReflectedTransform;
 import org.saar.maths.utils.Vector3;
 
 import java.util.Objects;
@@ -139,12 +141,16 @@ public class ReflectionExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final Camera reflectionCamera = new Camera(camera.getProjection());
+        final ReadonlyTransform reflectedTransform = new ReflectedTransform(
+                camera.getTransform(), mirrorModel.toPlane());
+        final ICamera reflectionCamera = new ReadonlyCamera(
+                camera.getProjection(), reflectedTransform);
         final DeferredRenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
                 reflectionCamera, reflectionRenderNode, light);
-
-        final Reflection reflection = new Reflection(mirrorModel.toPlane(),
-                camera, reflectionCamera, reflectionRenderingPath);
+        final ReadOnlyTexture2D reflectionMap = reflectionRenderingPath
+                .getPrototype().getBuffers().getAlbedo();
+        mirrorModel.setReflectionMap(reflectionMap);
+        reflectionUiBlock.getStyle().getBackgroundImage().set(reflectionMap);
 
         final ShadowsRenderingPath shadowsRenderingPath =
                 buildShadowsRenderingPath(shadowsRenderNode, light);
@@ -153,7 +159,7 @@ public class ReflectionExample {
                 objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
 
         final DeferredRenderingPath deferredRenderer = buildRenderingPath(
-                camera, renderNode, shadowsRenderingPath, light);
+                camera, renderNode, shadowsRenderingPath, light, uiDisplay);
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -162,14 +168,8 @@ public class ReflectionExample {
             uiDisplay.update();
 
             shadowsRenderingPath.render();
-            reflection.updateReflectionMap();
-
-            mirrorModel.setReflectionMap(reflection.getReflectionMap());
-
+            reflectionRenderingPath.render();
             deferredRenderer.render().toMainScreen();
-
-            reflectionUiBlock.getStyle().getBackgroundImage().set(reflection.getReflectionMap());
-            uiDisplay.render(new RenderContext(null));
 
             window.swapBuffers();
             window.pollEvents();
@@ -183,7 +183,7 @@ public class ReflectionExample {
 
         camera.delete();
         uiDisplay.delete();
-        reflection.delete();
+        reflectionRenderingPath.delete();
         shadowsRenderingPath.delete();
         deferredRenderer.delete();
         window.destroy();
@@ -209,7 +209,8 @@ public class ReflectionExample {
         return new ObjNodeBatch(cottage, dragon, stall);
     }
 
-    private static DeferredRenderingPath buildReflectionRenderingPath(Camera camera, DeferredRenderNode renderNode, DirectionalLight light) {
+    private static DeferredRenderingPath buildReflectionRenderingPath(
+            ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
         final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
                 new LightRenderPass(light)
@@ -274,7 +275,8 @@ public class ReflectionExample {
     }
 
     private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            ShadowsRenderingPath shadowsRenderingPath, DirectionalLight light) {
+                                                            ShadowsRenderingPath shadowsRenderingPath,
+                                                            DirectionalLight light, UIDisplay uiDisplay) {
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
         final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
 
@@ -282,7 +284,8 @@ public class ReflectionExample {
                 new DeferredGeometryPass(renderNode),
                 new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
                 new ContrastPostProcessor(1.3f),
-                new FogRenderPass(fog, FogDistance.XYZ)
+                new FogRenderPass(fog, FogDistance.XYZ),
+                new GeometryPass2D(uiDisplay)
         );
 
         return new DeferredRenderingPath(camera, renderPassesPipeline);

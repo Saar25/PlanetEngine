@@ -2,15 +2,14 @@ package org.saar.example.terrain;
 
 import org.joml.SimplexNoise;
 import org.joml.Vector2i;
+import org.lwjgl.opengl.GL20;
 import org.saar.core.camera.Camera;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.Projection;
 import org.saar.core.camera.projection.OrthographicProjection;
 import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.components.KeyboardMovementComponent;
-import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
-import org.saar.core.common.components.MouseDragRotationComponent;
+import org.saar.core.common.components.*;
 import org.saar.core.common.obj.Obj;
 import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
@@ -22,6 +21,9 @@ import org.saar.core.common.r3d.R3D;
 import org.saar.core.common.terrain.colour.ColourGenerator;
 import org.saar.core.common.terrain.colour.NormalColour;
 import org.saar.core.common.terrain.colour.NormalColourGenerator;
+import org.saar.core.common.terrain.components.TerrainGravityComponent;
+import org.saar.core.common.terrain.components.TerrainJumpingComponent;
+import org.saar.core.common.terrain.components.TerrainWalkingComponent;
 import org.saar.core.common.terrain.height.HeightGenerator;
 import org.saar.core.common.terrain.height.NoiseHeightGenerator;
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory;
@@ -47,7 +49,6 @@ import org.saar.core.renderer.shadow.ShadowsQuality;
 import org.saar.core.renderer.shadow.ShadowsRenderNode;
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
 import org.saar.core.renderer.shadow.ShadowsRenderingPath;
-import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
@@ -60,12 +61,13 @@ import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.maths.noise.LayeredNoise2f;
 import org.saar.maths.noise.MultipliedNoise2f;
 import org.saar.maths.noise.SpreadNoise2f;
-import org.saar.maths.transform.Position;
 import org.saar.maths.utils.Vector2;
 import org.saar.maths.utils.Vector3;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
+
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT;
 
 public class ForestExample {
 
@@ -74,6 +76,7 @@ public class ForestExample {
 
     public static void main(String[] args) throws Exception {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
+        GL20.glDisable(GL_DEBUG_OUTPUT);
 
         ClearColour.set(.0f, .7f, .8f);
 
@@ -82,33 +85,39 @@ public class ForestExample {
 
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
-        final KeyboardMovementComponent cameraMovementComponent =
-                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
-        final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
-                new KeyboardMovementScrollVelocityComponent(mouse),
-                new MouseDragRotationComponent(mouse, -.3f));
-
-        final Camera camera = new Camera(projection, components);
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-
         final LowPolyWorld world = buildWorld();
-
         for (int x = -5; x <= 5; x++) {
             for (int z = -5; z <= 5; z++) {
                 world.createTerrain(new Vector2i(x, z));
             }
         }
 
+        final NodeComponentGroup playerComponents = new NodeComponentGroup(
+                new VelocityComponent(),
+                new AccelerationComponent(),
+                new TerrainGravityComponent(world),
+                new TerrainJumpingComponent(world, keyboard, 5),
+                new TerrainWalkingComponent(world, keyboard, 5, 5)
+        );
+        final Model3D playerModel = buildCubeModel();
+        final Node3D player = new Node3D(playerModel, playerComponents);
+
+        final NodeComponentGroup components = new NodeComponentGroup(
+                new MouseDragRotationComponent(mouse, -.3f),
+                new ThirdPersonViewComponent(player.getModel().getTransform(), 5f)
+        );
+        final Camera camera = new Camera(projection, components);
+
+        player.getComponents().add(new BackFaceComponent(camera.getTransform(), .1f));
+
         final Mesh mesh = Obj.mesh("/assets/tree/tree.model.obj");
         final Texture2D texture = Texture2D.of("/assets/tree/tree.diffuse.png");
         final ObjNodeBatch treesNodeBatch = new ObjNodeBatch(IntStream.range(0, 1000).mapToObj(i -> {
             final ObjModel treeModel = new ObjModel(mesh, texture);
             final ObjNode tree = new ObjNode(treeModel);
-            treeModel.getTransform().getScale().set(10);
-            final float x = (float) (Math.random() * 2000 - 1000);
-            final float z = (float) (Math.random() * 2000 - 1000);
-            treeModel.getTransform().getPosition().set(x, world.getHeight(x, z) + 18, z);
+            final float x = (float) (Math.random() * 200 - 100);
+            final float z = (float) (Math.random() * 200 - 100);
+            treeModel.getTransform().getPosition().set(x, world.getHeight(x, 0, z) + 2, z);
             return tree;
         }).toArray(ObjNode[]::new));
 
@@ -122,34 +131,34 @@ public class ForestExample {
 
         final DirectionalLight light = buildDirectionalLight();
 
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world);
+        final ShadowsRenderNode staticShadowsRenderNode = new ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world);
+        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(player);
 
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-                -1000, 1000, -1000, 1000, -1000, 1000);
+                -100, 100, -100, 100, -100, 100);
         final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.MEDIUM, shadowProjection, light, shadowsRenderNode);
+                ShadowsQuality.MEDIUM, shadowProjection, light, shadowsRenderNode, staticShadowsRenderNode);
         final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
 
-        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(cube, cube2, treesNodeBatch, world);
+        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(cube, cube2, player, treesNodeBatch, world);
         final RenderingPath<?> renderingPath = buildRenderingPath(camera,
                 renderNode, light, shadowsRenderingPath.getCamera(), shadowMap);
 
-        final Fps fps = new Fps();
+        long last = System.currentTimeMillis();
+
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
+            long delta = System.currentTimeMillis() - last;
+            last = System.currentTimeMillis();
+            System.out.print("\r --->" + delta);
+
+            renderNode.update();
             camera.update();
 
+            shadowsRenderingPath.render();
             renderingPath.render().toMainScreen();
 
             window.swapBuffers();
             window.pollEvents();
-
-            final double delta = fps.delta() * 1000;
-
-            System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", cameraMovementComponent.getVelocity().x()) +
-                    ", Fps: " + String.format("%.2f", fps.fps()) +
-                    ", Delta: " + delta);
-            fps.update();
         }
 
         camera.delete();
@@ -159,17 +168,17 @@ public class ForestExample {
 
     private static LowPolyWorld buildWorld() {
         final HeightGenerator heightGenerator = new NoiseHeightGenerator(
-                new MultipliedNoise2f(200, new SpreadNoise2f(50,
+                new MultipliedNoise2f(50, new SpreadNoise2f(5,
                         new LayeredNoise2f(SimplexNoise::noise, 5)))
         );
 
         final ColourGenerator colourGenerator = new NormalColourGenerator(Vector3.upward(),
-                new NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-                new NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)));
+                new NormalColour(0.2f, Vector3.of(.41f, .41f, .41f)),
+                new NormalColour(0.3f, Vector3.of(.07f, .52f, .06f)));
 
         final LowPolyTerrainFactory terrainFactory = new LowPolyTerrainFactory(
                 new DiamondMeshGenerator(64), heightGenerator,
-                colourGenerator, Vector2.of(256, 256)
+                colourGenerator, Vector2.of(32, 32)
         );
 
         return new LowPolyWorld(terrainFactory);
@@ -177,8 +186,6 @@ public class ForestExample {
 
     private static Model3D buildCubeModel() {
         final Instance3D cubeInstance = R3D.instance();
-        cubeInstance.getTransform().getScale().set(10, 10, 10);
-        cubeInstance.getTransform().getPosition().set(0, 0, 50);
         final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
                 ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         return new Model3D(cubeMesh);

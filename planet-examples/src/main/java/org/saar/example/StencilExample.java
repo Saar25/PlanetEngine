@@ -7,6 +7,7 @@ import org.saar.core.screen.image.ScreenImage;
 import org.saar.core.screen.image.SimpleScreenImage;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.Comparator;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -123,10 +124,11 @@ public class StencilExample {
         vbo.allocateFloat(data.length);
         vbo.storeFloat(0, data);
 
-        vao.loadVbo(vbo,
+        vao.loadVbo(vbo, new AttributeComposite(
                 Attributes.of(0, 2, DataType.FLOAT, false),
                 Attributes.of(1, 3, DataType.FLOAT, false),
-                Attributes.of(2, 1, DataType.FLOAT, false));
+                Attributes.of(2, 1, DataType.FLOAT, false)
+        ));
 
         vbo.delete();
 

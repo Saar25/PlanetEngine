@@ -10,7 +10,7 @@
 
 // Definitions
 #ifndef SHADOW_BIAS
-#define SHADOW_BIAS 0.001f
+#define SHADOW_BIAS 0.01f
 #endif
 
 // Vertex outputs
@@ -65,8 +65,8 @@ void main(void) {
 
     if (shadowFactor > 0) {
         vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
-        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular);
-        vec3 finalColour = g_colour * lightColour * shadowFactor;
+        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular, shadowFactor);
+        vec3 finalColour = g_colour * lightColour;
 
         f_colour = vec4(finalColour, 1);
     } else {
@@ -111,10 +111,10 @@ float calcShadowFactor(void) {
             vec2 offset = vec2(row, col) * random * inc;
             vec2 coords = g_shadowMapCoords + offset;
             float depth = texture(u_shadowMap, coords).r;
-            if (g_shadowDepth + SHADOW_BIAS > depth) {
+            if (g_shadowDepth > depth + SHADOW_BIAS) {
                 shadowFactor += 1.0;
             }
         }
     }
-    return 1 - shadowFactor / (u_pcfRadius * u_pcfRadius + 1);
+    return 1 - shadowFactor / ((u_pcfRadius * 2 + 1) * (u_pcfRadius * 2 + 1));
 }

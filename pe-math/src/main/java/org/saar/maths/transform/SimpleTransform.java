@@ -3,6 +3,7 @@ package org.saar.maths.transform;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.jproperty.ObservableValue;
 import org.jproperty.binding.ObjectBinding;
 import org.saar.maths.utils.Matrix4;
 import org.saar.maths.utils.Vector3;
@@ -34,6 +35,10 @@ public final class SimpleTransform implements Transform {
         }
     };
 
+    public ObservableValue<Matrix4f> getTransformation() {
+        return this.transformation;
+    }
+
     @Override
     public Matrix4fc getTransformationMatrix() {
         return this.transformation.getValue();
@@ -54,7 +59,8 @@ public final class SimpleTransform implements Transform {
         return this.scale;
     }
 
-    public void lookAt(Position position) {
+    @Override
+    public void lookAt(ReadonlyPosition position) {
         final Vector3f direction = Vector3.sub(
                 position.getValue(), getPosition().getValue());
         getRotation().lookAlong(direction);

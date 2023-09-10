@@ -12,10 +12,6 @@ class PointLight(override val components: NodeComponentGroup = NodeComponentGrou
     override var attenuation: Attenuation = Attenuation.DISTANCE_7
     override val colour: Vector3f = Vector3.create()
 
-    init {
-        this.components.start(this)
-    }
-
     override fun update() {
         this.components.update(this)
         this.components.getNullable(TransformComponent::class)?.also {

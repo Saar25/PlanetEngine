@@ -27,10 +27,16 @@ public final class GlPrimitives {
         return buffer;
     }
 
+    public static int calculateSize(GlPrimitive primitive) {
+        final int components = primitive.getComponentCount();
+        final int bytes = primitive.getDataType().getBytes();
+        return components - bytes;
+    }
+
     public static int sumBytes(GlPrimitive... primitives) {
         int sum = 0;
         for (GlPrimitive primitive : primitives) {
-            sum += primitive.getSize();
+            sum += calculateSize(primitive);
         }
         return sum;
     }

@@ -5,6 +5,7 @@ import org.saar.core.mesh.Mesh
 import org.saar.core.mesh.MeshBuilder
 import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
+import org.saar.lwjgl.opengl.attribute.AttributeComposite
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -51,12 +52,12 @@ class MeshBuilder3D(
             Attributes.of(1, 3, DataType.FLOAT, true))
         this.colourBufferBuilder.addAttribute(
             Attributes.of(2, 3, DataType.FLOAT, true))
-        this.transformBufferBuilder.addAttributes(
+        this.transformBufferBuilder.addAttribute(AttributeComposite(
             Attributes.ofInstanced(3, 4, DataType.FLOAT, false),
             Attributes.ofInstanced(4, 4, DataType.FLOAT, false),
             Attributes.ofInstanced(5, 4, DataType.FLOAT, false),
             Attributes.ofInstanced(6, 4, DataType.FLOAT, false)
-        )
+        ))
     }
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
