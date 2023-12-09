@@ -5,6 +5,7 @@ import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.deferred.DeferredRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
@@ -16,6 +17,18 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
+
+// TODO: temporary class for migration
+class ShadowsRenderPassWrapper(
+    private val rp: ShadowsRenderPass,
+    private val buffers: DeferredRenderingBuffers
+) : RenderNode {
+    override fun render(context: RenderContext) = this.rp.render(context, this.buffers)
+
+    override fun delete() = this.rp.delete()
+}
+
+fun ShadowsRenderPass.asRenderNode(buffers: DeferredRenderingBuffers) = ShadowsRenderPassWrapper(this, buffers)
 
 class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture2D, light: DirectionalLight) :
     DeferredRenderPass {
@@ -99,7 +112,7 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
     override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
-        ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.001f)),
+        ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.01f)),
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
     )
 }

@@ -3,9 +3,13 @@ package org.saar.core.common.obj
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.constants.Comparator
+import org.saar.lwjgl.opengl.cullface.CullFace
+import org.saar.lwjgl.opengl.depth.DepthFunction
+import org.saar.lwjgl.opengl.depth.DepthMask
+import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -13,6 +17,8 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
+import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 
 object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
@@ -38,23 +44,24 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
     @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    @ShaderProperty
-    private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
+    )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_uvCoord", "in_normal")
+        "in_position", "in_uvCoord", "in_normal"
+    )
 
     override fun fragmentOutputs() = arrayOf(
-        "f_colour", "f_normal")
+        "f_colour", "f_normal"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
+        StencilTest.apply(StencilState.ALWAYS_WRITE)
+        DepthTest.apply(DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE))
         BlendTest.disable()
-        DepthTest.enable()
+        CullFace.enable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }

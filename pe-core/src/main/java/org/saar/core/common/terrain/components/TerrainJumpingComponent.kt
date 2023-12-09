@@ -22,7 +22,7 @@ class TerrainJumpingComponent(private val world: World,
 
     override fun update(node: ComposableNode) {
         val position = this.transformComponent.transform.position
-        val height = this.world.getHeight(position.x, position.z)
+        val height = this.world.getHeight(position.x, position.y, position.z)
 
         if (position.y <= height && this.keyboard.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             this.velocityComponent.direction.y = this.velocity

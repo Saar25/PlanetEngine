@@ -3,12 +3,12 @@ package org.saar.lwjgl.opengl.primitive;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.util.DataWriter;
 
-public class GlUInt4 extends GlPrimitiveBase implements GlPrimitive {
+public class GlUInt4 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.U_INT;
     private static final int COMPONENT_COUNT = 4;

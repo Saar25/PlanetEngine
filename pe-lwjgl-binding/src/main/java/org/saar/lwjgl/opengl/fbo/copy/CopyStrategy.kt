@@ -1,10 +1,9 @@
 package org.saar.lwjgl.opengl.fbo.copy
 
-import org.saar.lwjgl.opengl.fbo.DrawableFbo
-import org.saar.lwjgl.opengl.fbo.ReadableFbo
+import org.saar.lwjgl.opengl.fbo.ReadOnlyFbo
 
 interface CopyStrategy {
 
-    fun copy(from: ReadableFbo, to: DrawableFbo)
+    fun copy(from: ReadOnlyFbo, to: ReadOnlyFbo)
 
 }

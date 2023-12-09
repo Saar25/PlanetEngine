@@ -1,9 +1,6 @@
 package org.saar.core.common.terrain.lowpoly
 
-import org.joml.Vector2fc
-import org.joml.Vector2ic
-import org.joml.Vector3f
-import org.joml.Vector3fc
+import org.joml.*
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.common.terrain.TerrainFactory
@@ -24,14 +21,15 @@ class LowPolyTerrainFactory(
     private val v2 = Vector3.create()
     private val offset: Float = 0.01f
 
-    override fun create(position: Vector2ic): LowPolyTerrain {
+    override fun create(position: Vector3ic): LowPolyTerrain {
         val model = buildModel(position)
+        val terrainPosition = Vector2i(position.x(), position.z())
 
-        return LowPolyTerrain(position, this.dimensions, this.heightGenerator, model)
+        return LowPolyTerrain(terrainPosition, this.dimensions, this.heightGenerator, model)
     }
 
     private fun vertexPosition(x: Float, z: Float, dest: Vector3f): Vector3fc {
-        return dest.set(x, this.heightGenerator.generateHeight(x, z), z)
+        return dest.set(x, this.heightGenerator.generate(x, 0f, z), z)
     }
 
     private fun vertexNormal(position: Vector3fc): Vector3fc {
@@ -40,16 +38,16 @@ class LowPolyTerrainFactory(
         return Maths.calculateNormal(position, p2, p3)
     }
 
-    private fun buildModel(position: Vector2ic): Model3D {
+    private fun buildModel(position: Vector3ic): Model3D {
         val indices = this.meshGenerator.generateIndices()
         val vertices = this.meshGenerator.generateVertices().map {
             val lx = it.x * this.dimensions.x()
             val lz = it.y * this.dimensions.y()
 
             val wx = lx + position.x() * this.dimensions.x()
-            val wz = lz + position.y() * this.dimensions.y()
+            val wz = lz + position.z() * this.dimensions.y()
 
-            val height = this.heightGenerator.generateHeight(wx, wz)
+            val height = this.heightGenerator.generate(wx, 0f, wz)
 
             val lPosition = Vector3.of(lx, height, lz)
             val wPosition = Vector3.of(wx, height, wz)
@@ -68,7 +66,7 @@ class LowPolyTerrainFactory(
             it.specular = 0f
             it.transform.position.set(
                 position.x() * this.dimensions.x(), 0f,
-                position.y() * this.dimensions.y())
+                position.z() * this.dimensions.y())
         }
     }
 }

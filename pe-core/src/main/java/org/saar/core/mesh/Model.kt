@@ -3,7 +3,7 @@ package org.saar.core.mesh
 interface Model {
     val mesh: Mesh
 
-    fun draw() = mesh.draw()
+    fun draw() = this.mesh.draw()
 
-    fun delete() = mesh.delete()
+    fun delete() = this.mesh.delete()
 }

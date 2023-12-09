@@ -24,7 +24,7 @@ class TerrainGravityComponent(private val world: World) : NodeComponent {
 
     override fun update(node: ComposableNode) {
         val position = this.transformComponent.transform.position
-        val height = this.world.getHeight(position.x, position.z)
+        val height = this.world.getHeight(position.x, position.y, position.z)
 
         if (position.y > height) {
             this.accelerationComponent.direction.y = -9.8f

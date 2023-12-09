@@ -11,11 +11,15 @@
 
     <artifactId>pe-math</artifactId>
 
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
-            <version>1.10.4</version>
+            <version>1.10.8</version>
         </dependency>
         <dependency>
             <groupId>com.github.saar25</groupId>

@@ -13,17 +13,27 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
+import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.RenderPass;
+import org.saar.core.renderer.RenderPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
+import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
+import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
+import org.saar.core.renderer.renderpass.RenderPassKt;
+import org.saar.core.screen.MainScreen;
+import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.ScreenKt;
+import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.transform.Transform;
@@ -51,18 +61,18 @@ public class DeferredExample {
         light.getDirection().set(-50f, -50f, -50f);
         light.getColour().set(1.0f, 1.0f, 1.0f);
 
-        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
-                new DeferredGeometryPass(renderNode),
-                new LightRenderPass(light)
-        );
+        final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
+        final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
+        final RenderPipeline pipeline = new RenderPipeline(new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen), new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype.getBuffers()), MainScreen.INSTANCE));
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            deferredRenderer.render().toMainScreen();
+            ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            pipeline.render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -71,7 +81,8 @@ public class DeferredExample {
         }
 
         camera.delete();
-        deferredRenderer.delete();
+        screen.delete();
+        pipeline.delete();
         window.destroy();
     }
 
@@ -80,9 +91,7 @@ public class DeferredExample {
 
         final Transform center = new SimpleTransform();
 
-        final NodeComponentGroup components = new NodeComponentGroup(
-                new SmoothMouseRotationComponent(mouse, -.3f),
-                new ThirdPersonViewComponent(center, 80));
+        final NodeComponentGroup components = new NodeComponentGroup(new SmoothMouseRotationComponent(mouse, -.3f), new ThirdPersonViewComponent(center, 80));
 
         final Camera camera = new Camera(projection, components);
 
@@ -110,8 +119,7 @@ public class DeferredExample {
         final Instance3D cubeInstance = R3D.instance();
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
-                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
+        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance}, ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 

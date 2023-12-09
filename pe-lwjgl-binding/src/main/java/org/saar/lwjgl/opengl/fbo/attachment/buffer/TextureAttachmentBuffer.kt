@@ -25,7 +25,7 @@ class TextureAttachmentBuffer(
     }
 
     private fun configureTexture() {
-        this.texture.applyParameters(defaultParameters)
+        this.texture.applyParameters(*defaultParameters)
         if (this.internalFormat.formatType != FormatType.DEPTH_COMPONENT &&
             this.internalFormat.formatType != FormatType.STENCIL_INDEX &&
             this.internalFormat.formatType != FormatType.DEPTH_STENCIL &&

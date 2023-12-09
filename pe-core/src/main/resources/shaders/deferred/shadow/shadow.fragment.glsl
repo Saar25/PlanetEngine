@@ -10,7 +10,7 @@
 
 // Definitions
 #ifndef SHADOW_BIAS
-#define SHADOW_BIAS 0.001f
+#define SHADOW_BIAS 0.01f
 #endif
 
 // Vertex outputs

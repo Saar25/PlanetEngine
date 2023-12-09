@@ -15,12 +15,7 @@ import org.saar.lwjgl.opengl.stencil.*
 
 class DeferredGeometryPass(private vararg val children: DeferredRenderNode) : DeferredRenderPass {
 
-    private val stencilState = StencilState(
-        StencilOperation.REPLACE_ON_PASS,
-        StencilFunction(Comparator.ALWAYS, 1, 0xFF),
-        StencilMask.UNCHANGED
-    )
-
+    private val stencilState = StencilState.ALWAYS_WRITE
     private val depthState = DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE)
 
     override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {

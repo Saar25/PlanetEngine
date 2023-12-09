@@ -1,12 +1,12 @@
 package org.saar.lwjgl.opengl.primitive;
 
 import org.lwjgl.opengl.GL20;
-import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.util.DataWriter;
 
-public class GlFloat extends GlPrimitiveBase implements GlPrimitive {
+public class GlFloat implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
     private static final int COMPONENT_COUNT = 1;

@@ -20,25 +20,19 @@ class SquareMeshGenerator(private val vertices: Int) : MeshGenerator {
     }
 
     override fun generateIndices(): Collection<Int> {
-        val indices: MutableCollection<Int> = mutableListOf()
-        for (x0 in 0 until this.vertices - 1) {
-            for (z0 in 0 until this.vertices - 1) {
-                val x1 = x0 + 1
+        val indexPointers = arrayOf(2, 0, 1, 2, 1, 3)
+
+        return (0 until this.vertices - 1).flatMap { x0 ->
+            val x1 = x0 + 1
+            (0 until this.vertices - 1).flatMap { z0 ->
                 val z1 = z0 + 1
                 val current = intArrayOf(
                     x0 + z0 * this.vertices,
                     x1 + z0 * this.vertices,
                     x0 + z1 * this.vertices,
                     x1 + z1 * this.vertices)
-
-                indices.add(current[2])
-                indices.add(current[0])
-                indices.add(current[1])
-                indices.add(current[2])
-                indices.add(current[1])
-                indices.add(current[3])
+                indexPointers.map { current[it] }
             }
         }
-        return indices
     }
 }

@@ -4,6 +4,7 @@ import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -17,7 +18,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.shader.Shader;
@@ -38,14 +39,15 @@ public class InstancedModelExample {
 
         final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
         final float[] data = {
-                -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
-                +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
-                +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
+            -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
+            +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
+            +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
         dataBuffer.allocateFloat(data.length);
         dataBuffer.storeFloat(0, data);
-        vao.loadVbo(dataBuffer,
-                Attributes.of(0, 2, DataType.FLOAT, true),
-                Attributes.of(1, 3, DataType.FLOAT, true));
+        vao.loadVbo(dataBuffer, new AttributeComposite(
+            Attributes.of(0, 2, DataType.FLOAT, true),
+            Attributes.of(1, 3, DataType.FLOAT, true)
+        ));
         dataBuffer.delete();
 
         final DataBuffer instanceBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
@@ -59,18 +61,18 @@ public class InstancedModelExample {
         final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
-                Shader.createVertex("/vertex.glsl"),
-                Shader.createFragment("/fragment.glsl"));
+            Shader.createVertex("/vertex.glsl"),
+            Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttributes("in_position", "in_colour");
 
         shadersProgram.bind();
 
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        final AllocationStrategy allocation = new SimpleAllocationStrategy();
+        final AllocationStrategy allocation = SimpleAllocationStrategy.INSTANCE;
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final Attachment attachment = new Attachment(buffer, allocation);
-        final AttachmentIndex attachmentIndex = new ColourAttachmentIndex(0);
+        final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 
         fbo.addAttachment(attachmentIndex, attachment);

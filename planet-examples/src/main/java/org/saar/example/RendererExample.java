@@ -16,7 +16,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStr
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
@@ -47,7 +47,7 @@ public class RendererExample {
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final Attachment attachment = new Attachment(buffer, allocation);
-        final AttachmentIndex attachmentIndex = new ColourAttachmentIndex(0);
+        final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 

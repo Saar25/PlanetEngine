@@ -4,14 +4,17 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.system.MemoryStack;
 import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.event.IntValueChange;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.opengl.fbo.ScreenFbo;
+import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.maths.objects.Dimensions;
 import org.saar.maths.objects.RectangleI;
+
+import java.nio.IntBuffer;
 
 public class Window {
 
@@ -44,7 +47,7 @@ public class Window {
     private int x;
     private int y;
 
-    public Window(long id, String title, int width, int height, boolean vSync) {
+    private Window(long id, String title, int width, int height, boolean vSync) {
         this.id = id;
         this.vSync = vSync;
         this.title = title;
@@ -98,7 +101,7 @@ public class Window {
             this.height = height;
             this.resizeListenersHelper.fireEvent(event);
 
-            ScreenFbo.getInstance().bind();
+            Fbo.NULL.bind();
         });
 
         GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
@@ -117,7 +120,16 @@ public class Window {
         GLFW.glfwSwapInterval(this.vSync ? 1 : 0);
 
         GL.createCapabilities();
-        GLUtil.setupDebugMessageCallback(System.err);
+        GLUtil.setupDebugMessageCallback(System.out);
+
+        try (final MemoryStack stack = MemoryStack.stackPush()) {
+            final IntBuffer width = stack.mallocInt(1);
+            final IntBuffer height = stack.mallocInt(1);
+            GLFW.glfwGetWindowSize(this.id, width, height);
+            this.width = width.get();
+            this.height = height.get();
+        }
+
         setVisible(true);
     }
 

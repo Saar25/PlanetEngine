@@ -8,4 +8,12 @@ data class CullFaceState(
     val order: CullFaceOrder,
 ) {
     constructor(face: Face, order: CullFaceOrder) : this(true, face, order)
+
+    companion object {
+        val DEFAULTS = CullFaceState(
+            enabled = false,
+            face = Face.BACK,
+            order = CullFaceOrder.COUNTER_CLOCKWISE,
+        )
+    }
 }

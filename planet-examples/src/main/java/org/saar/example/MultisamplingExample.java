@@ -2,6 +2,7 @@ package org.saar.example;
 
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -13,7 +14,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStr
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.shader.Shader;
@@ -40,10 +41,11 @@ public class MultisamplingExample {
                 -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
                 +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
-        vao.loadVbo(vbo,
+        vao.loadVbo(vbo, new AttributeComposite(
                 Attributes.of(0, 2, DataType.FLOAT, false),
                 Attributes.of(1, 3, DataType.FLOAT, false),
-                Attributes.of(2, 1, DataType.FLOAT, false));
+                Attributes.of(2, 1, DataType.FLOAT, false)
+        ));
         vbo.delete();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
@@ -59,7 +61,7 @@ public class MultisamplingExample {
 
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(8);
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
-        final AttachmentIndex attachmentIndex = new ColourAttachmentIndex(0);
+        final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final Attachment attachment = new Attachment(buffer, allocation);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 

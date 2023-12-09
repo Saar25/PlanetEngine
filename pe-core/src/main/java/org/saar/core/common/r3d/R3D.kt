@@ -30,7 +30,7 @@ object R3D {
     }
 
     @JvmStatic
-    fun mesh(instances: Array<Instance3D>, vertices: Array<Vertex3D>, indices: IntArray): Mesh {
+    fun meshBuilder(instances: Array<Instance3D>, vertices: Array<Vertex3D>, indices: IntArray): MeshBuilder3D {
         val vertexBufferBuilder = DataMeshBufferBuilder(
             FixedBufferBuilder(vertices.size * 9 * 4),
             VboUsage.STATIC_DRAW)
@@ -51,6 +51,11 @@ object R3D {
         meshBuilder3D.writer.writeInstances(instances)
         meshBuilder3D.writer.writeIndices(indices)
 
-        return meshBuilder3D.load()
+        return meshBuilder3D
+    }
+
+    @JvmStatic
+    fun mesh(instances: Array<Instance3D>, vertices: Array<Vertex3D>, indices: IntArray): Mesh {
+        return meshBuilder(instances, vertices, indices).load()
     }
 }

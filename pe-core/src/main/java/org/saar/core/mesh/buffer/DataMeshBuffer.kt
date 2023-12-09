@@ -1,5 +1,6 @@
 package org.saar.core.mesh.buffer
 
+import org.saar.lwjgl.opengl.attribute.AttributeComposite
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.attribute.IAttribute
 import org.saar.lwjgl.opengl.vao.WritableVao
@@ -29,7 +30,7 @@ class DataMeshBuffer(
         this.vbo.store(offset * bytes, this.buffer.asByteBuffer())
     }
 
-    override fun loadInVao(vao: WritableVao) = vao.loadVbo(this.vbo, *this.attributes.toTypedArray())
+    override fun loadInVao(vao: WritableVao) = vao.loadVbo(this.vbo, AttributeComposite(this.attributes))
 
     override fun delete() = this.buffer.close()
 }

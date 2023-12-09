@@ -15,6 +15,7 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniform
+import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.maths.utils.Matrix4
@@ -29,7 +30,7 @@ class SkyboxPostProcessor(cubeMap: CubeMapTexture) : PostProcessor {
     )
 
     override fun prepare(context: RenderContext, buffers: PostProcessingBuffers) {
-        StencilTest.disable()
+        StencilTest.apply(StencilState.UNWRITTEN_ONLY)
         BlendTest.apply(this.blendState)
     }
 

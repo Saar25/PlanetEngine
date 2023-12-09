@@ -1,11 +1,33 @@
-# PlanetEngine
+# 🌍 PlanetEngine
 
-An abstract game engine written on top of opengl api and lwjgl
+An OpenGL-based game engine built on top of LWJGL
 
-## Lwjgl binding
-every opengl and lwjgl object is wrapped with a java class,  
-allowing many benefits like strong typing and encapsulation  
-under pe-lwjgl-binding module
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Java 17+
+- Maven 3.6+
+
+### Run an Example
+
+```bash
+mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplication
+```
+
+Replace the class with any of the available examples.
+
+## Modules
+
+- `pe-math` - Vector and matrix math utilities.
+- `pe-lwjgl-binding` - Low-level LWJGL and OpenGL bindings.
+- `pe-core` - High-level rendering pipelines.
+- `pe-gui` - UI system with components and text rendering.
+- `planet-examples` - A collection of runnable engine examples.
+
+## LWJGL Binding
+All OpenGL and LWJGL objects are wrapped in strongly typed Java classes, providing encapsulation, safety, and improved usability.  
+These bindings are located in the pe-lwjgl-binding module.
 
 ```java
 // org.saar.example.Example.java
@@ -58,9 +80,7 @@ window.destroy();
 ```
 
 ## Core engine
-Most of the time it would be safer not to handle vaos and vbos manually  
-using some helpful classes we can wrap out code with some nicer objects  
-under pe-core module
+While direct management of VAOs and VBOs is supported, it's often more convenient and safer to use the high-level abstractions provided by the engine.  
 
 ```java
 // org.saar.example.renderer.RendererExample.java
@@ -83,11 +103,11 @@ final Renderer2D renderer = new Renderer2D();
 renderer.render(new RenderContext(camera), model);
 ```
 
-the rendering pipeline consists of some primary interfaces
+The rendering pipeline consists of some primary interfaces
 
 ### Vertex
 
-represents a vertex of the mesh
+Defines a vertex of the mesh
 
 ```kotlin
 interface Vertex3D : Vertex {
@@ -99,7 +119,7 @@ interface Vertex3D : Vertex {
 
 ### Instance
 
-represents an instance (used for instance rendering)
+Defines an instance (used for instance rendering)
 
 ```kotlin
 interface Instance3D : Instance {
@@ -109,7 +129,7 @@ interface Instance3D : Instance {
 
 ### Mesh
 
-contains the vbos and vaos that hold the data for the vertices, instances
+Defines the draw method used to draw a mesh
 
 ```java
 public interface Mesh {
@@ -120,7 +140,7 @@ public interface Mesh {
 
 ### Model
 
-holds the mesh with some attributes, like texture or transform
+Defines the mesh and additional attributes used to render the model, such as texture or transform
 
 ```kotlin
 class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model {
@@ -130,14 +150,15 @@ class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model
 
 ### Node
 
-base class for complex objects in the scene
+Base class for complex objects in the scene
 usually holds the model and a renderer, and has at least one render method
 
 ```java
 final Model3D cubeModel = buildCubeModel();
 final Node3D cube = new Node3D(cubeModel);
 
-cube.renderForward(new RenderContext(camera))
+cube.renderForward(new RenderContext(camera));
+
 ```
 
 ### Renderer
@@ -152,13 +173,12 @@ Prototype objects are used in order to write a unique rendering pipeline
 private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
 // Use vertex and fragment shaders in the shaders program
-@ShaderProperty
-private val vertex = Shader.createVertex(GlslVersion.V400,
-    ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
-
-@ShaderProperty
-private val fragment = Shader.createFragment(GlslVersion.V400,
-    ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
+override val shaders = arrayOf(
+    Shader.createVertex(GlslVersion.V400, 
+        ShaderCode.loadSource("/shaders/r3d/vertex.glsl")),
+    Shader.createFragment(GlslVersion.V400, 
+        ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
+)
 
 // Bind per vertex attributes
 override fun vertexAttributes() = arrayOf(
@@ -166,7 +186,7 @@ override fun vertexAttributes() = arrayOf(
 
 // Being called before rendering
 override fun onRenderCycle(context: RenderContext) {
-    ProvokingVertex.setFirst();
+    ProvokingVertex.setFirst()
     BlendTest.disable()
     DepthTest.enable()
 }
@@ -194,27 +214,30 @@ Renderer2D, Renderer3D, ObjRenderer, NormalMappedRenderer and more are already i
 The engine makes a great usage in deferred rendering  
 Render passes like LightRenderPass and ShadowsRenderPass are implemented  
 as well as unique renderers like ObjDeferredRenderer and NormalMappedDeferredRenderer  
-and DeferredRenderingPath to wrap it all
+and RenderPipeline to wrap it all
 
 ### Post-processing
 
 Post-processing is extremely simple using this engine  
 all that it takes is to create your own PostProcessor and create your PostProcessingPipeline
 
-```java
-// org.saar.example.normalmapping.NormalMappingExample.java
+```kotlin
+// org.saar.example.normalmapping.NormalMappingExample.kt
 
 // Create the pipeline
-final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-    new ContrastPostProcessor(1.8f),
-    new GaussianBlurPostProcessor(11, 2)
-);
+val pipeline = RenderPipeline(
+    renderNode
+        .asDeferredRenderNode()
+        .onto(screen1),
+    ContrastPostProcessor(1.3f)
+        .asRenderNode(prototype1.buffers)
+        .onto(screen1),
+    FxaaPostProcessor()
+        .asRenderNode(prototype2.buffers)
+        .onto(MainScreen),
+)
 
-// Render to texture using deferred renderer
-final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
-
-// Post process the texture and output to the screen
-pipeline.process(texture).toMainScreen();
+pipeline.render(RenderContext(camera))
 ```
 
 ### Gui
@@ -307,7 +330,7 @@ You can try some examples that are under planet-examples module
 
 for example:  
 MultisamplingExample.java  
-NormalMappingExample.java  
-ReflectionExample.java  
+NormalMappingExample.kt  
+ReflectionExample.kt  
 ManyCubesExample.java
-GuiExample.java
+GuiExample.kt

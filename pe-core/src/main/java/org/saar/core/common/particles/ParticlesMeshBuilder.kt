@@ -52,4 +52,15 @@ class ParticlesMeshBuilder(
         val drawCall = InstancedArraysDrawCall(RenderMode.TRIANGLE_STRIP, 0, 4, this.instances)
         return ParticlesMesh(vao, drawCall, meshBuffers)
     }
+
+    override fun loadVao(): Vao {
+        return Vao.create().also { vao ->
+            val buffers = this.bufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) }
+
+            buffers.forEach {
+                it.store(0)
+                it.loadInVao(vao)
+            }
+        }
+    }
 }

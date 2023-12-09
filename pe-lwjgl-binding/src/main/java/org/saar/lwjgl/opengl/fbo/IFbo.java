@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.fbo;
 
-public interface IFbo extends ReadOnlyFbo, ReadableFbo, DrawableFbo, ModifiableFbo {
+public interface IFbo extends ReadOnlyFbo, ModifiableFbo {
 
     /**
      * Sets the size of the fbo
