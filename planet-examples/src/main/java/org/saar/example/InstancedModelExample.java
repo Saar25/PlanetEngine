@@ -4,6 +4,7 @@ import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -43,9 +44,10 @@ public class InstancedModelExample {
                 +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
         dataBuffer.allocateFloat(data.length);
         dataBuffer.storeFloat(0, data);
-        vao.loadVbo(dataBuffer,
+        vao.loadVbo(dataBuffer, new AttributeComposite(
                 Attributes.of(0, 2, DataType.FLOAT, true),
-                Attributes.of(1, 3, DataType.FLOAT, true));
+                Attributes.of(1, 3, DataType.FLOAT, true)
+        ));
         dataBuffer.delete();
 
         final DataBuffer instanceBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
