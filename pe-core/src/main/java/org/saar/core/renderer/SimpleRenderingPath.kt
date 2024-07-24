@@ -25,32 +25,39 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
         StencilMask.UNCHANGED
     )
 
-    private val screen = Screens.fromPrototype(this.prototype, Fbo.create(0, 0), SimpleAllocationStrategy())
+    private val screenA = Screens.fromPrototype(this.prototype, Fbo.create(0, 0), SimpleAllocationStrategy())
+    private val screenB = Screens.fromPrototype(this.prototype, Fbo.create(0, 0), SimpleAllocationStrategy())
+    private val swapScreen = mapOf(screenA to screenB, screenB to screenA)
 
     override fun render(): RenderingOutput<T> {
-        this.screen.setAsDraw()
-        this.screen.resizeToMainScreen()
+        this.screenA.resizeToMainScreen()
+        this.screenB.resizeToMainScreen()
 
+        this.screenA.setAsDraw()
         DepthTest.apply(mask = DepthMask.WRITE)
         StencilTest.apply(mask = StencilMask.UNCHANGED)
         GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        val context = RenderContext(camera)
+        var currentScreen = this.screenA
+
+        val context = RenderContext(this.camera)
         this.pipeline.passes.forEach {
             StencilTest.apply(this.stencilState)
             DepthTest.disable()
             BlendTest.disable()
 
             it.prepare(context, this.prototype.buffers)
-            this.screen.setAsDraw()
+            currentScreen.setAsDraw()
             it.render(context, this.prototype.buffers)
+
+            currentScreen = swapScreen[currentScreen]!!
         }
 
-        return RenderingOutput(this.screen, this.prototype.buffers)
+        return RenderingOutput(this.screenA, this.prototype.buffers)
     }
 
     override fun delete() {
-        this.screen.delete()
+        this.screenA.delete()
         this.pipeline.passes.forEach { it.delete() }
     }
 }
