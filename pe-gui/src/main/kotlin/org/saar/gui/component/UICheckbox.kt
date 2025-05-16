@@ -12,15 +12,14 @@ import org.saar.gui.style.redius.RadiusValues
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
-import org.saar.lwjgl.opengl.texture.parameter.TextureParameter
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 
 private val discardMap = Texture2D.of("/assets/gui/checkbox.png").apply {
-    applyParameters(arrayOf<TextureParameter>(
+    applyParameters(
         TextureMinFilterParameter(MinFilterValue.LINEAR),
         TextureMagFilterParameter(MagFilterValue.LINEAR),
-    ))
+    )
 }
 
 class UICheckbox : UIComponent() {

@@ -29,7 +29,10 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
-import org.saar.lwjgl.opengl.texture.parameter.*
+import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
+import org.saar.lwjgl.opengl.texture.parameter.TextureTWrapParameter
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 import org.saar.lwjgl.opengl.texture.values.WrapValue
@@ -62,12 +65,12 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
             this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F)
         painter.delete()
 
-        texture.applyParameters(arrayOf<TextureParameter>(
+        texture.applyParameters(
             TextureMinFilterParameter(MinFilterValue.NEAREST),
             TextureMagFilterParameter(MagFilterValue.NEAREST),
             TextureSWrapParameter(WrapValue.REPEAT),
             TextureTWrapParameter(WrapValue.REPEAT)
-        ))
+        )
 
         return texture
     }
