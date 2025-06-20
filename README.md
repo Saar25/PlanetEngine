@@ -1,11 +1,33 @@
-# PlanetEngine
+# 🌍 PlanetEngine
 
-An abstract game engine written on top of opengl api and lwjgl
+An OpenGL-based game engine built on top of LWJGL
 
-## Lwjgl binding
-every opengl and lwjgl object is wrapped with a java class,  
-allowing many benefits like strong typing and encapsulation  
-under pe-lwjgl-binding module
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Java 17+
+- Maven 3.6+
+
+### Run an Example
+
+```bash
+mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplication
+```
+
+Replace the class with any of the available examples.
+
+## Modules
+
+- `pe-math` - Vector and matrix math utilities.
+- `pe-lwjgl-binding` - Low-level LWJGL and OpenGL bindings.
+- `pe-core` - High-level rendering pipelines.
+- `pe-gui` - UI system with components and text rendering.
+- `planet-examples` - A collection of runnable engine examples.
+
+## LWJGL Binding
+All OpenGL and LWJGL objects are wrapped in strongly typed Java classes, providing encapsulation, safety, and improved usability.  
+These bindings are located in the pe-lwjgl-binding module.
 
 ```java
 // org.saar.example.Example.java
@@ -58,9 +80,7 @@ window.destroy();
 ```
 
 ## Core engine
-Most of the time it would be safer not to handle vaos and vbos manually  
-using some helpful classes we can wrap out code with some nicer objects  
-under pe-core module
+While direct management of VAOs and VBOs is supported, it's often more convenient and safer to use the high-level abstractions provided by the engine.  
 
 ```java
 // org.saar.example.renderer.RendererExample.java
@@ -83,11 +103,11 @@ final Renderer2D renderer = new Renderer2D();
 renderer.render(new RenderContext(camera), model);
 ```
 
-the rendering pipeline consists of some primary interfaces
+The rendering pipeline consists of some primary interfaces
 
 ### Vertex
 
-represents a vertex of the mesh
+Represents a vertex of the mesh
 
 ```kotlin
 interface Vertex3D : Vertex {
@@ -99,7 +119,7 @@ interface Vertex3D : Vertex {
 
 ### Instance
 
-represents an instance (used for instance rendering)
+Represents an instance (used for instance rendering)
 
 ```kotlin
 interface Instance3D : Instance {
@@ -109,7 +129,7 @@ interface Instance3D : Instance {
 
 ### Mesh
 
-contains the vbos and vaos that hold the data for the vertices, instances
+Contains the vbos and vaos that hold the data for the vertices, instances
 
 ```java
 public interface Mesh {
@@ -120,7 +140,7 @@ public interface Mesh {
 
 ### Model
 
-holds the mesh with some attributes, like texture or transform
+Holds the mesh with some attributes, like texture or transform
 
 ```kotlin
 class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model {
@@ -130,7 +150,7 @@ class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model
 
 ### Node
 
-base class for complex objects in the scene
+Base class for complex objects in the scene
 usually holds the model and a renderer, and has at least one render method
 
 ```java
