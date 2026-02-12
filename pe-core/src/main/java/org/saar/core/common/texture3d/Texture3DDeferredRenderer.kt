@@ -7,6 +7,7 @@ import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -44,9 +45,10 @@ private class Texture3DDeferredRendererPrototype : RendererPrototype<Texture3DMo
     override fun vertexAttributes() = arrayOf("in_position", "in_uvCoord")
 
     override fun onRenderCycle(context: RenderContext) {
-        ProvokingVertex.setFirst();
+        ProvokingVertex.setFirst()
         BlendTest.disable()
         DepthTest.enable()
+        CullFace.disable()
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }

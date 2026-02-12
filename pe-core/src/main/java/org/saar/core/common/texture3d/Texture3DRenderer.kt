@@ -44,7 +44,7 @@ private class Texture3DRendererPrototype : RendererPrototype<Texture3DModel> {
         ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
-        CullFace.set(enabled = true, face = Face.BACK)
+        CullFace.disable()
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Texture3DModel) {

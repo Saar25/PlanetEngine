@@ -57,7 +57,6 @@ private fun generateGrid(): Texture3DNode {
 
     val indices = meshGenerator.generateIndices().toIntArray()
 
-
     val texture = Texture2D.of("/assets/tree/tree.diffuse.png")
 
     return Texture3DNode(Texture3DModel(Texture3D.mesh(vertices, indices), texture))
