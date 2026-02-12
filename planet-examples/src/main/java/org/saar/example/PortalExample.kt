@@ -7,6 +7,9 @@ import org.saar.core.camera.Camera
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.components.KeyboardMovementComponent
 import org.saar.core.common.components.MouseDragRotationComponent
+import org.saar.core.common.portal.Portal
+import org.saar.core.common.portal.PortalModel
+import org.saar.core.common.portal.PortalNode
 import org.saar.core.common.terrain.colour.ColourGenerator
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
@@ -15,9 +18,6 @@ import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
-import org.saar.core.common.texture3d.Texture3D
-import org.saar.core.common.texture3d.Texture3DModel
-import org.saar.core.common.texture3d.Texture3DNode
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
@@ -62,12 +62,12 @@ fun main() {
     window.destroy()
 }
 
-private fun generatePortal(): Texture3DNode {
+private fun generatePortal(): PortalNode {
     val meshGenerator = DiamondMeshGenerator(2)
 
     val vertices = meshGenerator.generateVertices()
         .map {
-            Texture3D.vertex(
+            Portal.vertex(
                 Vector3.of(it.x, 0f, it.y),
                 Vector2.of(it.x + .5f, it.y + .5f))
         }.toTypedArray()
@@ -76,11 +76,11 @@ private fun generatePortal(): Texture3DNode {
 
     val texture = Texture2D.of("/assets/tree/tree.diffuse.png")
 
-    val model = Texture3DModel(Texture3D.mesh(vertices, indices), texture)
+    val model = PortalModel(Portal.mesh(vertices, indices), texture)
     model.transform.rotation.rotateDegrees(90f, 0f, 0f)
     model.transform.position.set(5f, 5f, 0f)
     model.transform.scale.set(5f)
-    return Texture3DNode(model)
+    return PortalNode(model)
 }
 
 private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
