@@ -3,13 +3,13 @@ flat in vec3 v_color;
 
 // Uniforms
 uniform sampler2D u_texture;
-uniform ivec2 u_resolution;
 
 // Fragment outputs
 layout (location = 0) out vec4 f_color;
 
 void main(void) {
-    vec4 color = texture(u_texture, gl_FragCoord.xy / u_resolution);
+    vec2 ndc = (v_clipSpace.xy / v_clipSpace.w) * 0.5 + 0.5;
+    vec4 color = texture(u_texture, ndc);
 
     f_color = color;
 }

@@ -36,8 +36,7 @@ private class PortalRendererPrototype : RendererPrototype<PortalModel> {
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/portal/portal.fragment.glsl"))
 
-    override fun vertexAttributes() = arrayOf(
-        "in_position", "in_colour", "in_transformation")
+    override fun vertexAttributes() = arrayOf("in_position")
 
     override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst();

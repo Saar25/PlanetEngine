@@ -1,13 +1,11 @@
 package org.saar.core.common.portal
 
-import org.joml.Vector2i
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
-import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -17,7 +15,6 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniform
 import org.saar.maths.utils.Matrix4
 
 object PortalDeferredRenderer : RendererPrototypeWrapper<PortalModel>(PortalDeferredRendererPrototype())
@@ -30,14 +27,6 @@ private class PortalDeferredRendererPrototype : RendererPrototype<PortalModel> {
     @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
-    val resolutionUniform = object : Vec2iUniform() {
-        override val name = "u_resolution"
-
-        override val value = Vector2i()
-            get() = field.set(MainScreen.width, MainScreen.height)
-    }
-
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
 
@@ -49,7 +38,7 @@ private class PortalDeferredRendererPrototype : RendererPrototype<PortalModel> {
     private val fragment = Shader.createFragment(GlslVersion.V400,
         ShaderCode.loadSource("/shaders/portal/portal.dfragment.glsl"))
 
-    override fun vertexAttributes() = arrayOf("in_position", "in_uvCoord")
+    override fun vertexAttributes() = arrayOf("in_position")
 
     override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst()
