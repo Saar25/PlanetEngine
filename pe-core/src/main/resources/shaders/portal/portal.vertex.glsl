@@ -1,3 +1,8 @@
+/**
+*
+* Portal vertex shader
+*
+**/
 // Per Vertex attibutes
 layout (location = 0) in vec3 in_position;
 

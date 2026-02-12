@@ -10,6 +10,7 @@ import org.saar.core.mesh.writer.writeVertices
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 
+// TODO: merge with FlatReflected pipeline and Texture3D
 object Portal {
 
     @JvmStatic
