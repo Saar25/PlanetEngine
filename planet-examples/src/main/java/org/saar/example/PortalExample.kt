@@ -11,6 +11,10 @@ import org.saar.core.common.components.MouseDragRotationComponent
 import org.saar.core.common.portal.Portal
 import org.saar.core.common.portal.PortalModel
 import org.saar.core.common.portal.PortalNode
+import org.saar.core.common.r3d.Model3D
+import org.saar.core.common.r3d.Node3D
+import org.saar.core.common.r3d.R3D.instance
+import org.saar.core.common.r3d.R3D.mesh
 import org.saar.core.common.terrain.colour.ColourGenerator
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
@@ -47,6 +51,13 @@ fun main() {
     val world = buildWorld()
     world.createTerrain(Vector2i(0))
 
+    val cubeInstance = instance().also {
+        it.transform.position.set(-5f, 5f, 5f)
+    }
+    val cubeMesh = mesh(arrayOf(cubeInstance), ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
+    val cubeModel = Model3D(cubeMesh)
+    val cube = Node3D(cubeModel)
+
     val portalOffset = SimpleTransform().also {
         it.position.add(10f, 0f, 0f)
     }
@@ -54,14 +65,14 @@ fun main() {
     val portalTransform1 = ComposedTransform(camera.transform, portalOffset)
     val portalCamera1 = ReadonlyCamera(camera.projection, portalTransform1)
     val portalRenderingPath1 = DeferredRenderingPath(portalCamera1,
-        DeferredRenderingPipeline(DeferredGeometryPass(world))
+        DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
     )
     val portalMap1 = portalRenderingPath1.prototype.buffers.albedo
 
     val portalTransform2 = ComposedTransform(camera.transform, InvertedTransform(portalOffset))
     val portalCamera2 = ReadonlyCamera(camera.projection, portalTransform2)
     val portalRenderingPath2 = DeferredRenderingPath(portalCamera2,
-        DeferredRenderingPipeline(DeferredGeometryPass(world))
+        DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
     )
     val portalMap2 = portalRenderingPath2.prototype.buffers.albedo
 
@@ -69,7 +80,7 @@ fun main() {
     val portal2 = generatePortal2(portalMap1)
 
     val renderingPipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(portal1, portal2, world),
+        DeferredGeometryPass(portal1, portal2, world, cube),
     )
     val renderingPath = DeferredRenderingPath(camera, renderingPipeline)
 
