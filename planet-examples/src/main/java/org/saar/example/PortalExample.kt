@@ -32,6 +32,7 @@ import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
 import org.saar.maths.transform.ComposedTransform
+import org.saar.maths.transform.InvertedTransform
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.utils.Vector2
@@ -49,17 +50,26 @@ fun main() {
     val portalOffset = SimpleTransform().also {
         it.position.add(10f, 0f, 0f)
     }
-    val portalTransform2 = ComposedTransform(camera.transform, portalOffset)
-    val portalCamera2 = ReadonlyCamera(camera.projection, portalTransform2)
-    val portalRenderingPath = DeferredRenderingPath(portalCamera2,
+
+    val portalTransform1 = ComposedTransform(camera.transform, portalOffset)
+    val portalCamera1 = ReadonlyCamera(camera.projection, portalTransform1)
+    val portalRenderingPath1 = DeferredRenderingPath(portalCamera1,
         DeferredRenderingPipeline(DeferredGeometryPass(world))
     )
-    val portalMap2 = portalRenderingPath.prototype.buffers.albedo
+    val portalMap1 = portalRenderingPath1.prototype.buffers.albedo
 
-    val portal = generatePortal(portalMap2)
+    val portalTransform2 = ComposedTransform(camera.transform, InvertedTransform(portalOffset))
+    val portalCamera2 = ReadonlyCamera(camera.projection, portalTransform2)
+    val portalRenderingPath2 = DeferredRenderingPath(portalCamera2,
+        DeferredRenderingPipeline(DeferredGeometryPass(world))
+    )
+    val portalMap2 = portalRenderingPath2.prototype.buffers.albedo
+
+    val portal1 = generatePortal1(portalMap2)
+    val portal2 = generatePortal2(portalMap1)
 
     val renderingPipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(portal, world),
+        DeferredGeometryPass(portal1, portal2, world),
     )
     val renderingPath = DeferredRenderingPath(camera, renderingPipeline)
 
@@ -67,7 +77,8 @@ fun main() {
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
 
-        portalRenderingPath.render()
+        portalRenderingPath1.render()
+        portalRenderingPath2.render()
 
         renderingPath.render().toMainScreen()
 
@@ -78,7 +89,7 @@ fun main() {
     window.destroy()
 }
 
-private fun generatePortal(portalMap: ReadOnlyTexture2D): PortalNode {
+private fun generatePortal1(portalMap: ReadOnlyTexture2D): PortalNode {
     val meshGenerator = DiamondMeshGenerator(2)
 
     val vertices = meshGenerator.generateVertices()
@@ -93,6 +104,25 @@ private fun generatePortal(portalMap: ReadOnlyTexture2D): PortalNode {
     val model = PortalModel(Portal.mesh(vertices, indices), portalMap)
     model.transform.rotation.rotateDegrees(90f, 0f, 0f)
     model.transform.position.set(5f, 5f, 0f)
+    model.transform.scale.set(5f)
+    return PortalNode(model)
+}
+
+private fun generatePortal2(portalMap: ReadOnlyTexture2D): PortalNode {
+    val meshGenerator = DiamondMeshGenerator(2)
+
+    val vertices = meshGenerator.generateVertices()
+        .map {
+            Portal.vertex(
+                Vector3.of(it.x, 0f, it.y),
+                Vector2.of(it.x + .5f, it.y + .5f))
+        }.toTypedArray()
+
+    val indices = meshGenerator.generateIndices().toIntArray()
+
+    val model = PortalModel(Portal.mesh(vertices, indices), portalMap)
+    model.transform.rotation.rotateDegrees(90f, 0f, 0f)
+    model.transform.position.set(-5f, 5f, 0f)
     model.transform.scale.set(5f)
     return PortalNode(model)
 }
