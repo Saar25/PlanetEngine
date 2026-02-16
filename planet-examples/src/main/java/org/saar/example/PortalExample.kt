@@ -36,7 +36,7 @@ import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
 import org.saar.maths.transform.ComposedTransform
-import org.saar.maths.transform.InvertedTransform
+import org.saar.maths.transform.NegatePositionTransform
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.utils.Vector2
@@ -69,7 +69,7 @@ fun main() {
     )
     val portalMap1 = portalRenderingPath1.prototype.buffers.albedo
 
-    val portalTransform2 = ComposedTransform(camera.transform, InvertedTransform(portalOffset))
+    val portalTransform2 = ComposedTransform(camera.transform, NegatePositionTransform(portalOffset))
     val portalCamera2 = ReadonlyCamera(camera.projection, portalTransform2)
     val portalRenderingPath2 = DeferredRenderingPath(portalCamera2,
         DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
@@ -113,7 +113,7 @@ private fun generatePortal1(portalMap: ReadOnlyTexture2D): PortalNode {
     val indices = meshGenerator.generateIndices().toIntArray()
 
     val model = PortalModel(Portal.mesh(vertices, indices), portalMap)
-    model.transform.rotation.rotateDegrees(90f, 0f, 0f)
+    model.transform.rotation.rotateDegrees(90f, 45f, 0f)
     model.transform.position.set(5f, 5f, 0f)
     model.transform.scale.set(5f)
     return PortalNode(model)
