@@ -13,5 +13,5 @@ void main(void) {
     vec4 color = texture(u_texture, ndc);
 
     f_color = color;
-    f_normalSpecular = vec4(0, 1, 0, 0);
+    f_normalSpecular = vec4(0, 0, 0, 0);
 }

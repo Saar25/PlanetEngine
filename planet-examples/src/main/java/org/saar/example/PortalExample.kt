@@ -23,10 +23,12 @@ import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
+import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
@@ -55,6 +57,11 @@ fun main() {
     val cubeModel = Model3D(cubeMesh)
     val cube = Node3D(cubeModel)
 
+    val light = DirectionalLight().also {
+        it.direction.set(-1f, -1f, -1f)
+        it.colour.set(1f, 1f, 1f)
+    }
+
     val portal1 = generatePortal1()
     val portal2 = generatePortal2()
 
@@ -62,22 +69,21 @@ fun main() {
         camera.transform, portal1.model.transform, portal2.model.transform)
     val portalCamera1 = ReadonlyCamera(camera.projection, portal1CameraTransform)
     val portalRenderingPath1 = DeferredRenderingPath(portalCamera1,
-        DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
+        DeferredRenderingPipeline(DeferredGeometryPass(world, cube), LightRenderPass(light))
     )
 
     val portal2CameraTransform = RelativeTransform(
         camera.transform, portal2.model.transform, portal1.model.transform)
     val portalCamera2 = ReadonlyCamera(camera.projection, portal2CameraTransform)
     val portalRenderingPath2 = DeferredRenderingPath(portalCamera2,
-        DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
+        DeferredRenderingPipeline(DeferredGeometryPass(world, cube), LightRenderPass(light))
     )
 
     portal1.model.viewTexture = portalRenderingPath1.prototype.buffers.albedo
     portal2.model.viewTexture = portalRenderingPath2.prototype.buffers.albedo
 
     val renderingPipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(portal1, portal2, world, cube),
-    )
+        DeferredGeometryPass(portal1, portal2, world, cube), LightRenderPass(light))
     val renderingPath = DeferredRenderingPath(camera, renderingPipeline)
 
     val keyboard = window.keyboard
@@ -150,15 +156,15 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 
 private fun buildWorld(): LowPolyWorld {
     val heightGenerator: HeightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(10, SpreadNoise2f(10,
+        MultipliedNoise2f(18, SpreadNoise2f(8,
             LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)))
     )
     val colourGenerator: ColourGenerator = NormalColourGenerator(Vector3.upward(),
-        NormalColour(0.9f, Vector3.of(.41f, .41f, .41f)),
+        NormalColour(0.90f, Vector3.of(.41f, .41f, .41f)),
         NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)))
     val terrainFactory = LowPolyTerrainFactory(
-        DiamondMeshGenerator(32), heightGenerator,
-        colourGenerator, Vector2.of(32f, 32f)
+        DiamondMeshGenerator(64), heightGenerator,
+        colourGenerator, Vector2.of(64f, 64f)
     )
     return LowPolyWorld(terrainFactory)
 }
