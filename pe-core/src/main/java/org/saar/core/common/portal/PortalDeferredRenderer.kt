@@ -56,7 +56,7 @@ private class PortalDeferredRendererPrototype : RendererPrototype<PortalModel> {
 
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
 
-        this.textureUniform.value = model.texture
+        this.textureUniform.value = model.viewTexture
     }
 
     override fun doInstanceDraw(context: RenderContext, model: PortalModel) = model.draw()

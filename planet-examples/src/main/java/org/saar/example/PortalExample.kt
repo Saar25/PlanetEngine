@@ -31,14 +31,11 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
-import org.saar.maths.transform.ComposedTransform
-import org.saar.maths.transform.NegatePositionTransform
 import org.saar.maths.transform.Position
-import org.saar.maths.transform.SimpleTransform
+import org.saar.maths.transform.RelativeTransform
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
@@ -58,26 +55,25 @@ fun main() {
     val cubeModel = Model3D(cubeMesh)
     val cube = Node3D(cubeModel)
 
-    val portalOffset = SimpleTransform().also {
-        it.position.add(10f, 0f, 0f)
-    }
+    val portal1 = generatePortal1()
+    val portal2 = generatePortal2()
 
-    val portalTransform1 = ComposedTransform(camera.transform, portalOffset)
-    val portalCamera1 = ReadonlyCamera(camera.projection, portalTransform1)
+    val portal1CameraTransform = RelativeTransform(
+        camera.transform, portal1.model.transform, portal2.model.transform)
+    val portalCamera1 = ReadonlyCamera(camera.projection, portal1CameraTransform)
     val portalRenderingPath1 = DeferredRenderingPath(portalCamera1,
         DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
     )
-    val portalMap1 = portalRenderingPath1.prototype.buffers.albedo
 
-    val portalTransform2 = ComposedTransform(camera.transform, NegatePositionTransform(portalOffset))
-    val portalCamera2 = ReadonlyCamera(camera.projection, portalTransform2)
+    val portal2CameraTransform = RelativeTransform(
+        camera.transform, portal2.model.transform, portal1.model.transform)
+    val portalCamera2 = ReadonlyCamera(camera.projection, portal2CameraTransform)
     val portalRenderingPath2 = DeferredRenderingPath(portalCamera2,
         DeferredRenderingPipeline(DeferredGeometryPass(world, cube))
     )
-    val portalMap2 = portalRenderingPath2.prototype.buffers.albedo
 
-    val portal1 = generatePortal1(portalMap2)
-    val portal2 = generatePortal2(portalMap1)
+    portal1.model.viewTexture = portalRenderingPath1.prototype.buffers.albedo
+    portal2.model.viewTexture = portalRenderingPath2.prototype.buffers.albedo
 
     val renderingPipeline = DeferredRenderingPipeline(
         DeferredGeometryPass(portal1, portal2, world, cube),
@@ -100,7 +96,7 @@ fun main() {
     window.destroy()
 }
 
-private fun generatePortal1(portalMap: ReadOnlyTexture2D): PortalNode {
+private fun generatePortal1(): PortalNode {
     val meshGenerator = DiamondMeshGenerator(2)
 
     val vertices = meshGenerator.generateVertices()
@@ -112,14 +108,14 @@ private fun generatePortal1(portalMap: ReadOnlyTexture2D): PortalNode {
 
     val indices = meshGenerator.generateIndices().toIntArray()
 
-    val model = PortalModel(Portal.mesh(vertices, indices), portalMap)
-    model.transform.rotation.rotateDegrees(90f, 45f, 0f)
+    val model = PortalModel(Portal.mesh(vertices, indices))
+    model.transform.rotation.rotateDegrees(90f, 90f, 0f)
     model.transform.position.set(5f, 5f, 0f)
     model.transform.scale.set(5f)
     return PortalNode(model)
 }
 
-private fun generatePortal2(portalMap: ReadOnlyTexture2D): PortalNode {
+private fun generatePortal2(): PortalNode {
     val meshGenerator = DiamondMeshGenerator(2)
 
     val vertices = meshGenerator.generateVertices()
@@ -131,7 +127,7 @@ private fun generatePortal2(portalMap: ReadOnlyTexture2D): PortalNode {
 
     val indices = meshGenerator.generateIndices().toIntArray()
 
-    val model = PortalModel(Portal.mesh(vertices, indices), portalMap)
+    val model = PortalModel(Portal.mesh(vertices, indices))
     model.transform.rotation.rotateDegrees(90f, 0f, 0f)
     model.transform.position.set(-5f, 5f, 0f)
     model.transform.scale.set(5f)
