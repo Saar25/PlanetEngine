@@ -2,9 +2,7 @@ package org.saar.example;
 
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
-import org.saar.core.screen.SimpleScreen;
-import org.saar.core.screen.image.ScreenImage;
-import org.saar.core.screen.image.SimpleScreenImage;
+import org.saar.core.screen.ScreenBuilder;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.attribute.AttributeComposite;
@@ -14,15 +12,7 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType;
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
-import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
-import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.IFbo;
 import org.saar.lwjgl.opengl.shader.Shader;
 import org.saar.lwjgl.opengl.shader.ShadersProgram;
 import org.saar.lwjgl.opengl.stencil.*;
@@ -42,8 +32,8 @@ public class StencilExample {
         final Vao vao2 = buildVao(0.3f);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
-                Shader.createVertex("/vertex.glsl"),
-                Shader.createFragment("/fragment.glsl"));
+            Shader.createVertex("/vertex.glsl"),
+            Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttribute(0, "in_position");
 
         shadersProgram.bind();
@@ -53,12 +43,12 @@ public class StencilExample {
         StencilTest.enable();
 
         final StencilState writeStencil = new StencilState(
-                new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
-                new StencilFunction(Comparator.ALWAYS, 1, 0xFF), StencilMask.UNCHANGED);
+            new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
+            new StencilFunction(Comparator.ALWAYS, 1, 0xFF), StencilMask.UNCHANGED);
 
         final StencilState readStencil = new StencilState(
-                new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
-                new StencilFunction(Comparator.EQUAL, 1, 0xFF), StencilMask.UNCHANGED);
+            new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
+            new StencilFunction(Comparator.EQUAL, 1, 0xFF), StencilMask.UNCHANGED);
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
@@ -86,28 +76,13 @@ public class StencilExample {
     }
 
     private static Screen buildScreen(int width, int height) {
-        final Fbo fbo = Fbo.create(width, height);
-        final SimpleScreen screen = new SimpleScreen(fbo);
+        final IFbo fbo = Fbo.create(width, height);
 
-        final AttachmentIndex stencilIndex = new BasicAttachmentIndex(AttachmentType.STENCIL);
-        final AllocationStrategy stencilAllocation = new MultisampledAllocationStrategy(4);
-        final AttachmentBuffer stencilBuffer = new RenderBufferAttachmentBuffer(InternalFormat.STENCIL_INDEX8);
-        final Attachment stencilAttachment = new Attachment(stencilBuffer, stencilAllocation);
-        final ScreenImage screenImage = new SimpleScreenImage(stencilAttachment);
-        screen.addScreenImage(stencilIndex, screenImage);
-
-        final AttachmentIndex colourIndex = new ColourAttachmentIndex(0);
-        final AllocationStrategy colourAllocation = new MultisampledAllocationStrategy(4);
-        final AttachmentBuffer colourBuffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
-        final Attachment attachment = new Attachment(colourBuffer, colourAllocation);
-        final SimpleScreenImage colourImage = new SimpleScreenImage(attachment);
-        screen.addScreenImage(colourIndex, colourImage);
-        screen.setReadImages(colourIndex);
-        screen.setDrawImages(colourIndex);
-
-        fbo.ensureStatus();
-
-        return screen;
+        return new ScreenBuilder(fbo)
+            .addColourRenderBuffer(InternalFormat.RGBA8, true, true)
+            .addStencilRenderBuffer(InternalFormat.STENCIL_INDEX8)
+            .multisampled(4)
+            .build();
     }
 
     private static Vao buildVao(float offset) {
@@ -116,18 +91,18 @@ public class StencilExample {
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
 
         final float[] data = {
-                -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, offset,
-                +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, offset,
-                +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, offset
+            -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, offset,
+            +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, offset,
+            +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, offset
         };
 
         vbo.allocateFloat(data.length);
         vbo.storeFloat(0, data);
 
         vao.loadVbo(vbo, new AttributeComposite(
-                Attributes.of(0, 2, DataType.FLOAT, false),
-                Attributes.of(1, 3, DataType.FLOAT, false),
-                Attributes.of(2, 1, DataType.FLOAT, false)
+            Attributes.of(0, 2, DataType.FLOAT, false),
+            Attributes.of(1, 3, DataType.FLOAT, false),
+            Attributes.of(2, 1, DataType.FLOAT, false)
         ));
 
         vbo.delete();
