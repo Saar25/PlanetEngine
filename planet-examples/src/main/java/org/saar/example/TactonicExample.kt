@@ -1,5 +1,9 @@
 package org.saar.example
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.joml.Vector3f
@@ -180,43 +184,69 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
         }
     }
 
-    val continentColors = (0 until numContinents).map { hueToRgb(it.toFloat() / numContinents) }
+    val isWater = (0 until numContinents).map { Math.random() < 0.5 }
+    val axisTilt = Math.toRadians(23.5)
+    val axis = Vector3.of(
+        Math.sin(axisTilt).toFloat(),
+        Math.cos(axisTilt).toFloat(),
+        0f,
+    )
 
+    val boundaryFace = BooleanArray(faces.size) { false }
+    val landWaterFace = BooleanArray(faces.size) { false }
     for (fi in faces.indices) {
         val (i0, i1, i2) = faces[fi]
-        if (continent[i0] != continent[i1] || continent[i1] != continent[i2] || continent[i2] != continent[i0]) {
-            val c = offsetCentroids[fi]
-            offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, 0.06f))
-        }
+        val diff = continent[i0] != continent[i1] || continent[i1] != continent[i2] || continent[i2] != continent[i0]
+        boundaryFace[fi] = diff
+        landWaterFace[fi] = diff && (isWater[continent[i0]] != isWater[continent[i1]] ||
+                isWater[continent[i1]] != isWater[continent[i2]] ||
+                isWater[continent[i2]] != isWater[continent[i0]])
     }
+    val landWaterDualFace = verts.indices.map { v -> vertFaces[v].any { landWaterFace[it] } }
 
     val vertNormals = computeVertexNormals(verts, faces)
+
+    data class DualFaceData(
+        val continentId: Int,
+        val centroids: List<Vector3fc>,
+        val normal: Vector3f,
+        val color: Vector3f,
+    )
+
+    val faceData = runBlocking {
+        verts.indices.map { v ->
+            async(Dispatchers.Default) {
+                val adj = vertFaces[v]
+                if (adj.size < 3) return@async null
+                val cents = adj.map { offsetCentroids[it] }
+                val n = vertNormals[v]
+                val t = tangent(n)
+                val b = Vector3.cross(n, t)
+                val order = cents.mapIndexed { i, c ->
+                    val d = Vector3.sub(c, verts[v])
+                    i to kotlin.math.atan2(d.dot(b).toDouble(), d.dot(t).toDouble())
+                }.sortedBy { it.second }.map { it.first }
+                val sorted = order.map { cents[it] }
+                val fn = faceNormal(sorted[0], sorted[1], sorted[2])
+                val pos = verts[v]
+                val cosLat = kotlin.math.abs(pos.dot(axis))
+                val temp = 1f - cosLat
+                val col = if (landWaterDualFace[v]) sandColor(temp)
+                else if (isWater[continent[v]]) waterColor(temp)
+                else landColor(temp)
+                DualFaceData(continent[v], sorted, fn, col)
+            }
+        }.awaitAll().filterNotNull()
+    }
 
     val chunkVerts = Array(numContinents) { mutableListOf<Vertex3D>() }
     val chunkIdx = Array(numContinents) { mutableListOf<Int>() }
 
-    for (v in verts.indices) {
-        val adj = vertFaces[v]
-        if (adj.size < 3) continue
-
-        val cents = adj.map { offsetCentroids[it] }
-        val n = vertNormals[v]
-        val t = tangent(n)
-        val b = Vector3.cross(n, t)
-
-        val order = cents.mapIndexed { i, c ->
-            val d = Vector3.sub(c, verts[v])
-            i to kotlin.math.atan2(d.dot(b).toDouble(), d.dot(t).toDouble())
-        }.sortedBy { it.second }.map { it.first }
-
-        val sorted = order.map { cents[it] }
-        val fn = faceNormal(sorted[0], sorted[1], sorted[2])
-        val col = continentColors[continent[v]]
-        val cId = continent[v]
-
+    for (data in faceData) {
+        val cId = data.continentId
         val base = chunkVerts[cId].size
-        for (p in sorted) chunkVerts[cId].add(vertex(p, fn, col))
-        for (i in 1 until sorted.size - 1) {
+        for (p in data.centroids) chunkVerts[cId].add(vertex(p, data.normal, data.color))
+        for (i in 1 until data.centroids.size - 1) {
             chunkIdx[cId].add(base)
             chunkIdx[cId].add(base + i)
             chunkIdx[cId].add(base + i + 1)
@@ -225,20 +255,6 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
 
     return chunkVerts.zip(chunkIdx) { verts, idx ->
         Pair(verts.toTypedArray(), idx.toIntArray())
-    }
-}
-
-private fun hueToRgb(hue: Float): Vector3f {
-    val h = hue * 6f
-    val i = h.toInt()
-    val f = h - i
-    return when (i % 6) {
-        0 -> Vector3.of(1f, f, 0f)
-        1 -> Vector3.of(1f - f, 1f, 0f)
-        2 -> Vector3.of(0f, 1f, f)
-        3 -> Vector3.of(0f, 1f - f, 1f)
-        4 -> Vector3.of(f, 0f, 1f)
-        else -> Vector3.of(1f, 0f, 1f - f)
     }
 }
 
@@ -270,6 +286,23 @@ private fun faceNormal(v0: Vector3fc, v1: Vector3fc, v2: Vector3fc): Vector3f {
     val n = Vector3.normalize(Vector3.cross(e1, e2))
     return if (n.dot(v0) < 0) Vector3.mul(n, -1f) else n
 }
+
+private fun lerp(a: Vector3fc, b: Vector3fc, t: Float): Vector3f {
+    return Vector3.of(
+        a.x() + (b.x() - a.x()) * t,
+        a.y() + (b.y() - a.y()) * t,
+        a.z() + (b.z() - a.z()) * t,
+    )
+}
+
+private fun waterColor(temp: Float): Vector3f =
+    lerp(Vector3.of(0.1f, 0.15f, 0.4f), Vector3.of(0f, 0.5f, 0.7f), temp)
+
+private fun landColor(temp: Float): Vector3f =
+    lerp(Vector3.of(0.9f, 0.9f, 1.0f), Vector3.of(0.1f, 0.5f, 0.1f), temp)
+
+private fun sandColor(temp: Float): Vector3f =
+    lerp(Vector3.of(0.6f, 0.55f, 0.4f), Vector3.of(0.85f, 0.8f, 0.6f), temp.coerceIn(0f, 1f))
 
 private fun subdivide(vertices: List<Vector3fc>, faces: List<List<Int>>): Pair<List<Vector3fc>, List<List<Int>>> {
     val newVertices = vertices.toMutableList()
