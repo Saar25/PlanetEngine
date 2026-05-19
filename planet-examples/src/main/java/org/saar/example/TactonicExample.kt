@@ -194,6 +194,7 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
 
     val boundaryFace = BooleanArray(faces.size) { false }
     val landWaterFace = BooleanArray(faces.size) { false }
+    val landLandFace = BooleanArray(faces.size) { false }
     for (fi in faces.indices) {
         val (i0, i1, i2) = faces[fi]
         val diff = continent[i0] != continent[i1] || continent[i1] != continent[i2] || continent[i2] != continent[i0]
@@ -201,8 +202,10 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
         landWaterFace[fi] = diff && (isWater[continent[i0]] != isWater[continent[i1]] ||
                 isWater[continent[i1]] != isWater[continent[i2]] ||
                 isWater[continent[i2]] != isWater[continent[i0]])
+        landLandFace[fi] = diff && !isWater[continent[i0]] && !isWater[continent[i1]] && !isWater[continent[i2]]
     }
     val landWaterDualFace = verts.indices.map { v -> vertFaces[v].any { landWaterFace[it] } }
+    val landLandDualFace = verts.indices.map { v -> vertFaces[v].any { landLandFace[it] } }
 
     val vertNormals = computeVertexNormals(verts, faces)
 
@@ -230,10 +233,14 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
                 val fn = faceNormal(sorted[0], sorted[1], sorted[2])
                 val pos = verts[v]
                 val cosLat = kotlin.math.abs(pos.dot(axis))
-                val temp = 1f - cosLat
-                val col = if (landWaterDualFace[v]) sandColor(temp)
-                else if (isWater[continent[v]]) waterColor(temp)
-                else landColor(temp)
+                val noiseTemp = SimplexNoise.noise(pos.x() * 3f, pos.y() * 3f, pos.z() * 3f)
+                val temp = (1f - cosLat + noiseTemp * 0.05f).coerceIn(0f, 1f)
+                val col = when {
+                    landLandDualFace[v] -> stoneColor(temp)
+                    landWaterDualFace[v] -> sandColor(temp)
+                    isWater[continent[v]] -> waterColor(temp)
+                    else -> landColor(temp)
+                }
                 DualFaceData(continent[v], sorted, fn, col)
             }
         }.awaitAll().filterNotNull()
@@ -295,11 +302,20 @@ private fun lerp(a: Vector3fc, b: Vector3fc, t: Float): Vector3f {
     )
 }
 
-private fun waterColor(temp: Float): Vector3f =
-    lerp(Vector3.of(0.1f, 0.15f, 0.4f), Vector3.of(0f, 0.5f, 0.7f), temp)
+private fun waterColor(temp: Float): Vector3f {
+    val t = temp.coerceIn(0f, 1f)
+    return if (t < 0.2f) lerp(Vector3.of(0.85f, 0.9f, 1.0f), Vector3.of(0f, 0.15f, 0.4f), t / 0.2f)
+    else lerp(Vector3.of(0f, 0.15f, 0.4f), Vector3.of(0f, 0.5f, 0.7f), (t - 0.2f) / 0.8f)
+}
 
-private fun landColor(temp: Float): Vector3f =
-    lerp(Vector3.of(0.9f, 0.9f, 1.0f), Vector3.of(0.1f, 0.5f, 0.1f), temp)
+private fun landColor(temp: Float): Vector3f {
+    val t = temp.coerceIn(0f, 1f)
+    return if (t < 0.2f) lerp(Vector3.of(0.9f, 0.9f, 1.0f), Vector3.of(0.4f, 0.5f, 0.3f), t / 0.2f)
+    else lerp(Vector3.of(0.4f, 0.5f, 0.3f), Vector3.of(0.05f, 0.45f, 0.08f), (t - 0.2f) / 0.8f)
+}
+
+private fun stoneColor(temp: Float): Vector3f =
+    lerp(Vector3.of(0.5f, 0.45f, 0.4f), Vector3.of(0.35f, 0.3f, 0.25f), temp.coerceIn(0f, 1f))
 
 private fun sandColor(temp: Float): Vector3f =
     lerp(Vector3.of(0.6f, 0.55f, 0.4f), Vector3.of(0.85f, 0.8f, 0.6f), temp.coerceIn(0f, 1f))
