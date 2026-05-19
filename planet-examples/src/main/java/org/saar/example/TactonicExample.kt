@@ -44,6 +44,23 @@ import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
+private const val NUM_CONTINENTS = 12
+private const val SUBDIVISIONS = 5
+private const val WATER_PROBABILITY = 0.5
+private const val PLANET_SCALE = 16f
+private const val NOISE_HEIGHT_AMPLITUDE = 0.006f
+private const val MOUNTAIN_HEIGHT = 0.02f
+private const val HEIGHT_NOISE_FREQ = 5f
+private const val TEMP_NOISE_AMPLITUDE = 0.05f
+private const val TEMP_NOISE_FREQ = 3f
+private const val PLANET_TILT_DEG = 23.5
+private const val TEMP_POLAR_THRESHOLD = 0.2f
+private const val CAMERA_FOV = 70f
+private const val CAMERA_NEAR = 0.1f
+private const val CAMERA_FAR = 1000f
+private const val CAMERA_MOUSE_SENSITIVITY = -0.3f
+private const val CAMERA_KEYBOARD_SPEED = 5f
+
 fun main() {
     val window = Window.create("Lwjgl", 1200, 700, true)
     ClearColour.set(0.53f, 0.81f, 0.92f)
@@ -53,11 +70,11 @@ fun main() {
     val world = buildWorld()
     world.createTerrain(Vector2i(0))
 
-    val continentMeshes = buildIcosahedron(numContinents = 8)
+    val continentMeshes = buildIcosahedron()
     val continentNodes = continentMeshes.map { (verts, idx) ->
         val icoInstance = instance().also {
             it.transform.position.set(0f, 5f, 0f)
-            it.transform.scale.set(8f, 8f, 8f)
+            it.transform.scale.set(PLANET_SCALE)
         }
         val icoMesh = mesh(arrayOf(icoInstance), verts, idx)
         val icoModel = Model3D(icoMesh).also { it.specular = 0f }
@@ -87,11 +104,11 @@ fun main() {
 }
 
 private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
-    val projection = ScreenPerspectiveProjection(70f, .1f, 1000f)
+    val projection = ScreenPerspectiveProjection(CAMERA_FOV, CAMERA_NEAR, CAMERA_FAR)
 
     val components = NodeComponentGroup(
-        MouseDragRotationComponent(mouse, -.3f),
-        KeyboardMovementComponent(keyboard, Vector3.of(5f)))
+        MouseDragRotationComponent(mouse, CAMERA_MOUSE_SENSITIVITY),
+        KeyboardMovementComponent(keyboard, Vector3.of(CAMERA_KEYBOARD_SPEED)))
 
     val camera = Camera(projection, components)
 
@@ -115,7 +132,7 @@ private fun buildWorld(): LowPolyWorld {
     return LowPolyWorld(terrainFactory)
 }
 
-private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>, IntArray>> {
+private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
     val phi = ((1.0 + Math.sqrt(5.0)) / 2.0).toFloat()
 
     var verts: List<Vector3fc> = listOf(
@@ -137,7 +154,7 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
         listOf(8, 6, 7), listOf(9, 8, 1),
     )
 
-    repeat(5) {
+    repeat(SUBDIVISIONS) {
         val (v, f) = subdivide(verts, faces)
         verts = v
         faces = f
@@ -167,7 +184,7 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
 
     val numFaces = verts.size
     val continent = IntArray(numFaces) { -1 }
-    val seeds = (0 until numFaces).shuffled().take(numContinents)
+    val seeds = (0 until numFaces).shuffled().take(NUM_CONTINENTS)
     seeds.forEachIndexed { i, idx -> continent[idx] = i }
 
     val queue = mutableListOf<Int>()
@@ -184,8 +201,8 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
         }
     }
 
-    val isWater = (0 until numContinents).map { Math.random() < 0.5 }
-    val axisTilt = Math.toRadians(23.5)
+    val isWater = (0 until NUM_CONTINENTS).map { Math.random() < WATER_PROBABILITY }
+    val axisTilt = Math.toRadians(PLANET_TILT_DEG)
     val axis = Vector3.of(
         Math.sin(axisTilt).toFloat(),
         Math.cos(axisTilt).toFloat(),
@@ -206,6 +223,15 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
     }
     val landWaterDualFace = verts.indices.map { v -> vertFaces[v].any { landWaterFace[it] } }
     val landLandDualFace = verts.indices.map { v -> vertFaces[v].any { landLandFace[it] } }
+
+    for (fi in faces.indices) {
+        val (i0, i1, i2) = faces[fi]
+        if (isWater[continent[i0]] && isWater[continent[i1]] && isWater[continent[i2]]) continue
+        val c = offsetCentroids[fi]
+        val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ, c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
+        val h = n * NOISE_HEIGHT_AMPLITUDE + if (landLandFace[fi]) MOUNTAIN_HEIGHT else 0f
+        offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
+    }
 
     val vertNormals = computeVertexNormals(verts, faces)
 
@@ -233,8 +259,8 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
                 val fn = faceNormal(sorted[0], sorted[1], sorted[2])
                 val pos = verts[v]
                 val cosLat = kotlin.math.abs(pos.dot(axis))
-                val noiseTemp = SimplexNoise.noise(pos.x() * 3f, pos.y() * 3f, pos.z() * 3f)
-                val temp = (1f - cosLat + noiseTemp * 0.05f).coerceIn(0f, 1f)
+                val noiseTemp = SimplexNoise.noise(pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
+                val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
                 val col = when {
                     landLandDualFace[v] -> stoneColor(temp)
                     landWaterDualFace[v] -> sandColor(temp)
@@ -246,8 +272,8 @@ private fun buildIcosahedron(numContinents: Int = 8): List<Pair<Array<Vertex3D>,
         }.awaitAll().filterNotNull()
     }
 
-    val chunkVerts = Array(numContinents) { mutableListOf<Vertex3D>() }
-    val chunkIdx = Array(numContinents) { mutableListOf<Int>() }
+    val chunkVerts = Array(NUM_CONTINENTS) { mutableListOf<Vertex3D>() }
+    val chunkIdx = Array(NUM_CONTINENTS) { mutableListOf<Int>() }
 
     for (data in faceData) {
         val cId = data.continentId
@@ -304,14 +330,14 @@ private fun lerp(a: Vector3fc, b: Vector3fc, t: Float): Vector3f {
 
 private fun waterColor(temp: Float): Vector3f {
     val t = temp.coerceIn(0f, 1f)
-    return if (t < 0.2f) lerp(Vector3.of(0.85f, 0.9f, 1.0f), Vector3.of(0f, 0.15f, 0.4f), t / 0.2f)
-    else lerp(Vector3.of(0f, 0.15f, 0.4f), Vector3.of(0f, 0.5f, 0.7f), (t - 0.2f) / 0.8f)
+    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.85f, 0.9f, 1.0f), Vector3.of(0f, 0.15f, 0.4f), t / TEMP_POLAR_THRESHOLD)
+    else lerp(Vector3.of(0f, 0.15f, 0.4f), Vector3.of(0f, 0.5f, 0.7f), (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
 }
 
 private fun landColor(temp: Float): Vector3f {
     val t = temp.coerceIn(0f, 1f)
-    return if (t < 0.2f) lerp(Vector3.of(0.9f, 0.9f, 1.0f), Vector3.of(0.4f, 0.5f, 0.3f), t / 0.2f)
-    else lerp(Vector3.of(0.4f, 0.5f, 0.3f), Vector3.of(0.05f, 0.45f, 0.08f), (t - 0.2f) / 0.8f)
+    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.9f, 0.9f, 1.0f), Vector3.of(0.4f, 0.5f, 0.3f), t / TEMP_POLAR_THRESHOLD)
+    else lerp(Vector3.of(0.4f, 0.5f, 0.3f), Vector3.of(0.05f, 0.45f, 0.08f), (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
 }
 
 private fun stoneColor(temp: Float): Vector3f =
