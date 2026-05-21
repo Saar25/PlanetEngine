@@ -112,7 +112,7 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 
     val camera = Camera(projection, components)
 
-    camera.transform.position.set(0f, 10f, 10f)
+    camera.transform.position.set(0f, PLANET_SCALE + 10f, 10f)
     camera.transform.lookAt(Position.of(0f, 0f, 0f))
     return camera
 }
@@ -232,66 +232,57 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         Vector3.normalize(tangent)
     }
 
+    data class PlatePair(val pA: Int, val pB: Int, val cA: Vector3fc, val cB: Vector3fc)
+
     val boundaryFace = BooleanArray(faces.size) { false }
     val landWaterFace = BooleanArray(faces.size) { false }
     val landLandFace = BooleanArray(faces.size) { false }
-    for (fi in faces.indices) {
-        val (i0, i1, i2) = faces[fi]
-        val diff = continent[i0] != continent[i1] || continent[i1] != continent[i2] || continent[i2] != continent[i0]
-        boundaryFace[fi] = diff
-        landWaterFace[fi] = diff && (isWater[continent[i0]] != isWater[continent[i1]] ||
-                isWater[continent[i1]] != isWater[continent[i2]] ||
-                isWater[continent[i2]] != isWater[continent[i0]])
-        landLandFace[fi] = diff && !isWater[continent[i0]] && !isWater[continent[i1]] && !isWater[continent[i2]]
-    }
-    val landWaterDualFace = verts.indices.map { v -> vertFaces[v].any { landWaterFace[it] } }
-    val landLandDualFace = verts.indices.map { v -> vertFaces[v].any { landLandFace[it] } }
-
     val convergentFace = BooleanArray(faces.size) { false }
-    for (fi in faces.indices) {
-        if (!landLandFace[fi]) continue
-        val (i0, i1, i2) = faces[fi]
-        val cIds = listOf(continent[i0], continent[i1], continent[i2]).distinct()
-        if (cIds.size != 2) continue
-        val pA = cIds[0]; val pB = cIds[1]
+    runBlocking {
+        faces.indices.map { fi ->
+            async(Dispatchers.Default) {
+                val (i0, i1, i2) = faces[fi]
+                val c0 = continent[i0]; val c1 = continent[i1]; val c2 = continent[i2]
+                val w0 = isWater[c0]; val w1 = isWater[c1]; val w2 = isWater[c2]
+                val diff = c0 != c1 || c1 != c2 || c2 != c0
+                boundaryFace[fi] = diff
+                landWaterFace[fi] = diff && (w0 != w1 || w1 != w2 || w2 != w0)
+                val ll = diff && !w0 && !w1 && !w2
+                landLandFace[fi] = ll
 
-        val vA = mutableListOf<Vector3fc>()
-        val vB = mutableListOf<Vector3fc>()
-        for (v in listOf(i0, i1, i2)) {
-            if (continent[v] == pA) vA.add(verts[v]) else vB.add(verts[v])
-        }
+                if (ll) {
+                    val pp = when {
+                        c0 == c1 -> PlatePair(c0, c2,
+                            Vector3.div(Vector3.add(verts[i0], verts[i1]), 2f), verts[i2])
+                        c1 == c2 -> PlatePair(c0, c1,
+                            verts[i0], Vector3.div(Vector3.add(verts[i1], verts[i2]), 2f))
+                        c2 == c0 -> PlatePair(c0, c1,
+                            Vector3.div(Vector3.add(verts[i2], verts[i0]), 2f), verts[i1])
+                        else -> null
+                    }
+                    if (pp != null) {
+                        val nrm = centroids[fi]
+                        val ab = Vector3.sub(pp.cB, pp.cA)
+                        val ab_t = Vector3.sub(ab, Vector3.mul(nrm, nrm.dot(ab)))
+                        if (!(ab_t.x() == 0f && ab_t.y() == 0f && ab_t.z() == 0f)) {
+                            val abDir = Vector3.normalize(ab_t)
+                            val vDirA = plateDirections[pp.pA]; val vDirB = plateDirections[pp.pB]
+                            val vA_t = Vector3.sub(vDirA, Vector3.mul(nrm, nrm.dot(vDirA)))
+                            val vB_t = Vector3.sub(vDirB, Vector3.mul(nrm, nrm.dot(vDirB)))
+                            convergentFace[fi] = vA_t.dot(abDir) > 0f && vB_t.dot(abDir) < 0f
+                        }
+                    }
+                }
 
-        val cA = vA.reduce { acc, vec -> Vector3.add(acc, vec) }
-            .let { Vector3.div(it, vA.size.toFloat()) }
-        val cB = vB.reduce { acc, vec -> Vector3.add(acc, vec) }
-            .let { Vector3.div(it, vB.size.toFloat()) }
-
-        val fc = centroids[fi]
-        val nrm = fc
-
-        val ab = Vector3.sub(cB, cA)
-        val ab_t = Vector3.sub(ab, Vector3.mul(nrm, nrm.dot(ab)))
-        if (ab_t.x() == 0f && ab_t.y() == 0f && ab_t.z() == 0f) continue
-        val abDir = Vector3.normalize(ab_t)
-
-        val vDirA = plateDirections[pA]; val vDirB = plateDirections[pB]
-        val vA_t = Vector3.sub(vDirA, Vector3.mul(nrm, nrm.dot(vDirA)))
-        val vB_t = Vector3.sub(vDirB, Vector3.mul(nrm, nrm.dot(vDirB)))
-
-        convergentFace[fi] = vA_t.dot(abDir) > 0f && vB_t.dot(abDir) < 0f
+                if (!w0 || !w1 || !w2) {
+                    val c = offsetCentroids[fi]
+                    val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ, c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
+                    val h = n * NOISE_HEIGHT_AMPLITUDE + if (convergentFace[fi]) MOUNTAIN_HEIGHT else 0f
+                    offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
+                }
+            }
+        }.awaitAll()
     }
-
-    val convergentDualFace = verts.indices.map { v -> vertFaces[v].any { convergentFace[it] } }
-
-    for (fi in faces.indices) {
-        val (i0, i1, i2) = faces[fi]
-        if (isWater[continent[i0]] && isWater[continent[i1]] && isWater[continent[i2]]) continue
-        val c = offsetCentroids[fi]
-        val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ, c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
-        val h = n * NOISE_HEIGHT_AMPLITUDE + if (convergentFace[fi]) MOUNTAIN_HEIGHT else 0f
-        offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
-    }
-
     val vertNormals = computeVertexNormals(verts, faces)
 
     data class DualFaceData(
@@ -320,9 +311,11 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
                 val cosLat = kotlin.math.abs(pos.dot(axis))
                 val noiseTemp = SimplexNoise.noise(pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
                 val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
+                val isMountain = adj.any { convergentFace[it] }
+                val isCoast = !isMountain && adj.any { landWaterFace[it] }
                 val col = when {
-                    convergentDualFace[v] -> stoneColor(temp)
-                    landWaterDualFace[v] -> sandColor(temp)
+                    isMountain -> stoneColor(temp)
+                    isCoast -> sandColor(temp)
                     isWater[continent[v]] -> waterColor(temp)
                     else -> landColor(temp)
                 }
