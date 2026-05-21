@@ -209,6 +209,29 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         0f,
     )
 
+    val plateCentroids = Array(NUM_CONTINENTS) { Vector3.create() }
+    val plateCounts = IntArray(NUM_CONTINENTS)
+    for (v in verts.indices) {
+        val cId = continent[v]
+        plateCentroids[cId].add(verts[v])
+        plateCounts[cId]++
+    }
+    for (cId in 0 until NUM_CONTINENTS) {
+        plateCentroids[cId].div(plateCounts[cId].toFloat())
+        plateCentroids[cId].normalize()
+    }
+
+    val plateDirections = Array(NUM_CONTINENTS) { cId ->
+        val rand = Vector3.of(
+            (Math.random() * 2 - 1).toFloat(),
+            (Math.random() * 2 - 1).toFloat(),
+            (Math.random() * 2 - 1).toFloat()
+        )
+        val n = plateCentroids[cId]
+        val tangent = Vector3.sub(rand, Vector3.mul(n, n.dot(rand)))
+        Vector3.normalize(tangent)
+    }
+
     val boundaryFace = BooleanArray(faces.size) { false }
     val landWaterFace = BooleanArray(faces.size) { false }
     val landLandFace = BooleanArray(faces.size) { false }
@@ -224,12 +247,48 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
     val landWaterDualFace = verts.indices.map { v -> vertFaces[v].any { landWaterFace[it] } }
     val landLandDualFace = verts.indices.map { v -> vertFaces[v].any { landLandFace[it] } }
 
+    val convergentFace = BooleanArray(faces.size) { false }
+    for (fi in faces.indices) {
+        if (!landLandFace[fi]) continue
+        val (i0, i1, i2) = faces[fi]
+        val cIds = listOf(continent[i0], continent[i1], continent[i2]).distinct()
+        if (cIds.size != 2) continue
+        val pA = cIds[0]; val pB = cIds[1]
+
+        val vA = mutableListOf<Vector3fc>()
+        val vB = mutableListOf<Vector3fc>()
+        for (v in listOf(i0, i1, i2)) {
+            if (continent[v] == pA) vA.add(verts[v]) else vB.add(verts[v])
+        }
+
+        val cA = vA.reduce { acc, vec -> Vector3.add(acc, vec) }
+            .let { Vector3.div(it, vA.size.toFloat()) }
+        val cB = vB.reduce { acc, vec -> Vector3.add(acc, vec) }
+            .let { Vector3.div(it, vB.size.toFloat()) }
+
+        val fc = centroids[fi]
+        val nrm = fc
+
+        val ab = Vector3.sub(cB, cA)
+        val ab_t = Vector3.sub(ab, Vector3.mul(nrm, nrm.dot(ab)))
+        if (ab_t.x() == 0f && ab_t.y() == 0f && ab_t.z() == 0f) continue
+        val abDir = Vector3.normalize(ab_t)
+
+        val vDirA = plateDirections[pA]; val vDirB = plateDirections[pB]
+        val vA_t = Vector3.sub(vDirA, Vector3.mul(nrm, nrm.dot(vDirA)))
+        val vB_t = Vector3.sub(vDirB, Vector3.mul(nrm, nrm.dot(vDirB)))
+
+        convergentFace[fi] = vA_t.dot(abDir) > 0f && vB_t.dot(abDir) < 0f
+    }
+
+    val convergentDualFace = verts.indices.map { v -> vertFaces[v].any { convergentFace[it] } }
+
     for (fi in faces.indices) {
         val (i0, i1, i2) = faces[fi]
         if (isWater[continent[i0]] && isWater[continent[i1]] && isWater[continent[i2]]) continue
         val c = offsetCentroids[fi]
         val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ, c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
-        val h = n * NOISE_HEIGHT_AMPLITUDE + if (landLandFace[fi]) MOUNTAIN_HEIGHT else 0f
+        val h = n * NOISE_HEIGHT_AMPLITUDE + if (convergentFace[fi]) MOUNTAIN_HEIGHT else 0f
         offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
     }
 
@@ -262,7 +321,7 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
                 val noiseTemp = SimplexNoise.noise(pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
                 val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
                 val col = when {
-                    landLandDualFace[v] -> stoneColor(temp)
+                    convergentDualFace[v] -> stoneColor(temp)
                     landWaterDualFace[v] -> sandColor(temp)
                     isWater[continent[v]] -> waterColor(temp)
                     else -> landColor(temp)
