@@ -5,7 +5,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.joml.SimplexNoise
-import org.joml.Vector2i
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.lwjgl.glfw.GLFW
@@ -19,14 +18,6 @@ import org.saar.core.common.r3d.R3D.instance
 import org.saar.core.common.r3d.R3D.mesh
 import org.saar.core.common.r3d.R3D.vertex
 import org.saar.core.common.r3d.Vertex3D
-import org.saar.core.common.terrain.colour.ColourGenerator
-import org.saar.core.common.terrain.colour.NormalColour
-import org.saar.core.common.terrain.colour.NormalColourGenerator
-import org.saar.core.common.terrain.height.HeightGenerator
-import org.saar.core.common.terrain.height.NoiseHeightGenerator
-import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
-import org.saar.core.common.terrain.lowpoly.LowPolyWorld
-import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.deferred.DeferredRenderingPath
@@ -37,15 +28,11 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
-import org.saar.maths.noise.LayeredNoise2f
-import org.saar.maths.noise.MultipliedNoise2f
-import org.saar.maths.noise.SpreadNoise2f
 import org.saar.maths.transform.Position
-import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
 private const val NUM_CONTINENTS = 12
-private const val CHUNKS = 6
+private const val CHUNKS = 20
 private const val SUBDIVISIONS = 5
 private const val WATER_PROBABILITY = 0.5
 private const val PLANET_SCALE = 16f
@@ -67,9 +54,6 @@ fun main() {
     ClearColour.set(0.53f, 0.81f, 0.92f)
 
     val camera = buildCamera(window.mouse, window.keyboard)
-
-    val world = buildWorld()
-    world.createTerrain(Vector2i(0))
 
     val continentMeshes = buildIcosahedron()
     val continentNodes = continentMeshes.map { (verts, idx) ->
@@ -118,21 +102,6 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
     return camera
 }
 
-private fun buildWorld(): LowPolyWorld {
-    val heightGenerator: HeightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(18, SpreadNoise2f(8,
-            LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)))
-    )
-    val colourGenerator: ColourGenerator = NormalColourGenerator(Vector3.upward(),
-        NormalColour(0.90f, Vector3.of(.41f, .41f, .41f)),
-        NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)))
-    val terrainFactory = LowPolyTerrainFactory(
-        DiamondMeshGenerator(64), heightGenerator,
-        colourGenerator, Vector2.of(64f, 64f)
-    )
-    return LowPolyWorld(terrainFactory)
-}
-
 private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
     val phi = ((1.0 + Math.sqrt(5.0)) / 2.0).toFloat()
 
@@ -155,10 +124,13 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         listOf(8, 6, 7), listOf(9, 8, 1),
     )
 
+    var faceOrigin: List<Int> = faces.indices.toList()
+
     repeat(SUBDIVISIONS) {
         val (v, f) = subdivide(verts, faces)
         verts = v
         faces = f
+        faceOrigin = faceOrigin.flatMap { listOf(it, it, it, it) }
     }
 
     val centroids = faces.map { (i0, i1, i2) ->
@@ -171,6 +143,10 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         faces.mapIndexedNotNull { fi, (i0, i1, i2) ->
             if (v == i0 || v == i1 || v == i2) fi else null
         }
+    }
+
+    val chunkForVertex = verts.indices.map { v ->
+        vertFaces[v].groupBy { faceOrigin[it] }.maxByOrNull { it.value.size }?.key ?: 0
     }
 
     val vertAdj = mutableMapOf<Int, MutableSet<Int>>()
@@ -331,22 +307,22 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
                     isWater[continent[v]] -> waterColor(temp)
                     else -> landColor(temp)
                 }
-                DualFaceData(continent[v], sorted, fn, col)
+                DualFaceData(chunkForVertex[v], sorted, fn, col)
             }
         }.awaitAll().filterNotNull()
     }
 
-    val chunkVerts = Array(NUM_CONTINENTS) { mutableListOf<Vertex3D>() }
-    val chunkIdx = Array(NUM_CONTINENTS) { mutableListOf<Int>() }
+    val chunkVerts = Array(CHUNKS) { mutableListOf<Vertex3D>() }
+    val chunkIdx = Array(CHUNKS) { mutableListOf<Int>() }
 
     for (data in faceData) {
-        val cId = data.continentId
-        val base = chunkVerts[cId].size
-        for (p in data.centroids) chunkVerts[cId].add(vertex(p, data.normal, data.color))
+        val ci = data.continentId
+        val base = chunkVerts[ci].size
+        for (p in data.centroids) chunkVerts[ci].add(vertex(p, data.normal, data.color))
         for (i in 1 until data.centroids.size - 1) {
-            chunkIdx[cId].add(base)
-            chunkIdx[cId].add(base + i)
-            chunkIdx[cId].add(base + i + 1)
+            chunkIdx[ci].add(base)
+            chunkIdx[ci].add(base + i)
+            chunkIdx[ci].add(base + i + 1)
         }
     }
 
