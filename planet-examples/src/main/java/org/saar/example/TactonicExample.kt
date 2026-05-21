@@ -45,6 +45,7 @@ import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
 private const val NUM_CONTINENTS = 12
+private const val CHUNKS = 6
 private const val SUBDIVISIONS = 5
 private const val WATER_PROBABILITY = 0.5
 private const val PLANET_SCALE = 16f
@@ -73,7 +74,7 @@ fun main() {
     val continentMeshes = buildIcosahedron()
     val continentNodes = continentMeshes.map { (verts, idx) ->
         val icoInstance = instance().also {
-            it.transform.position.set(0f, 5f, 0f)
+            it.transform.position.set(0f, 0f, 0f)
             it.transform.scale.set(PLANET_SCALE)
         }
         val icoMesh = mesh(arrayOf(icoInstance), verts, idx)
@@ -242,11 +243,15 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         faces.indices.map { fi ->
             async(Dispatchers.Default) {
                 val (i0, i1, i2) = faces[fi]
-                val c0 = continent[i0]; val c1 = continent[i1]; val c2 = continent[i2]
-                val w0 = isWater[c0]; val w1 = isWater[c1]; val w2 = isWater[c2]
-                val diff = c0 != c1 || c1 != c2 || c2 != c0
+                val c0 = continent[i0]
+                val c1 = continent[i1]
+                val c2 = continent[i2]
+                val w0 = isWater[c0]
+                val w1 = isWater[c1]
+                val w2 = isWater[c2]
+                val diff = c0 != c1 || c1 != c2
                 boundaryFace[fi] = diff
-                landWaterFace[fi] = diff && (w0 != w1 || w1 != w2 || w2 != w0)
+                landWaterFace[fi] = diff && (w0 != w1 || w1 != w2)
                 val ll = diff && !w0 && !w1 && !w2
                 landLandFace[fi] = ll
 
@@ -254,10 +259,13 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
                     val pp = when {
                         c0 == c1 -> PlatePair(c0, c2,
                             Vector3.div(Vector3.add(verts[i0], verts[i1]), 2f), verts[i2])
+
                         c1 == c2 -> PlatePair(c0, c1,
                             verts[i0], Vector3.div(Vector3.add(verts[i1], verts[i2]), 2f))
+
                         c2 == c0 -> PlatePair(c0, c1,
                             Vector3.div(Vector3.add(verts[i2], verts[i0]), 2f), verts[i1])
+
                         else -> null
                     }
                     if (pp != null) {
@@ -266,7 +274,8 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
                         val ab_t = Vector3.sub(ab, Vector3.mul(nrm, nrm.dot(ab)))
                         if (!(ab_t.x() == 0f && ab_t.y() == 0f && ab_t.z() == 0f)) {
                             val abDir = Vector3.normalize(ab_t)
-                            val vDirA = plateDirections[pp.pA]; val vDirB = plateDirections[pp.pB]
+                            val vDirA = plateDirections[pp.pA]
+                            val vDirB = plateDirections[pp.pB]
                             val vA_t = Vector3.sub(vDirA, Vector3.mul(nrm, nrm.dot(vDirA)))
                             val vB_t = Vector3.sub(vDirB, Vector3.mul(nrm, nrm.dot(vDirB)))
                             convergentFace[fi] = vA_t.dot(abDir) > 0f && vB_t.dot(abDir) < 0f
@@ -276,7 +285,9 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
 
                 if (!w0 || !w1 || !w2) {
                     val c = offsetCentroids[fi]
-                    val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ, c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
+                    val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ,
+                        c.y() * HEIGHT_NOISE_FREQ,
+                        c.z() * HEIGHT_NOISE_FREQ)
                     val h = n * NOISE_HEIGHT_AMPLITUDE + if (convergentFace[fi]) MOUNTAIN_HEIGHT else 0f
                     offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
                 }
@@ -309,7 +320,8 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
                 val fn = faceNormal(sorted[0], sorted[1], sorted[2])
                 val pos = verts[v]
                 val cosLat = kotlin.math.abs(pos.dot(axis))
-                val noiseTemp = SimplexNoise.noise(pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
+                val noiseTemp =
+                    SimplexNoise.noise(pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
                 val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
                 val isMountain = adj.any { convergentFace[it] }
                 val isCoast = !isMountain && adj.any { landWaterFace[it] }
@@ -382,14 +394,22 @@ private fun lerp(a: Vector3fc, b: Vector3fc, t: Float): Vector3f {
 
 private fun waterColor(temp: Float): Vector3f {
     val t = temp.coerceIn(0f, 1f)
-    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.85f, 0.9f, 1.0f), Vector3.of(0f, 0.15f, 0.4f), t / TEMP_POLAR_THRESHOLD)
-    else lerp(Vector3.of(0f, 0.15f, 0.4f), Vector3.of(0f, 0.5f, 0.7f), (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
+    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.85f, 0.9f, 1.0f),
+        Vector3.of(0f, 0.15f, 0.4f),
+        t / TEMP_POLAR_THRESHOLD)
+    else lerp(Vector3.of(0f, 0.15f, 0.4f),
+        Vector3.of(0f, 0.5f, 0.7f),
+        (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
 }
 
 private fun landColor(temp: Float): Vector3f {
     val t = temp.coerceIn(0f, 1f)
-    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.9f, 0.9f, 1.0f), Vector3.of(0.4f, 0.5f, 0.3f), t / TEMP_POLAR_THRESHOLD)
-    else lerp(Vector3.of(0.4f, 0.5f, 0.3f), Vector3.of(0.05f, 0.45f, 0.08f), (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
+    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.9f, 0.9f, 1.0f),
+        Vector3.of(0.4f, 0.5f, 0.3f),
+        t / TEMP_POLAR_THRESHOLD)
+    else lerp(Vector3.of(0.4f, 0.5f, 0.3f),
+        Vector3.of(0.05f, 0.45f, 0.08f),
+        (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
 }
 
 private fun stoneColor(temp: Float): Vector3f =
