@@ -14,11 +14,10 @@ import org.saar.core.common.components.KeyboardMovementComponent
 import org.saar.core.common.components.MouseDragRotationComponent
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
-import org.saar.core.common.r3d.R3D.instance
-import org.saar.core.common.r3d.R3D.mesh
-import org.saar.core.common.r3d.R3D.vertex
+import org.saar.core.common.r3d.R3D
 import org.saar.core.common.r3d.Vertex3D
 import org.saar.core.light.DirectionalLight
+import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
@@ -28,8 +27,14 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 private const val NUM_CONTINENTS = 12
 private const val CHUNKS = 20
@@ -57,11 +62,16 @@ fun main() {
 
     val continentMeshes = buildIcosahedron()
     val continentNodes = continentMeshes.map { (verts, idx) ->
-        val icoInstance = instance().also {
+        val icoInstance = R3D.instance().also {
             it.transform.position.set(0f, 0f, 0f)
             it.transform.scale.set(PLANET_SCALE)
         }
-        val icoMesh = mesh(arrayOf(icoInstance), verts, idx)
+        val icoVao = R3D.meshBuilder(arrayOf(icoInstance), verts, idx).loadVao()
+
+        val drawCall = InstancedElementsDrawCall(
+            RenderMode.TRIANGLES, idx.size, DataType.U_INT, 1)
+        val icoMesh = DrawCallMesh(icoVao, drawCall)
+
         val icoModel = Model3D(icoMesh).also { it.specular = 0f }
         Node3D(icoModel)
     }
@@ -103,7 +113,7 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 }
 
 private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
-    val phi = ((1.0 + Math.sqrt(5.0)) / 2.0).toFloat()
+    val phi = ((1.0 + sqrt(5.0)) / 2.0).toFloat()
 
     var verts: List<Vector3fc> = listOf(
         Vector3.of(-1f, phi, 0f), Vector3.of(1f, phi, 0f),
@@ -168,7 +178,7 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
     seeds.forEach { queue.add(it) }
 
     while (queue.isNotEmpty()) {
-        val idx = queue.removeAt((0 until queue.size).random())
+        val idx = queue.removeAt(queue.indices.random())
         val cId = continent[idx]
         val neighbors = vertAdj[idx] ?: continue
         for (n in neighbors.shuffled()) {
@@ -181,8 +191,8 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
     val isWater = (0 until NUM_CONTINENTS).map { Math.random() < WATER_PROBABILITY }
     val axisTilt = Math.toRadians(PLANET_TILT_DEG)
     val axis = Vector3.of(
-        Math.sin(axisTilt).toFloat(),
-        Math.cos(axisTilt).toFloat(),
+        sin(axisTilt).toFloat(),
+        cos(axisTilt).toFloat(),
         0f,
     )
 
@@ -318,7 +328,7 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
     for (data in faceData) {
         val ci = data.continentId
         val base = chunkVerts[ci].size
-        for (p in data.centroids) chunkVerts[ci].add(vertex(p, data.normal, data.color))
+        for (p in data.centroids) chunkVerts[ci].add(R3D.vertex(p, data.normal, data.color))
         for (i in 1 until data.centroids.size - 1) {
             chunkIdx[ci].add(base)
             chunkIdx[ci].add(base + i)

@@ -1,3 +1,11 @@
 package org.saar.core.mesh
 
-interface MeshBuilder : UnloadedMesh
+import org.saar.lwjgl.opengl.vao.Vao
+
+interface MeshBuilder {
+    fun load(): Mesh
+
+    fun loadVao(): Vao
+
+    fun delete()
+}

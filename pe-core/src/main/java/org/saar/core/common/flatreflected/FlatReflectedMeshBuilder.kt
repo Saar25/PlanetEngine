@@ -36,19 +36,23 @@ class FlatReflectedMeshBuilder(
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
     override fun load(): Mesh {
-        val vao = Vao.create()
-
-        val buffers = listOf(
-            this.positionBufferBuilder.build(VboTarget.ARRAY_BUFFER),
-            this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
-        )
-
-        buffers.forEach {
-            it.store(0)
-            it.loadInVao(vao)
-        }
-
-        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        val vao = loadVao()
+        val drawCall = ElementsDrawCall(
+            RenderMode.TRIANGLES, this.indices, DataType.U_INT)
         return DrawCallMesh(vao, drawCall)
+    }
+
+    override fun loadVao(): Vao {
+        return Vao.create().also { vao ->
+            val buffers = listOf(
+                this.positionBufferBuilder.build(VboTarget.ARRAY_BUFFER),
+                this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+            )
+
+            buffers.forEach {
+                it.store(0)
+                it.loadInVao(vao)
+            }
+        }
     }
 }

@@ -63,19 +63,22 @@ class MeshBuilder3D(
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
     override fun load(): Mesh {
-        val vao = Vao.create()
-
-        val buffers = this.vertexBufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) } +
-                this.transformBufferBuilder.build(VboTarget.ARRAY_BUFFER) +
-                this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
-
-        buffers.forEach {
-            it.store(0)
-            it.loadInVao(vao)
-        }
-
+        val vao = loadVao()
         val drawCall = InstancedElementsDrawCall(RenderMode.TRIANGLES,
             this.indices, DataType.U_INT, this.instances)
         return DrawCallMesh(vao, drawCall)
+    }
+
+    override fun loadVao(): Vao {
+        return Vao.create().also { vao ->
+            val buffers = this.vertexBufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) } +
+                    this.transformBufferBuilder.build(VboTarget.ARRAY_BUFFER) +
+                    this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+
+            buffers.forEach {
+                it.store(0)
+                it.loadInVao(vao)
+            }
+        }
     }
 }
