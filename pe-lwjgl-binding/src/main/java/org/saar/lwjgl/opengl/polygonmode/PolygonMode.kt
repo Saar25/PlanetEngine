@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.constants.Face
 object PolygonMode {
 
     private val DEFAULTS = PolygonModeState(
-        face = Face.FRONT_AND_BACK,
+        face = Face.FRONT,
         mode = PolygonModeValue.FILL,
     )
 

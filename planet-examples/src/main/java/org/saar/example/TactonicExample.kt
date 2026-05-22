@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFW
 import org.saar.core.camera.Camera
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.components.KeyboardMovementComponent
+import org.saar.core.common.components.LevelOfDetailComponent
 import org.saar.core.common.components.MouseDragRotationComponent
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
@@ -18,7 +19,9 @@ import org.saar.core.common.r3d.R3D
 import org.saar.core.common.r3d.Vertex3D
 import org.saar.core.light.DirectionalLight
 import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.lod.LodMesh
 import org.saar.core.node.NodeComponentGroup
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredRenderingPath
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
@@ -54,27 +57,49 @@ private const val CAMERA_FAR = 1000f
 private const val CAMERA_MOUSE_SENSITIVITY = -0.3f
 private const val CAMERA_KEYBOARD_SPEED = 5f
 
+private class ChunkLodData(
+    val combinedIndices: IntArray,
+    val lodByteOffsets: LongArray,
+    val lodCounts: IntArray,
+)
+
+private class ChunkData(
+    val verts: Array<Vertex3D>,
+    val lods: ChunkLodData,
+)
+
 fun main() {
     val window = Window.create("Lwjgl", 1200, 700, true)
     ClearColour.set(0.53f, 0.81f, 0.92f)
 
     val camera = buildCamera(window.mouse, window.keyboard)
 
-    val continentMeshes = buildIcosahedron()
-    val continentNodes = continentMeshes.map { (verts, idx) ->
-        val icoInstance = R3D.instance().also {
-            it.transform.position.set(0f, 0f, 0f)
-            it.transform.scale.set(PLANET_SCALE)
-        }
-        val icoVao = R3D.meshBuilder(arrayOf(icoInstance), verts, idx).loadVao()
-
-        val drawCall = InstancedElementsDrawCall(
-            RenderMode.TRIANGLES, idx.size, DataType.U_INT, 1)
-        val icoMesh = DrawCallMesh(icoVao, drawCall)
-
-        val icoModel = Model3D(icoMesh).also { it.specular = 0f }
-        Node3D(icoModel)
+    val chunkDataList = buildIcosahedron()
+    val icoInstance = R3D.instance().also {
+        it.transform.position.set(0f, 0f, 0f)
+        it.transform.scale.set(PLANET_SCALE)
     }
+    val continentNodes = chunkDataList.map { chunkData ->
+        val icoVao = R3D.meshBuilder(
+            arrayOf(icoInstance), chunkData.verts, chunkData.lods.combinedIndices
+        ).loadVao()
+
+        val lodMeshes = (0..SUBDIVISIONS).map { lod ->
+            val drawCall = InstancedElementsDrawCall(
+                RenderMode.TRIANGLES, chunkData.lods.lodCounts[lod],
+                DataType.U_INT, chunkData.lods.lodByteOffsets[lod], 1)
+            DrawCallMesh(icoVao, drawCall)
+        }
+        val lodMesh = LodMesh(lodMeshes)
+
+        val icoModel = Model3D(lodMesh).also { it.specular = 0f }
+        Node3D(icoModel).apply {
+            components.add(LevelOfDetailComponent(camera,
+                lodMesh.lod,
+                (0..SUBDIVISIONS).map { 8 * it + 24 }.reversed().toIntArray()))
+        }
+    }
+    val nodeGroup = DeferredRenderNodeGroup(*continentNodes.toTypedArray())
 
     val light = DirectionalLight().also {
         it.direction.set(-1f, -1f, -1f)
@@ -82,12 +107,13 @@ fun main() {
     }
 
     val renderingPipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(*continentNodes.toTypedArray()), LightRenderPass(light))
+        DeferredGeometryPass(nodeGroup), LightRenderPass(light))
     val renderingPath = DeferredRenderingPath(camera, renderingPipeline)
 
     val keyboard = window.keyboard
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
+        nodeGroup.update()
 
         renderingPath.render().toMainScreen()
 
@@ -112,7 +138,7 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
     return camera
 }
 
-private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
+private fun buildIcosahedron(): List<ChunkData> {
     val phi = ((1.0 + sqrt(5.0)) / 2.0).toFloat()
 
     var verts: List<Vector3fc> = listOf(
@@ -134,33 +160,35 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         listOf(8, 6, 7), listOf(9, 8, 1),
     )
 
-    var faceOrigin: List<Int> = faces.indices.toList()
+    val vertsAtLevel = mutableListOf(verts)
+    val facesAtLevel = mutableListOf(faces)
+    val faceOriginAtLevel = mutableListOf(faces.indices.toList())
 
     repeat(SUBDIVISIONS) {
         val (v, f) = subdivide(verts, faces)
         verts = v
         faces = f
-        faceOrigin = faceOrigin.flatMap { listOf(it, it, it, it) }
+        vertsAtLevel.add(verts)
+        facesAtLevel.add(faces)
+        faceOriginAtLevel.add(faceOriginAtLevel.last().flatMap { listOf(it, it, it, it) })
     }
 
-    val centroids = faces.map { (i0, i1, i2) ->
-        Vector3.normalize(Vector3.div(
-            Vector3.add(verts[i0], Vector3.add(verts[i1], verts[i2])), 3f))
-    }
-    val offsetCentroids = centroids.toMutableList()
+    val finalVerts = vertsAtLevel.last()
+    val finalFaces = facesAtLevel.last()
+    val finalFaceOrigin = faceOriginAtLevel.last()
 
-    val vertFaces = verts.indices.map { v ->
-        faces.mapIndexedNotNull { fi, (i0, i1, i2) ->
+    val vertFacesFinal = finalVerts.indices.map { v ->
+        finalFaces.mapIndexedNotNull { fi, (i0, i1, i2) ->
             if (v == i0 || v == i1 || v == i2) fi else null
         }
     }
 
-    val chunkForVertex = verts.indices.map { v ->
-        vertFaces[v].groupBy { faceOrigin[it] }.maxByOrNull { it.value.size }?.key ?: 0
+    val chunkForVertex = finalVerts.indices.map { v ->
+        vertFacesFinal[v].groupBy { finalFaceOrigin[it] }.maxByOrNull { it.value.size }?.key ?: 0
     }
 
     val vertAdj = mutableMapOf<Int, MutableSet<Int>>()
-    for ((i0, i1, i2) in faces) {
+    for ((i0, i1, i2) in finalFaces) {
         vertAdj.getOrPut(i0) { mutableSetOf() }.add(i1)
         vertAdj.getOrPut(i0) { mutableSetOf() }.add(i2)
         vertAdj.getOrPut(i1) { mutableSetOf() }.add(i0)
@@ -169,9 +197,9 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
         vertAdj.getOrPut(i2) { mutableSetOf() }.add(i1)
     }
 
-    val numFaces = verts.size
-    val continent = IntArray(numFaces) { -1 }
-    val seeds = (0 until numFaces).shuffled().take(NUM_CONTINENTS)
+    val numVerts = finalVerts.size
+    val continent = IntArray(numVerts) { -1 }
+    val seeds = (0 until numVerts).shuffled().take(NUM_CONTINENTS)
     seeds.forEachIndexed { i, idx -> continent[idx] = i }
 
     val queue = mutableListOf<Int>()
@@ -198,9 +226,9 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
 
     val plateCentroids = Array(NUM_CONTINENTS) { Vector3.create() }
     val plateCounts = IntArray(NUM_CONTINENTS)
-    for (v in verts.indices) {
+    for (v in finalVerts.indices) {
         val cId = continent[v]
-        plateCentroids[cId].add(verts[v])
+        plateCentroids[cId].add(finalVerts[v])
         plateCounts[cId]++
     }
     for (cId in 0 until NUM_CONTINENTS) {
@@ -221,123 +249,154 @@ private fun buildIcosahedron(): List<Pair<Array<Vertex3D>, IntArray>> {
 
     data class PlatePair(val pA: Int, val pB: Int, val cA: Vector3fc, val cB: Vector3fc)
 
-    val boundaryFace = BooleanArray(faces.size) { false }
-    val landWaterFace = BooleanArray(faces.size) { false }
-    val landLandFace = BooleanArray(faces.size) { false }
-    val convergentFace = BooleanArray(faces.size) { false }
-    runBlocking {
-        faces.indices.map { fi ->
-            async(Dispatchers.Default) {
-                val (i0, i1, i2) = faces[fi]
-                val c0 = continent[i0]
-                val c1 = continent[i1]
-                val c2 = continent[i2]
-                val w0 = isWater[c0]
-                val w1 = isWater[c1]
-                val w2 = isWater[c2]
-                val diff = c0 != c1 || c1 != c2
-                boundaryFace[fi] = diff
-                landWaterFace[fi] = diff && (w0 != w1 || w1 != w2)
-                val ll = diff && !w0 && !w1 && !w2
-                landLandFace[fi] = ll
+    val chunkAllVerts = Array(CHUNKS) { mutableListOf<Vertex3D>() }
+    val chunkAllIndices = Array(CHUNKS) { mutableListOf<Int>() }
+    val chunkLodCounts = Array(CHUNKS) { mutableListOf<Int>() }
 
-                if (ll) {
-                    val pp = when {
-                        c0 == c1 -> PlatePair(c0, c2,
-                            Vector3.div(Vector3.add(verts[i0], verts[i1]), 2f), verts[i2])
+    for (level in 0..SUBDIVISIONS) {
+        val levelVerts = vertsAtLevel[level]
+        val levelFaces = facesAtLevel[level]
 
-                        c1 == c2 -> PlatePair(c0, c1,
-                            verts[i0], Vector3.div(Vector3.add(verts[i1], verts[i2]), 2f))
+        val levelCentroids = levelFaces.map { (i0, i1, i2) ->
+            Vector3.normalize(Vector3.div(
+                Vector3.add(levelVerts[i0], Vector3.add(levelVerts[i1], levelVerts[i2])), 3f))
+        }
+        val levelOffsetCentroids = levelCentroids.toMutableList()
+        val levelVertFaces = levelVerts.indices.map { v ->
+            levelFaces.mapIndexedNotNull { fi, (i0, i1, i2) ->
+                if (v == i0 || v == i1 || v == i2) fi else null
+            }
+        }
 
-                        c2 == c0 -> PlatePair(c0, c1,
-                            Vector3.div(Vector3.add(verts[i2], verts[i0]), 2f), verts[i1])
+        val levelConvergentFace = BooleanArray(levelFaces.size) { false }
+        val levelLandWaterFace = BooleanArray(levelFaces.size) { false }
+        runBlocking {
+            levelFaces.indices.map { fi ->
+                async(Dispatchers.Default) {
+                    val (i0, i1, i2) = levelFaces[fi]
+                    val c0 = continent[i0];
+                    val c1 = continent[i1];
+                    val c2 = continent[i2]
+                    val w0 = isWater[c0];
+                    val w1 = isWater[c1];
+                    val w2 = isWater[c2]
+                    val diff = c0 != c1 || c1 != c2
+                    levelLandWaterFace[fi] = diff && (w0 != w1 || w1 != w2)
+                    val ll = diff && !w0 && !w1 && !w2
+                    if (ll) {
+                        val nrm = levelCentroids[fi]
+                        val pp = when {
+                            c0 == c1 -> PlatePair(c0, c2,
+                                Vector3.div(Vector3.add(levelVerts[i0], levelVerts[i1]), 2f), levelVerts[i2])
 
-                        else -> null
-                    }
-                    if (pp != null) {
-                        val nrm = centroids[fi]
-                        val ab = Vector3.sub(pp.cB, pp.cA)
-                        val ab_t = Vector3.sub(ab, Vector3.mul(nrm, nrm.dot(ab)))
-                        if (!(ab_t.x() == 0f && ab_t.y() == 0f && ab_t.z() == 0f)) {
-                            val abDir = Vector3.normalize(ab_t)
-                            val vDirA = plateDirections[pp.pA]
-                            val vDirB = plateDirections[pp.pB]
-                            val vA_t = Vector3.sub(vDirA, Vector3.mul(nrm, nrm.dot(vDirA)))
-                            val vB_t = Vector3.sub(vDirB, Vector3.mul(nrm, nrm.dot(vDirB)))
-                            convergentFace[fi] = vA_t.dot(abDir) > 0f && vB_t.dot(abDir) < 0f
+                            c1 == c2 -> PlatePair(c0, c1,
+                                levelVerts[i0], Vector3.div(Vector3.add(levelVerts[i1], levelVerts[i2]), 2f))
+
+                            c2 == c0 -> PlatePair(c0, c1,
+                                Vector3.div(Vector3.add(levelVerts[i2], levelVerts[i0]), 2f), levelVerts[i1])
+
+                            else -> null
+                        }
+                        if (pp != null) {
+                            val ab = Vector3.sub(pp.cB, pp.cA)
+                            val ab_t = Vector3.sub(ab, Vector3.mul(nrm, nrm.dot(ab)))
+                            if (!(ab_t.x() == 0f && ab_t.y() == 0f && ab_t.z() == 0f)) {
+                                val abDir = Vector3.normalize(ab_t)
+                                val vDirA = plateDirections[pp.pA]
+                                val vDirB = plateDirections[pp.pB]
+                                val vA_t = Vector3.sub(vDirA, Vector3.mul(nrm, nrm.dot(vDirA)))
+                                val vB_t = Vector3.sub(vDirB, Vector3.mul(nrm, nrm.dot(vDirB)))
+                                levelConvergentFace[fi] = vA_t.dot(abDir) > 0f && vB_t.dot(abDir) < 0f
+                            }
                         }
                     }
+                    if (!w0 || !w1 || !w2) {
+                        val c = levelCentroids[fi]
+                        val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ,
+                            c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
+                        val h = n * NOISE_HEIGHT_AMPLITUDE + if (levelConvergentFace[fi]) MOUNTAIN_HEIGHT else 0f
+                        levelOffsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
+                    }
                 }
+            }.awaitAll()
+        }
 
-                if (!w0 || !w1 || !w2) {
-                    val c = offsetCentroids[fi]
-                    val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ,
-                        c.y() * HEIGHT_NOISE_FREQ,
-                        c.z() * HEIGHT_NOISE_FREQ)
-                    val h = n * NOISE_HEIGHT_AMPLITUDE + if (convergentFace[fi]) MOUNTAIN_HEIGHT else 0f
-                    offsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
-                }
+        val levelNormals = computeVertexNormals(levelVerts, levelFaces)
+
+        data class FanData(
+            val chunkId: Int,
+            val centroids: List<Vector3fc>,
+            val normal: Vector3f,
+            val color: Vector3f,
+        )
+
+        val levelFanData = levelVerts.indices.mapNotNull { v ->
+            val adj = levelVertFaces[v]
+            if (adj.size < 3) return@mapNotNull null
+            val cents = adj.map { levelOffsetCentroids[it] }
+            val n = levelNormals[v]
+            val t = tangent(n)
+            val b = Vector3.cross(n, t)
+            val order = cents.mapIndexed { i, c ->
+                val d = Vector3.sub(c, levelVerts[v])
+                i to kotlin.math.atan2(d.dot(b).toDouble(), d.dot(t).toDouble())
+            }.sortedBy { it.second }.map { it.first }
+            val sorted = order.map { cents[it] }
+            val fn = faceNormal(sorted[0], sorted[1], sorted[2])
+
+            val pos = levelVerts[v]
+            val cosLat = kotlin.math.abs(pos.dot(axis))
+            val noiseTemp = SimplexNoise.noise(
+                pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
+            val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
+            val isMountain = adj.any { levelConvergentFace[it] }
+            val isCoast = !isMountain && adj.any { levelLandWaterFace[it] }
+            val col = when {
+                isMountain -> stoneColor(temp)
+                isCoast -> sandColor(temp)
+                isWater[continent[v]] -> waterColor(temp)
+                else -> landColor(temp)
             }
-        }.awaitAll()
-    }
-    val vertNormals = computeVertexNormals(verts, faces)
+            FanData(chunkForVertex[v], sorted, fn, col)
+        }
 
-    data class DualFaceData(
-        val continentId: Int,
-        val centroids: List<Vector3fc>,
-        val normal: Vector3f,
-        val color: Vector3f,
-    )
-
-    val faceData = runBlocking {
-        verts.indices.map { v ->
-            async(Dispatchers.Default) {
-                val adj = vertFaces[v]
-                if (adj.size < 3) return@async null
-                val cents = adj.map { offsetCentroids[it] }
-                val n = vertNormals[v]
-                val t = tangent(n)
-                val b = Vector3.cross(n, t)
-                val order = cents.mapIndexed { i, c ->
-                    val d = Vector3.sub(c, verts[v])
-                    i to kotlin.math.atan2(d.dot(b).toDouble(), d.dot(t).toDouble())
-                }.sortedBy { it.second }.map { it.first }
-                val sorted = order.map { cents[it] }
-                val fn = faceNormal(sorted[0], sorted[1], sorted[2])
-                val pos = verts[v]
-                val cosLat = kotlin.math.abs(pos.dot(axis))
-                val noiseTemp =
-                    SimplexNoise.noise(pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
-                val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
-                val isMountain = adj.any { convergentFace[it] }
-                val isCoast = !isMountain && adj.any { landWaterFace[it] }
-                val col = when {
-                    isMountain -> stoneColor(temp)
-                    isCoast -> sandColor(temp)
-                    isWater[continent[v]] -> waterColor(temp)
-                    else -> landColor(temp)
-                }
-                DualFaceData(chunkForVertex[v], sorted, fn, col)
+        val chunkVerts = Array(CHUNKS) { mutableListOf<Vertex3D>() }
+        val chunkIdx = Array(CHUNKS) { mutableListOf<Int>() }
+        for (data in levelFanData) {
+            val ci = data.chunkId
+            val base = chunkVerts[ci].size
+            for (p in data.centroids) chunkVerts[ci].add(R3D.vertex(p, data.normal, data.color))
+            for (i in 1 until data.centroids.size - 1) {
+                chunkIdx[ci].add(base)
+                chunkIdx[ci].add(base + i)
+                chunkIdx[ci].add(base + i + 1)
             }
-        }.awaitAll().filterNotNull()
-    }
+        }
 
-    val chunkVerts = Array(CHUNKS) { mutableListOf<Vertex3D>() }
-    val chunkIdx = Array(CHUNKS) { mutableListOf<Int>() }
-
-    for (data in faceData) {
-        val ci = data.continentId
-        val base = chunkVerts[ci].size
-        for (p in data.centroids) chunkVerts[ci].add(R3D.vertex(p, data.normal, data.color))
-        for (i in 1 until data.centroids.size - 1) {
-            chunkIdx[ci].add(base)
-            chunkIdx[ci].add(base + i)
-            chunkIdx[ci].add(base + i + 1)
+        for (ci in 0 until CHUNKS) {
+            chunkLodCounts[ci].add(chunkIdx[ci].size)
+            val vertBase = chunkAllVerts[ci].size
+            chunkAllVerts[ci].addAll(chunkVerts[ci])
+            for (i in chunkIdx[ci]) chunkAllIndices[ci].add(i + vertBase)
         }
     }
 
-    return chunkVerts.zip(chunkIdx) { verts, idx ->
-        Pair(verts.toTypedArray(), idx.toIntArray())
+    return (0 until CHUNKS).map { ci ->
+        val counts = chunkLodCounts[ci]
+        val offsets = mutableListOf<Long>()
+        var cumulative = 0L
+        for (count in counts) {
+            offsets.add(cumulative * 4L)
+            cumulative += count.toLong()
+        }
+        ChunkData(
+            chunkAllVerts[ci].toTypedArray(),
+            ChunkLodData(
+                chunkAllIndices[ci].toIntArray(),
+                offsets.toLongArray(),
+                counts.toIntArray(),
+            ),
+        )
     }
 }
 
