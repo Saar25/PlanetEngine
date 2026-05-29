@@ -85,7 +85,7 @@ private class TerrainApplication : Application {
 
         this.camera = Camera(projection, components)
 
-        camera.transform.position[0f, 0f] = 200f
+        camera.transform.position.set(0f, 0f, 200f)
         camera.transform.lookAt(Position.of(0f, 0f, 0f))
 
         val world = buildWorld()
@@ -145,8 +145,8 @@ private class TerrainApplication : Application {
 
     private fun buildCubeModel(world: World): Model3D {
         val cubeInstance = instance()
-        cubeInstance.transform.scale[10f, 10f] = 10f
-        cubeInstance.transform.position[101f, world.getHeight(101f, 0f, 50f)] = 50f
+        cubeInstance.transform.scale.set(10f, 10f, 10f)
+        cubeInstance.transform.position.set(101f, world.getHeight(101f, 0f, 50f), 50f)
         val cubeMesh = mesh(arrayOf(cubeInstance),
             ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
         return Model3D(cubeMesh)

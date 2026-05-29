@@ -277,7 +277,6 @@ private fun buildIcosahedron(): List<ChunkData> {
             Vector3.normalize(Vector3.div(
                 Vector3.add(levelVerts[i0], Vector3.add(levelVerts[i1], levelVerts[i2])), 3f))
         }
-        val levelOffsetCentroids = levelCentroids.toMutableList()
         val levelVertFaces = levelVerts.indices.map { v ->
             levelFaces.mapIndexedNotNull { fi, (i0, i1, i2) ->
                 if (v == i0 || v == i1 || v == i2) fi else null
@@ -326,67 +325,60 @@ private fun buildIcosahedron(): List<ChunkData> {
                             }
                         }
                     }
-                    if (!w0 || !w1 || !w2) {
-                        val c = levelCentroids[fi]
-                        val n = SimplexNoise.noise(c.x() * HEIGHT_NOISE_FREQ,
-                            c.y() * HEIGHT_NOISE_FREQ, c.z() * HEIGHT_NOISE_FREQ)
-                        val h = n * NOISE_HEIGHT_AMPLITUDE + if (levelConvergentFace[fi]) MOUNTAIN_HEIGHT else 0f
-                        levelOffsetCentroids[fi] = Vector3.add(c, Vector3.mul(c, h))
-                    }
+
                 }
             }.awaitAll()
         }
 
-        val levelNormals = computeVertexNormals(levelVerts, levelFaces)
-
-        data class FanData(
-            val chunkId: Int,
-            val centroids: List<Vector3fc>,
-            val normal: Vector3f,
-            val color: Vector3f,
-        )
-
-        val levelFanData = levelVerts.indices.mapNotNull { v ->
-            val adj = levelVertFaces[v]
-            if (adj.size < 3) return@mapNotNull null
-            val cents = adj.map { levelOffsetCentroids[it] }
-            val n = levelNormals[v]
-            val t = tangent(n)
-            val b = Vector3.cross(n, t)
-            val order = cents.mapIndexed { i, c ->
-                val d = Vector3.sub(c, levelVerts[v])
-                i to kotlin.math.atan2(d.dot(b).toDouble(), d.dot(t).toDouble())
-            }.sortedBy { it.second }.map { it.first }
-            val sorted = order.map { cents[it] }
-            val fn = faceNormal(sorted[0], sorted[1], sorted[2])
-
+        val levelDisplacedVerts = levelVerts.indices.map { v ->
             val pos = levelVerts[v]
-            val cosLat = kotlin.math.abs(pos.dot(axis))
-            val noiseTemp = SimplexNoise.noise(
-                pos.x() * TEMP_NOISE_FREQ, pos.y() * TEMP_NOISE_FREQ, pos.z() * TEMP_NOISE_FREQ)
-            val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
-            val isMountain = adj.any { levelConvergentFace[it] }
-            val isCoast = !isMountain && adj.any { levelLandWaterFace[it] }
-            val col = when {
-                isMountain -> stoneColor(temp)
-                isCoast -> sandColor(temp)
-                isWater[continent[v]] -> waterColor(temp)
-                else -> landColor(temp)
+            val cId = continent[v]
+            if (!isWater[cId]) {
+                val adj = levelVertFaces[v]
+                val isMountain = adj.any { levelConvergentFace[it] }
+                val n = SimplexNoise.noise(
+                    pos.x() * HEIGHT_NOISE_FREQ, pos.y() * HEIGHT_NOISE_FREQ, pos.z() * HEIGHT_NOISE_FREQ)
+                val h = n * NOISE_HEIGHT_AMPLITUDE + (if (isMountain) MOUNTAIN_HEIGHT else 0f)
+                Vector3.add(pos, Vector3.mul(pos, h))
+            } else {
+                Vector3.of(pos.x(), pos.y(), pos.z())
             }
-            FanData(chunkForVertex[v], sorted, fn, col)
         }
 
         val chunkVerts = Array(CHUNKS) { mutableListOf<Vertex3D>() }
         val chunkIdx = Array(CHUNKS) { mutableListOf<Int>() }
-        for (data in levelFanData) {
-            val ci = data.chunkId
-            val base = chunkVerts[ci].size
-            for (p in data.centroids) chunkVerts[ci].add(R3D.vertex(p, data.normal, data.color))
-            for (i in 1 until data.centroids.size - 1) {
-                chunkIdx[ci].add(base)
-                chunkIdx[ci].add(base + i)
-                chunkIdx[ci].add(base + i + 1)
+        for (fi in levelFaces.indices) {
+            val (i0, i1, i2) = levelFaces[fi]
+            val p0 = levelDisplacedVerts[i0]
+            val p1 = levelDisplacedVerts[i1]
+            val p2 = levelDisplacedVerts[i2]
+
+            val fn = faceNormal(p0, p1, p2)
+
+            val centroid = levelCentroids[fi]
+            val cosLat = kotlin.math.abs(centroid.dot(axis))
+            val noiseTemp = SimplexNoise.noise(
+                centroid.x() * TEMP_NOISE_FREQ, centroid.y() * TEMP_NOISE_FREQ,
+                centroid.z() * TEMP_NOISE_FREQ)
+            val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
+            val isMountain = levelConvergentFace[fi]
+            val isCoast = levelLandWaterFace[fi]
+            val col = when {
+                isMountain -> stoneColor(temp)
+                isCoast -> sandColor(temp)
+                isWater[continent[i0]] || isWater[continent[i1]] || isWater[continent[i2]] -> waterColor(temp)
+                else -> landColor(temp)
             }
+
+            val ci = chunkForVertex[i0]
+
+            val base = chunkVerts[ci].size
+            chunkVerts[ci].add(R3D.vertex(p0, fn, col))
+            chunkVerts[ci].add(R3D.vertex(p1, fn, col))
+            chunkVerts[ci].add(R3D.vertex(p2, fn, col))
+            chunkIdx[ci].add(base)
+            chunkIdx[ci].add(base + 1)
+            chunkIdx[ci].add(base + 2)
         }
 
         for (ci in 0 until CHUNKS) {
@@ -414,28 +406,6 @@ private fun buildIcosahedron(): List<ChunkData> {
             ),
         )
     }
-}
-
-private fun computeVertexNormals(
-    verts: List<Vector3fc>, faces: List<List<Int>>
-): List<Vector3f> {
-    val faceNormals = faces.map { (i0, i1, i2) ->
-        val e1 = Vector3.sub(verts[i1], verts[i0])
-        val e2 = Vector3.sub(verts[i2], verts[i0])
-        Vector3.normalize(Vector3.cross(e1, e2))
-    }
-    return verts.indices.map { i ->
-        val sum = Vector3.create()
-        faceNormals.filterIndexed { fi, _ -> i in faces[fi] }.forEach { sum.add(it) }
-        sum.normalize()
-        sum
-    }
-}
-
-private fun tangent(n: Vector3fc): Vector3f {
-    val up = Vector3.of(0f, 1f, 0f)
-    val ref = if (kotlin.math.abs(n.dot(up)) > 0.9f) Vector3.of(1f, 0f, 0f) else up
-    return Vector3.normalize(Vector3.cross(n, ref))
 }
 
 private fun faceNormal(v0: Vector3fc, v1: Vector3fc, v2: Vector3fc): Vector3f {
