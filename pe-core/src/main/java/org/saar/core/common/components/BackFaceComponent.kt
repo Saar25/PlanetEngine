@@ -1,11 +1,11 @@
 package org.saar.core.common.components
 
 import org.joml.Vector3f
+import org.joml.component1
+import org.joml.component2
+import org.joml.component3
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
-import org.saar.maths.JomlOperators.component1
-import org.saar.maths.JomlOperators.component2
-import org.saar.maths.JomlOperators.component3
 import org.saar.maths.transform.Transform
 
 class BackFaceComponent @JvmOverloads constructor(

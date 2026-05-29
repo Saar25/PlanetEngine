@@ -1,12 +1,12 @@
 package org.saar.core.common.components
 
-import org.saar.core.node.NodeComponent
+import org.joml.component1
+import org.joml.component2
+import org.joml.component3
 import org.saar.core.node.ComposableNode
+import org.saar.core.node.NodeComponent
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.input.mouse.MouseButton
-import org.saar.maths.JomlOperators.component1
-import org.saar.maths.JomlOperators.component2
-import org.saar.maths.JomlOperators.component3
 import org.saar.maths.utils.Vector3
 
 class SmoothMouseRotationComponent(private val mouse: Mouse, private val velocity: Float) : NodeComponent {

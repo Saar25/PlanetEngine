@@ -1,10 +1,10 @@
 package org.saar.lwjgl.opengl.clear
 
+import org.joml.component1
+import org.joml.component2
+import org.joml.component3
+import org.joml.component4
 import org.lwjgl.opengl.GL11
-import org.saar.maths.JomlOperators.component1
-import org.saar.maths.JomlOperators.component2
-import org.saar.maths.JomlOperators.component3
-import org.saar.maths.JomlOperators.component4
 import org.saar.maths.utils.Vector4
 
 object ClearColour {
