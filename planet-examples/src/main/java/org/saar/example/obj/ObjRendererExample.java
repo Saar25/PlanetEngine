@@ -16,12 +16,11 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
-import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.index.DepthAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.texture.Texture2D;
@@ -42,12 +41,12 @@ public class ObjRendererExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
         colorAttachment = new Attachment(
-                new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
-                new SimpleAllocationStrategy());
+            new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
+            new SimpleAllocationStrategy());
 
         depthAttachment = new Attachment(
-                new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
-                new SimpleAllocationStrategy());
+            new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
+            new SimpleAllocationStrategy());
 
         final Keyboard keyboard = window.getKeyboard();
 
@@ -80,7 +79,7 @@ public class ObjRendererExample {
             window.pollEvents();
 
             System.out.print("\rFps: " +
-                    1000f / (-current + (current = System.currentTimeMillis()))
+                             1000f / (-current + (current = System.currentTimeMillis()))
             );
         }
 
@@ -95,8 +94,8 @@ public class ObjRendererExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final NodeComponentGroup components = new NodeComponentGroup(
-                new KeyboardMovementComponent(keyboard, 20f, 20f, 20f),
-                new KeyboardRotationComponent(keyboard, 50f));
+            new KeyboardMovementComponent(keyboard, 20f, 20f, 20f),
+            new KeyboardRotationComponent(keyboard, 50f));
 
         final Camera camera = new Camera(projection, components);
 
@@ -120,7 +119,7 @@ public class ObjRendererExample {
         final Fbo fbo = Fbo.create(width, height);
 
         final AttachmentIndex colourIndex = new ColourAttachmentIndex(0);
-        final AttachmentIndex depthIndex = new BasicAttachmentIndex(AttachmentType.DEPTH);
+        final AttachmentIndex depthIndex = DepthAttachmentIndex.INSTANCE;
         final RenderTarget target = new IndexRenderTarget(colourIndex);
 
         fbo.addAttachment(colourIndex, colorAttachment);

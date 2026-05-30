@@ -4,10 +4,9 @@ import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.DepthStencilAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBuffers> {
@@ -29,7 +28,7 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
     )
 
     @ScreenImageProperty
-    private val depthImage = ScreenImagePrototype(BasicAttachmentIndex(AttachmentType.DEPTH_STENCIL),
+    private val depthImage = ScreenImagePrototype(DepthStencilAttachmentIndex,
         TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8)
     )
 

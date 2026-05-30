@@ -4,10 +4,9 @@ import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.DepthAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuffers> {
@@ -21,7 +20,7 @@ class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuff
         TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16), read = true)
 
     @ScreenImageProperty
-    private val depthImage = ScreenImagePrototype(BasicAttachmentIndex(AttachmentType.DEPTH),
+    private val depthImage = ScreenImagePrototype(DepthAttachmentIndex,
         TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24))
 
     override val buffers = object : ForwardRenderingBuffers {
