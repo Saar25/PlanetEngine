@@ -1,10 +1,10 @@
 package org.saar.core.screen
 
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter
-import org.saar.lwjgl.opengl.fbo.IFbo
+import org.saar.lwjgl.opengl.fbo.ReadOnlyFbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 
-abstract class ScreenBase : Screen {
+abstract class FboScreen : Screen {
 
     override val width get() = this.fbo.width
 
@@ -20,5 +20,5 @@ abstract class ScreenBase : Screen {
 
     override fun setAsDraw() = this.fbo.bindAsDraw()
 
-    protected abstract val fbo: IFbo
+    protected abstract val fbo: ReadOnlyFbo
 }

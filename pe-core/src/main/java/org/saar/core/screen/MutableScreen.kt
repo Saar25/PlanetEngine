@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTargetComposite
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
-class MutableScreen(override val fbo: IFbo) : ScreenBase(), OffScreen {
+class MutableScreen(override val fbo: IFbo) : FboScreen(), OffScreen {
 
     private val attachments = mutableMapOf<AttachmentIndex, IAttachment>()
 

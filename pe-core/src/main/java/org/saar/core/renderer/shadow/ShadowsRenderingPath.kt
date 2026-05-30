@@ -6,7 +6,7 @@ import org.saar.core.light.IDirectionalLight
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderingOutput
 import org.saar.core.renderer.RenderingPath
-import org.saar.core.screen.Screens
+import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.fbo.Fbo
@@ -27,13 +27,13 @@ class ShadowsRenderingPath @JvmOverloads constructor(
 
     private val prototype = ShadowsScreenPrototype()
 
-    private val screen = Screens.fromPrototype(this.prototype,
+    private val screen = this.prototype.toScreen(
         Fbo.create(quality.imageSize, quality.imageSize),
         SimpleAllocationStrategy())
 
     private val staticPrototype = ShadowsScreenPrototype()
 
-    private val staticScreen = Screens.fromPrototype(this.staticPrototype,
+    private val staticScreen = this.staticPrototype.toScreen(
         Fbo.create(quality.imageSize, quality.imageSize),
         SimpleAllocationStrategy())
 

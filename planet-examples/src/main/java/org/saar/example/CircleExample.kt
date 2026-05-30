@@ -12,7 +12,7 @@ import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
-import org.saar.core.screen.Screens
+import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -58,7 +58,7 @@ fun main() {
     val fbo = Fbo.create(WIDTH, HEIGHT)
     val screenPrototype = MyScreenPrototype()
     val allocation = SimpleAllocationStrategy()
-    val screen = Screens.fromPrototype(screenPrototype, fbo, allocation)
+    val screen = screenPrototype.toScreen(fbo, allocation)
 
     val painter = MyPostProcessor()
     val swizzle = SwizzlePostProcessor(Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)

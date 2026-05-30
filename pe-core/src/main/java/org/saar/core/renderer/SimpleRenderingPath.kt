@@ -2,7 +2,7 @@ package org.saar.core.renderer
 
 import org.saar.core.camera.ICamera
 import org.saar.core.renderer.renderpass.RenderPassBuffers
-import org.saar.core.screen.Screens
+import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
 import org.saar.lwjgl.opengl.depth.DepthMask
@@ -25,8 +25,8 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
         StencilMask.UNCHANGED
     )
 
-    private val screenA = Screens.fromPrototype(this.prototype, Fbo.create(0, 0), SimpleAllocationStrategy())
-    private val screenB = Screens.fromPrototype(this.prototype, Fbo.create(0, 0), SimpleAllocationStrategy())
+    private val screenA = this.prototype.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy())
+    private val screenB = this.prototype.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy())
     private val swapScreen = mapOf(screenA to screenB, screenB to screenA)
 
     override fun render(): RenderingOutput<T> {

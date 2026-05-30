@@ -54,6 +54,9 @@ class ScreenBuilder(private val fbo: IFbo) {
         return this
     }
 
+    fun addDepthStencilRenderBuffer(format: InternalFormat) =
+        addDepthStencilAttachment(RenderBufferAttachmentBuffer(format))
+
     fun addDepthStencilAttachment(buffer: AttachmentBuffer): ScreenBuilder {
         val layer = Layer(DepthStencilAttachmentIndex, buffer, read = false, draw = false)
         this.layers.add(layer)
@@ -94,8 +97,6 @@ class ScreenBuilder(private val fbo: IFbo) {
         if (drawIndices.isNotEmpty()) {
             screen.setDrawImages(drawIndices)
         }
-
-        this.fbo.ensureStatus()
 
         return screen
     }

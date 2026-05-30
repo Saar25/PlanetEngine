@@ -35,4 +35,6 @@ object Screens {
 
         return screen
     }
+
+    fun ScreenPrototype.toScreen(fbo: IFbo, allocation: AllocationStrategy) = fromPrototype(this, fbo, allocation)
 }
