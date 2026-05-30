@@ -4,7 +4,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -33,13 +32,10 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
     @UniformProperty(UniformTrigger.PER_INSTANCE)
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
-    @ShaderProperty
-    private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
+    )
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_colour", "in_transformation")

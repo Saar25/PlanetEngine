@@ -4,7 +4,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -30,13 +29,12 @@ private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflected
     @UniformProperty
     private val normalUniform = Vec3UniformValue("u_normal")
 
-    @ShaderProperty
-    private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.fragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.fragment.glsl"))
+    )
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_normal")

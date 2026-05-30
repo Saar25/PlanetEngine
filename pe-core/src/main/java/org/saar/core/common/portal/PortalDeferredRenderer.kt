@@ -3,7 +3,6 @@ package org.saar.core.common.portal
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -30,13 +29,10 @@ private class PortalDeferredRendererPrototype : RendererPrototype<PortalModel> {
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
 
-    @ShaderProperty
-    private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/portal/portal.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/portal/portal.dfragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/portal/portal.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/portal/portal.dfragment.glsl"))
+    )
 
     override fun vertexAttributes() = arrayOf("in_position")
 

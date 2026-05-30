@@ -38,6 +38,7 @@ object Maths {
      * @param p3 3rd point on the plane
      * @return the normal to the plane
      */
+    @JvmStatic
     fun calculateNormal(p1: Vector3fc, p2: Vector3fc, p3: Vector3fc): Vector3f {
         val v1 = p2.sub(p1, create())
         val v2 = p3.sub(p1, create())
@@ -65,6 +66,7 @@ object Maths {
      * @param max the maximum value
      * @return the clamped value
      */
+    @JvmStatic
     fun clamp(a: Int, min: Int, max: Int): Int {
         if (a < min) return min
         if (a > max) return max
@@ -92,6 +94,7 @@ object Maths {
      * @param max the maximum value
      * @return true if the value is between or equals false otherwise
      */
+    @JvmStatic
     fun isInside(a: Float, min: Float, max: Float): Boolean {
         return a in min..max
     }
@@ -105,6 +108,7 @@ object Maths {
      * @param scalar the scalar
      * @return The mixed vector
      */
+    @JvmStatic
     fun mix(vec1: Vector3fc, vec2: Vector3fc, scalar: Float): Vector3f {
         val v = vec1.mul(1 - scalar, create())
         val vector3f = vec2.mul(scalar, create())

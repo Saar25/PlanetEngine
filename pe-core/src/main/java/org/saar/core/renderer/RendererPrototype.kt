@@ -1,21 +1,19 @@
-package org.saar.core.renderer;
+package org.saar.core.renderer
 
-public interface RendererPrototype<T> {
+import org.saar.lwjgl.opengl.shader.Shader
 
-    default String[] vertexAttributes() {
-        return new String[0];
+interface RendererPrototype<T> {
+    fun vertexAttributes(): Array<String> = arrayOf()
+
+    fun fragmentOutputs(): Array<String> = arrayOf()
+
+    val shaders: Array<Shader> get() = emptyArray()
+
+    fun onRenderCycle(context: RenderContext) {
     }
 
-    default String[] fragmentOutputs() {
-        return new String[0];
+    fun onInstanceDraw(context: RenderContext, instance: T) {
     }
 
-    default void onRenderCycle(RenderContext context) {
-    }
-
-    default void onInstanceDraw(RenderContext context, T instance) {
-    }
-
-    void doInstanceDraw(RenderContext context, T instance);
-
+    fun doInstanceDraw(context: RenderContext, instance: T)
 }

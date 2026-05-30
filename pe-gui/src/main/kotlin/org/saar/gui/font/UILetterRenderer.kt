@@ -3,7 +3,6 @@ package org.saar.gui.font
 import org.joml.Vector2i
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -53,13 +52,12 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     @UniformProperty
     private val bitmapBoundsUniform = Vec4iUniformValue("u_bitmapBounds")
 
-    @ShaderProperty
-    private val vertex: Shader = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/gui/render/letter.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment: Shader = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/gui/render/letter.fragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/render/letter.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/render/letter.fragment.glsl"))
+    )
 
     override fun fragmentOutputs() = arrayOf("fragColour")
 
