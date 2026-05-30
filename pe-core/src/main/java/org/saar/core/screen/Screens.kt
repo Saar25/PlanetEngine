@@ -1,10 +1,8 @@
 package org.saar.core.screen
 
-import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.opengl.fbo.IFbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
-import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.DepthAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.DepthStencilAttachmentIndex
@@ -17,20 +15,19 @@ object Screens {
     @JvmStatic
     fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo, allocation: AllocationStrategy): OffScreen {
         val screenImagesMap = buildMap {
-            prototype.colorBuffers.withIndex().forEach { (index, buffer) -> put(ColorAttachmentIndex.at(index), buffer) }
+            prototype.colorBuffers.withIndex()
+                .forEach { (index, buffer) -> put(ColorAttachmentIndex.at(index), buffer) }
             prototype.depthBuffer?.let { put(DepthAttachmentIndex, it) }
             prototype.stencilBuffer?.let { put(StencilAttachmentIndex, it) }
             prototype.depthStencilBuffer?.let { put(DepthStencilAttachmentIndex, it) }
         }
 
         val attachments = screenImagesMap.mapValues { (index, buffer) ->
-            val attachment = Attachment(buffer, allocation)
-            fbo.addAttachment(index, attachment)
-            SimpleScreenImage(attachment)
+            Attachment(buffer, allocation).also { fbo.addAttachment(index, it) }
         }
 
         setReadTarget(fbo, prototype)
-        setDrawTargets(fbo, prototype.colorBuffers)
+        setDrawTargets(fbo, prototype)
 
         return ScreenPrototypeWrapper(fbo, attachments)
     }
@@ -42,8 +39,11 @@ object Screens {
         }
     }
 
-    private fun setDrawTargets(fbo: IFbo, prototypes: Collection<AttachmentBuffer>) {
-        val drawRenderTargets = List(prototypes.size) { ColorAttachmentIndex.at(it) }.map(::IndexRenderTarget)
+    private fun setDrawTargets(fbo: IFbo, prototype: ScreenPrototype) {
+        val drawRenderTargets = List(prototype.colorBuffers.size) {
+            val index = ColorAttachmentIndex.at(it)
+            IndexRenderTarget(index)
+        }
 
         val renderTarget = DrawRenderTargetComposite(drawRenderTargets)
 

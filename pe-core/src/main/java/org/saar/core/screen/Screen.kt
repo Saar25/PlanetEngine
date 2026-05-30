@@ -1,22 +1,19 @@
-package org.saar.core.screen;
+package org.saar.core.screen
 
-import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter
+import org.saar.lwjgl.opengl.utils.GlBuffer
 
-public interface Screen {
+interface Screen {
 
-    int getWidth();
+    val width: Int
 
-    int getHeight();
+    val height: Int
 
-    default void copyTo(Screen other) {
-        copyTo(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR);
-    }
+    fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer)
 
-    void copyTo(Screen other, FboBlitFilter filter, GlBuffer... buffers);
+    fun setAsDraw()
 
-    void setAsDraw();
-
-    void setAsRead();
-
+    fun setAsRead()
 }
+
+fun Screen.copyTo(other: Screen) = copyTo(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR)

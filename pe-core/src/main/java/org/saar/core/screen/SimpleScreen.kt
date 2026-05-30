@@ -1,59 +1,30 @@
-package org.saar.core.screen;
+package org.saar.core.screen
 
-import org.saar.core.screen.image.ScreenImage;
-import org.saar.lwjgl.opengl.fbo.IFbo;
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.rendertarget.*;
+import org.saar.lwjgl.opengl.fbo.IFbo
+import org.saar.lwjgl.opengl.fbo.attachment.IAttachment
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTargetComposite
+import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+class SimpleScreen(override val fbo: IFbo) : ScreenBase(), OffScreen {
 
-public class SimpleScreen extends ScreenBase implements OffScreen {
+    override val attachments = mutableMapOf<AttachmentIndex, IAttachment>()
 
-    private final IFbo fbo;
-
-    private final Map<AttachmentIndex, ScreenImage> images = new HashMap<>();
-
-    public SimpleScreen(IFbo fbo) {
-        this.fbo = fbo;
+    fun addAttachment(index: AttachmentIndex, attachment: IAttachment) {
+        this.attachments[index]?.delete()
+        this.fbo.addAttachment(index, attachment)
+        this.attachments[index] = attachment
     }
 
-    public void addScreenImage(AttachmentIndex index, ScreenImage image) {
-        getFbo().addAttachment(index, image.getAttachment());
-        getScreenImages().put(index, image);
+    fun setDrawImages(vararg indices: ColorAttachmentIndex) {
+        val targets = indices.map(::IndexRenderTarget)
+        val target = DrawRenderTargetComposite(targets)
+        this.fbo.setDrawTarget(target)
     }
 
-    public void setDrawImages(AttachmentIndex... indices) {
-        final SingleRenderTarget[] targets = Arrays.stream(indices)
-                .map(IndexRenderTarget::new)
-                .toArray(SingleRenderTarget[]::new);
-        final DrawRenderTarget target = new DrawRenderTargetComposite(targets);
-        getFbo().setDrawTarget(target);
-    }
-
-    public void setReadImages(AttachmentIndex index) {
-        final ReadRenderTarget target = new IndexRenderTarget(index);
-        getFbo().setReadTarget(target);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-    }
-
-    @Override
-    protected IFbo getFbo() {
-        return this.fbo;
-    }
-
-    @Override
-    protected Map<AttachmentIndex, ScreenImage> getScreenImages() {
-        return this.images;
+    fun setReadImages(index: ColorAttachmentIndex) {
+        val target = IndexRenderTarget(index)
+        this.fbo.setReadTarget(target)
     }
 }

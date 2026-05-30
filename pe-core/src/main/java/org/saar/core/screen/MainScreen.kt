@@ -8,9 +8,9 @@ object MainScreen : Screen {
 
     private val fbo: ScreenFbo get() = ScreenFbo.getInstance()
 
-    override fun getWidth() = this.fbo.width
+    override val width get() = this.fbo.width
 
-    override fun getHeight() = this.fbo.height
+    override val height get() = this.fbo.height
 
     override fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer) {
         setAsRead()

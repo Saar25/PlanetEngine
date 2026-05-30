@@ -13,6 +13,7 @@ import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.ScreenKt;
 import org.saar.core.screen.Screens;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -61,7 +62,7 @@ public class ScreenExample {
 
             renderer.render(new RenderContext(camera), cottageModel);
 
-            screen.copyTo(MainScreen.INSTANCE);
+            ScreenKt.copyTo(screen, MainScreen.INSTANCE);
 
             window.swapBuffers();
             window.pollEvents();
@@ -77,8 +78,8 @@ public class ScreenExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final NodeComponentGroup component = new NodeComponentGroup(
-                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
-                new KeyboardRotationComponent(keyboard, 50f));
+            new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+            new KeyboardRotationComponent(keyboard, 50f));
 
         final Camera camera = new Camera(projection, component);
 

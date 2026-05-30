@@ -3,6 +3,7 @@ package org.saar.example;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.Screen;
 import org.saar.core.screen.ScreenBuilder;
+import org.saar.core.screen.ScreenKt;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.attribute.AttributeComposite;
@@ -66,7 +67,7 @@ public class StencilExample {
             vao2.bind();
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            screen.copyTo(MainScreen.INSTANCE);
+            ScreenKt.copyTo(screen, MainScreen.INSTANCE);
 
             window.swapBuffers();
             window.pollEvents();

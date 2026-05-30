@@ -1,6 +1,5 @@
 package org.saar.core.screen
 
-import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.IFbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
@@ -71,15 +70,15 @@ class ScreenBuilder(private val fbo: IFbo) {
         val screen = SimpleScreen(this.fbo)
 
         layers.forEach { layer ->
-            val image = SimpleScreenImage(Attachment(layer.buffer, this.allocationStrategy))
-            screen.addScreenImage(layer.index, image)
+            val attachment = Attachment(layer.buffer, this.allocationStrategy)
+            screen.addAttachment(layer.index, attachment)
         }
 
         val readEntries = layers.filter { it.read }
         require(readEntries.size <= 1) { "Multiple read attachments" }
-        readEntries.firstOrNull()?.let { screen.setReadImages(it.index) }
+        readEntries.firstOrNull()?.let { screen.setReadImages(it.index as ColorAttachmentIndex) }
 
-        val drawIndices = layers.filter { it.draw }.map { it.index }
+        val drawIndices = layers.filter { it.draw }.map { it.index as ColorAttachmentIndex }
         if (drawIndices.isNotEmpty()) {
             screen.setDrawImages(*drawIndices.toTypedArray())
         }

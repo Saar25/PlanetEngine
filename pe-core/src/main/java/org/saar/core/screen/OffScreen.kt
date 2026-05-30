@@ -1,21 +1,16 @@
-package org.saar.core.screen;
+package org.saar.core.screen
 
-public interface OffScreen extends Screen {
+interface OffScreen : Screen {
 
-    void resize(int width, int height);
+    fun resize(width: Int, height: Int)
 
-    default void assureSize(int width, int height) {
-        if (width != getWidth() || height != getHeight()) {
-            resize(width, height);
+    fun assureSize(width: Int, height: Int) {
+        if (width != this.width || height != this.height) {
+            resize(width, height)
         }
     }
 
-    default void resizeToMainScreen() {
-        final int width = MainScreen.INSTANCE.getWidth();
-        final int height = MainScreen.INSTANCE.getHeight();
-        assureSize(width, height);
-    }
+    fun resizeToMainScreen() = assureSize(MainScreen.width, MainScreen.height)
 
-    void delete();
-
+    fun delete()
 }

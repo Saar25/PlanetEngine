@@ -1,59 +1,42 @@
-package org.saar.core.screen;
+package org.saar.core.screen
 
-import org.saar.core.screen.image.ScreenImage;
-import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
-import org.saar.lwjgl.opengl.fbo.IFbo;
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter
+import org.saar.lwjgl.opengl.fbo.IFbo
+import org.saar.lwjgl.opengl.fbo.attachment.IAttachment
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
+import org.saar.lwjgl.opengl.utils.GlBuffer
 
-import java.util.Map;
+abstract class ScreenBase : Screen {
 
-public abstract class ScreenBase implements Screen {
+    override val width get() = this.fbo.width
 
-    @Override
-    public int getWidth() {
-        return getFbo().getWidth();
+    override val height get() = this.fbo.height
+
+    override fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer) {
+        setAsRead()
+        other.setAsDraw()
+        this.fbo.blitFramebuffer(
+            0, 0, this.width, this.height,
+            0, 0, other.width, other.height,
+            filter, buffers)
     }
 
-    @Override
-    public int getHeight() {
-        return getFbo().getHeight();
+    override fun setAsDraw() = this.fbo.bindAsDraw()
+
+    override fun setAsRead() = this.fbo.bindAsRead()
+
+    fun resize(width: Int, height: Int) {
+        this.fbo.bind()
+        this.fbo.resize(width, height)
+        this.attachments.forEach { (index, attachment) -> attachment.init(this.fbo, index) }
     }
 
-    @Override
-    public void copyTo(Screen other, FboBlitFilter filter, GlBuffer... buffers) {
-        setAsRead();
-        other.setAsDraw();
-        getFbo().blitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0,
-                other.getWidth(), other.getHeight(), filter, buffers);
+    fun delete() {
+        this.fbo.delete()
+        this.attachments.values.forEach(IAttachment::delete)
     }
 
-    @Override
-    public void setAsDraw() {
-        getFbo().bindAsDraw();
-    }
+    protected abstract val fbo: IFbo
 
-    @Override
-    public void setAsRead() {
-        getFbo().bindAsRead();
-    }
-
-    protected void resize(int width, int height) {
-        getFbo().bind();
-        getFbo().resize(width, height);
-        for (Map.Entry<AttachmentIndex, ScreenImage> entry : getScreenImages().entrySet()) {
-            entry.getValue().init(getFbo(), entry.getKey());
-        }
-    }
-
-    protected void delete() {
-        getFbo().delete();
-        for (ScreenImage screenImage : getScreenImages().values()) {
-            screenImage.delete();
-        }
-    }
-
-    protected abstract IFbo getFbo();
-
-    protected abstract Map<AttachmentIndex, ScreenImage> getScreenImages();
+    protected abstract val attachments: Map<AttachmentIndex, IAttachment>
 }
