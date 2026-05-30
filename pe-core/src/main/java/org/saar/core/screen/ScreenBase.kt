@@ -2,8 +2,6 @@ package org.saar.core.screen
 
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter
 import org.saar.lwjgl.opengl.fbo.IFbo
-import org.saar.lwjgl.opengl.fbo.attachment.IAttachment
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
 import org.saar.lwjgl.opengl.utils.GlBuffer
 
 abstract class ScreenBase : Screen {
@@ -25,18 +23,5 @@ abstract class ScreenBase : Screen {
 
     override fun setAsRead() = this.fbo.bindAsRead()
 
-    fun resize(width: Int, height: Int) {
-        this.fbo.bind()
-        this.fbo.resize(width, height)
-        this.attachments.forEach { (index, attachment) -> attachment.init(this.fbo, index) }
-    }
-
-    fun delete() {
-        this.fbo.delete()
-        this.attachments.values.forEach(IAttachment::delete)
-    }
-
     protected abstract val fbo: IFbo
-
-    protected abstract val attachments: Map<AttachmentIndex, IAttachment>
 }

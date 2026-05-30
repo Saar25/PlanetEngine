@@ -14,7 +14,7 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class ScreenBuilder(private val fbo: IFbo) {
 
-    private val layers = ArrayList<Layer>()
+    private val layers = mutableListOf<Layer>()
 
     private var allocationStrategy: AllocationStrategy = SimpleAllocationStrategy()
 
@@ -26,61 +26,73 @@ class ScreenBuilder(private val fbo: IFbo) {
     }
 
     @JvmOverloads
-    fun addColourTexture(texture: MutableTexture2D = MutableTexture2D.create(),
-                         format: InternalFormat,
-                         read: Boolean,
-                         draw: Boolean): ScreenBuilder {
+    fun addColourTexture(texture: MutableTexture2D = MutableTexture2D.create(), format: InternalFormat): ScreenBuilder {
+        return addColorAttachment(TextureAttachmentBuffer(texture, format))
+    }
+
+    fun addColorRenderBuffer(format: InternalFormat): ScreenBuilder {
+        return addColorAttachment(RenderBufferAttachmentBuffer(format))
+    }
+
+    fun addColorAttachment(buffer: AttachmentBuffer): ScreenBuilder {
         val index = ColorAttachmentIndex.at(this.nextColourIndex++)
-        this.layers.add(Layer(index, TextureAttachmentBuffer(texture, format), read, draw))
+        this.layers.add(Layer(index, buffer, read = false, draw = true))
         return this
     }
 
-    fun addColourRenderBuffer(format: InternalFormat, read: Boolean, draw: Boolean): ScreenBuilder {
-        val index = ColorAttachmentIndex.at(this.nextColourIndex++)
-        this.layers.add(Layer(index, RenderBufferAttachmentBuffer(format), read, draw))
+    fun addDepthAttachment(buffer: AttachmentBuffer): ScreenBuilder {
+        val layer = Layer(DepthAttachmentIndex, buffer, read = false, draw = false)
+        this.layers.add(layer)
+        return this
+    }
+
+    fun addStencilRenderBuffer(format: InternalFormat) = addStencilAttachment(RenderBufferAttachmentBuffer(format))
+
+    fun addStencilAttachment(buffer: AttachmentBuffer): ScreenBuilder {
+        val layer = Layer(StencilAttachmentIndex, buffer, read = false, draw = false)
+        this.layers.add(layer)
+        return this
+    }
+
+    fun addDepthStencilAttachment(buffer: AttachmentBuffer): ScreenBuilder {
+        val layer = Layer(DepthStencilAttachmentIndex, buffer, read = false, draw = false)
+        this.layers.add(layer)
         return this
     }
 
     @JvmOverloads
-    fun addDepthTexture(texture: MutableTexture2D = MutableTexture2D.create(), format: InternalFormat): ScreenBuilder {
-        this.layers.add(Layer(DepthAttachmentIndex, TextureAttachmentBuffer(texture, format),
-            read = false, draw = false))
+    fun setRead(read: Boolean = true): ScreenBuilder {
+        val layer = this.layers.lastOrNull()
+            ?: throw IllegalStateException("Cannot set read before adding a color attachment")
+        require(layer.index is ColorAttachmentIndex) { "Cannot set read on a non-color attachment" }
+        layer.read = read
         return this
     }
 
-    fun addDepthRenderBuffer(format: InternalFormat): ScreenBuilder {
-        this.layers.add(Layer(DepthAttachmentIndex, RenderBufferAttachmentBuffer(format),
-            read = false, draw = false))
-        return this
-    }
-
-    fun addStencilRenderBuffer(format: InternalFormat): ScreenBuilder {
-        this.layers.add(Layer(StencilAttachmentIndex, RenderBufferAttachmentBuffer(format),
-            read = false, draw = false))
-        return this
-    }
-
-    fun addDepthStencilRenderBuffer(format: InternalFormat): ScreenBuilder {
-        this.layers.add(Layer(DepthStencilAttachmentIndex, RenderBufferAttachmentBuffer(format),
-            read = false, draw = false))
+    @JvmOverloads
+    fun setDraw(draw: Boolean = true): ScreenBuilder {
+        val layer = this.layers.lastOrNull()
+            ?: throw IllegalStateException("Cannot set draw before adding a color attachment")
+        require(layer.index is ColorAttachmentIndex) { "Cannot set draw on a non-color attachment" }
+        layer.draw = draw
         return this
     }
 
     fun build(): OffScreen {
-        val screen = SimpleScreen(this.fbo)
+        val screen = MutableScreen(this.fbo)
 
-        layers.forEach { layer ->
+        this.layers.forEach { layer ->
             val attachment = Attachment(layer.buffer, this.allocationStrategy)
             screen.addAttachment(layer.index, attachment)
         }
 
-        val readEntries = layers.filter { it.read }
+        val readEntries = this.layers.filter { it.read }
         require(readEntries.size <= 1) { "Multiple read attachments" }
-        readEntries.firstOrNull()?.let { screen.setReadImages(it.index as ColorAttachmentIndex) }
+        readEntries.firstOrNull()?.let { screen.setReadImage(it.index as ColorAttachmentIndex) }
 
-        val drawIndices = layers.filter { it.draw }.map { it.index as ColorAttachmentIndex }
+        val drawIndices = this.layers.filter { it.draw }.map { it.index as ColorAttachmentIndex }
         if (drawIndices.isNotEmpty()) {
-            screen.setDrawImages(*drawIndices.toTypedArray())
+            screen.setDrawImages(drawIndices)
         }
 
         this.fbo.ensureStatus()
@@ -91,7 +103,7 @@ class ScreenBuilder(private val fbo: IFbo) {
     private class Layer(
         val index: AttachmentIndex,
         val buffer: AttachmentBuffer,
-        val read: Boolean,
-        val draw: Boolean,
+        var read: Boolean,
+        var draw: Boolean,
     )
 }

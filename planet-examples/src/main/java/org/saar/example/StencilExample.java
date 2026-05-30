@@ -80,7 +80,7 @@ public class StencilExample {
         final IFbo fbo = Fbo.create(width, height);
 
         return new ScreenBuilder(fbo)
-            .addColourRenderBuffer(InternalFormat.RGBA8, true, true)
+            .addColorRenderBuffer(InternalFormat.RGBA8).setRead()
             .addStencilRenderBuffer(InternalFormat.STENCIL_INDEX8)
             .multisampled(4)
             .build();
