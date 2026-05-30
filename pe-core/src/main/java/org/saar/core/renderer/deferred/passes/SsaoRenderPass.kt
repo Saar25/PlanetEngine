@@ -17,7 +17,6 @@ import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
-import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
@@ -51,9 +50,10 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
-        @ScreenImageProperty
-        private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
-            TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F), read = true)
+        override val screenImages = listOf(
+            ScreenImagePrototype(ColourAttachmentIndex(0),
+                TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F), read = true)
+        )
     }, Fbo.create(0, 0), SimpleAllocationStrategy())
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)

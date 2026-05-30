@@ -1,5 +1,5 @@
-package org.saar.core.screen;
+package org.saar.core.screen
 
-public interface ScreenPrototype {
-
+interface ScreenPrototype {
+    val screenImages: Collection<ScreenImagePrototype>
 }

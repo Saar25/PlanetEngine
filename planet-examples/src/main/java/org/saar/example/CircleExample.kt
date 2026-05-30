@@ -14,7 +14,6 @@ import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
-import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -94,9 +93,10 @@ fun main() {
 private class MyScreenPrototype : ScreenPrototype {
     val image: MutableTexture2D = MutableTexture2D.create()
 
-    @ScreenImageProperty
-    private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
-        TextureAttachmentBuffer(this.image, InternalFormat.R8), read = true)
+    override val screenImages = listOf(
+        ScreenImagePrototype(ColourAttachmentIndex(0),
+            TextureAttachmentBuffer(this.image, InternalFormat.R8), read = true)
+    )
 
     val buffers = object : RenderingBuffers2D {
         override val albedo = image

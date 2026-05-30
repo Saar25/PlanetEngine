@@ -2,7 +2,6 @@ package org.saar.core.renderer.deferred
 
 import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.core.screen.ScreenImagePrototype
-import org.saar.core.screen.annotations.ScreenImageProperty
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
@@ -17,19 +16,20 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
 
     private val depthTexture = MutableTexture2D.create()
 
-    @ScreenImageProperty
-    private val colourImage = ScreenImagePrototype(ColourAttachmentIndex(0),
-        TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGBA16F), read = true
-    )
-
-    @ScreenImageProperty
-    private val normalSpecularImage = ScreenImagePrototype(ColourAttachmentIndex(1),
-        TextureAttachmentBuffer(this.normalSpecularTexture, InternalFormat.RGBA16F)
-    )
-
-    @ScreenImageProperty
-    private val depthImage = ScreenImagePrototype(DepthStencilAttachmentIndex,
-        TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8)
+    override val screenImages = listOf(
+        ScreenImagePrototype(
+            ColourAttachmentIndex(0),
+            TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGBA16F),
+            read = true
+        ),
+        ScreenImagePrototype(
+            ColourAttachmentIndex(1),
+            TextureAttachmentBuffer(this.normalSpecularTexture, InternalFormat.RGBA16F)
+        ),
+        ScreenImagePrototype(
+            DepthStencilAttachmentIndex,
+            TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8)
+        )
     )
 
     override val buffers = object : DeferredRenderingBuffers {

@@ -16,10 +16,9 @@ object Screens {
 
     @JvmStatic
     fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo, allocation: AllocationStrategy): OffScreen {
-        val locator = ScreenImagesLocator(prototype)
         val screenImagesMap = mutableMapOf<AttachmentIndex, ScreenImage>()
 
-        val imagesPrototypes = locator.screenImagePrototypes.sortedBy { it.index.value }
+        val imagesPrototypes = prototype.screenImages.sortedBy { it.index.value }
         val colourImagesPrototypes = imagesPrototypes.filter { it.index.type == AttachmentType.COLOUR }
         val otherImagesPrototypes = imagesPrototypes.filter { it.index.type != AttachmentType.COLOUR }
 
@@ -46,10 +45,8 @@ object Screens {
     }
 
     private fun setReadTarget(fbo: IFbo, prototypes: List<ScreenImagePrototype>) {
-        val readPrototypeIndex = prototypes.indexOfFirst { it.read }
-        if (readPrototypeIndex >= 0) {
-            val readIndex = ColourAttachmentIndex(readPrototypeIndex)
-            fbo.setReadTarget(IndexRenderTarget(readIndex))
+        prototypes.firstOrNull { it.read }?.let { image ->
+            fbo.setReadTarget(IndexRenderTarget(image.index))
         }
     }
 
