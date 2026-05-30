@@ -40,7 +40,7 @@ class SimpleTransform : Transform {
 
     override fun lookAt(position: ReadonlyPosition) {
         val direction = Vector3.sub(
-            position.value, position.value)
+            this.position.value, position.value)
         rotation.lookAlong(direction)
     }
 
