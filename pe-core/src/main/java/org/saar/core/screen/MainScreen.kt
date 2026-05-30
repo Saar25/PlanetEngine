@@ -1,12 +1,12 @@
 package org.saar.core.screen
 
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter
-import org.saar.lwjgl.opengl.fbo.ScreenFbo
+import org.saar.lwjgl.opengl.fbo.WindowFbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 
 object MainScreen : Screen {
 
-    private val fbo: ScreenFbo get() = ScreenFbo.getInstance()
+    private val fbo: WindowFbo get() = WindowFbo.getInstance()
 
     override val width get() = this.fbo.width
 

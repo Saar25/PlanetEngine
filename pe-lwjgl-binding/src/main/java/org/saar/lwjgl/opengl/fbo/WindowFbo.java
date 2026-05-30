@@ -6,15 +6,15 @@ import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
-public class ScreenFbo implements ReadOnlyFbo, ReadableFbo, DrawableFbo {
+public class WindowFbo implements ReadOnlyFbo, ReadableFbo, DrawableFbo {
 
-    private static final ScreenFbo instance = new ScreenFbo();
+    private static final WindowFbo instance = new WindowFbo();
 
-    private ScreenFbo() {
+    private WindowFbo() {
     }
 
-    public static ScreenFbo getInstance() {
-        return ScreenFbo.instance;
+    public static WindowFbo getInstance() {
+        return WindowFbo.instance;
     }
 
     private Fbo getFbo() {
