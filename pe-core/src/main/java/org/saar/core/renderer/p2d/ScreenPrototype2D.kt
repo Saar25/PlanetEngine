@@ -12,9 +12,12 @@ class ScreenPrototype2D : RenderingPathScreenPrototype<RenderingBuffers2D> {
     private val colourTexture = MutableTexture2D.create()
 
     override val screenImages = listOf(
-        ScreenImagePrototype(ColourAttachmentIndex(0),
-            TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16F), read = true)
+        ScreenImagePrototype(
+            ColourAttachmentIndex(0),
+            TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16F))
     )
+
+    override val readIndex = ColourAttachmentIndex(0)
 
     override val buffers = object : RenderingBuffers2D {
         override val albedo = colourTexture

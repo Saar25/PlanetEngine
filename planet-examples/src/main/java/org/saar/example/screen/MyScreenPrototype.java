@@ -1,6 +1,7 @@
 package org.saar.example.screen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.saar.core.screen.ScreenImagePrototype;
 import org.saar.core.screen.ScreenPrototype;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -18,13 +19,16 @@ public class MyScreenPrototype implements ScreenPrototype {
             new ScreenImagePrototype(
                 new ColourAttachmentIndex(0),
                 new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
-                true,
                 true),
             new ScreenImagePrototype(
                 DepthAttachmentIndex.INSTANCE,
                 new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
-                true,
-                false)
+                true)
         );
+    }
+
+    @Override
+    public @Nullable ColourAttachmentIndex getReadIndex() {
+        return new ColourAttachmentIndex(0);
     }
 }

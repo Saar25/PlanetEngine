@@ -7,8 +7,6 @@ import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
-import org.saar.lwjgl.opengl.fbo.attachment.index.BasicAttachmentIndex
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTargetComposite
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
@@ -20,43 +18,33 @@ object Screens {
 
         val imagesPrototypes = prototype.screenImages.sortedBy { it.index.value }
         val colourImagesPrototypes = imagesPrototypes.filter { it.index.type == AttachmentType.COLOUR }
-        val otherImagesPrototypes = imagesPrototypes.filter { it.index.type != AttachmentType.COLOUR }
 
-        colourImagesPrototypes.forEachIndexed { i, p ->
-            val index = ColourAttachmentIndex(i)
+        imagesPrototypes.forEach { p ->
             val attachment = Attachment(p.buffer, allocation)
-            fbo.addAttachment(index, attachment)
+            fbo.addAttachment(p.index, attachment)
 
-            screenImagesMap[index] = SimpleScreenImage(attachment)
+            screenImagesMap[p.index] = SimpleScreenImage(attachment)
         }
 
-        otherImagesPrototypes.forEach { p ->
-            val index = BasicAttachmentIndex(p.index.type)
-            val attachment = Attachment(p.buffer, allocation)
-            fbo.addAttachment(index, attachment)
-
-            screenImagesMap[index] = SimpleScreenImage(attachment)
-        }
-
-        setReadTarget(fbo, colourImagesPrototypes)
+        setReadTarget(fbo, prototype)
         setDrawTargets(fbo, colourImagesPrototypes)
 
         return ScreenPrototypeWrapper(fbo, screenImagesMap)
     }
 
-    private fun setReadTarget(fbo: IFbo, prototypes: List<ScreenImagePrototype>) {
-        prototypes.firstOrNull { it.read }?.let { image ->
-            fbo.setReadTarget(IndexRenderTarget(image.index))
+    private fun setReadTarget(fbo: IFbo, prototype: ScreenPrototype) {
+        prototype.readIndex?.let {
+            val target = IndexRenderTarget(it)
+            fbo.setReadTarget(target)
         }
     }
 
     private fun setDrawTargets(fbo: IFbo, prototypes: List<ScreenImagePrototype>) {
         val drawRenderTargets = prototypes
-            .foldIndexed(arrayOf<AttachmentIndex>()) { index, indices, imagePrototype ->
-                if (imagePrototype.draw) indices + ColourAttachmentIndex(index) else indices
-            }.map { IndexRenderTarget(it) }
+            .filter { it.draw }
+            .map { IndexRenderTarget(it.index) }
 
-        val renderTarget = DrawRenderTargetComposite(*drawRenderTargets.toTypedArray())
+        val renderTarget = DrawRenderTargetComposite(drawRenderTargets)
 
         fbo.setDrawTarget(renderTarget)
     }

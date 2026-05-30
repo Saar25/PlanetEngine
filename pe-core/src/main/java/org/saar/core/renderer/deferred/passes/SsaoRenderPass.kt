@@ -52,8 +52,9 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
         override val screenImages = listOf(
             ScreenImagePrototype(ColourAttachmentIndex(0),
-                TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F), read = true)
+                TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F))
         )
+        override val readIndex = ColourAttachmentIndex(0)
     }, Fbo.create(0, 0), SimpleAllocationStrategy())
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)

@@ -20,7 +20,6 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
         ScreenImagePrototype(
             ColourAttachmentIndex(0),
             TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGBA16F),
-            read = true
         ),
         ScreenImagePrototype(
             ColourAttachmentIndex(1),
@@ -31,6 +30,8 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
             TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8)
         )
     )
+
+    override val readIndex = ColourAttachmentIndex(0)
 
     override val buffers = object : DeferredRenderingBuffers {
         override val albedo = colourTexture

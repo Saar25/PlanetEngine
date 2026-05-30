@@ -7,5 +7,4 @@ data class ScreenImagePrototype(
     val index: AttachmentIndex,
     val buffer: AttachmentBuffer,
     val draw: Boolean = true,
-    val read: Boolean = false,
 )

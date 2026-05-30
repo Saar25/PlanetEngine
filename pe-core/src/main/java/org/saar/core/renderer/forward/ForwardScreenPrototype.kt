@@ -16,10 +16,12 @@ class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuff
 
     override val screenImages = listOf(
         ScreenImagePrototype(ColourAttachmentIndex(0),
-            TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16), read = true),
+            TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16)),
         ScreenImagePrototype(DepthAttachmentIndex,
             TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24))
     )
+
+    override val readIndex = ColourAttachmentIndex(0)
 
     override val buffers = object : ForwardRenderingBuffers {
         override val albedo = colourTexture

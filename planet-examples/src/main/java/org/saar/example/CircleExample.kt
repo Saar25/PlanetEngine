@@ -94,9 +94,12 @@ private class MyScreenPrototype : ScreenPrototype {
     val image: MutableTexture2D = MutableTexture2D.create()
 
     override val screenImages = listOf(
-        ScreenImagePrototype(ColourAttachmentIndex(0),
-            TextureAttachmentBuffer(this.image, InternalFormat.R8), read = true)
+        ScreenImagePrototype(
+            ColourAttachmentIndex(0),
+            TextureAttachmentBuffer(this.image, InternalFormat.R8))
     )
+
+    override val readIndex = ColourAttachmentIndex(0)
 
     val buffers = object : RenderingBuffers2D {
         override val albedo = image
