@@ -13,7 +13,6 @@ object MainScreen : Screen {
     override val height get() = this.fbo.height
 
     override fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer) {
-        setAsRead()
         other.setAsDraw()
         this.fbo.blitFramebuffer(
             0, 0, this.width, this.height,
@@ -22,6 +21,4 @@ object MainScreen : Screen {
     }
 
     override fun setAsDraw() = this.fbo.bindAsDraw()
-
-    override fun setAsRead() = this.fbo.bindAsRead()
 }

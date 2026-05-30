@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 
-public class WindowFbo implements ReadOnlyFbo, ReadableFbo, DrawableFbo {
+public class WindowFbo implements ReadOnlyFbo {
 
     private static final WindowFbo instance = new WindowFbo();
 

@@ -1,8 +1,7 @@
 package org.saar.lwjgl.opengl.fbo.copy
 
-import org.saar.lwjgl.opengl.fbo.DrawableFbo
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter
-import org.saar.lwjgl.opengl.fbo.ReadableFbo
+import org.saar.lwjgl.opengl.fbo.ReadOnlyFbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 
 class BlitCopyStrategy(
@@ -10,7 +9,7 @@ class BlitCopyStrategy(
     private val buffers: Array<GlBuffer>,
 ) : CopyStrategy {
 
-    override fun copy(from: ReadableFbo, to: DrawableFbo) {
+    override fun copy(from: ReadOnlyFbo, to: ReadOnlyFbo) {
         to.bindAsDraw()
         from.blitFramebuffer(
             0, 0, from.width, from.height,

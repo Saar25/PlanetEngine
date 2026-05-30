@@ -11,7 +11,6 @@ abstract class ScreenBase : Screen {
     override val height get() = this.fbo.height
 
     override fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer) {
-        setAsRead()
         other.setAsDraw()
         this.fbo.blitFramebuffer(
             0, 0, this.width, this.height,
@@ -20,8 +19,6 @@ abstract class ScreenBase : Screen {
     }
 
     override fun setAsDraw() = this.fbo.bindAsDraw()
-
-    override fun setAsRead() = this.fbo.bindAsRead()
 
     protected abstract val fbo: IFbo
 }

@@ -53,7 +53,7 @@ public class Fbo implements IFbo {
         blitFramebuffer(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR);
     }
 
-    public void blitFramebuffer(DrawableFbo fbo, FboBlitFilter filter, GlBuffer... buffers) {
+    public void blitFramebuffer(ReadOnlyFbo fbo, FboBlitFilter filter, GlBuffer... buffers) {
         fbo.bindAsDraw();
         blitFramebuffer(fbo.getWidth(), fbo.getHeight(), filter, buffers);
     }

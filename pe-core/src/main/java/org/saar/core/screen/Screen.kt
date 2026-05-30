@@ -12,8 +12,6 @@ interface Screen {
     fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer)
 
     fun setAsDraw()
-
-    fun setAsRead()
 }
 
 fun Screen.copyTo(other: Screen) = copyTo(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR)
