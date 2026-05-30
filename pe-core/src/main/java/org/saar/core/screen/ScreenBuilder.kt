@@ -31,13 +31,13 @@ class ScreenBuilder(private val fbo: IFbo) {
                          format: InternalFormat,
                          read: Boolean,
                          draw: Boolean): ScreenBuilder {
-        val index = ColourAttachmentIndex(this.nextColourIndex++)
+        val index = ColorAttachmentIndex.at(this.nextColourIndex++)
         this.layers.add(Layer(index, TextureAttachmentBuffer(texture, format), read, draw))
         return this
     }
 
     fun addColourRenderBuffer(format: InternalFormat, read: Boolean, draw: Boolean): ScreenBuilder {
-        val index = ColourAttachmentIndex(this.nextColourIndex++)
+        val index = ColorAttachmentIndex.at(this.nextColourIndex++)
         this.layers.add(Layer(index, RenderBufferAttachmentBuffer(format), read, draw))
         return this
     }

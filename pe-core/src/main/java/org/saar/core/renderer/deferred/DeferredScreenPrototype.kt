@@ -3,7 +3,7 @@ package org.saar.core.renderer.deferred
 import org.saar.core.renderer.RenderingPathScreenPrototype
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBuffers> {
@@ -21,7 +21,7 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
 
     override val depthStencilBuffer = TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24_STENCIL8)
 
-    override val readIndex = ColourAttachmentIndex(0)
+    override val readIndex = ColorAttachmentIndex.at(0)
 
     override val buffers = object : DeferredRenderingBuffers {
         override val albedo = colourTexture

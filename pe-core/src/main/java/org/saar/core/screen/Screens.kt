@@ -5,7 +5,7 @@ import org.saar.lwjgl.opengl.fbo.IFbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.DepthAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.DepthStencilAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.StencilAttachmentIndex
@@ -17,7 +17,7 @@ object Screens {
     @JvmStatic
     fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo, allocation: AllocationStrategy): OffScreen {
         val screenImagesMap = buildMap {
-            prototype.colorBuffers.withIndex().forEach { (index, buffer) -> put(ColourAttachmentIndex(index), buffer) }
+            prototype.colorBuffers.withIndex().forEach { (index, buffer) -> put(ColorAttachmentIndex.at(index), buffer) }
             prototype.depthBuffer?.let { put(DepthAttachmentIndex, it) }
             prototype.stencilBuffer?.let { put(StencilAttachmentIndex, it) }
             prototype.depthStencilBuffer?.let { put(DepthStencilAttachmentIndex, it) }
@@ -43,7 +43,7 @@ object Screens {
     }
 
     private fun setDrawTargets(fbo: IFbo, prototypes: Collection<AttachmentBuffer>) {
-        val drawRenderTargets = List(prototypes.size, ::ColourAttachmentIndex).map(::IndexRenderTarget)
+        val drawRenderTargets = List(prototypes.size) { ColorAttachmentIndex.at(it) }.map(::IndexRenderTarget)
 
         val renderTarget = DrawRenderTargetComposite(drawRenderTargets)
 

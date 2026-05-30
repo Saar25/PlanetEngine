@@ -21,7 +21,7 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -50,7 +50,7 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = Screens.fromPrototype(object : ScreenPrototype {
         override val colorBuffers = listOf(TextureAttachmentBuffer(ssaoTexture, InternalFormat.R16F))
-        override val readIndex = ColourAttachmentIndex(0)
+        override val readIndex = ColorAttachmentIndex.at(0)
     }, Fbo.create(0, 0), SimpleAllocationStrategy())
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)

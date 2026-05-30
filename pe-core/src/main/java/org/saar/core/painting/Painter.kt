@@ -8,7 +8,7 @@ import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
@@ -29,7 +29,7 @@ fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFor
             val allocation = SimpleAllocationStrategy()
             val buffer = TextureAttachmentBuffer(texture, internalFormat)
             val attachment = Attachment(buffer, allocation)
-            val index = ColourAttachmentIndex(0)
+            val index = ColorAttachmentIndex.at(0)
             val renderTarget = IndexRenderTarget(index)
 
             addAttachment(index, attachment)

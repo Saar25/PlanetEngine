@@ -21,7 +21,7 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
-import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -96,7 +96,7 @@ private class MyScreenPrototype : ScreenPrototype {
         TextureAttachmentBuffer(this.image, InternalFormat.R8)
     )
 
-    override val readIndex = ColourAttachmentIndex(0)
+    override val readIndex = ColorAttachmentIndex.at(0)
 
     val buffers = object : RenderingBuffers2D {
         override val albedo = image
