@@ -1,12 +1,14 @@
 package org.saar.core.screen
 
-import org.saar.core.screen.image.ScreenImage
 import org.saar.core.screen.image.SimpleScreenImage
 import org.saar.lwjgl.opengl.fbo.IFbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
-import org.saar.lwjgl.opengl.fbo.attachment.AttachmentType
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.ColourAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.DepthAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.DepthStencilAttachmentIndex
+import org.saar.lwjgl.opengl.fbo.attachment.index.StencilAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTargetComposite
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
@@ -14,22 +16,23 @@ object Screens {
 
     @JvmStatic
     fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo, allocation: AllocationStrategy): OffScreen {
-        val screenImagesMap = mutableMapOf<AttachmentIndex, ScreenImage>()
+        val screenImagesMap = buildMap {
+            prototype.colorBuffers.withIndex().forEach { (index, buffer) -> put(ColourAttachmentIndex(index), buffer) }
+            prototype.depthBuffer?.let { put(DepthAttachmentIndex, it) }
+            prototype.stencilBuffer?.let { put(StencilAttachmentIndex, it) }
+            prototype.depthStencilBuffer?.let { put(DepthStencilAttachmentIndex, it) }
+        }
 
-        val imagesPrototypes = prototype.screenImages.sortedBy { it.index.value }
-        val colourImagesPrototypes = imagesPrototypes.filter { it.index.type == AttachmentType.COLOUR }
-
-        imagesPrototypes.forEach { p ->
-            val attachment = Attachment(p.buffer, allocation)
-            fbo.addAttachment(p.index, attachment)
-
-            screenImagesMap[p.index] = SimpleScreenImage(attachment)
+        val attachments = screenImagesMap.mapValues { (index, buffer) ->
+            val attachment = Attachment(buffer, allocation)
+            fbo.addAttachment(index, attachment)
+            SimpleScreenImage(attachment)
         }
 
         setReadTarget(fbo, prototype)
-        setDrawTargets(fbo, colourImagesPrototypes)
+        setDrawTargets(fbo, prototype.colorBuffers)
 
-        return ScreenPrototypeWrapper(fbo, screenImagesMap)
+        return ScreenPrototypeWrapper(fbo, attachments)
     }
 
     private fun setReadTarget(fbo: IFbo, prototype: ScreenPrototype) {
@@ -39,10 +42,8 @@ object Screens {
         }
     }
 
-    private fun setDrawTargets(fbo: IFbo, prototypes: List<ScreenImagePrototype>) {
-        val drawRenderTargets = prototypes
-            .filter { it.draw }
-            .map { IndexRenderTarget(it.index) }
+    private fun setDrawTargets(fbo: IFbo, prototypes: Collection<AttachmentBuffer>) {
+        val drawRenderTargets = List(prototypes.size, ::ColourAttachmentIndex).map(::IndexRenderTarget)
 
         val renderTarget = DrawRenderTargetComposite(drawRenderTargets)
 

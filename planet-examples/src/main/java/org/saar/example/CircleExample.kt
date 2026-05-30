@@ -11,7 +11,6 @@ import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.core.screen.ScreenImagePrototype
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens
 import org.saar.lwjgl.glfw.window.Window
@@ -93,10 +92,8 @@ fun main() {
 private class MyScreenPrototype : ScreenPrototype {
     val image: MutableTexture2D = MutableTexture2D.create()
 
-    override val screenImages = listOf(
-        ScreenImagePrototype(
-            ColourAttachmentIndex(0),
-            TextureAttachmentBuffer(this.image, InternalFormat.R8))
+    override val colorBuffers = listOf(
+        TextureAttachmentBuffer(this.image, InternalFormat.R8)
     )
 
     override val readIndex = ColourAttachmentIndex(0)
