@@ -33,7 +33,7 @@ fun Painter.asRenderNode(): RenderNode = object : RenderNode {
 fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFormat): MutableTexture2D {
     return MutableTexture2D.create().also { texture ->
         val fbo = Fbo.create(width, height).apply {
-            val allocation = SimpleAllocationStrategy()
+            val allocation = SimpleAllocationStrategy
             val buffer = TextureAttachmentBuffer(texture, internalFormat)
             val attachment = Attachment(buffer, allocation)
             val index = ColorAttachmentIndex.at(0)

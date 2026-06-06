@@ -29,13 +29,13 @@ class ShadowsRenderingPath @JvmOverloads constructor(
 
     private val screen = this.prototype.toScreen(
         Fbo.create(quality.imageSize, quality.imageSize),
-        SimpleAllocationStrategy())
+        SimpleAllocationStrategy)
 
     private val staticPrototype = ShadowsScreenPrototype()
 
     private val staticScreen = this.staticPrototype.toScreen(
         Fbo.create(quality.imageSize, quality.imageSize),
-        SimpleAllocationStrategy())
+        SimpleAllocationStrategy)
 
     private var validStaticMap: Boolean = false
 

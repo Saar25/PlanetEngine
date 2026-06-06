@@ -16,7 +16,7 @@ class ScreenBuilder(private val fbo: IFbo) {
 
     private val layers = mutableListOf<Layer>()
 
-    private var allocationStrategy: AllocationStrategy = SimpleAllocationStrategy()
+    private var allocationStrategy: AllocationStrategy = SimpleAllocationStrategy
 
     private var nextColourIndex = 0
 

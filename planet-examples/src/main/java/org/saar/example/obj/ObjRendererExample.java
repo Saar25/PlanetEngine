@@ -42,11 +42,11 @@ public class ObjRendererExample {
 
         colorAttachment = new Attachment(
             new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
-            new SimpleAllocationStrategy());
+            SimpleAllocationStrategy.INSTANCE);
 
         depthAttachment = new Attachment(
             new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
-            new SimpleAllocationStrategy());
+            SimpleAllocationStrategy.INSTANCE);
 
         final Keyboard keyboard = window.getKeyboard();
 

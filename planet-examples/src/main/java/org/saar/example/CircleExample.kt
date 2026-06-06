@@ -58,7 +58,7 @@ fun main() {
 
     val fbo = Fbo.create(WIDTH, HEIGHT)
     val screenPrototype = MyScreenPrototype()
-    val allocation = SimpleAllocationStrategy()
+    val allocation = SimpleAllocationStrategy
     val screen = screenPrototype.toScreen(fbo, allocation)
 
     val painter = MyPostProcessor()

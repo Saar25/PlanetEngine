@@ -37,7 +37,7 @@ object Screens {
         return screen
     }
 
-    fun ScreenPrototype.toScreen(fbo: IFbo, allocation: AllocationStrategy = SimpleAllocationStrategy()): OffScreen {
+    fun ScreenPrototype.toScreen(fbo: IFbo, allocation: AllocationStrategy = SimpleAllocationStrategy): OffScreen {
         return fromPrototype(this, fbo, allocation)
     }
 }

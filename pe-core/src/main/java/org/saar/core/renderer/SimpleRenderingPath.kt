@@ -26,8 +26,8 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
         StencilMask.UNCHANGED
     )
 
-    private val screenA = this.prototypeA.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy())
-    private val screenB = this.prototypeB.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy())
+    private val screenA = this.prototypeA.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy)
+    private val screenB = this.prototypeB.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy)
     private val swapPrototype = mapOf(prototypeA to prototypeB, prototypeB to prototypeA)
     private val swapScreen = mapOf(screenA to screenB, screenB to screenA)
 

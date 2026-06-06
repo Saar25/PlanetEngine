@@ -69,7 +69,7 @@ public class InstancedModelExample {
 
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        final AllocationStrategy allocation = new SimpleAllocationStrategy();
+        final AllocationStrategy allocation = SimpleAllocationStrategy.INSTANCE;
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
         final Attachment attachment = new Attachment(buffer, allocation);
         final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
