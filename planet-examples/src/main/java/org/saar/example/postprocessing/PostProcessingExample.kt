@@ -6,14 +6,18 @@ import org.saar.core.common.r2d.Model2D
 import org.saar.core.common.r2d.Node2D
 import org.saar.core.common.r2d.R2D
 import org.saar.core.common.r2d.R2D.vertex
+import org.saar.core.painting.asRenderNode
 import org.saar.core.painting.painters.FBMPainter
-import org.saar.core.painting.painters.RandomPainter
-import org.saar.core.postprocessing.processors.ContrastPostProcessor
-import org.saar.core.renderer.p2d.GeometryPass2D
-import org.saar.core.renderer.p2d.RenderingPath2D
-import org.saar.core.renderer.p2d.RenderingPipeline2D
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.p2d.ScreenPrototype2D
+import org.saar.core.renderer.p2d.asRenderNode2D
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour.set
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector2.of
 import org.saar.maths.utils.Vector3
@@ -35,22 +39,26 @@ object PostProcessingExample {
         val model = buildModel2D()
         val node = Node2D(model)
 
-        val pipeline = RenderingPipeline2D(
-            FBMPainter(),
-            GeometryPass2D(node),
-        )
+        val screenPrototype = ScreenPrototype2D()
+        val fbo = Fbo.create(WIDTH, HEIGHT)
+        val screen = screenPrototype.toScreen(fbo)
 
-        val renderingPath = RenderingPath2D(camera, pipeline)
+        val renderPipeline = RenderPipeline(
+            FBMPainter().asRenderNode().onto(screen),
+            node.asRenderNode2D().onto(screen)
+        )
 
         val keyboard = window.keyboard
         while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
-            renderingPath.render().toMainScreen()
+            renderPipeline.render(RenderContext(null))
+            screen.copyTo(MainScreen)
 
             window.swapBuffers()
             window.pollEvents()
         }
 
-        renderingPath.delete()
+        screen.delete()
+        renderPipeline.delete()
         window.destroy()
     }
 

@@ -6,7 +6,6 @@ import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.resizeToMainScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
-import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy

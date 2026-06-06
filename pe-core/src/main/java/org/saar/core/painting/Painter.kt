@@ -1,6 +1,7 @@
 package org.saar.core.painting
 
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPass
 import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.lwjgl.opengl.constants.InternalFormat
@@ -21,6 +22,12 @@ interface Painter : RenderPass<RenderPassBuffers> {
     override fun prepare(context: RenderContext, buffers: RenderPassBuffers) = prepare()
 
     override fun render(context: RenderContext, buffers: RenderPassBuffers) = render()
+}
+
+fun Painter.asRenderNode(): RenderNode = object : RenderNode {
+    override fun render(context: RenderContext) = this@asRenderNode.render()
+
+    override fun delete() = this@asRenderNode.delete()
 }
 
 fun Painter.renderToTexture(width: Int, height: Int, internalFormat: InternalFormat): MutableTexture2D {

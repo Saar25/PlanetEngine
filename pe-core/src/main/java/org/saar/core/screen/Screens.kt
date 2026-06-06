@@ -3,6 +3,7 @@ package org.saar.core.screen
 import org.saar.lwjgl.opengl.fbo.IFbo
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.DepthAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.attachment.index.DepthStencilAttachmentIndex
@@ -36,5 +37,7 @@ object Screens {
         return screen
     }
 
-    fun ScreenPrototype.toScreen(fbo: IFbo, allocation: AllocationStrategy) = fromPrototype(this, fbo, allocation)
+    fun ScreenPrototype.toScreen(fbo: IFbo, allocation: AllocationStrategy = SimpleAllocationStrategy()): OffScreen {
+        return fromPrototype(this, fbo, allocation)
+    }
 }
