@@ -5,7 +5,6 @@ import org.saar.core.renderer.renderpass.RenderPassBuffers
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.resizeToMainScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.constants.Comparator
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
@@ -20,11 +19,7 @@ class SimpleRenderingPath<T : RenderPassBuffers>(
     private val prototypeB: RenderingPathScreenPrototype<T>,
 ) : RenderingPath<T> {
 
-    private val stencilState = StencilState(
-        StencilOperation.ALWAYS_KEEP,
-        StencilFunction(Comparator.NOT_EQUAL, 0, 0xFF),
-        StencilMask.UNCHANGED
-    )
+    private val stencilState = StencilState.REPLACE
 
     private val screenA = this.prototypeA.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy)
     private val screenB = this.prototypeB.toScreen(Fbo.create(0, 0), SimpleAllocationStrategy)

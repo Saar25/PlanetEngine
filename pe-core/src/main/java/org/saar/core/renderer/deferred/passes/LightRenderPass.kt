@@ -17,6 +17,8 @@ import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.UniformArray
+import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
 
@@ -29,6 +31,10 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
     constructor(light: DirectionalLight) : this(directionalLights = arrayOf(light))
 
     constructor(light: PointLight) : this(pointLights = arrayOf(light))
+
+    override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
+        StencilTest.apply(StencilState.UNWRITTEN_ONLY)
+    }
 
     override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
         this.prototype.colourTextureUniform.value = buffers.albedo
