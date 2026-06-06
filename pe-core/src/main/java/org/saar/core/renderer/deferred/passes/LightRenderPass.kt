@@ -10,6 +10,7 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -33,7 +34,8 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
     constructor(light: PointLight) : this(pointLights = arrayOf(light))
 
     override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
-        StencilTest.apply(StencilState.UNWRITTEN_ONLY)
+        StencilTest.apply(StencilState.REPLACE)
+        DepthTest.disable()
     }
 
     override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {

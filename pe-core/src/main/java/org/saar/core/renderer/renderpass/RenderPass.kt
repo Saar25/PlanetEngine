@@ -14,13 +14,12 @@ interface RenderPass<in T : RenderPassBuffers> {
 }
 
 fun <T : RenderPassBuffers> RenderPass<T>.asRenderNode(buffers: T) = object : RenderNode {
-    override fun render(context: RenderContext) = this@asRenderNode.render(context, buffers)
+    override fun render(context: RenderContext) {
+        this@asRenderNode.prepare(context, buffers)
+        this@asRenderNode.render(context, buffers)
+    }
 
     override fun delete() = this@asRenderNode.delete()
 }
 
-fun RenderPass<RenderPassBuffers>.asRenderNode() = object : RenderNode {
-    override fun render(context: RenderContext) = this@asRenderNode.render(context, object : RenderPassBuffers {})
-
-    override fun delete() = this@asRenderNode.delete()
-}
+fun RenderPass<RenderPassBuffers>.asRenderNode() = asRenderNode(object : RenderPassBuffers {})

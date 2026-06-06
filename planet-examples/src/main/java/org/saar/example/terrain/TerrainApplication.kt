@@ -3,7 +3,6 @@ package org.saar.example.terrain
 import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.saar.core.camera.Camera
-import org.saar.core.camera.ICamera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.components.KeyboardMovementComponent
@@ -117,7 +116,7 @@ private class TerrainApplication : Application {
         val light = buildDirectionalLight()
         val cubeMap = createCubeMap()
         val renderNode = DeferredRenderNodeGroup(cube, cube2, world)
-        this.renderPipeline = buildRenderPipeline(camera, renderNode, light, cubeMap)
+        this.renderPipeline = buildRenderPipeline(renderNode, light, cubeMap)
         this.fps = Fps()
     }
 
@@ -175,8 +174,9 @@ private class TerrainApplication : Application {
         return light
     }
 
-    private fun buildRenderPipeline(camera: ICamera, renderNode: DeferredRenderNode,
-                                    light: DirectionalLight, cubeMap: CubeMapTexture): RenderPipeline {
+    private fun buildRenderPipeline(renderNode: DeferredRenderNode,
+                                    light: DirectionalLight,
+                                    cubeMap: CubeMapTexture): RenderPipeline {
         val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
 
         val screenATexture1 = MutableTexture2D.create()
@@ -223,11 +223,13 @@ private class TerrainApplication : Application {
             FogRenderPass(fog, FogDistance.XZ)
                 .asRenderNode(screenBBuffers)
                 .onto(screenA),
+            /*
+            // TODO: fix skybox
             SkyboxPostProcessor(cubeMap)
                 .asRenderNode(screenABuffers)
-                .onto(screenB),
+                .onto(screenB),*/
             FxaaPostProcessor()
-                .asRenderNode(screenBBuffers)
+                .asRenderNode(screenABuffers)
                 .onto(MainScreen),
         )
     }
