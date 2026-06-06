@@ -18,7 +18,7 @@ class ScreenBuilder(private val fbo: IFbo) {
 
     private var allocationStrategy: AllocationStrategy = SimpleAllocationStrategy
 
-    private var nextColourIndex = 0
+    private var nextColorIndex = 0
 
     fun multisampled(samples: Int): ScreenBuilder {
         this.allocationStrategy = MultisampledAllocationStrategy(samples)
@@ -26,7 +26,7 @@ class ScreenBuilder(private val fbo: IFbo) {
     }
 
     @JvmOverloads
-    fun addColourTexture(texture: MutableTexture2D = MutableTexture2D.create(), format: InternalFormat): ScreenBuilder {
+    fun addColorTexture(texture: MutableTexture2D = MutableTexture2D.create(), format: InternalFormat): ScreenBuilder {
         return addColorAttachment(TextureAttachmentBuffer(texture, format))
     }
 
@@ -35,7 +35,7 @@ class ScreenBuilder(private val fbo: IFbo) {
     }
 
     fun addColorAttachment(buffer: AttachmentBuffer): ScreenBuilder {
-        val index = ColorAttachmentIndex.at(this.nextColourIndex++)
+        val index = ColorAttachmentIndex.at(this.nextColorIndex++)
         this.layers.add(Layer(index, buffer, read = false, draw = true))
         return this
     }

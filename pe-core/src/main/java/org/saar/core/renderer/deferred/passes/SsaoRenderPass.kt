@@ -46,7 +46,7 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = ScreenBuilder(Fbo.create(0, 0))
-        .addColourTexture(ssaoTexture, InternalFormat.R16F).setRead()
+        .addColorTexture(ssaoTexture, InternalFormat.R16F).setRead()
         .build()
 
     private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)

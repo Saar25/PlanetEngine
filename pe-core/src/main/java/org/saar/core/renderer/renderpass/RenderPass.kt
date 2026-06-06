@@ -18,3 +18,9 @@ fun <T : RenderPassBuffers> RenderPass<T>.asRenderNode(buffers: T) = object : Re
 
     override fun delete() = this@asRenderNode.delete()
 }
+
+fun RenderPass<RenderPassBuffers>.asRenderNode() = object : RenderNode {
+    override fun render(context: RenderContext) = this@asRenderNode.render(context, object : RenderPassBuffers {})
+
+    override fun delete() = this@asRenderNode.delete()
+}

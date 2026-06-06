@@ -30,20 +30,31 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPipeline
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.DeferredRenderingPath
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
-import org.saar.core.renderer.deferred.passes.SsaoRenderPass
 import org.saar.core.renderer.forward.passes.FogRenderPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.OffScreen
+import org.saar.core.screen.ScreenBuilder
+import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.constants.InternalFormat
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
@@ -65,8 +76,10 @@ private class TerrainApplication : Application {
 
     private lateinit var fps: Fps
     private lateinit var camera: Camera
-    private lateinit var renderingPath: DeferredRenderingPath
+    private lateinit var renderPipeline: RenderPipeline
     private lateinit var cameraMovementComponent: KeyboardMovementComponent
+    private lateinit var screenA: OffScreen
+    private lateinit var screenB: OffScreen
 
     override fun initialize(window: Window) {
         window.width = WIDTH
@@ -104,7 +117,7 @@ private class TerrainApplication : Application {
         val light = buildDirectionalLight()
         val cubeMap = createCubeMap()
         val renderNode = DeferredRenderNodeGroup(cube, cube2, world)
-        this.renderingPath = buildRenderingPath(camera, renderNode, light, cubeMap)
+        this.renderPipeline = buildRenderPipeline(camera, renderNode, light, cubeMap)
         this.fps = Fps()
     }
 
@@ -120,12 +133,15 @@ private class TerrainApplication : Application {
     }
 
     override fun render(window: Window) {
-        renderingPath.render().toMainScreen()
+        this.screenA.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        this.screenB.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        this.renderPipeline.render(RenderContext(camera))
     }
 
     override fun close(window: Window) {
         camera.delete()
-        renderingPath.delete()
+        this.renderPipeline.delete()
     }
 
     private fun buildWorld(): LowPolyWorld {
@@ -159,18 +175,61 @@ private class TerrainApplication : Application {
         return light
     }
 
-    private fun buildRenderingPath(camera: ICamera, renderNode: DeferredRenderNode,
-                                   light: DirectionalLight, cubeMap: CubeMapTexture): DeferredRenderingPath {
+    private fun buildRenderPipeline(camera: ICamera, renderNode: DeferredRenderNode,
+                                    light: DirectionalLight, cubeMap: CubeMapTexture): RenderPipeline {
         val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
-        val renderPassesPipeline = DeferredRenderingPipeline(
-            DeferredGeometryPass(renderNode),
-            LightRenderPass(light),
-            SsaoRenderPass(),
-            FogRenderPass(fog, FogDistance.XZ),
-            SkyboxPostProcessor(cubeMap),
+
+        val screenATexture1 = MutableTexture2D.create()
+        val screenATexture2 = MutableTexture2D.create()
+        val screenBTexture1 = MutableTexture2D.create()
+        val screenBTexture2 = MutableTexture2D.create()
+        val depthTexture = MutableTexture2D.create()
+
+        val screenABuffers = object : DeferredRenderingBuffers {
+            override val albedo = screenATexture1
+            override val normalSpecular = screenATexture2
+            override val depth = depthTexture
+        }
+        val screenBBuffers = object : DeferredRenderingBuffers {
+            override val albedo = screenBTexture1
+            override val normalSpecular = screenBTexture2
+            override val depth = depthTexture
+        }
+
+        this.screenA = ScreenBuilder(Fbo.create(WIDTH, HEIGHT))
+            .addColorTexture(screenATexture1, InternalFormat.RGBA16F)
+            .addColorTexture(screenATexture2, InternalFormat.RGBA16F)
+            .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
+            .build()
+
+        this.screenB = ScreenBuilder(Fbo.create(WIDTH, HEIGHT))
+            .addColorTexture(screenBTexture1, InternalFormat.RGBA16F)
+            .addColorTexture(screenBTexture2, InternalFormat.RGBA16F)
+            .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
+            .build()
+
+        return RenderPipeline(
+            renderNode
+                .asDeferredRenderNode()
+                .onto(screenA),
+            LightRenderPass(light)
+                .asRenderNode(screenABuffers)
+                .onto(screenB),
+            /*
+            // TODO: fix ssao
+            SsaoRenderPass()
+                .asRenderNode(screenBBuffers)
+                .onto(MainScreen),*/
+            FogRenderPass(fog, FogDistance.XZ)
+                .asRenderNode(screenBBuffers)
+                .onto(screenA),
+            SkyboxPostProcessor(cubeMap)
+                .asRenderNode(screenABuffers)
+                .onto(screenB),
             FxaaPostProcessor()
+                .asRenderNode(screenBBuffers)
+                .onto(MainScreen),
         )
-        return DeferredRenderingPath(camera, renderPassesPipeline)
     }
 
     private fun createCubeMap(): CubeMapTexture {
