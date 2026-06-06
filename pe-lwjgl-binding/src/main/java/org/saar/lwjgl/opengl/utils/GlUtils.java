@@ -53,4 +53,8 @@ public final class GlUtils {
     public static void clear(GlBuffer buffer1, GlBuffer buffer2, GlBuffer buffer3) {
         GL11.glClear(buffer1.get() | buffer2.get() | buffer3.get());
     }
+
+    public static void clear(Iterable<GlBuffer> buffers) {
+        GL11.glClear(GlBuffer.getValue(buffers));
+    }
 }

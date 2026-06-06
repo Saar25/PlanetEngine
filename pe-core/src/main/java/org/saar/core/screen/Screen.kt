@@ -2,6 +2,7 @@ package org.saar.core.screen
 
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter
 import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlUtils
 
 interface Screen {
 
@@ -17,3 +18,10 @@ interface Screen {
 }
 
 fun Screen.copyTo(other: Screen) = copyTo(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR)
+
+fun Screen.clear(vararg buffers: GlBuffer) = this.clear(buffers.asIterable())
+
+fun Screen.clear(buffers: Iterable<GlBuffer>) {
+    this.setAsDraw()
+    GlUtils.clear(buffers)
+}

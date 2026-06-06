@@ -20,12 +20,19 @@ import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
-import org.saar.core.postprocessing.processors.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderingPath
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.p2d.asRenderNode2D
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.assureSize
+import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.gui.UIDisplay
@@ -37,7 +44,9 @@ import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
@@ -101,13 +110,6 @@ fun main() {
     val cube = Node3D(cubeModel)
 
     val cubeMap = createCubeMap()
-    val pipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(world, cube),
-        SkyboxPostProcessor(cubeMap),
-        LightRenderPass(pointLights = lights),
-        FxaaPostProcessor()
-    )
-    val renderingPath = DeferredRenderingPath(camera, pipeline)
 
     val uiDisplay = UIDisplay(window)
 
@@ -130,6 +132,33 @@ fun main() {
 
     uiDisplay.add(uiTextGroup)
 
+    val screenPrototype1 = DeferredScreenPrototype()
+    val screen1 = screenPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val screenPrototype2 = DeferredScreenPrototype()
+    val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val pipeline = RenderPipeline(
+        // TODO: fix cube map
+        /*SkyboxPostProcessor(cubeMap)
+            .asRenderNode(object : PostProcessingBuffers {
+                override val albedo = Texture2D.NULL
+            })
+            .onto(screen1),*/
+        DeferredRenderNodeGroup(world, cube)
+            .asDeferredRenderNode()
+            .onto(screen1),
+        LightRenderPass(pointLights = lights)
+            .asRenderNode(screenPrototype1.buffers)
+            .onto(screen2),
+        FxaaPostProcessor()
+            .asRenderNode(screenPrototype2.buffers)
+            .onto(MainScreen),
+        uiDisplay
+            .asRenderNode2D()
+            .onto(MainScreen)
+    )
+
     val fps = Fps()
 
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
@@ -137,8 +166,12 @@ fun main() {
         uiDisplay.update()
         lights.forEach { it.update() }
 
-        renderingPath.render().toMainScreen()
-        uiDisplay.render(RenderContext(camera))
+        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.assureSize(MainScreen.width, MainScreen.height)
+        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.assureSize(MainScreen.width, MainScreen.height)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        pipeline.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -149,7 +182,9 @@ fun main() {
     }
 
     camera.delete()
-    renderingPath.delete()
+    screen1.delete()
+    screen2.delete()
+    pipeline.delete()
     window.destroy()
 }
 

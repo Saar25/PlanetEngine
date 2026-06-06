@@ -117,7 +117,6 @@ public class Window {
         GLFW.glfwSwapInterval(this.vSync ? 1 : 0);
 
         GL.createCapabilities();
-        GLUtil.setupDebugMessageCallback(System.err);
         setVisible(true);
     }
 
