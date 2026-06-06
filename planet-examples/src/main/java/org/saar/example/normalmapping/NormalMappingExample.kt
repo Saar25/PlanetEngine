@@ -39,7 +39,7 @@ import org.saar.core.renderer.shadow.ShadowsRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
 import org.saar.core.renderer.shadow.ShadowsRenderingPath
 import org.saar.core.screen.MainScreen
-import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.ScreenSwap
 import org.saar.core.screen.clear
 import org.saar.example.ExamplesUtils
 import org.saar.gui.UIChildNode
@@ -51,7 +51,6 @@ import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour.set
-import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -105,29 +104,36 @@ fun main() {
     val uiDisplay = buildUIDisplay(window, light)
 
     val screenPrototype1 = DeferredScreenPrototype()
-    val screen1 = screenPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
-
     val screenPrototype2 = DeferredScreenPrototype()
-    val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screenSwap = ScreenSwap(screenPrototype1, screenPrototype2)
 
     val renderPassesPipeline = RenderPipeline(
-        renderNode.asDeferredRenderNode().onto(screen1),
+        renderNode
+            .asDeferredRenderNode()
+            .onto(screenSwap.current),
         ShadowsRenderPass(shadowsRenderingPath.camera, shadowMap, light)
-            .asRenderNode(screenPrototype1.buffers).onto(screen2),
-        ContrastPostProcessor(1.3f).asRenderNode(screenPrototype2.buffers).onto(screen1),
-        FxaaPostProcessor().asRenderNode(screenPrototype1.buffers).onto(screen2),
-        uiDisplay.asDeferredRenderNode().onto(screen2)
+            .asRenderNode(screenSwap.prototype.buffers)
+            .onto(screenSwap.swap()),
+        ContrastPostProcessor(1.3f)
+            .asRenderNode(screenSwap.prototype.buffers)
+            .onto(screenSwap.swap()),
+        FxaaPostProcessor()
+            .asRenderNode(screenSwap.prototype.buffers)
+            .onto(MainScreen),
+        uiDisplay
+            .asDeferredRenderNode()
+            .onto(MainScreen)
     )
 
     var current = System.currentTimeMillis()
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         camera.update()
 
-        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screenSwap.clearAll(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screenSwap.assureSize(MainScreen.width, MainScreen.height)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         shadowsRenderingPath.render()
         renderPassesPipeline.render(RenderContext(camera))
-        screen2.copyTo(MainScreen)
 
         window.swapBuffers()
         window.pollEvents()
@@ -145,8 +151,7 @@ fun main() {
     camera.delete()
     shadowsRenderingPath.delete()
     renderPassesPipeline.delete()
-    screen1.delete()
-    screen2.delete()
+    screenSwap.delete()
     window.destroy()
 }
 
