@@ -12,8 +12,8 @@ interface RendererPrototype<T> {
     fun onRenderCycle(context: RenderContext) {
     }
 
-    fun onInstanceDraw(context: RenderContext, instance: T) {
+    fun onInstanceDraw(context: RenderContext, model: T) {
     }
 
-    fun doInstanceDraw(context: RenderContext, instance: T)
+    fun doInstanceDraw(context: RenderContext, model: T)
 }

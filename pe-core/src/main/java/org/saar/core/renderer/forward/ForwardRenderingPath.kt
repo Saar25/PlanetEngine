@@ -9,7 +9,7 @@ class ForwardRenderingPath(
     pipeline: ForwardRenderingPipeline,
 ) : RenderingPath<ForwardRenderingBuffers> {
 
-    private val path = SimpleRenderingPath(camera, pipeline, ForwardScreenPrototype())
+    private val path = SimpleRenderingPath(camera, pipeline, ForwardScreenPrototype(), ForwardScreenPrototype())
 
     override fun render() = this.path.render()
 

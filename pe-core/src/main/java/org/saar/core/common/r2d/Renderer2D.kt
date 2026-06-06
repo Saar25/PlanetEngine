@@ -19,5 +19,7 @@ private class RendererPrototype2D : RendererPrototype<Model2D> {
 
     override fun vertexAttributes() = arrayOf("in_position", "in_colour")
 
+    override fun fragmentOutputs() = arrayOf("f_colour")
+
     override fun doInstanceDraw(context: RenderContext, model: Model2D) = model.draw()
 }

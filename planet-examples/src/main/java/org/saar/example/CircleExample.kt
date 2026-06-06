@@ -13,6 +13,7 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.resizeToMainScreen
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest

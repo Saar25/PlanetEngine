@@ -15,6 +15,7 @@ import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenBuilder
+import org.saar.core.screen.assureSize
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo

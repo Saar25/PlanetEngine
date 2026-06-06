@@ -9,7 +9,9 @@ interface Screen {
 
     val height: Int
 
-    fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer)
+    fun copyTo(other: Screen,
+               filter: FboBlitFilter = FboBlitFilter.LINEAR,
+               vararg buffers: GlBuffer = arrayOf(GlBuffer.COLOUR))
 
     fun setAsDraw()
 }
