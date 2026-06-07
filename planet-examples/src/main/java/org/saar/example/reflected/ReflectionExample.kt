@@ -1,327 +1,329 @@
-package org.saar.example.reflected;
+package org.saar.example.reflected
 
-import org.saar.core.camera.Camera;
-import org.saar.core.camera.ICamera;
-import org.saar.core.camera.Projection;
-import org.saar.core.camera.ReadonlyCamera;
-import org.saar.core.camera.projection.OrthographicProjection;
-import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.components.KeyboardMovementComponent;
-import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
-import org.saar.core.common.components.MouseDragRotationComponent;
-import org.saar.core.common.flatreflected.*;
-import org.saar.core.common.obj.Obj;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjNode;
-import org.saar.core.common.obj.ObjNodeBatch;
-import org.saar.core.common.r3d.*;
-import org.saar.core.fog.Fog;
-import org.saar.core.fog.FogDistance;
-import org.saar.core.light.DirectionalLight;
-import org.saar.core.mesh.Mesh;
-import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.postprocessing.processors.ContrastPostProcessor;
-import org.saar.core.renderer.deferred.DeferredRenderNode;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
-import org.saar.core.renderer.deferred.passes.LightRenderPass;
-import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
-import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.renderer.p2d.GeometryPass2D;
-import org.saar.core.renderer.shadow.ShadowsQuality;
-import org.saar.core.renderer.shadow.ShadowsRenderNode;
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
-import org.saar.core.renderer.shadow.ShadowsRenderingPath;
-import org.saar.core.util.Fps;
-import org.saar.example.ExamplesUtils;
-import org.saar.gui.UIBlock;
-import org.saar.gui.UIDisplay;
-import org.saar.gui.UIElement;
-import org.saar.gui.UIText;
-import org.saar.gui.font.Font;
-import org.saar.gui.font.FontLoader;
-import org.saar.gui.style.Colours;
-import org.saar.gui.style.alignment.AlignmentValues;
-import org.saar.gui.style.arrangement.ArrangementValues;
-import org.saar.gui.style.axisalignment.AxisAlignmentValues;
-import org.saar.gui.style.coordinate.CoordinateValues;
-import org.saar.gui.style.length.LengthValues;
-import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
-import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.clear.ClearColour;
-import org.saar.lwjgl.opengl.texture.ColourTexture;
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
-import org.saar.lwjgl.opengl.texture.Texture2D;
-import org.saar.maths.Angle;
-import org.saar.maths.transform.Position;
-import org.saar.maths.transform.ReadonlyTransform;
-import org.saar.maths.transform.ReflectedTransform;
-import org.saar.maths.utils.Vector3;
+import org.saar.core.camera.Camera
+import org.saar.core.camera.Projection
+import org.saar.core.camera.ReadonlyCamera
+import org.saar.core.camera.projection.ScreenPerspectiveProjection
+import org.saar.core.camera.projection.SimpleOrthographicProjection
+import org.saar.core.common.components.KeyboardMovementComponent
+import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent
+import org.saar.core.common.components.MouseDragRotationComponent
+import org.saar.core.common.flatreflected.FlatReflected
+import org.saar.core.common.flatreflected.FlatReflected.vertex
+import org.saar.core.common.flatreflected.FlatReflectedModel
+import org.saar.core.common.flatreflected.FlatReflectedNode
+import org.saar.core.common.obj.Obj.mesh
+import org.saar.core.common.obj.ObjModel
+import org.saar.core.common.obj.ObjNode
+import org.saar.core.common.obj.ObjNodeBatch
+import org.saar.core.common.r3d.Model3D
+import org.saar.core.common.r3d.Node3D
+import org.saar.core.common.r3d.NodeBatch3D
+import org.saar.core.common.r3d.R3D
+import org.saar.core.light.DirectionalLight
+import org.saar.core.node.NodeComponentGroup
+import org.saar.core.postprocessing.processors.ContrastPostProcessor
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderNode
+import org.saar.core.renderer.deferred.passes.LightRenderPass
+import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.p2d.GeometryPass2D
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.renderer.shadow.*
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.clear
+import org.saar.core.util.Fps
+import org.saar.example.ExamplesUtils
+import org.saar.gui.UIBlock
+import org.saar.gui.UIDisplay
+import org.saar.gui.UIElement
+import org.saar.gui.UIText
+import org.saar.gui.font.FontLoader
+import org.saar.gui.font.FontLoader.loadFont
+import org.saar.gui.style.Colours
+import org.saar.gui.style.alignment.AlignmentValues
+import org.saar.gui.style.arrangement.ArrangementValues
+import org.saar.gui.style.axisalignment.AxisAlignmentValues
+import org.saar.gui.style.coordinate.CoordinateValues.pixelsEnd
+import org.saar.gui.style.length.LengthValues.ratio
+import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.Texture2D
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.maths.Angle.Companion.degrees
+import org.saar.maths.transform.Position
+import org.saar.maths.transform.ReflectedTransform
+import org.saar.maths.utils.Vector3
+import java.util.*
 
-import java.util.Objects;
+private const val WIDTH = 1200
+private const val HEIGHT = 700
 
-public class ReflectionExample {
+fun main() {
+    val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    private static final int WIDTH = 1200;
-    private static final int HEIGHT = 700;
+    ClearColour.set(.2f, .2f, .2f)
 
-    public static void main(String[] args) {
-        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
-
-        final Keyboard keyboard = window.getKeyboard();
-        final Mouse mouse = window.getMouse();
-
-        ClearColour.set(.2f, .2f, .2f);
-
-        final UIDisplay uiDisplay = new UIDisplay(window);
-        uiDisplay.getStyle().getAlignment().setValue(AlignmentValues.horizontal);
-        uiDisplay.getStyle().getArrangement().setValue(ArrangementValues.spaceAround);
-        uiDisplay.getStyle().getAxisAlignment().setValue(AxisAlignmentValues.center);
-
-        final UIBlock reflectionUiBlock = new UIBlock();
-        reflectionUiBlock.getStyle().getX().set(CoordinateValues.pixelsEnd((30)));
-        reflectionUiBlock.getStyle().getY().set(30);
-        reflectionUiBlock.getStyle().getWidth().set(300);
-        reflectionUiBlock.getStyle().getHeight().set(
-                LengthValues.ratio((float) HEIGHT / WIDTH));
-        reflectionUiBlock.getStyle().getBorders().set(1);
-        reflectionUiBlock.getStyle().getBorderColour().set(Colours.PURPLE);
-
-        uiDisplay.add(reflectionUiBlock);
-
-        final Font font = FontLoader.loadFont(
-                FontLoader.DEFAULT_FONT_FAMILY,
-                22f, 512, 512, "? .FpsDeltaSpeed:0123456789");
-
-        final UIElement uiTextGroup = new UIElement();
-        uiTextGroup.getStyle().getFont().set(font);
-        uiTextGroup.getStyle().getFontSize().set(22);
-        uiTextGroup.getStyle().getFontColour().set(Colours.WHITE);
-        uiTextGroup.getStyle().getAlignment().setValue(AlignmentValues.vertical);
-
-        final UIText uiFps = new UIText("Fps: ???");
-        uiTextGroup.add(uiFps);
-
-        final UIText uiSpeed = new UIText("Speed: ???");
-        uiTextGroup.add(uiSpeed);
-
-        final UIText uiDelta = new UIText("Delta: ???");
-        uiTextGroup.add(uiDelta);
-
-        uiDisplay.add(uiTextGroup);
-
-        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 300);
-
-        final KeyboardMovementComponent cameraMovementComponent =
-                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
-        final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
-                new KeyboardMovementScrollVelocityComponent(mouse),
-                new MouseDragRotationComponent(mouse, -.3f));
-
-        final Camera camera = new Camera(projection, components);
-        camera.getTransform().getPosition().set(0, 25, 100);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
-
-        final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
-
-        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
-
-        final FlatReflectedModel mirrorModel = buildMirrorModel();
-        final FlatReflectedNode mirror = new FlatReflectedNode(mirrorModel);
-
-        final FlatReflectedNodeBatch flatReflectedNodeBatch = new FlatReflectedNodeBatch(mirror);
-
-        final DeferredRenderNodeGroup reflectionRenderNode = new DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D);
-        final ShadowsRenderNode shadowsRenderNode = new ShadowsRenderNodeGroup(objNodeBatch, nodeBatch3D);
-
-        final DirectionalLight light = buildDirectionalLight();
-
-        final ReadonlyTransform reflectedTransform = new ReflectedTransform(
-                camera.getTransform(), mirrorModel.toPlane());
-        final ICamera reflectionCamera = new ReadonlyCamera(
-                camera.getProjection(), reflectedTransform);
-        final DeferredRenderingPath reflectionRenderingPath = buildReflectionRenderingPath(
-                reflectionCamera, reflectionRenderNode, light);
-        final ReadOnlyTexture2D reflectionMap = reflectionRenderingPath
-                .getPrototype().getBuffers().getAlbedo();
-        mirrorModel.setReflectionMap(reflectionMap);
-        reflectionUiBlock.getStyle().getBackgroundImage().set(reflectionMap);
-
-        final ShadowsRenderingPath shadowsRenderingPath =
-                buildShadowsRenderingPath(shadowsRenderNode, light);
-
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(
-                objNodeBatch, nodeBatch3D, flatReflectedNodeBatch);
-
-        final DeferredRenderingPath deferredRenderer = buildRenderingPath(
-                camera, renderNode, shadowsRenderingPath, light, uiDisplay);
-
-        final Fps fps = new Fps();
-        while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            renderNode.update();
-            camera.update();
-            uiDisplay.update();
-
-            shadowsRenderingPath.render();
-            reflectionRenderingPath.render();
-            deferredRenderer.render().toMainScreen();
-
-            window.swapBuffers();
-            window.pollEvents();
-
-            uiFps.setText(String.format("Fps: %.2f", fps.fps()));
-            uiSpeed.setText(String.format("Speed: %.2f", cameraMovementComponent.getVelocity().x()));
-            uiDelta.setText(String.format("Delta: %d", (long) (fps.delta() * 1000)));
-
-            fps.update();
-        }
-
-        camera.delete();
-        uiDisplay.delete();
-        reflectionRenderingPath.delete();
-        shadowsRenderingPath.delete();
-        deferredRenderer.delete();
-        window.destroy();
+    val uiDisplay = UIDisplay(window).apply {
+        style.alignment.value = AlignmentValues.horizontal
+        style.arrangement.value = ArrangementValues.spaceAround
+        style.axisAlignment.value = AxisAlignmentValues.center
     }
 
-    private static NodeBatch3D buildNodeBatch3D() {
-        final Model3D cubeModel = buildCubeModel();
-        final Node3D cube = new Node3D(cubeModel);
-
-        return new NodeBatch3D(cube);
+    val reflectionUiBlock = UIBlock().apply {
+        style.x.set(pixelsEnd((30)))
+        style.y.set(30)
+        style.width.set(300)
+        style.height.set(
+            ratio(HEIGHT.toFloat() / WIDTH)
+        )
+        style.borders.set(1)
+        style.borderColour.set(Colours.PURPLE)
     }
 
-    private static ObjNodeBatch buildObjNodeBatch() {
-        final ObjModel cottageModel = buildCottageModel();
-        final ObjNode cottage = new ObjNode(cottageModel);
+    uiDisplay.add(reflectionUiBlock)
 
-        final ObjModel dragonModel = buildDragonModel();
-        final ObjNode dragon = new ObjNode(dragonModel);
+    val font = loadFont(
+        FontLoader.DEFAULT_FONT_FAMILY, 22f, 512, 512, "? .FpsDeltaSpeed:0123456789"
+    )
 
-        final ObjModel stallModel = buildStallModel();
-        final ObjNode stall = new ObjNode(stallModel);
-
-        return new ObjNodeBatch(cottage, dragon, stall);
+    val uiTextGroup = UIElement().apply {
+        style.font.set(font)
+        style.fontSize.set(22)
+        style.fontColour.set(Colours.WHITE)
+        style.alignment.value = AlignmentValues.vertical
     }
 
-    private static DeferredRenderingPath buildReflectionRenderingPath(
-            ICamera camera, DeferredRenderNode renderNode, DirectionalLight light) {
-        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
-                new DeferredGeometryPass(renderNode),
-                new LightRenderPass(light)
-        );
+    val uiFps = UIText("Fps: ???")
+    uiTextGroup.add(uiFps)
 
-        return new DeferredRenderingPath(camera, renderPassesPipeline);
+    val uiSpeed = UIText("Speed: ???")
+    uiTextGroup.add(uiSpeed)
+
+    val uiDelta = UIText("Delta: ???")
+    uiTextGroup.add(uiDelta)
+
+    uiDisplay.add(uiTextGroup)
+
+    val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 300f)
+
+    val cameraMovementComponent = KeyboardMovementComponent(window.keyboard, 50f, 50f, 50f)
+    val components = NodeComponentGroup(
+        cameraMovementComponent,
+        KeyboardMovementScrollVelocityComponent(window.mouse),
+        MouseDragRotationComponent(window.mouse, -.3f)
+    )
+
+    val camera = Camera(projection, components).apply {
+        transform.position.set(0f, 25f, 100f)
+        transform.lookAt(Position.of(0f, 0f, 0f))
     }
 
-    private static FlatReflectedModel buildMirrorModel() {
-        final FlatReflectedVertex[] vertices = {
-                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, -0.5f)), // 0
-                FlatReflected.vertex(Vector3.of(-0.5f, +0.5f, +0.5f)), // 1
-                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, +0.5f)), // 2
-                FlatReflected.vertex(Vector3.of(+0.5f, +0.5f, -0.5f)), // 3
-        };
-        final Mesh mesh = FlatReflected.mesh(vertices, new int[]{0, 1, 2, 0, 2, 3});
+    val objNodeBatch = buildObjNodeBatch()
 
-        final FlatReflectedModel mirror = new FlatReflectedModel(mesh, Vector3.upward());
-        mirror.getTransform().getPosition().set(0, .1f, 0);
-        mirror.getTransform().getScale().scale(100, 0, 100);
-        return mirror;
+    val nodeBatch3D = buildNodeBatch3D()
+
+    val mirrorModel = buildMirrorModel()
+    val mirror = FlatReflectedNode(mirrorModel)
+
+    val reflectionRenderNode = DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D)
+    val shadowsRenderNode = ShadowsRenderNodeGroup(objNodeBatch, nodeBatch3D)
+
+    val light = buildDirectionalLight()
+
+    val reflectedTransform = ReflectedTransform(camera.transform, mirrorModel.toPlane())
+    val reflectionCamera = ReadonlyCamera(camera.projection, reflectedTransform)
+
+    val reflectionPrototype1 = DeferredScreenPrototype()
+    val reflectionScreen1 = reflectionPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val reflectionPrototype2 = DeferredScreenPrototype()
+    val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val reflectionRenderPipeline = RenderPipeline(
+        reflectionRenderNode.asDeferredRenderNode().onto(reflectionScreen1),
+        LightRenderPass(light).asRenderNode(reflectionPrototype1.buffers).onto(reflectionScreen2)
+    )
+    val reflectionMap = reflectionPrototype2.buffers.albedo
+    reflectionUiBlock.style.backgroundImage.set(reflectionMap)
+
+    val shadowsProjection = 100f.let { SimpleOrthographicProjection(-it, it, -it, it, -it, it) }
+    val shadowsCamera = ShadowsCamera(shadowsProjection, light)
+    val shadowsPrototype = ShadowsScreenPrototype()
+    val shadowsScreen =
+        shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize))
+    val shadowsRenderPipeline = RenderPipeline(
+        shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
+    )
+
+    val renderNode = DeferredRenderNodeGroup(
+        objNodeBatch, nodeBatch3D, mirror
+    )
+
+    val shadowMap = shadowsPrototype.buffers.depth
+//    val fog = Fog(Vector3.of(.2f), 1000f, 2000f)
+
+    val prototype1 = DeferredScreenPrototype()
+    val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val prototype2 = DeferredScreenPrototype()
+    val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val renderPipeline = RenderPipeline(
+        renderNode.asDeferredRenderNode().onto(screen1),
+        ShadowsRenderPass(shadowsCamera, shadowMap, light).asRenderNode(prototype1.buffers).onto(screen2),
+        ContrastPostProcessor(1.3f).asRenderNode(prototype2.buffers).onto(MainScreen),
+//        FogRenderPass(fog, FogDistance.XYZ).asRenderNode(prototype1.buffers).onto(MainScreen),
+        GeometryPass2D(uiDisplay).asRenderNode(prototype1.buffers).onto(MainScreen)
+    )
+
+    val fps = Fps()
+    while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
+        renderNode.update()
+        camera.update()
+        uiDisplay.update()
+
+        reflectionScreen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        reflectionScreen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+
+        reflectionRenderPipeline.render(RenderContext(reflectionCamera))
+        shadowsRenderPipeline.render(RenderContext(shadowsCamera))
+        renderPipeline.render(RenderContext(camera))
+
+        window.swapBuffers()
+        window.pollEvents()
+
+        uiFps.text = String.format("Fps: %.2f", fps.fps())
+        uiSpeed.text = String.format("Speed: %.2f", cameraMovementComponent.velocity.x())
+        uiDelta.text = String.format("Delta: %d", (fps.delta() * 1000).toLong())
+
+        fps.update()
     }
 
-    private static ObjModel buildDragonModel() {
-        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
-        dragonModel.getTransform().getPosition().set(50, 0, 0);
-        return dragonModel;
+    camera.delete()
+    uiDisplay.delete()
+    reflectionScreen1.delete()
+    reflectionScreen2.delete()
+    reflectionRenderPipeline.delete()
+    shadowsScreen.delete()
+    shadowsRenderNode.delete()
+    screen1.delete()
+    screen2.delete()
+    renderPipeline.delete()
+    window.destroy()
+}
+
+private fun buildNodeBatch3D(): NodeBatch3D {
+    val cubeModel = buildCubeModel()
+    val cube = Node3D(cubeModel)
+
+    return NodeBatch3D(cube)
+}
+
+private fun buildObjNodeBatch(): ObjNodeBatch {
+    val cottageModel = buildCottageModel()
+    val cottage = ObjNode(cottageModel)
+
+    val dragonModel = buildDragonModel()
+    val dragon = ObjNode(dragonModel)
+
+    val stallModel = buildStallModel()
+    val stall = ObjNode(stallModel)
+
+    return ObjNodeBatch(cottage, dragon, stall)
+}
+
+private fun buildMirrorModel(): FlatReflectedModel {
+    val vertices = arrayOf(
+        vertex(Vector3.of(-0.5f, +0.5f, -0.5f)),  // 0
+        vertex(Vector3.of(-0.5f, +0.5f, +0.5f)),  // 1
+        vertex(Vector3.of(+0.5f, +0.5f, +0.5f)),  // 2
+        vertex(Vector3.of(+0.5f, +0.5f, -0.5f)),  // 3
+    )
+    val mesh = FlatReflected.mesh(vertices, intArrayOf(0, 1, 2, 0, 2, 3))
+
+    val mirror = FlatReflectedModel(mesh, Vector3.upward())
+    mirror.transform.position.set(0f, .1f, 0f)
+    mirror.transform.scale.scale(100f, 0f, 100f)
+    return mirror
+}
+
+private fun buildDragonModel(): ObjModel {
+    val dragonModel = Objects.requireNonNull<ObjModel>(loadDragon())
+    dragonModel.transform.position.set(50f, 0f, 0f)
+    return dragonModel
+}
+
+private fun buildCottageModel(): ObjModel {
+    return Objects.requireNonNull<ObjModel>(loadCottage())
+}
+
+private fun buildStallModel(): ObjModel {
+    val stallModel = Objects.requireNonNull<ObjModel>(loadStall())
+    stallModel.transform.position.set(-50f, 0f, 0f)
+    stallModel.transform.rotation.rotate(degrees(0f), degrees(180f), degrees(0f))
+    return stallModel
+}
+
+private fun buildCubeModel(): Model3D {
+    val cubeInstance = R3D.instance().apply {
+        transform.scale.set(10f, 10f, 10f)
+        transform.position.set(0f, 0f, 50f)
     }
+    val cubeMesh = R3D.mesh(
+        arrayOf(cubeInstance), ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices
+    )
+    return Model3D(cubeMesh)
+}
 
-    private static ObjModel buildCottageModel() {
-        return Objects.requireNonNull(loadCottage());
+private fun buildDirectionalLight(): DirectionalLight {
+    val light = DirectionalLight()
+    light.direction.set(-1f, -1f, -1f)
+    light.colour.set(1f, 1f, 1f)
+    return light
+}
+
+private fun loadCottage(): ObjModel? {
+    try {
+        val mesh = mesh("/assets/cottage/cottage.obj")
+        val texture = Texture2D.of("/assets/cottage/cottage_diffuse.png")
+        return ObjModel(mesh, texture)
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
+    return null
+}
 
-    private static ObjModel buildStallModel() {
-        final ObjModel stallModel = Objects.requireNonNull(loadStall());
-        stallModel.getTransform().getPosition().set(-50, 0, 0);
-        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
-        return stallModel;
+private fun loadStall(): ObjModel? {
+    try {
+        val mesh = mesh("/assets/stall/stall.model.obj")
+        val texture = Texture2D.of("/assets/stall/stall.diffuse.png")
+        return ObjModel(mesh, texture)
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
+    return null
+}
 
-    private static Model3D buildCubeModel() {
-        final Instance3D cubeInstance = R3D.instance();
-        cubeInstance.getTransform().getScale().set(10, 10, 10);
-        cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
-                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
-        return new Model3D(cubeMesh);
+private fun loadDragon(): ObjModel? {
+    try {
+        val mesh = mesh("/assets/dragon/dragon.model.obj")
+        val texture: ReadOnlyTexture = of(255, 215, 0, 255)
+        return ObjModel(mesh, texture)
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
-
-    private static DirectionalLight buildDirectionalLight() {
-        final DirectionalLight light = new DirectionalLight();
-        light.getDirection().set(-1, -1, -1);
-        light.getColour().set(1, 1, 1);
-        return light;
-    }
-
-    private static ShadowsRenderingPath buildShadowsRenderingPath(ShadowsRenderNode renderNode, DirectionalLight light) {
-        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-                -100, 100, -100, 100, -100, 100);
-        return new ShadowsRenderingPath(ShadowsQuality.HIGH,
-                shadowProjection, light, renderNode);
-    }
-
-    private static DeferredRenderingPath buildRenderingPath(ICamera camera, DeferredRenderNode renderNode,
-                                                            ShadowsRenderingPath shadowsRenderingPath,
-                                                            DirectionalLight light, UIDisplay uiDisplay) {
-        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
-        final Fog fog = new Fog(Vector3.of(.2f), 100, 200);
-
-        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
-                new DeferredGeometryPass(renderNode),
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light),
-                new ContrastPostProcessor(1.3f),
-                new FogRenderPass(fog, FogDistance.XYZ),
-                new GeometryPass2D(uiDisplay)
-        );
-
-        return new DeferredRenderingPath(camera, renderPassesPipeline);
-    }
-
-    private static ObjModel loadCottage() {
-        try {
-            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
-            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static ObjModel loadStall() {
-        try {
-            final Mesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
-            final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static ObjModel loadDragon() {
-        try {
-            final Mesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
-            final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+    return null
 }
