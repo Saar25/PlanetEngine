@@ -10,6 +10,8 @@ data class DepthState(
     constructor(function: DepthFunction, mask: DepthMask) : this(true, function, mask)
 
     companion object {
+        val DEFAULTS = DepthState(false, DepthFunction(Comparator.LESS), DepthMask.WRITE)
+
         val DISABLED = DepthState(false, DepthFunction(Comparator.ALWAYS), DepthMask.READ)
 
         val WRITE = DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE)

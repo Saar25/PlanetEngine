@@ -12,6 +12,13 @@ data class StencilState(
             this(true, operation, function, mask)
 
     companion object {
+        val DEFAULTS = StencilState(
+            false,
+            StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.KEEP),
+            StencilFunction(Comparator.ALWAYS, 0, 1),
+            StencilMask.UNCHANGED
+        )
+
         val ALWAYS_WRITE = StencilState(
             StencilOperation.REPLACE_ON_PASS,
             StencilFunction(Comparator.ALWAYS, 1, 0xFF),
