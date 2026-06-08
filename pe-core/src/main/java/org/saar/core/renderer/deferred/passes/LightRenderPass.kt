@@ -10,6 +10,9 @@ import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.cullface.CullFace
+import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -35,7 +38,9 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
 
     override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
         StencilTest.apply(StencilState.REPLACE)
-        DepthTest.disable()
+        DepthTest.apply(DepthState.DISABLED)
+        BlendTest.disable()
+        CullFace.disable()
     }
 
     override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {

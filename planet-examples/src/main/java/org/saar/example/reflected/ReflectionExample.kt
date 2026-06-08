@@ -56,6 +56,7 @@ import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.Angle.Companion.degrees
@@ -70,7 +71,7 @@ private const val HEIGHT = 700
 fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    ClearColour.set(.2f, .2f, .2f)
+    ClearColour.set(0.392f, 0.584f, 0.929f)
 
     val uiDisplay = UIDisplay(window).apply {
         style.alignment.value = AlignmentValues.horizontal
@@ -131,16 +132,10 @@ fun main() {
 
     val nodeBatch3D = buildNodeBatch3D()
 
-    val mirrorModel = buildMirrorModel()
-    val mirror = FlatReflectedNode(mirrorModel)
-
     val reflectionRenderNode = DeferredRenderNodeGroup(objNodeBatch, nodeBatch3D)
     val shadowsRenderNode = ShadowsRenderNodeGroup(objNodeBatch, nodeBatch3D)
 
     val light = buildDirectionalLight()
-
-    val reflectedTransform = ReflectedTransform(camera.transform, mirrorModel.toPlane())
-    val reflectionCamera = ReadonlyCamera(camera.projection, reflectedTransform)
 
     val reflectionPrototype1 = DeferredScreenPrototype()
     val reflectionScreen1 = reflectionPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
@@ -154,6 +149,12 @@ fun main() {
     )
     val reflectionMap = reflectionPrototype2.buffers.albedo
     reflectionUiBlock.style.backgroundImage.set(reflectionMap)
+
+    val mirrorModel = buildMirrorModel(reflectionMap)
+    val mirror = FlatReflectedNode(mirrorModel)
+
+    val reflectedTransform = ReflectedTransform(camera.transform, mirrorModel.toPlane())
+    val reflectionCamera = ReadonlyCamera(camera.projection, reflectedTransform)
 
     val shadowsProjection = 100f.let { SimpleOrthographicProjection(-it, it, -it, it, -it, it) }
     val shadowsCamera = ShadowsCamera(shadowsProjection, light)
@@ -245,7 +246,7 @@ private fun buildObjNodeBatch(): ObjNodeBatch {
     return ObjNodeBatch(cottage, dragon, stall)
 }
 
-private fun buildMirrorModel(): FlatReflectedModel {
+private fun buildMirrorModel(reflectionTexture: ReadOnlyTexture2D): FlatReflectedModel {
     val vertices = arrayOf(
         vertex(Vector3.of(-0.5f, +0.5f, -0.5f)),  // 0
         vertex(Vector3.of(-0.5f, +0.5f, +0.5f)),  // 1
@@ -254,9 +255,11 @@ private fun buildMirrorModel(): FlatReflectedModel {
     )
     val mesh = FlatReflected.mesh(vertices, intArrayOf(0, 1, 2, 0, 2, 3))
 
-    val mirror = FlatReflectedModel(mesh, Vector3.upward())
-    mirror.transform.position.set(0f, .1f, 0f)
-    mirror.transform.scale.scale(100f, 0f, 100f)
+    val mirror = FlatReflectedModel(mesh, Vector3.upward()).apply {
+        transform.position.set(0f, .1f, 0f)
+        transform.scale.scale(100f, 0f, 100f)
+        reflectionMap = reflectionTexture
+    }
     return mirror
 }
 

@@ -5,6 +5,7 @@ import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
