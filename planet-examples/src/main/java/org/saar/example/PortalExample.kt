@@ -25,14 +25,22 @@ import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.renderer.deferred.DeferredRenderingPath
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
@@ -66,34 +74,64 @@ fun main() {
     val portal2 = generatePortal2()
 
     val portal1CameraTransform = RelativeTransform(
-        camera.transform, portal1.model.transform, portal2.model.transform)
+        camera.transform, portal1.model.transform, portal2.model.transform
+    )
     val portalCamera1 = ReadonlyCamera(camera.projection, portal1CameraTransform)
-    val portalRenderingPath1 = DeferredRenderingPath(portalCamera1,
-        DeferredRenderingPipeline(DeferredGeometryPass(world, cube), LightRenderPass(light))
+
+    val prototype1a = DeferredScreenPrototype()
+    val screen1a = prototype1a.toScreen(Fbo.create(window.width, window.height))
+
+    val prototype1b = DeferredScreenPrototype()
+    val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
+
+    val portalRenderingPath1 = RenderPipeline(
+        DeferredGeometryPass(world, cube).asRenderNode(prototype1a.buffers).onto(screen1a),
+        LightRenderPass(light).asRenderNode(prototype1a.buffers).onto(screen1b)
     )
 
     val portal2CameraTransform = RelativeTransform(
-        camera.transform, portal2.model.transform, portal1.model.transform)
+        camera.transform, portal2.model.transform, portal1.model.transform
+    )
     val portalCamera2 = ReadonlyCamera(camera.projection, portal2CameraTransform)
-    val portalRenderingPath2 = DeferredRenderingPath(portalCamera2,
-        DeferredRenderingPipeline(DeferredGeometryPass(world, cube), LightRenderPass(light))
+
+    val prototype2a = DeferredScreenPrototype()
+    val screen2a = prototype2a.toScreen(Fbo.create(window.width, window.height))
+
+    val prototype2b = DeferredScreenPrototype()
+    val screen2b = prototype2b.toScreen(Fbo.create(window.width, window.height))
+
+    val portalRenderingPath2 = RenderPipeline(
+        DeferredGeometryPass(world, cube).asRenderNode(prototype2a.buffers).onto(screen2a),
+        LightRenderPass(light).asRenderNode(prototype2a.buffers).onto(screen2b)
     )
 
-    portal1.model.viewTexture = portalRenderingPath1.prototype.buffers.albedo
-    portal2.model.viewTexture = portalRenderingPath2.prototype.buffers.albedo
+    portal1.model.viewTexture = prototype1b.buffers.albedo
+    portal2.model.viewTexture = prototype2b.buffers.albedo
 
-    val renderingPipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(portal1, portal2, world, cube), LightRenderPass(light))
-    val renderingPath = DeferredRenderingPath(camera, renderingPipeline)
+
+    val prototype = DeferredScreenPrototype()
+    val screen = prototype1a.toScreen(Fbo.create(window.width, window.height))
+
+    val renderPipeline = RenderPipeline(
+        DeferredGeometryPass(portal1, portal2, world, cube).asRenderNode(prototype.buffers).onto(screen),
+        LightRenderPass(light).asRenderNode(prototype.buffers).onto(MainScreen)
+    )
 
     val keyboard = window.keyboard
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
 
-        portalRenderingPath1.render()
-        portalRenderingPath2.render()
+        screen1a.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1b.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2a.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2b.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        renderingPath.render().toMainScreen()
+        portalRenderingPath1.render(RenderContext(portalCamera1))
+        portalRenderingPath2.render(RenderContext(portalCamera2))
+
+        renderPipeline.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -109,7 +147,8 @@ private fun generatePortal1(): PortalNode {
         .map {
             Portal.vertex(
                 Vector3.of(it.x, 0f, it.y),
-                Vector2.of(it.x + .5f, it.y + .5f))
+                Vector2.of(it.x + .5f, it.y + .5f)
+            )
         }.toTypedArray()
 
     val indices = meshGenerator.generateIndices().toIntArray()
@@ -128,7 +167,8 @@ private fun generatePortal2(): PortalNode {
         .map {
             Portal.vertex(
                 Vector3.of(it.x, 0f, it.y),
-                Vector2.of(it.x + .5f, it.y + .5f))
+                Vector2.of(it.x + .5f, it.y + .5f)
+            )
         }.toTypedArray()
 
     val indices = meshGenerator.generateIndices().toIntArray()
@@ -145,7 +185,8 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 
     val components = NodeComponentGroup(
         MouseDragRotationComponent(mouse, -.3f),
-        KeyboardMovementComponent(keyboard, Vector3.of(5f)))
+        KeyboardMovementComponent(keyboard, Vector3.of(5f))
+    )
 
     val camera = Camera(projection, components)
 
@@ -156,12 +197,18 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 
 private fun buildWorld(): LowPolyWorld {
     val heightGenerator: HeightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(18, SpreadNoise2f(8,
-            LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)))
+        MultipliedNoise2f(
+            18, SpreadNoise2f(
+                8,
+                LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)
+            )
+        )
     )
-    val colourGenerator: ColourGenerator = NormalColourGenerator(Vector3.upward(),
+    val colourGenerator: ColourGenerator = NormalColourGenerator(
+        Vector3.upward(),
         NormalColour(0.90f, Vector3.of(.41f, .41f, .41f)),
-        NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)))
+        NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))
+    )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
         colourGenerator, Vector2.of(64f, 64f)
