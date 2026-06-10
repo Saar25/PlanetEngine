@@ -16,25 +16,31 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
+import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.RenderPassKt;
+import org.saar.core.renderer.RenderPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderingPath;
 import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
-import org.saar.core.renderer.shadow.ShadowsQuality;
-import org.saar.core.renderer.shadow.ShadowsRenderNode;
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup;
-import org.saar.core.renderer.shadow.ShadowsRenderingPath;
+import org.saar.core.renderer.shadow.*;
+import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.ScreenKt;
+import org.saar.core.screen.Screens;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.ColourTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
@@ -68,24 +74,34 @@ public class ShadowExample {
 
         final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
 
-        final ShadowsRenderNode shadowsRenderNode =
-                new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch);
-
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-1, -1, -1);
         light.getColour().set(1, 1, 1);
 
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
-        final ShadowsRenderingPath shadowsRenderingPath = new ShadowsRenderingPath(
-                ShadowsQuality.MEDIUM, shadowProjection, light, shadowsRenderNode);
-        final ReadOnlyTexture2D shadowMap = shadowsRenderingPath.render().getBuffers().getDepth();
+        final ShadowsScreenPrototype shadowsPrototype = new ShadowsScreenPrototype();
+        final OffScreen shadowsScreen = Screens.INSTANCE.toScreen(
+                shadowsPrototype,
+                Fbo.create(ShadowsQuality.MEDIUM.getImageSize(), ShadowsQuality.MEDIUM.getImageSize()),
+                SimpleAllocationStrategy.INSTANCE);
+        final ShadowsCamera shadowsCamera = new ShadowsCamera(shadowProjection, light);
+
+        final ReadOnlyTexture2D shadowMap = shadowsPrototype.getBuffers().getDepth();
+
+        final RenderPipeline shadowsRenderPipeline = new RenderPipeline(
+                RenderPassKt.onto(
+                        ShadowsRenderNodeKt.asShadowsRenderNode(
+                                new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)), shadowsScreen)
+        );
+        ScreenKt.clear(shadowsScreen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+        shadowsRenderPipeline.render(new RenderContext(shadowsCamera));
 
         final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
         final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
                 new DeferredGeometryPass(renderNode),
-                new ShadowsRenderPass(shadowsRenderingPath.getCamera(), shadowMap, light)
+                new ShadowsRenderPass(shadowsCamera, shadowMap, light)
         );
 
         final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
@@ -109,7 +125,7 @@ public class ShadowExample {
         }
 
         camera.delete();
-        shadowsRenderingPath.delete();
+        shadowsRenderPipeline.delete();
         deferredRenderer.delete();
         window.destroy();
     }

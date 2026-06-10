@@ -34,12 +34,10 @@ import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.deferred.passes.asRenderNode
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.renderpass.asRenderNode
-import org.saar.core.renderer.shadow.ShadowsQuality
-import org.saar.core.renderer.shadow.ShadowsRenderNode
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
-import org.saar.core.renderer.shadow.ShadowsRenderingPath
+import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenSwap
+import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
 import org.saar.example.ExamplesUtils
 import org.saar.gui.UIChildNode
@@ -51,6 +49,7 @@ import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour.set
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -70,9 +69,11 @@ fun main() {
 
     val cameraMovementComponent =
         KeyboardMovementComponent(window.keyboard, 50f, 50f, 50f)
-    val components = NodeComponentGroup(cameraMovementComponent,
+    val components = NodeComponentGroup(
+        cameraMovementComponent,
         KeyboardMovementScrollVelocityComponent(window.mouse),
-        MouseDragRotationComponent(window.mouse, -.3f))
+        MouseDragRotationComponent(window.mouse, -.3f)
+    )
 
     val camera = Camera(projection, components)
 
@@ -91,15 +92,26 @@ fun main() {
     light.colour.set(1f, 1f, 1f)
 
     val shadowsRenderNode: ShadowsRenderNode = ShadowsRenderNodeGroup(
-        nodeBatch3D, objNodeBatch, nodeBatch3D, normalMappedNodeBatch)
+        nodeBatch3D, objNodeBatch, nodeBatch3D, normalMappedNodeBatch
+    )
     val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
-        -100f, 100f, -100f, 100f, -100f, 100f)
-    val shadowsRenderingPath = ShadowsRenderingPath(
-        ShadowsQuality.LOW, shadowProjection, light, shadowsRenderNode)
-    val shadowMap = shadowsRenderingPath.render().buffers.depth
+        -100f, 100f, -100f, 100f, -100f, 100f
+    )
+    val shadowsCamera = ShadowsCamera(shadowProjection, light)
+
+    val shadowsPrototype = ShadowsScreenPrototype()
+    val shadowsScreen =
+        shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
+
+    val shadowsRenderPipeline = RenderPipeline(
+        shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
+    )
+
+    val shadowMap = shadowsPrototype.buffers.depth
 
     val renderNode = DeferredRenderNodeGroup(
-        nodeBatch3D, normalMappedNodeBatch, objNodeBatch)
+        nodeBatch3D, normalMappedNodeBatch, objNodeBatch
+    )
 
     val uiDisplay = buildUIDisplay(window, light)
 
@@ -111,7 +123,7 @@ fun main() {
         renderNode
             .asDeferredRenderNode()
             .onto(screenSwap.current),
-        ShadowsRenderPass(shadowsRenderingPath.camera, shadowMap, light)
+        ShadowsRenderPass(shadowsCamera, shadowMap, light)
             .asRenderNode(screenSwap.prototype.buffers)
             .onto(screenSwap.swap()),
         ContrastPostProcessor(1.3f)
@@ -129,10 +141,11 @@ fun main() {
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         camera.update()
 
+        shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsRenderPipeline.render(RenderContext(shadowsCamera))
         screenSwap.clearAll(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screenSwap.assureSize(MainScreen.width, MainScreen.height)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        shadowsRenderingPath.render()
         renderPassesPipeline.render(RenderContext(camera))
 
         window.swapBuffers()
@@ -141,17 +154,20 @@ fun main() {
         val delta = System.currentTimeMillis() - current
 
         val fps = 1000f / delta
-        print("\r --> " +
-                "Speed: " + String.format("%.2f", cameraMovementComponent.velocity.x()) +
-                ", Fps: " + String.format("%.2f", fps) +
-                ", Delta: " + delta)
+        print(
+            "\r --> " +
+                    "Speed: " + String.format("%.2f", cameraMovementComponent.velocity.x()) +
+                    ", Fps: " + String.format("%.2f", fps) +
+                    ", Delta: " + delta
+        )
         current = System.currentTimeMillis()
     }
 
     camera.delete()
-    shadowsRenderingPath.delete()
-    renderPassesPipeline.delete()
+    shadowsScreen.delete()
+    shadowsRenderPipeline.delete()
     screenSwap.delete()
+    renderPassesPipeline.delete()
     window.destroy()
 }
 
