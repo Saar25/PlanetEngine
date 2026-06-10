@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.system.MemoryStack;
 import org.saar.lwjgl.glfw.event.EventListener;
 import org.saar.lwjgl.glfw.event.EventListenersHelper;
 import org.saar.lwjgl.glfw.event.IntValueChange;
@@ -12,6 +13,8 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.maths.objects.Dimensions;
 import org.saar.maths.objects.RectangleI;
+
+import java.nio.IntBuffer;
 
 public class Window {
 
@@ -44,7 +47,7 @@ public class Window {
     private int x;
     private int y;
 
-    public Window(long id, String title, int width, int height, boolean vSync) {
+    private Window(long id, String title, int width, int height, boolean vSync) {
         this.id = id;
         this.vSync = vSync;
         this.title = title;
@@ -64,15 +67,15 @@ public class Window {
     public static Window create(String title, int width, int height, boolean vSync) {
         final WindowBuilder builder = builder(title, width, height, vSync);
         builder.hint(WindowHints.visible(false))
-            .hint(WindowHints.resizable());
+                .hint(WindowHints.resizable());
         return builder.build();
     }
 
     public static WindowBuilder builder(String title, int width, int height, boolean vSync) {
         final WindowBuilder builder = new WindowBuilder(title, width, height, vSync);
         builder.hint(WindowHints.contextVersion(3, 2))
-            .hint(WindowHints.openglProfile(OpenGlProfileType.CORE))
-            .hint(WindowHints.openglForwardCompatibility());
+                .hint(WindowHints.openglProfile(OpenGlProfileType.CORE))
+                .hint(WindowHints.openglForwardCompatibility());
         return builder;
     }
 
@@ -91,8 +94,8 @@ public class Window {
     private void init() {
         GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
             final ResizeEvent event = new ResizeEvent(
-                new IntValueChange(this.width, width),
-                new IntValueChange(this.height, height)
+                    new IntValueChange(this.width, width),
+                    new IntValueChange(this.height, height)
             );
             this.width = width;
             this.height = height;
@@ -103,8 +106,8 @@ public class Window {
 
         GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
             final PositionEvent event = new PositionEvent(
-                new IntValueChange(this.x, x),
-                new IntValueChange(this.y, y)
+                    new IntValueChange(this.x, x),
+                    new IntValueChange(this.y, y)
             );
             this.x = x;
             this.y = y;
@@ -118,6 +121,15 @@ public class Window {
 
         GL.createCapabilities();
         GLUtil.setupDebugMessageCallback(System.out);
+
+        try (final MemoryStack stack = MemoryStack.stackPush()) {
+            final IntBuffer width = stack.mallocInt(1);
+            final IntBuffer height = stack.mallocInt(1);
+            GLFW.glfwGetWindowSize(this.id, width, height);
+            this.width = width.get();
+            this.height = height.get();
+        }
+
         setVisible(true);
     }
 
@@ -325,7 +337,7 @@ public class Window {
     public void setFullscreen() {
         final Dimensions dimensions = Monitor.primary.getDimensions();
         GLFW.glfwSetWindowMonitor(this.id, Monitor.primary.id, 0, 0,
-            dimensions.getWidth(), dimensions.getHeight(), GLFW.GLFW_DONT_CARE);
+                dimensions.getWidth(), dimensions.getHeight(), GLFW.GLFW_DONT_CARE);
 
         this.width = dimensions.getWidth();
         this.height = dimensions.getHeight();
@@ -334,7 +346,7 @@ public class Window {
     public void setMaximized() {
         final RectangleI workArea = Monitor.primary.getWorkArea();
         GLFW.glfwSetWindowMonitor(this.id, 0, workArea.x, workArea.y,
-            workArea.w, workArea.h, GLFW.GLFW_DONT_CARE);
+                workArea.w, workArea.h, GLFW.GLFW_DONT_CARE);
 
         GLFW.glfwMaximizeWindow(this.id);
         this.x = workArea.x;
