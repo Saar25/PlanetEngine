@@ -13,18 +13,28 @@ import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
+import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.RenderPass;
+import org.saar.core.renderer.RenderPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
+import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
+import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
+import org.saar.core.renderer.renderpass.RenderPassKt;
+import org.saar.core.screen.MainScreen;
+import org.saar.core.screen.OffScreen;
+import org.saar.core.screen.ScreenKt;
+import org.saar.core.screen.Screens;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColour;
+import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.maths.transform.Position;
 import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.transform.Transform;
@@ -53,24 +63,34 @@ public class SsaoExample {
         light.getDirection().set(-50f, -50f, -50f);
         light.getColour().set(1.0f, 1.0f, 1.0f);
 
-        final DeferredRenderingPath ssaoPath = new DeferredRenderingPath(camera,
-            new DeferredRenderingPipeline(
-                new DeferredGeometryPass(renderNode),
-                new LightRenderPass(light),
-                new SsaoRenderPass()));
+        final DeferredScreenPrototype prototype1 = new DeferredScreenPrototype();
+        final OffScreen screen1 = Screens.INSTANCE.toScreen(
+                prototype1,
+                Fbo.create(window.getWidth(), window.getHeight()),
+                SimpleAllocationStrategy.INSTANCE);
 
-        final DeferredRenderingPath noSsaoPath = new DeferredRenderingPath(camera,
-            new DeferredRenderingPipeline(
-                new DeferredGeometryPass(renderNode),
-                new LightRenderPass(light)));
+        final DeferredScreenPrototype prototype2 = new DeferredScreenPrototype();
+        final OffScreen screen2 = Screens.INSTANCE.toScreen(
+                prototype2,
+                Fbo.create(window.getWidth(), window.getHeight()),
+                SimpleAllocationStrategy.INSTANCE);
 
-        final AtomicReference<DeferredRenderingPath> currentPath = new AtomicReference<>(ssaoPath);
+        final RenderPipeline ssaoPipeline = new RenderPipeline(
+                new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
+                new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), screen2),
+                new RenderPass(RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), MainScreen.INSTANCE));
+
+        final RenderPipeline noSsaoPath = new RenderPipeline(
+                new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
+                new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), MainScreen.INSTANCE));
+
+        final AtomicReference<RenderPipeline> currentPipeline = new AtomicReference<>(ssaoPipeline);
 
         keyboard.onKeyPress('R').perform(e -> {
-            if (currentPath.get() == ssaoPath) {
-                currentPath.set(noSsaoPath);
+            if (currentPipeline.get() == ssaoPipeline) {
+                currentPipeline.set(noSsaoPath);
             } else {
-                currentPath.set(ssaoPath);
+                currentPipeline.set(ssaoPipeline);
             }
         });
 
@@ -79,7 +99,10 @@ public class SsaoExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            currentPath.get().render().toMainScreen();
+            ScreenKt.clear(screen1, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(screen2, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            currentPipeline.get().render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -87,7 +110,9 @@ public class SsaoExample {
             System.out.print("\rFps: " + 1000f / (-current + (current = System.currentTimeMillis())));
         }
 
-        ssaoPath.delete();
+        screen1.delete();
+        screen2.delete();
+        ssaoPipeline.delete();
         noSsaoPath.delete();
         window.destroy();
     }
@@ -98,8 +123,8 @@ public class SsaoExample {
         final Transform center = new SimpleTransform();
 
         final NodeComponentGroup components = new NodeComponentGroup(
-            new SmoothMouseRotationComponent(mouse, -.3f),
-            new ThirdPersonViewComponent(center, 80));
+                new SmoothMouseRotationComponent(mouse, -.3f),
+                new ThirdPersonViewComponent(center, 80));
 
         final Camera camera = new Camera(projection, components);
 
@@ -125,7 +150,7 @@ public class SsaoExample {
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
         final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
-            ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
+                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 

@@ -17,15 +17,16 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.RenderPass;
 import org.saar.core.renderer.RenderPassKt;
 import org.saar.core.renderer.RenderPipeline;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderingPath;
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline;
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
+import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
+import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.*;
+import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.ScreenKt;
 import org.saar.core.screen.Screens;
@@ -99,18 +100,28 @@ public class ShadowExample {
 
         final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
-        final DeferredRenderingPipeline renderPassesPipeline = new DeferredRenderingPipeline(
-                new DeferredGeometryPass(renderNode),
-                new ShadowsRenderPass(shadowsCamera, shadowMap, light)
-        );
+        final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
+        final OffScreen screen = Screens.INSTANCE.toScreen(
+                prototype,
+                Fbo.create(window.getWidth(), window.getHeight()),
+                SimpleAllocationStrategy.INSTANCE);
 
-        final DeferredRenderingPath deferredRenderer = new DeferredRenderingPath(camera, renderPassesPipeline);
+        final RenderPipeline pipeline = new RenderPipeline(
+                new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen),
+                new RenderPass(
+                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
+                                new ShadowsRenderPass(shadowsCamera, shadowMap, light),
+                                prototype.getBuffers()
+                        ), MainScreen.INSTANCE)
+        );
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            deferredRenderer.render().toMainScreen();
+            ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            pipeline.render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -125,8 +136,10 @@ public class ShadowExample {
         }
 
         camera.delete();
+        shadowsScreen.delete();
         shadowsRenderPipeline.delete();
-        deferredRenderer.delete();
+        screen.delete();
+        pipeline.delete();
         window.destroy();
     }
 

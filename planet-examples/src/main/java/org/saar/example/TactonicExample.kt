@@ -21,11 +21,17 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.mesh.lod.LodMesh
 import org.saar.core.node.NodeComponentGroup
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPipeline
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.DeferredRenderingPath
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
@@ -34,9 +40,11 @@ import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.polygonmode.PolygonMode
 import org.saar.lwjgl.opengl.polygonmode.PolygonModeState
 import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
 import kotlin.math.cos
@@ -91,16 +99,21 @@ fun main() {
         val lodMeshes = (0..SUBDIVISIONS).map { lod ->
             val drawCall = InstancedElementsDrawCall(
                 RenderMode.TRIANGLES, chunkData.lods.lodCounts[lod],
-                DataType.U_INT, chunkData.lods.lodByteOffsets[lod], 1)
+                DataType.U_INT, chunkData.lods.lodByteOffsets[lod], 1
+            )
             DrawCallMesh(icoVao, drawCall)
         }
         val lodMesh = LodMesh(lodMeshes)
 
         val icoModel = Model3D(lodMesh).also { it.specular = 0f }
         Node3D(icoModel).apply {
-            components.add(LevelOfDetailComponent(camera,
-                lodMesh.lod,
-                (0..SUBDIVISIONS).map { 8 * it + 24 }.reversed().toIntArray()))
+            components.add(
+                LevelOfDetailComponent(
+                    camera,
+                    lodMesh.lod,
+                    (0..SUBDIVISIONS).map { 8 * it + 24 }.reversed().toIntArray()
+                )
+            )
         }
     }
     val nodeGroup = DeferredRenderNodeGroup(*continentNodes.toTypedArray())
@@ -110,33 +123,45 @@ fun main() {
         it.colour.set(1f, 1f, 1f)
     }
 
-    val renderingPipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(nodeGroup), LightRenderPass(light))
-    val renderingPath = DeferredRenderingPath(camera, renderingPipeline)
+    val prototype = DeferredScreenPrototype()
+    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+
+    val pipeline = RenderPipeline(
+        nodeGroup.asDeferredRenderNode().onto(screen),
+        LightRenderPass(light).asRenderNode(prototype.buffers).onto(MainScreen)
+    )
 
     val keyboard = window.keyboard
     keyboard.onKeyPress('J').perform {
-        PolygonMode.set(PolygonModeState(
-            face = Face.FRONT_AND_BACK,
-            mode = PolygonModeValue.LINE,
-        ))
+        PolygonMode.set(
+            PolygonModeState(
+                face = Face.FRONT_AND_BACK,
+                mode = PolygonModeValue.LINE,
+            )
+        )
     }
     keyboard.onKeyPress('K').perform {
-        PolygonMode.set(PolygonModeState(
-            face = Face.FRONT_AND_BACK,
-            mode = PolygonModeValue.FILL,
-        ))
+        PolygonMode.set(
+            PolygonModeState(
+                face = Face.FRONT_AND_BACK,
+                mode = PolygonModeValue.FILL,
+            )
+        )
     }
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
         nodeGroup.update()
 
-        renderingPath.render().toMainScreen()
+        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        pipeline.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
     }
 
+    screen.delete()
+    pipeline.delete()
     window.destroy()
 }
 
@@ -145,7 +170,8 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 
     val components = NodeComponentGroup(
         MouseDragRotationComponent(mouse, CAMERA_MOUSE_SENSITIVITY),
-        KeyboardMovementComponent(keyboard, Vector3.of(CAMERA_KEYBOARD_SPEED)))
+        KeyboardMovementComponent(keyboard, Vector3.of(CAMERA_KEYBOARD_SPEED))
+    )
 
     val camera = Camera(projection, components)
 
@@ -274,8 +300,11 @@ private fun buildIcosahedron(): List<ChunkData> {
         val levelFaces = facesAtLevel[level]
 
         val levelCentroids = levelFaces.map { (i0, i1, i2) ->
-            Vector3.normalize(Vector3.div(
-                Vector3.add(levelVerts[i0], Vector3.add(levelVerts[i1], levelVerts[i2])), 3f))
+            Vector3.normalize(
+                Vector3.div(
+                    Vector3.add(levelVerts[i0], Vector3.add(levelVerts[i1], levelVerts[i2])), 3f
+                )
+            )
         }
         val levelVertFaces = levelVerts.indices.map { v ->
             levelFaces.mapIndexedNotNull { fi, (i0, i1, i2) ->
@@ -301,14 +330,20 @@ private fun buildIcosahedron(): List<ChunkData> {
                     if (ll) {
                         val nrm = levelCentroids[fi]
                         val pp = when {
-                            c0 == c1 -> PlatePair(c0, c2,
-                                Vector3.div(Vector3.add(levelVerts[i0], levelVerts[i1]), 2f), levelVerts[i2])
+                            c0 == c1 -> PlatePair(
+                                c0, c2,
+                                Vector3.div(Vector3.add(levelVerts[i0], levelVerts[i1]), 2f), levelVerts[i2]
+                            )
 
-                            c1 == c2 -> PlatePair(c0, c1,
-                                levelVerts[i0], Vector3.div(Vector3.add(levelVerts[i1], levelVerts[i2]), 2f))
+                            c1 == c2 -> PlatePair(
+                                c0, c1,
+                                levelVerts[i0], Vector3.div(Vector3.add(levelVerts[i1], levelVerts[i2]), 2f)
+                            )
 
-                            c2 == c0 -> PlatePair(c0, c1,
-                                Vector3.div(Vector3.add(levelVerts[i2], levelVerts[i0]), 2f), levelVerts[i1])
+                            c2 == c0 -> PlatePair(
+                                c0, c1,
+                                Vector3.div(Vector3.add(levelVerts[i2], levelVerts[i0]), 2f), levelVerts[i1]
+                            )
 
                             else -> null
                         }
@@ -337,7 +372,8 @@ private fun buildIcosahedron(): List<ChunkData> {
                 val adj = levelVertFaces[v]
                 val isMountain = adj.any { levelConvergentFace[it] }
                 val n = SimplexNoise.noise(
-                    pos.x() * HEIGHT_NOISE_FREQ, pos.y() * HEIGHT_NOISE_FREQ, pos.z() * HEIGHT_NOISE_FREQ)
+                    pos.x() * HEIGHT_NOISE_FREQ, pos.y() * HEIGHT_NOISE_FREQ, pos.z() * HEIGHT_NOISE_FREQ
+                )
                 val h = n * NOISE_HEIGHT_AMPLITUDE + (if (isMountain) MOUNTAIN_HEIGHT else 0f)
                 Vector3.add(pos, Vector3.mul(pos, h))
             } else {
@@ -359,7 +395,8 @@ private fun buildIcosahedron(): List<ChunkData> {
             val cosLat = kotlin.math.abs(centroid.dot(axis))
             val noiseTemp = SimplexNoise.noise(
                 centroid.x() * TEMP_NOISE_FREQ, centroid.y() * TEMP_NOISE_FREQ,
-                centroid.z() * TEMP_NOISE_FREQ)
+                centroid.z() * TEMP_NOISE_FREQ
+            )
             val temp = (1f - cosLat + noiseTemp * TEMP_NOISE_AMPLITUDE).coerceIn(0f, 1f)
             val isMountain = levelConvergentFace[fi]
             val isCoast = levelLandWaterFace[fi]
@@ -425,22 +462,30 @@ private fun lerp(a: Vector3fc, b: Vector3fc, t: Float): Vector3f {
 
 private fun waterColor(temp: Float): Vector3f {
     val t = temp.coerceIn(0f, 1f)
-    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.85f, 0.9f, 1.0f),
+    return if (t < TEMP_POLAR_THRESHOLD) lerp(
+        Vector3.of(0.85f, 0.9f, 1.0f),
         Vector3.of(0f, 0.15f, 0.4f),
-        t / TEMP_POLAR_THRESHOLD)
-    else lerp(Vector3.of(0f, 0.15f, 0.4f),
+        t / TEMP_POLAR_THRESHOLD
+    )
+    else lerp(
+        Vector3.of(0f, 0.15f, 0.4f),
         Vector3.of(0f, 0.5f, 0.7f),
-        (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
+        (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD)
+    )
 }
 
 private fun landColor(temp: Float): Vector3f {
     val t = temp.coerceIn(0f, 1f)
-    return if (t < TEMP_POLAR_THRESHOLD) lerp(Vector3.of(0.9f, 0.9f, 1.0f),
+    return if (t < TEMP_POLAR_THRESHOLD) lerp(
+        Vector3.of(0.9f, 0.9f, 1.0f),
         Vector3.of(0.4f, 0.5f, 0.3f),
-        t / TEMP_POLAR_THRESHOLD)
-    else lerp(Vector3.of(0.4f, 0.5f, 0.3f),
+        t / TEMP_POLAR_THRESHOLD
+    )
+    else lerp(
+        Vector3.of(0.4f, 0.5f, 0.3f),
         Vector3.of(0.05f, 0.45f, 0.08f),
-        (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD))
+        (t - TEMP_POLAR_THRESHOLD) / (1f - TEMP_POLAR_THRESHOLD)
+    )
 }
 
 private fun stoneColor(temp: Float): Vector3f =
