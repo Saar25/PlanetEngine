@@ -16,23 +16,29 @@ class RenderPassPrototypeWrapper(private val prototype: RenderPassPrototype) {
 
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
         .also { this.shadersProgram.bind() }
-        .let {
+        .let { helper ->
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.ALWAYS)
-                .flatMap { u -> u.subUniforms }
-                .map { u -> UniformWrapper(this.shadersProgram.getUniformLocation(u.name), u) }
-                .fold(it) { helper, uniform -> helper.addUniform(uniform) }
+                .flatMap { it.subUniforms }
+                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
+                .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
         }
-        .let {
+        .let { helper ->
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_INSTANCE)
-                .flatMap { u -> u.subUniforms }
-                .map { u -> UniformWrapper(this.shadersProgram.getUniformLocation(u.name), u) }
-                .fold(it) { helper, uniform -> helper.addPerInstanceUniform(uniform) }
+                .flatMap { it.subUniforms }
+                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
+                .fold(helper) { helper, uniform -> helper.addPerInstanceUniform(uniform) }
         }
-        .let {
+        .let { helper ->
             Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_RENDER_CYCLE)
-                .flatMap { u -> u.subUniforms }
-                .map { u -> UniformWrapper(this.shadersProgram.getUniformLocation(u.name), u) }
-                .fold(it) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
+                .flatMap { it.subUniforms }
+                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
+                .fold(helper) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
+        }
+        .let { helper ->
+            this.prototype.uniforms
+                .flatMap { it.subUniforms }
+                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
+                .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
         }
 
     init {
