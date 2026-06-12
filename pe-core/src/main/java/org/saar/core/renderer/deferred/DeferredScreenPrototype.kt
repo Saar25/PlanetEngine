@@ -1,12 +1,12 @@
 package org.saar.core.renderer.deferred
 
-import org.saar.core.renderer.RenderingPathScreenPrototype
+import org.saar.core.screen.ScreenPrototype
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
-class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBuffers> {
+class DeferredScreenPrototype : ScreenPrototype {
 
     private val colourTexture = MutableTexture2D.create()
 
@@ -23,7 +23,7 @@ class DeferredScreenPrototype : RenderingPathScreenPrototype<DeferredRenderingBu
 
     override val readIndex = ColorAttachmentIndex.at(0)
 
-    override val buffers = object : DeferredRenderingBuffers {
+    val buffers = object : DeferredRenderingBuffers {
         override val albedo = colourTexture
         override val normalSpecular = normalSpecularTexture
         override val depth = depthTexture

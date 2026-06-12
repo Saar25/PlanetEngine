@@ -84,7 +84,7 @@ fun main() {
     val prototype1b = DeferredScreenPrototype()
     val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
 
-    val portalRenderingPath1 = RenderPipeline(
+    val portalRenderPipeline1 = RenderPipeline(
         DeferredGeometryPass(world, cube).asRenderNode(prototype1a.buffers).onto(screen1a),
         LightRenderPass(light).asRenderNode(prototype1a.buffers).onto(screen1b)
     )
@@ -100,7 +100,7 @@ fun main() {
     val prototype2b = DeferredScreenPrototype()
     val screen2b = prototype2b.toScreen(Fbo.create(window.width, window.height))
 
-    val portalRenderingPath2 = RenderPipeline(
+    val portalRenderPipeline2 = RenderPipeline(
         DeferredGeometryPass(world, cube).asRenderNode(prototype2a.buffers).onto(screen2a),
         LightRenderPass(light).asRenderNode(prototype2a.buffers).onto(screen2b)
     )
@@ -128,8 +128,8 @@ fun main() {
         screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        portalRenderingPath1.render(RenderContext(portalCamera1))
-        portalRenderingPath2.render(RenderContext(portalCamera2))
+        portalRenderPipeline1.render(RenderContext(portalCamera1))
+        portalRenderPipeline2.render(RenderContext(portalCamera2))
 
         renderPipeline.render(RenderContext(camera))
 

@@ -1,12 +1,12 @@
 package org.saar.core.renderer.forward
 
-import org.saar.core.renderer.RenderingPathScreenPrototype
+import org.saar.core.screen.ScreenPrototype
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
-class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuffers> {
+class ForwardScreenPrototype : ScreenPrototype {
 
     private val colourTexture = MutableTexture2D.create()
 
@@ -20,7 +20,7 @@ class ForwardScreenPrototype : RenderingPathScreenPrototype<ForwardRenderingBuff
 
     override val readIndex = ColorAttachmentIndex.at(0)
 
-    override val buffers = object : ForwardRenderingBuffers {
+    val buffers = object : ForwardRenderingBuffers {
         override val albedo = colourTexture
         override val depth = depthTexture
     }

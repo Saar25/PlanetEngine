@@ -1,6 +1,6 @@
 package org.saar.core.renderer.shadow
 
-import org.saar.core.renderer.RenderingPathScreenPrototype
+import org.saar.core.screen.ScreenPrototype
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
@@ -12,7 +12,7 @@ import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
 import org.saar.lwjgl.opengl.texture.values.WrapValue
 
-class ShadowsScreenPrototype : RenderingPathScreenPrototype<ShadowsBuffers> {
+class ShadowsScreenPrototype : ScreenPrototype {
 
     private val depthTexture = MutableTexture2D.create().apply {
         applyParameters(
@@ -25,7 +25,7 @@ class ShadowsScreenPrototype : RenderingPathScreenPrototype<ShadowsBuffers> {
 
     override val depthBuffer = TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24)
 
-    override val buffers = object : ShadowsBuffers {
+    val buffers = object : ShadowsBuffers {
         override val depth = depthTexture
     }
 }

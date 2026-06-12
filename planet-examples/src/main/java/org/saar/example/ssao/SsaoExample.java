@@ -80,7 +80,7 @@ public class SsaoExample {
                 new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), screen2),
                 new RenderPass(RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), MainScreen.INSTANCE));
 
-        final RenderPipeline noSsaoPath = new RenderPipeline(
+        final RenderPipeline noSsaoPipeline = new RenderPipeline(
                 new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
                 new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), MainScreen.INSTANCE));
 
@@ -88,7 +88,7 @@ public class SsaoExample {
 
         keyboard.onKeyPress('R').perform(e -> {
             if (currentPipeline.get() == ssaoPipeline) {
-                currentPipeline.set(noSsaoPath);
+                currentPipeline.set(noSsaoPipeline);
             } else {
                 currentPipeline.set(ssaoPipeline);
             }
@@ -113,7 +113,7 @@ public class SsaoExample {
         screen1.delete();
         screen2.delete();
         ssaoPipeline.delete();
-        noSsaoPath.delete();
+        noSsaoPipeline.delete();
         window.destroy();
     }
 
