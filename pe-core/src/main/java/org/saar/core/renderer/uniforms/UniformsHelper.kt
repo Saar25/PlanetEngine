@@ -1,49 +1,27 @@
-package org.saar.core.renderer.uniforms;
+package org.saar.core.renderer.uniforms
 
-import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper;
+import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper
 
-import java.util.ArrayList;
-import java.util.List;
+interface UniformsHelper {
+    fun addUniform(uniform: UniformWrapper): UniformsHelper
 
-public abstract class UniformsHelper {
+    fun load()
 
-    public static UniformsHelper empty() {
-        return Empty.EMPTY;
+    private object Empty : UniformsHelper {
+        override fun addUniform(uniform: UniformWrapper) = Generic().addUniform(uniform)
+
+        override fun load() = Unit
     }
 
-    public abstract UniformsHelper addUniform(UniformWrapper uniform);
+    private class Generic : UniformsHelper {
+        private val uniforms = mutableListOf<UniformWrapper>()
 
-    public abstract void load();
+        override fun addUniform(uniform: UniformWrapper) = this.also { this.uniforms.add(uniform) }
 
-    private static class Empty extends UniformsHelper {
-
-        private static final Empty EMPTY = new Empty();
-
-        @Override
-        public UniformsHelper addUniform(UniformWrapper uniform) {
-            final UniformsHelper helper = new Generic();
-            return helper.addUniform(uniform);
-        }
-
-        @Override
-        public void load() {
-        }
+        override fun load() = this.uniforms.forEach(UniformWrapper::load)
     }
 
-    private static class Generic extends UniformsHelper {
-
-        private final List<UniformWrapper> uniforms = new ArrayList<>();
-
-        @Override
-        public UniformsHelper addUniform(UniformWrapper uniform) {
-            this.uniforms.add(uniform);
-            return this;
-        }
-
-        @Override
-        public void load() {
-            this.uniforms.forEach(UniformWrapper::load);
-        }
+    companion object {
+        fun empty(): UniformsHelper = Empty
     }
-
 }

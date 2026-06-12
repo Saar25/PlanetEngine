@@ -1,19 +1,15 @@
-package org.saar.core.renderer.uniforms;
+package org.saar.core.renderer.uniforms
 
-import org.saar.core.util.reflection.FieldsLocator;
-import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer;
+import org.saar.core.util.reflection.FieldsLocator
+import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
 
-import java.util.List;
+class UniformPropertiesLocator(any: Any) {
 
-public final class UniformPropertiesLocator {
+    private val fieldsLocator = FieldsLocator(any)
 
-    private final FieldsLocator fieldsLocator;
-
-    public UniformPropertiesLocator(Object object) {
-        this.fieldsLocator = new FieldsLocator(object);
-    }
-
-    public List<UniformContainer> getUniforms() {
-        return this.fieldsLocator.getFilteredValues(UniformContainer.class, UniformProperty.class);
-    }
+    fun findUniform(): Collection<UniformContainer> =
+        this.fieldsLocator.getFilteredValues(
+            UniformContainer::class.java,
+            UniformProperty::class.java
+        )
 }

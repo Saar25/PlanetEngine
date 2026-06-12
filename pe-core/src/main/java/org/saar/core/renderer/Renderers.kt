@@ -1,17 +1,11 @@
-package org.saar.core.renderer;
+package org.saar.core.renderer
 
-import org.saar.core.renderer.uniforms.UniformPropertiesLocator;
-import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer;
+import org.saar.core.renderer.uniforms.UniformPropertiesLocator
+import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
 
-import java.util.List;
+object Renderers {
 
-public final class Renderers {
-
-    private Renderers() {
-        throw new AssertionError("Cannot create instance of class " + getClass().getSimpleName());
-    }
-
-    public static List<UniformContainer> findUniforms(Object renderer) {
-        return new UniformPropertiesLocator(renderer).getUniforms();
+    fun findUniforms(renderer: Any): Collection<UniformContainer> {
+        return UniformPropertiesLocator(renderer).findUniform()
     }
 }

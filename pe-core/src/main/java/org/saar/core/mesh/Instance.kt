@@ -1,5 +1,3 @@
-package org.saar.core.mesh;
+package org.saar.core.mesh
 
-public interface Instance {
-
-}
+interface Instance 
