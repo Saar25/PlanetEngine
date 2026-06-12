@@ -107,7 +107,7 @@ The rendering pipeline consists of some primary interfaces
 
 ### Vertex
 
-Represents a vertex of the mesh
+Defines a vertex of the mesh
 
 ```kotlin
 interface Vertex3D : Vertex {
@@ -119,7 +119,7 @@ interface Vertex3D : Vertex {
 
 ### Instance
 
-Represents an instance (used for instance rendering)
+Defines an instance (used for instance rendering)
 
 ```kotlin
 interface Instance3D : Instance {
@@ -129,7 +129,7 @@ interface Instance3D : Instance {
 
 ### Mesh
 
-Contains the vbos and vaos that hold the data for the vertices, instances
+Defines the draw method used to draw a mesh
 
 ```java
 public interface Mesh {
@@ -140,7 +140,7 @@ public interface Mesh {
 
 ### Model
 
-Holds the mesh with some attributes, like texture or transform
+Defines the mesh and additional attributes used to render the model, such as texture or transform
 
 ```kotlin
 class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model {
@@ -157,7 +157,8 @@ usually holds the model and a renderer, and has at least one render method
 final Model3D cubeModel = buildCubeModel();
 final Node3D cube = new Node3D(cubeModel);
 
-cube.renderForward(new RenderContext(camera))
+cube.renderForward(new RenderContext(camera));
+
 ```
 
 ### Renderer
@@ -172,13 +173,12 @@ Prototype objects are used in order to write a unique rendering pipeline
 private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
 // Use vertex and fragment shaders in the shaders program
-@ShaderProperty
-private val vertex = Shader.createVertex(GlslVersion.V400,
-    ShaderCode.loadSource("/shaders/r3d/vertex.glsl"))
-
-@ShaderProperty
-private val fragment = Shader.createFragment(GlslVersion.V400,
-    ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
+override val shaders = arrayOf(
+    Shader.createVertex(GlslVersion.V400, 
+        ShaderCode.loadSource("/shaders/r3d/vertex.glsl")),
+    Shader.createFragment(GlslVersion.V400, 
+        ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
+)
 
 // Bind per vertex attributes
 override fun vertexAttributes() = arrayOf(
@@ -186,7 +186,7 @@ override fun vertexAttributes() = arrayOf(
 
 // Being called before rendering
 override fun onRenderCycle(context: RenderContext) {
-    ProvokingVertex.setFirst();
+    ProvokingVertex.setFirst()
     BlendTest.disable()
     DepthTest.enable()
 }
@@ -214,27 +214,30 @@ Renderer2D, Renderer3D, ObjRenderer, NormalMappedRenderer and more are already i
 The engine makes a great usage in deferred rendering  
 Render passes like LightRenderPass and ShadowsRenderPass are implemented  
 as well as unique renderers like ObjDeferredRenderer and NormalMappedDeferredRenderer  
-and DeferredRenderingPath to wrap it all
+and RenderPipeline to wrap it all
 
 ### Post-processing
 
 Post-processing is extremely simple using this engine  
 all that it takes is to create your own PostProcessor and create your PostProcessingPipeline
 
-```java
-// org.saar.example.normalmapping.NormalMappingExample.java
+```kotlin
+// org.saar.example.normalmapping.NormalMappingExample.kt
 
 // Create the pipeline
-final PostProcessingPipeline pipeline = new PostProcessingPipeline(
-    new ContrastPostProcessor(1.8f),
-    new GaussianBlurPostProcessor(11, 2)
-);
+val pipeline = RenderPipeline(
+    renderNode
+        .asDeferredRenderNode()
+        .onto(screen1),
+    ContrastPostProcessor(1.3f)
+        .asRenderNode(prototype1.buffers)
+        .onto(screen1),
+    FxaaPostProcessor()
+        .asRenderNode(prototype2.buffers)
+        .onto(MainScreen),
+)
 
-// Render to texture using deferred renderer
-final ReadOnlyTexture texture = deferredRenderer.render().toTexture();
-
-// Post process the texture and output to the screen
-pipeline.process(texture).toMainScreen();
+pipeline.render(RenderContext(camera))
 ```
 
 ### Gui
@@ -327,7 +330,7 @@ You can try some examples that are under planet-examples module
 
 for example:  
 MultisamplingExample.java  
-NormalMappingExample.java  
-ReflectionExample.java  
+NormalMappingExample.kt  
+ReflectionExample.kt  
 ManyCubesExample.java
-GuiExample.java
+GuiExample.kt
