@@ -4,7 +4,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -20,10 +19,10 @@ object PortalDeferredRenderer : RendererPrototypeWrapper<PortalModel>(PortalDefe
 
 private class PortalDeferredRendererPrototype : RendererPrototype<PortalModel> {
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     @UniformProperty

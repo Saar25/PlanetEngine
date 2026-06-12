@@ -1,6 +1,5 @@
 package org.saar.core.renderer
 
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.core.renderer.uniforms.UniformsHelper
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper
@@ -12,22 +11,10 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
         .also { this.shadersProgram.bind() }
         .let { helper ->
-            Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.ALWAYS)
+            Renderers.findUniforms(this.prototype)
                 .flatMap { it.subUniforms }
                 .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
                 .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
-        }
-        .let { helper ->
-            Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_INSTANCE)
-                .flatMap { it.subUniforms }
-                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
-                .fold(helper) { helper, uniform -> helper.addPerInstanceUniform(uniform) }
-        }
-        .let { helper ->
-            Renderers.findUniformsByTrigger(this.prototype, UniformTrigger.PER_RENDER_CYCLE)
-                .flatMap { it.subUniforms }
-                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
-                .fold(helper) { helper, uniform -> helper.addPerRenderCycleUniform(uniform) }
         }
         .let { helper ->
             this.prototype.uniforms
@@ -45,7 +32,6 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
     fun beforeRender(context: RenderContext) {
         this.shadersProgram.bind()
         this.prototype.onRenderCycle(context)
-        this.uniformsHelper.loadPerRenderCycle()
     }
 
     fun afterRender() {
@@ -69,7 +55,7 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
     fun render(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
-        this.uniformsHelper.loadPerInstance()
+        this.uniformsHelper.load()
 
         this.prototype.doInstanceDraw(context, model)
     }

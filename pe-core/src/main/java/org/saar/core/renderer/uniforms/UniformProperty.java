@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniformProperty {
 
-    UniformTrigger value() default UniformTrigger.ALWAYS;
-
 }

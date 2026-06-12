@@ -16,9 +16,4 @@ public final class UniformPropertiesLocator {
     public List<UniformContainer> getUniforms() {
         return this.fieldsLocator.getFilteredValues(UniformContainer.class, UniformProperty.class);
     }
-
-    public List<UniformContainer> getUniformsByTrigger(UniformTrigger trigger) {
-        return this.fieldsLocator.getFilteredValues(UniformContainer.class, UniformProperty.class,
-                f -> f.getAnnotation(UniformProperty.class).value() == trigger);
-    }
 }

@@ -4,7 +4,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -19,16 +18,16 @@ object NormalMappedDeferredRenderer : RendererPrototypeWrapper<NormalMappedModel
 
 private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val transformationUniform = Mat4UniformValue("u_transformation")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
     @UniformProperty
@@ -38,7 +37,7 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
         override val value = 2.5f
     }
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     override val shaders = arrayOf(
@@ -47,10 +46,12 @@ private class NormalMappedPrototype : RendererPrototype<NormalMappedModel> {
     )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent")
+        "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent"
+    )
 
     override fun fragmentOutputs() = arrayOf(
-        "f_colour", "f_normal")
+        "f_colour", "f_normal"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         BlendTest.disable()

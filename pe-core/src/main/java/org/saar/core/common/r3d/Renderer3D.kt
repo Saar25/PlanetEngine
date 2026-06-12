@@ -5,7 +5,6 @@ import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
 import org.saar.lwjgl.opengl.constants.Face
@@ -23,13 +22,13 @@ object Renderer3D : Renderer, RendererPrototypeWrapper<Model3D>(RendererPrototyp
 
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val clipPlaneUniform = Vec4UniformValue("u_clipPlane")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val modelMatrixUniform = Mat4UniformValue("u_modelMatrix")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
     override val shaders = arrayOf(
@@ -38,7 +37,8 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
     )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_colour", "in_transformation")
+        "in_position", "in_colour", "in_transformation"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst();

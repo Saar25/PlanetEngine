@@ -4,7 +4,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -21,19 +20,19 @@ object DeferredRenderer3D : RendererPrototypeWrapper<Model3D>(DeferredRendererPr
 
 private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val clipPlaneUniform = Vec4UniformValue("u_clipPlane")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val specularUniform = FloatUniformValue("u_specular")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val modelMatrixUniform = Mat4UniformValue("u_modelMatrix")
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
     override val shaders = arrayOf(
@@ -42,7 +41,8 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
     )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_colour", "in_transformation")
+        "in_position", "in_colour", "in_transformation"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst()

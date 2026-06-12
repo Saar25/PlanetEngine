@@ -5,7 +5,6 @@ import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -21,7 +20,7 @@ object Texture3DRenderer : Renderer, RendererPrototypeWrapper<Texture3DModel>(Te
 
 private class Texture3DRendererPrototype : RendererPrototype<Texture3DModel> {
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
     @UniformProperty
@@ -33,7 +32,8 @@ private class Texture3DRendererPrototype : RendererPrototype<Texture3DModel> {
     )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_colour", "in_transformation")
+        "in_position", "in_colour", "in_transformation"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst();
