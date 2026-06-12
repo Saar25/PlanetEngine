@@ -1,19 +1,12 @@
 package org.saar.lwjgl.opengl.depth
 
 import org.lwjgl.opengl.GL11
-import org.saar.lwjgl.opengl.constants.Comparator
 
 object DepthTest {
 
-    private val DEFAULTS = DepthState(
-        enabled = false,
-        function = DepthFunction(Comparator.LESS),
-        mask = DepthMask.WRITE
-    )
-
     private const val target = GL11.GL_DEPTH_TEST
 
-    private var current: DepthState = DEFAULTS
+    private var current: DepthState = DepthState.DEFAULTS
 
     @JvmStatic
     fun enable() = apply(enabled = true)

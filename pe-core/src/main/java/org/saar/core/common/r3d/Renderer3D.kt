@@ -4,40 +4,53 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
+import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
+import org.saar.lwjgl.opengl.constants.Face
+import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.Vec4UniformValue
 import org.saar.maths.utils.Matrix4
 
 object Renderer3D : Renderer, RendererPrototypeWrapper<Model3D>(RendererPrototype3D())
 
 private class RendererPrototype3D : RendererPrototype<Model3D> {
 
-    @UniformProperty(UniformTrigger.PER_INSTANCE)
+    @UniformProperty
+    private val clipPlaneUniform = Vec4UniformValue("u_clipPlane")
+
+    @UniformProperty
+    private val modelMatrixUniform = Mat4UniformValue("u_modelMatrix")
+
+    @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
-    @ShaderProperty
-    private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
+    )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_colour", "in_transformation")
+        "in_position", "in_colour", "in_transformation"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
+        CullFace.set(enabled = true, face = Face.BACK)
+        if (context.clipPlane != null) {
+            ClipPlaneTest.enable(0)
+            this.clipPlaneUniform.value.set(context.clipPlane.value)
+        } else {
+            ClipPlaneTest.disable(0)
+        }
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Model3D) {
@@ -45,6 +58,7 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
         val p = context.camera.projection.matrix
         val m = model.transform.transformationMatrix
 
+        this.modelMatrixUniform.value.set(m)
         this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
     }
 

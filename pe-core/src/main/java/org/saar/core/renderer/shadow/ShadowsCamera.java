@@ -4,18 +4,22 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.saar.core.camera.ICamera;
 import org.saar.core.camera.projection.OrthographicProjection;
+import org.saar.core.light.IDirectionalLight;
 import org.saar.maths.transform.SimpleTransform;
 import org.saar.maths.utils.Matrix4;
+import org.saar.maths.utils.Vector3;
 
 public class ShadowsCamera implements ICamera {
 
-
     private final Matrix4f viewMatrix = Matrix4.create();
     private final SimpleTransform transform = new SimpleTransform();
-    private final OrthographicProjection projection;
 
-    public ShadowsCamera(OrthographicProjection projection) {
+    private final OrthographicProjection projection;
+    private final IDirectionalLight light;
+
+    public ShadowsCamera(OrthographicProjection projection, IDirectionalLight light) {
         this.projection = projection;
+        this.light = light;
     }
 
     @Override
@@ -23,7 +27,8 @@ public class ShadowsCamera implements ICamera {
         return Matrix4.ofView(
                 getTransform().getPosition().getValue(),
                 getTransform().getRotation().getValue(),
-                this.viewMatrix);
+                this.viewMatrix
+        ).lookAlong(this.light.getDirection(), Vector3.UP);
     }
 
     @Override

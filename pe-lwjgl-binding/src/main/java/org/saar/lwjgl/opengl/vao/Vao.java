@@ -3,7 +3,6 @@ package org.saar.lwjgl.opengl.vao;
 import org.lwjgl.opengl.GL30;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.saar.lwjgl.opengl.vao.linking.LinkingStrategy;
 import org.saar.lwjgl.opengl.vbo.ReadOnlyVbo;
 
 public class Vao implements IVao {
@@ -26,15 +25,20 @@ public class Vao implements IVao {
     }
 
     @Override
-    public void loadVbo(ReadOnlyVbo buffer, LinkingStrategy linking, IAttribute... attributes) {
+    public void loadVbo(ReadOnlyVbo buffer, IAttribute attribute) {
         bind();
 
         buffer.bind();
-        linking.link(attributes);
-        for (IAttribute attribute : attributes) {
-            attribute.enable();
-        }
+        attribute.link(attribute.getBytesPerVertex(), 0);
+        attribute.enable();
 
+        unbind();
+    }
+
+    @Override
+    public void loadVbo(ReadOnlyVbo buffer) {
+        bind();
+        buffer.bind();
         unbind();
     }
 

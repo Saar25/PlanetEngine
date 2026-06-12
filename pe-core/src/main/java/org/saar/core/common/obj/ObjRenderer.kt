@@ -4,7 +4,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -28,13 +27,10 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
     @UniformProperty
     private val transformUniform = Mat4UniformValue("u_transformationMatrix")
 
-    @ShaderProperty
-    private val vertex = Shader.createVertex(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl"))
-
-    @ShaderProperty
-    private val fragment = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/obj/obj.fragment.glsl"))
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.fragment.glsl"))
+    )
 
     override fun vertexAttributes() = arrayOf(
         "in_position", "in_uvCoord", "in_normal")

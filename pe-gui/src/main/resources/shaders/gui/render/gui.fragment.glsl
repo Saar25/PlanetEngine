@@ -11,6 +11,7 @@ uniform bool u_hasDiscardMap;
 uniform sampler2D u_discardMap;
 uniform ivec2 u_resolution;
 uniform vec4 u_radiuses;
+uniform float u_opacity;
 uniform uint u_borderColour;
 uniform vec4 u_colourModifier;
 
@@ -214,10 +215,9 @@ vec4 getBorderColour(void) {
 void main(void) {
     g_radius = getRadius(v_bounds, v_position);
 
-    if (getDiscardMapValue() < .1) {
-        discard;
-    }
-    else if (isInside(v_bounds)){
+    float discardMapValue = getDiscardMapValue();
+
+    if (isInside(v_bounds)){
         vec4 colour = getColour();
         vec4 borderColour = getBorderColour();
         float blendFactor = g_radiusAlpha * g_radiusAlpha;
@@ -233,4 +233,6 @@ void main(void) {
     else {
         discard;
     }
+
+    fragColour.a *= u_opacity * discardMapValue;
 }

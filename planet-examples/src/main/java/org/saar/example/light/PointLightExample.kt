@@ -11,19 +11,28 @@ import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
+import org.saar.core.common.terrain.components.TerrainGravityComponent
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
+import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
-import org.saar.core.postprocessing.processors.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderingPath
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.p2d.asRenderNode2D
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.assureSize
+import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.gui.UIDisplay
@@ -35,7 +44,9 @@ import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
 import org.saar.maths.noise.SpreadNoise2f
@@ -51,14 +62,12 @@ fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
     ClearColour.set(.0f, .7f, .8f)
 
-    val keyboard = window.keyboard
-    val mouse = window.mouse
     val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
     val components = NodeComponentGroup(
-        KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
-        KeyboardMovementScrollVelocityComponent(mouse),
-        MouseDragRotationComponent(mouse, -.3f)
+        KeyboardMovementComponent(window.keyboard, 50f, 50f, 50f),
+        KeyboardMovementScrollVelocityComponent(window.mouse),
+        MouseDragRotationComponent(window.mouse, -.3f)
     )
 
     val camera = Camera(projection, components).apply {
@@ -76,17 +85,19 @@ fun main() {
             NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
         Vector2.of(256f, 256f)
     )
-    val terrain = terrainFactory.create(Vector2i(0, 0))
+    val world = LowPolyWorld(terrainFactory)
+    world.createTerrain(Vector2i(0, 0))
 
-    val lights = Array(100) {
+    val lights = Array(200) {
         val lightComponents = NodeComponentGroup(
-            TransformComponent().apply { transform.position.set(0f, 30f, 0f) },
+            TransformComponent().apply { transform.position.set(0f, 500f, 0f) },
             VelocityComponent(),
             AccelerationComponent(),
-            RandomMovementComponent()
+            RandomMovementComponent(),
+            TerrainGravityComponent(world),
         )
         PointLight(lightComponents).apply {
-            attenuation = Attenuation.DISTANCE_600
+            attenuation = Attenuation.DISTANCE_32
             Vector3.randomize(colour)
             update()
         }
@@ -99,13 +110,6 @@ fun main() {
     val cube = Node3D(cubeModel)
 
     val cubeMap = createCubeMap()
-    val pipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(terrain, cube),
-        SkyboxPostProcessor(cubeMap),
-        LightRenderPass(pointLights = lights),
-        FxaaPostProcessor()
-    )
-    val renderingPath = DeferredRenderingPath(camera, pipeline)
 
     val uiDisplay = UIDisplay(window)
 
@@ -128,15 +132,46 @@ fun main() {
 
     uiDisplay.add(uiTextGroup)
 
+    val screenPrototype1 = DeferredScreenPrototype()
+    val screen1 = screenPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val screenPrototype2 = DeferredScreenPrototype()
+    val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val pipeline = RenderPipeline(
+        // TODO: fix cube map
+        /*SkyboxPostProcessor(cubeMap)
+            .asRenderNode(object : PostProcessingBuffers {
+                override val albedo = Texture2D.NULL
+            })
+            .onto(screen1),*/
+        DeferredRenderNodeGroup(world, cube)
+            .asDeferredRenderNode()
+            .onto(screen1),
+        LightRenderPass(pointLights = lights)
+            .asRenderNode(screenPrototype1.buffers)
+            .onto(screen2),
+        FxaaPostProcessor()
+            .asRenderNode(screenPrototype2.buffers)
+            .onto(MainScreen),
+        uiDisplay
+            .asRenderNode2D()
+            .onto(MainScreen)
+    )
+
     val fps = Fps()
 
-    while (window.isOpen && !keyboard.isKeyPressed('T'.code)) {
+    while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         camera.update()
         uiDisplay.update()
         lights.forEach { it.update() }
 
-        renderingPath.render().toMainScreen()
-        uiDisplay.render(RenderContext(camera))
+        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.assureSize(MainScreen.width, MainScreen.height)
+        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.assureSize(MainScreen.width, MainScreen.height)
+        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        pipeline.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -147,7 +182,9 @@ fun main() {
     }
 
     camera.delete()
-    renderingPath.delete()
+    screen1.delete()
+    screen2.delete()
+    pipeline.delete()
     window.destroy()
 }
 

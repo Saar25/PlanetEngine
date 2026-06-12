@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 
 public class MutableTexture2D implements WritableTexture2D {
 
-
     private final TextureObject texture;
     private final TextureTarget target;
     private int width;

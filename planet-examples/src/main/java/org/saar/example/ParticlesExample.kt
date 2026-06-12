@@ -18,9 +18,15 @@ import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
-import org.saar.core.renderer.deferred.DeferredRenderingPath
-import org.saar.core.renderer.deferred.DeferredRenderingPipeline
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
@@ -29,7 +35,9 @@ import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.Texture2D
+import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
 import kotlin.system.measureTimeMillis
@@ -81,12 +89,13 @@ fun main() {
     val particlesComponents = NodeComponentGroup(MyParticlesComponent())
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
 
-    val pipeline = DeferredRenderingPipeline(
-        DeferredGeometryPass(particles, uiDisplay),
-        FxaaPostProcessor(),
-    )
+    val prototype = DeferredScreenPrototype()
+    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
-    val renderingPath = DeferredRenderingPath(camera, pipeline)
+    val pipeline = RenderPipeline(
+        DeferredGeometryPass(particles, uiDisplay).asRenderNode(prototype.buffers).onto(screen),
+        FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
+    )
 
     val fps = Fps()
 
@@ -94,7 +103,9 @@ fun main() {
 
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         val time = measureTimeMillis {
-            renderingPath.render().toMainScreen()
+            screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            pipeline.render(RenderContext(camera))
 
             particles.update()
             uiDisplay.update()
@@ -109,7 +120,8 @@ fun main() {
         fps.update()
     }
 
-    renderingPath.delete()
+    screen.delete()
+    pipeline.delete()
     window.destroy()
 }
 

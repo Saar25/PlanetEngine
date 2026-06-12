@@ -1,17 +1,17 @@
 package org.saar.gui.component
 
 import org.jproperty.property.SimpleBooleanProperty
+import org.saar.gui.Defaults
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.EventListener
 import org.saar.gui.event.MouseEvent
-import org.saar.gui.style.Colours
 
 class UIButton(text: String = "") : UIComponent() {
 
     private val pressedProperty = SimpleBooleanProperty()
 
-    private var onAction: EventListener<MouseEvent>? = null
+    var onAction: EventListener<MouseEvent>? = null
 
     val uiText = UIText(text)
 
@@ -20,10 +20,8 @@ class UIButton(text: String = "") : UIComponent() {
     init {
         this.style.padding.set(30, 100)
         this.style.borders.set(2)
-    }
-
-    fun setOnAction(onAction: EventListener<MouseEvent>) {
-        this.onAction = onAction
+        this.style.borderColour.set(Defaults.secondColour)
+        this.style.backgroundColour.set(Defaults.backgroundColour)
     }
 
     override fun onMousePress(event: MouseEvent) {
@@ -48,10 +46,5 @@ class UIButton(text: String = "") : UIComponent() {
     override fun onMouseExit(event: MouseEvent) {
         this.pressedProperty.set(false)
         this.style.colourModifier.set(1f)
-    }
-
-    init {
-        this.style.backgroundColour.set(Colours.GRAY)
-        this.style.borderColour.set(Colours.DARK_GRAY)
     }
 }

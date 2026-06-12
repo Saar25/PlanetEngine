@@ -11,6 +11,7 @@ import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
+import org.saar.gui.event.EventListener
 import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
@@ -105,7 +106,7 @@ class LoginPageApplication : Application {
                 this.style.borders.set(1.px)
                 this.style.backgroundColour.set(Colours.parse("#212121"))
 
-                this.setOnAction {
+                this.onAction = EventListener {
                     if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {
                         badCredentials.text = "Noice"
                         badCredentials.style.fontColour.set(Colours.GREEN)

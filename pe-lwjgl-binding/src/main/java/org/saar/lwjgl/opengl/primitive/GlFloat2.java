@@ -2,13 +2,13 @@ package org.saar.lwjgl.opengl.primitive;
 
 import org.joml.Vector2fc;
 import org.lwjgl.opengl.GL20;
-import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
+import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.util.DataWriter;
 import org.saar.maths.utils.Vector2;
 
-public class GlFloat2 extends GlPrimitiveBase implements GlPrimitive {
+public class GlFloat2 implements GlPrimitive {
 
     private static final DataType DATA_TYPE = DataType.FLOAT;
     private static final int COMPONENT_COUNT = 2;

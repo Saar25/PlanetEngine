@@ -18,6 +18,7 @@ import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.length.Lengths
 import org.saar.gui.style.margin.Margin
+import org.saar.gui.style.opacity.Opacity
 import org.saar.gui.style.padding.Padding
 import org.saar.gui.style.position.Position
 import org.saar.gui.style.redius.Radius
@@ -53,6 +54,8 @@ class BlockStyle(container: UIBlock) : Style {
     override val borderColour: BorderColour = BorderColour(container)
 
     override val radius: Radius = Radius(container)
+
+    override val opacity: Opacity = Opacity(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 

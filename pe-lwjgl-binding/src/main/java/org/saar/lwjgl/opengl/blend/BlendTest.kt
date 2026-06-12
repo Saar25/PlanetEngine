@@ -4,22 +4,9 @@ import org.lwjgl.opengl.GL11
 
 object BlendTest {
 
-    private val ALPHA = BlendState(
-        function = BlendFunction(BlendValue.SRC_ALPHA, BlendValue.ONE_MINUS_SRC_ALPHA),
-    )
-
-    private val ADDITIVE = BlendState(
-        function = BlendFunction(BlendValue.SRC_ALPHA, BlendValue.ONE),
-    )
-
-    private val DEFAULTS = BlendState(
-        enabled = false,
-        function = BlendFunction(BlendValue.ONE, BlendValue.ZERO),
-    )
-
     private const val target = GL11.GL_BLEND
 
-    private var current: BlendState = DEFAULTS
+    private var current: BlendState = BlendState.DEFAULTS
 
     @JvmStatic
     fun enable() = apply(enabled = true)
@@ -46,13 +33,14 @@ object BlendTest {
     ) = apply(BlendState(enabled, function))
 
     @JvmStatic
-    fun applyAlpha() = apply(ALPHA)
+    fun applyAlpha() = apply(BlendState.ALPHA)
 
     @JvmStatic
-    fun applyAdditive() = apply(ADDITIVE)
+    fun applyAdditive() = apply(BlendState.ADDITIVE)
 
     private fun setEnabled(enabled: Boolean) = if (enabled) GL11.glEnable(this.target) else GL11.glDisable(this.target)
 
     private fun setFunction(function: BlendFunction) = GL11.glBlendFunc(
-        function.source.value, function.destination.value)
+        function.source.value, function.destination.value
+    )
 }

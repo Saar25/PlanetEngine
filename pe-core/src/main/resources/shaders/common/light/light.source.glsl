@@ -32,19 +32,25 @@ float smoothSpecularFactor(const float specular, const float power, const float 
 
 // Directional light
 
-float lightFactor(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection, const float power, const float scalar) {
+float lightFactor(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection,
+                  const float power, const float scalar, const float shadow) {
     float diffuse = diffuseFactor(normal, light.direction);
     if (diffuse > 0) {
         float specularFactor = specularFactor(light.direction, reflectedViewDirection);
         float smoothSpecularFactor = smoothSpecularFactor(specularFactor, power, scalar);
-        return ambientFactor() + diffuse + smoothSpecularFactor;
+        return ambientFactor() + (diffuse + smoothSpecularFactor) * shadow;
     } else {
-        return ambientFactor() + diffuse;
+        return ambientFactor() + (diffuse) * shadow;
     }
 }
 
+vec3 lightColour(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection,
+                 const float power, const float scalar, const float shadow) {
+    return light.colour * lightFactor(light, normal, reflectedViewDirection, power, scalar, shadow);
+}
+
 vec3 lightColour(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection, const float power, const float scalar) {
-    return light.colour * lightFactor(light, normal, reflectedViewDirection, power, scalar);
+    return lightColour(light, normal, reflectedViewDirection, power, scalar, 1);
 }
 
 vec3 totalLightsColour(const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights, const int count,

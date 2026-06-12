@@ -4,20 +4,19 @@ import org.saar.core.painting.Painter
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.constants.Comparator
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
-import org.saar.lwjgl.opengl.stencil.*
+import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.stencil.StencilTest
 
 class FBMPainter : Painter {
 
     private val prototype = FBMPainterPrototype()
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    private val stencilState = StencilState(StencilOperation.ALWAYS_KEEP,
-        StencilFunction(Comparator.EQUAL, 0), StencilMask.UNCHANGED)
+    private val stencilState = StencilState.UNWRITTEN_ONLY
 
     override fun prepare() = StencilTest.apply(this.stencilState)
 

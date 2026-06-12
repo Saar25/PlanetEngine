@@ -5,15 +5,9 @@ import org.saar.lwjgl.opengl.constants.Face
 
 object CullFace {
 
-    private val DEFAULTS = CullFaceState(
-        enabled = false,
-        face = Face.BACK,
-        order = CullFaceOrder.COUNTER_CLOCKWISE,
-    )
-
     private const val target = GL11.GL_CULL_FACE
 
-    private var current: CullFaceState = DEFAULTS
+    private var current: CullFaceState = CullFaceState.DEFAULTS
 
     @JvmStatic
     fun enable() = set(enabled = true)

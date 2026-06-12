@@ -6,6 +6,6 @@ interface World : ParentNode {
 
     override val children: List<Terrain>
 
-    fun getHeight(x: Float, z: Float): Float
+    fun getHeight(x: Float, y: Float, z: Float): Float
 
 }

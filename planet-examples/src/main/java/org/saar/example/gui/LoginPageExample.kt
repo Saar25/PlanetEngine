@@ -9,6 +9,7 @@ import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
+import org.saar.gui.event.EventListener
 import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues.vertical
 import org.saar.gui.style.arrangement.ArrangementValues.spaceBetween
@@ -100,8 +101,9 @@ object LoginPageExample {
                 style.borderColour.set(Colours.WHITE)
                 style.borders.set(1.px)
                 style.backgroundColour.set(Colours.parse("#212121"))
+                style.opacity.set(.6f)
 
-                setOnAction {
+                onAction = EventListener {
                     if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {
                         badCredentials.text = "Noice"
                         badCredentials.style.fontColour.set(Colours.GREEN)

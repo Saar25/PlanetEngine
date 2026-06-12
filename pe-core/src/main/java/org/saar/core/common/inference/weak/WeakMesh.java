@@ -2,6 +2,7 @@ package org.saar.core.common.inference.weak;
 
 import org.saar.core.mesh.DrawCallMesh;
 import org.saar.core.mesh.Mesh;
+import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.attribute.IAttribute;
 import org.saar.lwjgl.opengl.constants.DataType;
@@ -29,12 +30,12 @@ public class WeakMesh implements Mesh {
         if (vertices.length > 0) {
             final IAttribute[] attributes = vertices[0].getAttributes();
             vertexAttributes = attributes.length;
-            loadVertices(vao, vertices, attributes);
+            loadVertices(vao, vertices, new AttributeComposite(attributes));
         }
 
         if (instances.length > 0) {
-            final IAttribute[] attributes = instances[0].getAttributes(vertexAttributes);
-            loadInstances(vao, instances, attributes);
+            final IAttribute attribute = instances[0].getAttribute(vertexAttributes);
+            loadInstances(vao, instances, attribute);
         }
 
         loadIndices(vao, indices);
@@ -53,12 +54,12 @@ public class WeakMesh implements Mesh {
         if (vertices.length > 0) {
             final IAttribute[] attributes = vertices[0].getAttributes();
             vertexAttributes = attributes.length;
-            loadVertices(vao, vertices, attributes);
+            loadVertices(vao, vertices, new AttributeComposite(attributes));
         }
 
         if (instances.length > 0) {
-            final IAttribute[] attributes = instances[0].getAttributes(vertexAttributes);
-            loadInstances(vao, instances, attributes);
+            final IAttribute attribute = instances[0].getAttribute(vertexAttributes);
+            loadInstances(vao, instances, attribute);
         }
 
         final DrawCall drawCall = new InstancedArraysDrawCall(
@@ -72,7 +73,7 @@ public class WeakMesh implements Mesh {
 
         if (vertices.length > 0) {
             final IAttribute[] attributes = vertices[0].getAttributes();
-            loadVertices(vao, vertices, attributes);
+            loadVertices(vao, vertices, new AttributeComposite(attributes));
         }
 
         loadIndices(vao, indices);
@@ -88,7 +89,7 @@ public class WeakMesh implements Mesh {
 
         if (vertices.length > 0) {
             final IAttribute[] attributes = vertices[0].getAttributes();
-            loadVertices(vao, vertices, attributes);
+            loadVertices(vao, vertices, new AttributeComposite(attributes));
         }
 
         final ArraysDrawCall drawCall = new ArraysDrawCall(
@@ -113,11 +114,11 @@ public class WeakMesh implements Mesh {
         vbo.delete();
     }
 
-    private static void loadVertices(Vao vao, WeakVertex[] vertices, IAttribute[] attributes) {
+    private static void loadVertices(Vao vao, WeakVertex[] vertices, IAttribute attribute) {
         final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
 
         final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
-                vertices.length * Attributes.sumBytes(attributes));
+                vertices.length * Attributes.sumBytes(attribute));
 
         for (WeakVertex vertex : vertices) {
             vertex.write(buffer.getWriter());
@@ -125,15 +126,15 @@ public class WeakMesh implements Mesh {
 
         vbo.allocate(buffer.flip().limit());
         vbo.store(0, buffer.asByteBuffer());
-        vao.loadVbo(vbo, attributes);
+        vao.loadVbo(vbo, attribute);
         vbo.delete();
     }
 
-    private static void loadInstances(Vao vao, WeakInstance[] instances, IAttribute[] attributes) {
+    private static void loadInstances(Vao vao, WeakInstance[] instances, IAttribute attribute) {
         final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
 
         final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
-                instances.length * Attributes.sumBytes(attributes));
+                instances.length * Attributes.sumBytes(attribute));
 
         for (WeakInstance instance : instances) {
             instance.write(buffer.getWriter());
@@ -141,7 +142,7 @@ public class WeakMesh implements Mesh {
 
         vbo.allocate(buffer.flip().limit());
         vbo.store(0, buffer.asByteBuffer());
-        vao.loadVbo(vbo, attributes);
+        vao.loadVbo(vbo, attribute);
         vbo.delete();
     }
 

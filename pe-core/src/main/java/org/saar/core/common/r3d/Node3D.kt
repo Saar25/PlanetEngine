@@ -1,9 +1,9 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.node.NodeComponentGroup
-import org.saar.core.node.ComposableNode
 import org.saar.core.common.components.TransformComponent
+import org.saar.core.node.ComposableNode
 import org.saar.core.node.Node
+import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.forward.ForwardRenderNode
@@ -16,10 +16,6 @@ open class Node3D(val model: Model3D, components: NodeComponentGroup) :
 
     final override val components: NodeComponentGroup = NodeComponentGroup(
         components, TransformComponent(model.transform))
-
-    init {
-        this.components.start(this)
-    }
 
     final override fun renderForward(context: RenderContext) {
         Renderer3D.render(context, this.model)

@@ -28,6 +28,8 @@ import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.opacity.NoOpacity
+import org.saar.gui.style.opacity.ReadonlyOpacity
 import org.saar.gui.style.padding.NoPadding
 import org.saar.gui.style.padding.ReadonlyPadding
 import org.saar.gui.style.position.PositionValues
@@ -84,6 +86,8 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
     override val borderColour: ReadonlyBorderColour = NoBorderColour
 
     override val radius: ReadonlyRadius = NoRadius
+
+    override val opacity: ReadonlyOpacity = NoOpacity
 
     override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
 

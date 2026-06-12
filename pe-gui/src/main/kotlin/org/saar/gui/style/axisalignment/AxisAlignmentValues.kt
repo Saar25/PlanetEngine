@@ -31,9 +31,9 @@ object AxisAlignmentValues {
     @JvmField
     val center = object : AxisAlignmentValue {
         override fun computeAxisX(container: UIParentNode, child: UIChildNode): Int =
-            (container.style.width.get() - child.style.width.get()) / 2
+            (container.style.boxSizing.getSpaceWidth() - child.style.boxSizing.getSpaceWidth()) / 2
 
         override fun computeAxisY(container: UIParentNode, child: UIChildNode): Int =
-            (container.style.height.get() - child.style.height.get()) / 2
+            (container.style.boxSizing.getBoxHeight() - child.style.boxSizing.getBoxHeight()) / 2
     }
 }

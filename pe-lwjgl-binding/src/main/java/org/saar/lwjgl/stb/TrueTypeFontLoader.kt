@@ -12,7 +12,7 @@ object TrueTypeFontLoader {
     fun bakeFontBitmap(buffer: ReadonlyLwjglBuffer, fontHeight: Float, bitmapWidth: Int,
                        bitmapHeight: Int, start: Char, count: Int): TrueTypeBitmap {
         MemoryStack.stackPush().use { stack ->
-            val cdata = STBTTBakedChar.mallocStack(count, stack)
+            val cdata = STBTTBakedChar.malloc(count, stack)
             val bitmap = LwjglByteBuffer.allocate(bitmapWidth * bitmapHeight)
 
             STBTruetype.stbtt_BakeFontBitmap(buffer.asByteBuffer(), fontHeight,

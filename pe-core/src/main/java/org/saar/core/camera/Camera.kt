@@ -23,11 +23,7 @@ class Camera(override val projection: Projection,
             field
         )
 
-    init {
-        this.components.start(this)
-    }
+    override fun update() = this.components.update(this)
 
-    override fun update() = components.update(this)
-
-    override fun delete() = components.delete(this)
+    override fun delete() = this.components.delete(this)
 }

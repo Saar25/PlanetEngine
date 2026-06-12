@@ -15,6 +15,4 @@ public interface GlPrimitive {
     DataType getDataType();
 
     int getComponentCount();
-
-    int getSize();
 }

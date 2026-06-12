@@ -18,6 +18,7 @@ import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.NoMargin
 import org.saar.gui.style.margin.ReadonlyMargin
+import org.saar.gui.style.opacity.Opacity
 import org.saar.gui.style.padding.NoPadding
 import org.saar.gui.style.padding.ReadonlyPadding
 import org.saar.gui.style.position.Position
@@ -66,6 +67,8 @@ class TextStyle(container: UIText) : Style {
     override val borderColour: BorderColour = BorderColour(container)
 
     override val radius: Radius = Radius(container)
+
+    override val opacity: Opacity = Opacity(container)
 
     override val backgroundColour: BackgroundColour = BackgroundColour(container)
 

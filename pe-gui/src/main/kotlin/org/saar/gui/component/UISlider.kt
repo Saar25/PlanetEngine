@@ -2,11 +2,13 @@ package org.saar.gui.component
 
 import org.jproperty.property.FloatProperty
 import org.jproperty.property.SimpleFloatProperty
+import org.saar.gui.Defaults
 import org.saar.gui.UIBlock
 import org.saar.gui.UIComponent
 import org.saar.gui.event.MouseEvent
-import org.saar.gui.style.Colours
+import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.coordinate.CoordinateValues.percent
+import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.position.PositionValues
 import org.saar.maths.utils.Maths
 
@@ -21,19 +23,23 @@ class UISlider : UIComponent() {
 
     private val uiTruck = UIBlock().apply {
         style.borders.set(2)
+        style.height.value = LengthValues.percent(40f)
     }
 
     private val uiThumb = UIBlock().apply {
-        style.backgroundColour.set(Colours.DARK_GRAY)
+        style.backgroundColour.set(Defaults.mainColour)
         style.position.value = PositionValues.absolute
-        style.width.set(20)
+        style.width.set(10)
     }
 
     override val children = listOf(this.uiTruck, this.uiThumb).onEach { it.parent = this }
 
+    override val renderSelf = false
+
     init {
-        this.style.backgroundColour.set(Colours.GRAY)
-        this.style.borderColour.set(Colours.DARK_GRAY)
+        style.axisAlignment.value = AxisAlignmentValues.center
+        style.backgroundColour.set(Defaults.backgroundColour)
+        style.borderColour.set(Defaults.secondColour)
     }
 
     override fun onMousePress(event: MouseEvent) {

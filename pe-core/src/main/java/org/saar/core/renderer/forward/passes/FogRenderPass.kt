@@ -9,6 +9,7 @@ import org.saar.core.renderer.forward.ForwardRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -16,12 +17,19 @@ import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
+import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 
 class FogRenderPass(fog: IFog, fogDistance: FogDistance) : ForwardRenderPass {
 
     private val prototype = FogRenderPassPrototype(fog, fogDistance)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+
+    override fun prepare(context: RenderContext, buffers: ForwardRenderingBuffers) {
+        StencilTest.apply(StencilState.REPLACE)
+        DepthTest.disable()
+    }
 
     override fun render(context: RenderContext, buffers: ForwardRenderingBuffers) = this.wrapper.render {
         this.prototype.textureUniform.value = buffers.albedo

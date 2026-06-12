@@ -7,6 +7,7 @@ import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
+import org.saar.gui.event.EventListener
 import org.saar.gui.font.FontLoader
 import org.saar.gui.style.Colours
 import org.saar.gui.style.length.LengthValues.percent
@@ -38,7 +39,7 @@ object UIButtonExample {
         val uiButton = UIButton().apply {
             style.width.value = percent(50f)
             style.height.value = ratio(.5f)
-            setOnAction { println("Clicked!") }
+            onAction = EventListener { println("Clicked!") }
         }
         container.add(uiButton)
 

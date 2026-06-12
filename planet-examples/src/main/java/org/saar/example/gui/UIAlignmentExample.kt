@@ -6,6 +6,7 @@ import org.saar.gui.UIBlock
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
+import org.saar.gui.event.EventListener
 import org.saar.gui.style.Colours
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
@@ -41,21 +42,21 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                setOnAction { println("Clicked!") }
+                onAction = EventListener { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
             })
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                setOnAction { println("Clicked!") }
+                onAction = EventListener { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
             })
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                setOnAction { println("Clicked!") }
+                onAction = EventListener { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
             })
@@ -75,21 +76,21 @@ object UIAlignmentExample {
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                setOnAction { println("Clicked!") }
+                onAction = EventListener { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
             })
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                setOnAction { println("Clicked!") }
+                onAction = EventListener { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
             })
 
             add(UIButton().apply {
                 style.fontSize.set(48)
-                setOnAction { println("Clicked!") }
+                onAction = EventListener { println("Clicked!") }
                 style.margin.set(5)
                 style.radius.set(10)
             })

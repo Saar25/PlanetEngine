@@ -1,12 +1,15 @@
 package org.saar.core.common.components
 
-import org.saar.core.node.NodeComponent
+import org.joml.Vector3f
 import org.saar.core.node.ComposableNode
+import org.saar.core.node.NodeComponent
 import org.saar.maths.transform.Transform
 
 class ThirdPersonViewComponent(private val toFollow: Transform, private val distance: Float) : NodeComponent {
 
     private lateinit var transformComponent: TransformComponent
+
+    private val temp: Vector3f = Vector3f()
 
     override fun start(node: ComposableNode) {
         this.transformComponent = node.components.get()
@@ -14,7 +17,8 @@ class ThirdPersonViewComponent(private val toFollow: Transform, private val dist
 
     override fun update(node: ComposableNode) {
         val position = this.transformComponent.transform.rotation.direction
-            .normalize(this.distance).add(this.toFollow.position.value)
+            .normalize(this.distance, this.temp).add(this.toFollow.position.value)
+
         this.transformComponent.transform.position.set(position)
     }
 }
