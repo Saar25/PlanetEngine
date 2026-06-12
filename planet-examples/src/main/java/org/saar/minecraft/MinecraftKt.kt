@@ -1,6 +1,9 @@
 package org.saar.minecraft
 
 import org.joml.SimplexNoise
+import org.joml.component1
+import org.joml.component2
+import org.joml.component3
 import org.jproperty.ChangeListener
 import org.jproperty.property.SimpleFloatProperty
 import org.saar.core.camera.Camera
@@ -9,6 +12,7 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.components.MouseRotationComponent
 import org.saar.core.common.components.VelocityComponent
 import org.saar.core.node.NodeComponentGroup
+import org.saar.core.renderer.RenderContext
 import org.saar.core.screen.MainScreen
 import org.saar.core.util.Fps
 import org.saar.gui.*
@@ -31,9 +35,6 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
-import org.saar.maths.JomlOperators.component1
-import org.saar.maths.JomlOperators.component2
-import org.saar.maths.JomlOperators.component3
 import org.saar.maths.noise.Noise3f
 import org.saar.maths.transform.Position
 import org.saar.minecraft.chunk.ChunkRenderer
@@ -85,8 +86,8 @@ fun main() {
 
     val rendering =
         if (HIGH_QUALITY) MinecraftDeferredRendering(uiDisplay, world, camera, WORLD_RADIUS)
-        else MinecraftForwardRendering(uiDisplay, world, camera, WORLD_RADIUS)
-    val renderingPath = rendering.buildRenderingPath()
+        else MinecraftForwardRendering(uiDisplay, world, WORLD_RADIUS)
+    val renderPipeline = rendering.buildRenderPipeline()
 
     val atlas = createAtlas().also {
         ChunkRenderer.atlas = it
@@ -124,7 +125,7 @@ fun main() {
         uiDisplay.update()
         rendering.update()
 
-        renderingPath.render().toMainScreen()
+        renderPipeline.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -134,7 +135,7 @@ fun main() {
 
     atlas.delete()
     world.delete()
-    renderingPath.delete()
+    renderPipeline.delete()
     window.destroy()
 }
 
@@ -236,7 +237,8 @@ private fun buildWorld(): World {
 
 private fun generateWorld() {
     val worldGeneratingFuture = world.generateAround(
-        Position.of(0f, 0f, 0f), WORLD_RADIUS)
+        Position.of(0f, 0f, 0f), WORLD_RADIUS
+    )
     while (!worldGeneratingFuture.isDone) {
         window.swapBuffers()
         window.pollEvents()
@@ -270,11 +272,11 @@ private fun buildCamera(window: Window, world: World): Camera {
 
 private fun createAtlas(): Texture2D {
     return Texture2D.of(TEXTURE_ATLAS_PATH).apply {
-        applyParameters(arrayOf(
+        applyParameters(
             TextureMagFilterParameter(MagFilterValue.NEAREST),
             TextureMinFilterParameter(MinFilterValue.NEAREST_MIPMAP_LINEAR),
             TextureAnisotropicFilterParameter(8f)
-        ))
+        )
         generateMipmap()
     }
 }

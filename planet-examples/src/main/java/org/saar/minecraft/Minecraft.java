@@ -7,7 +7,8 @@ import org.saar.core.camera.projection.ScreenPerspectiveProjection;
 import org.saar.core.common.components.MouseRotationComponent;
 import org.saar.core.common.components.VelocityComponent;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderingPath;
+import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.RenderPipeline;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.util.Fps;
 import org.saar.gui.*;
@@ -31,7 +32,6 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter;
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter;
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue;
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue;
-import org.saar.maths.noise.LayeredNoise3f;
 import org.saar.maths.noise.Noise3f;
 import org.saar.maths.noise.SpreadNoise3f;
 import org.saar.maths.transform.Position;
@@ -116,13 +116,13 @@ public class Minecraft {
 
         final MinecraftRendering rendering = HIGH_QUALITY
                 ? new MinecraftDeferredRendering(uiDisplay, world, camera, WORLD_RADIUS)
-                : new MinecraftForwardRendering(uiDisplay, world, camera, WORLD_RADIUS);
+                : new MinecraftForwardRendering(uiDisplay, world, WORLD_RADIUS);
 
         final Texture2D atlas = createAtlas();
         ChunkRenderer.INSTANCE.setAtlas(atlas);
         WaterRenderer.INSTANCE.setAtlas(atlas);
 
-        final RenderingPath<?> renderingPath = rendering.buildRenderingPath();
+        final RenderPipeline renderPipeline = rendering.buildRenderPipeline();
 
         final Fps fps = new Fps();
 
@@ -150,7 +150,7 @@ public class Minecraft {
             uiDisplay.update();
 
             rendering.update();
-            renderingPath.render().toMainScreen();
+            renderPipeline.render(new RenderContext(camera));
 
             if (System.currentTimeMillis() - lastFpsUpdate >= 5000) {
                 uiFps.setText(String.format("Fps: %.3f", fps.fps()));
@@ -181,7 +181,7 @@ public class Minecraft {
         atlas.delete();
         world.delete();
 
-        renderingPath.delete();
+        renderPipeline.delete();
         window.destroy();
     }
 

@@ -6,7 +6,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeHelper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
@@ -96,16 +95,9 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
     @UniformProperty
     private val chunkCoordinateUniform = Vec2iUniformValue("u_chunkCoordinate")
 
-    @ShaderProperty
-    private val vertex: Shader = Shader.createVertex(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/minecraft/shaders/block.vertex.glsl")
-    )
-
-    @ShaderProperty
-    private val fragment: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/minecraft/shaders/block.fragment.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/minecraft/shaders/block.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/minecraft/shaders/block.fragment.glsl"))
     )
 
     override fun vertexAttributes() = arrayOf("in_data")
@@ -128,9 +120,9 @@ private class ChunkRendererPrototype : RendererPrototype<Chunk> {
         this.glowTransitionUniform.value = abs(time - TRANSITION_TIME / 2f) / TRANSITION_TIME / 2f
     }
 
-    override fun onInstanceDraw(context: RenderContext, chunk: Chunk) {
-        this.chunkCoordinateUniform.value = chunk.position
+    override fun onInstanceDraw(context: RenderContext, model: Chunk) {
+        this.chunkCoordinateUniform.value = model.position
     }
 
-    override fun doInstanceDraw(context: RenderContext, instance: Chunk) = instance.drawOpaque()
+    override fun doInstanceDraw(context: RenderContext, model: Chunk) = model.drawOpaque()
 }

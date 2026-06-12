@@ -24,7 +24,7 @@ public final class Collision {
     }
 
     private static float safeClamp(float value, float max) {
-        return max > 0 ? Maths.clamp(value, 0, max) : Maths.clamp(value, max, 0);
+        return max > 0 ? Maths.INSTANCE.clamp(value, 0, max) : Maths.INSTANCE.clamp(value, max, 0);
     }
 
     private static BlockContainer collidedBlock(World world, ReadonlyPosition position, Vector3fc unitDirection, int length) {

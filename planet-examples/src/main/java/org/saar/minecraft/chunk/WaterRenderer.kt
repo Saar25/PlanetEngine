@@ -6,9 +6,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeHelper
-import org.saar.core.renderer.shaders.ShaderProperty
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.core.renderer.uniforms.UniformTrigger
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
 import org.saar.lwjgl.opengl.cullface.CullFace
@@ -58,13 +56,13 @@ object WaterRenderer : Renderer {
 
 private class WaterRendererPrototype : RendererPrototype<Chunk> {
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val projectionViewUniform = Mat4UniformValue("u_projectionView")
 
     @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val atlasUniform = object : TextureUniform() {
         override val unit = 0
 
@@ -73,14 +71,14 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
         override val value get() = WaterRenderer.atlas
     }
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val dimensionsUniform = object : Vec2iUniform() {
         override val name = "u_dimensions"
 
         override val value = Vector2i(16, 16)
     }
 
-    @UniformProperty(UniformTrigger.PER_RENDER_CYCLE)
+    @UniformProperty
     private val texturesCount = object : IntUniform() {
         override val name = "u_texturesCount"
 
@@ -96,16 +94,9 @@ private class WaterRendererPrototype : RendererPrototype<Chunk> {
     @UniformProperty
     private val chunkCoordinateUniform = Vec2iUniformValue("u_chunkCoordinate")
 
-    @ShaderProperty
-    private val vertex: Shader = Shader.createVertex(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/minecraft/shaders/water.vertex.glsl")
-    )
-
-    @ShaderProperty
-    private val fragment: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/minecraft/shaders/water.fragment.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/minecraft/shaders/water.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/minecraft/shaders/water.fragment.glsl"))
     )
 
     override fun vertexAttributes() = arrayOf("in_data")

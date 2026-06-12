@@ -18,7 +18,7 @@ public class Terrain3DGenerator implements WorldGenerator {
     }
 
     private float smoothStep(float value) {
-        final float t = Maths.clamp((this.maxHeight - value) / (this.maxHeight - this.minHeight), 0, 1);
+        final float t = Maths.INSTANCE.clamp((this.maxHeight - value) / (this.maxHeight - this.minHeight), 0, 1);
         return t * t * (3 - 2 * t);
     }
 

@@ -1,11 +1,10 @@
 package org.saar.minecraft
 
-import org.saar.core.renderer.RenderingPath
-import org.saar.core.renderer.renderpass.RenderPassBuffers
+import org.saar.core.renderer.RenderPipeline
 
 interface MinecraftRendering {
 
-    fun buildRenderingPath(): RenderingPath<out RenderPassBuffers>
+    fun buildRenderPipeline(): RenderPipeline
 
     fun update()
 
