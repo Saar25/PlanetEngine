@@ -38,8 +38,6 @@ class FogRenderPass(fog: IFog, fogDistance: FogDistance) : ForwardRenderPass {
         this.prototype.projectionMatrixInvUniform.value = context.camera
             .projection.matrix.invertPerspective(Matrix4.temp)
 
-        this.prototype.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
-
         this.prototype.cameraPositionUniform.value.set(context.camera.transform.position.value)
     }
 
@@ -61,9 +59,6 @@ private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : Rend
 
     @UniformProperty
     val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
-
-    @UniformProperty
-    val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
     @UniformProperty
     val cameraPositionUniform = Vec3UniformValue("u_cameraPosition")

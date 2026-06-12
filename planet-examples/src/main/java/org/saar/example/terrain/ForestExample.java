@@ -123,7 +123,7 @@ public class ForestExample {
             final float z = (float) (Math.random() * 200 - 100);
             treeModel.getTransform().getPosition().set(x, world.getHeight(x, 0, z) + 2, z);
             return tree;
-        }).<ObjNode>toArray(ObjNode[]::new));
+        }).toArray(ObjNode[]::new));
 
         final Model3D cubeModel = buildCubeModel();
         final Node3D cube = new Node3D(cubeModel);

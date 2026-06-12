@@ -212,24 +212,24 @@ private class TerrainApplication : Application {
             renderNode
                 .asDeferredRenderNode()
                 .onto(screenA),
-            LightRenderPass(light)
+            /*LightRenderPass(light)
                 .asRenderNode(screenABuffers)
-                .onto(screenB),
+                .onto(screenB),*/
             /*
             // TODO: fix ssao
             SsaoRenderPass()
                 .asRenderNode(screenBBuffers)
                 .onto(MainScreen),*/
             FogRenderPass(fog, FogDistance.XZ)
-                .asRenderNode(screenBBuffers)
-                .onto(screenA),
+                .asRenderNode(screenABuffers)
+                .onto(screenB),
             /*
             // TODO: fix skybox
             SkyboxPostProcessor(cubeMap)
                 .asRenderNode(screenABuffers)
                 .onto(screenB),*/
             FxaaPostProcessor()
-                .asRenderNode(screenABuffers)
+                .asRenderNode(screenBBuffers)
                 .onto(MainScreen),
         )
     }
