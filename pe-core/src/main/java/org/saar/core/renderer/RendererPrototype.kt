@@ -9,7 +9,7 @@ interface RendererPrototype<T> {
 
     fun fragmentOutputs(): Array<String> = arrayOf()
 
-    val uniforms: Array<Uniform> get() = emptyArray()
+    val uniforms: List<Uniform> get() = emptyList()
 
     val shadersProgram: ShadersProgram
 

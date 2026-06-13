@@ -1,24 +1,14 @@
 package org.saar.core.renderer
 
-import org.saar.core.renderer.uniforms.UniformsHelper
-import org.saar.lwjgl.opengl.shader.ShadersProgram
-import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper
+import org.saar.lwjgl.opengl.shader.uniforms.Uniform
 
 class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : Renderer {
 
-    private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
-        .also { this.prototype.shadersProgram.bind() }
-        .let { helper ->
-            Renderers.findUniforms(this.prototype)
+    private val uniforms: Map<Uniform, Int> = this.prototype.shadersProgram.bind()
+        .let {
+            (this.prototype.uniforms + Renderers.findUniforms(this.prototype))
                 .flatMap { it.subUniforms }
-                .map { UniformWrapper(this.prototype.shadersProgram.getUniformLocation(it.name), it) }
-                .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
-        }
-        .let { helper ->
-            this.prototype.uniforms
-                .flatMap { it.subUniforms }
-                .map { UniformWrapper(this.prototype.shadersProgram.getUniformLocation(it.name), it) }
-                .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
+                .associateWith { this.prototype.shadersProgram.getUniformLocation(it.name) }
         }
 
     init {
@@ -27,19 +17,19 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
         this.prototype.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
-    fun beforeRender(context: RenderContext) {
+    fun bind(context: RenderContext) {
         this.prototype.shadersProgram.bind()
         this.prototype.onRenderCycle(context)
     }
 
-    fun afterRender() {
+    fun unbind() {
         this.prototype.shadersProgram.unbind()
     }
 
     inline fun doRender(context: RenderContext, renderCallback: () -> Unit) {
-        beforeRender(context)
+        bind(context)
         renderCallback()
-        afterRender()
+        unbind()
     }
 
     fun render(context: RenderContext, models: Iterable<T>) = doRender(context) {
@@ -49,7 +39,7 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
     fun render(context: RenderContext, model: T) {
         this.prototype.onInstanceDraw(context, model)
 
-        this.uniformsHelper.load()
+        this.uniforms.entries.forEach { (uniform, location) -> uniform.load(location) }
 
         this.prototype.doInstanceDraw(context, model)
     }
@@ -60,10 +50,10 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
 }
 
 fun RendererPrototypeHelper<Unit>.render(context: RenderContext, renderCallback: () -> Unit) {
-    beforeRender(context)
+    bind(context)
     renderCallback()
     render(context, Unit)
-    afterRender()
+    unbind()
 }
 
 fun RendererPrototypeHelper<Unit>.render(context: RenderContext) = render(context) {
