@@ -5,7 +5,7 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.painting.Random2fPainter
-import org.saar.core.postprocessing.GaussianBlurPostProcessor
+import org.saar.core.postprocessing.GaussianBlurRenderPass
 import org.saar.core.postprocessing.MultiplyPostProcessor
 import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -53,7 +53,7 @@ class SsaoRenderPass(
         .addColorTexture(this.ssaoTexture, InternalFormat.R16F).setRead()
         .build()
 
-    private val blurPostProcessor = GaussianBlurPostProcessor(this.ssaoTexture, 11, 2)
+    private val blurRenderPass = GaussianBlurRenderPass(11, 1f)
 
     private val multiplyPostProcessor = MultiplyPostProcessor(this.albedoBuffer, this.ssaoTexture, 1)
 
@@ -107,7 +107,6 @@ class SsaoRenderPass(
     override fun delete() {
         this.ssaoWrapper.delete()
         this.ssaoPrototype.noiseTexture.delete()
-        this.blurPostProcessor.delete()
         this.multiplyPostProcessor.delete()
         this.screen.delete()
     }

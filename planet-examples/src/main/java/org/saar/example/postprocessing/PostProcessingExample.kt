@@ -7,11 +7,11 @@ import org.saar.core.common.r2d.Node2D
 import org.saar.core.common.r2d.R2D
 import org.saar.core.common.r2d.R2D.vertex
 import org.saar.core.painting.FBMPainter
+import org.saar.core.postprocessing.GaussianBlurRenderPass
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.p2d.ScreenPrototype2D
-import org.saar.core.renderer.p2d.asRenderNode2D
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.glfw.window.Window
@@ -38,25 +38,30 @@ object PostProcessingExample {
         val model = buildModel2D()
         val node = Node2D(model)
 
-        val screenPrototype = ScreenPrototype2D()
-        val fbo = Fbo.create(WIDTH, HEIGHT)
-        val screen = screenPrototype.toScreen(fbo)
+        val prototype1 = ScreenPrototype2D()
+        val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+        val prototype2 = ScreenPrototype2D()
+        val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
+        val gaussianBlurRenderPass = GaussianBlurRenderPass(21)
         val renderGraph = RenderGraph(
-            FBMPainter().onto(screen),
-            node.asRenderNode2D().onto(screen)
+            FBMPainter().onto(screen1),
+            node.onto(screen1),
+            gaussianBlurRenderPass.Vertical(prototype1.albedoTexture).onto(screen2),
+            gaussianBlurRenderPass.Horizontal(prototype2.albedoTexture).onto(screen1),
         )
 
         val keyboard = window.keyboard
         while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
             renderGraph.render(RenderContext(null))
-            screen.copyTo(MainScreen)
+            screen1.copyTo(MainScreen)
 
             window.swapBuffers()
             window.pollEvents()
         }
 
-        screen.delete()
+        screen1.delete()
+        screen2.delete()
         renderGraph.delete()
         window.destroy()
     }

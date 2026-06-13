@@ -11,16 +11,21 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
+import org.saar.maths.utils.Maths.sqrt
 import kotlin.math.PI
 import kotlin.math.exp
-import kotlin.math.pow
 
-private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
-    val mean = samples / 2
+private fun calculateGaussianKernel(samples: Int, sigma: Float): FloatArray {
+    val mean = samples / 2f
+
+    val twoSigmaSquare = 2.0f * sigma * sigma
+    val normalizationFactor = 1.0f / (sqrt(2.0f * PI.toFloat()) * sigma)
 
     val kernel = FloatArray(samples) {
-        val pow = ((it - mean) / sigma).toFloat().pow(2.0f)
-        (exp(-0.5f * pow) / (2 * PI * sigma * sigma)).toFloat()
+        val x = it.toFloat() - mean
+        val exponent = -(x * x) / twoSigmaSquare
+
+        normalizationFactor * exp(exponent)
     }
 
     val sum = kernel.sum()
@@ -30,30 +35,31 @@ private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
     return kernel
 }
 
-class GaussianBlurPostProcessor(
-    private val albedoBuffer: ReadOnlyTexture2D,
-    samples: Int,
-    sigma: Int
-) : RenderPass {
+class GaussianBlurRenderPass(samples: Int = 11, sigma: Float = samples / 3f) {
 
     private val samples = calculateGaussianKernel(samples, sigma)
     private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
     private val wrapper = RendererPrototypeHelper(this.prototype)
 
-    override fun render(context: RenderContext) {
-        this.wrapper.render(context) {
-            this.prototype.textureUniform.value = this.albedoBuffer
+    inner class Vertical(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
+        override fun render(context: RenderContext) = this@GaussianBlurRenderPass.wrapper.render(context) {
+            this@GaussianBlurRenderPass.prototype.textureUniform.value = this.albedoBuffer
 
-            this.prototype.verticalBlurUniform.value = true
+            this@GaussianBlurRenderPass.prototype.verticalBlurUniform.value = true
         }
-        this.wrapper.render(context) {
-            this.prototype.textureUniform.value = this.albedoBuffer
 
-            this.prototype.verticalBlurUniform.value = false
-        }
+        override fun delete() = this@GaussianBlurRenderPass.wrapper.delete()
     }
 
-    override fun delete() = this.wrapper.delete()
+    inner class Horizontal(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
+        override fun render(context: RenderContext) = this@GaussianBlurRenderPass.wrapper.render(context) {
+            this@GaussianBlurRenderPass.prototype.textureUniform.value = this.albedoBuffer
+
+            this@GaussianBlurRenderPass.prototype.verticalBlurUniform.value = false
+        }
+
+        override fun delete() = this@GaussianBlurRenderPass.wrapper.delete()
+    }
 }
 
 private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : RendererPrototype<Unit> {
