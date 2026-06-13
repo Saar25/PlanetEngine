@@ -3,10 +3,8 @@ package org.saar.core.renderer.forward.passes
 import org.saar.core.fog.FogDistance
 import org.saar.core.fog.FogUniformValue
 import org.saar.core.fog.IFog
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.mesh.common.QuadMesh
+import org.saar.core.renderer.*
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.DepthTestRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
@@ -31,14 +29,14 @@ class FogRenderPass(
 ) : RenderNode {
 
     private val prototype = FogRenderPassPrototype(fog, fogDistance)
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val wrapper = RendererPrototypeHelper(this.prototype)
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.REPLACE),
         DepthTestRenderState(DepthState.DISABLED),
     )
 
-    override fun render(context: RenderContext) = this.wrapper.render {
+    override fun render(context: RenderContext) = this.wrapper.render(context) {
         this.prototype.textureUniform.value = this.albedoBuffer
         this.prototype.depthUniform.value = this.depthBuffer
 
@@ -53,7 +51,7 @@ class FogRenderPass(
     }
 }
 
-private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : RenderPassPrototype {
+private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : RendererPrototype<Unit> {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
@@ -77,12 +75,18 @@ private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : Rend
         override val value = fogDistance.ordinal
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
-        ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
-        ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),
-        ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
-        ShaderCode.loadSource("/shaders/postprocessing/fog.pass.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
+            ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
+            ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),
+            ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
+            ShaderCode.loadSource("/shaders/postprocessing/fog.pass.glsl")
+        ),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
+
 }

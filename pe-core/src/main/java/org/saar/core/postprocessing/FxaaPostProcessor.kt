@@ -1,10 +1,8 @@
 package org.saar.core.postprocessing
 
 import org.joml.Vector2i
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.mesh.common.QuadMesh
+import org.saar.core.renderer.*
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -22,20 +20,20 @@ class FxaaPostProcessor(
 ) : RenderNode {
 
     private val prototype = FxaaPostProcessorPrototype()
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val wrapper = RendererPrototypeHelper(this.prototype)
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.DISABLED),
     )
 
-    override fun render(context: RenderContext) = this.wrapper.render {
+    override fun render(context: RenderContext) = this.wrapper.render(context) {
         this.prototype.textureUniform.value = this.albedoBuffer
     }
 
     override fun delete() = this.wrapper.delete()
 }
 
-private class FxaaPostProcessorPrototype : RenderPassPrototype {
+private class FxaaPostProcessorPrototype : RendererPrototype<Unit> {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
@@ -48,11 +46,16 @@ private class FxaaPostProcessorPrototype : RenderPassPrototype {
             get() = field.set(MainScreen.width, MainScreen.height)
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.define("FXAA_REDUCE_MIN", (1.0 / 128.0).toString()),
-        ShaderCode.define("FXAA_REDUCE_MUL", (1.0 / 8.0).toString()),
-        ShaderCode.define("FXAA_SPAN_MAX", 8.0.toString()),
-        ShaderCode.loadSource("/shaders/postprocessing/fxaa.pass.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.define("FXAA_REDUCE_MIN", (1.0 / 128.0).toString()),
+            ShaderCode.define("FXAA_REDUCE_MUL", (1.0 / 8.0).toString()),
+            ShaderCode.define("FXAA_SPAN_MAX", 8.0.toString()),
+            ShaderCode.loadSource("/shaders/postprocessing/fxaa.pass.glsl")
+        ),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

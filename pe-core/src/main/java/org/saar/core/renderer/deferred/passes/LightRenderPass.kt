@@ -4,10 +4,8 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.light.ViewSpacePointLightUniform
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.mesh.common.QuadMesh
+import org.saar.core.renderer.*
 import org.saar.core.renderer.state.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendState
@@ -34,7 +32,7 @@ class LightRenderPass(
 ) : RenderNode {
 
     private val prototype = LightRenderPassPrototype(pointLights, directionalLights)
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val wrapper = RendererPrototypeHelper(this.prototype)
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.REPLACE),
@@ -43,7 +41,7 @@ class LightRenderPass(
         CullFaceRenderState(CullFaceState.DISABLED),
     )
 
-    override fun render(context: RenderContext) = this.wrapper.render {
+    override fun render(context: RenderContext) = this.wrapper.render(context) {
         this.prototype.colourTextureUniform.value = this.albedoBuffer
         this.prototype.normalSpecularTextureUniform.value = this.normalSpecularBuffer
         this.prototype.depthTextureUniform.value = this.depthBuffer
@@ -62,7 +60,7 @@ class LightRenderPass(
 private class LightRenderPassPrototype(
     private val pointLights: Array<PointLight>,
     private val directionalLights: Array<DirectionalLight>
-) : RenderPassPrototype {
+) : RendererPrototype<Unit> {
 
     @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -102,11 +100,15 @@ private class LightRenderPassPrototype(
             ViewSpacePointLightUniform(name, this@LightRenderPassPrototype.pointLights[index])
         }
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
-        ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
-
-        ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
+            ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
+            ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
+        ),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

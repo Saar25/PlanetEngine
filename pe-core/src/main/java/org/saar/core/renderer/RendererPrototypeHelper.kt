@@ -38,17 +38,13 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
         this.shadersProgram.unbind()
     }
 
-    inline fun render(context: RenderContext, renderCallback: () -> Unit) {
+    inline fun doRender(context: RenderContext, renderCallback: () -> Unit) {
         beforeRender(context)
         renderCallback()
         afterRender()
     }
 
-    fun render(context: RenderContext, models: Iterable<T>) = render(context) {
-        models.forEach { render(context, it) }
-    }
-
-    fun render(context: RenderContext, vararg models: T) = render(context) {
+    fun render(context: RenderContext, models: Iterable<T>) = doRender(context) {
         models.forEach { render(context, it) }
     }
 
@@ -63,4 +59,15 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
     override fun delete() {
         this.shadersProgram.delete()
     }
+}
+
+fun RendererPrototypeHelper<Unit>.render(context: RenderContext, renderCallback: () -> Unit) {
+    beforeRender(context)
+    renderCallback()
+    render(context, Unit)
+    afterRender()
+}
+
+fun RendererPrototypeHelper<Unit>.render(context: RenderContext) = render(context) {
+    render(context, Unit)
 }

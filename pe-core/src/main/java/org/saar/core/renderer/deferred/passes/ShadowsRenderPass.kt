@@ -4,10 +4,8 @@ import org.joml.Vector2i
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.mesh.common.QuadMesh
+import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -26,9 +24,9 @@ class ShadowsRenderPass(
 ) : RenderNode {
 
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val wrapper = RendererPrototypeHelper(this.prototype)
 
-    override fun render(context: RenderContext) = this.wrapper.render {
+    override fun render(context: RenderContext) = this.wrapper.render(context) {
         this.prototype.colourTextureUniform.value = this.albedoBuffer
         this.prototype.normalSpecularTexture.value = this.normalSpecularBuffer
         this.prototype.depthTextureUniform.value = this.depthBuffer
@@ -49,7 +47,7 @@ private class ShadowsRenderPassPrototype(
     private val shadowCamera: ICamera,
     private val shadowMap: ReadOnlyTexture2D,
     private val light: DirectionalLight
-) : RenderPassPrototype {
+) : RendererPrototype<Unit> {
 
     @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
@@ -105,10 +103,15 @@ private class ShadowsRenderPassPrototype(
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
-        ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.01f)),
-        ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
+            ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.01f)),
+            ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
+        ),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

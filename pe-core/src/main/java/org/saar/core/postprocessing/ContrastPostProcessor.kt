@@ -1,9 +1,7 @@
 package org.saar.core.postprocessing
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.mesh.common.QuadMesh
+import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -18,16 +16,16 @@ class ContrastPostProcessor(
 ) : RenderNode {
 
     private val prototype = ContrastPostProcessorPrototype(contrast)
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val wrapper = RendererPrototypeHelper(this.prototype)
 
-    override fun render(context: RenderContext) = this.wrapper.render {
+    override fun render(context: RenderContext) = this.wrapper.render(context) {
         this.prototype.textureUniform.value = this.albedoBuffer
     }
 
     override fun delete() = this.wrapper.delete()
 }
 
-private class ContrastPostProcessorPrototype(contrast: Float) : RenderPassPrototype {
+private class ContrastPostProcessorPrototype(contrast: Float) : RendererPrototype<Unit> {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
@@ -39,8 +37,10 @@ private class ContrastPostProcessorPrototype(contrast: Float) : RenderPassProtot
         override val value = contrast
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl")),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

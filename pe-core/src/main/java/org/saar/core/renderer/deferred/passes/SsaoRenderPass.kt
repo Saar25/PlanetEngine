@@ -3,14 +3,11 @@ package org.saar.core.renderer.deferred.passes
 import org.joml.Math
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.painting.Random2fPainter
 import org.saar.core.postprocessing.GaussianBlurPostProcessor
 import org.saar.core.postprocessing.MultiplyPostProcessor
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.Renderers
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenBuilder
@@ -48,7 +45,7 @@ class SsaoRenderPass(
     private val ssaoPrototype = SsaoRenderPassPrototype(
         createNoiseTexture(), createKernel(), this.noiseTextureSize, this.radius
     )
-    private val ssaoWrapper = RenderPassPrototypeWrapper(this.ssaoPrototype)
+    private val ssaoWrapper = RendererPrototypeHelper(this.ssaoPrototype)
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = ScreenBuilder(Fbo.create(0, 0))
@@ -93,7 +90,7 @@ class SsaoRenderPass(
             Window.current().height
         )
 
-        this.ssaoWrapper.render {
+        this.ssaoWrapper.render(context) {
             this.ssaoPrototype.normalSpecularTexture.value = this.normalSpecularBuffer
             this.ssaoPrototype.depthTextureUniform.value = this.depthBuffer
 
@@ -120,7 +117,7 @@ private class SsaoRenderPassPrototype(
     val kernel: Array<Vector3f>,
     val noiseTextureSize: Int,
     val radius: Float,
-) : RenderPassPrototype {
+) : RendererPrototype<Unit> {
 
     @UniformProperty
     val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 0)
@@ -166,11 +163,16 @@ private class SsaoRenderPassPrototype(
         override val value get() = this@SsaoRenderPassPrototype.radius
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.define("KERNEL_SAMPLES", this.kernel.size.toString()),
-        ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.define("KERNEL_SAMPLES", this.kernel.size.toString()),
+            ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
+        ),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }
 
 /*

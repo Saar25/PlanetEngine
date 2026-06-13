@@ -4,6 +4,7 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.uniforms.Uniform
 
 interface RendererPrototype<T> {
+
     fun vertexAttributes(): Array<String> = arrayOf()
 
     fun fragmentOutputs(): Array<String> = arrayOf()

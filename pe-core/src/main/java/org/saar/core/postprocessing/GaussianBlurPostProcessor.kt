@@ -1,10 +1,8 @@
 package org.saar.core.postprocessing
 
 import org.joml.Vector2i
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.mesh.common.QuadMesh
+import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -39,15 +37,15 @@ class GaussianBlurPostProcessor(
 
     private val samples = calculateGaussianKernel(samples, sigma)
     private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
-    private val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    private val wrapper = RendererPrototypeHelper(this.prototype)
 
     override fun render(context: RenderContext) {
-        this.wrapper.render {
+        this.wrapper.render(context) {
             this.prototype.textureUniform.value = this.albedoBuffer
 
             this.prototype.verticalBlurUniform.value = true
         }
-        this.wrapper.render {
+        this.wrapper.render(context) {
             this.prototype.textureUniform.value = this.albedoBuffer
 
             this.prototype.verticalBlurUniform.value = false
@@ -57,7 +55,7 @@ class GaussianBlurPostProcessor(
     override fun delete() = this.wrapper.delete()
 }
 
-private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : RenderPassPrototype {
+private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : RendererPrototype<Unit> {
 
     @UniformProperty
     val textureUniform = TextureUniformValue("u_texture", 0)
@@ -71,16 +69,21 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     }
 
     @UniformProperty
-    val blurLevelsUniform: UniformArray<FloatUniform> = UniformArray("u_blurLevels", this.samples.size) { name, index ->
+    val blurLevelsUniform = UniformArray("u_blurLevels", this.samples.size) { name, index ->
         FloatUniformValue(name, this.samples[index])
     }
 
     @UniformProperty
     val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.define("LEVELS", this.samples.size.toString()),
-        ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.define("LEVELS", this.samples.size.toString()),
+            ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
+        ),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

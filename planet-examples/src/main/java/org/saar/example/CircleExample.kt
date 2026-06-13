@@ -1,12 +1,10 @@
 package org.saar.example
 
 import org.lwjgl.glfw.GLFW
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.postprocessing.Swizzle
 import org.saar.core.postprocessing.SwizzlePostProcessor
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
@@ -102,16 +100,16 @@ private class MyScreenPrototype : ScreenPrototype {
 private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderNode {
 
     private val prototype = MyRenderPassPrototype()
-    val wrapper = RenderPassPrototypeWrapper(this.prototype)
+    val wrapper = RendererPrototypeHelper(this.prototype)
 
-    override fun render(context: RenderContext) = this.wrapper.render {
+    override fun render(context: RenderContext) = this.wrapper.render(context) {
         this.prototype.colourTextureUniform.value = this.albedoBuffer
     }
 
     override fun delete() = this.wrapper.delete()
 }
 
-private class MyRenderPassPrototype : RenderPassPrototype {
+private class MyRenderPassPrototype : RendererPrototype<Unit> {
 
     @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -131,8 +129,10 @@ private class MyRenderPassPrototype : RenderPassPrototype {
         override val name = "u_radius"
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/circle.fragment.glsl"),
+    override val shaders = arrayOf(
+        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/circle.fragment.glsl")),
     )
+
+    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

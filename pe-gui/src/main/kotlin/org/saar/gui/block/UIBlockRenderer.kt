@@ -31,7 +31,7 @@ object UIBlockRenderer : Renderer {
     }
 
     fun render(context: RenderContext, uiBlock: UINode) {
-        this.helper.render(context) { doRender(context, uiBlock) }
+        this.helper.doRender(context) { doRender(context, uiBlock) }
     }
 
     private fun doRender(context: RenderContext, uiBlock: UINode) {
@@ -85,10 +85,14 @@ private class UIRendererPrototype : RendererPrototype<UINode> {
     private val discardMapUniform = TextureUniformValue("u_discardMap", 1)
 
     override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
+        Shader.createVertex(
+            GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")
+        ),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl")
+        )
     )
 
     override fun fragmentOutputs() = arrayOf("fragColour")
