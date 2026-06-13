@@ -5,7 +5,7 @@ import org.saar.core.engine.Application
 import org.saar.core.engine.PlanetEngine
 import org.saar.core.painting.FBMPainter
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
+import org.saar.core.renderer.RenderPass
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
@@ -28,7 +28,7 @@ fun main() {
 
 class LoginPageApplication : Application {
 
-    private lateinit var background: RenderNode
+    private lateinit var background: RenderPass
     private lateinit var display: UIDisplay
 
     override fun initialize(window: Window) {

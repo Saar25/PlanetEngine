@@ -2,7 +2,7 @@ package org.saar.core.renderer.deferred
 
 import org.saar.core.node.Node
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
+import org.saar.core.renderer.RenderPass
 
 interface DeferredRenderNode : Node {
 
@@ -10,7 +10,7 @@ interface DeferredRenderNode : Node {
 
 }
 
-fun DeferredRenderNode.asDeferredRenderNode() = object : RenderNode {
+fun DeferredRenderNode.asDeferredRenderNode() = object : RenderPass {
     override fun render(context: RenderContext) = this@asDeferredRenderNode.renderDeferred(context)
 
     override fun delete() = this@asDeferredRenderNode.delete()

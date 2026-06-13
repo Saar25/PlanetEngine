@@ -97,7 +97,7 @@ private class MyScreenPrototype : ScreenPrototype {
     override val readIndex = ColorAttachmentIndex.at(0)
 }
 
-private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderNode {
+private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
 
     private val prototype = MyRenderPassPrototype()
     val wrapper = RendererPrototypeHelper(this.prototype)

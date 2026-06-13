@@ -21,7 +21,7 @@ class ShadowsRenderPass(
     shadowCamera: ICamera,
     shadowMap: ReadOnlyTexture2D,
     light: DirectionalLight
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
     private val wrapper = RendererPrototypeHelper(this.prototype)

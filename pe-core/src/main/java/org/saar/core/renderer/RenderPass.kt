@@ -3,7 +3,7 @@ package org.saar.core.renderer
 import org.saar.core.renderer.state.DefaultRenderState
 import org.saar.core.renderer.state.RenderState
 
-interface RenderNode {
+interface RenderPass {
 
     val renderState: RenderState get() = DefaultRenderState
 

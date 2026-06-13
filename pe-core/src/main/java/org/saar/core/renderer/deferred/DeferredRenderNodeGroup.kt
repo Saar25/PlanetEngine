@@ -2,9 +2,9 @@ package org.saar.core.renderer.deferred
 
 import org.saar.core.node.ParentNode
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
+import org.saar.core.renderer.RenderPass
 
-class DeferredRenderNodeGroup(vararg children: DeferredRenderNode) : ParentNode, DeferredRenderNode, RenderNode {
+class DeferredRenderNodeGroup(vararg children: DeferredRenderNode) : ParentNode, DeferredRenderNode, RenderPass {
 
     override val children: MutableList<DeferredRenderNode> = children.toMutableList()
 

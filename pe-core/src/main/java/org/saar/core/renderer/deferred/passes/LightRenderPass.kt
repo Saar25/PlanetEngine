@@ -29,7 +29,7 @@ class LightRenderPass(
     private val depthBuffer: ReadOnlyTexture2D,
     pointLights: Array<PointLight> = emptyArray(),
     directionalLights: Array<DirectionalLight> = emptyArray()
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = LightRenderPassPrototype(pointLights, directionalLights)
     private val wrapper = RendererPrototypeHelper(this.prototype)

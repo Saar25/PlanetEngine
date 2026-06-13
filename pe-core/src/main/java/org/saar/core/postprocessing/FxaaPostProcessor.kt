@@ -17,7 +17,7 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
 class FxaaPostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = FxaaPostProcessorPrototype()
     private val wrapper = RendererPrototypeHelper(this.prototype)

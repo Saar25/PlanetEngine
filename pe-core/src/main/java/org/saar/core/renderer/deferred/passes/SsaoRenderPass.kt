@@ -37,7 +37,7 @@ class SsaoRenderPass(
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
     val radius: Float = 1f
-) : RenderNode {
+) : RenderPass {
 
     private val noiseTextureSize = 64
     private val kernelSamplesSize = 32

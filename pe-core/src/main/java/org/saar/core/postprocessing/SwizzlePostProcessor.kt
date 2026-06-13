@@ -18,7 +18,7 @@ class SwizzlePostProcessor(
     g: Swizzle,
     b: Swizzle,
     a: Swizzle
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = SwizzlePostProcessorPrototype(r, g, b, a)
     private val wrapper = RendererPrototypeHelper(this.prototype)

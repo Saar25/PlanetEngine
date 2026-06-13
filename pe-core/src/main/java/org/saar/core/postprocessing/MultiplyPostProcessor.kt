@@ -14,7 +14,7 @@ class MultiplyPostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val multiply: ReadOnlyTexture,
     components: Int = 4
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = MultiplyPostProcessorPrototype(components)
     private val wrapper = RendererPrototypeHelper(this.prototype)

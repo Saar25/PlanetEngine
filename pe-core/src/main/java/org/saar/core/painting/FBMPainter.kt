@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.stencil.StencilState
 
-class FBMPainter : RenderNode {
+class FBMPainter : RenderPass {
 
     private val prototype = FBMPainterPrototype()
     private val wrapper = RendererPrototypeHelper(this.prototype)

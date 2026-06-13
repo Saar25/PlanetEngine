@@ -18,7 +18,7 @@ import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.maths.utils.Matrix4
 
-class SkyboxPostProcessor(private val cubeMap: CubeMapTexture) : RenderNode {
+class SkyboxPostProcessor(private val cubeMap: CubeMapTexture) : RenderPass {
 
     private val prototype = SkyboxPostProcessorPrototype()
     private val wrapper = RendererPrototypeHelper(this.prototype)

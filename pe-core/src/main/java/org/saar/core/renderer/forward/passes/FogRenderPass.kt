@@ -26,7 +26,7 @@ class FogRenderPass(
     private val depthBuffer: ReadOnlyTexture2D,
     fog: IFog,
     fogDistance: FogDistance
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = FogRenderPassPrototype(fog, fogDistance)
     private val wrapper = RendererPrototypeHelper(this.prototype)

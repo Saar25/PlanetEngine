@@ -17,7 +17,7 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 class GammaCorrectionPostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val gamma: Float = 2.2f,
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = GammaCorrectionPostProcessorPrototype()
     private val wrapper = RendererPrototypeHelper(this.prototype)

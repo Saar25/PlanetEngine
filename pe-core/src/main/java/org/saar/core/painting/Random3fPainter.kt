@@ -6,7 +6,7 @@ import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 
-class Random3fPainter : RenderNode {
+class Random3fPainter : RenderPass {
 
     private val prototype = Random3fPainterPrototype()
     private val wrapper = RendererPrototypeHelper(this.prototype)

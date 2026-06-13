@@ -2,7 +2,7 @@ package org.saar.core.painting
 
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderNode
+import org.saar.core.renderer.RenderPass
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.Renderers
@@ -11,7 +11,7 @@ import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 
-class RandomPainter : RenderNode {
+class RandomPainter : RenderPass {
 
     private val prototype = RandomPainterPrototype()
     private val wrapper = RendererPrototypeHelper(this.prototype)

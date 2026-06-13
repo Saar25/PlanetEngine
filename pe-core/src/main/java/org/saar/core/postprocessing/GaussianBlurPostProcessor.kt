@@ -33,7 +33,7 @@ class GaussianBlurPostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
     samples: Int,
     sigma: Int
-) : RenderNode {
+) : RenderPass {
 
     private val samples = calculateGaussianKernel(samples, sigma)
     private val prototype = GaussianBlurPostProcessorPrototype(this.samples)

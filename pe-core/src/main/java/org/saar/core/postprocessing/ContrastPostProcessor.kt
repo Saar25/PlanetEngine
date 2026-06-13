@@ -13,7 +13,7 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 class ContrastPostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
     contrast: Float,
-) : RenderNode {
+) : RenderPass {
 
     private val prototype = ContrastPostProcessorPrototype(contrast)
     private val wrapper = RendererPrototypeHelper(this.prototype)
