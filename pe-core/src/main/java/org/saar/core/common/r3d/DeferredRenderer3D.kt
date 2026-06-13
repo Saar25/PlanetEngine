@@ -5,7 +5,6 @@ import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -48,12 +47,6 @@ private class DeferredRendererPrototype3D : RendererPrototype<Model3D> {
         ProvokingVertex.setFirst()
         BlendTest.disable()
         DepthTest.enable()
-        if (context.clipPlane != null) {
-            ClipPlaneTest.enable(0)
-            this.clipPlaneUniform.value.set(context.clipPlane.value)
-        } else {
-            ClipPlaneTest.disable(0)
-        }
 
         this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
     }

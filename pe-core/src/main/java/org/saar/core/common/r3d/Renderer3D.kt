@@ -6,7 +6,6 @@ import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.clipplane.ClipPlaneTest
 import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -45,12 +44,6 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
         BlendTest.disable()
         DepthTest.enable()
         CullFace.set(enabled = true, face = Face.BACK)
-        if (context.clipPlane != null) {
-            ClipPlaneTest.enable(0)
-            this.clipPlaneUniform.value.set(context.clipPlane.value)
-        } else {
-            ClipPlaneTest.disable(0)
-        }
     }
 
     override fun onInstanceDraw(context: RenderContext, model: Model3D) {
