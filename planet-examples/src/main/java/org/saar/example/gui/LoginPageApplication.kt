@@ -3,9 +3,9 @@ package org.saar.example.gui
 import org.jproperty.InvalidationListener
 import org.saar.core.engine.Application
 import org.saar.core.engine.PlanetEngine
-import org.saar.core.painting.Painter
-import org.saar.core.painting.painters.FBMPainter
+import org.saar.core.painting.FBMPainter
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
@@ -28,7 +28,7 @@ fun main() {
 
 class LoginPageApplication : Application {
 
-    private lateinit var background: Painter
+    private lateinit var background: RenderNode
     private lateinit var display: UIDisplay
 
     override fun initialize(window: Window) {
@@ -124,7 +124,7 @@ class LoginPageApplication : Application {
     }
 
     override fun render(window: Window) {
-        this.background.render()
+        this.background.render(RenderContext(null))
         this.display.render(RenderContext(null))
     }
 

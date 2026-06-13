@@ -6,8 +6,7 @@ import org.saar.core.common.r2d.Model2D
 import org.saar.core.common.r2d.Node2D
 import org.saar.core.common.r2d.R2D
 import org.saar.core.common.r2d.R2D.vertex
-import org.saar.core.painting.asRenderNode
-import org.saar.core.painting.painters.FBMPainter
+import org.saar.core.painting.FBMPainter
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.onto
@@ -44,7 +43,7 @@ object PostProcessingExample {
         val screen = screenPrototype.toScreen(fbo)
 
         val renderGraph = RenderGraph(
-            FBMPainter().asRenderNode().onto(screen),
+            FBMPainter().onto(screen),
             node.asRenderNode2D().onto(screen)
         )
 

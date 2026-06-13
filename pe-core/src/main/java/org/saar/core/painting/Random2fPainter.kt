@@ -1,25 +1,27 @@
-package org.saar.core.painting.painters
+package org.saar.core.painting
 
-import org.saar.core.painting.Painter
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 
-class Random2fPainter : Painter {
+class Random2fPainter : RenderNode {
 
     private val prototype = Random2fPainterPrototype()
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render() = this.wrapper.render()
+    override fun render(context: RenderContext) = this.wrapper.render()
 
     override fun delete() = this.wrapper.delete()
 }
 
 private class Random2fPainterPrototype : RenderPassPrototype {
 
-    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(
+        GlslVersion.V400,
         ShaderCode.loadSource("/shaders/painting/random2f.fragment.glsl")
     )
 }

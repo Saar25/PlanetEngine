@@ -3,12 +3,12 @@ package org.saar.core.renderer.deferred.passes
 import org.joml.Math
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.saar.core.painting.painters.Random2fPainter
-import org.saar.core.painting.renderToTexture
+import org.saar.core.painting.Random2fPainter
 import org.saar.core.postprocessing.GaussianBlurPostProcessor
 import org.saar.core.postprocessing.MultiplyPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderNode
+import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -60,18 +60,18 @@ class SsaoRenderPass(
     private val multiplyPostProcessor = MultiplyPostProcessor(this.albedoBuffer, this.ssaoTexture, 1)
 
     private fun createNoiseTexture(): MutableTexture2D {
-        val painter = Random2fPainter()
-        val texture = painter.renderToTexture(
-            this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F
-        )
-        painter.delete()
-
-        texture.applyParameters(
-            TextureMinFilterParameter(MinFilterValue.NEAREST),
-            TextureMagFilterParameter(MagFilterValue.NEAREST),
-            TextureSWrapParameter(WrapValue.REPEAT),
-            TextureTWrapParameter(WrapValue.REPEAT)
-        )
+        val texture = Random2fPainter().let { painter ->
+            Renderers.renderToTexture(this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F) {
+                painter.render(RenderContext(null))
+            }.also { painter.delete() }
+        }.apply {
+            applyParameters(
+                TextureMinFilterParameter(MinFilterValue.NEAREST),
+                TextureMagFilterParameter(MagFilterValue.NEAREST),
+                TextureSWrapParameter(WrapValue.REPEAT),
+                TextureTWrapParameter(WrapValue.REPEAT)
+            )
+        }
 
         return texture
     }

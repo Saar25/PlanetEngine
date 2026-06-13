@@ -2,7 +2,7 @@ package org.saar.example.gui
 
 import org.jproperty.InvalidationListener
 import org.lwjgl.glfw.GLFW
-import org.saar.core.painting.painters.FBMPainter
+import org.saar.core.painting.FBMPainter
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
@@ -123,7 +123,7 @@ object LoginPageExample {
             display.update()
 
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
-            background.render()
+            background.render(RenderContext(null))
             display.render(RenderContext(null))
 
             window.swapBuffers()
