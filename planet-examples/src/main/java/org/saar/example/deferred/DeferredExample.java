@@ -14,8 +14,8 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderPass;
-import org.saar.core.renderer.RenderPipeline;
+import org.saar.core.renderer.RenderGraph;
+import org.saar.core.renderer.RenderGraphNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
@@ -64,7 +64,9 @@ public class DeferredExample {
         final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
         final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
 
-        final RenderPipeline pipeline = new RenderPipeline(new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen), new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype.getBuffers()), MainScreen.INSTANCE));
+        final RenderGraph renderGraph = new RenderGraph(
+                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen),
+                new RenderGraphNode(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype.getBuffers()), MainScreen.INSTANCE));
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
@@ -72,7 +74,7 @@ public class DeferredExample {
 
             ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            pipeline.render(new RenderContext(camera));
+            renderGraph.render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -82,7 +84,7 @@ public class DeferredExample {
 
         camera.delete();
         screen.delete();
-        pipeline.delete();
+        renderGraph.delete();
         window.destroy();
     }
 

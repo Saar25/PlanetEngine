@@ -2,7 +2,7 @@ package org.saar.core.renderer
 
 import org.saar.core.screen.Screen
 
-class RenderPass(private val renderNode: RenderNode, private val to: Screen) {
+class RenderGraphNode(private val renderNode: RenderNode, private val to: Screen) {
 
     fun render(context: RenderContext) {
         this.to.setAsDraw()
@@ -15,6 +15,6 @@ class RenderPass(private val renderNode: RenderNode, private val to: Screen) {
     }
 }
 
-fun RenderNode.onto(screen: Screen): RenderPass {
-    return RenderPass(this, screen)
+fun RenderNode.onto(screen: Screen): RenderGraphNode {
+    return RenderGraphNode(this, screen)
 }

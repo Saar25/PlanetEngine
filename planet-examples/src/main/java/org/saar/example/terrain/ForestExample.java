@@ -36,8 +36,8 @@ import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.postprocessing.processors.FxaaPostProcessor;
 import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
 import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderPassKt;
-import org.saar.core.renderer.RenderPipeline;
+import org.saar.core.renderer.RenderGraph;
+import org.saar.core.renderer.RenderGraphNodeKt;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
@@ -45,6 +45,7 @@ import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
+import org.saar.core.renderer.renderpass.RenderPassKt;
 import org.saar.core.renderer.shadow.*;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -146,8 +147,8 @@ public class ForestExample {
 
         final ReadOnlyTexture2D shadowMap = shadowsPrototype.getBuffers().getDepth();
 
-        final RenderPipeline shadowsRenderPipeline = new RenderPipeline(
-                RenderPassKt.onto(
+        final RenderGraph shadowsRenderGraph = new RenderGraph(
+                RenderGraphNodeKt.onto(
                         ShadowsRenderNodeKt.asShadowsRenderNode(
                                 new ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player)), shadowsScreen)
         );
@@ -164,25 +165,19 @@ public class ForestExample {
         final DeferredScreenPrototype prototype2 = new DeferredScreenPrototype();
         final OffScreen screen2 = Screens.INSTANCE.toScreen(prototype2, Fbo.create(WIDTH, HEIGHT), SimpleAllocationStrategy.INSTANCE);
 
-        final RenderPipeline renderPipeline = new RenderPipeline(
-                RenderPassKt.onto(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new DeferredGeometryPass(renderNode), prototype1.getBuffers()), screen1),
-                RenderPassKt.onto(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new ShadowsRenderPass(shadowsCamera, shadowMap, light), prototype1.getBuffers()), screen2),
-                RenderPassKt.onto(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new SsaoRenderPass(), prototype2.getBuffers()), screen1),
-                RenderPassKt.onto(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new FogRenderPass(fog, FogDistance.XZ), prototype1.getBuffers()), screen2),
-                RenderPassKt.onto(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new SkyboxPostProcessor(cubeMap), prototype2.getBuffers()), screen1),
-                RenderPassKt.onto(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new FxaaPostProcessor(), prototype1.getBuffers()), MainScreen.INSTANCE)
+        final RenderGraph renderGraph = new RenderGraph(
+                RenderGraphNodeKt.onto(
+                        RenderPassKt.asRenderNode(new DeferredGeometryPass(renderNode), prototype1.getBuffers()), screen1),
+                RenderGraphNodeKt.onto(
+                        RenderPassKt.asRenderNode(new ShadowsRenderPass(shadowsCamera, shadowMap, light), prototype1.getBuffers()), screen2),
+                RenderGraphNodeKt.onto(
+                        RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), screen1),
+                RenderGraphNodeKt.onto(
+                        RenderPassKt.asRenderNode(new FogRenderPass(fog, FogDistance.XZ), prototype1.getBuffers()), screen2),
+                RenderGraphNodeKt.onto(
+                        RenderPassKt.asRenderNode(new SkyboxPostProcessor(cubeMap), prototype2.getBuffers()), screen1),
+                RenderGraphNodeKt.onto(
+                        RenderPassKt.asRenderNode(new FxaaPostProcessor(), prototype1.getBuffers()), MainScreen.INSTANCE)
         );
 
         long last = System.currentTimeMillis();
@@ -196,12 +191,12 @@ public class ForestExample {
             camera.update();
 
             ScreenKt.clear(shadowsScreen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            shadowsRenderPipeline.render(new RenderContext(shadowsCamera));
+            shadowsRenderGraph.render(new RenderContext(shadowsCamera));
 
             ScreenKt.clear(screen1, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(screen2, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            renderPipeline.render(new RenderContext(camera));
+            renderGraph.render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -210,7 +205,7 @@ public class ForestExample {
         camera.delete();
         screen1.delete();
         screen2.delete();
-        renderPipeline.delete();
+        renderGraph.delete();
         window.destroy();
     }
 

@@ -28,14 +28,12 @@ import org.saar.core.fog.FogDistance
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
-import org.saar.core.postprocessing.processors.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.asDeferredRenderNode
-import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.forward.passes.FogRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.renderpass.asRenderNode
@@ -75,7 +73,7 @@ private class TerrainApplication : Application {
 
     private lateinit var fps: Fps
     private lateinit var camera: Camera
-    private lateinit var renderPipeline: RenderPipeline
+    private lateinit var renderGraph: RenderGraph
     private lateinit var cameraMovementComponent: KeyboardMovementComponent
     private lateinit var screenA: OffScreen
     private lateinit var screenB: OffScreen
@@ -116,7 +114,7 @@ private class TerrainApplication : Application {
         val light = buildDirectionalLight()
         val cubeMap = createCubeMap()
         val renderNode = DeferredRenderNodeGroup(cube, cube2, world)
-        this.renderPipeline = buildRenderPipeline(renderNode, light, cubeMap)
+        this.renderGraph = buildRenderGraph(renderNode, light, cubeMap)
         this.fps = Fps()
     }
 
@@ -135,12 +133,12 @@ private class TerrainApplication : Application {
         this.screenA.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         this.screenB.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        this.renderPipeline.render(RenderContext(camera))
+        this.renderGraph.render(RenderContext(camera))
     }
 
     override fun close(window: Window) {
         camera.delete()
-        this.renderPipeline.delete()
+        this.renderGraph.delete()
     }
 
     private fun buildWorld(): LowPolyWorld {
@@ -174,9 +172,9 @@ private class TerrainApplication : Application {
         return light
     }
 
-    private fun buildRenderPipeline(renderNode: DeferredRenderNode,
-                                    light: DirectionalLight,
-                                    cubeMap: CubeMapTexture): RenderPipeline {
+    private fun buildRenderGraph(renderNode: DeferredRenderNode,
+                                 light: DirectionalLight,
+                                 cubeMap: CubeMapTexture): RenderGraph {
         val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
 
         val screenATexture1 = MutableTexture2D.create()
@@ -208,7 +206,7 @@ private class TerrainApplication : Application {
             .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
             .build()
 
-        return RenderPipeline(
+        return RenderGraph(
             renderNode
                 .asDeferredRenderNode()
                 .onto(screenA),

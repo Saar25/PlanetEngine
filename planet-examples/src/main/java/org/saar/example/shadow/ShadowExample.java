@@ -17,9 +17,9 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderPass;
-import org.saar.core.renderer.RenderPassKt;
-import org.saar.core.renderer.RenderPipeline;
+import org.saar.core.renderer.RenderGraphNode;
+import org.saar.core.renderer.RenderGraphNodeKt;
+import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
@@ -90,13 +90,13 @@ public class ShadowExample {
 
         final ReadOnlyTexture2D shadowMap = shadowsPrototype.getBuffers().getDepth();
 
-        final RenderPipeline shadowsRenderPipeline = new RenderPipeline(
-                RenderPassKt.onto(
+        final RenderGraph shadowsRenderGraph = new RenderGraph(
+                RenderGraphNodeKt.onto(
                         ShadowsRenderNodeKt.asShadowsRenderNode(
                                 new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)), shadowsScreen)
         );
         ScreenKt.clear(shadowsScreen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-        shadowsRenderPipeline.render(new RenderContext(shadowsCamera));
+        shadowsRenderGraph.render(new RenderContext(shadowsCamera));
 
         final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
@@ -106,9 +106,9 @@ public class ShadowExample {
                 Fbo.create(window.getWidth(), window.getHeight()),
                 SimpleAllocationStrategy.INSTANCE);
 
-        final RenderPipeline pipeline = new RenderPipeline(
-                new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen),
-                new RenderPass(
+        final RenderGraph renderGraph = new RenderGraph(
+                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen),
+                new RenderGraphNode(
                         org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
                                 new ShadowsRenderPass(shadowsCamera, shadowMap, light),
                                 prototype.getBuffers()
@@ -121,7 +121,7 @@ public class ShadowExample {
 
             ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            pipeline.render(new RenderContext(camera));
+            renderGraph.render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -137,9 +137,9 @@ public class ShadowExample {
 
         camera.delete();
         shadowsScreen.delete();
-        shadowsRenderPipeline.delete();
+        shadowsRenderGraph.delete();
         screen.delete();
-        pipeline.delete();
+        renderGraph.delete();
         window.destroy();
     }
 

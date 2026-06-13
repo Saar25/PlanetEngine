@@ -19,7 +19,7 @@ import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.onto
@@ -92,7 +92,7 @@ fun main() {
     val prototype = DeferredScreenPrototype()
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
-    val pipeline = RenderPipeline(
+    val renderGraph = RenderGraph(
         DeferredGeometryPass(particles, uiDisplay).asRenderNode(prototype.buffers).onto(screen),
         FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
     )
@@ -105,7 +105,7 @@ fun main() {
         val time = measureTimeMillis {
             screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
             MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-            pipeline.render(RenderContext(camera))
+            renderGraph.render(RenderContext(camera))
 
             particles.update()
             uiDisplay.update()
@@ -121,7 +121,7 @@ fun main() {
     }
 
     screen.delete()
-    pipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 

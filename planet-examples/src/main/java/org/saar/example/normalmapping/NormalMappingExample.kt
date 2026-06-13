@@ -26,7 +26,7 @@ import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.ContrastPostProcessor
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.asDeferredRenderNode
@@ -103,7 +103,7 @@ fun main() {
     val shadowsScreen =
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
 
-    val shadowsRenderPipeline = RenderPipeline(
+    val shadowsRenderGraph = RenderGraph(
         shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
     )
 
@@ -119,7 +119,7 @@ fun main() {
     val screenPrototype2 = DeferredScreenPrototype()
     val screenSwap = ScreenSwap(screenPrototype1, screenPrototype2)
 
-    val renderPassesPipeline = RenderPipeline(
+    val renderGraph = RenderGraph(
         renderNode
             .asDeferredRenderNode()
             .onto(screenSwap.current),
@@ -142,11 +142,11 @@ fun main() {
         camera.update()
 
         shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        shadowsRenderPipeline.render(RenderContext(shadowsCamera))
+        shadowsRenderGraph.render(RenderContext(shadowsCamera))
         screenSwap.clearAll(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screenSwap.assureSize(MainScreen.width, MainScreen.height)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderPassesPipeline.render(RenderContext(camera))
+        renderGraph.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -165,9 +165,9 @@ fun main() {
 
     camera.delete()
     shadowsScreen.delete()
-    shadowsRenderPipeline.delete()
+    shadowsRenderGraph.delete()
     screenSwap.delete()
-    renderPassesPipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 

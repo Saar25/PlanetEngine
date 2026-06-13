@@ -26,7 +26,7 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
@@ -84,7 +84,7 @@ fun main() {
     val prototype1b = DeferredScreenPrototype()
     val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
 
-    val portalRenderPipeline1 = RenderPipeline(
+    val portalRenderGraph1 = RenderGraph(
         DeferredGeometryPass(world, cube).asRenderNode(prototype1a.buffers).onto(screen1a),
         LightRenderPass(light).asRenderNode(prototype1a.buffers).onto(screen1b)
     )
@@ -100,7 +100,7 @@ fun main() {
     val prototype2b = DeferredScreenPrototype()
     val screen2b = prototype2b.toScreen(Fbo.create(window.width, window.height))
 
-    val portalRenderPipeline2 = RenderPipeline(
+    val portalRenderGraph2 = RenderGraph(
         DeferredGeometryPass(world, cube).asRenderNode(prototype2a.buffers).onto(screen2a),
         LightRenderPass(light).asRenderNode(prototype2a.buffers).onto(screen2b)
     )
@@ -112,7 +112,7 @@ fun main() {
     val prototype = DeferredScreenPrototype()
     val screen = prototype1a.toScreen(Fbo.create(window.width, window.height))
 
-    val renderPipeline = RenderPipeline(
+    val renderGraph = RenderGraph(
         DeferredGeometryPass(portal1, portal2, world, cube).asRenderNode(prototype.buffers).onto(screen),
         LightRenderPass(light).asRenderNode(prototype.buffers).onto(MainScreen)
     )
@@ -128,10 +128,10 @@ fun main() {
         screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        portalRenderPipeline1.render(RenderContext(portalCamera1))
-        portalRenderPipeline2.render(RenderContext(portalCamera2))
+        portalRenderGraph1.render(RenderContext(portalCamera1))
+        portalRenderGraph2.render(RenderContext(portalCamera2))
 
-        renderPipeline.render(RenderContext(camera))
+        renderGraph.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()

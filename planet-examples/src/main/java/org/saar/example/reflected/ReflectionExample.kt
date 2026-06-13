@@ -24,7 +24,7 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.ContrastPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.asDeferredRenderNode
@@ -143,7 +143,7 @@ fun main() {
     val reflectionPrototype2 = DeferredScreenPrototype()
     val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
-    val reflectionRenderPipeline = RenderPipeline(
+    val reflectionRenderGraph = RenderGraph(
         reflectionRenderNode.asDeferredRenderNode().onto(reflectionScreen1),
         LightRenderPass(light).asRenderNode(reflectionPrototype1.buffers).onto(reflectionScreen2)
     )
@@ -161,7 +161,7 @@ fun main() {
     val shadowsPrototype = ShadowsScreenPrototype()
     val shadowsScreen =
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize))
-    val shadowsRenderPipeline = RenderPipeline(
+    val shadowsRenderGraph = RenderGraph(
         shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
     )
 
@@ -178,7 +178,7 @@ fun main() {
     val prototype2 = DeferredScreenPrototype()
     val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
-    val renderPipeline = RenderPipeline(
+    val renderGraph = RenderGraph(
         renderNode.asDeferredRenderNode().onto(screen1),
         ShadowsRenderPass(shadowsCamera, shadowMap, light).asRenderNode(prototype1.buffers).onto(screen2),
         ContrastPostProcessor(1.3f).asRenderNode(prototype2.buffers).onto(MainScreen),
@@ -199,9 +199,9 @@ fun main() {
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        reflectionRenderPipeline.render(RenderContext(reflectionCamera))
-        shadowsRenderPipeline.render(RenderContext(shadowsCamera))
-        renderPipeline.render(RenderContext(camera))
+        reflectionRenderGraph.render(RenderContext(reflectionCamera))
+        shadowsRenderGraph.render(RenderContext(shadowsCamera))
+        renderGraph.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -217,12 +217,12 @@ fun main() {
     uiDisplay.delete()
     reflectionScreen1.delete()
     reflectionScreen2.delete()
-    reflectionRenderPipeline.delete()
+    reflectionRenderGraph.delete()
     shadowsScreen.delete()
     shadowsRenderNode.delete()
     screen1.delete()
     screen2.delete()
-    renderPipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 

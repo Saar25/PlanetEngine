@@ -224,8 +224,8 @@ all that it takes is to create your own PostProcessor and create your PostProces
 ```kotlin
 // org.saar.example.normalmapping.NormalMappingExample.kt
 
-// Create the pipeline
-val pipeline = RenderPipeline(
+// Create the render graph
+val graph = RenderGraph(
     renderNode
         .asDeferredRenderNode()
         .onto(screen1),
@@ -237,7 +237,7 @@ val pipeline = RenderPipeline(
         .onto(MainScreen),
 )
 
-pipeline.render(RenderContext(camera))
+graph.render(RenderContext(camera))
 ```
 
 ### Gui

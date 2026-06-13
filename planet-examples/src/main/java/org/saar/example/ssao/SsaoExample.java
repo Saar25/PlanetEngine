@@ -14,8 +14,8 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderPass;
-import org.saar.core.renderer.RenderPipeline;
+import org.saar.core.renderer.RenderGraph;
+import org.saar.core.renderer.RenderGraphNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
@@ -75,22 +75,22 @@ public class SsaoExample {
                 Fbo.create(window.getWidth(), window.getHeight()),
                 SimpleAllocationStrategy.INSTANCE);
 
-        final RenderPipeline ssaoPipeline = new RenderPipeline(
-                new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
-                new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), screen2),
-                new RenderPass(RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), MainScreen.INSTANCE));
+        final RenderGraph ssaoGraph = new RenderGraph(
+                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
+                new RenderGraphNode(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), screen2),
+                new RenderGraphNode(RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), MainScreen.INSTANCE));
 
-        final RenderPipeline noSsaoPipeline = new RenderPipeline(
-                new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
-                new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), MainScreen.INSTANCE));
+        final RenderGraph noSsaoGraph = new RenderGraph(
+                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
+                new RenderGraphNode(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), MainScreen.INSTANCE));
 
-        final AtomicReference<RenderPipeline> currentPipeline = new AtomicReference<>(ssaoPipeline);
+        final AtomicReference<RenderGraph> currentGraph = new AtomicReference<>(ssaoGraph);
 
         keyboard.onKeyPress('R').perform(e -> {
-            if (currentPipeline.get() == ssaoPipeline) {
-                currentPipeline.set(noSsaoPipeline);
+            if (currentGraph.get() == ssaoGraph) {
+                currentGraph.set(noSsaoGraph);
             } else {
-                currentPipeline.set(ssaoPipeline);
+                currentGraph.set(ssaoGraph);
             }
         });
 
@@ -102,7 +102,7 @@ public class SsaoExample {
             ScreenKt.clear(screen1, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(screen2, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            currentPipeline.get().render(new RenderContext(camera));
+            currentGraph.get().render(new RenderContext(camera));
 
             window.swapBuffers();
             window.pollEvents();
@@ -112,8 +112,8 @@ public class SsaoExample {
 
         screen1.delete();
         screen2.delete();
-        ssaoPipeline.delete();
-        noSsaoPipeline.delete();
+        ssaoGraph.delete();
+        noSsaoGraph.delete();
         window.destroy();
     }
 

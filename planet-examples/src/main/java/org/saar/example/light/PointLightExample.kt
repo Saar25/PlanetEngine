@@ -21,7 +21,7 @@ import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.asDeferredRenderNode
@@ -80,9 +80,11 @@ fun main() {
     )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
-        NormalColourGenerator(Vector3.upward(),
+        NormalColourGenerator(
+            Vector3.upward(),
             NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
+            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))
+        ),
         Vector2.of(256f, 256f)
     )
     val world = LowPolyWorld(terrainFactory)
@@ -138,7 +140,7 @@ fun main() {
     val screenPrototype2 = DeferredScreenPrototype()
     val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
-    val pipeline = RenderPipeline(
+    val renderGraph = RenderGraph(
         // TODO: fix cube map
         /*SkyboxPostProcessor(cubeMap)
             .asRenderNode(object : PostProcessingBuffers {
@@ -171,7 +173,7 @@ fun main() {
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.assureSize(MainScreen.width, MainScreen.height)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        pipeline.render(RenderContext(camera))
+        renderGraph.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -184,7 +186,7 @@ fun main() {
     camera.delete()
     screen1.delete()
     screen2.delete()
-    pipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -200,7 +202,9 @@ private fun createCubeMap() = CubeMapTextureBuilder()
 private fun buildCubeModel(): Model3D {
     val cubeInstance = R3D.instance()
     cubeInstance.transform.scale.set(10f, 10f, 10f)
-    val cubeMesh = R3D.mesh(arrayOf(cubeInstance),
-        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
+    val cubeMesh = R3D.mesh(
+        arrayOf(cubeInstance),
+        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices
+    )
     return Model3D(cubeMesh)
 }

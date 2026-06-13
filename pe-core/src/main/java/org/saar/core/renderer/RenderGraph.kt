@@ -3,19 +3,19 @@ package org.saar.core.renderer
 import org.saar.core.renderer.state.DefaultRenderState
 import org.saar.core.renderer.state.RenderState
 
-class RenderPipeline(
-    private val passes: Iterable<RenderPass>,
+class RenderGraph(
+    private val nodes: Iterable<RenderGraphNode>,
     private val renderState: RenderState = DefaultRenderState
 ) {
 
-    constructor(vararg passes: RenderPass) : this(passes = passes.asIterable())
+    constructor(vararg nodes: RenderGraphNode) : this(nodes = nodes.asIterable())
 
     fun render(context: RenderContext) {
-        this.passes.forEach {
+        this.nodes.forEach {
             this.renderState.apply()
             it.render(context)
         }
     }
 
-    fun delete() = this.passes.forEach { it.delete() }
+    fun delete() = this.nodes.forEach { it.delete() }
 }

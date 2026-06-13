@@ -9,7 +9,7 @@ import org.saar.core.common.r2d.R2D.vertex
 import org.saar.core.painting.asRenderNode
 import org.saar.core.painting.painters.FBMPainter
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.p2d.ScreenPrototype2D
 import org.saar.core.renderer.p2d.asRenderNode2D
@@ -43,14 +43,14 @@ object PostProcessingExample {
         val fbo = Fbo.create(WIDTH, HEIGHT)
         val screen = screenPrototype.toScreen(fbo)
 
-        val renderPipeline = RenderPipeline(
+        val renderGraph = RenderGraph(
             FBMPainter().asRenderNode().onto(screen),
             node.asRenderNode2D().onto(screen)
         )
 
         val keyboard = window.keyboard
         while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
-            renderPipeline.render(RenderContext(null))
+            renderGraph.render(RenderContext(null))
             screen.copyTo(MainScreen)
 
             window.swapBuffers()
@@ -58,7 +58,7 @@ object PostProcessingExample {
         }
 
         screen.delete()
-        renderPipeline.delete()
+        renderGraph.delete()
         window.destroy()
     }
 
