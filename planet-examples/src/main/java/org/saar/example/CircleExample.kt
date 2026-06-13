@@ -1,12 +1,10 @@
 package org.saar.example
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.postprocessing.processors.Swizzle
-import org.saar.core.postprocessing.processors.SwizzlePostProcessor
+import org.saar.core.postprocessing.Swizzle
+import org.saar.core.postprocessing.SwizzlePostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.p2d.RenderingBuffers2D
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -29,6 +27,7 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 import java.awt.Dimension
@@ -61,8 +60,8 @@ fun main() {
     val allocation = SimpleAllocationStrategy
     val screen = screenPrototype.toScreen(fbo, allocation)
 
-    val painter = MyPostProcessor()
-    val swizzle = SwizzlePostProcessor(Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)
+    val painter = MyPostProcessor(screenPrototype.albedoTexture)
+    val swizzle = SwizzlePostProcessor(screenPrototype.albedoTexture, Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)
 
     val keyboard = window.keyboard
 
@@ -76,9 +75,9 @@ fun main() {
         screen.resizeToMainScreen()
         GlUtils.clear(GlBuffer.COLOUR)
 
-        painter.render(RenderContext(null), screenPrototype.buffers)
+        painter.render(RenderContext(null))
         MainScreen.setAsDraw()
-        swizzle.render(RenderContext(null), screenPrototype.buffers)
+        swizzle.render(RenderContext(null))
 
         window.swapBuffers()
         window.pollEvents()
@@ -91,26 +90,22 @@ fun main() {
 }
 
 private class MyScreenPrototype : ScreenPrototype {
-    val image: MutableTexture2D = MutableTexture2D.create()
+    val albedoTexture: MutableTexture2D = MutableTexture2D.create()
 
     override val colorBuffers = listOf(
-        TextureAttachmentBuffer(this.image, InternalFormat.R8)
+        TextureAttachmentBuffer(this.albedoTexture, InternalFormat.R8)
     )
 
     override val readIndex = ColorAttachmentIndex.at(0)
-
-    val buffers = object : RenderingBuffers2D {
-        override val albedo = image
-    }
 }
 
-private class MyPostProcessor : PostProcessor {
+private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderNode {
 
     private val prototype = MyRenderPassPrototype()
     val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
-        this.prototype.colourTextureUniform.value = buffers.albedo
+    override fun render(context: RenderContext) = this.wrapper.render {
+        this.prototype.colourTextureUniform.value = this.albedoBuffer
     }
 
     override fun delete() = this.wrapper.delete()

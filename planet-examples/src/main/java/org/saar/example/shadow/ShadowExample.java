@@ -17,12 +17,10 @@ import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNode;
 import org.saar.core.renderer.RenderGraphNodeKt;
-import org.saar.core.renderer.RenderGraph;
-import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.shadow.*;
@@ -88,7 +86,7 @@ public class ShadowExample {
                 SimpleAllocationStrategy.INSTANCE);
         final ShadowsCamera shadowsCamera = new ShadowsCamera(shadowProjection, light);
 
-        final ReadOnlyTexture2D shadowMap = shadowsPrototype.getBuffers().getDepth();
+        final ReadOnlyTexture2D shadowMap = shadowsPrototype.getDepthTexture();
 
         final RenderGraph shadowsRenderGraph = new RenderGraph(
                 RenderGraphNodeKt.onto(
@@ -98,7 +96,7 @@ public class ShadowExample {
         ScreenKt.clear(shadowsScreen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
         shadowsRenderGraph.render(new RenderContext(shadowsCamera));
 
-        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
         final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
         final OffScreen screen = Screens.INSTANCE.toScreen(
@@ -107,11 +105,15 @@ public class ShadowExample {
                 SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen),
+                new RenderGraphNode(renderNode, screen),
                 new RenderGraphNode(
-                        org.saar.core.renderer.renderpass.RenderPassKt.asRenderNode(
-                                new ShadowsRenderPass(shadowsCamera, shadowMap, light),
-                                prototype.getBuffers()
+                        new ShadowsRenderPass(
+                                prototype.getAlbedoTexture(),
+                                prototype.getNormalSpecularTexture(),
+                                prototype.getDepthTexture(),
+                                shadowsCamera,
+                                shadowMap,
+                                light
                         ), MainScreen.INSTANCE)
         );
 

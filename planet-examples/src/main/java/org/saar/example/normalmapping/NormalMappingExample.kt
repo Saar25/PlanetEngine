@@ -23,17 +23,15 @@ import org.saar.core.common.r3d.NodeBatch3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.ContrastPostProcessor
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
+import org.saar.core.postprocessing.ContrastPostProcessor
+import org.saar.core.postprocessing.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
-import org.saar.core.renderer.deferred.passes.asRenderNode
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenSwap
@@ -107,7 +105,7 @@ fun main() {
         shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
     )
 
-    val shadowMap = shadowsPrototype.buffers.depth
+    val shadowMap = shadowsPrototype.depthTexture
 
     val renderNode = DeferredRenderNodeGroup(
         nodeBatch3D, normalMappedNodeBatch, objNodeBatch
@@ -121,17 +119,17 @@ fun main() {
 
     val renderGraph = RenderGraph(
         renderNode
-            .asDeferredRenderNode()
             .onto(screenSwap.current),
-        ShadowsRenderPass(shadowsCamera, shadowMap, light)
-            .asRenderNode(screenSwap.prototype.buffers)
-            .onto(screenSwap.swap()),
-        ContrastPostProcessor(1.3f)
-            .asRenderNode(screenSwap.prototype.buffers)
-            .onto(screenSwap.swap()),
-        FxaaPostProcessor()
-            .asRenderNode(screenSwap.prototype.buffers)
-            .onto(MainScreen),
+        ShadowsRenderPass(
+            albedoBuffer = screenSwap.prototype.albedoTexture,
+            normalSpecularBuffer = screenSwap.prototype.normalSpecularTexture,
+            depthBuffer = screenSwap.prototype.depthTexture,
+            shadowsCamera,
+            shadowMap,
+            light
+        ).onto(screenSwap.swap()),
+        ContrastPostProcessor(screenSwap.prototype.albedoTexture, 1.3f).onto(screenSwap.swap()),
+        FxaaPostProcessor(screenSwap.prototype.albedoTexture).onto(MainScreen),
         uiDisplay
             .asDeferredRenderNode()
             .onto(MainScreen)

@@ -11,16 +11,15 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.light.PointLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
-import org.saar.core.renderer.renderpass.RenderPassKt;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.ScreenKt;
@@ -65,8 +64,14 @@ public class DeferredExample {
         final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen),
-                new RenderGraphNode(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype.getBuffers()), MainScreen.INSTANCE));
+                new RenderGraphNode(renderNode, screen),
+                new RenderGraphNode(new LightRenderPass(
+                        prototype.getAlbedoTexture(),
+                        prototype.getNormalSpecularTexture(),
+                        prototype.getDepthTexture(),
+                        new PointLight[0],
+                        new DirectionalLight[]{light}
+                ), MainScreen.INSTANCE));
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

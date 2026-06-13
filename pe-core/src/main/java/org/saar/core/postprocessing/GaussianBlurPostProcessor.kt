@@ -1,9 +1,8 @@
-package org.saar.core.postprocessing.processors
+package org.saar.core.postprocessing
 
 import org.joml.Vector2i
-import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessor
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -12,6 +11,7 @@ import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.*
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.pow
@@ -31,28 +31,30 @@ private fun calculateGaussianKernel(samples: Int, sigma: Int): FloatArray {
     return kernel
 }
 
-class GaussianBlurPostProcessor(samples: Int, sigma: Int) : PostProcessor {
+class GaussianBlurPostProcessor(
+    private val albedoBuffer: ReadOnlyTexture2D,
+    samples: Int,
+    sigma: Int
+) : RenderNode {
 
     private val samples = calculateGaussianKernel(samples, sigma)
     private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderContext, buffers: PostProcessingBuffers) {
+    override fun render(context: RenderContext) {
         this.wrapper.render {
-            this.prototype.textureUniform.value = buffers.albedo
+            this.prototype.textureUniform.value = this.albedoBuffer
 
             this.prototype.verticalBlurUniform.value = true
         }
         this.wrapper.render {
-            this.prototype.textureUniform.value = buffers.albedo
+            this.prototype.textureUniform.value = this.albedoBuffer
 
             this.prototype.verticalBlurUniform.value = false
         }
     }
 
-    override fun delete() {
-        this.wrapper.delete()
-    }
+    override fun delete() = this.wrapper.delete()
 }
 
 private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : RenderPassPrototype {
@@ -76,7 +78,9 @@ private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray
     @UniformProperty
     val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
-    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(
+        GlslVersion.V400,
         ShaderCode.define("LEVELS", this.samples.size.toString()),
-        ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl"))
+        ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
+    )
 }

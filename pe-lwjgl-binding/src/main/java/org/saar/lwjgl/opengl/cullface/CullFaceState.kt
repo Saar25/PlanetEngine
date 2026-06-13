@@ -15,5 +15,13 @@ data class CullFaceState(
             face = Face.BACK,
             order = CullFaceOrder.COUNTER_CLOCKWISE,
         )
+
+        val DISABLED = DEFAULTS
+
+        val BACK_CCW = CullFaceState(
+            enabled = true,
+            face = Face.BACK,
+            order = CullFaceOrder.COUNTER_CLOCKWISE,
+        )
     }
 }

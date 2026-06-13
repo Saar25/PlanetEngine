@@ -22,17 +22,15 @@ import org.saar.core.common.r3d.NodeBatch3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.ContrastPostProcessor
+import org.saar.core.postprocessing.ContrastPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.p2d.GeometryPass2D
-import org.saar.core.renderer.renderpass.asRenderNode
+import org.saar.core.renderer.p2d.asRenderNode2D
 import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -144,10 +142,15 @@ fun main() {
     val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val reflectionRenderGraph = RenderGraph(
-        reflectionRenderNode.asDeferredRenderNode().onto(reflectionScreen1),
-        LightRenderPass(light).asRenderNode(reflectionPrototype1.buffers).onto(reflectionScreen2)
+        reflectionRenderNode.onto(reflectionScreen1),
+        LightRenderPass(
+            albedoBuffer = reflectionPrototype1.albedoTexture,
+            normalSpecularBuffer = reflectionPrototype1.normalSpecularTexture,
+            depthBuffer = reflectionPrototype1.depthTexture,
+            directionalLights = arrayOf(light)
+        ).onto(reflectionScreen2)
     )
-    val reflectionMap = reflectionPrototype2.buffers.albedo
+    val reflectionMap = reflectionPrototype2.albedoTexture
     reflectionUiBlock.style.backgroundImage.set(reflectionMap)
 
     val mirrorModel = buildMirrorModel(reflectionMap)
@@ -169,7 +172,7 @@ fun main() {
         objNodeBatch, nodeBatch3D, mirror
     )
 
-    val shadowMap = shadowsPrototype.buffers.depth
+    val shadowMap = shadowsPrototype.depthTexture
 //    val fog = Fog(Vector3.of(.2f), 1000f, 2000f)
 
     val prototype1 = DeferredScreenPrototype()
@@ -179,11 +182,18 @@ fun main() {
     val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val renderGraph = RenderGraph(
-        renderNode.asDeferredRenderNode().onto(screen1),
-        ShadowsRenderPass(shadowsCamera, shadowMap, light).asRenderNode(prototype1.buffers).onto(screen2),
-        ContrastPostProcessor(1.3f).asRenderNode(prototype2.buffers).onto(MainScreen),
+        renderNode.onto(screen1),
+        ShadowsRenderPass(
+            albedoBuffer = prototype1.albedoTexture,
+            normalSpecularBuffer = prototype1.normalSpecularTexture,
+            depthBuffer = prototype1.depthTexture,
+            shadowsCamera,
+            shadowMap,
+            light
+        ).onto(screen2),
+        ContrastPostProcessor(prototype2.albedoTexture, 1.3f).onto(MainScreen),
 //        FogRenderPass(fog, FogDistance.XYZ).asRenderNode(prototype1.buffers).onto(MainScreen),
-        GeometryPass2D(uiDisplay).asRenderNode(prototype1.buffers).onto(MainScreen)
+        uiDisplay.asRenderNode2D().onto(MainScreen)
     )
 
     val fps = Fps()

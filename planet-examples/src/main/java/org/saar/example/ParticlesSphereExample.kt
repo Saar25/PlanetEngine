@@ -12,13 +12,12 @@ import org.saar.core.common.particles.components.ParticlesModelComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
+import org.saar.core.postprocessing.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -30,7 +29,6 @@ import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
-import java.lang.Math.random
 import kotlin.math.sqrt
 
 private const val WIDTH = 1200
@@ -65,7 +63,7 @@ fun main() {
 
     val renderGraph = RenderGraph(
         particles.asDeferredRenderNode().onto(screen),
-        FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
+        FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
 
     val keyboard = window.keyboard
@@ -127,7 +125,7 @@ private class IncreaseParticlesCountComponent(
         this.modelComponent.model.mesh.buffers.offset(from)
         for (i in from until to) {
             val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
-                .normalize((RADIUS * sqrt(random())).toFloat())
+                .normalize((RADIUS * sqrt(Math.random())).toFloat())
             this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
         }
     }
@@ -150,7 +148,7 @@ private class MyParticlesSphereComponent : NodeComponent {
 
             if (now - instance.birth >= LIFETIME) {
                 val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
-                    .normalize((RADIUS * sqrt(random())).toFloat())
+                    .normalize((RADIUS * sqrt(Math.random())).toFloat())
                 this.modelComponent.model.mesh.buffers.offset(i)
                 this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
             } else {

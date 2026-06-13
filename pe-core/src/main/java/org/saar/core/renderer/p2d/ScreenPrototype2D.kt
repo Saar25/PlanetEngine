@@ -5,18 +5,16 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
 class ScreenPrototype2D : ScreenPrototype {
 
-    private val colourTexture = MutableTexture2D.create()
+    private val _albedoTexture = MutableTexture2D.create()
+    val albedoTexture: ReadOnlyTexture2D get() = this._albedoTexture
 
     override val colorBuffers = listOf(
-        TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16F)
+        TextureAttachmentBuffer(this._albedoTexture, InternalFormat.RGB16F)
     )
 
     override val readIndex = ColorAttachmentIndex.at(0)
-
-    val buffers = object : RenderingBuffers2D {
-        override val albedo = colourTexture
-    }
 }

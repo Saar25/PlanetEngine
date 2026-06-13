@@ -19,16 +19,14 @@ import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.Attenuation
 import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
+import org.saar.core.postprocessing.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.p2d.asRenderNode2D
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.assureSize
@@ -147,15 +145,14 @@ fun main() {
                 override val albedo = Texture2D.NULL
             })
             .onto(screen1),*/
-        DeferredRenderNodeGroup(world, cube)
-            .asDeferredRenderNode()
-            .onto(screen1),
-        LightRenderPass(pointLights = lights)
-            .asRenderNode(screenPrototype1.buffers)
-            .onto(screen2),
-        FxaaPostProcessor()
-            .asRenderNode(screenPrototype2.buffers)
-            .onto(MainScreen),
+        DeferredRenderNodeGroup(world, cube).onto(screen1),
+        LightRenderPass(
+            albedoBuffer = screenPrototype1.albedoTexture,
+            normalSpecularBuffer = screenPrototype1.normalSpecularTexture,
+            depthBuffer = screenPrototype1.depthTexture,
+            pointLights = lights
+        ).onto(screen2),
+        FxaaPostProcessor(screenPrototype2.albedoTexture).onto(MainScreen),
         uiDisplay
             .asRenderNode2D()
             .onto(MainScreen)

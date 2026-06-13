@@ -11,17 +11,16 @@ import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.light.PointLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.LightRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
-import org.saar.core.renderer.renderpass.RenderPassKt;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.ScreenKt;
@@ -76,13 +75,30 @@ public class SsaoExample {
                 SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph ssaoGraph = new RenderGraph(
-                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
-                new RenderGraphNode(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), screen2),
-                new RenderGraphNode(RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), MainScreen.INSTANCE));
+                new RenderGraphNode(renderNode, screen1),
+                new RenderGraphNode(new LightRenderPass(
+                        prototype1.getAlbedoTexture(),
+                        prototype1.getNormalSpecularTexture(),
+                        prototype1.getDepthTexture(),
+                        new PointLight[0],
+                        new DirectionalLight[]{light}
+                ), screen2),
+                new RenderGraphNode(new SsaoRenderPass(
+                        prototype2.getAlbedoTexture(),
+                        prototype2.getNormalSpecularTexture(),
+                        prototype2.getDepthTexture(),
+                        1f
+                ), MainScreen.INSTANCE));
 
         final RenderGraph noSsaoGraph = new RenderGraph(
-                new RenderGraphNode(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen1),
-                new RenderGraphNode(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype1.getBuffers()), MainScreen.INSTANCE));
+                new RenderGraphNode(renderNode, screen1),
+                new RenderGraphNode(new LightRenderPass(
+                        prototype2.getAlbedoTexture(),
+                        prototype2.getNormalSpecularTexture(),
+                        prototype2.getDepthTexture(),
+                        new PointLight[0],
+                        new DirectionalLight[]{light}
+                ), MainScreen.INSTANCE));
 
         final AtomicReference<RenderGraph> currentGraph = new AtomicReference<>(ssaoGraph);
 

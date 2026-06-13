@@ -5,23 +5,21 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
 class ForwardScreenPrototype : ScreenPrototype {
 
-    private val colourTexture = MutableTexture2D.create()
+    private val _albedoTexture = MutableTexture2D.create()
+    val albedoTexture: ReadOnlyTexture2D get() = this._albedoTexture
 
-    private val depthTexture = MutableTexture2D.create()
+    private val _depthTexture = MutableTexture2D.create()
+    val depthTexture: ReadOnlyTexture2D get() = this._depthTexture
 
     override val colorBuffers = listOf(
-        TextureAttachmentBuffer(this.colourTexture, InternalFormat.RGB16)
+        TextureAttachmentBuffer(this._albedoTexture, InternalFormat.RGB16)
     )
 
-    override val depthBuffer = TextureAttachmentBuffer(this.depthTexture, InternalFormat.DEPTH24)
+    override val depthBuffer = TextureAttachmentBuffer(this._depthTexture, InternalFormat.DEPTH24)
 
     override val readIndex = ColorAttachmentIndex.at(0)
-
-    val buffers = object : ForwardRenderingBuffers {
-        override val albedo = colourTexture
-        override val depth = depthTexture
-    }
 }

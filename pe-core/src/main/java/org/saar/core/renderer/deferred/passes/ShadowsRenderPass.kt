@@ -6,8 +6,6 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderNode
-import org.saar.core.renderer.deferred.DeferredRenderPass
-import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -18,28 +16,22 @@ import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 
-// TODO: temporary class for migration
-class ShadowsRenderPassWrapper(
-    private val rp: ShadowsRenderPass,
-    private val buffers: DeferredRenderingBuffers
+class ShadowsRenderPass(
+    private val albedoBuffer: ReadOnlyTexture2D,
+    private val normalSpecularBuffer: ReadOnlyTexture2D,
+    private val depthBuffer: ReadOnlyTexture2D,
+    shadowCamera: ICamera,
+    shadowMap: ReadOnlyTexture2D,
+    light: DirectionalLight
 ) : RenderNode {
-    override fun render(context: RenderContext) = this.rp.render(context, this.buffers)
-
-    override fun delete() = this.rp.delete()
-}
-
-fun ShadowsRenderPass.asRenderNode(buffers: DeferredRenderingBuffers) = ShadowsRenderPassWrapper(this, buffers)
-
-class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture2D, light: DirectionalLight) :
-    DeferredRenderPass {
 
     private val prototype = ShadowsRenderPassPrototype(shadowCamera, shadowMap, light)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
-        this.prototype.colourTextureUniform.value = buffers.albedo
-        this.prototype.normalSpecularTexture.value = buffers.normalSpecular
-        this.prototype.depthTextureUniform.value = buffers.depth
+    override fun render(context: RenderContext) = this.wrapper.render {
+        this.prototype.colourTextureUniform.value = this.albedoBuffer
+        this.prototype.normalSpecularTexture.value = this.normalSpecularBuffer
+        this.prototype.depthTextureUniform.value = this.depthBuffer
 
         this.prototype.projectionMatrixInvUniform.value =
             context.camera.projection.matrix.invertPerspective(Matrix4.temp)
@@ -53,9 +45,11 @@ class ShadowsRenderPass(shadowCamera: ICamera, shadowMap: ReadOnlyTexture2D, lig
 
 }
 
-private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
-                                         private val shadowMap: ReadOnlyTexture2D,
-                                         private val light: DirectionalLight) : RenderPassPrototype {
+private class ShadowsRenderPassPrototype(
+    private val shadowCamera: ICamera,
+    private val shadowMap: ReadOnlyTexture2D,
+    private val light: DirectionalLight
+) : RenderPassPrototype {
 
     @UniformProperty
     private val shadowMatrixUniform = object : Mat4Uniform() {
@@ -63,7 +57,8 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
 
         override val value
             get() = this@ShadowsRenderPassPrototype.shadowCamera.projection.matrix.mul(
-                this@ShadowsRenderPassPrototype.shadowCamera.viewMatrix, Matrix4.temp)
+                this@ShadowsRenderPassPrototype.shadowCamera.viewMatrix, Matrix4.temp
+            )
 
         override val transpose = false
     }
@@ -110,7 +105,8 @@ private class ShadowsRenderPassPrototype(private val shadowCamera: ICamera,
     @UniformProperty
     val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
-    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(
+        GlslVersion.V400,
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
         ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.01f)),
         ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")

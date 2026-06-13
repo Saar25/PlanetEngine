@@ -1,32 +1,25 @@
 package org.saar.core.renderer.deferred.passes
 
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNode
-import org.saar.core.renderer.deferred.DeferredRenderPass
-import org.saar.core.renderer.deferred.DeferredRenderingBuffers
-import org.saar.lwjgl.opengl.constants.Comparator
-import org.saar.lwjgl.opengl.constants.Face
-import org.saar.lwjgl.opengl.cullface.CullFace
-import org.saar.lwjgl.opengl.depth.DepthFunction
-import org.saar.lwjgl.opengl.depth.DepthMask
+import org.saar.core.renderer.state.CompositeRenderState
+import org.saar.core.renderer.state.CullFaceRenderState
+import org.saar.core.renderer.state.DepthTestRenderState
+import org.saar.core.renderer.state.StencilTestRenderState
+import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.depth.DepthState
-import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.stencil.*
+import org.saar.lwjgl.opengl.stencil.StencilState
 
-class DeferredGeometryPass(private vararg val children: DeferredRenderNode) : DeferredRenderPass {
+class DeferredGeometryPass(private vararg val children: DeferredRenderNode) : RenderNode {
 
-    private val stencilState = StencilState.ALWAYS_WRITE
-    private val depthState = DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE)
+    override val renderState = CompositeRenderState(
+        DepthTestRenderState(DepthState.WRITE),
+        StencilTestRenderState(StencilState.ALWAYS_WRITE),
+        CullFaceRenderState(CullFaceState.BACK_CCW),
+    )
 
-    override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
-        CullFace.set(true, Face.BACK)
-        StencilTest.apply(this.stencilState)
-        DepthTest.apply(this.depthState)
-    }
-
-    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) {
-        this.children.forEach { it.renderDeferred(RenderContext(context.camera)) }
-    }
+    override fun render(context: RenderContext) = this.children.forEach { it.renderDeferred(context) }
 
     override fun delete() = this.children.forEach { it.delete() }
 }

@@ -5,11 +5,10 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.saar.core.painting.painters.Random2fPainter
 import org.saar.core.painting.renderToTexture
-import org.saar.core.postprocessing.processors.GaussianBlurPostProcessor
-import org.saar.core.postprocessing.processors.MultiplyPostProcessor
+import org.saar.core.postprocessing.GaussianBlurPostProcessor
+import org.saar.core.postprocessing.MultiplyPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderPass
-import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -24,6 +23,7 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureSWrapParameter
@@ -35,28 +35,35 @@ import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector3
 import kotlin.random.Random
 
-class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
+class SsaoRenderPass(
+    private val albedoBuffer: ReadOnlyTexture2D,
+    private val normalSpecularBuffer: ReadOnlyTexture2D,
+    private val depthBuffer: ReadOnlyTexture2D,
+    val radius: Float = 1f
+) : RenderNode {
 
     private val noiseTextureSize = 64
     private val kernelSamplesSize = 32
 
     private val ssaoPrototype = SsaoRenderPassPrototype(
-        createNoiseTexture(), createKernel(), this.noiseTextureSize, radius)
+        createNoiseTexture(), createKernel(), this.noiseTextureSize, this.radius
+    )
     private val ssaoWrapper = RenderPassPrototypeWrapper(this.ssaoPrototype)
 
     private val ssaoTexture = MutableTexture2D.create()
     private val screen = ScreenBuilder(Fbo.create(0, 0))
-        .addColorTexture(ssaoTexture, InternalFormat.R16F).setRead()
+        .addColorTexture(this.ssaoTexture, InternalFormat.R16F).setRead()
         .build()
 
-    private val blurPostProcessor = GaussianBlurPostProcessor(11, 2)
+    private val blurPostProcessor = GaussianBlurPostProcessor(this.ssaoTexture, 11, 2)
 
-    private val multiplyPostProcessor = MultiplyPostProcessor(ssaoTexture, 1)
+    private val multiplyPostProcessor = MultiplyPostProcessor(this.albedoBuffer, this.ssaoTexture, 1)
 
     private fun createNoiseTexture(): MutableTexture2D {
         val painter = Random2fPainter()
         val texture = painter.renderToTexture(
-            this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F)
+            this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F
+        )
         painter.delete()
 
         texture.applyParameters(
@@ -79,7 +86,7 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
         Vector3.of(x, y, z).normalize(Random.nextFloat() * scale)
     }
 
-    override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
+    override fun render(context: RenderContext) {
         this.screen.setAsDraw()
         this.screen.assureSize(
             Window.current().width,
@@ -87,18 +94,16 @@ class SsaoRenderPass(val radius: Float = 1f) : DeferredRenderPass {
         )
 
         this.ssaoWrapper.render {
-            this.ssaoPrototype.normalSpecularTexture.value = buffers.normalSpecular
-            this.ssaoPrototype.depthTextureUniform.value = buffers.depth
+            this.ssaoPrototype.normalSpecularTexture.value = this.normalSpecularBuffer
+            this.ssaoPrototype.depthTextureUniform.value = this.depthBuffer
 
             this.ssaoPrototype.projectionMatrixInvUniform.value =
                 context.camera.projection.matrix.invertPerspective(Matrix4.temp)
 
             this.ssaoPrototype.projectionMatrixUniform.value.set(context.camera.projection.matrix)
         }
-    }
 
-    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) {
-        this.multiplyPostProcessor.render(context, buffers)
+        this.multiplyPostProcessor.render(context)
     }
 
     override fun delete() {
@@ -127,14 +132,14 @@ private class SsaoRenderPassPrototype(
     private val noiseTextureUniform = object : TextureUniform() {
         override val name = "u_noiseTexture"
 
-        override val value get() = noiseTexture
+        override val value get() = this@SsaoRenderPassPrototype.noiseTexture
 
         override val unit = 2
     }
 
     @UniformProperty
     private val kernelUniform = UniformArray("u_kernel", this.kernel.size) { name, index ->
-        Vec3UniformValue(name, kernel[index])
+        Vec3UniformValue(name, this.kernel[index])
     }
 
     @UniformProperty
@@ -145,7 +150,7 @@ private class SsaoRenderPassPrototype(
             get() = field.set(
                 MainScreen.width.toFloat(),
                 MainScreen.height.toFloat()
-            ).div(noiseTextureSize.toFloat())
+            ).div(this@SsaoRenderPassPrototype.noiseTextureSize.toFloat())
     }
 
     @UniformProperty
@@ -158,12 +163,14 @@ private class SsaoRenderPassPrototype(
     val radiusUniform = object : FloatUniform() {
         override val name = "u_radius"
 
-        override val value get() = radius
+        override val value get() = this@SsaoRenderPassPrototype.radius
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
-        ShaderCode.define("KERNEL_SAMPLES", kernel.size.toString()),
-        ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl"))
+    override val fragmentShader: Shader = Shader.createFragment(
+        GlslVersion.V400,
+        ShaderCode.define("KERNEL_SAMPLES", this.kernel.size.toString()),
+        ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
+    )
 }
 
 /*

@@ -33,19 +33,16 @@ import org.saar.core.fog.FogDistance;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.postprocessing.processors.FxaaPostProcessor;
-import org.saar.core.postprocessing.processors.SkyboxPostProcessor;
+import org.saar.core.postprocessing.FxaaPostProcessor;
+import org.saar.core.postprocessing.SkyboxPostProcessor;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNodeKt;
-import org.saar.core.renderer.deferred.DeferredRenderNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
 import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
-import org.saar.core.renderer.renderpass.RenderPassKt;
 import org.saar.core.renderer.shadow.*;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -117,7 +114,7 @@ public class ForestExample {
 
         final Mesh mesh = Obj.mesh("/assets/tree/tree.model.obj");
         final Texture2D texture = Texture2D.of("/assets/tree/tree.diffuse.png");
-        final ObjNodeBatch treesNodeBatch = new ObjNodeBatch(IntStream.range(0, 1000).<ObjNode>mapToObj(i -> {
+        final ObjNodeBatch treesNodeBatch = new ObjNodeBatch(IntStream.range(0, 1000).mapToObj(i -> {
             final ObjModel treeModel = new ObjModel(mesh, texture);
             final ObjNode tree = new ObjNode(treeModel);
             final float x = (float) (Math.random() * 200 - 100);
@@ -145,7 +142,7 @@ public class ForestExample {
                 SimpleAllocationStrategy.INSTANCE);
         final ShadowsCamera shadowsCamera = new ShadowsCamera(shadowProjection, light);
 
-        final ReadOnlyTexture2D shadowMap = shadowsPrototype.getBuffers().getDepth();
+        final ReadOnlyTexture2D shadowMap = shadowsPrototype.getDepthTexture();
 
         final RenderGraph shadowsRenderGraph = new RenderGraph(
                 RenderGraphNodeKt.onto(
@@ -154,7 +151,7 @@ public class ForestExample {
         );
 
 
-        final DeferredRenderNode renderNode = new DeferredRenderNodeGroup(cube, cube2, player, treesNodeBatch, world);
+        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(cube, cube2, player, treesNodeBatch, world);
 
         final CubeMapTexture cubeMap = createCubeMap();
         final Fog fog = new Fog(Vector3.of(0), 700, 1000);
@@ -166,18 +163,32 @@ public class ForestExample {
         final OffScreen screen2 = Screens.INSTANCE.toScreen(prototype2, Fbo.create(WIDTH, HEIGHT), SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
+                RenderGraphNodeKt.onto(renderNode, screen1),
                 RenderGraphNodeKt.onto(
-                        RenderPassKt.asRenderNode(new DeferredGeometryPass(renderNode), prototype1.getBuffers()), screen1),
+                        new ShadowsRenderPass(
+                                prototype1.getAlbedoTexture(),
+                                prototype1.getNormalSpecularTexture(),
+                                prototype1.getDepthTexture(),
+                                shadowsCamera,
+                                shadowMap,
+                                light
+                        ), screen2),
                 RenderGraphNodeKt.onto(
-                        RenderPassKt.asRenderNode(new ShadowsRenderPass(shadowsCamera, shadowMap, light), prototype1.getBuffers()), screen2),
+                        new SsaoRenderPass(
+                                prototype2.getAlbedoTexture(),
+                                prototype2.getNormalSpecularTexture(),
+                                prototype2.getDepthTexture(),
+                                1f
+                        ), screen1),
                 RenderGraphNodeKt.onto(
-                        RenderPassKt.asRenderNode(new SsaoRenderPass(), prototype2.getBuffers()), screen1),
-                RenderGraphNodeKt.onto(
-                        RenderPassKt.asRenderNode(new FogRenderPass(fog, FogDistance.XZ), prototype1.getBuffers()), screen2),
-                RenderGraphNodeKt.onto(
-                        RenderPassKt.asRenderNode(new SkyboxPostProcessor(cubeMap), prototype2.getBuffers()), screen1),
-                RenderGraphNodeKt.onto(
-                        RenderPassKt.asRenderNode(new FxaaPostProcessor(), prototype1.getBuffers()), MainScreen.INSTANCE)
+                        new FogRenderPass(
+                                prototype1.getAlbedoTexture(),
+                                prototype1.getDepthTexture(),
+                                fog,
+                                FogDistance.XZ
+                        ), screen2),
+                RenderGraphNodeKt.onto(new SkyboxPostProcessor(cubeMap), screen2),
+                RenderGraphNodeKt.onto(new FxaaPostProcessor(prototype2.getAlbedoTexture()), MainScreen.INSTANCE)
         );
 
         long last = System.currentTimeMillis();

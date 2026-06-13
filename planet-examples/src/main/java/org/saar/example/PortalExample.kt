@@ -27,11 +27,11 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -85,8 +85,13 @@ fun main() {
     val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
 
     val portalRenderGraph1 = RenderGraph(
-        DeferredGeometryPass(world, cube).asRenderNode(prototype1a.buffers).onto(screen1a),
-        LightRenderPass(light).asRenderNode(prototype1a.buffers).onto(screen1b)
+        DeferredGeometryPass(world, cube).onto(screen1a),
+        LightRenderPass(
+            albedoBuffer = prototype1a.albedoTexture,
+            normalSpecularBuffer = prototype1a.normalSpecularTexture,
+            depthBuffer = prototype1a.depthTexture,
+            directionalLights = arrayOf(light)
+        ).onto(screen1b)
     )
 
     val portal2CameraTransform = RelativeTransform(
@@ -101,20 +106,31 @@ fun main() {
     val screen2b = prototype2b.toScreen(Fbo.create(window.width, window.height))
 
     val portalRenderGraph2 = RenderGraph(
-        DeferredGeometryPass(world, cube).asRenderNode(prototype2a.buffers).onto(screen2a),
-        LightRenderPass(light).asRenderNode(prototype2a.buffers).onto(screen2b)
+        DeferredGeometryPass(world, cube).onto(screen2a),
+        LightRenderPass(
+            albedoBuffer = prototype2a.albedoTexture,
+            normalSpecularBuffer = prototype2a.normalSpecularTexture,
+            depthBuffer = prototype2a.depthTexture,
+            directionalLights = arrayOf(light)
+        ).onto(screen2b)
     )
 
-    portal1.model.viewTexture = prototype1b.buffers.albedo
-    portal2.model.viewTexture = prototype2b.buffers.albedo
+    portal1.model.viewTexture = prototype1b.albedoTexture
+    portal2.model.viewTexture = prototype2b.albedoTexture
 
 
     val prototype = DeferredScreenPrototype()
     val screen = prototype1a.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        DeferredGeometryPass(portal1, portal2, world, cube).asRenderNode(prototype.buffers).onto(screen),
-        LightRenderPass(light).asRenderNode(prototype.buffers).onto(MainScreen)
+        DeferredRenderNodeGroup(portal1, portal2, world, cube)
+            .onto(screen),
+        LightRenderPass(
+            albedoBuffer = prototype.albedoTexture,
+            normalSpecularBuffer = prototype.normalSpecularTexture,
+            depthBuffer = prototype.depthTexture,
+            directionalLights = arrayOf(light)
+        ).onto(MainScreen)
     )
 
     val keyboard = window.keyboard

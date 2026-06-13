@@ -1,8 +1,7 @@
-package org.saar.core.postprocessing.processors
+package org.saar.core.postprocessing
 
-import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessor
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -12,19 +11,22 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniform
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
-class MultiplyPostProcessor(multiply: ReadOnlyTexture, components: Int = 4) : PostProcessor {
+class MultiplyPostProcessor(
+    private val albedoBuffer: ReadOnlyTexture2D,
+    multiply: ReadOnlyTexture,
+    components: Int = 4
+) : RenderNode {
 
     private val prototype = MultiplyPostProcessorPrototype(multiply, components)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
-        this.prototype.textureUniform.value = buffers.albedo
+    override fun render(context: RenderContext) = this.wrapper.render {
+        this.prototype.textureUniform.value = this.albedoBuffer
     }
 
-    override fun delete() {
-        this.wrapper.delete()
-    }
+    override fun delete() = this.wrapper.delete()
 }
 
 private class MultiplyPostProcessorPrototype(multiply: ReadOnlyTexture, components: Int) : RenderPassPrototype {
@@ -41,7 +43,9 @@ private class MultiplyPostProcessorPrototype(multiply: ReadOnlyTexture, componen
         override val value = multiply
     }
 
-    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(
+        GlslVersion.V400,
         ShaderCode.define("COMPONENTS", components.toString()),
-        ShaderCode.loadSource("/shaders/postprocessing/multiply.pass.glsl"))
+        ShaderCode.loadSource("/shaders/postprocessing/multiply.pass.glsl")
+    )
 }

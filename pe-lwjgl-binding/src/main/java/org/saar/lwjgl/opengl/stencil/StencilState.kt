@@ -19,6 +19,8 @@ data class StencilState(
             StencilMask.UNCHANGED
         )
 
+        val DISABLED = DEFAULTS
+
         val ALWAYS_WRITE = StencilState(
             StencilOperation.REPLACE_ON_PASS,
             StencilFunction(Comparator.ALWAYS, 1, 0xFF),

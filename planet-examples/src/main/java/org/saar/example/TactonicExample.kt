@@ -25,10 +25,8 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -127,8 +125,13 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        nodeGroup.asDeferredRenderNode().onto(screen),
-        LightRenderPass(light).asRenderNode(prototype.buffers).onto(MainScreen)
+        nodeGroup.onto(screen),
+        LightRenderPass(
+            albedoBuffer = prototype.albedoTexture,
+            normalSpecularBuffer = prototype.normalSpecularTexture,
+            depthBuffer = prototype.depthTexture,
+            directionalLights = arrayOf(light)
+        ).onto(MainScreen)
     )
 
     val keyboard = window.keyboard

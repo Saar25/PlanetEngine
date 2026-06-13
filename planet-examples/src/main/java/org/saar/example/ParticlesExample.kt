@@ -17,13 +17,12 @@ import org.saar.core.common.particles.components.ParticlesModelComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
+import org.saar.core.postprocessing.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -93,8 +92,8 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        DeferredGeometryPass(particles, uiDisplay).asRenderNode(prototype.buffers).onto(screen),
-        FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
+        DeferredGeometryPass(particles, uiDisplay).onto(screen),
+        FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
 
     val fps = Fps()

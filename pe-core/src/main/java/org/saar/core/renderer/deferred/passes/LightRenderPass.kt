@@ -5,15 +5,14 @@ import org.saar.core.light.PointLight
 import org.saar.core.light.ViewSpaceDirectionalLightUniform
 import org.saar.core.light.ViewSpacePointLightUniform
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderPass
-import org.saar.core.renderer.deferred.DeferredRenderingBuffers
+import org.saar.core.renderer.RenderNode
 import org.saar.core.renderer.renderpass.RenderPassPrototype
 import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
+import org.saar.core.renderer.state.*
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.cullface.CullFace
+import org.saar.lwjgl.opengl.blend.BlendState
+import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.depth.DepthState
-import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -22,31 +21,32 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.UniformArray
 import org.saar.lwjgl.opengl.stencil.StencilState
-import org.saar.lwjgl.opengl.stencil.StencilTest
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import kotlin.math.max
 
-class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
-                      directionalLights: Array<DirectionalLight> = emptyArray()) : DeferredRenderPass {
+class LightRenderPass(
+    private val albedoBuffer: ReadOnlyTexture2D,
+    private val normalSpecularBuffer: ReadOnlyTexture2D,
+    private val depthBuffer: ReadOnlyTexture2D,
+    pointLights: Array<PointLight> = emptyArray(),
+    directionalLights: Array<DirectionalLight> = emptyArray()
+) : RenderNode {
 
     private val prototype = LightRenderPassPrototype(pointLights, directionalLights)
     private val wrapper = RenderPassPrototypeWrapper(this.prototype)
 
-    constructor(light: DirectionalLight) : this(directionalLights = arrayOf(light))
+    override val renderState = CompositeRenderState(
+        StencilTestRenderState(StencilState.REPLACE),
+        DepthTestRenderState(DepthState.DISABLED),
+        BlendTestRenderState(BlendState.DISABLED),
+        CullFaceRenderState(CullFaceState.DISABLED),
+    )
 
-    constructor(light: PointLight) : this(pointLights = arrayOf(light))
-
-    override fun prepare(context: RenderContext, buffers: DeferredRenderingBuffers) {
-        StencilTest.apply(StencilState.REPLACE)
-        DepthTest.apply(DepthState.DISABLED)
-        BlendTest.disable()
-        CullFace.disable()
-    }
-
-    override fun render(context: RenderContext, buffers: DeferredRenderingBuffers) = this.wrapper.render {
-        this.prototype.colourTextureUniform.value = buffers.albedo
-        this.prototype.normalSpecularTextureUniform.value = buffers.normalSpecular
-        this.prototype.depthTextureUniform.value = buffers.depth
+    override fun render(context: RenderContext) = this.wrapper.render {
+        this.prototype.colourTextureUniform.value = this.albedoBuffer
+        this.prototype.normalSpecularTextureUniform.value = this.normalSpecularBuffer
+        this.prototype.depthTextureUniform.value = this.depthBuffer
 
         this.prototype.projectionMatrixInvUniform.value =
             context.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
@@ -55,14 +55,14 @@ class LightRenderPass(pointLights: Array<PointLight> = emptyArray(),
         this.prototype.pointLightsUniform.forEach { it.camera = context.camera }
     }
 
-    override fun delete() {
-        this.wrapper.delete()
-    }
+
+    override fun delete() = this.wrapper.delete()
 }
 
 private class LightRenderPassPrototype(
     private val pointLights: Array<PointLight>,
-    private val directionalLights: Array<DirectionalLight>) : RenderPassPrototype {
+    private val directionalLights: Array<DirectionalLight>
+) : RenderPassPrototype {
 
     @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -102,7 +102,8 @@ private class LightRenderPassPrototype(
             ViewSpacePointLightUniform(name, this@LightRenderPassPrototype.pointLights[index])
         }
 
-    override val fragmentShader: Shader = Shader.createFragment(GlslVersion.V400,
+    override val fragmentShader: Shader = Shader.createFragment(
+        GlslVersion.V400,
         ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
         ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
 

@@ -27,16 +27,14 @@ import org.saar.core.fog.Fog
 import org.saar.core.fog.FogDistance
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
+import org.saar.core.postprocessing.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.DeferredRenderingBuffers
 import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.forward.passes.FogRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.OffScreen
 import org.saar.core.screen.ScreenBuilder
@@ -89,9 +87,11 @@ private class TerrainApplication : Application {
 
         val projection: Projection = ScreenPerspectiveProjection(70f, 1f, MAX_DISTANCE_CLIP)
         this.cameraMovementComponent = KeyboardMovementComponent(keyboard, 50f, 50f, 50f)
-        val components = NodeComponentGroup(cameraMovementComponent,
+        val components = NodeComponentGroup(
+            cameraMovementComponent,
             KeyboardMovementScrollVelocityComponent(mouse),
-            MouseDragRotationComponent(mouse, -.3f))
+            MouseDragRotationComponent(mouse, -.3f)
+        )
 
         this.camera = Camera(projection, components)
 
@@ -122,10 +122,12 @@ private class TerrainApplication : Application {
         camera.update()
 
         val delta = fps.delta() * 1000
-        print("\r --> " +
-                "Speed: " + String.format("%.2f", cameraMovementComponent.velocity.x()) +
-                ", Fps: " + String.format("%.2f", fps.fps()) +
-                ", Delta: " + delta)
+        print(
+            "\r --> " +
+                    "Speed: " + String.format("%.2f", cameraMovementComponent.velocity.x()) +
+                    ", Fps: " + String.format("%.2f", fps.fps()) +
+                    ", Delta: " + delta
+        )
         fps.update()
     }
 
@@ -143,12 +145,18 @@ private class TerrainApplication : Application {
 
     private fun buildWorld(): LowPolyWorld {
         val heightGenerator: HeightGenerator = NoiseHeightGenerator(
-            MultipliedNoise2f(200, SpreadNoise2f(50,
-                LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)))
+            MultipliedNoise2f(
+                200, SpreadNoise2f(
+                    50,
+                    LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)
+                )
+            )
         )
-        val colourGenerator: ColourGenerator = NormalColourGenerator(Vector3.upward(),
+        val colourGenerator: ColourGenerator = NormalColourGenerator(
+            Vector3.upward(),
             NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f)))
+            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))
+        )
         val terrainFactory = LowPolyTerrainFactory(
             DiamondMeshGenerator(64), heightGenerator,
             colourGenerator, Vector2.of(256f, 256f)
@@ -160,8 +168,10 @@ private class TerrainApplication : Application {
         val cubeInstance = instance()
         cubeInstance.transform.scale.set(10f, 10f, 10f)
         cubeInstance.transform.position.set(101f, world.getHeight(101f, 0f, 50f), 50f)
-        val cubeMesh = mesh(arrayOf(cubeInstance),
-            ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
+        val cubeMesh = mesh(
+            arrayOf(cubeInstance),
+            ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices
+        )
         return Model3D(cubeMesh)
     }
 
@@ -172,37 +182,28 @@ private class TerrainApplication : Application {
         return light
     }
 
-    private fun buildRenderGraph(renderNode: DeferredRenderNode,
-                                 light: DirectionalLight,
-                                 cubeMap: CubeMapTexture): RenderGraph {
+    private fun buildRenderGraph(
+        renderNode: DeferredRenderNode,
+        light: DirectionalLight,
+        cubeMap: CubeMapTexture
+    ): RenderGraph {
         val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
 
-        val screenATexture1 = MutableTexture2D.create()
-        val screenATexture2 = MutableTexture2D.create()
-        val screenBTexture1 = MutableTexture2D.create()
-        val screenBTexture2 = MutableTexture2D.create()
+        val screenAAlbedo = MutableTexture2D.create()
+        val screenANormalSpecular = MutableTexture2D.create()
+        val screenBAlbedo = MutableTexture2D.create()
+        val screenBNormalSpecular = MutableTexture2D.create()
         val depthTexture = MutableTexture2D.create()
 
-        val screenABuffers = object : DeferredRenderingBuffers {
-            override val albedo = screenATexture1
-            override val normalSpecular = screenATexture2
-            override val depth = depthTexture
-        }
-        val screenBBuffers = object : DeferredRenderingBuffers {
-            override val albedo = screenBTexture1
-            override val normalSpecular = screenBTexture2
-            override val depth = depthTexture
-        }
-
         this.screenA = ScreenBuilder(Fbo.create(WIDTH, HEIGHT))
-            .addColorTexture(screenATexture1, InternalFormat.RGBA16F)
-            .addColorTexture(screenATexture2, InternalFormat.RGBA16F)
+            .addColorTexture(screenAAlbedo, InternalFormat.RGBA16F)
+            .addColorTexture(screenANormalSpecular, InternalFormat.RGBA16F)
             .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
             .build()
 
         this.screenB = ScreenBuilder(Fbo.create(WIDTH, HEIGHT))
-            .addColorTexture(screenBTexture1, InternalFormat.RGBA16F)
-            .addColorTexture(screenBTexture2, InternalFormat.RGBA16F)
+            .addColorTexture(screenBAlbedo, InternalFormat.RGBA16F)
+            .addColorTexture(screenBNormalSpecular, InternalFormat.RGBA16F)
             .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
             .build()
 
@@ -218,16 +219,18 @@ private class TerrainApplication : Application {
             SsaoRenderPass()
                 .asRenderNode(screenBBuffers)
                 .onto(MainScreen),*/
-            FogRenderPass(fog, FogDistance.XZ)
-                .asRenderNode(screenABuffers)
-                .onto(screenB),
+            FogRenderPass(
+                albedoBuffer = screenAAlbedo,
+                depthBuffer = depthTexture,
+                fog,
+                FogDistance.XZ
+            ).onto(screenB),
             /*
             // TODO: fix skybox
             SkyboxPostProcessor(cubeMap)
                 .asRenderNode(screenABuffers)
                 .onto(screenB),*/
-            FxaaPostProcessor()
-                .asRenderNode(screenBBuffers)
+            FxaaPostProcessor(screenBAlbedo)
                 .onto(MainScreen),
         )
     }
