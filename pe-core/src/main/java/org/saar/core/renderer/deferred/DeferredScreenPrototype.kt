@@ -7,15 +7,19 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
-class DeferredScreenPrototype : ScreenPrototype {
+class DeferredScreenPrototype @JvmOverloads constructor(
+    albedoTexture: MutableTexture2D = MutableTexture2D.create(),
+    normalSpecularTexture: MutableTexture2D = MutableTexture2D.create(),
+    depthTexture: MutableTexture2D = MutableTexture2D.create(),
+) : ScreenPrototype {
 
-    private val _albedoTexture = MutableTexture2D.create()
+    private val _albedoTexture = albedoTexture
     val albedoTexture: ReadOnlyTexture2D get() = this._albedoTexture
 
-    private val _normalSpecularTexture = MutableTexture2D.create()
+    private val _normalSpecularTexture = normalSpecularTexture
     val normalSpecularTexture: ReadOnlyTexture2D get() = this._normalSpecularTexture
 
-    private val _depthTexture = MutableTexture2D.create()
+    private val _depthTexture = depthTexture
     val depthTexture: ReadOnlyTexture2D get() = this._depthTexture
 
     override val colorBuffers = listOf(

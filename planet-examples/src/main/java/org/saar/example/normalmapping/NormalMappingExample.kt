@@ -29,7 +29,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.shadow.*
@@ -130,9 +129,7 @@ fun main() {
         ).onto(screenSwap.swap()),
         ContrastPostProcessor(screenSwap.prototype.albedoTexture, 1.3f).onto(screenSwap.swap()),
         FxaaPostProcessor(screenSwap.prototype.albedoTexture).onto(MainScreen),
-        uiDisplay
-            .asDeferredRenderNode()
-            .onto(MainScreen)
+        uiDisplay.onto(MainScreen)
     )
 
     var current = System.currentTimeMillis()

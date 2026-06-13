@@ -100,30 +100,30 @@ private class UIRendererPrototype : RendererPrototype<UINode> {
         CullFace.disable()
     }
 
-    override fun onInstanceDraw(context: RenderContext, uiBlock: UINode) {
-        hasTextureUniform.value = uiBlock.style.backgroundImage.texture != Texture2D.NULL
-        textureUniform.value = uiBlock.style.backgroundImage.texture
+    override fun onInstanceDraw(context: RenderContext, model: UINode) {
+        hasTextureUniform.value = model.style.backgroundImage.texture != Texture2D.NULL
+        textureUniform.value = model.style.backgroundImage.texture
 
-        hasDiscardMapUniform.value = uiBlock.style.discardMap.texture != Texture2D.NULL
-        discardMapUniform.value = uiBlock.style.discardMap.texture
+        hasDiscardMapUniform.value = model.style.discardMap.texture != Texture2D.NULL
+        discardMapUniform.value = model.style.discardMap.texture
 
         // TODO: make these ivec4
         boundsUniform.value.set(
-            uiBlock.style.position.getX().toFloat(),
-            uiBlock.style.position.getY().toFloat(),
-            uiBlock.style.width.get().toFloat(),
-            uiBlock.style.height.get().toFloat()
+            model.style.position.getX().toFloat(),
+            model.style.position.getY().toFloat(),
+            model.style.width.get().toFloat(),
+            model.style.height.get().toFloat()
         )
 
         val vector4i = Vector4i()
-        bordersUniform.value.set(uiBlock.style.borders.asVector4i(vector4i))
-        radiusesUniform.value.set(uiBlock.style.radius.asVector4i(vector4i))
-        cornersColoursUniform.value = uiBlock.style.backgroundColour.asVector4i(vector4i)
-        opacityUniform.value = uiBlock.style.opacity.opacity
+        bordersUniform.value.set(model.style.borders.asVector4i(vector4i))
+        radiusesUniform.value.set(model.style.radius.asVector4i(vector4i))
+        cornersColoursUniform.value = model.style.backgroundColour.asVector4i(vector4i)
+        opacityUniform.value = model.style.opacity.opacity
 
-        borderColourUniform.value = uiBlock.style.borderColour.asInt()
-        colourModifierUniform.value.set(uiBlock.style.colourModifier.multiply)
+        borderColourUniform.value = model.style.borderColour.asInt()
+        colourModifierUniform.value.set(model.style.colourModifier.multiply)
     }
 
-    override fun doInstanceDraw(context: RenderContext, uiBlock: UINode) = QuadMesh.draw()
+    override fun doInstanceDraw(context: RenderContext, model: UINode) = QuadMesh.draw()
 }

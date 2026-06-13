@@ -30,7 +30,6 @@ import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.p2d.asRenderNode2D
 import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -193,7 +192,7 @@ fun main() {
         ).onto(screen2),
         ContrastPostProcessor(prototype2.albedoTexture, 1.3f).onto(MainScreen),
 //        FogRenderPass(fog, FogDistance.XYZ).asRenderNode(prototype1.buffers).onto(MainScreen),
-        uiDisplay.asRenderNode2D().onto(MainScreen)
+        uiDisplay.onto(MainScreen)
     )
 
     val fps = Fps()

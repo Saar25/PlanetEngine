@@ -7,12 +7,10 @@ import org.saar.core.node.ComposableNode
 import org.saar.core.node.Node
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.deferred.DeferredRenderNode
-import org.saar.core.renderer.forward.ForwardRenderNode
-import org.saar.core.renderer.shadow.ShadowsRenderNode
+import org.saar.core.renderer.RenderPass
 
 class ParticlesNode(val model: ParticlesModel, components: NodeComponentGroup) :
-    Node, ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode, ComposableNode {
+    Node, RenderPass, ComposableNode {
 
     constructor(model: ParticlesModel) : this(model, NodeComponentGroup())
 
@@ -23,16 +21,8 @@ class ParticlesNode(val model: ParticlesModel, components: NodeComponentGroup) :
         ParticlesMeshUpdateComponent(),
     )
 
-    override fun renderForward(context: RenderContext) {
+    override fun render(context: RenderContext) {
         ParticlesRenderer.render(context, this.model)
-    }
-
-    override fun renderDeferred(context: RenderContext) {
-        ParticlesDeferredRenderer.render(context, this.model)
-    }
-
-    override fun renderShadows(context: RenderContext) {
-        ParticlesDeferredRenderer.render(context, this.model)
     }
 
     override fun update() {

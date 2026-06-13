@@ -28,11 +28,13 @@ import org.saar.core.fog.FogDistance
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.FxaaPostProcessor
+import org.saar.core.postprocessing.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.asDeferredRenderNode
+import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.forward.passes.FogRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
@@ -211,26 +213,26 @@ private class TerrainApplication : Application {
             renderNode
                 .asDeferredRenderNode()
                 .onto(screenA),
-            /*LightRenderPass(light)
-                .asRenderNode(screenABuffers)
-                .onto(screenB),*/
+            LightRenderPass(
+                albedoBuffer = screenAAlbedo,
+                normalSpecularBuffer = screenANormalSpecular,
+                depthBuffer = depthTexture,
+                directionalLights = arrayOf(light),
+            ).onto(screenB),
             /*
             // TODO: fix ssao
             SsaoRenderPass()
                 .asRenderNode(screenBBuffers)
                 .onto(MainScreen),*/
             FogRenderPass(
-                albedoBuffer = screenAAlbedo,
+                albedoBuffer = screenBAlbedo,
                 depthBuffer = depthTexture,
                 fog,
                 FogDistance.XZ
-            ).onto(screenB),
-            /*
-            // TODO: fix skybox
+            ).onto(screenA),
             SkyboxPostProcessor(cubeMap)
-                .asRenderNode(screenABuffers)
-                .onto(screenB),*/
-            FxaaPostProcessor(screenBAlbedo)
+                .onto(screenA),
+            FxaaPostProcessor(screenAAlbedo)
                 .onto(MainScreen),
         )
     }

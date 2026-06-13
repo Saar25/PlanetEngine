@@ -17,16 +17,17 @@ import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.Attenuation
+import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.FxaaPostProcessor
+import org.saar.core.postprocessing.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.p2d.asRenderNode2D
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.assureSize
@@ -44,6 +45,7 @@ import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
 import org.saar.maths.noise.MultipliedNoise2f
@@ -132,30 +134,31 @@ fun main() {
 
     uiDisplay.add(uiTextGroup)
 
-    val screenPrototype1 = DeferredScreenPrototype()
+    val depthTexture = MutableTexture2D.create()
+
+    val screenPrototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
     val screen1 = screenPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
 
-    val screenPrototype2 = DeferredScreenPrototype()
+    val screenPrototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
     val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val renderGraph = RenderGraph(
-        // TODO: fix cube map
-        /*SkyboxPostProcessor(cubeMap)
-            .asRenderNode(object : PostProcessingBuffers {
-                override val albedo = Texture2D.NULL
-            })
-            .onto(screen1),*/
-        DeferredRenderNodeGroup(world, cube).onto(screen1),
+        DeferredGeometryPass(world, cube).onto(screen1),
         LightRenderPass(
             albedoBuffer = screenPrototype1.albedoTexture,
             normalSpecularBuffer = screenPrototype1.normalSpecularTexture,
-            depthBuffer = screenPrototype1.depthTexture,
-            pointLights = lights
+            depthBuffer = depthTexture,
+            pointLights = lights,
+            directionalLights = arrayOf(
+                DirectionalLight().also {
+                    it.colour.set(Vector3.of(.2f))
+                    it.direction.set(Vector3.DOWN)
+                }
+            )
         ).onto(screen2),
-        FxaaPostProcessor(screenPrototype2.albedoTexture).onto(MainScreen),
-        uiDisplay
-            .asRenderNode2D()
-            .onto(MainScreen)
+        SkyboxPostProcessor(cubeMap).onto(screen2),
+        uiDisplay.onto(screen2),
+        FxaaPostProcessor(screenPrototype2.albedoTexture).onto(MainScreen)
     )
 
     val fps = Fps()
