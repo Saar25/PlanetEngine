@@ -1,10 +1,21 @@
 package org.saar.core.renderer
 
-class RenderPipeline(private val passes: Iterable<RenderPass>) {
+import org.saar.core.renderer.state.DefaultRenderState
+import org.saar.core.renderer.state.RenderState
 
-    constructor(vararg passes: RenderPass) : this(passes.asIterable())
+class RenderPipeline(
+    private val passes: Iterable<RenderPass>,
+    private val renderState: RenderState = DefaultRenderState
+) {
 
-    fun render(context: RenderContext) = this.passes.forEach { it.render(context) }
+    constructor(vararg passes: RenderPass) : this(passes = passes.asIterable())
+
+    fun render(context: RenderContext) {
+        this.passes.forEach {
+            this.renderState.apply()
+            it.render(context)
+        }
+    }
 
     fun delete() = this.passes.forEach { it.delete() }
 }

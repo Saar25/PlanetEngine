@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL32
 
 object ProvokingVertex {
 
-    private val DEFAULTS = ProvokingVertexValue.LAST
+    val DEFAULTS = ProvokingVertexValue.LAST
 
     private var current: ProvokingVertexValue = DEFAULTS
 

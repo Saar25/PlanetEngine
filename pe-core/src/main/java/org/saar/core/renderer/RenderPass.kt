@@ -6,6 +6,7 @@ class RenderPass(private val renderNode: RenderNode, private val to: Screen) {
 
     fun render(context: RenderContext) {
         this.to.setAsDraw()
+        this.renderNode.renderState.apply()
         this.renderNode.render(context)
     }
 

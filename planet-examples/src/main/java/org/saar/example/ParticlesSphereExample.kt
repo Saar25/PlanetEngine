@@ -16,7 +16,7 @@ import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderPipeline
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.deferred.asDeferredRenderNode
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
@@ -64,7 +64,7 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val pipeline = RenderPipeline(
-        DeferredGeometryPass(particles).asRenderNode(prototype.buffers).onto(screen),
+        particles.asDeferredRenderNode().onto(screen),
         FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
     )
 
@@ -91,13 +91,13 @@ private fun buildParticlesModel(): ParticlesModel {
     val now = System.currentTimeMillis().toInt()
     val mesh = Particles.mesh(
         generateSequence {
-        val x = (Math.random() * 2 - 1).toFloat()
-        val y = (Math.random() * 2 - 1).toFloat()
-        val z = (Math.random() * 2 - 1).toFloat()
-        Vector3.of(x, y, z).normalize(RADIUS)
-    }.take(PARTICLES)
-        .mapIndexed { i, it -> Particles.instance(it, now - i * LIFETIME / PARTICLES) }
-        .toList().toTypedArray())
+            val x = (Math.random() * 2 - 1).toFloat()
+            val y = (Math.random() * 2 - 1).toFloat()
+            val z = (Math.random() * 2 - 1).toFloat()
+            Vector3.of(x, y, z).normalize(RADIUS)
+        }.take(PARTICLES)
+            .mapIndexed { i, it -> Particles.instance(it, now - i * LIFETIME / PARTICLES) }
+            .toList().toTypedArray())
 
     val texture = Texture2D.of("/assets/particles.png")
 
