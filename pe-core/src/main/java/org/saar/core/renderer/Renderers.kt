@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 
 object Renderers {
 
-    val vertexShaderCode: ShaderCode = ShaderCode.loadSource("/shaders/common/quad/quad.vertex.glsl")
+    val quadVertexShaderCode: ShaderCode = ShaderCode.loadSource("/shaders/common/quad/quad.vertex.glsl")
 
     fun findUniforms(renderer: Any): Collection<UniformContainer> {
         return UniformPropertiesLocator(renderer).findUniform()

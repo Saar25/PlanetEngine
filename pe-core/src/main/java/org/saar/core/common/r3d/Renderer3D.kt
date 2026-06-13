@@ -13,6 +13,7 @@ import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec4UniformValue
 import org.saar.maths.utils.Matrix4
@@ -30,7 +31,7 @@ private class RendererPrototype3D : RendererPrototype<Model3D> {
     @UniformProperty
     private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
-    override val shaders = arrayOf(
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
         Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl")),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.fragment.glsl"))
     )

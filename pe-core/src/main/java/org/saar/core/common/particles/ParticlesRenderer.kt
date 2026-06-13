@@ -12,6 +12,7 @@ import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
@@ -45,7 +46,7 @@ private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
         override val value: Int get() = System.currentTimeMillis().toInt()
     }
 
-    override val shaders = arrayOf(
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
         Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/particles/particles.vertex.glsl")),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/particles/particles.fragment.glsl"))
     )

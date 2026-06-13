@@ -6,36 +6,34 @@ import org.saar.lwjgl.opengl.shader.uniforms.UniformWrapper
 
 class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : Renderer {
 
-    private val shadersProgram: ShadersProgram = ShadersProgram.create(*this.prototype.shaders)
-
     private val uniformsHelper: UniformsHelper = UniformsHelper.empty()
-        .also { this.shadersProgram.bind() }
+        .also { this.prototype.shadersProgram.bind() }
         .let { helper ->
             Renderers.findUniforms(this.prototype)
                 .flatMap { it.subUniforms }
-                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
+                .map { UniformWrapper(this.prototype.shadersProgram.getUniformLocation(it.name), it) }
                 .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
         }
         .let { helper ->
             this.prototype.uniforms
                 .flatMap { it.subUniforms }
-                .map { UniformWrapper(this.shadersProgram.getUniformLocation(it.name), it) }
+                .map { UniformWrapper(this.prototype.shadersProgram.getUniformLocation(it.name), it) }
                 .fold(helper) { helper, uniform -> helper.addUniform(uniform) }
         }
 
     init {
-        this.shadersProgram.bind()
-        this.shadersProgram.bindAttributes(*this.prototype.vertexAttributes())
-        this.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
+        this.prototype.shadersProgram.bind()
+        this.prototype.shadersProgram.bindAttributes(*this.prototype.vertexAttributes())
+        this.prototype.shadersProgram.bindFragmentOutputs(*this.prototype.fragmentOutputs())
     }
 
     fun beforeRender(context: RenderContext) {
-        this.shadersProgram.bind()
+        this.prototype.shadersProgram.bind()
         this.prototype.onRenderCycle(context)
     }
 
     fun afterRender() {
-        this.shadersProgram.unbind()
+        this.prototype.shadersProgram.unbind()
     }
 
     inline fun doRender(context: RenderContext, renderCallback: () -> Unit) {
@@ -57,7 +55,7 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
     }
 
     override fun delete() {
-        this.shadersProgram.delete()
+        this.prototype.shadersProgram.delete()
     }
 }
 

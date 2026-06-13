@@ -22,6 +22,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
@@ -129,8 +130,8 @@ private class MyRenderPassPrototype : RendererPrototype<Unit> {
         override val name = "u_radius"
     }
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/circle.fragment.glsl")),
     )
 

@@ -14,6 +14,7 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
@@ -44,18 +45,14 @@ private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
     @UniformProperty
     private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-    override val shaders = arrayOf(
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
         Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
     )
 
-    override fun vertexAttributes() = arrayOf(
-        "in_position", "in_uvCoord", "in_normal"
-    )
+    override fun vertexAttributes() = arrayOf("in_position", "in_uvCoord", "in_normal")
 
-    override fun fragmentOutputs() = arrayOf(
-        "f_colour", "f_normal"
-    )
+    override fun fragmentOutputs() = arrayOf("f_colour", "f_normal")
 
     override fun onRenderCycle(context: RenderContext) {
         StencilTest.apply(StencilState.ALWAYS_WRITE)

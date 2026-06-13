@@ -1,6 +1,6 @@
 package org.saar.core.renderer
 
-import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Uniform
 
 interface RendererPrototype<T> {
@@ -11,7 +11,7 @@ interface RendererPrototype<T> {
 
     val uniforms: Array<Uniform> get() = emptyArray()
 
-    val shaders: Array<Shader> get() = emptyArray()
+    val shadersProgram: ShadersProgram
 
     fun onRenderCycle(context: RenderContext) {
     }

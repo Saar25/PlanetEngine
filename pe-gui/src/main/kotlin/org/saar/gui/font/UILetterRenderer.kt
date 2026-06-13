@@ -12,6 +12,7 @@ import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 
@@ -52,11 +53,15 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
     @UniformProperty
     private val bitmapBoundsUniform = Vec4iUniformValue("u_bitmapBounds")
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/letter.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/letter.fragment.glsl"))
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(
+            GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/render/letter.vertex.glsl")
+        ),
+        Shader.createFragment(
+            GlslVersion.V400,
+            ShaderCode.loadSource("/shaders/gui/render/letter.fragment.glsl")
+        )
     )
 
     override fun fragmentOutputs() = arrayOf("fragColour")
@@ -69,27 +74,29 @@ private class LetterRendererPrototype : RendererPrototype<UILetter> {
         CullFace.disable()
     }
 
-    override fun onInstanceDraw(context: RenderContext, uiLetter: UILetter) {
-        this.bitmapUniform.value = uiLetter.font.bitmap
+    override fun onInstanceDraw(context: RenderContext, model: UILetter) {
+        this.bitmapUniform.value = model.font.bitmap
 
         this.bitmapDimensionsUniform.value = Vector2i(
-            uiLetter.font.bitmap.width,
-            uiLetter.font.bitmap.height)
+            model.font.bitmap.width,
+            model.font.bitmap.height
+        )
 
-        this.bitmapBoundsUniform.value = uiLetter.character.bitmapBox.toVector4i()
+        this.bitmapBoundsUniform.value = model.character.bitmapBox.toVector4i()
 
-        val bounds = uiLetter.character.localBox.toVector4f()
-            .mul(uiLetter.style.fontSize.size / uiLetter.font.size)
-            .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
+        val bounds = model.character.localBox.toVector4f()
+            .mul(model.style.fontSize.size / model.font.size)
+            .add(model.offset.x(), model.offset.y(), 0f, 0f)
 
         this.boundsUniform.value.set(
-            bounds.x() + uiLetter.style.position.getX(),
-            bounds.y() + uiLetter.style.position.getY(),
+            bounds.x() + model.style.position.getX(),
+            bounds.y() + model.style.position.getY(),
             bounds.z(),
-            bounds.w())
+            bounds.w()
+        )
 
-        this.fontColourUniform.value = uiLetter.style.fontColour.asInt()
+        this.fontColourUniform.value = model.style.fontColour.asInt()
     }
 
-    override fun doInstanceDraw(context: RenderContext, uiLetter: UILetter) = QuadMesh.draw()
+    override fun doInstanceDraw(context: RenderContext, model: UILetter) = QuadMesh.draw()
 }

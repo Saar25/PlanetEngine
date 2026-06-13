@@ -5,6 +5,7 @@ import org.saar.core.renderer.*
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 
 class Random2fPainter : RenderPass {
 
@@ -18,8 +19,8 @@ class Random2fPainter : RenderPass {
 
 private class Random2fPainterPrototype : RendererPrototype<Unit> {
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/painting/random2f.fragment.glsl")),
     )
 

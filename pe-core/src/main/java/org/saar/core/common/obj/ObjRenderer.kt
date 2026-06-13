@@ -10,6 +10,7 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
@@ -27,13 +28,12 @@ private class ObjRendererPrototype : RendererPrototype<ObjModel> {
     @UniformProperty
     private val transformUniform = Mat4UniformValue("u_transformationMatrix")
 
-    override val shaders = arrayOf(
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
         Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.fragment.glsl"))
     )
 
-    override fun vertexAttributes() = arrayOf(
-        "in_position", "in_uvCoord", "in_normal")
+    override fun vertexAttributes() = arrayOf("in_position", "in_uvCoord", "in_normal")
 
     override fun onRenderCycle(context: RenderContext) {
         BlendTest.disable()

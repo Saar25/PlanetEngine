@@ -11,6 +11,7 @@ import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
@@ -32,7 +33,7 @@ private class Texture3DDeferredRendererPrototype : RendererPrototype<Texture3DMo
     @UniformProperty
     private val textureUniform = TextureUniformValue("u_texture", 0)
 
-    override val shaders = arrayOf(
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
         Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/texture3d/texture3d.vertex.glsl")),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/texture3d/texture3d.dfragment.glsl"))
     )

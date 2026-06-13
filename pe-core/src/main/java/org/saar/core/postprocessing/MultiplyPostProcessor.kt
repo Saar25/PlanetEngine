@@ -6,6 +6,7 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
@@ -35,8 +36,8 @@ private class MultiplyPostProcessorPrototype(components: Int) : RendererPrototyp
     @UniformProperty
     val multiplyUniform = TextureUniformValue("u_multiply", 1)
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(
             GlslVersion.V400,
             ShaderCode.define("COMPONENTS", components.toString()),

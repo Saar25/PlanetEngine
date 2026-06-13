@@ -18,6 +18,7 @@ import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
@@ -163,8 +164,8 @@ private class SsaoRenderPassPrototype(
         override val value get() = this@SsaoRenderPassPrototype.radius
     }
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(
             GlslVersion.V400,
             ShaderCode.define("KERNEL_SAMPLES", this.kernel.size.toString()),

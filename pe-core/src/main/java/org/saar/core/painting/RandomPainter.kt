@@ -1,15 +1,11 @@
 package org.saar.core.painting
 
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPass
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeHelper
-import org.saar.core.renderer.Renderers
-import org.saar.core.renderer.render
+import org.saar.core.renderer.*
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 
 class RandomPainter : RenderPass {
 
@@ -23,8 +19,8 @@ class RandomPainter : RenderPass {
 
 private class RandomPainterPrototype : RendererPrototype<Unit> {
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/painting/random.fragment.glsl")),
     )
 

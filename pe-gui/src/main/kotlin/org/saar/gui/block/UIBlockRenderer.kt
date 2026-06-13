@@ -17,6 +17,7 @@ import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -84,18 +85,12 @@ private class UIRendererPrototype : RendererPrototype<UINode> {
     @UniformProperty
     private val discardMapUniform = TextureUniformValue("u_discardMap", 1)
 
-    override val shaders = arrayOf(
-        Shader.createVertex(
-            GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")
-        ),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl")
-        )
-    )
-
     override fun fragmentOutputs() = arrayOf("fragColour")
+
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")),
+        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         BlendTest.applyAlpha()

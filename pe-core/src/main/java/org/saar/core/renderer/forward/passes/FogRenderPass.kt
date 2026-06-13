@@ -13,6 +13,7 @@ import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
@@ -75,8 +76,8 @@ private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : Rend
         override val value = fogDistance.ordinal
     }
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(
             GlslVersion.V400,
             ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),

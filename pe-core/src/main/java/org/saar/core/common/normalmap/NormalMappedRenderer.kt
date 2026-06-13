@@ -10,6 +10,7 @@ import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
@@ -30,13 +31,14 @@ private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedMode
     @UniformProperty
     private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
 
-    override val shaders = arrayOf(
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
         Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/normal-map/normal-map.vertex.glsl")),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/normal-map/normal-map.fragment.glsl"))
     )
 
     override fun vertexAttributes() = arrayOf(
-        "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent")
+        "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent"
+    )
 
     override fun onRenderCycle(context: RenderContext) {
         BlendTest.disable()

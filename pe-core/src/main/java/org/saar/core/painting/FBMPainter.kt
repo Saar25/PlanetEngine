@@ -7,6 +7,7 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.stencil.StencilState
 
@@ -33,8 +34,8 @@ private class FBMPainterPrototype : RendererPrototype<Unit> {
         override val value get() = (System.currentTimeMillis() - startTime) / 1000f
     }
 
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400, Renderers.vertexShaderCode),
+    override val shadersProgram: ShadersProgram = ShadersProgram.create(
+        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
         Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/painting/fbm.fragment.glsl")),
     )
 
