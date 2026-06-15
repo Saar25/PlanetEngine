@@ -7,41 +7,45 @@ import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
-import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
+import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
 class ContrastPostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
-    contrast: Float,
+    private val contrast: Float,
 ) : RenderPass {
 
-    private val prototype = ContrastPostProcessorPrototype(contrast)
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = ContrastShadersLink
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.textureUniform.value = this.albedoBuffer
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+
+        this.shadersLink.textureUniform.value = this.albedoBuffer
+        this.shadersLink.contrastUniform.value = this.contrast
+
+        this.uniformsLoader.load()
+
+        QuadMesh.draw()
     }
 
-    override fun delete() = this.wrapper.delete()
-}
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-private class ContrastPostProcessorPrototype(contrast: Float) : RendererPrototype<Unit> {
+    private object ContrastShadersLink : ShadersLink {
 
-    @UniformProperty
-    val textureUniform = TextureUniformValue("u_texture", 0)
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
 
-    @UniformProperty
-    val contrastUniform = object : FloatUniform() {
-        override val name = "u_contrast"
+        @UniformProperty
+        val contrastUniform = FloatUniformValue("u_contrast")
 
-        override val value = contrast
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl")
+            ),
+        )
     }
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/contrast.pass.glsl")),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

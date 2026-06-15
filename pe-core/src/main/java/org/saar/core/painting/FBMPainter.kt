@@ -4,40 +4,43 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.util.Time
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
-import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
+import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilState
 
 class FBMPainter : RenderPass {
 
-    private val prototype = FBMPainterPrototype()
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = FBMShadersLink
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = StencilTestRenderState(StencilState.UNWRITTEN_ONLY)
 
-    override fun render(context: RenderContext) = this.wrapper.render(context)
+    private val startTime = Time()
 
-    override fun delete() = this.wrapper.delete()
-}
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
 
-private class FBMPainterPrototype : RendererPrototype<Unit> {
+        this.shadersLink.timeUniform.value = this.startTime.delta().toMillis() / 1000f
 
-    private val startTime = System.currentTimeMillis()
+        this.uniformsLoader.load()
 
-    @UniformProperty
-    val timeUniform = object : FloatUniform() {
-        override val name = "u_time"
-
-        override val value get() = (System.currentTimeMillis() - startTime) / 1000f
+        QuadMesh.draw()
     }
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/painting/fbm.fragment.glsl")),
-    )
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
+    private object FBMShadersLink : ShadersLink {
+
+        @UniformProperty
+        val timeUniform = FloatUniformValue("u_time")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/painting/fbm.fragment.glsl")),
+        )
+    }
 }

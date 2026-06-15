@@ -1,5 +1,5 @@
 // Vertex outputs
-in vec3 v_uvCoords;
+in vec2 v_uvCoords;
 
 // Uniforms
 uniform sampler2D u_texture;

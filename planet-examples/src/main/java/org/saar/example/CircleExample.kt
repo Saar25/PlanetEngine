@@ -10,6 +10,7 @@ import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.resizeToMainScreen
+import org.saar.core.util.Time
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -100,40 +101,42 @@ private class MyScreenPrototype : ScreenPrototype {
 
 private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
 
-    private val prototype = MyRenderPassPrototype()
-    val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = MyShadersLink
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.colourTextureUniform.value = this.albedoBuffer
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.colourTextureUniform.value = this.albedoBuffer
+        this.uniformsLoader.load()
+        QuadMesh.draw()
     }
 
-    override fun delete() = this.wrapper.delete()
-}
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-private class MyRenderPassPrototype : RendererPrototype<Unit> {
+    private object MyShadersLink : ShadersLink {
 
-    @UniformProperty
-    val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
+        @UniformProperty
+        val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
 
-    @UniformProperty
-    val timeUniform = object : IntUniform() {
-        private val start = System.currentTimeMillis()
-        override val value get() = (System.currentTimeMillis() - this.start).toInt()
+        @UniformProperty
+        val timeUniform = object : IntUniform() {
+            private val start = Time()
 
-        override val name = "u_time"
+            override val value get() = this.start.delta().toMillis().toInt()
+
+            override val name = "u_time"
+        }
+
+        @UniformProperty
+        val radiusUniform = object : IntUniform() {
+            override val value get() = radius
+
+            override val name = "u_radius"
+        }
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/circle.fragment.glsl")),
+        )
     }
-
-    @UniformProperty
-    val radiusUniform = object : IntUniform() {
-        override val value get() = radius
-
-        override val name = "u_radius"
-    }
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/circle.fragment.glsl")),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

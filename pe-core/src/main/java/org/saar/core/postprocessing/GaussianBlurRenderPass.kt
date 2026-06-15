@@ -15,82 +15,88 @@ import org.saar.maths.utils.Maths.sqrt
 import kotlin.math.PI
 import kotlin.math.exp
 
-private fun calculateGaussianKernel(samples: Int, sigma: Float): FloatArray {
-    val mean = samples / 2f
-
-    val twoSigmaSquare = 2.0f * sigma * sigma
-    val normalizationFactor = 1.0f / (sqrt(2.0f * PI.toFloat()) * sigma)
-
-    val kernel = FloatArray(samples) {
-        val x = it.toFloat() - mean
-        val exponent = -(x * x) / twoSigmaSquare
-
-        normalizationFactor * exp(exponent)
-    }
-
-    val sum = kernel.sum()
-    for (x in 0 until samples) {
-        kernel[x] /= sum
-    }
-    return kernel
-}
-
 class GaussianBlurRenderPass(samples: Int = 11, sigma: Float = samples / 3f) {
 
     private val samples = calculateGaussianKernel(samples, sigma)
-    private val prototype = GaussianBlurPostProcessorPrototype(this.samples)
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = GaussianBlurShadersLink(this.samples)
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    inner class Vertical(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
-        override fun render(context: RenderContext) = this@GaussianBlurRenderPass.wrapper.render(context) {
-            this@GaussianBlurRenderPass.prototype.textureUniform.value = this.albedoBuffer
+    private fun calculateGaussianKernel(samples: Int, sigma: Float): FloatArray {
+        val mean = samples / 2f
 
-            this@GaussianBlurRenderPass.prototype.verticalBlurUniform.value = true
+        val twoSigmaSquare = 2.0f * sigma * sigma
+        val normalizationFactor = 1.0f / (sqrt(2.0f * PI.toFloat()) * sigma)
+
+        val kernel = FloatArray(samples) {
+            val x = it.toFloat() - mean
+            val exponent = -(x * x) / twoSigmaSquare
+
+            normalizationFactor * exp(exponent)
         }
 
-        override fun delete() = this@GaussianBlurRenderPass.wrapper.delete()
+        val sum = kernel.sum()
+        for (x in 0 until samples) {
+            kernel[x] /= sum
+        }
+        return kernel
+    }
+
+    inner class Vertical(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
+
+        override fun render(context: RenderContext) {
+            this@GaussianBlurRenderPass.shadersLink.shadersProgram.bind()
+            this@GaussianBlurRenderPass.shadersLink.textureUniform.value = this.albedoBuffer
+            this@GaussianBlurRenderPass.shadersLink.verticalBlurUniform.value = true
+
+            this@GaussianBlurRenderPass.uniformsLoader.load()
+            QuadMesh.draw()
+        }
+
+        override fun delete() = this@GaussianBlurRenderPass.shadersLink.shadersProgram.delete()
     }
 
     inner class Horizontal(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
-        override fun render(context: RenderContext) = this@GaussianBlurRenderPass.wrapper.render(context) {
-            this@GaussianBlurRenderPass.prototype.textureUniform.value = this.albedoBuffer
 
-            this@GaussianBlurRenderPass.prototype.verticalBlurUniform.value = false
+        override fun render(context: RenderContext) {
+            this@GaussianBlurRenderPass.shadersLink.shadersProgram.bind()
+            this@GaussianBlurRenderPass.shadersLink.textureUniform.value = this.albedoBuffer
+            this@GaussianBlurRenderPass.shadersLink.verticalBlurUniform.value = false
+
+            this@GaussianBlurRenderPass.uniformsLoader.load()
+            QuadMesh.draw()
         }
 
-        override fun delete() = this@GaussianBlurRenderPass.wrapper.delete()
-    }
-}
-
-private class GaussianBlurPostProcessorPrototype(private val samples: FloatArray) : RendererPrototype<Unit> {
-
-    @UniformProperty
-    val textureUniform = TextureUniformValue("u_texture", 0)
-
-    @UniformProperty
-    val resolutionUniform = object : Vec2iUniform() {
-        override val name = "u_resolution"
-
-        override val value = Vector2i()
-            get() = field.set(MainScreen.width, MainScreen.height)
+        override fun delete() = this@GaussianBlurRenderPass.shadersLink.shadersProgram.delete()
     }
 
-    @UniformProperty
-    val blurLevelsUniform = UniformArray("u_blurLevels", this.samples.size) { name, index ->
-        FloatUniformValue(name, this.samples[index])
+    private class GaussianBlurShadersLink(private val samples: FloatArray) : ShadersLink {
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val resolutionUniform = object : Vec2iUniform() {
+            override val name = "u_resolution"
+
+            override val value = Vector2i()
+                get() = field.set(MainScreen.width, MainScreen.height)
+        }
+
+        @UniformProperty
+        val blurLevelsUniform = UniformArray("u_blurLevels", this.samples.size) { name, index ->
+            FloatUniformValue(name, this.samples[index])
+        }
+
+        @UniformProperty
+        val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.define("LEVELS", this.samples.size.toString()),
+                ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
+            ),
+        )
     }
-
-    @UniformProperty
-    val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.define("LEVELS", this.samples.size.toString()),
-            ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
-        ),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

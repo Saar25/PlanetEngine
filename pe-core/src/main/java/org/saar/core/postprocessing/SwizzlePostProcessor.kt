@@ -2,7 +2,6 @@ package org.saar.core.postprocessing
 
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
-import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -15,42 +14,39 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 
 class SwizzlePostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
-    r: Swizzle,
-    g: Swizzle,
-    b: Swizzle,
-    a: Swizzle
+    r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle
 ) : RenderPass {
 
-    private val prototype = SwizzlePostProcessorPrototype(r, g, b, a)
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = SwizzleShadersLink(r, g, b, a)
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.DISABLED)
-    )
+    override val renderState = StencilTestRenderState(StencilState.DISABLED)
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.textureUniform.value = this.albedoBuffer
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.textureUniform.value = this.albedoBuffer
+
+        this.uniformsLoader.load()
+        QuadMesh.draw()
     }
 
-    override fun delete() = this.wrapper.delete()
-}
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-private class SwizzlePostProcessorPrototype(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle) : RendererPrototype<Unit> {
+    private class SwizzleShadersLink(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle) : ShadersLink {
 
-    @UniformProperty
-    val textureUniform = TextureUniformValue("u_texture", 0)
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.define("R", r.name.lowercase()),
-            ShaderCode.define("G", g.name.lowercase()),
-            ShaderCode.define("B", b.name.lowercase()),
-            ShaderCode.define("A", a.name.lowercase()),
-            ShaderCode.loadSource("/shaders/postprocessing/swizzle.pass.glsl")
-        ),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.define("R", r.name.lowercase()),
+                ShaderCode.define("G", g.name.lowercase()),
+                ShaderCode.define("B", b.name.lowercase()),
+                ShaderCode.define("A", a.name.lowercase()),
+                ShaderCode.loadSource("/shaders/postprocessing/swizzle.pass.glsl")
+            ),
+        )
+    }
 }

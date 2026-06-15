@@ -5,8 +5,8 @@ import org.joml.Vector4i
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeHelper
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UINode
@@ -24,102 +24,97 @@ import org.saar.lwjgl.opengl.texture.Texture2D
 
 object UIBlockRenderer : Renderer<UINode> {
 
-    private val prototype = UIRendererPrototype()
-    private val helper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = UIShadersLink
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override fun render(context: RenderContext, models: Iterable<UINode>) {
-        models.forEach { this.helper.doRender(context) { doRender(context, it) } }
-    }
-
-    private fun doRender(context: RenderContext, uiBlock: UINode) {
-        this.helper.render(context, uiBlock)
-    }
-
-    override fun delete() = this.helper.delete()
-}
-
-private class UIRendererPrototype : RendererPrototype<UINode> {
-
-    @UniformProperty
-    private val resolutionUniform = object : Vec2iUniform() {
-        override val name = "u_resolution"
-
-        override val value = Vector2i()
-            get() = field.set(MainScreen.width, MainScreen.height)
-    }
-
-    @UniformProperty
-    private val boundsUniform = Vec4UniformValue("u_bounds")
-
-    @UniformProperty
-    private val bordersUniform = Vec4UniformValue("u_borders")
-
-    @UniformProperty
-    private val radiusesUniform = Vec4UniformValue("u_radiuses")
-
-    @UniformProperty
-    private val opacityUniform = FloatUniformValue("u_opacity")
-
-    @UniformProperty
-    private val borderColourUniform = UIntUniformValue("u_borderColour")
-
-    @UniformProperty
-    private val colourModifierUniform = Vec4UniformValue("u_colourModifier")
-
-    @UniformProperty
-    private val cornersColoursUniform = Vec4iUniformValue("u_cornersColours")
-
-    @UniformProperty
-    private val hasTextureUniform = BooleanUniformValue("u_hasTexture")
-
-    @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
-
-    @UniformProperty
-    private val hasDiscardMapUniform = BooleanUniformValue("u_hasDiscardMap")
-
-    @UniformProperty
-    private val discardMapUniform = TextureUniformValue("u_discardMap", 1)
-
-    override fun fragmentOutputs() = arrayOf("fragColour")
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
-    )
-
-    override fun onRenderCycle(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()
         ProvokingVertex.setFirst()
         CullFace.disable()
+
+        models.forEach { model ->
+            this.shadersLink.hasTextureUniform.value = model.style.backgroundImage.texture != Texture2D.NULL
+            this.shadersLink.textureUniform.value = model.style.backgroundImage.texture
+
+            this.shadersLink.hasDiscardMapUniform.value = model.style.discardMap.texture != Texture2D.NULL
+            this.shadersLink.discardMapUniform.value = model.style.discardMap.texture
+
+            // TODO: make these ivec4
+            this.shadersLink.boundsUniform.value.set(
+                model.style.position.getX().toFloat(),
+                model.style.position.getY().toFloat(),
+                model.style.width.get().toFloat(),
+                model.style.height.get().toFloat()
+            )
+
+            val vector4i = Vector4i()
+            this.shadersLink.bordersUniform.value.set(model.style.borders.asVector4i(vector4i))
+            this.shadersLink.radiusesUniform.value.set(model.style.radius.asVector4i(vector4i))
+            this.shadersLink.cornersColoursUniform.value = model.style.backgroundColour.asVector4i(vector4i)
+            this.shadersLink.opacityUniform.value = model.style.opacity.opacity
+
+            this.shadersLink.borderColourUniform.value = model.style.borderColour.asInt()
+            this.shadersLink.colourModifierUniform.value.set(model.style.colourModifier.multiply)
+
+            this.uniformsLoader.load()
+            QuadMesh.draw()
+        }
     }
 
-    override fun onInstanceDraw(context: RenderContext, model: UINode) {
-        hasTextureUniform.value = model.style.backgroundImage.texture != Texture2D.NULL
-        textureUniform.value = model.style.backgroundImage.texture
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-        hasDiscardMapUniform.value = model.style.discardMap.texture != Texture2D.NULL
-        discardMapUniform.value = model.style.discardMap.texture
+    private object UIShadersLink : ShadersLink {
 
-        // TODO: make these ivec4
-        boundsUniform.value.set(
-            model.style.position.getX().toFloat(),
-            model.style.position.getY().toFloat(),
-            model.style.width.get().toFloat(),
-            model.style.height.get().toFloat()
+        @UniformProperty
+        val resolutionUniform = object : Vec2iUniform() {
+            override val name = "u_resolution"
+
+            // TODO: use bound screen instead of main screen
+            override val value = Vector2i()
+                get() = field.set(MainScreen.width, MainScreen.height)
+        }
+
+        @UniformProperty
+        val boundsUniform = Vec4UniformValue("u_bounds")
+
+        @UniformProperty
+        val bordersUniform = Vec4UniformValue("u_borders")
+
+        @UniformProperty
+        val radiusesUniform = Vec4UniformValue("u_radiuses")
+
+        @UniformProperty
+        val opacityUniform = FloatUniformValue("u_opacity")
+
+        @UniformProperty
+        val borderColourUniform = UIntUniformValue("u_borderColour")
+
+        @UniformProperty
+        val colourModifierUniform = Vec4UniformValue("u_colourModifier")
+
+        @UniformProperty
+        val cornersColoursUniform = Vec4iUniformValue("u_cornersColours")
+
+        @UniformProperty
+        val hasTextureUniform = BooleanUniformValue("u_hasTexture")
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val hasDiscardMapUniform = BooleanUniformValue("u_hasDiscardMap")
+
+        @UniformProperty
+        val discardMapUniform = TextureUniformValue("u_discardMap", 1)
+
+        override val fragmentOutputs = arrayOf("fragColour")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
         )
-
-        val vector4i = Vector4i()
-        bordersUniform.value.set(model.style.borders.asVector4i(vector4i))
-        radiusesUniform.value.set(model.style.radius.asVector4i(vector4i))
-        cornersColoursUniform.value = model.style.backgroundColour.asVector4i(vector4i)
-        opacityUniform.value = model.style.opacity.opacity
-
-        borderColourUniform.value = model.style.borderColour.asInt()
-        colourModifierUniform.value.set(model.style.colourModifier.multiply)
     }
-
-    override fun doInstanceDraw(context: RenderContext, model: UINode) = QuadMesh.draw()
 }

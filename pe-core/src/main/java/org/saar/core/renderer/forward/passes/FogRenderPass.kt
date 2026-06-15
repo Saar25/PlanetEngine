@@ -14,7 +14,7 @@ import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
-import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
@@ -25,69 +25,65 @@ import org.saar.maths.utils.Matrix4
 class FogRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
-    fog: IFog,
-    fogDistance: FogDistance
+    private val fog: IFog,
+    private val fogDistance: FogDistance
 ) : RenderPass {
 
-    private val prototype = FogRenderPassPrototype(fog, fogDistance)
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = FogShadersLink(this.fog)
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.REPLACE),
         DepthTestRenderState(DepthState.DISABLED),
     )
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.textureUniform.value = this.albedoBuffer
-        this.prototype.depthUniform.value = this.depthBuffer
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.textureUniform.value = this.albedoBuffer
+        this.shadersLink.depthUniform.value = this.depthBuffer
+        this.shadersLink.fogDistanceUniform.value = this.fogDistance.ordinal
 
-        this.prototype.projectionMatrixInvUniform.value = context.camera
+        this.shadersLink.projectionMatrixInvUniform.value = context.camera
             .projection.matrix.invertPerspective(Matrix4.temp)
 
-        this.prototype.cameraPositionUniform.value.set(context.camera.transform.position.value)
+        this.shadersLink.cameraPositionUniform.value.set(context.camera.transform.position.value)
+        this.uniformsLoader.load()
+        QuadMesh.draw()
     }
 
-    override fun delete() {
-        this.wrapper.delete()
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    // TODO: make object
+    private class FogShadersLink(fog: IFog) : ShadersLink {
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val depthUniform = TextureUniformValue("u_depth", 1)
+
+        @UniformProperty
+        val fogUniform = FogUniformValue("u_fog", fog)
+
+        @UniformProperty
+        val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
+
+        @UniformProperty
+        val cameraPositionUniform = Vec3UniformValue("u_cameraPosition")
+
+        @UniformProperty
+        val fogDistanceUniform = IntUniformValue("u_fogDistance")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
+                ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
+                ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),
+                ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
+                ShaderCode.loadSource("/shaders/postprocessing/fog.pass.glsl")
+            ),
+        )
     }
-}
-
-private class FogRenderPassPrototype(fog: IFog, fogDistance: FogDistance) : RendererPrototype<Unit> {
-
-    @UniformProperty
-    val textureUniform = TextureUniformValue("u_texture", 0)
-
-    @UniformProperty
-    val depthUniform = TextureUniformValue("u_depth", 1)
-
-    @UniformProperty
-    val fogUniform = FogUniformValue("u_fog", fog)
-
-    @UniformProperty
-    val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
-
-    @UniformProperty
-    val cameraPositionUniform = Vec3UniformValue("u_cameraPosition")
-
-    @UniformProperty
-    val fogDistanceUniform = object : IntUniform() {
-        override val name = "u_fogDistance"
-
-        override val value = fogDistance.ordinal
-    }
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
-            ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
-            ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),
-            ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
-            ShaderCode.loadSource("/shaders/postprocessing/fog.pass.glsl")
-        ),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
-
 }

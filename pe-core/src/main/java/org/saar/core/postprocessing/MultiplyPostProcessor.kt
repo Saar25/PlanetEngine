@@ -17,33 +17,35 @@ class MultiplyPostProcessor(
     components: Int = 4
 ) : RenderPass {
 
-    private val prototype = MultiplyPostProcessorPrototype(components)
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = MultiplyShadersLink(components)
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.textureUniform.value = this.albedoBuffer
-        this.prototype.multiplyUniform.value = this.multiply
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.textureUniform.value = this.albedoBuffer
+        this.shadersLink.multiplyUniform.value = this.multiply
+
+        this.uniformsLoader.load()
+        QuadMesh.draw()
     }
 
-    override fun delete() = this.wrapper.delete()
-}
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-private class MultiplyPostProcessorPrototype(components: Int) : RendererPrototype<Unit> {
+    private class MultiplyShadersLink(components: Int) : ShadersLink {
 
-    @UniformProperty
-    val textureUniform = TextureUniformValue("u_texture", 0)
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
 
-    @UniformProperty
-    val multiplyUniform = TextureUniformValue("u_multiply", 1)
+        @UniformProperty
+        val multiplyUniform = TextureUniformValue("u_multiply", 1)
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.define("COMPONENTS", components.toString()),
-            ShaderCode.loadSource("/shaders/postprocessing/multiply.pass.glsl")
-        ),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.define("COMPONENTS", components.toString()),
+                ShaderCode.loadSource("/shaders/postprocessing/multiply.pass.glsl")
+            ),
+        )
+    }
 }

@@ -32,8 +32,8 @@ class LightRenderPass(
     directionalLights: Array<DirectionalLight> = emptyArray()
 ) : RenderPass {
 
-    private val prototype = LightRenderPassPrototype(pointLights, directionalLights)
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = LightShadersLink(pointLights, directionalLights)
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.REPLACE),
@@ -42,26 +42,31 @@ class LightRenderPass(
         CullFaceRenderState(CullFaceState.DISABLED),
     )
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.colourTextureUniform.value = this.albedoBuffer
-        this.prototype.normalSpecularTextureUniform.value = this.normalSpecularBuffer
-        this.prototype.depthTextureUniform.value = this.depthBuffer
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.colourTextureUniform.value = this.albedoBuffer
+        this.shadersLink.normalSpecularTextureUniform.value = this.normalSpecularBuffer
+        this.shadersLink.depthTextureUniform.value = this.depthBuffer
 
-        this.prototype.projectionMatrixInvUniform.value =
+        this.shadersLink.projectionMatrixInvUniform.value =
             context.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
 
-        this.prototype.directionalLightsUniform.forEach { it.camera = context.camera }
-        this.prototype.pointLightsUniform.forEach { it.camera = context.camera }
+        this.shadersLink.directionalLightsUniform.forEach { it.camera = context.camera }
+        this.shadersLink.pointLightsUniform.forEach { it.camera = context.camera }
+
+        this.uniformsLoader.load()
+        QuadMesh.draw()
     }
 
 
-    override fun delete() = this.wrapper.delete()
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 }
 
-private class LightRenderPassPrototype(
+// TODO: make object
+private class LightShadersLink(
     private val pointLights: Array<PointLight>,
     private val directionalLights: Array<DirectionalLight>
-) : RendererPrototype<Unit> {
+) : ShadersLink {
 
     @UniformProperty
     val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
@@ -79,26 +84,26 @@ private class LightRenderPassPrototype(
     val directionalLightsCountUniform = object : IntUniform() {
         override val name = "u_directionalLightsCount"
 
-        override val value get() = this@LightRenderPassPrototype.directionalLights.size
+        override val value get() = this@LightShadersLink.directionalLights.size
     }
 
     @UniformProperty
     val directionalLightsUniform: UniformArray<ViewSpaceDirectionalLightUniform> =
         UniformArray("u_directionalLights", this.directionalLights.size) { name, index ->
-            ViewSpaceDirectionalLightUniform(name, this@LightRenderPassPrototype.directionalLights[index])
+            ViewSpaceDirectionalLightUniform(name, this@LightShadersLink.directionalLights[index])
         }
 
     @UniformProperty
     val pointLightsCountUniform = object : IntUniform() {
         override val name = "u_pointLightsCount"
 
-        override val value get() = this@LightRenderPassPrototype.pointLights.size
+        override val value get() = this@LightShadersLink.pointLights.size
     }
 
     @UniformProperty
     val pointLightsUniform: UniformArray<ViewSpacePointLightUniform> =
         UniformArray("u_pointLights", this.pointLights.size) { name, index ->
-            ViewSpacePointLightUniform(name, this@LightRenderPassPrototype.pointLights[index])
+            ViewSpacePointLightUniform(name, this@LightShadersLink.pointLights[index])
         }
 
     override val shadersProgram: ShadersProgram = ShadersProgram.create(
@@ -110,6 +115,4 @@ private class LightRenderPassPrototype(
             ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
         ),
     )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
 }

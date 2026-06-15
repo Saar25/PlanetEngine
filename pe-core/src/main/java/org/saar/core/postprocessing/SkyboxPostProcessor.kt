@@ -1,7 +1,10 @@
 package org.saar.core.postprocessing
 
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPass
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.state.BlendTestRenderState
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
@@ -21,41 +24,43 @@ import org.saar.maths.utils.Matrix4
 
 class SkyboxPostProcessor(private val cubeMap: CubeMapTexture) : RenderPass {
 
-    private val prototype = SkyboxPostProcessorPrototype()
-    private val wrapper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = SkyboxShadersLink
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.UNWRITTEN_ONLY),
         BlendTestRenderState(BlendState(BlendFunction(BlendValue.ONE_MINUS_DST_ALPHA, BlendValue.DST_ALPHA))),
     )
 
-    override fun render(context: RenderContext) = this.wrapper.render(context) {
-        this.prototype.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)
-        this.prototype.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
-        this.prototype.cubeMapUniform.value = this.cubeMap
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)
+        this.shadersLink.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
+        this.shadersLink.cubeMapUniform.value = this.cubeMap
+
+        this.uniformsLoader.load()
+        QuadMesh.draw()
     }
 
     override fun delete() {
-        this.wrapper.delete()
+        this.shadersLink.shadersProgram.delete()
         this.cubeMap.delete()
     }
-}
 
-private class SkyboxPostProcessorPrototype : RendererPrototype<Unit> {
+    private object SkyboxShadersLink : ShadersLink {
 
-    @UniformProperty
-    val cubeMapUniform = TextureUniformValue("u_cubeMap", 0)
+        @UniformProperty
+        val cubeMapUniform = TextureUniformValue("u_cubeMap", 0)
 
-    @UniformProperty
-    val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
+        @UniformProperty
+        val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
 
-    @UniformProperty
-    val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
+        @UniformProperty
+        val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/skybox.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/skybox.pass.glsl")),
-    )
-
-    override fun doInstanceDraw(context: RenderContext, model: Unit) = QuadMesh.draw()
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/skybox.vertex.glsl")),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/skybox.pass.glsl")),
+        )
+    }
 }
