@@ -3,15 +3,20 @@ package org.saar.core.renderer
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Uniform
 
-interface RendererPrototype<T> {
+@Deprecated("Use ShadersLink instead")
+interface RendererPrototype<T> : ShadersLink {
 
     fun vertexAttributes(): Array<String> = arrayOf()
 
     fun fragmentOutputs(): Array<String> = arrayOf()
 
-    val uniforms: List<Uniform> get() = emptyList()
+    override val vertexAttributes get() = vertexAttributes()
 
-    val shadersProgram: ShadersProgram
+    override val fragmentOutputs get() = fragmentOutputs()
+
+    override val uniforms: List<Uniform> get() = emptyList()
+
+    override val shadersProgram: ShadersProgram
 
     fun onRenderCycle(context: RenderContext) {
     }
