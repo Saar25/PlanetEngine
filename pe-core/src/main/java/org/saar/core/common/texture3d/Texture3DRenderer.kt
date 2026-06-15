@@ -1,7 +1,6 @@
 package org.saar.core.common.texture3d
 
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -17,7 +16,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
 
-object Texture3DRenderer : Renderer, RendererPrototypeWrapper<Texture3DModel>(Texture3DRendererPrototype())
+object Texture3DRenderer : RendererPrototypeWrapper<Texture3DModel>(Texture3DRendererPrototype())
 
 private class Texture3DRendererPrototype : RendererPrototype<Texture3DModel> {
 

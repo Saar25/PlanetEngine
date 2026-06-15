@@ -22,17 +22,13 @@ import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
 
-object UIBlockRenderer : Renderer {
+object UIBlockRenderer : Renderer<UINode> {
 
     private val prototype = UIRendererPrototype()
     private val helper = RendererPrototypeHelper(this.prototype)
 
-    fun render(context: RenderContext, models: Iterable<UINode>) {
-        this.helper.render(context, models)
-    }
-
-    fun render(context: RenderContext, uiBlock: UINode) {
-        this.helper.doRender(context) { doRender(context, uiBlock) }
+    override fun render(context: RenderContext, models: Iterable<UINode>) {
+        models.forEach { this.helper.doRender(context) { doRender(context, it) } }
     }
 
     private fun doRender(context: RenderContext, uiBlock: UINode) {

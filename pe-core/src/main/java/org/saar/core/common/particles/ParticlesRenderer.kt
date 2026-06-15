@@ -1,7 +1,6 @@
 package org.saar.core.common.particles
 
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -20,7 +19,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 
-object ParticlesRenderer : Renderer, RendererPrototypeWrapper<ParticlesModel>(ParticlesRendererPrototype())
+object ParticlesRenderer : RendererPrototypeWrapper<ParticlesModel>(ParticlesRendererPrototype())
 
 private class ParticlesRendererPrototype : RendererPrototype<ParticlesModel> {
 

@@ -1,7 +1,6 @@
 package org.saar.core.common.flatreflected
 
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.RendererPrototype
 import org.saar.core.renderer.RendererPrototypeWrapper
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -17,7 +16,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
 import org.saar.maths.utils.Matrix4
 
-object FlatReflectedRenderer : Renderer, RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype())
+object FlatReflectedRenderer : RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype())
 
 private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflectedModel> {
 

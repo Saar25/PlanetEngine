@@ -2,7 +2,10 @@ package org.saar.gui.font
 
 import org.joml.Vector2i
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.RendererPrototype
+import org.saar.core.renderer.RendererPrototypeHelper
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
@@ -16,7 +19,7 @@ import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 
-object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter> {
+object UILetterRenderer : Renderer<UILetter> {
 
     private val prototype = LetterRendererPrototype()
     private val helper = RendererPrototypeHelper(this.prototype)

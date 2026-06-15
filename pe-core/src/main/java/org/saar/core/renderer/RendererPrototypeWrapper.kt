@@ -1,15 +1,11 @@
 package org.saar.core.renderer
 
-abstract class RendererPrototypeWrapper<T>(prototype: RendererPrototype<T>) : Renderer {
+abstract class RendererPrototypeWrapper<in T>(prototype: RendererPrototype<T>) : Renderer<T> {
 
     private val helper = RendererPrototypeHelper(prototype)
 
-    fun render(context: RenderContext, models: Iterable<T>) {
+    override fun render(context: RenderContext, models: Iterable<T>) {
         this.helper.render(context, models)
-    }
-
-    fun render(context: RenderContext, vararg models: T) {
-        render(context, models.asIterable())
     }
 
     final override fun delete() {

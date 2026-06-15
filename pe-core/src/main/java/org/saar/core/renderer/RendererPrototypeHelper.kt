@@ -2,7 +2,7 @@ package org.saar.core.renderer
 
 import org.saar.lwjgl.opengl.shader.uniforms.Uniform
 
-class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : Renderer {
+class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) {
 
     private val uniforms: Map<Uniform, Int> = this.prototype.shadersProgram.bind()
         .let {
@@ -44,7 +44,7 @@ class RendererPrototypeHelper<T>(private val prototype: RendererPrototype<T>) : 
         this.prototype.doInstanceDraw(context, model)
     }
 
-    override fun delete() {
+    fun delete() {
         this.prototype.shadersProgram.delete()
     }
 }
