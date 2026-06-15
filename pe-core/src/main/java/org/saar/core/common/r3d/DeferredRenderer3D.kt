@@ -1,27 +1,30 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.ShadersUniformsLoader
-import org.saar.core.renderer.init
+import org.saar.core.renderer.*
+import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
+import org.saar.lwjgl.opengl.shader.GlslVersion
+import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.Vec4UniformValue
 import org.saar.maths.utils.Matrix4
 
-object DeferredRenderer3D {
+object DeferredRenderer3D : Renderer<Model3D> {
 
     private val shadersLink = DeferredShadersLink3D
-
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     init {
         this.shadersLink.init()
     }
 
-    fun render(context: RenderContext, vararg models: Model3D) = render(context, models.asIterable())
-
-    fun render(context: RenderContext, models: Iterable<Model3D>) {
+    override fun render(context: RenderContext, models: Iterable<Model3D>) {
         this.shadersLink.shadersProgram.bind()
 
         ProvokingVertex.setFirst()
@@ -46,5 +49,32 @@ object DeferredRenderer3D {
 
             model.mesh.draw()
         }
+    }
+
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    object DeferredShadersLink3D : ShadersLink {
+
+        @UniformProperty
+        val clipPlaneUniform = Vec4UniformValue("u_clipPlane")
+
+        @UniformProperty
+        val specularUniform = FloatUniformValue("u_specular")
+
+        @UniformProperty
+        val modelMatrixUniform = Mat4UniformValue("u_modelMatrix")
+
+        @UniformProperty
+        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+        @UniformProperty
+        val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
+        override val vertexAttributes = arrayOf("in_position", "in_colour", "in_transformation")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl")),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.dfragment.glsl"))
+        )
     }
 }
