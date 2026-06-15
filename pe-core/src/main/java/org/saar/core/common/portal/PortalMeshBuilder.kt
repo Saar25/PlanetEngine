@@ -15,32 +15,27 @@ import org.saar.lwjgl.opengl.vbo.VboTarget
 class PortalMeshBuilder(
     private val indices: Int,
     private val positionBufferBuilder: DataMeshBufferBuilder,
-    private val uvCoordBufferBuilder: DataMeshBufferBuilder,
     private val indexBufferBuilder: IndexMeshBufferBuilder,
 ) : MeshBuilder {
 
     val writer = PortalMeshWriter(
         this.positionBufferBuilder.writer,
-        this.uvCoordBufferBuilder.writer,
         this.indexBufferBuilder.writer,
     )
 
     private val bufferBuilders = listOf(
         this.positionBufferBuilder,
-        this.uvCoordBufferBuilder,
         this.indexBufferBuilder,
     ).distinct()
 
     private val vertexBufferBuilders = listOf(
         this.positionBufferBuilder,
-        this.uvCoordBufferBuilder,
     ).distinct()
 
     init {
         this.positionBufferBuilder.addAttribute(
-            Attributes.of(0, 3, DataType.FLOAT, true))
-        this.uvCoordBufferBuilder.addAttribute(
-            Attributes.of(1, 2, DataType.FLOAT, true))
+            Attributes.of(0, 3, DataType.FLOAT, true)
+        )
     }
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }

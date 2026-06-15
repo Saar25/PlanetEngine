@@ -24,6 +24,7 @@ import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.DirectionalLight
+import org.saar.core.mesh.Mesh
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
@@ -70,8 +71,17 @@ fun main() {
         it.colour.set(1f, 1f, 1f)
     }
 
-    val portal1 = generatePortal1()
-    val portal2 = generatePortal2()
+    val mesh = generatePortalMesh()
+    val portal1 = PortalModel(mesh).also {
+        it.transform.rotation.rotateDegrees(90f, 90f, 0f)
+        it.transform.position.set(5f, 5f, 0f)
+        it.transform.scale.set(5f)
+    }.let(::PortalNode)
+    val portal2 = PortalModel(mesh).apply {
+        transform.rotation.rotateDegrees(90f, 0f, 0f)
+        transform.position.set(-5f, 5f, 0f)
+        transform.scale.set(5f)
+    }.let(::PortalNode)
 
     val portal1CameraTransform = RelativeTransform(
         camera.transform, portal1.model.transform, portal2.model.transform
@@ -85,13 +95,13 @@ fun main() {
     val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
 
     val portalRenderGraph1 = RenderGraph(
-        DeferredGeometryPass(world, cube).onto(screen1a),
-        LightRenderPass(
+        DeferredGeometryPass(world, cube).onto(screen1b),
+        /*LightRenderPass(
             albedoBuffer = prototype1a.albedoTexture,
             normalSpecularBuffer = prototype1a.normalSpecularTexture,
             depthBuffer = prototype1a.depthTexture,
             directionalLights = arrayOf(light)
-        ).onto(screen1b)
+        ).onto(screen1b)*/
     )
 
     val portal2CameraTransform = RelativeTransform(
@@ -105,32 +115,32 @@ fun main() {
     val prototype2b = DeferredScreenPrototype()
     val screen2b = prototype2b.toScreen(Fbo.create(window.width, window.height))
 
+    // TODO: fix lights
     val portalRenderGraph2 = RenderGraph(
-        DeferredGeometryPass(world, cube).onto(screen2a),
-        LightRenderPass(
+        DeferredGeometryPass(world, cube).onto(screen2b),
+        /*LightRenderPass(
             albedoBuffer = prototype2a.albedoTexture,
             normalSpecularBuffer = prototype2a.normalSpecularTexture,
             depthBuffer = prototype2a.depthTexture,
             directionalLights = arrayOf(light)
-        ).onto(screen2b)
+        ).onto(screen2b)*/
     )
 
     portal1.model.viewTexture = prototype1b.albedoTexture
     portal2.model.viewTexture = prototype2b.albedoTexture
 
-
     val prototype = DeferredScreenPrototype()
-    val screen = prototype1a.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
         DeferredRenderNodeGroup(portal1, portal2, world, cube)
-            .onto(screen),
-        LightRenderPass(
+            .onto(MainScreen),
+        /*LightRenderPass(
             albedoBuffer = prototype.albedoTexture,
             normalSpecularBuffer = prototype.normalSpecularTexture,
             depthBuffer = prototype.depthTexture,
             directionalLights = arrayOf(light)
-        ).onto(MainScreen)
+        ).onto(MainScreen)*/
     )
 
     val keyboard = window.keyboard
@@ -156,44 +166,17 @@ fun main() {
     window.destroy()
 }
 
-private fun generatePortal1(): PortalNode {
+private fun generatePortalMesh(): Mesh {
     val meshGenerator = DiamondMeshGenerator(2)
 
     val vertices = meshGenerator.generateVertices()
-        .map {
-            Portal.vertex(
-                Vector3.of(it.x, 0f, it.y),
-                Vector2.of(it.x + .5f, it.y + .5f)
-            )
-        }.toTypedArray()
+        .map { Portal.vertex(Vector3.of(it.x, 0f, it.y)) }
+        .toTypedArray()
 
     val indices = meshGenerator.generateIndices().toIntArray()
 
-    val model = PortalModel(Portal.mesh(vertices, indices))
-    model.transform.rotation.rotateDegrees(90f, 90f, 0f)
-    model.transform.position.set(5f, 5f, 0f)
-    model.transform.scale.set(5f)
-    return PortalNode(model)
-}
-
-private fun generatePortal2(): PortalNode {
-    val meshGenerator = DiamondMeshGenerator(2)
-
-    val vertices = meshGenerator.generateVertices()
-        .map {
-            Portal.vertex(
-                Vector3.of(it.x, 0f, it.y),
-                Vector2.of(it.x + .5f, it.y + .5f)
-            )
-        }.toTypedArray()
-
-    val indices = meshGenerator.generateIndices().toIntArray()
-
-    val model = PortalModel(Portal.mesh(vertices, indices))
-    model.transform.rotation.rotateDegrees(90f, 0f, 0f)
-    model.transform.position.set(-5f, 5f, 0f)
-    model.transform.scale.set(5f)
-    return PortalNode(model)
+    val mesh = Portal.mesh(vertices, indices)
+    return mesh
 }
 
 private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {

@@ -57,7 +57,7 @@ void main(void) {
     vec3 lightsColour = finalLightsColour();
     vec3 finalColour = g_colour * lightsColour;
     
-    f_colour = vec4(finalColour, 1);
+    f_colour = vec4(g_normal, 1);
 }
 
 void initBufferValues(void) {

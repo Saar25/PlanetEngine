@@ -6,13 +6,11 @@ import org.saar.lwjgl.util.DataWriter
 
 class PortalMeshWriter(
     private val positionWriter: DataWriter,
-    private val uvCoordWriter: DataWriter,
     private val indexWriter: DataWriter,
 ) : VertexMeshWriter<PortalVertex>, IndexedMeshWriter {
 
     override fun writeVertex(vertex: PortalVertex) {
         this.positionWriter.write3f(vertex.position3f)
-        this.uvCoordWriter.write2f(vertex.uvCoord2f)
     }
 
     override fun writeIndex(index: Int) = this.indexWriter.writeInt(index)
