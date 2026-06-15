@@ -30,7 +30,7 @@ object Renderers {
 
             screen.setAsDraw()
             render()
-            screen.delete()
+            fbo.delete()
         }
     }
 }

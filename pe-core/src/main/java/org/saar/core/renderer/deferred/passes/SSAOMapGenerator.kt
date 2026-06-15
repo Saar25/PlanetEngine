@@ -26,16 +26,14 @@ import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 import kotlin.random.Random
 
-// TODO: implement ssao correctly
-class SsaoRenderPass(
-    private val albedoBuffer: ReadOnlyTexture2D,
+
+class SSAOMapGenerator @JvmOverloads constructor(
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
-    val radius: Float = 1f
+    private val radius: Float = 8f,
+    private val noiseTextureSize: Int = 64,
+    private val kernelSamplesSize: Int = 32
 ) : RenderPass {
-
-    private val noiseTextureSize = 64
-    private val kernelSamplesSize = 32
 
     private val noiseTexture = createNoiseTexture()
 
@@ -52,7 +50,7 @@ class SsaoRenderPass(
 
     private fun createNoiseTexture(): MutableTexture2D {
         val texture = Random2fPainter().let { painter ->
-            Renderers.renderToTexture(this.noiseTextureSize, this.noiseTextureSize, InternalFormat.RG16F) {
+            Renderers.renderToTexture(this.noiseTextureSize, this.noiseTextureSize, InternalFormat.R16F) {
                 painter.render(RenderContext(null))
             }.also { painter.delete() }
         }.apply {

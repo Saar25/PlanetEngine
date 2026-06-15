@@ -41,7 +41,7 @@ import org.saar.core.renderer.RenderGraphNodeKt;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass;
-import org.saar.core.renderer.deferred.passes.SsaoRenderPass;
+import org.saar.core.renderer.deferred.passes.SSAOMapGenerator;
 import org.saar.core.renderer.forward.passes.FogRenderPass;
 import org.saar.core.renderer.shadow.*;
 import org.saar.core.screen.MainScreen;
@@ -174,11 +174,9 @@ public class ForestExample {
                                 light
                         ), screen2),
                 RenderGraphNodeKt.onto(
-                        new SsaoRenderPass(
-                                prototype2.getAlbedoTexture(),
+                        new SSAOMapGenerator(
                                 prototype2.getNormalSpecularTexture(),
-                                prototype2.getDepthTexture(),
-                                1f
+                                prototype2.getDepthTexture()
                         ), screen1),
                 RenderGraphNodeKt.onto(
                         new FogRenderPass(
