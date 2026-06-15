@@ -1,9 +1,9 @@
 package org.saar.core.renderer.deferred.passes
 
 import org.saar.core.light.DirectionalLight
+import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.light.PointLight
-import org.saar.core.light.ViewSpaceDirectionalLightUniform
-import org.saar.core.light.ViewSpacePointLightUniform
+import org.saar.core.light.PointLightUniform
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.state.*
@@ -15,24 +15,25 @@ import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
-import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.UniformArray
 import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Vector4
 import kotlin.math.max
 
 class LightRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
-    pointLights: Array<PointLight> = emptyArray(),
-    directionalLights: Array<DirectionalLight> = emptyArray()
+    private val pointLights: Array<PointLight> = emptyArray(),
+    private val directionalLights: Array<DirectionalLight> = emptyArray()
 ) : RenderPass {
 
-    private val shadersLink = LightShadersLink(pointLights, directionalLights)
+    private val shadersLink = LightShadersLink(this.pointLights.size, this.directionalLights.size)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
@@ -51,8 +52,22 @@ class LightRenderPass(
         this.shadersLink.projectionMatrixInvUniform.value =
             context.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
 
-        this.shadersLink.directionalLightsUniform.forEach { it.camera = context.camera }
-        this.shadersLink.pointLightsUniform.forEach { it.camera = context.camera }
+        val viewInvT = context.camera.viewMatrix.invert(Matrix4.create()).transpose()
+
+        this.shadersLink.directionalLightsCountUniform.value = this.directionalLights.size
+        this.directionalLights.forEachIndexed { index, light ->
+            val vs = Vector4.of(light.direction, 0f).mul(viewInvT).also { it.w = 0f }.normalize()
+            this.shadersLink.directionalLightsUniform.value[index].directionUniform.value.set(vs.x(), vs.y(), vs.z())
+            this.shadersLink.directionalLightsUniform.value[index].colourUniform.value = light.colour
+        }
+
+        this.shadersLink.pointLightsCountUniform.value = this.pointLights.size
+        this.pointLights.forEachIndexed { index, light ->
+            val vs = Vector4.of(light.position, 1f).mul(context.camera.viewMatrix).let { it.div(it.w()) }
+            this.shadersLink.pointLightsUniform.value[index].positionUniform.value.set(vs.x(), vs.y(), vs.z())
+            this.shadersLink.pointLightsUniform.value[index].attenuationUniform.value.set(light.attenuation.vector3f)
+            this.shadersLink.pointLightsUniform.value[index].colourUniform.value.set(light.colour)
+        }
 
         this.uniformsLoader.load()
         QuadMesh.draw()
@@ -60,59 +75,41 @@ class LightRenderPass(
 
 
     override fun delete() = this.shadersLink.shadersProgram.delete()
-}
 
-// TODO: make object
-private class LightShadersLink(
-    private val pointLights: Array<PointLight>,
-    private val directionalLights: Array<DirectionalLight>
-) : ShadersLink {
+    private class LightShadersLink(pointLights: Int, directionalLights: Int) : ShadersLink {
 
-    @UniformProperty
-    val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
+        @UniformProperty
+        val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
 
-    @UniformProperty
-    val normalSpecularTextureUniform = TextureUniformValue("u_normalSpecularTexture", 1)
+        @UniformProperty
+        val normalSpecularTextureUniform = TextureUniformValue("u_normalSpecularTexture", 1)
 
-    @UniformProperty
-    val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
+        @UniformProperty
+        val depthTextureUniform = TextureUniformValue("u_depthTexture", 2)
 
-    @UniformProperty
-    val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
+        @UniformProperty
+        val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
 
-    @UniformProperty
-    val directionalLightsCountUniform = object : IntUniform() {
-        override val name = "u_directionalLightsCount"
+        @UniformProperty
+        val directionalLightsCountUniform = IntUniformValue("u_directionalLightsCount")
 
-        override val value get() = this@LightShadersLink.directionalLights.size
+        @UniformProperty
+        val directionalLightsUniform = UniformArray("u_directionalLights", directionalLights, ::DirectionalLightUniform)
+
+        @UniformProperty
+        val pointLightsCountUniform = IntUniformValue("u_pointLightsCount")
+
+        @UniformProperty
+        val pointLightsUniform = UniformArray("u_pointLights", pointLights, ::PointLightUniform)
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.define("MAX_POINT_LIGHTS", max(pointLights, 1).toString()),
+                ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(directionalLights, 1).toString()),
+                ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
+            ),
+        )
     }
-
-    @UniformProperty
-    val directionalLightsUniform: UniformArray<ViewSpaceDirectionalLightUniform> =
-        UniformArray("u_directionalLights", this.directionalLights.size) { name, index ->
-            ViewSpaceDirectionalLightUniform(name, this@LightShadersLink.directionalLights[index])
-        }
-
-    @UniformProperty
-    val pointLightsCountUniform = object : IntUniform() {
-        override val name = "u_pointLightsCount"
-
-        override val value get() = this@LightShadersLink.pointLights.size
-    }
-
-    @UniformProperty
-    val pointLightsUniform: UniformArray<ViewSpacePointLightUniform> =
-        UniformArray("u_pointLights", this.pointLights.size) { name, index ->
-            ViewSpacePointLightUniform(name, this@LightShadersLink.pointLights[index])
-        }
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.define("MAX_POINT_LIGHTS", max(this.pointLights.size, 1).toString()),
-            ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", max(this.directionalLights.size, 1).toString()),
-            ShaderCode.loadSource("/shaders/deferred/light/light.fragment.glsl")
-        ),
-    )
 }

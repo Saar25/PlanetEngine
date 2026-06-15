@@ -179,8 +179,8 @@ private class TerrainApplication : Application {
 
     private fun buildDirectionalLight(): DirectionalLight {
         val light = DirectionalLight()
-        light.direction[-1f, -1f] = -1f
-        light.colour[1f, 1f] = 1f
+        light.direction.set(-1f, -1f, -1f)
+        light.colour.set(1f, 1f, 1f)
         return light
     }
 

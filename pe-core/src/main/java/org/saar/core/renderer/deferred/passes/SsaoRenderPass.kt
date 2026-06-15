@@ -1,7 +1,6 @@
 package org.saar.core.renderer.deferred.passes
 
 import org.joml.Math
-import org.joml.Vector3f
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.painting.Random2fPainter
 import org.saar.core.renderer.*
@@ -40,8 +39,16 @@ class SsaoRenderPass(
 
     private val noiseTexture = createNoiseTexture()
 
-    private val shadersLink = SsaoShadersLink(createKernel())
+    private val kernel = createKernel(this.kernelSamplesSize)
+
+    private val shadersLink = SsaoShadersLink(this.kernel.size)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+
+    init {
+        this.shadersLink.init()
+        this.shadersLink.kernelUniform.value
+            .forEachIndexed { index, uniform -> uniform.value = this.kernel[index] }
+    }
 
     private fun createNoiseTexture(): MutableTexture2D {
         val texture = Random2fPainter().let { painter ->
@@ -60,7 +67,7 @@ class SsaoRenderPass(
         return texture
     }
 
-    private fun createKernel() = Array(this.kernelSamplesSize) { i ->
+    private fun createKernel(size: Int) = Array(size) { i ->
         val x = Random.nextFloat() * 2 - 1
         val y = Random.nextFloat() * 2 - 1
         val z = Random.nextFloat()
@@ -95,7 +102,7 @@ class SsaoRenderPass(
         this.noiseTexture.delete()
     }
 
-    private class SsaoShadersLink(val kernel: Array<Vector3f>) : ShadersLink {
+    private class SsaoShadersLink(kernelSize: Int) : ShadersLink {
 
         @UniformProperty
         val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 0)
@@ -107,9 +114,7 @@ class SsaoRenderPass(
         val noiseTextureUniform = TextureUniformValue("u_noiseTexture", 2)
 
         @UniformProperty
-        val kernelUniform = UniformArray("u_kernel", this.kernel.size) { name, index ->
-            Vec3UniformValue(name, this.kernel[index])
-        }
+        val kernelUniform = UniformArray("u_kernel", kernelSize, ::Vec3UniformValue)
 
         @UniformProperty
         val noiseScaleUniform = Vec2UniformValue("u_noiseScale")
@@ -127,7 +132,7 @@ class SsaoRenderPass(
             Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
             Shader.createFragment(
                 GlslVersion.V400,
-                ShaderCode.define("KERNEL_SAMPLES", this.kernel.size.toString()),
+                ShaderCode.define("KERNEL_SAMPLES", kernelSize.toString()),
                 ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
             ),
         )

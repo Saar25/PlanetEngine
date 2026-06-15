@@ -21,6 +21,13 @@ class GaussianBlurRenderPass(samples: Int = 11, sigma: Float = samples / 3f) {
     private val shadersLink = GaussianBlurShadersLink(this.samples)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
+    init {
+        this.shadersLink.init()
+        this.shadersLink.blurLevelsUniform.value.forEachIndexed { index, uniform ->
+            uniform.value = this.samples[index]
+        }
+    }
+
     private fun calculateGaussianKernel(samples: Int, sigma: Float): FloatArray {
         val mean = samples / 2f
 
@@ -83,9 +90,7 @@ class GaussianBlurRenderPass(samples: Int = 11, sigma: Float = samples / 3f) {
         }
 
         @UniformProperty
-        val blurLevelsUniform = UniformArray("u_blurLevels", this.samples.size) { name, index ->
-            FloatUniformValue(name, this.samples[index])
-        }
+        val blurLevelsUniform = UniformArray("u_blurLevels", this.samples.size, ::FloatUniformValue)
 
         @UniformProperty
         val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")

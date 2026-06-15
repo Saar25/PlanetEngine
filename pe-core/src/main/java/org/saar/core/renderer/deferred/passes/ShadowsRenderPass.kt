@@ -3,7 +3,7 @@ package org.saar.core.renderer.deferred.passes
 import org.joml.Vector2i
 import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
-import org.saar.core.light.ViewSpaceDirectionalLightUniform
+import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
@@ -17,6 +17,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniformValue
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Vector4
 
 class ShadowsRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
@@ -24,10 +25,10 @@ class ShadowsRenderPass(
     private val depthBuffer: ReadOnlyTexture2D,
     private val shadowCamera: ICamera,
     private val shadowMap: ReadOnlyTexture2D,
-    light: DirectionalLight
+    private val light: DirectionalLight
 ) : RenderPass {
 
-    private val shadersLink = ShadowsShadersLink(light)
+    private val shadersLink = ShadowsShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override fun render(context: RenderContext) {
@@ -38,8 +39,10 @@ class ShadowsRenderPass(
             )
         this.shadersLink.projectionMatrixInvUniform.value =
             context.camera.projection.matrix.invertPerspective(Matrix4.temp)
-        this.shadersLink.viewMatrixInvUniform.value =
-            context.camera.viewMatrix.invert(Matrix4.temp)
+
+        val viewInv = context.camera.viewMatrix.invert(Matrix4.create())
+        this.shadersLink.viewMatrixInvUniform.value = viewInv
+
         this.shadersLink.pcfRadiusUniform.value = 2
         this.shadersLink.shadowMapUniform.value = this.shadowMap
         this.shadersLink.shadowMapSizeUniform.value = Vector2i(shadowMap.width, shadowMap.height)
@@ -48,7 +51,10 @@ class ShadowsRenderPass(
         this.shadersLink.normalSpecularTexture.value = this.normalSpecularBuffer
         this.shadersLink.depthTextureUniform.value = this.depthBuffer
 
-        this.shadersLink.lightUniform.camera = context.camera
+        val viewInvT = viewInv.transpose()
+        val vs = Vector4.of(this.light.direction, 0f).mul(viewInvT).also { it.w = 0f }.normalize()
+        this.shadersLink.lightUniform.directionUniform.value.set(vs.x(), vs.y(), vs.z())
+        this.shadersLink.lightUniform.colourUniform.value = light.colour
 
         this.uniformsLoader.load()
         QuadMesh.draw()
@@ -56,8 +62,7 @@ class ShadowsRenderPass(
 
     override fun delete() = this.shadersLink.shadersProgram.delete()
 
-    // TODO: make object
-    private class ShadowsShadersLink(private val light: DirectionalLight) : ShadersLink {
+    private object ShadowsShadersLink : ShadersLink {
 
         @UniformProperty
         val shadowMatrixUniform = Mat4UniformValue("u_shadowMatrix")
@@ -72,7 +77,7 @@ class ShadowsRenderPass(
         val pcfRadiusUniform = IntUniformValue("u_pcfRadius")
 
         @UniformProperty
-        val lightUniform = ViewSpaceDirectionalLightUniform("u_light", this.light)
+        val lightUniform = DirectionalLightUniform("u_light")
 
         @UniformProperty
         val shadowMapUniform = TextureUniformValue("u_shadowMap", 0)
