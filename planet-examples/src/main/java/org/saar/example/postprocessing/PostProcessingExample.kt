@@ -40,28 +40,31 @@ object PostProcessingExample {
 
         val prototype1 = ScreenPrototype2D()
         val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
-        val prototype2 = ScreenPrototype2D()
-        val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+        val dsPrototype1 = ScreenPrototype2D()
+        val dsScreen1 = dsPrototype1.toScreen(Fbo.create(WIDTH / 8, HEIGHT / 8))
+        val dsPrototype2 = ScreenPrototype2D()
+        val dsScreen2 = dsPrototype2.toScreen(Fbo.create(WIDTH / 8, HEIGHT / 8))
 
         val gaussianBlurRenderPass = GaussianBlurRenderPass(21)
         val renderGraph = RenderGraph(
             FBMPainter().onto(screen1),
             node.onto(screen1),
-            gaussianBlurRenderPass.Vertical(prototype1.albedoTexture).onto(screen2),
-            gaussianBlurRenderPass.Horizontal(prototype2.albedoTexture).onto(screen1),
+            gaussianBlurRenderPass.Vertical(prototype1.albedoTexture).onto(dsScreen1),
+            gaussianBlurRenderPass.Horizontal(dsPrototype1.albedoTexture).onto(dsScreen2),
         )
 
         val keyboard = window.keyboard
         while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
             renderGraph.render(RenderContext(null))
-            screen1.copyTo(MainScreen)
+            dsScreen2.copyTo(MainScreen)
 
             window.swapBuffers()
             window.pollEvents()
         }
 
         screen1.delete()
-        screen2.delete()
+        dsScreen1.delete()
+        dsScreen2.delete()
         renderGraph.delete()
         window.destroy()
     }
