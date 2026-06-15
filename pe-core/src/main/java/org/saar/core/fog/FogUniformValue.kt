@@ -1,28 +1,16 @@
 package org.saar.core.fog
 
-import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
+import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
-import org.saar.lwjgl.opengl.shader.uniforms.Vec3Uniform
+import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
 
-class FogUniformValue(name: String, var value: IFog) : UniformContainer {
+class FogUniformValue(name: String) : UniformContainer {
 
-    private val colourUniform = object : Vec3Uniform() {
-        override val name = "$name.colour"
+    val colourUniform = Vec3UniformValue("$name.colour")
 
-        override val value get() = this@FogUniformValue.value.colour
-    }
+    val startUniform = FloatUniformValue("$name.start")
 
-    private val startUniform = object : FloatUniform() {
-        override val name = "$name.start"
-
-        override val value get() = this@FogUniformValue.value.start
-    }
-
-    private val endUniform = object : FloatUniform() {
-        override val name = "$name.end"
-
-        override val value get() = this@FogUniformValue.value.end
-    }
+    val endUniform = FloatUniformValue("$name.end")
 
     override val subUniforms = listOf(this.colourUniform, this.startUniform, this.endUniform)
 }

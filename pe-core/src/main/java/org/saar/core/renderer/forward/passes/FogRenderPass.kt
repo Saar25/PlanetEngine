@@ -29,7 +29,7 @@ class FogRenderPass(
     private val fogDistance: FogDistance
 ) : RenderPass {
 
-    private val shadersLink = FogShadersLink(this.fog)
+    private val shadersLink = FogShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
@@ -42,6 +42,9 @@ class FogRenderPass(
         this.shadersLink.textureUniform.value = this.albedoBuffer
         this.shadersLink.depthUniform.value = this.depthBuffer
         this.shadersLink.fogDistanceUniform.value = this.fogDistance.ordinal
+        this.shadersLink.fogUniform.colourUniform.value.set(this.fog.colour)
+        this.shadersLink.fogUniform.startUniform.value = this.fog.start
+        this.shadersLink.fogUniform.endUniform.value = this.fog.end
 
         this.shadersLink.projectionMatrixInvUniform.value = context.camera
             .projection.matrix.invertPerspective(Matrix4.temp)
@@ -53,8 +56,7 @@ class FogRenderPass(
 
     override fun delete() = this.shadersLink.shadersProgram.delete()
 
-    // TODO: make object
-    private class FogShadersLink(fog: IFog) : ShadersLink {
+    private object FogShadersLink : ShadersLink {
 
         @UniformProperty
         val textureUniform = TextureUniformValue("u_texture", 0)
@@ -63,7 +65,7 @@ class FogRenderPass(
         val depthUniform = TextureUniformValue("u_depth", 1)
 
         @UniformProperty
-        val fogUniform = FogUniformValue("u_fog", fog)
+        val fogUniform = FogUniformValue("u_fog")
 
         @UniformProperty
         val projectionMatrixInvUniform = Mat4UniformValue("u_projectionMatrixInv")
