@@ -18,8 +18,9 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.RenderPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.SSAOMapGenerator
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
@@ -30,13 +31,13 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour.set
 import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position.Companion.of
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.transform.Transform
 import java.util.*
-import java.util.concurrent.atomic.AtomicReference
 
 private const val WIDTH = 1200
 private const val HEIGHT = 700
@@ -49,24 +50,25 @@ fun main() {
 
     val camera = buildCamera(window.mouse)
 
-    val renderNode = buildRenderNode()
+    val geometryPass = buildGeometryPass()
 
     val light = DirectionalLight()
     light.direction.set(-50f, -50f, -50f)
     light.colour.set(1.0f, 1.0f, 1.0f)
 
-    val prototype1 = DeferredScreenPrototype()
+    val depthTexture = MutableTexture2D.create()
+    val prototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
     val screen1 = prototype1.toScreen(Fbo.create(window.width, window.height))
+    val prototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen2 = prototype2.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        renderNode.onto(screen1),
+        geometryPass.onto(screen1),
         SSAOMapGenerator(
             normalSpecularBuffer = prototype1.normalSpecularTexture,
             depthBuffer = prototype1.depthTexture,
-        ).onto(MainScreen),
+        ).onto(screen2),
     )
-
-    val currentGraph = AtomicReference(renderGraph)
 
     var current = System.currentTimeMillis()
 
@@ -74,8 +76,10 @@ fun main() {
         camera.update()
 
         screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        currentGraph.get().render(RenderContext(camera))
+        renderGraph.render(RenderContext(camera))
+        screen2.copyTo(MainScreen)
 
         window.swapBuffers()
         window.pollEvents()
@@ -105,10 +109,10 @@ private fun buildCamera(mouse: Mouse): Camera {
     return camera
 }
 
-private fun buildRenderNode(): DeferredRenderNodeGroup {
+private fun buildGeometryPass(): RenderPass {
     val nodeBatch3D = buildNodeBatch3D()
     val objNodeBatch = buildObjNodeBatch()
-    return DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch)
+    return DeferredGeometryPass(nodeBatch3D, objNodeBatch)
 }
 
 private fun buildObjNodeBatch(): ObjNodeBatch {

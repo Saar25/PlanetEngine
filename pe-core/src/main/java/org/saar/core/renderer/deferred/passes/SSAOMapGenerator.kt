@@ -4,6 +4,8 @@ import org.joml.Math
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.painting.Random2fPainter
 import org.saar.core.renderer.*
+import org.saar.core.renderer.state.RenderState
+import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
@@ -12,6 +14,8 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
+import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
@@ -30,7 +34,7 @@ import kotlin.random.Random
 class SSAOMapGenerator @JvmOverloads constructor(
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
-    private val radius: Float = 8f,
+    private val radius: Float = 5f,
     private val noiseTextureSize: Int = 64,
     private val kernelSamplesSize: Int = 32
 ) : RenderPass {
@@ -41,6 +45,8 @@ class SSAOMapGenerator @JvmOverloads constructor(
 
     private val shadersLink = SsaoShadersLink(this.kernel.size)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+
+    override val renderState = StencilTestRenderState(StencilState.REPLACE)
 
     init {
         this.shadersLink.init()

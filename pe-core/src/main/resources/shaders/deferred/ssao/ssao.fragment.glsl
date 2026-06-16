@@ -49,34 +49,33 @@ vec3 finalSpecularColour(void);
 void main(void) {
     initBufferValues();
     initGlobals();
-    
-    vec3 randomVec = texture(u_noiseTexture, v_position * u_noiseScale).rgb * 2 - 1;
-    
+
+    vec3 noiseSample = texture(u_noiseTexture, v_position * u_noiseScale + v_position.xx + v_position.yy).rgb;
+    vec3 randomVec = normalize(vec3(noiseSample.rg * 2 - 1, noiseSample.b));
+
     vec3 tangent   = normalize(randomVec - g_normal * dot(randomVec, g_normal));
     vec3 bitangent = cross(g_normal, tangent);
     mat3 TBN       = mat3(tangent, bitangent, g_normal);
-    
+
     float bias = .025;
-    
+
     float occlusion = 0.0;
     for (int i = 0; i < KERNEL_SAMPLES; i++) {
         vec3 point_vs = g_viewPosition + (TBN * u_kernel[i]) * u_radius;
-        
+
         vec4 offset    = u_projectionMatrix * vec4(point_vs, 1.0);
         vec2 sample_uv = (offset.xy / offset.w) * 0.5 + 0.5;
-        
-        if (sample_uv.x > 0 && sample_uv.x < 1 && sample_uv.y > 0 && sample_uv.y < 1) {
-            float sample_d  = texture(u_depthTexture, sample_uv).r;
-            vec3  sample_cs = ndcToClipSpace(sample_uv, sample_d);
-            vec3  sample_vs = clipSpaceToViewSpace(sample_cs, u_projectionMatrixInv);
-            
-            float distance   = abs(g_viewPosition.z - sample_vs.z);
-            float rangeCheck = smoothstep(0.0, 1.0, u_radius / distance);
-            
-            occlusion += clamp(sample_vs.z - point_vs.z - bias, 0, 1) * rangeCheck;
-        }
+
+        float sample_d  = texture(u_depthTexture, sample_uv).r;
+        vec3  sample_cs = ndcToClipSpace(sample_uv, sample_d);
+        vec3  sample_vs = clipSpaceToViewSpace(sample_cs, u_projectionMatrixInv);
+
+        float distance   = abs(g_viewPosition.z - sample_vs.z);
+        float rangeCheck = smoothstep(0.0, 1.0, u_radius / distance);
+
+        occlusion += point_vs.z + bias >= sample_vs.z ? 0 : rangeCheck;
     }
-    
+
     occlusion = 1 - (occlusion / KERNEL_SAMPLES);
     f_colour = vec4(vec3(occlusion), 1);
 }
