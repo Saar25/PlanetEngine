@@ -31,7 +31,10 @@ import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.shadow.*
+import org.saar.core.renderer.shadow.ShadowsCamera
+import org.saar.core.renderer.shadow.ShadowsQuality
+import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
+import org.saar.core.renderer.shadow.ShadowsScreenPrototype
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenSwap
 import org.saar.core.screen.Screens.toScreen
@@ -88,7 +91,7 @@ fun main() {
     light.direction.set(-1f, -1f, -1f)
     light.colour.set(1f, 1f, 1f)
 
-    val shadowsRenderNode: ShadowsRenderNode = ShadowsRenderNodeGroup(
+    val shadowsRenderNode = ShadowsRenderNodeGroup(
         nodeBatch3D, objNodeBatch, nodeBatch3D, normalMappedNodeBatch
     )
     val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
@@ -101,7 +104,7 @@ fun main() {
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
 
     val shadowsRenderGraph = RenderGraph(
-        shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
+        shadowsRenderNode.onto(shadowsScreen)
     )
 
     val shadowMap = shadowsPrototype.depthTexture

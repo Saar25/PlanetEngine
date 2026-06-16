@@ -30,7 +30,10 @@ import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.shadow.*
+import org.saar.core.renderer.shadow.ShadowsCamera
+import org.saar.core.renderer.shadow.ShadowsQuality
+import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
+import org.saar.core.renderer.shadow.ShadowsScreenPrototype
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -164,7 +167,7 @@ fun main() {
     val shadowsScreen =
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize))
     val shadowsRenderGraph = RenderGraph(
-        shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
+        shadowsRenderNode.onto(shadowsScreen)
     )
 
     val renderNode = DeferredRenderNodeGroup(
