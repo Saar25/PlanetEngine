@@ -18,7 +18,6 @@ import org.saar.core.common.r3d.R3D.mesh
 import org.saar.core.common.terrain.colour.ColourGenerator
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
-import org.saar.core.common.terrain.height.HeightGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
@@ -31,7 +30,6 @@ import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
-import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -43,8 +41,8 @@ import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
-import org.saar.maths.noise.MultipliedNoise2f
-import org.saar.maths.noise.SpreadNoise2f
+import org.saar.maths.noise.multiplied
+import org.saar.maths.noise.spread
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.RelativeTransform
 import org.saar.maths.utils.Vector2
@@ -195,13 +193,8 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 }
 
 private fun buildWorld(): LowPolyWorld {
-    val heightGenerator: HeightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(
-            18, SpreadNoise2f(
-                8,
-                LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)
-            )
-        )
+    val heightGenerator = NoiseHeightGenerator(
+        LayeredNoise2f(SimplexNoise::noise, 5).spread(8f).multiplied(18f)
     )
     val colourGenerator: ColourGenerator = NormalColourGenerator(
         Vector3.upward(),

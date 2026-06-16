@@ -57,8 +57,8 @@ import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
-import org.saar.maths.noise.MultipliedNoise2f
-import org.saar.maths.noise.SpreadNoise2f
+import org.saar.maths.noise.multiplied
+import org.saar.maths.noise.spread
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 import java.io.IOException
@@ -205,9 +205,8 @@ fun main() {
 
 private fun buildWorld(): LowPolyWorld {
     val heightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(50, SpreadNoise2f(5, LayeredNoise2f({ x, y -> SimplexNoise.noise(x, y) }, 5)))
+        LayeredNoise2f(SimplexNoise::noise, 5).spread(5f).multiplied(50f)
     )
-
     val colourGenerator: ColourGenerator = NormalColourGenerator(
         Vector3.upward(),
         NormalColour(0.2f, Vector3.of(.41f, .41f, .41f)),

@@ -16,7 +16,6 @@ import org.saar.core.common.terrain.World
 import org.saar.core.common.terrain.colour.ColourGenerator
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
-import org.saar.core.common.terrain.height.HeightGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
@@ -53,8 +52,8 @@ import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
-import org.saar.maths.noise.MultipliedNoise2f
-import org.saar.maths.noise.SpreadNoise2f
+import org.saar.maths.noise.multiplied
+import org.saar.maths.noise.spread
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
@@ -146,13 +145,8 @@ private class TerrainApplication : Application {
     }
 
     private fun buildWorld(): LowPolyWorld {
-        val heightGenerator: HeightGenerator = NoiseHeightGenerator(
-            MultipliedNoise2f(
-                200, SpreadNoise2f(
-                    50,
-                    LayeredNoise2f({ x: Float, y: Float -> SimplexNoise.noise(x, y) }, 5)
-                )
-            )
+        val heightGenerator = NoiseHeightGenerator(
+            LayeredNoise2f(SimplexNoise::noise, 5).spread(50f).multiplied(200f)
         )
         val colourGenerator: ColourGenerator = NormalColourGenerator(
             Vector3.upward(),

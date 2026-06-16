@@ -48,8 +48,8 @@ import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.LayeredNoise2f
-import org.saar.maths.noise.MultipliedNoise2f
-import org.saar.maths.noise.SpreadNoise2f
+import org.saar.maths.noise.multiplied
+import org.saar.maths.noise.spread
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
@@ -76,7 +76,7 @@ fun main() {
     }
 
     val heightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(200, SpreadNoise2f(50, LayeredNoise2f(SimplexNoise::noise, 5)))
+        LayeredNoise2f(SimplexNoise::noise, 5).spread(50f).multiplied(200f)
     )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
