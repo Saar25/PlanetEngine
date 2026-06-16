@@ -16,6 +16,8 @@ import org.saar.core.common.r3d.R3D.instance
 import org.saar.core.common.r3d.R3D.mesh
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
+import org.saar.core.postprocessing.FxaaPostProcessor
+import org.saar.core.postprocessing.MultiplyPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.RenderPass
@@ -44,7 +46,7 @@ private const val HEIGHT = 700
 
 // TODO: complete example
 fun main() {
-    val window = Window.create("SSAO Example", WIDTH, HEIGHT, true)
+    val window = Window.create("SSAO Example - press R to toggle SSAO pass", WIDTH, HEIGHT, true)
 
     set(.42f, .42f, .42f)
 
@@ -61,14 +63,31 @@ fun main() {
     val screen1 = prototype1.toScreen(Fbo.create(window.width, window.height))
     val prototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
     val screen2 = prototype2.toScreen(Fbo.create(window.width, window.height))
+    val prototype3 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen3 = prototype3.toScreen(Fbo.create(window.width, window.height))
 
-    val renderGraph = RenderGraph(
+    val ssaoRenderGraph = RenderGraph(
         geometryPass.onto(screen1),
         SSAOMapGenerator(
             normalSpecularBuffer = prototype1.normalSpecularTexture,
             depthBuffer = prototype1.depthTexture,
+            radius = 10f
         ).onto(screen2),
+        MultiplyPostProcessor(prototype1.albedoTexture, prototype2.albedoTexture).onto(screen3),
+        FxaaPostProcessor(prototype3.albedoTexture).onto(MainScreen)
     )
+
+    val noSsaoRenderGraph = RenderGraph(
+        geometryPass.onto(screen1),
+        FxaaPostProcessor(prototype1.albedoTexture).onto(MainScreen)
+    )
+
+    val ref = object {
+        var value = ssaoRenderGraph
+    }
+
+    window.keyboard.onKeyPress('R')
+        .perform { ref.value = if (ref.value == ssaoRenderGraph) noSsaoRenderGraph else ssaoRenderGraph }
 
     var current = System.currentTimeMillis()
 
@@ -78,8 +97,7 @@ fun main() {
         screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderGraph.render(RenderContext(camera))
-        screen2.copyTo(MainScreen)
+        ref.value.render(RenderContext(camera))
 
         window.swapBuffers()
         window.pollEvents()
@@ -88,7 +106,7 @@ fun main() {
     }
 
     screen1.delete()
-    renderGraph.delete()
+    ssaoRenderGraph.delete()
     window.destroy()
 }
 
