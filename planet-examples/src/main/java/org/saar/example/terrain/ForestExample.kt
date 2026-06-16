@@ -1,6 +1,5 @@
 package org.saar.example.terrain
 
-import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL43C
@@ -56,7 +55,8 @@ import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.noise.LayeredNoise2f
+import org.saar.maths.noise.Noise2f
+import org.saar.maths.noise.layered
 import org.saar.maths.noise.multiplied
 import org.saar.maths.noise.spread
 import org.saar.maths.utils.Vector2
@@ -205,7 +205,7 @@ fun main() {
 
 private fun buildWorld(): LowPolyWorld {
     val heightGenerator = NoiseHeightGenerator(
-        LayeredNoise2f(SimplexNoise::noise, 5).spread(5f).multiplied(50f)
+        Noise2f.simplex.layered(5).spread(5f).multiplied(50f)
     )
     val colourGenerator: ColourGenerator = NormalColourGenerator(
         Vector3.upward(),

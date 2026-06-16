@@ -1,6 +1,5 @@
 package org.saar.example.light
 
-import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
@@ -47,7 +46,8 @@ import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.noise.LayeredNoise2f
+import org.saar.maths.noise.Noise2f
+import org.saar.maths.noise.layered
 import org.saar.maths.noise.multiplied
 import org.saar.maths.noise.spread
 import org.saar.maths.utils.Vector2
@@ -76,7 +76,7 @@ fun main() {
     }
 
     val heightGenerator = NoiseHeightGenerator(
-        LayeredNoise2f(SimplexNoise::noise, 5).spread(50f).multiplied(200f)
+        Noise2f.simplex.layered(5).spread(50f).multiplied(200f)
     )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,

@@ -1,6 +1,5 @@
 package org.saar.example
 
-import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW
 import org.saar.core.camera.Camera
@@ -40,7 +39,8 @@ import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.noise.LayeredNoise2f
+import org.saar.maths.noise.Noise2f
+import org.saar.maths.noise.layered
 import org.saar.maths.noise.multiplied
 import org.saar.maths.noise.spread
 import org.saar.maths.transform.Position
@@ -194,7 +194,7 @@ private fun buildCamera(mouse: Mouse, keyboard: Keyboard): Camera {
 
 private fun buildWorld(): LowPolyWorld {
     val heightGenerator = NoiseHeightGenerator(
-        LayeredNoise2f(SimplexNoise::noise, 5).spread(8f).multiplied(18f)
+        Noise2f.simplex.layered(5).spread(8f).multiplied(18f)
     )
     val colourGenerator: ColourGenerator = NormalColourGenerator(
         Vector3.upward(),

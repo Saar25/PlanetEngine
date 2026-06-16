@@ -1,6 +1,6 @@
 package org.saar.maths.noise
 
-class OffsetNoise1f(private val offset: Float, private val noise1f: Noise1f) : Noise1f {
+class OffsetNoise1f(private val noise1f: Noise1f, private val offset: Float) : Noise1f {
 
     override fun noise(x: Float) = this.noise1f.noise(x) + this.offset
 }
