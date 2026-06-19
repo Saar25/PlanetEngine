@@ -1,132 +1,122 @@
-package org.saar.lwjgl.glfw.input.mouse;
+package org.saar.lwjgl.glfw.input.mouse
 
-import org.lwjgl.glfw.GLFW;
-import org.saar.lwjgl.glfw.event.EventListener;
-import org.saar.lwjgl.glfw.event.EventListenersHelper;
-import org.saar.lwjgl.glfw.event.IntValueChange;
-import org.saar.lwjgl.glfw.event.OnAction;
-import org.saar.lwjgl.glfw.input.Modifiers;
+import org.lwjgl.glfw.GLFW
+import org.saar.lwjgl.glfw.event.EventListener
+import org.saar.lwjgl.glfw.event.EventListenersHelper
+import org.saar.lwjgl.glfw.event.IntValueChange
+import org.saar.lwjgl.glfw.event.OnAction
+import org.saar.lwjgl.glfw.input.Modifiers
 
-public class Mouse {
+class Mouse(private val window: Long) {
 
-    private final long window;
+    private var helperScroll = EventListenersHelper.empty<ScrollEvent>()
 
-    private EventListenersHelper<ScrollEvent> helperScroll = EventListenersHelper.empty();
-    private EventListenersHelper<ClickEvent> helperClick = EventListenersHelper.empty();
-    private EventListenersHelper<MoveEvent> helperMove = EventListenersHelper.empty();
+    private var helperClick = EventListenersHelper.empty<ClickEvent>()
 
-    private MouseCursor cursor = MouseCursor.NORMAL;
+    private var helperMove = EventListenersHelper.empty<MoveEvent>()
 
-    private int x;
-    private int y;
-    private double scroll;
+    var cursor: MouseCursor = MouseCursor.NORMAL
+        set(cursor) {
+            if (field != cursor) {
+                GLFW.glfwSetInputMode(this.window, GLFW.GLFW_CURSOR, cursor.get())
+                field = cursor
+            }
+        }
 
-    public Mouse(long window) {
-        this.window = window;
-        init();
+    var xPos: Int = 0
+        private set
+    var yPos: Int = 0
+        private set
+    private val scroll = 0.0
+
+    init {
+        init()
     }
 
-    public void init() {
-        GLFW.glfwSetMouseButtonCallback(this.window, (window, buttonId, actionId, mods) -> {
-            final MouseButton button = MouseButton.valueOf(buttonId);
-            final boolean isDown = actionId == GLFW.GLFW_PRESS;
-            final Modifiers modifiers = new Modifiers(mods);
+    fun init() {
+        GLFW.glfwSetMouseButtonCallback(
+            this.window
+        ) { window: Long, buttonId: Int, actionId: Int, mods: Int ->
+            val button = MouseButton.valueOf(buttonId)
+            val isDown = actionId == GLFW.GLFW_PRESS
+            val modifiers = Modifiers(mods)
 
-            final ClickEvent event = new ClickEvent(this, button, isDown, modifiers);
-
-            this.helperClick.fireEvent(event);
-        });
-        GLFW.glfwSetCursorPosCallback(this.window, (window, xPos, yPos) -> {
-            final MoveEvent event = new MoveEvent(this,
-                    new IntValueChange(this.x, (int) xPos),
-                    new IntValueChange(this.y, (int) yPos));
-
-            this.x = (int) xPos;
-            this.y = (int) yPos;
-
-            this.helperMove.fireEvent(event);
-        });
-        GLFW.glfwSetScrollCallback(this.window, (window, xOffset, yOffset) -> {
-            final ScrollEvent event = new ScrollEvent(this, yOffset);
-            this.helperScroll.fireEvent(event);
-        });
-    }
-
-    public void show() {
-        setCursor(MouseCursor.NORMAL);
-    }
-
-    public void hide() {
-        setCursor(MouseCursor.DISABLED);
-    }
-
-    public MouseCursor getCursor() {
-        return this.cursor;
-    }
-
-    public void setCursor(MouseCursor cursor) {
-        if (this.cursor != cursor) {
-            GLFW.glfwSetInputMode(this.window,
-                    GLFW.GLFW_CURSOR, cursor.get());
-            this.cursor = cursor;
+            val event = ClickEvent(this, button, isDown, modifiers)
+            this.helperClick.fireEvent(event)
+        }
+        GLFW.glfwSetCursorPosCallback(this.window) { window: Long, xPos: Double, yPos: Double ->
+            val event = MoveEvent(
+                this,
+                IntValueChange(this.xPos, xPos.toInt()),
+                IntValueChange(this.yPos, yPos.toInt())
+            )
+            this.xPos = xPos.toInt()
+            this.yPos = yPos.toInt()
+            this.helperMove.fireEvent(event)
+        }
+        GLFW.glfwSetScrollCallback(this.window) { window: Long, xOffset: Double, yOffset: Double ->
+            val event = ScrollEvent(this, yOffset)
+            this.helperScroll.fireEvent(event)
         }
     }
 
-    public int getXPos() {
-        return this.x;
+    fun show() {
+        this.cursor = MouseCursor.NORMAL
     }
 
-    public int getYPos() {
-        return this.y;
+    fun hide() {
+        this.cursor = MouseCursor.DISABLED
     }
 
-    public boolean isButtonDown(MouseButton button) {
-        return isState(button, MouseButtonState.PRESS);
+    fun isButtonDown(button: MouseButton): Boolean {
+        return isState(button, MouseButtonState.PRESS)
     }
 
-    public boolean isState(MouseButton button, MouseButtonState buttonState) {
-        final int state = getState(button);
-        return state == buttonState.get();
+    fun isState(button: MouseButton, buttonState: MouseButtonState): Boolean {
+        val state = getState(button)
+        return state == buttonState.get()
     }
 
-    public MouseButtonState getButtonState(MouseButton button) {
-        final int state = getState(button);
-        return MouseButtonState.valueOf(state);
+    fun getButtonState(button: MouseButton): MouseButtonState {
+        val state = getState(button)
+        return MouseButtonState.valueOf(state)
     }
 
-    public int getState(MouseButton button) {
-        return GLFW.glfwGetMouseButton(this.window, button.get());
+    fun getState(button: MouseButton): Int {
+        return GLFW.glfwGetMouseButton(this.window, button.get())
     }
 
-    public void addScrollListener(EventListener<ScrollEvent> listener) {
-        this.helperScroll = this.helperScroll.addListener(listener);
+    fun addScrollListener(listener: EventListener<ScrollEvent>) {
+        this.helperScroll = this.helperScroll.addListener(listener)
     }
 
-    public void removeScrollListener(EventListener<ScrollEvent> listener) {
-        this.helperScroll = this.helperScroll.removeListener(listener);
+    fun removeScrollListener(listener: EventListener<ScrollEvent>) {
+        this.helperScroll = this.helperScroll.removeListener(listener)
     }
 
-    public void addClickListener(EventListener<ClickEvent> listener) {
-        this.helperClick = this.helperClick.addListener(listener);
+    fun addClickListener(listener: EventListener<ClickEvent>) {
+        this.helperClick = this.helperClick.addListener(listener)
     }
 
-    public void removeClickListener(EventListener<ClickEvent> listener) {
-        this.helperClick = this.helperClick.removeListener(listener);
+    fun removeClickListener(listener: EventListener<ClickEvent>) {
+        this.helperClick = this.helperClick.removeListener(listener)
     }
 
-    public void addMoveListener(EventListener<MoveEvent> listener) {
-        this.helperMove = this.helperMove.addListener(listener);
+    fun addMoveListener(listener: EventListener<MoveEvent>) {
+        this.helperMove = this.helperMove.addListener(listener)
     }
 
-    public void removeMoveListener(EventListener<MoveEvent> listener) {
-        this.helperMove = this.helperMove.removeListener(listener);
+    fun removeMoveListener(listener: EventListener<MoveEvent>) {
+        this.helperMove = this.helperMove.removeListener(listener)
     }
 
-    public OnAction<ClickEvent> onClick(MouseButton button) {
-        return listener -> addClickListener(e -> {
-            if (e.getButton() == button) {
-                listener.onEvent(e);
+    fun onClick(button: MouseButton): OnAction<ClickEvent> {
+        return OnAction { listener ->
+            addClickListener { e ->
+                if (e.button == button) {
+                    listener.onEvent(e)
+                }
             }
-        });
+        }
     }
 }

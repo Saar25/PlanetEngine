@@ -1,4 +1,3 @@
-package org.saar.lwjgl.glfw.event;
+package org.saar.lwjgl.glfw.event
 
-public abstract class Event {
-}
+interface Event

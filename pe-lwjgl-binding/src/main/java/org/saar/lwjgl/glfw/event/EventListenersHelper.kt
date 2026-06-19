@@ -1,105 +1,57 @@
-package org.saar.lwjgl.glfw.event;
+package org.saar.lwjgl.glfw.event
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+abstract class EventListenersHelper<T : Event> {
+    abstract fun addListener(listener: EventListener<T>): EventListenersHelper<T>
 
-public abstract class EventListenersHelper<T extends Event> {
+    abstract fun removeListener(listener: EventListener<T>): EventListenersHelper<T>
 
-    public abstract EventListenersHelper<T> addListener(EventListener<T> listener);
+    abstract fun fireEvent(event: T)
 
-    public abstract EventListenersHelper<T> removeListener(EventListener<T> listener);
+    private object Empty : EventListenersHelper<Event>() {
+        override fun addListener(listener: EventListener<Event>) = Single(listener)
 
-    public abstract void fireEvent(T event);
+        override fun removeListener(listener: EventListener<Event>) = this
 
-    public static <T extends Event> EventListenersHelper<T> empty() {
-        @SuppressWarnings("unchecked") final EventListenersHelper<T> empty =
-                (EventListenersHelper<T>) Empty.EMPTY;
-        return empty;
+        override fun fireEvent(event: Event) = Unit
     }
 
-    private static class Empty<T extends Event> extends EventListenersHelper<T> {
+    private class Single<T : Event>(private val listener: EventListener<T>) : EventListenersHelper<T>() {
+        override fun addListener(listener: EventListener<T>) = Generic(this.listener, listener)
 
-        private static final EventListenersHelper<?> EMPTY = new Empty<>();
-
-        @Override
-        public EventListenersHelper<T> addListener(EventListener<T> listener) {
-            return new Single<>(listener);
-        }
-
-        @Override
-        public EventListenersHelper<T> removeListener(EventListener<T> listener) {
-            return this;
-        }
-
-        @Override
-        public void fireEvent(T event) {
-        }
-    }
-
-    private static class Single<T extends Event> extends EventListenersHelper<T> {
-
-        private final EventListener<T> listener;
-
-        public Single(EventListener<T> listener) {
-            this.listener = listener;
-        }
-
-        @Override
-        public EventListenersHelper<T> addListener(EventListener<T> listener) {
-            return new Generic<>(this.listener, listener);
-        }
-
-        @Override
-        public EventListenersHelper<T> removeListener(EventListener<T> listener) {
-            if (this.listener == listener) {
-                return EventListenersHelper.empty();
+        override fun removeListener(listener: EventListener<T>): EventListenersHelper<T> {
+            if (this.listener === listener) {
+                return empty()
             }
-            return this;
+            return this
         }
 
-        @Override
-        public void fireEvent(T event) {
-            this.listener.onEvent(event);
-        }
-    }
-
-    private static class Generic<T extends Event> extends EventListenersHelper<T> {
-
-        private final List<EventListener<T>> listeners;
-
-        @SafeVarargs
-        public Generic(EventListener<T>... listeners) {
-            this.listeners = new ArrayList<>(Arrays.asList(listeners));
-        }
-
-        @Override
-        public EventListenersHelper<T> addListener(EventListener<T> listener) {
-            this.listeners.add(listener);
-            return this;
-        }
-
-        @Override
-        public EventListenersHelper<T> removeListener(EventListener<T> listener) {
-            if (this.listeners.contains(listener)) {
-                if (this.listeners.size() == 2) {
-                    if (this.listeners.get(0) == listener) {
-                        return new Single<>(this.listeners.get(1));
-                    } else {
-                        return new Single<>(this.listeners.get(0));
-                    }
-                }
-                this.listeners.remove(listener);
-            }
-            return this;
-        }
-
-        @Override
-        public void fireEvent(T event) {
-            for (EventListener<T> listener : this.listeners) {
-                listener.onEvent(event);
-            }
+        override fun fireEvent(event: T) {
+            this.listener.onEvent(event)
         }
     }
 
+    private class Generic<T : Event>(vararg listeners: EventListener<T>) : EventListenersHelper<T>() {
+        private val listeners: MutableList<EventListener<T>> = mutableListOf(*listeners)
+
+        override fun addListener(listener: EventListener<T>): EventListenersHelper<T> {
+            this.listeners.add(listener)
+            return this
+        }
+
+        override fun removeListener(listener: EventListener<T>): EventListenersHelper<T> {
+            this.listeners.remove(listener)
+
+            return if (this.listeners.size == 1) Single(this.listeners[0]) else this
+        }
+
+        override fun fireEvent(event: T) {
+            this.listeners.forEach { it.onEvent(event) }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        @Suppress("UNCHECKED_CAST")
+        fun <T : Event> empty() = Empty as EventListenersHelper<T>
+    }
 }

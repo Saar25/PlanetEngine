@@ -1,7 +1,5 @@
-package org.saar.lwjgl.glfw.window;
+package org.saar.lwjgl.glfw.window
 
-public interface WindowHint {
-
-    void apply();
-
+fun interface WindowHint {
+    fun apply()
 }

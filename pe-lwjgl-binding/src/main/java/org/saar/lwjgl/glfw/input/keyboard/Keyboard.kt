@@ -1,126 +1,131 @@
-package org.saar.lwjgl.glfw.input.keyboard;
+package org.saar.lwjgl.glfw.input.keyboard
 
-import org.lwjgl.glfw.GLFW;
-import org.saar.lwjgl.glfw.event.EventListener;
-import org.saar.lwjgl.glfw.event.EventListenersHelper;
-import org.saar.lwjgl.glfw.event.OnAction;
-import org.saar.lwjgl.glfw.input.Modifiers;
+import org.lwjgl.glfw.GLFW
+import org.saar.lwjgl.glfw.event.EventListener
+import org.saar.lwjgl.glfw.event.EventListenersHelper
+import org.saar.lwjgl.glfw.event.OnAction
+import org.saar.lwjgl.glfw.input.Modifiers
+import org.saar.lwjgl.glfw.input.keyboard.KeyMapper.mapToKey
+import org.saar.lwjgl.glfw.input.keyboard.KeyState.Companion.valueOf
 
-public class Keyboard {
+class Keyboard(private val window: Long) {
 
-    private final long window;
+    private var helperKeyPress = EventListenersHelper.empty<KeyEvent>()
 
-    private EventListenersHelper<KeyEvent> helperKeyPress = EventListenersHelper.empty();
+    private var helperKeyRelease = EventListenersHelper.empty<KeyEvent>()
 
-    private EventListenersHelper<KeyEvent> helperKeyRelease = EventListenersHelper.empty();
+    private var helperKeyRepeat = EventListenersHelper.empty<KeyEvent>()
 
-    private EventListenersHelper<KeyEvent> helperKeyRepeat = EventListenersHelper.empty();
-
-    public Keyboard(long window) {
-        this.window = window;
-        init();
+    init {
+        this.init()
     }
 
-    public void init() {
-        GLFW.glfwSetKeyCallback(window, (window, code, scanCode, action, mods) -> {
-            final Modifiers modifiers = new Modifiers(mods);
-            final int key = KeyMapper.mapToKey(code, modifiers);
-            final KeyEvent event = new KeyEvent(code, modifiers, key);
+    fun init() {
+        GLFW.glfwSetKeyCallback(this.window) { window: Long, code: Int, scanCode: Int, action: Int, mods: Int ->
+            val modifiers = Modifiers(mods)
+            val key = mapToKey(code, modifiers)
+            val event = KeyEvent(code, modifiers, key)
             if (action == KeyState.PRESS.get()) {
-                this.helperKeyPress.fireEvent(event);
+                this.helperKeyPress.fireEvent(event)
             } else if (action == KeyState.RELEASE.get()) {
-                this.helperKeyRelease.fireEvent(event);
+                this.helperKeyRelease.fireEvent(event)
             } else if (action == KeyState.REPEAT.get()) {
-                this.helperKeyRepeat.fireEvent(event);
-            }
-        });
-    }
-
-    public boolean isKeyPressed(int keyCode) {
-        return isKeyState(keyCode, KeyState.PRESS);
-    }
-
-    public boolean isKeyState(int keyCode, KeyState keyState) {
-        final int state = getState(keyCode);
-        return state == keyState.get();
-    }
-
-    public KeyState getKeyState(int keyCode) {
-        final int state = getState(keyCode);
-        return KeyState.valueOf(state);
-    }
-
-    public int getState(int keyCode) {
-        return GLFW.glfwGetKey(this.window, keyCode);
-    }
-
-    public boolean allKeysPressed(int... keyCodes) {
-        for (int keyCode : keyCodes) {
-            if (!isKeyPressed(keyCode)) {
-                return false;
+                this.helperKeyRepeat.fireEvent(event)
             }
         }
-        return true;
     }
 
-    public boolean anyKeyPressed(int... keyCodes) {
-        for (int keyCode : keyCodes) {
-            if (isKeyPressed(keyCode)) {
-                return true;
+    fun isKeyPressed(keyCode: Int): Boolean {
+        return this.isKeyState(keyCode, KeyState.PRESS)
+    }
+
+    fun isKeyState(keyCode: Int, keyState: KeyState): Boolean {
+        val state = this.getState(keyCode)
+        return state == keyState.get()
+    }
+
+    fun getKeyState(keyCode: Int): KeyState {
+        val state = this.getState(keyCode)
+        return valueOf(state)
+    }
+
+    fun getState(keyCode: Int): Int {
+        return GLFW.glfwGetKey(this.window, keyCode)
+    }
+
+    fun allKeysPressed(vararg keyCodes: Int): Boolean {
+        for (keyCode in keyCodes) {
+            if (!this.isKeyPressed(keyCode)) {
+                return false
             }
         }
-        return false;
+        return true
     }
 
-    public void addKeyPressListener(EventListener<KeyEvent> listener) {
-        this.helperKeyPress = this.helperKeyPress.addListener(listener);
-    }
-
-    public void addKeyReleaseListener(EventListener<KeyEvent> listener) {
-        this.helperKeyRelease = this.helperKeyRelease.addListener(listener);
-    }
-
-    public void addKeyRepeatListener(EventListener<KeyEvent> listener) {
-        this.helperKeyRepeat = this.helperKeyRepeat.addListener(listener);
-    }
-
-    public void removeKeyPressListener(EventListener<KeyEvent> listener) {
-        this.helperKeyPress = this.helperKeyPress.removeListener(listener);
-    }
-
-    public void removeKeyReleaseListener(EventListener<KeyEvent> listener) {
-        this.helperKeyRelease = this.helperKeyRelease.removeListener(listener);
-    }
-
-    public void removeKeyRepeatListener(EventListener<KeyEvent> listener) {
-        this.helperKeyRepeat = this.helperKeyRepeat.removeListener(listener);
-    }
-
-    public OnAction<KeyEvent> onKeyPress(char keyChar) {
-        return onKeyPress((int) keyChar);
-    }
-
-    public OnAction<KeyEvent> onKeyPress(int keyCode) {
-        return listener -> addKeyPressListener(e -> {
-            if (e.getCode() == keyCode) {
-                listener.onEvent(e);
+    fun anyKeyPressed(vararg keyCodes: Int): Boolean {
+        for (keyCode in keyCodes) {
+            if (this.isKeyPressed(keyCode)) {
+                return true
             }
-        });
+        }
+        return false
     }
 
-    public OnAction<KeyEvent> onKeyRepeat(int keyCode) {
-        return listener -> addKeyRepeatListener(e -> {
-            if (e.getCode() == keyCode) {
-                listener.onEvent(e);
-            }
-        });
+    fun addKeyPressListener(listener: EventListener<KeyEvent>) {
+        this.helperKeyPress = this.helperKeyPress.addListener(listener)
     }
 
-    public OnAction<KeyEvent> onKeyRelease(int keyCode) {
-        return listener -> addKeyReleaseListener(e -> {
-            if (e.getCode() == keyCode) {
-                listener.onEvent(e);
+    fun addKeyReleaseListener(listener: EventListener<KeyEvent>) {
+        this.helperKeyRelease = this.helperKeyRelease.addListener(listener)
+    }
+
+    fun addKeyRepeatListener(listener: EventListener<KeyEvent>) {
+        this.helperKeyRepeat = this.helperKeyRepeat.addListener(listener)
+    }
+
+    fun removeKeyPressListener(listener: EventListener<KeyEvent>) {
+        this.helperKeyPress = this.helperKeyPress.removeListener(listener)
+    }
+
+    fun removeKeyReleaseListener(listener: EventListener<KeyEvent>) {
+        this.helperKeyRelease = this.helperKeyRelease.removeListener(listener)
+    }
+
+    fun removeKeyRepeatListener(listener: EventListener<KeyEvent>) {
+        this.helperKeyRepeat = this.helperKeyRepeat.removeListener(listener)
+    }
+
+    fun onKeyPress(keyChar: Char): OnAction<KeyEvent> {
+        return this.onKeyPress(keyChar.code)
+    }
+
+    fun onKeyPress(keyCode: Int): OnAction<KeyEvent> {
+        return OnAction { listener ->
+            this.addKeyPressListener { e ->
+                if (e.code == keyCode) {
+                    listener.onEvent(e)
+                }
             }
-        });
+        }
+    }
+
+    fun onKeyRepeat(keyCode: Int): OnAction<KeyEvent> {
+        return OnAction { listener: EventListener<KeyEvent> ->
+            this.addKeyRepeatListener { e: KeyEvent ->
+                if (e.code == keyCode) {
+                    listener.onEvent(e)
+                }
+            }
+        }
+    }
+
+    fun onKeyRelease(keyCode: Int): OnAction<KeyEvent> {
+        return OnAction { listener: EventListener<KeyEvent> ->
+            this.addKeyReleaseListener { e: KeyEvent ->
+                if (e.code == keyCode) {
+                    listener.onEvent(e)
+                }
+            }
+        }
     }
 }

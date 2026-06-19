@@ -1,9 +1,8 @@
-package org.saar.lwjgl.glfw.window;
+package org.saar.lwjgl.glfw.window
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW
 
-public enum WindowHintType {
-
+enum class WindowHintType(private val value: Int) {
     FOCUSED(GLFW.GLFW_FOCUSED),
     ICONIFIED(GLFW.GLFW_ICONIFIED),
     RESIZABLE(GLFW.GLFW_RESIZABLE),
@@ -31,13 +30,5 @@ public enum WindowHintType {
     SCALE_TO_MONITOR(GLFW.GLFW_SCALE_TO_MONITOR),
     ;
 
-    private final int value;
-
-    WindowHintType(int value) {
-        this.value = value;
-    }
-
-    public int get() {
-        return value;
-    }
+    fun get() = value
 }

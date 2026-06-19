@@ -1,33 +1,21 @@
-package org.saar.lwjgl.glfw.window;
+package org.saar.lwjgl.glfw.window
 
-import java.util.ArrayList;
-import java.util.List;
+class WindowBuilder(
+    private val title: String,
+    private val width: Int,
+    private val height: Int,
+    private val vSync: Boolean
+) {
+    private val hints = mutableListOf<WindowHint>()
 
-public class WindowBuilder {
-
-    private final List<WindowHint> hints = new ArrayList<>();
-
-    private final String title;
-    private final int width;
-    private final int height;
-    private final boolean vSync;
-
-    public WindowBuilder(String title, int width, int height, boolean vSync) {
-        this.title = title;
-        this.width = width;
-        this.height = height;
-        this.vSync = vSync;
+    fun hint(hint: WindowHint): WindowBuilder {
+        this.hints.add(hint)
+        return this
     }
 
-    public WindowBuilder hint(WindowHint hint) {
-        this.hints.add(hint);
-        return this;
-    }
+    fun build(): Window {
+        this.hints.forEach(WindowHint::apply)
 
-    public Window build() {
-        for (WindowHint hint : this.hints) {
-            hint.apply();
-        }
-        return Window.create0(this.title, this.width, this.height, this.vSync);
+        return Window.create0(this.title, this.width, this.height, this.vSync)
     }
 }

@@ -7,4 +7,4 @@ class MoveEvent(
     val mouse: Mouse,
     val x: IntValueChange,
     val y: IntValueChange,
-) : Event()
+) : Event

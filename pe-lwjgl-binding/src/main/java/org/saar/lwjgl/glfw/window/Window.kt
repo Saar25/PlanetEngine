@@ -1,382 +1,305 @@
-package org.saar.lwjgl.glfw.window;
+package org.saar.lwjgl.glfw.window
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLUtil;
-import org.lwjgl.system.MemoryStack;
-import org.saar.lwjgl.glfw.event.EventListener;
-import org.saar.lwjgl.glfw.event.EventListenersHelper;
-import org.saar.lwjgl.glfw.event.IntValueChange;
-import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
-import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.maths.objects.Dimensions;
-import org.saar.maths.objects.RectangleI;
+import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFWErrorCallback
+import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GLUtil
+import org.lwjgl.system.MemoryStack
+import org.saar.lwjgl.glfw.event.EventListener
+import org.saar.lwjgl.glfw.event.EventListenersHelper
+import org.saar.lwjgl.glfw.event.IntValueChange
+import org.saar.lwjgl.glfw.input.keyboard.Keyboard
+import org.saar.lwjgl.glfw.input.mouse.Mouse
+import org.saar.lwjgl.glfw.window.WindowHints.contextVersion
+import org.saar.lwjgl.glfw.window.WindowHints.openglForwardCompatibility
+import org.saar.lwjgl.glfw.window.WindowHints.openglProfile
+import org.saar.lwjgl.glfw.window.WindowHints.resizable
+import org.saar.lwjgl.glfw.window.WindowHints.visible
+import org.saar.lwjgl.opengl.fbo.Fbo
 
-import java.nio.IntBuffer;
+class Window private constructor(
+    private val id: Long,
+    private var title: String,
+    private var _width: Int,
+    private var _height: Int,
+    private val vSync: Boolean
+) {
 
-public class Window {
+    /**
+     * Creates the mouse that corresponds to this window
+     * 
+     * @return the mouse
+     */
+    val mouse = Mouse(this.id)
 
-    private static Window current = null;
+    /**
+     * Returns the keyboard that corresponds to this window
+     * 
+     * @return the keyboard
+     */
+    val keyboard = Keyboard(this.id)
 
-    static {
-        // Set up an error callback. The default implementation
-        // will print the error message in System.err.
-        GLFWErrorCallback.createPrint(System.err).set();
+    private var resizeListenersHelper = EventListenersHelper.empty<ResizeEvent>()
 
-        // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if (!GLFW.glfwInit()) {
-            throw new IllegalStateException("Unable to initialize GLFW");
-        }
-    }
+    private var positionListenersHelper = EventListenersHelper.empty<PositionEvent>()
+    private var _x = 0
+    private var _y = 0
 
-    private final long id;
-
-    private final Mouse mouse;
-    private final Keyboard keyboard;
-
-    private final boolean vSync;
-    private String title;
-
-    private EventListenersHelper<ResizeEvent> resizeListenersHelper = EventListenersHelper.empty();
-    private int width;
-    private int height;
-
-    private EventListenersHelper<PositionEvent> positionListenersHelper = EventListenersHelper.empty();
-    private int x;
-    private int y;
-
-    private Window(long id, String title, int width, int height, boolean vSync) {
-        this.id = id;
-        this.vSync = vSync;
-        this.title = title;
-        this.width = width;
-        this.height = height;
-        this.mouse = new Mouse(this.id);
-        this.keyboard = new Keyboard(this.id);
-        init();
-    }
-
-    static Window create0(String title, int width, int height, boolean vSync) {
-        final long id = GLFW.glfwCreateWindow(width, height, title, 0, 0);
-        if (id == 0) throw new RuntimeException("Failed to init the GLFW window");
-        return new Window(id, title, width, height, vSync);
-    }
-
-    public static Window create(String title, int width, int height, boolean vSync) {
-        final WindowBuilder builder = builder(title, width, height, vSync);
-        builder.hint(WindowHints.visible(false))
-                .hint(WindowHints.resizable());
-        return builder.build();
-    }
-
-    public static WindowBuilder builder(String title, int width, int height, boolean vSync) {
-        final WindowBuilder builder = new WindowBuilder(title, width, height, vSync);
-        builder.hint(WindowHints.contextVersion(3, 2))
-                .hint(WindowHints.openglProfile(OpenGlProfileType.CORE))
-                .hint(WindowHints.openglForwardCompatibility());
-        return builder;
-    }
-
-    public static Window current() {
-        return Window.current;
-    }
-
-    public void addResizeListener(EventListener<ResizeEvent> listener) {
-        this.resizeListenersHelper = this.resizeListenersHelper.addListener(listener);
-    }
-
-    public void addPositionListener(EventListener<PositionEvent> listener) {
-        this.positionListenersHelper = this.positionListenersHelper.addListener(listener);
-    }
-
-    private void init() {
-        GLFW.glfwSetFramebufferSizeCallback(this.id, (window, width, height) -> {
-            final ResizeEvent event = new ResizeEvent(
-                    new IntValueChange(this.width, width),
-                    new IntValueChange(this.height, height)
-            );
-            this.width = width;
-            this.height = height;
-            this.resizeListenersHelper.fireEvent(event);
-
-            Fbo.NULL.bind();
-        });
-
-        GLFW.glfwSetWindowPosCallback(this.id, (window, x, y) -> {
-            final PositionEvent event = new PositionEvent(
-                    new IntValueChange(this.x, x),
-                    new IntValueChange(this.y, y)
-            );
-            this.x = x;
-            this.y = y;
-            this.positionListenersHelper.fireEvent(event);
-        });
-
-        center();
-        makeContextCurrent();
-
-        GLFW.glfwSwapInterval(this.vSync ? 1 : 0);
-
-        GL.createCapabilities();
-        GLUtil.setupDebugMessageCallback(System.out);
-
-        try (final MemoryStack stack = MemoryStack.stackPush()) {
-            final IntBuffer width = stack.mallocInt(1);
-            final IntBuffer height = stack.mallocInt(1);
-            GLFW.glfwGetWindowSize(this.id, width, height);
-            this.width = width.get();
-            this.height = height.get();
+    var x: Int
+        get() = _x
+        set(value) {
+            this._x = value
         }
 
-        setVisible(true);
+    var y: Int
+        get() = _y
+        set(value) {
+            this._y = value
+        }
+
+    var width: Int
+        get() = _width
+        set(value) {
+            this._width = value
+        }
+
+    var height: Int
+        get() = _height
+        set(value) {
+            this._height = value
+        }
+
+    init {
+        init()
     }
 
-    private void makeContextCurrent() {
-        GLFW.glfwMakeContextCurrent(this.id);
-        Window.current = this;
+    fun addResizeListener(listener: EventListener<ResizeEvent>) {
+        this.resizeListenersHelper = this.resizeListenersHelper.addListener(listener)
+    }
+
+    fun addPositionListener(listener: EventListener<PositionEvent>) {
+        this.positionListenersHelper = this.positionListenersHelper.addListener(listener)
+    }
+
+    private fun init() {
+        GLFW.glfwSetFramebufferSizeCallback(this.id) { window: Long, width: Int, height: Int ->
+            val event = ResizeEvent(
+                IntValueChange(this.width, width),
+                IntValueChange(this.height, height)
+            )
+            this.width = width
+            this.height = height
+            this.resizeListenersHelper.fireEvent(event)
+            Fbo.NULL.bind()
+        }
+
+        GLFW.glfwSetWindowPosCallback(this.id) { window: Long, x: Int, y: Int ->
+            val event = PositionEvent(
+                IntValueChange(this.x, x),
+                IntValueChange(this.y, y)
+            )
+            this.x = x
+            this.y = y
+            this.positionListenersHelper.fireEvent(event)
+        }
+
+        center()
+        makeContextCurrent()
+
+        GLFW.glfwSwapInterval(if (this.vSync) 1 else 0)
+
+        GL.createCapabilities()
+        GLUtil.setupDebugMessageCallback(System.out)
+
+        MemoryStack.stackPush().use { stack ->
+            val width = stack.mallocInt(1)
+            val height = stack.mallocInt(1)
+            GLFW.glfwGetWindowSize(this.id, width, height)
+            this.width = width.get()
+            this.height = height.get()
+        }
+        setVisible(true)
+    }
+
+    private fun makeContextCurrent() {
+        GLFW.glfwMakeContextCurrent(this.id)
+        current = this
     }
 
     /**
      * Sets the window visibility
-     *
+     * 
      * @param visible true if the window should be visible, false otherwise
      */
-    public void setVisible(boolean visible) {
-        if (visible) show();
-        else hide();
+    fun setVisible(visible: Boolean) {
+        if (visible) show()
+        else hide()
     }
 
     /**
      * Sets the window invisible
      */
-    public void show() {
-        GLFW.glfwShowWindow(this.id);
-    }
+    fun show() = GLFW.glfwShowWindow(this.id)
 
     /**
      * Sets the window visible
      */
-    public void hide() {
-        GLFW.glfwHideWindow(this.id);
-    }
+    fun hide() = GLFW.glfwHideWindow(this.id)
 
     /**
      * Returns whether the window has been closed by the user
-     *
+     * 
      * @return true if window has been close else false
      */
-    public boolean windowShouldClose() {
-        return GLFW.glfwWindowShouldClose(this.id);
-    }
+    fun windowShouldClose() = GLFW.glfwWindowShouldClose(this.id)
 
-    /**
-     * Returns whether the window has been closed by the user
-     *
-     * @return true if window has been close else false
-     */
-    public boolean isOpen() {
-        return !GLFW.glfwWindowShouldClose(this.id);
-    }
+    val isOpen: Boolean
+        /**
+         * Returns whether the window has been closed by the user
+         * 
+         * @return true if window has been close else false
+         */
+        get() = !GLFW.glfwWindowShouldClose(this.id)
 
     /**
      * Sets the window should close flag. Used for closing up the program
-     *
+     * 
      * @param shouldClose true if wants the window to close else false
      */
-    public void setWindowShouldClose(boolean shouldClose) {
-        GLFW.glfwSetWindowShouldClose(this.id, shouldClose);
-    }
+    fun setWindowShouldClose(shouldClose: Boolean) = GLFW.glfwSetWindowShouldClose(this.id, shouldClose)
 
     /**
      * Swap the buffers of the window
      */
-    public void swapBuffers() {
-        GLFW.glfwSwapBuffers(this.id);
-    }
+    fun swapBuffers() = GLFW.glfwSwapBuffers(this.id)
 
     /**
      * Poll glfw events
      */
-    public void pollEvents() {
-        GLFW.glfwPollEvents();
-    }
+    fun pollEvents() = GLFW.glfwPollEvents()
 
     /**
      * wait for glfw events
      */
-    public void waitEvents() {
-        GLFW.glfwWaitEvents();
-    }
+    fun waitEvents() = GLFW.glfwWaitEvents()
 
     /**
      * Returns the window's title
-     *
+     * 
      * @return the window's title
      */
-    public String getTitle() {
-        return this.title;
-    }
+    fun getTitle() = this.title
 
     /**
      * Sets the window visible
      */
-    public void setTitle(String title) {
-        GLFW.glfwSetWindowTitle(this.id, title);
-        this.title = title;
-    }
-
-    /**
-     * Return the window's width
-     *
-     * @return the window's width
-     */
-    public int getWidth() {
-        return this.width;
-    }
-
-    /**
-     * Sets the width of the window
-     *
-     * @param width the width of the window
-     */
-    public void setWidth(int width) {
-        setSize(width, getHeight());
-    }
-
-    /**
-     * Return the window's height
-     *
-     * @return the window's height
-     */
-    public int getHeight() {
-        return this.height;
-    }
-
-    /**
-     * Sets the height of the window
-     *
-     * @param height the height of the window
-     */
-    public void setHeight(int height) {
-        setSize(getWidth(), height);
+    fun setTitle(title: String) {
+        GLFW.glfwSetWindowTitle(this.id, title)
+        this.title = title
     }
 
     /**
      * Sets the size of the window
-     *
+     * 
      * @param width  the width of the window
      * @param height the height of the window
      */
-    public void setSize(int width, int height) {
-        GLFW.glfwSetWindowSize(this.id, width, height);
-        this.width = width;
-        this.height = height;
-    }
-
-    /**
-     * Return the window's x position
-     *
-     * @return the window's x position
-     */
-    public int getX() {
-        return this.x;
-    }
-
-    /**
-     * Sets the x position of the window
-     *
-     * @param x the x position of the window
-     */
-    public void setX(int x) {
-        setPosition(x, getY());
-    }
-
-    /**
-     * Return the window's y position
-     *
-     * @return the window's y position
-     */
-    public int getY() {
-        return this.y;
-    }
-
-    /**
-     * Sets the y position of the window
-     *
-     * @param y the y position of the window
-     */
-    public void setY(int y) {
-        setPosition(getX(), y);
+    fun setSize(width: Int, height: Int) {
+        GLFW.glfwSetWindowSize(this.id, width, height)
+        this.width = width
+        this.height = height
     }
 
     /**
      * Sets the position of the window
-     *
+     * 
      * @param x the x position of the window
      * @param y the y position of the window
      */
-    public void setPosition(int x, int y) {
-        GLFW.glfwSetWindowPos(this.id, x, y);
-    }
+    fun setPosition(x: Int, y: Int) = GLFW.glfwSetWindowPos(this.id, x, y)
 
     /**
      * Center the window in the middle of the screen
      */
-    public void center() {
-        final Dimensions dimensions = Monitor.primary.getDimensions();
-        final int w = (dimensions.getWidth() - getWidth()) / 2;
-        final int h = (dimensions.getHeight() - getHeight()) / 2;
-        setPosition(w, h);
+    fun center() {
+        val dimensions = Monitor.primary.dimensions
+        val w = (dimensions.width - this.width) / 2
+        val h = (dimensions.height - this.height) / 2
+        setPosition(w, h)
     }
 
     /**
      * Set the window to fullscreen
      */
-    public void setFullscreen() {
-        final Dimensions dimensions = Monitor.primary.getDimensions();
-        GLFW.glfwSetWindowMonitor(this.id, Monitor.primary.id, 0, 0,
-                dimensions.getWidth(), dimensions.getHeight(), GLFW.GLFW_DONT_CARE);
+    fun setFullscreen() {
+        val dimensions = Monitor.primary.dimensions
+        GLFW.glfwSetWindowMonitor(
+            this.id, Monitor.primary.id, 0, 0,
+            dimensions.width, dimensions.height, GLFW.GLFW_DONT_CARE
+        )
 
-        this.width = dimensions.getWidth();
-        this.height = dimensions.getHeight();
+        this.width = dimensions.width
+        this.height = dimensions.height
     }
 
-    public void setMaximized() {
-        final RectangleI workArea = Monitor.primary.getWorkArea();
-        GLFW.glfwSetWindowMonitor(this.id, 0, workArea.x, workArea.y,
-                workArea.w, workArea.h, GLFW.GLFW_DONT_CARE);
+    fun setMaximized() {
+        val workArea = Monitor.primary.workArea
+        GLFW.glfwSetWindowMonitor(
+            this.id, 0, workArea.x, workArea.y,
+            workArea.w, workArea.h, GLFW.GLFW_DONT_CARE
+        )
 
-        GLFW.glfwMaximizeWindow(this.id);
-        this.x = workArea.x;
-        this.y = workArea.y;
-        this.width = workArea.w;
-        this.height = workArea.h;
-    }
-
-    /**
-     * Creates the mouse that corresponds to this window
-     *
-     * @return the mouse
-     */
-    public Mouse getMouse() {
-        return this.mouse;
-    }
-
-    /**
-     * Returns the keyboard that corresponds to this window
-     *
-     * @return the keyboard
-     */
-    public Keyboard getKeyboard() {
-        return this.keyboard;
+        GLFW.glfwMaximizeWindow(this.id)
+        this.x = workArea.x
+        this.y = workArea.y
+        this.width = workArea.w
+        this.height = workArea.h
     }
 
     /**
      * Destroy the window and free all resources allocated in its context
      */
-    public void destroy() {
-        GLFW.glfwDestroyWindow(this.id);
+    fun destroy() = GLFW.glfwDestroyWindow(this.id)
+
+    companion object {
+
+        private var current: Window? = null
+
+        init {
+            // Set up an error callback. The default implementation
+            // will print the error message in System.err.
+            GLFWErrorCallback.createPrint(System.err).set()
+
+            // Initialize GLFW. Most GLFW functions will not work before doing this.
+            check(GLFW.glfwInit()) { "Unable to initialize GLFW" }
+        }
+
+        fun create0(title: String, width: Int, height: Int, vSync: Boolean): Window {
+            val id = GLFW.glfwCreateWindow(width, height, title, 0, 0)
+            if (id == 0L) throw RuntimeException("Failed to init the GLFW window")
+            return Window(id, title, width, height, vSync)
+        }
+
+        @JvmStatic
+        fun create(title: String, width: Int, height: Int, vSync: Boolean): Window {
+            val builder: WindowBuilder = builder(title, width, height, vSync)
+            builder.hint(visible(false))
+                .hint(resizable())
+            return builder.build()
+        }
+
+        @JvmStatic
+        fun builder(title: String, width: Int, height: Int, vSync: Boolean): WindowBuilder {
+            val builder = WindowBuilder(title, width, height, vSync)
+            builder.hint(contextVersion(3, 2))
+                .hint(openglProfile(OpenGlProfileType.CORE))
+                .hint(openglForwardCompatibility())
+            return builder
+        }
+
+        @JvmStatic
+        fun current(): Window? {
+            return current
+        }
     }
 }

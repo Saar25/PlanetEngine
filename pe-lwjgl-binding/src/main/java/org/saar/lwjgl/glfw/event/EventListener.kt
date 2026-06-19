@@ -1,7 +1,5 @@
-package org.saar.lwjgl.glfw.event;
+package org.saar.lwjgl.glfw.event
 
-public interface EventListener<T extends Event> {
-
-    void onEvent(T e);
-
+fun interface EventListener<in T : Event> {
+    fun onEvent(e: T)
 }
