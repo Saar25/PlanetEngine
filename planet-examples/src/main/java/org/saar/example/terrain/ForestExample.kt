@@ -32,14 +32,11 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredGeometryPass
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.p2d.ScreenPrototype2D
-import org.saar.core.renderer.shadow.ShadowsCamera
-import org.saar.core.renderer.shadow.ShadowsQuality
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
-import org.saar.core.renderer.shadow.ShadowsScreenPrototype
+import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -132,11 +129,11 @@ fun main() {
     val shadowMap = shadowsPrototype.depthTexture
 
     val shadowsRenderGraph = RenderGraph(
-        ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player).onto(shadowsScreen)
+        ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player).asShadowsRenderPass().onto(shadowsScreen)
     )
 
 
-    val renderNode = DeferredGeometryPass(cube, cube2, player, treesNodeBatch, world)
+    val renderNode = DeferredNodeRenderPass(cube, cube2, player, treesNodeBatch, world)
 
     val cubeMap = createCubeMap()
     val fog = Fog(Vector3.of(0f), 700f, 1000f)

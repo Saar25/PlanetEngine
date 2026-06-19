@@ -26,6 +26,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -125,7 +126,7 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        nodeGroup.onto(screen),
+        nodeGroup.asDeferredRenderPass().onto(screen),
         LightRenderPass(
             albedoBuffer = prototype.albedoTexture,
             normalSpecularBuffer = prototype.normalSpecularTexture,

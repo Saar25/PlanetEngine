@@ -33,7 +33,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.asDeferredRenderNode
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.OffScreen
@@ -205,7 +205,7 @@ private class TerrainApplication : Application {
 
         return RenderGraph(
             renderNode
-                .asDeferredRenderNode()
+                .asDeferredRenderPass()
                 .onto(screenA),
             LightRenderPass(
                 albedoBuffer = screenAAlbedo,

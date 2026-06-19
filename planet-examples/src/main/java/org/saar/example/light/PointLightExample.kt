@@ -24,7 +24,7 @@ import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredGeometryPass
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
@@ -143,7 +143,7 @@ fun main() {
     val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val renderGraph = RenderGraph(
-        DeferredGeometryPass(world, cube).onto(screen1),
+        DeferredNodeRenderPass(world, cube).onto(screen1),
         LightRenderPass(
             albedoBuffer = screenPrototype1.albedoTexture,
             normalSpecularBuffer = screenPrototype1.normalSpecularTexture,

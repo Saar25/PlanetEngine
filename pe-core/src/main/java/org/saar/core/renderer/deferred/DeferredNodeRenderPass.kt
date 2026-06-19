@@ -10,7 +10,9 @@ import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.stencil.StencilState
 
-class DeferredGeometryPass(private vararg val children: DeferredRenderNode) : RenderPass {
+class DeferredNodeRenderPass(private val renderNode: DeferredRenderNode) : RenderPass {
+
+    constructor(vararg children: DeferredRenderNode) : this(DeferredRenderNodeGroup(*children))
 
     override val renderState = CompositeRenderState(
         DepthTestRenderState(DepthState.WRITE),
@@ -18,7 +20,9 @@ class DeferredGeometryPass(private vararg val children: DeferredRenderNode) : Re
         CullFaceRenderState(CullFaceState.BACK_CCW),
     )
 
-    override fun render(context: RenderContext) = this.children.forEach { it.renderDeferred(context) }
+    override fun render(context: RenderContext) = this.renderNode.renderDeferred(context)
 
-    override fun delete() = this.children.forEach { it.delete() }
+    override fun delete() = this.renderNode.delete()
 }
+
+fun DeferredRenderNode.asDeferredRenderPass() = DeferredNodeRenderPass(this)

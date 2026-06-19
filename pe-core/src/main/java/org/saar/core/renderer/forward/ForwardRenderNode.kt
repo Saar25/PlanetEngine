@@ -9,9 +9,3 @@ interface ForwardRenderNode : Node {
     fun renderForward(context: RenderContext)
 
 }
-
-fun ForwardRenderNode.asForwardRenderNode() = object : RenderPass {
-    override fun render(context: RenderContext) = this@asForwardRenderNode.renderForward(context)
-
-    override fun delete() = this@asForwardRenderNode.delete()
-}

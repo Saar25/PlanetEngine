@@ -8,14 +8,16 @@ import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.stencil.StencilState
 
-class ForwardGeometryPass(private vararg val children: ForwardRenderNode) : RenderPass {
+class ForwardNodeRenderPass(private val renderNode: ForwardRenderNode) : RenderPass {
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.ALWAYS_WRITE),
         CullFaceRenderState(CullFaceState.BACK_CCW),
     )
 
-    override fun render(context: RenderContext) = this.children.forEach { it.renderForward(context) }
+    override fun render(context: RenderContext) = this.renderNode.renderForward(context)
 
-    override fun delete() = this.children.forEach { it.delete() }
+    override fun delete() = this.renderNode.delete()
 }
+
+fun ForwardRenderNode.asForwardRenderPass() = ForwardNodeRenderPass(this)

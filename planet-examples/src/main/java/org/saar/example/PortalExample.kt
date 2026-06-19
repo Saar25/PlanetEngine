@@ -26,9 +26,10 @@ import org.saar.core.mesh.Mesh
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredGeometryPass
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -93,7 +94,7 @@ fun main() {
     val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
 
     val portalRenderGraph1 = RenderGraph(
-        DeferredGeometryPass(world, cube).onto(screen1b),
+        DeferredNodeRenderPass(world, cube).onto(screen1b),
         /*LightRenderPass(
             albedoBuffer = prototype1a.albedoTexture,
             normalSpecularBuffer = prototype1a.normalSpecularTexture,
@@ -115,7 +116,7 @@ fun main() {
 
     // TODO: fix lights
     val portalRenderGraph2 = RenderGraph(
-        DeferredGeometryPass(world, cube).onto(screen2b),
+        DeferredNodeRenderPass(world, cube).onto(screen2b),
         /*LightRenderPass(
             albedoBuffer = prototype2a.albedoTexture,
             normalSpecularBuffer = prototype2a.normalSpecularTexture,
@@ -132,6 +133,7 @@ fun main() {
 
     val renderGraph = RenderGraph(
         DeferredRenderNodeGroup(portal1, portal2, world, cube)
+            .asDeferredRenderPass()
             .onto(MainScreen),
         /*LightRenderPass(
             albedoBuffer = prototype.albedoTexture,

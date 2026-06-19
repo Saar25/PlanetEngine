@@ -19,6 +19,7 @@ import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNode;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -64,7 +65,7 @@ public class DeferredExample {
         final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(renderNode, screen),
+                new RenderGraphNode(new DeferredNodeRenderPass(renderNode), screen),
                 new RenderGraphNode(new LightRenderPass(
                         prototype.getAlbedoTexture(),
                         prototype.getNormalSpecularTexture(),

@@ -30,11 +30,9 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.shadow.ShadowsCamera
-import org.saar.core.renderer.shadow.ShadowsQuality
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
-import org.saar.core.renderer.shadow.ShadowsScreenPrototype
+import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenSwap
 import org.saar.core.screen.Screens.toScreen
@@ -104,7 +102,7 @@ fun main() {
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
 
     val shadowsRenderGraph = RenderGraph(
-        shadowsRenderNode.onto(shadowsScreen)
+        shadowsRenderNode.asShadowsRenderPass().onto(shadowsScreen)
     )
 
     val shadowMap = shadowsPrototype.depthTexture
@@ -120,8 +118,7 @@ fun main() {
     val screenSwap = ScreenSwap(screenPrototype1, screenPrototype2)
 
     val renderGraph = RenderGraph(
-        renderNode
-            .onto(screenSwap.current),
+        renderNode.asDeferredRenderPass().onto(screenSwap.current),
         ShadowsRenderPass(
             albedoBuffer = screenSwap.prototype.albedoTexture,
             normalSpecularBuffer = screenSwap.prototype.normalSpecularTexture,

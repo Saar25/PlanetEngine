@@ -22,7 +22,7 @@ import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.RenderPass
-import org.saar.core.renderer.deferred.DeferredGeometryPass
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
@@ -129,7 +129,7 @@ private fun buildCamera(mouse: Mouse): Camera {
 private fun buildGeometryPass(): RenderPass {
     val nodeBatch3D = buildNodeBatch3D()
     val objNodeBatch = buildObjNodeBatch()
-    return DeferredGeometryPass(nodeBatch3D, objNodeBatch)
+    return DeferredNodeRenderPass(nodeBatch3D, objNodeBatch)
 }
 
 private fun buildObjNodeBatch(): ObjNodeBatch {

@@ -29,11 +29,9 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.shadow.ShadowsCamera
-import org.saar.core.renderer.shadow.ShadowsQuality
-import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
-import org.saar.core.renderer.shadow.ShadowsScreenPrototype
+import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -144,7 +142,7 @@ fun main() {
     val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val reflectionRenderGraph = RenderGraph(
-        reflectionRenderNode.onto(reflectionScreen1),
+        reflectionRenderNode.asDeferredRenderPass().onto(reflectionScreen1),
         LightRenderPass(
             albedoBuffer = reflectionPrototype1.albedoTexture,
             normalSpecularBuffer = reflectionPrototype1.normalSpecularTexture,
@@ -167,7 +165,7 @@ fun main() {
     val shadowsScreen =
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize))
     val shadowsRenderGraph = RenderGraph(
-        shadowsRenderNode.onto(shadowsScreen)
+        shadowsRenderNode.asShadowsRenderPass().onto(shadowsScreen)
     )
 
     val renderNode = DeferredRenderNodeGroup(
@@ -184,7 +182,7 @@ fun main() {
     val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val renderGraph = RenderGraph(
-        renderNode.onto(screen1),
+        renderNode.asDeferredRenderPass().onto(screen1),
         ShadowsRenderPass(
             albedoBuffer = prototype1.albedoTexture,
             normalSpecularBuffer = prototype1.normalSpecularTexture,
