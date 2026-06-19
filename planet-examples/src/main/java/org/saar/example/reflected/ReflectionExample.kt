@@ -53,11 +53,13 @@ import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.Angle.Companion.degrees
+import org.saar.maths.objects.Planef
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.ReflectedTransform
 import org.saar.maths.utils.Vector3
@@ -135,19 +137,23 @@ fun main() {
 
     val light = buildDirectionalLight()
 
-    val reflectionPrototype1 = DeferredScreenPrototype()
+    val reflectedTransform = ReflectedTransform(camera.transform, Planef(Vector3.upward(), .1f))
+    val reflectionCamera = ReadonlyCamera(camera.projection, reflectedTransform)
+
+    val reflectionDepthTexture = MutableTexture2D.create()
+    val reflectionPrototype1 = DeferredScreenPrototype(depthTexture = reflectionDepthTexture)
     val reflectionScreen1 = reflectionPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
 
-    val reflectionPrototype2 = DeferredScreenPrototype()
+    val reflectionPrototype2 = DeferredScreenPrototype(depthTexture = reflectionDepthTexture)
     val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val reflectionRenderGraph = RenderGraph(
-        reflectionRenderNode.asDeferredRenderPass(camera).onto(reflectionScreen1),
+        reflectionRenderNode.asDeferredRenderPass(reflectionCamera).onto(reflectionScreen2),
         LightRenderPass(
             albedoBuffer = reflectionPrototype1.albedoTexture,
             normalSpecularBuffer = reflectionPrototype1.normalSpecularTexture,
             depthBuffer = reflectionPrototype1.depthTexture,
-            camera = camera,
+            camera = reflectionCamera,
             directionalLights = arrayOf(light)
         ).onto(reflectionScreen2)
     )
@@ -156,9 +162,6 @@ fun main() {
 
     val mirrorModel = buildMirrorModel(reflectionMap)
     val mirror = FlatReflectedNode(mirrorModel)
-
-    val reflectedTransform = ReflectedTransform(camera.transform, mirrorModel.toPlane())
-    val reflectionCamera = ReadonlyCamera(camera.projection, reflectedTransform)
 
     val shadowsProjection = 100f.let { SimpleOrthographicProjection(-it, it, -it, it, -it, it) }
     val shadowsCamera = ShadowsCamera(shadowsProjection, light)

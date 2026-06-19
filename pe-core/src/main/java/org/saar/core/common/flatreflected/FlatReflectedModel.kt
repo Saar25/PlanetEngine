@@ -20,7 +20,7 @@ class FlatReflectedModel(
 
     fun toPlane(): Planef {
         val position = this.transform.position.value
-        return Planef(position, this.normal)
+        return Planef(this.normal, position)
     }
 
     override fun delete() {

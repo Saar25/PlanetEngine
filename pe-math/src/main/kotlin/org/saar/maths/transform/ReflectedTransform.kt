@@ -56,7 +56,8 @@ class ReflectedTransform(private val transform: ReadonlyTransform, private val p
         }
 
         override fun compute() = Matrix4.ofTransformation(
-            position.value, rotation.value, scale.value, this.matrix)
+            position.value, rotation.value, scale.value, this.matrix
+        )
 
         override fun dispose() = unbind(positionProperty, rotationProperty, scale)
     }
