@@ -44,7 +44,6 @@ import java.util.*
 private const val WIDTH = 1200
 private const val HEIGHT = 700
 
-// TODO: complete example
 fun main() {
     val window = Window.create("SSAO Example - press R to toggle SSAO pass", WIDTH, HEIGHT, true)
 

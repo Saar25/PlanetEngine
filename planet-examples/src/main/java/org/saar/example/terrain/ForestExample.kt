@@ -30,15 +30,18 @@ import org.saar.core.fog.FogDistance
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.postprocessing.FxaaPostProcessor
+import org.saar.core.postprocessing.GaussianBlurRenderPass
+import org.saar.core.postprocessing.MultiplyPostProcessor
 import org.saar.core.postprocessing.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.deferred.passes.SSAOMapGenerator
 import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
 import org.saar.core.renderer.forward.passes.FogRenderPass
 import org.saar.core.renderer.onto
+import org.saar.core.renderer.p2d.ScreenPrototype2D
 import org.saar.core.renderer.shadow.ShadowsCamera
 import org.saar.core.renderer.shadow.ShadowsQuality
 import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
@@ -50,9 +53,9 @@ import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.Noise2f
@@ -139,39 +142,56 @@ fun main() {
     )
 
 
-    val renderNode = DeferredRenderNodeGroup(cube, cube2, player, treesNodeBatch, world)
+    val renderNode = DeferredGeometryPass(cube, cube2, player, treesNodeBatch, world)
 
     val cubeMap = createCubeMap()
     val fog = Fog(Vector3.of(0f), 700f, 1000f)
 
-    val prototype1 = DeferredScreenPrototype()
-    val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT), SimpleAllocationStrategy)
+    val depthTexture = MutableTexture2D.create()
+    val prototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
 
-    val prototype2 = DeferredScreenPrototype()
-    val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT), SimpleAllocationStrategy)
+    val prototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val prototype3 = ScreenPrototype2D()
+    val screen3 = prototype3.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+
+    val prototype4 = ScreenPrototype2D()
+    val screen4 = prototype4.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+
+    val prototype5 = ScreenPrototype2D()
+    val screen5 = prototype5.toScreen(Fbo.create(WIDTH, HEIGHT))
+
+    val gaussianBlur = GaussianBlurRenderPass()
 
     val renderGraph = RenderGraph(
         renderNode.onto(screen1),
         ShadowsRenderPass(
             prototype1.albedoTexture,
             prototype1.normalSpecularTexture,
-            prototype1.depthTexture,
+            depthTexture,
             shadowsCamera,
             shadowMap,
             light
         ).onto(screen2),
         SSAOMapGenerator(
-            prototype2.normalSpecularTexture,
-            prototype2.depthTexture
-        ).onto(screen1),
+            prototype1.normalSpecularTexture,
+            depthTexture,
+            radius = 1f,
+            kernelSamplesSize = 128
+        ).onto(screen4),
+        gaussianBlur.Vertical(prototype4.albedoTexture).onto(screen3),
+        gaussianBlur.Horizontal(prototype3.albedoTexture).onto(screen4),
+        MultiplyPostProcessor(prototype4.albedoTexture, prototype2.albedoTexture).onto(screen5),
         FogRenderPass(
-            prototype1.albedoTexture,
-            prototype1.depthTexture,
+            prototype5.albedoTexture,
+            depthTexture,
             fog,
             FogDistance.XZ
-        ).onto(screen2),
-        SkyboxPostProcessor(cubeMap).onto(screen2),
-        FxaaPostProcessor(prototype2.albedoTexture).onto(MainScreen)
+        ).onto(screen1),
+        SkyboxPostProcessor(cubeMap).onto(screen1),
+        FxaaPostProcessor(prototype1.albedoTexture).onto(MainScreen)
     )
 
     var last = System.currentTimeMillis()
@@ -181,7 +201,7 @@ fun main() {
         last = System.currentTimeMillis()
         print("\r --->$delta")
 
-        renderNode.update()
+        player.update()
         camera.update()
 
         shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
