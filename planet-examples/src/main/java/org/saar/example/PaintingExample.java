@@ -1,6 +1,6 @@
 package org.saar.example;
 
-import org.saar.core.painting.FBMPainter;
+import org.saar.core.common.renderpass.FBMRenderPass;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderPass;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -20,7 +20,7 @@ public class PaintingExample {
                 .hint(WindowHints.focused())
                 .build();
 
-        final RenderPass painter = new FBMPainter();
+        final RenderPass painter = new FBMRenderPass();
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {

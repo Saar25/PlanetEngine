@@ -1,10 +1,8 @@
-package org.saar.core.renderer.deferred.passes
+package org.saar.core.common.renderpass
 
 import org.joml.Math
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.painting.Random2fPainter
 import org.saar.core.renderer.*
-import org.saar.core.renderer.state.RenderState
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
@@ -15,7 +13,6 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilState
-import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
@@ -55,7 +52,7 @@ class SSAOMapGenerator @JvmOverloads constructor(
     }
 
     private fun createNoiseTexture(): MutableTexture2D {
-        val texture = Random2fPainter().let { painter ->
+        val texture = Random2fRenderPass().let { painter ->
             Renderers.renderToTexture(this.noiseTextureSize, this.noiseTextureSize, InternalFormat.R16F) {
                 painter.render(RenderContext(null))
             }.also { painter.delete() }

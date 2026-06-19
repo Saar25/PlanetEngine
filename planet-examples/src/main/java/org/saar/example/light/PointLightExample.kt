@@ -8,6 +8,9 @@ import org.saar.core.common.components.*
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
+import org.saar.core.common.renderpass.FxaaPostProcessor
+import org.saar.core.common.renderpass.LightRenderPass
+import org.saar.core.common.renderpass.SkyboxPostProcessor
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
 import org.saar.core.common.terrain.components.TerrainGravityComponent
@@ -19,13 +22,10 @@ import org.saar.core.light.Attenuation
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.FxaaPostProcessor
-import org.saar.core.postprocessing.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredGeometryPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
-import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen

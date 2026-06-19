@@ -15,6 +15,7 @@ import org.saar.core.common.obj.ObjNodeBatch
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
+import org.saar.core.common.renderpass.*
 import org.saar.core.common.terrain.colour.ColourGenerator
 import org.saar.core.common.terrain.colour.NormalColour
 import org.saar.core.common.terrain.colour.NormalColourGenerator
@@ -29,17 +30,10 @@ import org.saar.core.fog.Fog
 import org.saar.core.fog.FogDistance
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.FxaaPostProcessor
-import org.saar.core.postprocessing.GaussianBlurRenderPass
-import org.saar.core.postprocessing.MultiplyPostProcessor
-import org.saar.core.postprocessing.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredGeometryPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
-import org.saar.core.renderer.deferred.passes.SSAOMapGenerator
-import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
-import org.saar.core.renderer.forward.passes.FogRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.renderer.p2d.ScreenPrototype2D
 import org.saar.core.renderer.shadow.ShadowsCamera

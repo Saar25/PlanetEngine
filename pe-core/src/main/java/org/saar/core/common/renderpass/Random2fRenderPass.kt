@@ -1,4 +1,4 @@
-package org.saar.core.painting
+package org.saar.core.common.renderpass
 
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext
@@ -10,7 +10,7 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 
-class Random2fPainter : RenderPass {
+class Random2fRenderPass : RenderPass {
 
     private val shadersLink = Random2fPainterPrototype
 

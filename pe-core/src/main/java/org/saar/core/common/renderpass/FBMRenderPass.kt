@@ -1,4 +1,4 @@
-package org.saar.core.painting
+package org.saar.core.common.renderpass
 
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
@@ -12,7 +12,7 @@ import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilState
 
-class FBMPainter : RenderPass {
+class FBMRenderPass : RenderPass {
 
     private val shadersLink = FBMShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)

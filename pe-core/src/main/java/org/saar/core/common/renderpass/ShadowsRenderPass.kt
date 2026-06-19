@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.passes
+package org.saar.core.common.renderpass
 
 import org.joml.Vector2i
 import org.saar.core.camera.ICamera

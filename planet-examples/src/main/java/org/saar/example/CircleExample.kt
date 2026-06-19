@@ -1,9 +1,9 @@
 package org.saar.example
 
 import org.lwjgl.glfw.GLFW
+import org.saar.core.common.renderpass.Swizzle
+import org.saar.core.common.renderpass.SwizzlePostProcessor
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.postprocessing.Swizzle
-import org.saar.core.postprocessing.SwizzlePostProcessor
 import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen

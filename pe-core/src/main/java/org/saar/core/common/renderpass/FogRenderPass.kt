@@ -1,10 +1,14 @@
-package org.saar.core.renderer.forward.passes
+package org.saar.core.common.renderpass
 
 import org.saar.core.fog.FogDistance
 import org.saar.core.fog.FogUniformValue
 import org.saar.core.fog.IFog
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPass
+import org.saar.core.renderer.Renderers
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.DepthTestRenderState
 import org.saar.core.renderer.state.StencilTestRenderState

@@ -14,10 +14,10 @@ import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
 import org.saar.core.common.particles.components.ParticlesControlComponent
 import org.saar.core.common.particles.components.ParticlesModelComponent
+import org.saar.core.common.renderpass.FxaaPostProcessor
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype

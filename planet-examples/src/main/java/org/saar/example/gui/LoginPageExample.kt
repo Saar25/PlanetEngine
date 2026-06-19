@@ -2,7 +2,7 @@ package org.saar.example.gui
 
 import org.jproperty.InvalidationListener
 import org.lwjgl.glfw.GLFW
-import org.saar.core.painting.FBMPainter
+import org.saar.core.common.renderpass.FBMRenderPass
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
@@ -115,7 +115,7 @@ object LoginPageExample {
             }
         }
 
-        val background = FBMPainter()
+        val background = FBMRenderPass()
 
         val keyboard = window.keyboard
 

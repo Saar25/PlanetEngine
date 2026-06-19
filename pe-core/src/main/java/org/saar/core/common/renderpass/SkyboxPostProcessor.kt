@@ -1,4 +1,4 @@
-package org.saar.core.postprocessing
+package org.saar.core.common.renderpass
 
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext

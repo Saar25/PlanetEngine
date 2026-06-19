@@ -17,6 +17,7 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.common.r3d.Vertex3D
+import org.saar.core.common.renderpass.LightRenderPass
 import org.saar.core.light.DirectionalLight
 import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.mesh.lod.LodMesh
@@ -25,7 +26,6 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -321,11 +321,11 @@ private fun buildIcosahedron(): List<ChunkData> {
             levelFaces.indices.map { fi ->
                 async(Dispatchers.Default) {
                     val (i0, i1, i2) = levelFaces[fi]
-                    val c0 = continent[i0];
-                    val c1 = continent[i1];
+                    val c0 = continent[i0]
+                    val c1 = continent[i1]
                     val c2 = continent[i2]
-                    val w0 = isWater[c0];
-                    val w1 = isWater[c1];
+                    val w0 = isWater[c0]
+                    val w1 = isWater[c1]
                     val w2 = isWater[c2]
                     val diff = c0 != c1 || c1 != c2
                     levelLandWaterFace[fi] = diff && (w0 != w1 || w1 != w2)

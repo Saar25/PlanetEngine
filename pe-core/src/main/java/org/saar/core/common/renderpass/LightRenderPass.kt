@@ -1,4 +1,4 @@
-package org.saar.core.renderer.deferred.passes
+package org.saar.core.common.renderpass
 
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform

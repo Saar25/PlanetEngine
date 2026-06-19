@@ -11,6 +11,10 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D.instance
 import org.saar.core.common.r3d.R3D.mesh
+import org.saar.core.common.renderpass.FogRenderPass
+import org.saar.core.common.renderpass.FxaaPostProcessor
+import org.saar.core.common.renderpass.LightRenderPass
+import org.saar.core.common.renderpass.SkyboxPostProcessor
 import org.saar.core.common.terrain.World
 import org.saar.core.common.terrain.colour.ColourGenerator
 import org.saar.core.common.terrain.colour.NormalColour
@@ -25,15 +29,11 @@ import org.saar.core.fog.Fog
 import org.saar.core.fog.FogDistance
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.FxaaPostProcessor
-import org.saar.core.postprocessing.SkyboxPostProcessor
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.asDeferredRenderNode
-import org.saar.core.renderer.deferred.passes.LightRenderPass
-import org.saar.core.renderer.forward.passes.FogRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.OffScreen

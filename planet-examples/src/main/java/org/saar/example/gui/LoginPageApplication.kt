@@ -1,9 +1,9 @@
 package org.saar.example.gui
 
 import org.jproperty.InvalidationListener
+import org.saar.core.common.renderpass.FBMRenderPass
 import org.saar.core.engine.Application
 import org.saar.core.engine.PlanetEngine
-import org.saar.core.painting.FBMPainter
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderPass
 import org.saar.gui.UIDisplay
@@ -32,7 +32,7 @@ class LoginPageApplication : Application {
     private lateinit var display: UIDisplay
 
     override fun initialize(window: Window) {
-        this.background = FBMPainter()
+        this.background = FBMRenderPass()
 
         this.display = UIDisplay(window).apply {
             this.style.alignment.value = AlignmentValues.vertical

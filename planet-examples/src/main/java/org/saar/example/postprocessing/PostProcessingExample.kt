@@ -6,8 +6,8 @@ import org.saar.core.common.r2d.Model2D
 import org.saar.core.common.r2d.Node2D
 import org.saar.core.common.r2d.R2D
 import org.saar.core.common.r2d.R2D.vertex
-import org.saar.core.painting.FBMPainter
-import org.saar.core.postprocessing.GaussianBlurRenderPass
+import org.saar.core.common.renderpass.FBMRenderPass
+import org.saar.core.common.renderpass.GaussianBlurRenderPass
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.onto
@@ -47,7 +47,7 @@ object PostProcessingExample {
 
         val gaussianBlurRenderPass = GaussianBlurRenderPass(21)
         val renderGraph = RenderGraph(
-            FBMPainter().onto(screen1),
+            FBMRenderPass().onto(screen1),
             node.onto(screen1),
             gaussianBlurRenderPass.Vertical(prototype1.albedoTexture).onto(dsScreen1),
             gaussianBlurRenderPass.Horizontal(dsPrototype1.albedoTexture).onto(dsScreen2),

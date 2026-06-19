@@ -26,9 +26,9 @@ import org.saar.core.mesh.Mesh
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredGeometryPass
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
