@@ -20,7 +20,9 @@ class FlatReflectedNode(val model: FlatReflectedModel) : Node,
     }
 
     override fun renderShadows(context: ShadowsRenderContext) {
-        FlatReflectedDeferredRenderer.render(context, this.model)
+        // TODO: create a shadows renderer that can reduce computations
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        FlatReflectedDeferredRenderer.render(deferredRenderContext, this.model)
     }
 
     override fun delete() {

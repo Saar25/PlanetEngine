@@ -1,8 +1,10 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.deferred.DeferredRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -17,63 +19,76 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
 import org.saar.maths.utils.Matrix4
 
-object FlatReflectedDeferredRenderer :
-    RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedDeferredRendererPrototype())
+object FlatReflectedDeferredRenderer : Renderer<DeferredRenderContext, FlatReflectedModel> {
 
-private class FlatReflectedDeferredRendererPrototype : RendererPrototype<FlatReflectedModel> {
+    private val shadersLink = FlatReflectedDeferredRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    @UniformProperty
-    private val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 0)
-
-    @UniformProperty
-    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
-
-    @UniformProperty
-    private val normalUniform = Vec3UniformValue("u_normal")
-
-    @UniformProperty
-    private val specularUniform = object : FloatUniform() {
-        override val name = "u_specular"
-
-        override val value = 1f
+    init {
+        this.shadersLink.init()
     }
 
-    @UniformProperty
-    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+    override fun render(context: DeferredRenderContext, models: Iterable<FlatReflectedModel>) {
+        this.shadersLink.shadersProgram.bind()
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(
-            GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl")
-        ),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.dfragment.glsl")
-        )
-    )
-
-    override fun vertexAttributes() = arrayOf(
-        "in_position", "in_normal"
-    )
-
-    override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
-    }
+        this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
-    override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = model.transform.transformationMatrix
+        val vp = p.mul(v, Matrix4.create())
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
+        models.forEach { model ->
+            val m = model.transform.transformationMatrix
 
-        this.normalUniform.value = model.normal
-        this.reflectionMapUniform.value = model.reflectionMap
+            this.shadersLink.mvpMatrixUniform.value = vp.mul(m, Matrix4.temp)
+
+            this.shadersLink.normalUniform.value = model.normal
+            this.shadersLink.reflectionMapUniform.value = model.reflectionMap
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
     }
 
-    override fun doInstanceDraw(context: RenderContext, model: FlatReflectedModel) = model.draw()
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    private object FlatReflectedDeferredRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 0)
+
+        @UniformProperty
+        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+        @UniformProperty
+        val normalUniform = Vec3UniformValue("u_normal")
+
+        @UniformProperty
+        val specularUniform = object : FloatUniform() {
+            override val name = "u_specular"
+
+            override val value = 1f
+        }
+
+        @UniformProperty
+        val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
+        override val vertexAttributes = arrayOf("in_position", "in_normal")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl")
+            ),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.dfragment.glsl")
+            )
+        )
+    }
 }

@@ -29,7 +29,8 @@ class FlatReflectedNodeBatch(vararg nodes: FlatReflectedNode) : ParentNode,
 
     override fun renderShadows(context: ShadowsRenderContext) {
         val models = this.children.map { it.model }
-        FlatReflectedDeferredRenderer.render(context, models)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        FlatReflectedDeferredRenderer.render(deferredRenderContext, models)
     }
 
     override fun delete() {

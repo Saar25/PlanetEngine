@@ -1,6 +1,10 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.renderer.*
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.forward.ForwardRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Face
@@ -15,7 +19,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec4UniformValue
 import org.saar.maths.utils.Matrix4
 
-object Renderer3D : Renderer<Model3D> {
+object Renderer3D : Renderer<ForwardRenderContext, Model3D> {
 
     private val shadersLink = RendererShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
@@ -24,7 +28,7 @@ object Renderer3D : Renderer<Model3D> {
         this.shadersLink.init()
     }
 
-    override fun render(context: RenderContext, models: Iterable<Model3D>) {
+    override fun render(context: ForwardRenderContext, models: Iterable<Model3D>) {
         this.shadersLink.shadersProgram.bind()
 
         ProvokingVertex.setFirst();

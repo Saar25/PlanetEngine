@@ -22,7 +22,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
 
-object UIBlockRenderer : Renderer<UINode> {
+object UIBlockRenderer : Renderer<RenderContext, UINode> {
 
     private val shadersLink = UIShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)

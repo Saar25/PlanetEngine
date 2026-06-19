@@ -19,7 +19,7 @@ import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 
-object UILetterRenderer : Renderer<UILetter> {
+object UILetterRenderer : Renderer<RenderContext, UILetter> {
 
     private val shadersLink = LetterShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)

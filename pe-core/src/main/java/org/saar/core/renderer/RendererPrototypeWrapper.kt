@@ -1,6 +1,7 @@
 package org.saar.core.renderer
 
-abstract class RendererPrototypeWrapper<in T>(private val prototype: RendererPrototype<T>) : Renderer<T> {
+abstract class RendererPrototypeWrapper<in T>(private val prototype: RendererPrototype<T>) :
+    Renderer<RenderContext, T> {
 
     private val shadersLink = this.prototype
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
