@@ -69,7 +69,7 @@ public class RendererExample {
 
             GlUtils.clear(GlBuffer.COLOUR);
 
-            renderer.render(new RenderContext(null), model);
+            renderer.render(new RenderContext(), model);
 
             fbo.blitToScreen();
 

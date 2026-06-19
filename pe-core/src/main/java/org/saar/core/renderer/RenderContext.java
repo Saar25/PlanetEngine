@@ -6,8 +6,16 @@ public class RenderContext {
 
     private final ICamera camera;
 
+    public RenderContext() {
+        this.camera = null;
+    }
+
     public RenderContext(ICamera camera) {
         this.camera = camera;
+    }
+
+    public RenderContext(RenderContext context) {
+        this.camera = context.camera;
     }
 
     public ICamera getCamera() {

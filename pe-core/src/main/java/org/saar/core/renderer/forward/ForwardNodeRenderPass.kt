@@ -2,6 +2,7 @@ package org.saar.core.renderer.forward
 
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderPass
+import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.CullFaceRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
@@ -15,7 +16,10 @@ class ForwardNodeRenderPass(private val renderNode: ForwardRenderNode) : RenderP
         CullFaceRenderState(CullFaceState.BACK_CCW),
     )
 
-    override fun render(context: RenderContext) = this.renderNode.renderForward(context)
+    override fun render(context: RenderContext) {
+        val forwardContext = ForwardRenderContext(context, context.camera)
+        this.renderNode.renderForward(forwardContext)
+    }
 
     override fun delete() = this.renderNode.delete()
 }

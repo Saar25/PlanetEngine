@@ -4,9 +4,11 @@ import org.saar.core.common.components.TransformComponent
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.Node
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.deferred.DeferredRenderNode
+import org.saar.core.renderer.forward.ForwardRenderContext
 import org.saar.core.renderer.forward.ForwardRenderNode
+import org.saar.core.renderer.shadow.ShadowsRenderContext
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
 open class PortalNode(val model: PortalModel, components: NodeComponentGroup) :
@@ -15,17 +17,18 @@ open class PortalNode(val model: PortalModel, components: NodeComponentGroup) :
     constructor(model: PortalModel) : this(model, NodeComponentGroup())
 
     final override val components: NodeComponentGroup = NodeComponentGroup(
-        components, TransformComponent(model.transform))
+        components, TransformComponent(model.transform)
+    )
 
-    final override fun renderForward(context: RenderContext) {
+    final override fun renderForward(context: ForwardRenderContext) {
         PortalRenderer.render(context, this.model)
     }
 
-    final override fun renderDeferred(context: RenderContext) {
+    final override fun renderDeferred(context: DeferredRenderContext) {
         PortalDeferredRenderer.render(context, this.model)
     }
 
-    final override fun renderShadows(context: RenderContext) {
+    final override fun renderShadows(context: ShadowsRenderContext) {
         PortalDeferredRenderer.render(context, this.model)
     }
 

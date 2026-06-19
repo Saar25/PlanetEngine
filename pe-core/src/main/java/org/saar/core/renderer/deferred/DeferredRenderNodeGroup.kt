@@ -7,7 +7,7 @@ class DeferredRenderNodeGroup(vararg children: DeferredRenderNode) : ParentNode,
 
     override val children: MutableList<DeferredRenderNode> = children.toMutableList()
 
-    override fun renderDeferred(context: RenderContext) = this.children.forEach { it.renderDeferred(context) }
+    override fun renderDeferred(context: DeferredRenderContext) = this.children.forEach { it.renderDeferred(context) }
 
     override fun delete() = this.children.forEach { it.delete() }
 }

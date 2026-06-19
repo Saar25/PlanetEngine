@@ -37,7 +37,7 @@ object HelloWorldExample {
             display.update()
 
             GlUtils.clear(GlBuffer.COLOUR)
-            display.render(RenderContext(null))
+            display.render(RenderContext())
 
             window.swapBuffers()
             window.pollEvents()

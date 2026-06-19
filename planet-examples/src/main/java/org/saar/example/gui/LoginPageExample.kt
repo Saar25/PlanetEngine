@@ -123,8 +123,8 @@ object LoginPageExample {
             display.update()
 
             GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
-            background.render(RenderContext(null))
-            display.render(RenderContext(null))
+            background.render(RenderContext())
+            display.render(RenderContext())
 
             window.swapBuffers()
             window.pollEvents()

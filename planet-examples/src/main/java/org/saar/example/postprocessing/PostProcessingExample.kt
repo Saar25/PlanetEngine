@@ -55,7 +55,7 @@ object PostProcessingExample {
 
         val keyboard = window.keyboard
         while (window.isOpen && !keyboard.isKeyPressed('E'.code)) {
-            renderGraph.render(RenderContext(null))
+            renderGraph.render(RenderContext())
             dsScreen2.copyTo(MainScreen)
 
             window.swapBuffers()

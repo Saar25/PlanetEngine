@@ -87,7 +87,7 @@ object GuiExample {
 
             display.update()
 
-            display.render(RenderContext(null))
+            display.render(RenderContext())
 
             window.swapBuffers()
             window.pollEvents()

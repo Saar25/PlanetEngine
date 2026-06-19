@@ -124,8 +124,8 @@ class LoginPageApplication : Application {
     }
 
     override fun render(window: Window) {
-        this.background.render(RenderContext(null))
-        this.display.render(RenderContext(null))
+        this.background.render(RenderContext())
+        this.display.render(RenderContext())
     }
 
     override fun close(window: Window) {

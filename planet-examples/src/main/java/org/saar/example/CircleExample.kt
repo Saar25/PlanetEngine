@@ -75,9 +75,9 @@ fun main() {
         screen.resizeToMainScreen()
         GlUtils.clear(GlBuffer.COLOUR)
 
-        painter.render(RenderContext(null))
+        painter.render(RenderContext())
         MainScreen.setAsDraw()
-        swizzle.render(RenderContext(null))
+        swizzle.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

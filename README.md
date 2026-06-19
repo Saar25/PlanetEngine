@@ -259,7 +259,7 @@ val uiButton = UIButton().apply {
 }
 display.add(uiButton)
 
-display.render(RenderContext(null))
+display.render(RenderContext())
 ```
 
 ### Text rendering

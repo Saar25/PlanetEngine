@@ -20,7 +20,10 @@ class DeferredNodeRenderPass(private val renderNode: DeferredRenderNode) : Rende
         CullFaceRenderState(CullFaceState.BACK_CCW),
     )
 
-    override fun render(context: RenderContext) = this.renderNode.renderDeferred(context)
+    override fun render(context: RenderContext) {
+        val deferredContext = DeferredRenderContext(context, context.camera)
+        this.renderNode.renderDeferred(deferredContext)
+    }
 
     override fun delete() = this.renderNode.delete()
 }

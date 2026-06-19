@@ -54,7 +54,7 @@ class SSAOMapGenerator @JvmOverloads constructor(
     private fun createNoiseTexture(): MutableTexture2D {
         val texture = Random2fRenderPass().let { painter ->
             Renderers.renderToTexture(this.noiseTextureSize, this.noiseTextureSize, InternalFormat.R16F) {
-                painter.render(RenderContext(null))
+                painter.render(RenderContext())
             }.also { painter.delete() }
         }.apply {
             applyParameters(

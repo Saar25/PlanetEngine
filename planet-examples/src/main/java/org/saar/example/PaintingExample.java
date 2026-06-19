@@ -24,7 +24,7 @@ public class PaintingExample {
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-            painter.render(new RenderContext(null));
+            painter.render(new RenderContext());
             window.swapBuffers();
             window.pollEvents();
         }
