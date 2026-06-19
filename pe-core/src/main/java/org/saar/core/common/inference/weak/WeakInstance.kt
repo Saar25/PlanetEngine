@@ -1,37 +1,35 @@
-package org.saar.core.common.inference.weak;
+package org.saar.core.common.inference.weak
 
-import org.saar.core.mesh.Instance;
-import org.saar.lwjgl.opengl.attribute.AttributeComposite;
-import org.saar.lwjgl.opengl.attribute.IAttribute;
-import org.saar.lwjgl.opengl.primitive.GlPrimitive;
-import org.saar.lwjgl.util.DataWriter;
+import org.saar.core.mesh.Instance
+import org.saar.lwjgl.opengl.attribute.AttributeComposite
+import org.saar.lwjgl.opengl.attribute.IAttribute
+import org.saar.lwjgl.opengl.primitive.GlPrimitive
+import org.saar.lwjgl.util.DataWriter
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+class WeakInstance(private val primitives: List<GlPrimitive>) : Instance {
 
-public class WeakInstance implements Instance {
-
-    private final List<GlPrimitive> primitives = new ArrayList<>();
-
-    public WeakInstance with(GlPrimitive primitive) {
-        this.primitives.add(primitive);
-        return this;
+    fun getAttribute(vertexAttributes: Int): IAttribute {
+        var index = vertexAttributes
+        val attributes = this.primitives.flatMap {
+            it.attribute(index++, false, 1).asIterable()
+        }
+        return AttributeComposite(attributes)
     }
 
-    public void write(DataWriter writer) {
-        for (GlPrimitive primitive : this.primitives) {
-            primitive.write(writer);
-        }
+    fun write(writer: DataWriter) = this.primitives.forEach { it.write(writer) }
+
+    val attributes = this.primitives.flatMapIndexed { index, primitive ->
+        primitive.attribute(index, false, 0).asIterable()
     }
 
-    public IAttribute getAttribute(int vertexAttributes) {
-        int index = vertexAttributes;
-        final List<IAttribute> attributes = new ArrayList<>();
-        for (GlPrimitive primitive : this.primitives) {
-            Collections.addAll(attributes, primitive
-                    .attribute(index++, false, 1));
+    class Builder {
+        private val primitives = mutableListOf<GlPrimitive>()
+
+        fun with(primitive: GlPrimitive): Builder {
+            this.primitives.add(primitive)
+            return this
         }
-        return new AttributeComposite(attributes);
+
+        fun build() = WeakInstance(this.primitives)
     }
 }

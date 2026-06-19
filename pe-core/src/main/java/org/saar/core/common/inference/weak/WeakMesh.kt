@@ -1,158 +1,159 @@
-package org.saar.core.common.inference.weak;
+package org.saar.core.common.inference.weak
 
-import org.saar.core.mesh.DrawCallMesh;
-import org.saar.core.mesh.Mesh;
-import org.saar.lwjgl.opengl.attribute.AttributeComposite;
-import org.saar.lwjgl.opengl.attribute.Attributes;
-import org.saar.lwjgl.opengl.attribute.IAttribute;
-import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.drawcall.*;
-import org.saar.lwjgl.opengl.vao.Vao;
-import org.saar.lwjgl.opengl.vbo.Vbo;
-import org.saar.lwjgl.opengl.vbo.VboTarget;
-import org.saar.lwjgl.opengl.vbo.VboUsage;
-import org.saar.lwjgl.util.buffer.LwjglByteBuffer;
+import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.Mesh
+import org.saar.lwjgl.opengl.attribute.AttributeComposite
+import org.saar.lwjgl.opengl.attribute.Attributes.sumBytes
+import org.saar.lwjgl.opengl.attribute.IAttribute
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.constants.RenderMode
+import org.saar.lwjgl.opengl.drawcall.*
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.Vbo
+import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.lwjgl.opengl.vbo.VboUsage
+import org.saar.lwjgl.util.buffer.LwjglByteBuffer
 
-public class WeakMesh implements Mesh {
+class WeakMesh private constructor(private val mesh: Mesh) : Mesh {
 
-    private final Mesh mesh;
+    override fun draw() = this.mesh.draw()
 
-    private WeakMesh(Mesh mesh) {
-        this.mesh = mesh;
-    }
+    override fun delete() = this.mesh.delete()
 
-    public static WeakMesh load(WeakVertex[] vertices, int[] indices, WeakInstance[] instances) {
-        int vertexAttributes = 0;
+    companion object {
+        @JvmStatic
+        fun load(vertices: Array<WeakVertex>, indices: IntArray, instances: Array<WeakInstance>): WeakMesh {
+            var vertexAttributes = 0
 
-        final Vao vao = Vao.create();
+            val vao = Vao.create()
 
-        if (vertices.length > 0) {
-            final IAttribute[] attributes = vertices[0].getAttributes();
-            vertexAttributes = attributes.length;
-            loadVertices(vao, vertices, new AttributeComposite(attributes));
+            if (vertices.isNotEmpty()) {
+                val attributes = vertices[0].attributes
+                vertexAttributes = attributes.size
+                loadVertices(vao, vertices, AttributeComposite(attributes))
+            }
+
+            if (instances.isNotEmpty()) {
+                val attribute = instances[0].getAttribute(vertexAttributes)
+                loadInstances(vao, instances, attribute)
+            }
+
+            loadIndices(vao, indices)
+
+            val drawCall: DrawCall = InstancedElementsDrawCall(
+                RenderMode.TRIANGLES, indices.size, DataType.U_INT, instances.size
+            )
+            val mesh: Mesh = DrawCallMesh(vao, drawCall)
+            return WeakMesh(mesh)
         }
 
-        if (instances.length > 0) {
-            final IAttribute attribute = instances[0].getAttribute(vertexAttributes);
-            loadInstances(vao, instances, attribute);
+        @JvmStatic
+        fun load(vertices: Array<WeakVertex>, instances: Array<WeakInstance>): WeakMesh {
+            var vertexAttributes = 0
+
+            val vao = Vao.create()
+
+            if (vertices.isNotEmpty()) {
+                val attributes = vertices[0].attributes
+                vertexAttributes = attributes.size
+                loadVertices(vao, vertices, AttributeComposite(attributes))
+            }
+
+            if (instances.isNotEmpty()) {
+                val attribute = instances[0].getAttribute(vertexAttributes)
+                loadInstances(vao, instances, attribute)
+            }
+
+            val drawCall: DrawCall = InstancedArraysDrawCall(
+                RenderMode.TRIANGLES, vertices.size, instances.size
+            )
+            val mesh: Mesh = DrawCallMesh(vao, drawCall)
+            return WeakMesh(mesh)
         }
 
-        loadIndices(vao, indices);
+        @JvmStatic
+        fun load(vertices: Array<WeakVertex>, indices: IntArray): WeakMesh {
+            val vao = Vao.create()
 
-        final DrawCall drawCall = new InstancedElementsDrawCall(
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT, instances.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new WeakMesh(mesh);
-    }
+            if (vertices.isNotEmpty()) {
+                val attributes = vertices[0].attributes
+                loadVertices(vao, vertices, AttributeComposite(attributes))
+            }
 
-    public static WeakMesh load(WeakVertex[] vertices, WeakInstance[] instances) {
-        int vertexAttributes = 0;
+            loadIndices(vao, indices)
 
-        final Vao vao = Vao.create();
-
-        if (vertices.length > 0) {
-            final IAttribute[] attributes = vertices[0].getAttributes();
-            vertexAttributes = attributes.length;
-            loadVertices(vao, vertices, new AttributeComposite(attributes));
+            val drawCall = ElementsDrawCall(
+                RenderMode.TRIANGLES, indices.size, DataType.U_INT
+            )
+            val mesh: Mesh = DrawCallMesh(vao, drawCall)
+            return WeakMesh(mesh)
         }
 
-        if (instances.length > 0) {
-            final IAttribute attribute = instances[0].getAttribute(vertexAttributes);
-            loadInstances(vao, instances, attribute);
+        @JvmStatic
+        fun load(vertices: Array<WeakVertex>): WeakMesh {
+            val vao = Vao.create()
+
+            if (vertices.isNotEmpty()) {
+                val attributes = vertices[0].attributes
+                loadVertices(vao, vertices, AttributeComposite(attributes))
+            }
+
+            val drawCall = ArraysDrawCall(
+                RenderMode.TRIANGLES, vertices.size
+            )
+            val mesh: Mesh = DrawCallMesh(vao, drawCall)
+            return WeakMesh(mesh)
         }
 
-        final DrawCall drawCall = new InstancedArraysDrawCall(
-                RenderMode.TRIANGLES, vertices.length, instances.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new WeakMesh(mesh);
-    }
+        private fun loadIndices(vao: Vao, indices: IntArray) {
+            val vbo = Vbo.create(VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW)
 
-    public static WeakMesh load(WeakVertex[] vertices, int[] indices) {
-        final Vao vao = Vao.create();
+            val buffer = LwjglByteBuffer.allocate(
+                indices.size * DataType.INT.bytes
+            )
 
-        if (vertices.length > 0) {
-            final IAttribute[] attributes = vertices[0].getAttributes();
-            loadVertices(vao, vertices, new AttributeComposite(attributes));
+            for (index in indices) {
+                buffer.writer.writeInt(index)
+            }
+
+            vbo.allocate(buffer.flip().limit().toLong())
+            vbo.store(0, buffer.asByteBuffer())
+            vao.loadVbo(vbo)
+            vbo.delete()
         }
 
-        loadIndices(vao, indices);
+        private fun loadVertices(vao: Vao, vertices: Array<WeakVertex>, attribute: IAttribute) {
+            val vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW)
 
-        final ElementsDrawCall drawCall = new ElementsDrawCall(
-                RenderMode.TRIANGLES, indices.length, DataType.U_INT);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new WeakMesh(mesh);
-    }
+            val buffer = LwjglByteBuffer.allocate(
+                vertices.size * sumBytes(attribute)
+            )
 
-    public static WeakMesh load(WeakVertex[] vertices) {
-        final Vao vao = Vao.create();
+            for (vertex in vertices) {
+                vertex.write(buffer.writer)
+            }
 
-        if (vertices.length > 0) {
-            final IAttribute[] attributes = vertices[0].getAttributes();
-            loadVertices(vao, vertices, new AttributeComposite(attributes));
+            vbo.allocate(buffer.flip().limit().toLong())
+            vbo.store(0, buffer.asByteBuffer())
+            vao.loadVbo(vbo, attribute)
+            vbo.delete()
         }
 
-        final ArraysDrawCall drawCall = new ArraysDrawCall(
-                RenderMode.TRIANGLES, vertices.length);
-        final Mesh mesh = new DrawCallMesh(vao, drawCall);
-        return new WeakMesh(mesh);
-    }
+        private fun loadInstances(vao: Vao, instances: Array<WeakInstance>, attribute: IAttribute) {
+            val vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW)
 
-    private static void loadIndices(Vao vao, int[] indices) {
-        final Vbo vbo = Vbo.create(VboTarget.ELEMENT_ARRAY_BUFFER, VboUsage.STATIC_DRAW);
+            val buffer = LwjglByteBuffer.allocate(
+                instances.size * sumBytes(attribute)
+            )
 
-        final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
-                indices.length * DataType.INT.getBytes());
+            for (instance in instances) {
+                instance.write(buffer.writer)
+            }
 
-        for (int index : indices) {
-            buffer.getWriter().writeInt(index);
+            vbo.allocate(buffer.flip().limit().toLong())
+            vbo.store(0, buffer.asByteBuffer())
+            vao.loadVbo(vbo, attribute)
+            vbo.delete()
         }
-
-        vbo.allocate(buffer.flip().limit());
-        vbo.store(0, buffer.asByteBuffer());
-        vao.loadVbo(vbo);
-        vbo.delete();
-    }
-
-    private static void loadVertices(Vao vao, WeakVertex[] vertices, IAttribute attribute) {
-        final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-
-        final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
-                vertices.length * Attributes.sumBytes(attribute));
-
-        for (WeakVertex vertex : vertices) {
-            vertex.write(buffer.getWriter());
-        }
-
-        vbo.allocate(buffer.flip().limit());
-        vbo.store(0, buffer.asByteBuffer());
-        vao.loadVbo(vbo, attribute);
-        vbo.delete();
-    }
-
-    private static void loadInstances(Vao vao, WeakInstance[] instances, IAttribute attribute) {
-        final Vbo vbo = Vbo.create(VboTarget.ARRAY_BUFFER, VboUsage.STATIC_DRAW);
-
-        final LwjglByteBuffer buffer = LwjglByteBuffer.allocate(
-                instances.length * Attributes.sumBytes(attribute));
-
-        for (WeakInstance instance : instances) {
-            instance.write(buffer.getWriter());
-        }
-
-        vbo.allocate(buffer.flip().limit());
-        vbo.store(0, buffer.asByteBuffer());
-        vao.loadVbo(vbo, attribute);
-        vbo.delete();
-    }
-
-    @Override
-    public void draw() {
-        this.mesh.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.mesh.delete();
     }
 }

@@ -1,36 +1,25 @@
-package org.saar.core.common.inference.weak;
+package org.saar.core.common.inference.weak
 
-import org.saar.core.mesh.Vertex;
-import org.saar.lwjgl.opengl.attribute.IAttribute;
-import org.saar.lwjgl.opengl.primitive.GlPrimitive;
-import org.saar.lwjgl.util.DataWriter;
+import org.saar.core.mesh.Vertex
+import org.saar.lwjgl.opengl.primitive.GlPrimitive
+import org.saar.lwjgl.util.DataWriter
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+class WeakVertex(private val primitives: Iterable<GlPrimitive>) : Vertex {
 
-public class WeakVertex implements Vertex {
+    fun write(writer: DataWriter) = this.primitives.forEach { it.write(writer) }
 
-    private final List<GlPrimitive> primitives = new ArrayList<>();
-
-    public WeakVertex with(GlPrimitive primitive) {
-        this.primitives.add(primitive);
-        return this;
+    val attributes = this.primitives.flatMapIndexed { index, primitive ->
+        primitive.attribute(index, false, 0).asIterable()
     }
 
-    public void write(DataWriter writer) {
-        for (GlPrimitive primitive : this.primitives) {
-            primitive.write(writer);
-        }
-    }
+    class Builder {
+        private val primitives = mutableListOf<GlPrimitive>()
 
-    public IAttribute[] getAttributes() {
-        int index = 0;
-        final List<IAttribute> attributes = new ArrayList<>();
-        for (GlPrimitive primitive : this.primitives) {
-            Collections.addAll(attributes, primitive
-                    .attribute(index++, false, 0));
+        fun with(primitive: GlPrimitive): Builder {
+            this.primitives.add(primitive)
+            return this
         }
-        return attributes.toArray(new IAttribute[0]);
+
+        fun build() = WeakVertex(this.primitives)
     }
 }

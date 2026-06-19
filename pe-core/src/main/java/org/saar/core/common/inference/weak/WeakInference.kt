@@ -6,20 +6,11 @@ object WeakInference {
 
     @JvmStatic
     fun instance(vararg primitives: GlPrimitive): WeakInstance {
-        val instance = WeakInstance()
-        for (primitive in primitives) {
-            instance.with(primitive)
-        }
-        return instance
+        return primitives.fold(WeakInstance.Builder()) { builder, primitive -> builder.with(primitive) }.build()
     }
 
     @JvmStatic
     fun vertex(vararg primitives: GlPrimitive): WeakVertex {
-        val instance = WeakVertex()
-        for (primitive in primitives) {
-            instance.with(primitive)
-        }
-        return instance
+        return primitives.fold(WeakVertex.Builder()) { builder, primitive -> builder.with(primitive) }.build()
     }
-
 }
