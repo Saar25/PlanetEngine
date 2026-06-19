@@ -1,8 +1,10 @@
 package org.saar.core.common.obj
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.deferred.DeferredRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
@@ -22,55 +24,68 @@ import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 
-object ObjDeferredRenderer : RendererPrototypeWrapper<ObjModel>(ObjDeferredRendererPrototype())
+object ObjDeferredRenderer : Renderer<DeferredRenderContext, ObjModel> {
 
-private class ObjDeferredRendererPrototype : RendererPrototype<ObjModel> {
+    private val shadersLink = ObjDeferredRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    @UniformProperty
-    private val viewProjectionUniform = Mat4UniformValue("u_viewProjectionMatrix")
-
-    @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
-
-    @UniformProperty
-    private val transformUniform = Mat4UniformValue("u_transformationMatrix")
-
-    @UniformProperty
-    private val specularUniform = object : FloatUniform() {
-        override val name = "u_specular"
-
-        override val value = 2.5f
+    init {
+        this.shadersLink.init()
     }
 
-    @UniformProperty
-    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+    override fun render(context: DeferredRenderContext, models: Iterable<ObjModel>) {
+        this.shadersLink.shadersProgram.bind()
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
-    )
-
-    override fun vertexAttributes() = arrayOf("in_position", "in_uvCoord", "in_normal")
-
-    override fun fragmentOutputs() = arrayOf("f_colour", "f_normal")
-
-    override fun onRenderCycle(context: RenderContext) {
         StencilTest.apply(StencilState.ALWAYS_WRITE)
         DepthTest.apply(DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE))
         BlendTest.disable()
         CullFace.enable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
-    }
+        this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
-    override fun onInstanceDraw(context: RenderContext, model: ObjModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
+        this.shadersLink.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
 
-        this.transformUniform.value.set(model.transform.transformationMatrix)
-        this.textureUniform.value = model.texture
+        models.forEach { model ->
+            this.shadersLink.transformUniform.value.set(model.transform.transformationMatrix)
+            this.shadersLink.textureUniform.value = model.texture
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
     }
 
-    override fun doInstanceDraw(context: RenderContext, model: ObjModel) = model.draw()
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    private object ObjDeferredRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val viewProjectionUniform = Mat4UniformValue("u_viewProjectionMatrix")
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val transformUniform = Mat4UniformValue("u_transformationMatrix")
+
+        @UniformProperty
+        val specularUniform = object : FloatUniform() {
+            override val name = "u_specular"
+            override val value = 2.5f
+        }
+
+        @UniformProperty
+        val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
+        override val vertexAttributes = arrayOf("in_position", "in_uvCoord", "in_normal")
+
+        override val fragmentOutputs = arrayOf("f_colour", "f_normal")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.dfragment.glsl"))
+        )
+    }
 }

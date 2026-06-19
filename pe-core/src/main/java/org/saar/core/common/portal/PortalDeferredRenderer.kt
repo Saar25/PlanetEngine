@@ -1,8 +1,10 @@
 package org.saar.core.common.portal
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.deferred.DeferredRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
@@ -16,44 +18,60 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
 
-object PortalDeferredRenderer : RendererPrototypeWrapper<PortalModel>(PortalDeferredRendererPrototype())
+object PortalDeferredRenderer : Renderer<DeferredRenderContext, PortalModel> {
 
-private class PortalDeferredRendererPrototype : RendererPrototype<PortalModel> {
+    private val shadersLink = PortalDeferredRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    @UniformProperty
-    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+    init {
+        this.shadersLink.init()
+    }
 
-    @UniformProperty
-    private val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+    override fun render(context: DeferredRenderContext, models: Iterable<PortalModel>) {
+        this.shadersLink.shadersProgram.bind()
 
-    @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/portal/portal.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/portal/portal.dfragment.glsl"))
-    )
-
-    override fun vertexAttributes() = arrayOf("in_position")
-
-    override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst()
         BlendTest.disable()
         DepthTest.enable()
         CullFace.disable()
 
-        this.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
-    }
+        this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
-    override fun onInstanceDraw(context: RenderContext, model: PortalModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = model.transform.transformationMatrix
+        val vp = p.mul(v, Matrix4.create())
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
+        models.forEach { model ->
+            val m = model.transform.transformationMatrix
 
-        this.textureUniform.value = model.viewTexture
+            this.shadersLink.mvpMatrixUniform.value = vp.mul(m, Matrix4.temp)
+
+            this.shadersLink.textureUniform.value = model.viewTexture
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
     }
 
-    override fun doInstanceDraw(context: RenderContext, model: PortalModel) = model.draw()
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    private object PortalDeferredRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+        @UniformProperty
+        val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        override val vertexAttributes = arrayOf("in_position")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/portal/portal.vertex.glsl")),
+            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/portal/portal.dfragment.glsl"))
+        )
+    }
 }

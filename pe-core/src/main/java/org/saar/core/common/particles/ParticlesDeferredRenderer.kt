@@ -1,8 +1,10 @@
 package org.saar.core.common.particles
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.deferred.DeferredRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
@@ -23,62 +25,81 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 
-object ParticlesDeferredRenderer : RendererPrototypeWrapper<ParticlesModel>(ParticlesDeferredRendererPrototype())
+object ParticlesDeferredRenderer : Renderer<DeferredRenderContext, ParticlesModel> {
 
-private class ParticlesDeferredRendererPrototype : RendererPrototype<ParticlesModel> {
+    private val shadersLink = ParticlesDeferredRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    @UniformProperty
-    private val viewMatrixTUniform = Mat4UniformValue("u_viewMatrixT")
+    val depthState = DepthState(DepthFunction(Comparator.LESS), DepthMask.READ)
 
-    @UniformProperty
-    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
-
-    @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
-
-    @UniformProperty
-    private val textureAtlasSizeUniform = IntUniformValue("u_textureAtlasSize")
-
-    @UniformProperty
-    private val maxAgeUniform = IntUniformValue("u_maxAge")
-
-    @UniformProperty
-    private val currentTimeUniform = object : IntUniform() {
-        override val name = "u_currentTime"
-
-        override val value: Int get() = System.currentTimeMillis().toInt()
+    init {
+        this.shadersLink.init()
     }
 
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/particles/particles.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/particles/particles.dfragment.glsl"))
-    )
+    override fun render(context: DeferredRenderContext, models: Iterable<ParticlesModel>) {
+        this.shadersLink.shadersProgram.bind()
 
-    private val depthState = DepthState(DepthFunction(Comparator.LESS), DepthMask.READ)
-
-    override fun vertexAttributes() = arrayOf("in_position", "in_age")
-
-    override fun onRenderCycle(context: RenderContext) {
         ProvokingVertex.setFirst();
         CullFace.disable()
         BlendTest.applyAlpha()
         DepthTest.apply(this.depthState)
         StencilTest.disable()
-    }
 
-    override fun onInstanceDraw(context: RenderContext, model: ParticlesModel) {
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix
-        val m = model.transform.transformationMatrix
+        val vp = p.mul(v, Matrix4.create())
+        this.shadersLink.viewMatrixTUniform.value = v.transpose(Matrix4.temp).m03(0f).m13(0f).m23(0f)
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
-        this.viewMatrixTUniform.value = v.transpose(Matrix4.temp).m03(0f).m13(0f).m23(0f)
+        models.forEach { model ->
+            val m = model.transform.transformationMatrix
 
-        this.textureUniform.value = model.texture
-        this.textureAtlasSizeUniform.value = model.textureAtlasSize
+            this.shadersLink.mvpMatrixUniform.value = vp.mul(m, Matrix4.temp)
 
-        this.maxAgeUniform.value = model.maxAge
+            this.shadersLink.textureUniform.value = model.texture
+            this.shadersLink.textureAtlasSizeUniform.value = model.textureAtlasSize
+
+            this.shadersLink.maxAgeUniform.value = model.maxAge
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
     }
 
-    override fun doInstanceDraw(context: RenderContext, model: ParticlesModel) = model.draw()
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    private object ParticlesDeferredRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val viewMatrixTUniform = Mat4UniformValue("u_viewMatrixT")
+
+        @UniformProperty
+        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val textureAtlasSizeUniform = IntUniformValue("u_textureAtlasSize")
+
+        @UniformProperty
+        val maxAgeUniform = IntUniformValue("u_maxAge")
+
+        @UniformProperty
+        val currentTimeUniform = object : IntUniform() {
+            override val name = "u_currentTime"
+
+            override val value: Int get() = System.currentTimeMillis().toInt()
+        }
+
+        override val vertexAttributes = arrayOf("in_position", "in_age")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/particles/particles.vertex.glsl")),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/particles/particles.dfragment.glsl")
+            )
+        )
+    }
 }

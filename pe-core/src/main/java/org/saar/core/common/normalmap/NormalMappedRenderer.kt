@@ -1,8 +1,10 @@
 package org.saar.core.common.normalmap
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.forward.ForwardRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -14,45 +16,60 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
 
-object NormalMappedRenderer : RendererPrototypeWrapper<NormalMappedModel>(NormalMappedRendererPrototype())
+object NormalMappedRenderer : Renderer<ForwardRenderContext, NormalMappedModel> {
 
-private class NormalMappedRendererPrototype : RendererPrototype<NormalMappedModel> {
+    private val shadersLink = NormalMappedRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    @UniformProperty
-    private val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
+    init {
+        this.shadersLink.init()
+    }
 
-    @UniformProperty
-    private val transformationUniform = Mat4UniformValue("u_transformation")
+    override fun render(context: ForwardRenderContext, models: Iterable<NormalMappedModel>) {
+        this.shadersLink.shadersProgram.bind()
 
-    @UniformProperty
-    private val textureUniform = TextureUniformValue("u_texture", 0)
-
-    @UniformProperty
-    private val normalMapUniform = TextureUniformValue("u_normalMap", 1)
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/normal-map/normal-map.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/normal-map/normal-map.fragment.glsl"))
-    )
-
-    override fun vertexAttributes() = arrayOf(
-        "in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent"
-    )
-
-    override fun onRenderCycle(context: RenderContext) {
         BlendTest.disable()
         DepthTest.enable()
+
+        models.forEach { model ->
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            this.shadersLink.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
+
+            this.shadersLink.transformationUniform.value.set(model.transform.transformationMatrix)
+            this.shadersLink.textureUniform.value = model.texture
+            this.shadersLink.normalMapUniform.value = model.normalMap
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
     }
 
-    override fun onInstanceDraw(context: RenderContext, model: NormalMappedModel) {
-        val v = context.camera.viewMatrix
-        val p = context.camera.projection.matrix
-        this.viewProjectionUniform.value = p.mul(v, Matrix4.temp)
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-        this.transformationUniform.value.set(model.transform.transformationMatrix)
-        this.textureUniform.value = model.texture
-        this.normalMapUniform.value = model.normalMap
+    private object NormalMappedRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val viewProjectionUniform = Mat4UniformValue("u_viewProjection")
+
+        @UniformProperty
+        val transformationUniform = Mat4UniformValue("u_transformation")
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val normalMapUniform = TextureUniformValue("u_normalMap", 1)
+
+        override val vertexAttributes = arrayOf("in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/normal-map/normal-map.vertex.glsl")),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/normal-map/normal-map.fragment.glsl")
+            )
+        )
     }
-
-    override fun doInstanceDraw(context: RenderContext, model: NormalMappedModel) = model.draw()
 }
