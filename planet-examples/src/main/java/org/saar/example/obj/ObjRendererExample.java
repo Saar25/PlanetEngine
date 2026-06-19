@@ -11,6 +11,7 @@ import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
@@ -71,7 +72,7 @@ public class ObjRendererExample {
 
             camera.update();
 
-            renderer.render(new RenderContext(camera), cottageModel);
+            renderer.render(new ForwardRenderContext(new RenderContext(), camera), cottageModel);
 
             fbo.blitToScreen();
 

@@ -11,6 +11,7 @@ import org.saar.core.mesh.buffer.DataMeshBufferBuilder;
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -52,7 +53,7 @@ public class Renderer3DExample {
 
             camera.update();
 
-            renderer.render(new RenderContext(camera), models);
+            renderer.render(new ForwardRenderContext(new RenderContext(), camera), models);
 
             window.swapBuffers();
             window.pollEvents();

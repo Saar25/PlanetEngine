@@ -1,5 +1,6 @@
 package org.saar.core.common.renderpass
 
+import org.saar.core.camera.ICamera
 import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.light.PointLight
@@ -29,8 +30,9 @@ class LightRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
+    private val camera: ICamera,
     private val pointLights: Array<PointLight> = emptyArray(),
-    private val directionalLights: Array<DirectionalLight> = emptyArray()
+    private val directionalLights: Array<DirectionalLight> = emptyArray(),
 ) : RenderPass {
 
     private val shadersLink = LightShadersLink(this.pointLights.size, this.directionalLights.size)
@@ -50,9 +52,9 @@ class LightRenderPass(
         this.shadersLink.depthTextureUniform.value = this.depthBuffer
 
         this.shadersLink.projectionMatrixInvUniform.value =
-            context.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
+            this.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
 
-        val viewInvT = context.camera.viewMatrix.invert(Matrix4.create()).transpose()
+        val viewInvT = this.camera.viewMatrix.invert(Matrix4.create()).transpose()
 
         this.shadersLink.directionalLightsCountUniform.value = this.directionalLights.size
         this.directionalLights.forEachIndexed { index, light ->
@@ -63,7 +65,7 @@ class LightRenderPass(
 
         this.shadersLink.pointLightsCountUniform.value = this.pointLights.size
         this.pointLights.forEachIndexed { index, light ->
-            val vs = Vector4.of(light.position, 1f).mul(context.camera.viewMatrix).let { it.div(it.w()) }
+            val vs = Vector4.of(light.position, 1f).mul(this.camera.viewMatrix).let { it.div(it.w()) }
             this.shadersLink.pointLightsUniform.value[index].positionUniform.value.set(vs.x(), vs.y(), vs.z())
             this.shadersLink.pointLightsUniform.value[index].attenuationUniform.value.set(light.attenuation.vector3f)
             this.shadersLink.pointLightsUniform.value[index].colourUniform.value.set(light.colour)

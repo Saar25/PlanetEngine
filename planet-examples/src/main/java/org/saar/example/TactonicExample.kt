@@ -131,6 +131,7 @@ fun main() {
             albedoBuffer = prototype.albedoTexture,
             normalSpecularBuffer = prototype.normalSpecularTexture,
             depthBuffer = prototype.depthTexture,
+            camera = camera,
             directionalLights = arrayOf(light)
         ).onto(MainScreen)
     )

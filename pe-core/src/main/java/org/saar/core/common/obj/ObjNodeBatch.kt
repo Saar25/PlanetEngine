@@ -29,7 +29,8 @@ class ObjNodeBatch(vararg nodes: ObjNode) : ParentNode,
 
     override fun renderShadows(context: ShadowsRenderContext) {
         val models = this.children.map { it.model }
-        ObjDeferredRenderer.render(context, models)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        ObjDeferredRenderer.render(deferredRenderContext, models)
     }
 
     override fun delete() {

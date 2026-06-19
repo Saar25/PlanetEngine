@@ -148,6 +148,7 @@ fun main() {
             albedoBuffer = screenPrototype1.albedoTexture,
             normalSpecularBuffer = screenPrototype1.normalSpecularTexture,
             depthBuffer = depthTexture,
+            camera = camera,
             pointLights = lights,
             directionalLights = arrayOf(
                 DirectionalLight().also {

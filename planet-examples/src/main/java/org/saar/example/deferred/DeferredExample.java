@@ -70,6 +70,7 @@ public class DeferredExample {
                         prototype.getAlbedoTexture(),
                         prototype.getNormalSpecularTexture(),
                         prototype.getDepthTexture(),
+                        camera,
                         new PointLight[0],
                         new DirectionalLight[]{light}
                 ), MainScreen.INSTANCE));

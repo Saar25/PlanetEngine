@@ -29,7 +29,8 @@ open class Texture3DNode(val model: Texture3DModel, components: NodeComponentGro
     }
 
     final override fun renderShadows(context: ShadowsRenderContext) {
-        Texture3DDeferredRenderer.render(context, this.model)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        Texture3DDeferredRenderer.render(deferredRenderContext, this.model)
     }
 
     final override fun update() {

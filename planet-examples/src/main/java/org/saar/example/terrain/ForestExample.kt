@@ -178,6 +178,7 @@ fun main() {
         FogRenderPass(
             prototype5.albedoTexture,
             depthTexture,
+            camera,
             fog,
             FogDistance.XZ
         ).onto(screen1),

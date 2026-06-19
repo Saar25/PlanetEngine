@@ -29,7 +29,8 @@ class NormalMappedNodeBatch(vararg nodes: NormalMappedNode) : ParentNode,
 
     override fun renderShadows(context: ShadowsRenderContext) {
         val models = this.children.map { it.model }
-        NormalMappedDeferredRenderer.render(context, models)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        NormalMappedDeferredRenderer.render(deferredRenderContext, models)
     }
 
     override fun delete() {

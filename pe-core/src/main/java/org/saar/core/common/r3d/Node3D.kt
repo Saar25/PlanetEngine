@@ -29,7 +29,8 @@ open class Node3D(val model: Model3D, components: NodeComponentGroup) :
     }
 
     final override fun renderShadows(context: ShadowsRenderContext) {
-        DeferredRenderer3D.render(context, this.model)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        DeferredRenderer3D.render(deferredRenderContext, this.model)
     }
 
     final override fun update() {

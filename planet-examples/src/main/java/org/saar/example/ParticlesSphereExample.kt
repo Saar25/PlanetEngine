@@ -16,6 +16,7 @@ import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.forward.asForwardRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -61,7 +62,7 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        particles.onto(screen),
+        particles.asForwardRenderPass().onto(screen),
         FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
 

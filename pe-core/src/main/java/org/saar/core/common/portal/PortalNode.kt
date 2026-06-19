@@ -29,7 +29,8 @@ open class PortalNode(val model: PortalModel, components: NodeComponentGroup) :
     }
 
     final override fun renderShadows(context: ShadowsRenderContext) {
-        PortalDeferredRenderer.render(context, this.model)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        PortalDeferredRenderer.render(deferredRenderContext, this.model)
     }
 
     final override fun update() {

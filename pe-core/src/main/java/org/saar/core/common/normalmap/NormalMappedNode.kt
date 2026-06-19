@@ -20,7 +20,8 @@ class NormalMappedNode(val model: NormalMappedModel) : Node,
     }
 
     override fun renderShadows(context: ShadowsRenderContext) {
-        NormalMappedDeferredRenderer.render(context, this.model)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        NormalMappedDeferredRenderer.render(deferredRenderContext, this.model)
     }
 
     override fun delete() {

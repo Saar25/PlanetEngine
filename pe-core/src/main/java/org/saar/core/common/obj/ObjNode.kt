@@ -19,7 +19,8 @@ class ObjNode(val model: ObjModel) : Node, ForwardRenderNode, DeferredRenderNode
     }
 
     override fun renderShadows(context: ShadowsRenderContext) {
-        ObjDeferredRenderer.render(context, this.model)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        ObjDeferredRenderer.render(deferredRenderContext, this.model)
     }
 
     override fun delete() {

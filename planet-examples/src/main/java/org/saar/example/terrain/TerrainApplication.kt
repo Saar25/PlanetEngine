@@ -211,6 +211,7 @@ private class TerrainApplication : Application {
                 albedoBuffer = screenAAlbedo,
                 normalSpecularBuffer = screenANormalSpecular,
                 depthBuffer = depthTexture,
+                camera = camera,
                 directionalLights = arrayOf(light),
             ).onto(screenB),
             /*
@@ -221,6 +222,7 @@ private class TerrainApplication : Application {
             FogRenderPass(
                 albedoBuffer = screenBAlbedo,
                 depthBuffer = depthTexture,
+                camera,
                 fog,
                 FogDistance.XZ
             ).onto(screenA),

@@ -12,6 +12,7 @@ import org.saar.core.common.r3d.Renderer3D;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -57,7 +58,7 @@ public class ManyCubesExample {
                 for (int j = 0; j < COLS; j++) {
                     model.getTransform().getPosition().set(
                             i * size - size / 2f, 0, j * size - size / 2f);
-                    renderer.render(new RenderContext(camera), model);
+                    renderer.render(new ForwardRenderContext(new RenderContext(), camera), model);
                 }
             }
 

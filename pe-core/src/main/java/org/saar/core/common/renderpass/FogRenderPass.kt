@@ -1,14 +1,11 @@
 package org.saar.core.common.renderpass
 
+import org.saar.core.camera.ICamera
 import org.saar.core.fog.FogDistance
 import org.saar.core.fog.FogUniformValue
 import org.saar.core.fog.IFog
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPass
-import org.saar.core.renderer.Renderers
-import org.saar.core.renderer.ShadersLink
-import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.*
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.DepthTestRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
@@ -29,6 +26,7 @@ import org.saar.maths.utils.Matrix4
 class FogRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
+    private val camera: ICamera,
     private val fog: IFog,
     private val fogDistance: FogDistance
 ) : RenderPass {
@@ -50,10 +48,10 @@ class FogRenderPass(
         this.shadersLink.fogUniform.startUniform.value = this.fog.start
         this.shadersLink.fogUniform.endUniform.value = this.fog.end
 
-        this.shadersLink.projectionMatrixInvUniform.value = context.camera
-            .projection.matrix.invertPerspective(Matrix4.temp)
+        this.shadersLink.projectionMatrixInvUniform.value =
+            this.camera.projection.matrix.invertPerspective(Matrix4.temp)
 
-        this.shadersLink.cameraPositionUniform.value.set(context.camera.transform.position.value)
+        this.shadersLink.cameraPositionUniform.value.set(this.camera.transform.position.value)
         this.uniformsLoader.load()
         QuadMesh.draw()
     }

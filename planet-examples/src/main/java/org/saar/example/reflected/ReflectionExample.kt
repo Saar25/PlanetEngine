@@ -147,6 +147,7 @@ fun main() {
             albedoBuffer = reflectionPrototype1.albedoTexture,
             normalSpecularBuffer = reflectionPrototype1.normalSpecularTexture,
             depthBuffer = reflectionPrototype1.depthTexture,
+            camera = camera,
             directionalLights = arrayOf(light)
         ).onto(reflectionScreen2)
     )

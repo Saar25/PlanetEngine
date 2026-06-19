@@ -29,7 +29,8 @@ class ParticlesNodeBatch(vararg nodes: ParticlesNode) : ParentNode,
 
     override fun renderShadows(context: ShadowsRenderContext) {
         val models = this.children.map { it.model }
-        ParticlesDeferredRenderer.render(context, models)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        ParticlesDeferredRenderer.render(deferredRenderContext, models)
     }
 
     override fun delete() {

@@ -29,7 +29,8 @@ class Texture3DNodeBatch(vararg nodes: Texture3DNode) : ParentNode,
 
     override fun renderShadows(context: ShadowsRenderContext) {
         val models = this.children.map { it.model }
-        Texture3DDeferredRenderer.render(context, models)
+        val deferredRenderContext = DeferredRenderContext(context, context.camera)
+        Texture3DDeferredRenderer.render(deferredRenderContext, models)
     }
 
     override fun delete() {
