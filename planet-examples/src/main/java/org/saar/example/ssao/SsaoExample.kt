@@ -1,6 +1,7 @@
 package org.saar.example.ssao
 
 import org.saar.core.camera.Camera
+import org.saar.core.camera.ICamera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.projection.ScreenPerspectiveProjection
 import org.saar.core.common.components.SmoothMouseRotationComponent
@@ -51,7 +52,7 @@ fun main() {
 
     val camera = buildCamera(window.mouse)
 
-    val geometryPass = buildGeometryPass()
+    val geometryPass = buildGeometryPass(camera)
 
     val light = DirectionalLight()
     light.direction.set(-50f, -50f, -50f)
@@ -70,6 +71,7 @@ fun main() {
         SSAOMapGenerator(
             normalSpecularBuffer = prototype1.normalSpecularTexture,
             depthBuffer = prototype1.depthTexture,
+            camera = camera,
             radius = 10f
         ).onto(screen2),
         MultiplyPostProcessor(prototype1.albedoTexture, prototype2.albedoTexture).onto(screen3),
@@ -96,7 +98,7 @@ fun main() {
         screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        ref.value.render(RenderContext(camera))
+        ref.value.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()
@@ -126,10 +128,10 @@ private fun buildCamera(mouse: Mouse): Camera {
     return camera
 }
 
-private fun buildGeometryPass(): RenderPass {
+private fun buildGeometryPass(camera: ICamera): RenderPass {
     val nodeBatch3D = buildNodeBatch3D()
     val objNodeBatch = buildObjNodeBatch()
-    return DeferredNodeRenderPass(nodeBatch3D, objNodeBatch)
+    return DeferredNodeRenderPass(camera, nodeBatch3D, objNodeBatch)
 }
 
 private fun buildObjNodeBatch(): ObjNodeBatch {

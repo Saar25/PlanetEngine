@@ -62,7 +62,7 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        particles.asForwardRenderPass().onto(screen),
+        particles.asForwardRenderPass(camera).onto(screen),
         FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
 
@@ -71,7 +71,7 @@ fun main() {
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderGraph.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         particles.update()
         camera.update()

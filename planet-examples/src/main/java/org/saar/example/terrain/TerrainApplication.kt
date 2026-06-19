@@ -136,7 +136,7 @@ private class TerrainApplication : Application {
         this.screenA.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         this.screenB.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        this.renderGraph.render(RenderContext(camera))
+        this.renderGraph.render(RenderContext())
     }
 
     override fun close(window: Window) {
@@ -205,7 +205,7 @@ private class TerrainApplication : Application {
 
         return RenderGraph(
             renderNode
-                .asDeferredRenderPass()
+                .asDeferredRenderPass(camera)
                 .onto(screenA),
             LightRenderPass(
                 albedoBuffer = screenAAlbedo,
@@ -226,7 +226,7 @@ private class TerrainApplication : Application {
                 fog,
                 FogDistance.XZ
             ).onto(screenA),
-            SkyboxPostProcessor(cubeMap)
+            SkyboxPostProcessor(cubeMap, camera)
                 .onto(screenA),
             FxaaPostProcessor(screenAAlbedo)
                 .onto(MainScreen),

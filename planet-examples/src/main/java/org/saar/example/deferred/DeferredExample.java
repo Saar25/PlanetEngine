@@ -65,7 +65,7 @@ public class DeferredExample {
         final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(new DeferredNodeRenderPass(renderNode), screen),
+                new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
                 new RenderGraphNode(new LightRenderPass(
                         prototype.getAlbedoTexture(),
                         prototype.getNormalSpecularTexture(),
@@ -81,7 +81,7 @@ public class DeferredExample {
 
             ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            renderGraph.render(new RenderContext(camera));
+            renderGraph.render(new RenderContext());
 
             window.swapBuffers();
             window.pollEvents();

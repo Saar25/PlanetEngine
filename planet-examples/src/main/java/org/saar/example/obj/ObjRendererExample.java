@@ -10,7 +10,6 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
@@ -42,12 +41,12 @@ public class ObjRendererExample {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
         colorAttachment = new Attachment(
-            new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
-            SimpleAllocationStrategy.INSTANCE);
+                new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
+                SimpleAllocationStrategy.INSTANCE);
 
         depthAttachment = new Attachment(
-            new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
-            SimpleAllocationStrategy.INSTANCE);
+                new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
+                SimpleAllocationStrategy.INSTANCE);
 
         final Keyboard keyboard = window.getKeyboard();
 
@@ -72,7 +71,7 @@ public class ObjRendererExample {
 
             camera.update();
 
-            renderer.render(new ForwardRenderContext(new RenderContext(), camera), cottageModel);
+            renderer.render(new ForwardRenderContext(camera), cottageModel);
 
             fbo.blitToScreen();
 
@@ -80,7 +79,7 @@ public class ObjRendererExample {
             window.pollEvents();
 
             System.out.print("\rFps: " +
-                             1000f / (-current + (current = System.currentTimeMillis()))
+                    1000f / (-current + (current = System.currentTimeMillis()))
             );
         }
 
@@ -95,8 +94,8 @@ public class ObjRendererExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final NodeComponentGroup components = new NodeComponentGroup(
-            new KeyboardMovementComponent(keyboard, 20f, 20f, 20f),
-            new KeyboardRotationComponent(keyboard, 50f));
+                new KeyboardMovementComponent(keyboard, 20f, 20f, 20f),
+                new KeyboardRotationComponent(keyboard, 50f));
 
         final Camera camera = new Camera(projection, components);
 

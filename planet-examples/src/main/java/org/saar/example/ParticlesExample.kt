@@ -92,7 +92,7 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        particles.asForwardRenderPass().onto(screen),
+        particles.asForwardRenderPass(camera).onto(screen),
         uiDisplay.onto(screen),
         FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
@@ -105,7 +105,7 @@ fun main() {
         val time = measureTimeMillis {
             screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
             MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-            renderGraph.render(RenderContext(camera))
+            renderGraph.render(RenderContext())
 
             particles.update()
             uiDisplay.update()

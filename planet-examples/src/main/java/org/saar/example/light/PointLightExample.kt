@@ -143,7 +143,7 @@ fun main() {
     val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val renderGraph = RenderGraph(
-        DeferredNodeRenderPass(world, cube).onto(screen1),
+        DeferredNodeRenderPass(camera, world, cube).onto(screen1),
         LightRenderPass(
             albedoBuffer = screenPrototype1.albedoTexture,
             normalSpecularBuffer = screenPrototype1.normalSpecularTexture,
@@ -157,7 +157,7 @@ fun main() {
                 }
             )
         ).onto(screen2),
-        SkyboxPostProcessor(cubeMap).onto(screen2),
+        SkyboxPostProcessor(cubeMap, camera).onto(screen2),
         uiDisplay.onto(screen2),
         FxaaPostProcessor(screenPrototype2.albedoTexture).onto(MainScreen)
     )
@@ -174,7 +174,7 @@ fun main() {
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.assureSize(MainScreen.width, MainScreen.height)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderGraph.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

@@ -94,7 +94,7 @@ fun main() {
     val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
 
     val portalRenderGraph1 = RenderGraph(
-        DeferredNodeRenderPass(world, cube).onto(screen1b),
+        DeferredNodeRenderPass(camera, world, cube).onto(screen1b),
         /*LightRenderPass(
             albedoBuffer = prototype1a.albedoTexture,
             normalSpecularBuffer = prototype1a.normalSpecularTexture,
@@ -116,7 +116,7 @@ fun main() {
 
     // TODO: fix lights
     val portalRenderGraph2 = RenderGraph(
-        DeferredNodeRenderPass(world, cube).onto(screen2b),
+        DeferredNodeRenderPass(camera, world, cube).onto(screen2b),
         /*LightRenderPass(
             albedoBuffer = prototype2a.albedoTexture,
             normalSpecularBuffer = prototype2a.normalSpecularTexture,
@@ -133,7 +133,7 @@ fun main() {
 
     val renderGraph = RenderGraph(
         DeferredRenderNodeGroup(portal1, portal2, world, cube)
-            .asDeferredRenderPass()
+            .asDeferredRenderPass(camera)
             .onto(MainScreen),
         /*LightRenderPass(
             albedoBuffer = prototype.albedoTexture,
@@ -154,10 +154,10 @@ fun main() {
         screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        portalRenderGraph1.render(RenderContext(portalCamera1))
-        portalRenderGraph2.render(RenderContext(portalCamera2))
+        portalRenderGraph1.render(RenderContext())
+        portalRenderGraph2.render(RenderContext())
 
-        renderGraph.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

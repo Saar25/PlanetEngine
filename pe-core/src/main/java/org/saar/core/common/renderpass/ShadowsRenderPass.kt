@@ -23,7 +23,8 @@ class ShadowsRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
-    private val shadowCamera: ICamera,
+    private val shadowsCamera: ICamera,
+    private val camera: ICamera,
     private val shadowMap: ReadOnlyTexture2D,
     private val light: DirectionalLight
 ) : RenderPass {
@@ -34,13 +35,13 @@ class ShadowsRenderPass(
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()
         this.shadersLink.shadowMatrixUniform.value =
-            this.shadowCamera.projection.matrix.mul(
-                this.shadowCamera.viewMatrix, Matrix4.temp
+            this.shadowsCamera.projection.matrix.mul(
+                this.shadowsCamera.viewMatrix, Matrix4.temp
             )
         this.shadersLink.projectionMatrixInvUniform.value =
-            context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+            this.camera.projection.matrix.invertPerspective(Matrix4.temp)
 
-        val viewInv = context.camera.viewMatrix.invert(Matrix4.create())
+        val viewInv = this.camera.viewMatrix.invert(Matrix4.create())
         this.shadersLink.viewMatrixInvUniform.value = viewInv
 
         this.shadersLink.pcfRadiusUniform.value = 2

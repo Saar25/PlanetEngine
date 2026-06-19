@@ -1,6 +1,7 @@
 package org.saar.core.common.renderpass
 
 import org.joml.Math
+import org.saar.core.camera.ICamera
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.state.StencilTestRenderState
@@ -31,6 +32,7 @@ import kotlin.random.Random
 class SSAOMapGenerator @JvmOverloads constructor(
     private val normalSpecularBuffer: ReadOnlyTexture2D,
     private val depthBuffer: ReadOnlyTexture2D,
+    private val camera: ICamera,
     private val radius: Float = 5f,
     private val noiseTextureSize: Int = 64,
     private val kernelSamplesSize: Int = 32
@@ -89,9 +91,9 @@ class SSAOMapGenerator @JvmOverloads constructor(
         ).div(this.noiseTextureSize.toFloat())
 
         this.shadersLink.projectionMatrixInvUniform.value =
-            context.camera.projection.matrix.invertPerspective(Matrix4.temp)
+            this.camera.projection.matrix.invertPerspective(Matrix4.temp)
 
-        this.shadersLink.projectionMatrixUniform.value.set(context.camera.projection.matrix)
+        this.shadersLink.projectionMatrixUniform.value.set(this.camera.projection.matrix)
         this.shadersLink.radiusUniform.value = this.radius
 
         this.uniformsLoader.load()

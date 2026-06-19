@@ -102,7 +102,7 @@ fun main() {
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
 
     val shadowsRenderGraph = RenderGraph(
-        shadowsRenderNode.asShadowsRenderPass().onto(shadowsScreen)
+        shadowsRenderNode.asShadowsRenderPass(camera).onto(shadowsScreen)
     )
 
     val shadowMap = shadowsPrototype.depthTexture
@@ -118,12 +118,13 @@ fun main() {
     val screenSwap = ScreenSwap(screenPrototype1, screenPrototype2)
 
     val renderGraph = RenderGraph(
-        renderNode.asDeferredRenderPass().onto(screenSwap.current),
+        renderNode.asDeferredRenderPass(camera).onto(screenSwap.current),
         ShadowsRenderPass(
             albedoBuffer = screenSwap.prototype.albedoTexture,
             normalSpecularBuffer = screenSwap.prototype.normalSpecularTexture,
             depthBuffer = screenSwap.prototype.depthTexture,
-            shadowsCamera,
+            shadowsCamera = shadowsCamera,
+            camera = camera,
             shadowMap,
             light
         ).onto(screenSwap.swap()),
@@ -137,11 +138,11 @@ fun main() {
         camera.update()
 
         shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        shadowsRenderGraph.render(RenderContext(shadowsCamera))
+        shadowsRenderGraph.render(RenderContext())
         screenSwap.clearAll(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screenSwap.assureSize(MainScreen.width, MainScreen.height)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderGraph.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

@@ -129,11 +129,12 @@ fun main() {
     val shadowMap = shadowsPrototype.depthTexture
 
     val shadowsRenderGraph = RenderGraph(
-        ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player).asShadowsRenderPass().onto(shadowsScreen)
+        ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player)
+            .asShadowsRenderPass(camera).onto(shadowsScreen)
     )
 
 
-    val renderNode = DeferredNodeRenderPass(cube, cube2, player, treesNodeBatch, world)
+    val renderNode = DeferredNodeRenderPass(camera, cube, cube2, player, treesNodeBatch, world)
 
     val cubeMap = createCubeMap()
     val fog = Fog(Vector3.of(0f), 700f, 1000f)
@@ -159,16 +160,18 @@ fun main() {
     val renderGraph = RenderGraph(
         renderNode.onto(screen1),
         ShadowsRenderPass(
-            prototype1.albedoTexture,
-            prototype1.normalSpecularTexture,
-            depthTexture,
-            shadowsCamera,
+            albedoBuffer = prototype1.albedoTexture,
+            normalSpecularBuffer = prototype1.normalSpecularTexture,
+            depthBuffer = depthTexture,
+            shadowsCamera = shadowsCamera,
+            camera = camera,
             shadowMap,
             light
         ).onto(screen2),
         SSAOMapGenerator(
             prototype1.normalSpecularTexture,
             depthTexture,
+            camera,
             radius = 1f,
             kernelSamplesSize = 128
         ).onto(screen4),
@@ -182,7 +185,7 @@ fun main() {
             fog,
             FogDistance.XZ
         ).onto(screen1),
-        SkyboxPostProcessor(cubeMap).onto(screen1),
+        SkyboxPostProcessor(cubeMap, camera).onto(screen1),
         FxaaPostProcessor(prototype1.albedoTexture).onto(MainScreen)
     )
 
@@ -197,12 +200,12 @@ fun main() {
         camera.update()
 
         shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        shadowsRenderGraph.render(RenderContext(shadowsCamera))
+        shadowsRenderGraph.render(RenderContext())
 
         screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderGraph.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

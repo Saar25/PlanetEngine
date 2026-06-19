@@ -1,5 +1,6 @@
 package org.saar.core.common.renderpass
 
+import org.saar.core.camera.ICamera
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderPass
@@ -22,7 +23,10 @@ import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.maths.utils.Matrix4
 
-class SkyboxPostProcessor(private val cubeMap: CubeMapTexture) : RenderPass {
+class SkyboxPostProcessor(
+    private val cubeMap: CubeMapTexture,
+    private val camera: ICamera
+) : RenderPass {
 
     private val shadersLink = SkyboxShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
@@ -34,8 +38,8 @@ class SkyboxPostProcessor(private val cubeMap: CubeMapTexture) : RenderPass {
 
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()
-        this.shadersLink.projectionMatrixInvUniform.value = context.camera.projection.matrix.invert(Matrix4.temp)
-        this.shadersLink.viewMatrixInvUniform.value = context.camera.viewMatrix.invert(Matrix4.temp)
+        this.shadersLink.projectionMatrixInvUniform.value = this.camera.projection.matrix.invert(Matrix4.temp)
+        this.shadersLink.viewMatrixInvUniform.value = this.camera.viewMatrix.invert(Matrix4.temp)
         this.shadersLink.cubeMapUniform.value = this.cubeMap
 
         this.uniformsLoader.load()

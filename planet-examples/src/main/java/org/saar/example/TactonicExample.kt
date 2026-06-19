@@ -126,7 +126,7 @@ fun main() {
     val screen = prototype.toScreen(Fbo.create(window.width, window.height))
 
     val renderGraph = RenderGraph(
-        nodeGroup.asDeferredRenderPass().onto(screen),
+        nodeGroup.asDeferredRenderPass(camera).onto(screen),
         LightRenderPass(
             albedoBuffer = prototype.albedoTexture,
             normalSpecularBuffer = prototype.normalSpecularTexture,
@@ -159,7 +159,7 @@ fun main() {
 
         screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderGraph.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

@@ -100,7 +100,7 @@ final Model2D model = new Model2D(mesh);
 final Renderer2D renderer = new Renderer2D();
 
 // Render the model
-renderer.render(new RenderContext(camera), model);
+renderer.render(new ForwardRenderContext(camera), model);
 ```
 
 The rendering pipeline consists of some primary interfaces
@@ -157,7 +157,7 @@ usually holds the model and a renderer, and has at least one render method
 final Model3D cubeModel = buildCubeModel();
 final Node3D cube = new Node3D(cubeModel);
 
-cube.renderForward(new RenderContext(camera));
+cube.renderForward(new RenderContext());
 
 ```
 
@@ -237,7 +237,7 @@ val graph = RenderGraph(
         .onto(MainScreen),
 )
 
-graph.render(RenderContext(camera))
+graph.render(RenderContext())
 ```
 
 ### Gui

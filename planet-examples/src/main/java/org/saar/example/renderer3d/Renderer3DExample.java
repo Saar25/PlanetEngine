@@ -10,7 +10,6 @@ import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.buffer.DataMeshBufferBuilder;
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
@@ -53,7 +52,7 @@ public class Renderer3DExample {
 
             camera.update();
 
-            renderer.render(new ForwardRenderContext(new RenderContext(), camera), models);
+            renderer.render(new ForwardRenderContext(camera), models);
 
             window.swapBuffers();
             window.pollEvents();

@@ -142,7 +142,7 @@ fun main() {
     val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val reflectionRenderGraph = RenderGraph(
-        reflectionRenderNode.asDeferredRenderPass().onto(reflectionScreen1),
+        reflectionRenderNode.asDeferredRenderPass(camera).onto(reflectionScreen1),
         LightRenderPass(
             albedoBuffer = reflectionPrototype1.albedoTexture,
             normalSpecularBuffer = reflectionPrototype1.normalSpecularTexture,
@@ -166,7 +166,7 @@ fun main() {
     val shadowsScreen =
         shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize))
     val shadowsRenderGraph = RenderGraph(
-        shadowsRenderNode.asShadowsRenderPass().onto(shadowsScreen)
+        shadowsRenderNode.asShadowsRenderPass(camera).onto(shadowsScreen)
     )
 
     val renderNode = DeferredRenderNodeGroup(
@@ -183,12 +183,13 @@ fun main() {
     val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
 
     val renderGraph = RenderGraph(
-        renderNode.asDeferredRenderPass().onto(screen1),
+        renderNode.asDeferredRenderPass(camera).onto(screen1),
         ShadowsRenderPass(
             albedoBuffer = prototype1.albedoTexture,
             normalSpecularBuffer = prototype1.normalSpecularTexture,
             depthBuffer = prototype1.depthTexture,
-            shadowsCamera,
+            shadowsCamera = shadowsCamera,
+            camera = camera,
             shadowMap,
             light
         ).onto(screen2),
@@ -210,9 +211,9 @@ fun main() {
         screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
-        reflectionRenderGraph.render(RenderContext(reflectionCamera))
-        shadowsRenderGraph.render(RenderContext(shadowsCamera))
-        renderGraph.render(RenderContext(camera))
+        reflectionRenderGraph.render(RenderContext())
+        shadowsRenderGraph.render(RenderContext())
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()

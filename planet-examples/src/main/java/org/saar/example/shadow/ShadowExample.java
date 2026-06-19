@@ -91,11 +91,11 @@ public class ShadowExample {
 
         final RenderGraph shadowsRenderGraph = new RenderGraph(
                 RenderGraphNodeKt.onto(new ShadowsNodeRenderPass(
-                        new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
+                        camera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
                 ), shadowsScreen)
         );
         ScreenKt.clear(shadowsScreen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-        shadowsRenderGraph.render(new RenderContext(shadowsCamera));
+        shadowsRenderGraph.render(new RenderContext());
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
@@ -106,13 +106,14 @@ public class ShadowExample {
                 SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(new DeferredNodeRenderPass(renderNode), screen),
+                new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
                 new RenderGraphNode(
                         new ShadowsRenderPass(
                                 prototype.getAlbedoTexture(),
                                 prototype.getNormalSpecularTexture(),
                                 prototype.getDepthTexture(),
                                 shadowsCamera,
+                                camera,
                                 shadowMap,
                                 light
                         ), MainScreen.INSTANCE)
@@ -124,7 +125,7 @@ public class ShadowExample {
 
             ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            renderGraph.render(new RenderContext(camera));
+            renderGraph.render(new RenderContext());
 
             window.swapBuffers();
             window.pollEvents();

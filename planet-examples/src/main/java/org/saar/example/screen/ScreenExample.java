@@ -10,7 +10,6 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -61,7 +60,7 @@ public class ScreenExample {
 
             camera.update();
 
-            renderer.render(new ForwardRenderContext(new RenderContext(), camera), cottageModel);
+            renderer.render(new ForwardRenderContext(camera), cottageModel);
 
             ScreenKt.copyTo(screen, MainScreen.INSTANCE);
 
