@@ -1,29 +1,17 @@
-package org.saar.core.camera.projection;
+package org.saar.core.camera.projection
 
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.saar.core.camera.Projection;
-import org.saar.maths.utils.Matrix4;
+import org.saar.core.camera.Projection
 
-public abstract class OrthographicProjection implements Projection {
+interface OrthographicProjection : Projection {
+    val left: Float
 
-    private final Matrix4f matrix = Matrix4.create();
+    val right: Float
 
-    public abstract float getLeft();
+    val bottom: Float
 
-    public abstract float getRight();
+    val top: Float
 
-    public abstract float getBottom();
+    val zNear: Float
 
-    public abstract float getTop();
-
-    public abstract float getzNear();
-
-    public abstract float getzFar();
-
-    @Override
-    public final Matrix4fc getMatrix() {
-        return Matrix4.ofProjection(getLeft(), getRight(), getBottom(),
-                getTop(), getzNear(), getzFar(), this.matrix);
-    }
+    val zFar: Float
 }

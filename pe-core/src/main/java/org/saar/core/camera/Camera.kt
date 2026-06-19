@@ -6,11 +6,10 @@ import org.saar.core.node.NodeComponentGroup
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.utils.Matrix4
 
-class Camera(override val projection: Projection,
-             components: NodeComponentGroup = NodeComponentGroup()
+class Camera @JvmOverloads constructor(
+    override val projection: Projection,
+    components: NodeComponentGroup = NodeComponentGroup()
 ) : ICamera, ComposableNode {
-
-    constructor(projection: Projection) : this(projection, NodeComponentGroup())
 
     override val transform = SimpleTransform()
 

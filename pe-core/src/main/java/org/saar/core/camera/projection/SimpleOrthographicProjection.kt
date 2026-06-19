@@ -1,52 +1,22 @@
-package org.saar.core.camera.projection;
+package org.saar.core.camera.projection
 
-import org.saar.core.camera.Projection;
+import org.joml.Matrix4f
+import org.saar.core.camera.Projection
+import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Matrix4.ofProjection
 
-public class SimpleOrthographicProjection extends OrthographicProjection implements Projection {
+class SimpleOrthographicProjection(
+    override val left: Float,
+    override val right: Float,
+    override val bottom: Float,
+    override val top: Float,
+    override val zNear: Float,
+    override val zFar: Float
+) : OrthographicProjection, Projection {
 
-    private final float left;
-    private final float right;
-    private final float bottom;
-    private final float top;
-    private final float zNear;
-    private final float zFar;
-
-    public SimpleOrthographicProjection(float left, float right, float bottom, float top, float zNear, float zFar) {
-        this.left = left;
-        this.right = right;
-        this.bottom = bottom;
-        this.top = top;
-        this.zNear = zNear;
-        this.zFar = zFar;
-    }
-
-    @Override
-    public float getLeft() {
-        return this.left;
-    }
-
-    @Override
-    public float getRight() {
-        return this.right;
-    }
-
-    @Override
-    public float getBottom() {
-        return this.bottom;
-    }
-
-    @Override
-    public float getTop() {
-        return this.top;
-    }
-
-    @Override
-    public float getzNear() {
-        return this.zNear;
-    }
-
-    @Override
-    public float getzFar() {
-        return this.zFar;
-    }
+    override val matrix: Matrix4f = Matrix4.create()
+        get() = ofProjection(
+            this.left, this.right, this.bottom,
+            this.top, this.zNear, this.zFar, field
+        )
 }

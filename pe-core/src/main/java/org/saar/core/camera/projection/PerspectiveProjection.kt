@@ -1,27 +1,16 @@
-package org.saar.core.camera.projection;
+package org.saar.core.camera.projection
 
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.saar.core.camera.Projection;
-import org.saar.maths.utils.Matrix4;
+import org.saar.core.camera.Projection
 
-public abstract class PerspectiveProjection implements Projection {
+interface PerspectiveProjection : Projection {
 
-    private final Matrix4f matrix = Matrix4.create();
+    val fov: Float
 
-    public abstract float getFov();
+    val width: Float
 
-    public abstract float getWidth();
+    val height: Float
 
-    public abstract float getHeight();
+    val near: Float
 
-    public abstract float getNear();
-
-    public abstract float getFar();
-
-    @Override
-    public final Matrix4fc getMatrix() {
-        return Matrix4.ofProjection((float) Math.toRadians(getFov()),
-                getWidth(), getHeight(), getNear(), getFar(), this.matrix);
-    }
+    val far: Float
 }

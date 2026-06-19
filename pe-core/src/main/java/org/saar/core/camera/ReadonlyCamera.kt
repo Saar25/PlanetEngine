@@ -4,6 +4,7 @@ import org.saar.maths.transform.ReadonlyTransform
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.utils.Matrix4
 
+@Deprecated("Use ICamera")
 class ReadonlyCamera @JvmOverloads constructor(
     override val projection: Projection,
     override val transform: ReadonlyTransform = SimpleTransform()
