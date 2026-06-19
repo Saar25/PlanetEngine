@@ -11,3 +11,7 @@ class Angle private constructor(val radians: Float) {
         fun degrees(degrees: Float) = Angle(Math.toRadians(degrees.toDouble()).toFloat())
     }
 }
+
+fun Float.radians() = Angle.radians(this)
+
+fun Float.degrees() = Angle.degrees(this)

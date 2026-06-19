@@ -4,25 +4,33 @@ import org.joml.Matrix4f
 import org.saar.core.camera.Projection
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screen
+import org.saar.maths.Angle
+import org.saar.maths.degrees
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Matrix4.ofProjection
 
 class ScreenPerspectiveProjection(
     private val screen: Screen = MainScreen,
-    override var fov: Float,
-    override var near: Float,
-    override var far: Float
+    override val fov: Angle,
+    override val near: Float,
+    override val far: Float
 ) : PerspectiveProjection, Projection {
 
-    constructor(fov: Float, near: Float, far: Float) : this(MainScreen, fov, near, far)
+    constructor(fov: Angle, near: Float, far: Float) : this(MainScreen, fov, near, far)
 
+    constructor(fov: Float, near: Float, far: Float) : this(MainScreen, fov.degrees(), near, far)
+
+    private var lastWidth = -1f
     override val width: Float get() = this.screen.width.toFloat()
 
+    private var lastHeight = -1f
     override val height: Float get() = this.screen.height.toFloat()
 
     override val matrix: Matrix4f = Matrix4.create()
-        get() = ofProjection(
-            Math.toRadians(this.fov.toDouble()).toFloat(),
-            this.width, this.height, this.near, this.far, field
-        )
+        get() = if (width == lastWidth && height == lastHeight) field
+        else {
+            this.lastWidth = this.width
+            this.lastHeight = this.height
+            ofProjection(this.fov.radians, this.width, this.height, this.near, this.far, field)
+        }
 }
