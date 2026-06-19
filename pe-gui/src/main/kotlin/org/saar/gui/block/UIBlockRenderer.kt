@@ -42,12 +42,11 @@ object UIBlockRenderer : Renderer<UINode> {
             this.shadersLink.hasDiscardMapUniform.value = model.style.discardMap.texture != Texture2D.NULL
             this.shadersLink.discardMapUniform.value = model.style.discardMap.texture
 
-            // TODO: make these ivec4
             this.shadersLink.boundsUniform.value.set(
-                model.style.position.getX().toFloat(),
-                model.style.position.getY().toFloat(),
-                model.style.width.get().toFloat(),
-                model.style.height.get().toFloat()
+                model.style.position.getX(),
+                model.style.position.getY(),
+                model.style.width.get(),
+                model.style.height.get()
             )
 
             val vector4i = Vector4i()
@@ -78,7 +77,7 @@ object UIBlockRenderer : Renderer<UINode> {
         }
 
         @UniformProperty
-        val boundsUniform = Vec4UniformValue("u_bounds")
+        val boundsUniform = Vec4iUniformValue("u_bounds")
 
         @UniformProperty
         val bordersUniform = Vec4UniformValue("u_borders")

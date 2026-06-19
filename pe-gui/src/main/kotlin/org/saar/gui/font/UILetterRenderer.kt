@@ -50,10 +50,10 @@ object UILetterRenderer : Renderer<UILetter> {
                 .add(model.offset.x(), model.offset.y(), 0f, 0f)
 
             this.shadersLink.boundsUniform.value.set(
-                bounds.x() + model.style.position.getX(),
-                bounds.y() + model.style.position.getY(),
-                bounds.z(),
-                bounds.w()
+                (bounds.x() + model.style.position.getX()).toInt(),
+                (bounds.y() + model.style.position.getY()).toInt(),
+                bounds.z().toInt(),
+                bounds.w().toInt()
             )
 
             this.shadersLink.fontColourUniform.value = model.style.fontColour.asInt()
@@ -78,7 +78,7 @@ object UILetterRenderer : Renderer<UILetter> {
         }
 
         @UniformProperty
-        val boundsUniform = Vec4UniformValue("u_bounds")
+        val boundsUniform = Vec4iUniformValue("u_bounds")
 
         @UniformProperty
         val fontColourUniform = UIntUniformValue("u_fontColour")

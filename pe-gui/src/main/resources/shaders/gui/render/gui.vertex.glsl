@@ -4,7 +4,7 @@ vec2(1, 1), vec2(1, 0)
 );
 
 // Uniforms
-uniform vec4 u_bounds;
+uniform ivec4 u_bounds;
 uniform vec4 u_borders;
 uniform ivec2 u_resolution;
 uniform ivec4 u_cornersColours;
