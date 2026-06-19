@@ -1,8 +1,10 @@
 package org.saar.core.common.flatreflected
 
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RendererPrototype
-import org.saar.core.renderer.RendererPrototypeWrapper
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.forward.ForwardRenderContext
+import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
@@ -16,49 +18,61 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
 import org.saar.maths.utils.Matrix4
 
-object FlatReflectedRenderer : RendererPrototypeWrapper<FlatReflectedModel>(FlatReflectedRendererPrototype())
+object FlatReflectedRenderer : Renderer<ForwardRenderContext, FlatReflectedModel> {
 
-private class FlatReflectedRendererPrototype() : RendererPrototype<FlatReflectedModel> {
+    private val shadersLink = FlatReflectedRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    @UniformProperty
-    private val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 1)
+    init {
+        this.shadersLink.init()
+    }
 
-    @UniformProperty
-    private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+    override fun render(context: ForwardRenderContext, models: Iterable<FlatReflectedModel>) {
+        this.shadersLink.shadersProgram.bind()
 
-    @UniformProperty
-    private val normalUniform = Vec3UniformValue("u_normal")
-
-    override val shadersProgram: ShadersProgram = ShadersProgram.create(
-        Shader.createVertex(
-            GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl")
-        ),
-        Shader.createFragment(
-            GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.fragment.glsl")
-        )
-    )
-
-    override fun vertexAttributes() = arrayOf(
-        "in_position", "in_normal"
-    )
-
-    override fun onRenderCycle(context: RenderContext) {
-        ProvokingVertex.setFirst();
+        ProvokingVertex.setFirst()
         BlendTest.disable()
         DepthTest.enable()
+
+        models.forEach { model ->
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            val m = model.transform.transformationMatrix
+
+            this.shadersLink.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
+            this.shadersLink.reflectionMapUniform.value = model.reflectionMap
+            this.shadersLink.normalUniform.value = model.normal
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
     }
 
-    override fun onInstanceDraw(context: RenderContext, model: FlatReflectedModel) {
-        val v = context.camera.viewMatrix
-        val p = context.camera.projection.matrix
-        val m = model.transform.transformationMatrix
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-        this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
-        this.reflectionMapUniform.value = model.reflectionMap
-        this.normalUniform.value = model.normal
+    private object FlatReflectedRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val reflectionMapUniform = TextureUniformValue("u_reflectionMap", 1)
+
+        @UniformProperty
+        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+        @UniformProperty
+        val normalUniform = Vec3UniformValue("u_normal")
+
+        override val vertexAttributes = arrayOf("in_position", "in_normal")
+
+        override val shadersProgram: ShadersProgram = ShadersProgram.create(
+            Shader.createVertex(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.vertex.glsl")
+            ),
+            Shader.createFragment(
+                GlslVersion.V400,
+                ShaderCode.loadSource("/shaders/flat-reflected/flat-reflected.fragment.glsl")
+            )
+        )
     }
-
-    override fun doInstanceDraw(context: RenderContext, model: FlatReflectedModel) = model.draw()
 }
