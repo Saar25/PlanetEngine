@@ -5,7 +5,7 @@ import org.saar.core.camera.Projection
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screen
 import org.saar.maths.Angle
-import org.saar.maths.degrees
+import org.saar.maths.Angle.Companion.degrees
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Matrix4.ofProjection
 

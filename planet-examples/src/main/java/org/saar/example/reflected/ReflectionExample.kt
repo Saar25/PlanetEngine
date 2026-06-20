@@ -58,7 +58,7 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.degrees
+import org.saar.maths.Angle.Companion.degrees
 import org.saar.maths.objects.Planef
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.ReflectedTransform

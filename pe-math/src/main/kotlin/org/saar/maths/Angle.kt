@@ -6,13 +6,8 @@ value class Angle private constructor(val radians: Float) {
     val degrees: Float get() = Math.toDegrees(this.radians.toDouble()).toFloat()
 
     companion object {
-        fun radians(radians: Float) = Angle(radians)
+        val Float.radians get() = Angle(this)
 
-        @JvmStatic
-        fun degrees(degrees: Float) = Angle(Math.toRadians(degrees.toDouble()).toFloat())
+        val Float.degrees get() = Angle(Math.toRadians(this.toDouble()).toFloat())
     }
 }
-
-val Float.radians get() = Angle.radians(this)
-
-val Float.degrees get() = Angle.degrees(this)

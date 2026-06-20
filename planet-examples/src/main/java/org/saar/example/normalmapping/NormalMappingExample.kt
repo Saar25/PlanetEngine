@@ -55,7 +55,7 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.degrees
+import org.saar.maths.Angle.Companion.degrees
 import org.saar.maths.transform.Position.Companion.of
 import org.saar.maths.utils.Quaternion
 import java.util.*
