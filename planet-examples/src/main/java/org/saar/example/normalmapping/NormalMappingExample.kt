@@ -228,7 +228,7 @@ private fun buildNodeBatch3D(): NodeBatch3D {
 }
 
 private fun buildNormalMappedNodeBatch(): NormalMappedNodeBatch {
-    val rotation = Quaternion.create().rotationAxis(.5f.degrees().radians, 0f, 1f, 0f)
+    val rotation = Quaternion.create().rotationAxis(.5f.degrees.radians, 0f, 1f, 0f)
 
     val boulderModel = Objects.requireNonNull<NormalMappedModel>(loadBoulder())
     boulderModel.transform.position.set(0f, 20f, 0f)

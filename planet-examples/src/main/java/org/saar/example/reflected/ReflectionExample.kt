@@ -291,7 +291,7 @@ private fun buildCottageModel(): ObjModel {
 private fun buildStallModel(): ObjModel {
     val stallModel = Objects.requireNonNull<ObjModel>(loadStall()).apply {
         transform.position.set(-50f, 0f, 0f)
-        transform.rotation.rotate(0f.degrees(), 180f.degrees(), 0f.degrees())
+        transform.rotation.rotate(0f.degrees, 180f.degrees, 0f.degrees)
     }
     return stallModel
 }

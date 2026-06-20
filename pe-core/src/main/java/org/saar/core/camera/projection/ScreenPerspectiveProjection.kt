@@ -16,9 +16,7 @@ class ScreenPerspectiveProjection(
     override val far: Float
 ) : PerspectiveProjection, Projection {
 
-    constructor(fov: Angle, near: Float, far: Float) : this(MainScreen, fov, near, far)
-
-    constructor(fov: Float, near: Float, far: Float) : this(MainScreen, fov.degrees(), near, far)
+    constructor(fov: Float, near: Float, far: Float) : this(MainScreen, fov.degrees, near, far)
 
     private var lastWidth = -1f
     override val width: Float get() = this.screen.width.toFloat()

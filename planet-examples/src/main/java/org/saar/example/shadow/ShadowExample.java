@@ -41,7 +41,6 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.maths.Angle;
 import org.saar.maths.transform.Position;
 
 import java.util.Objects;
@@ -169,7 +168,7 @@ public class ShadowExample {
 
         final ObjModel stallModel = Objects.requireNonNull(loadStall());
         stallModel.getTransform().getPosition().set(-50, 0, 0);
-        stallModel.getTransform().getRotation().rotate(Angle.degrees(0), Angle.degrees(180), Angle.degrees(0));
+        stallModel.getTransform().getRotation().rotateDegrees(0f, 180f, 0f);
         final ObjNode stall = new ObjNode(stallModel);
 
         return new ObjNodeBatch(cottage, dragon, stall);

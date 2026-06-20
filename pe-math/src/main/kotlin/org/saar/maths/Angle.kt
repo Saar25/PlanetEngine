@@ -1,6 +1,7 @@
 package org.saar.maths
 
-class Angle private constructor(val radians: Float) {
+@JvmInline
+value class Angle private constructor(val radians: Float) {
 
     val degrees: Float get() = Math.toDegrees(this.radians.toDouble()).toFloat()
 
@@ -12,6 +13,6 @@ class Angle private constructor(val radians: Float) {
     }
 }
 
-fun Float.radians() = Angle.radians(this)
+val Float.radians get() = Angle.radians(this)
 
-fun Float.degrees() = Angle.degrees(this)
+val Float.degrees get() = Angle.degrees(this)
