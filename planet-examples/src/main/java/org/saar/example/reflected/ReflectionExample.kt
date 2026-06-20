@@ -58,7 +58,7 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.Angle.Companion.degrees
+import org.saar.maths.degrees
 import org.saar.maths.objects.Planef
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.ReflectedTransform
@@ -289,9 +289,10 @@ private fun buildCottageModel(): ObjModel {
 }
 
 private fun buildStallModel(): ObjModel {
-    val stallModel = Objects.requireNonNull<ObjModel>(loadStall())
-    stallModel.transform.position.set(-50f, 0f, 0f)
-    stallModel.transform.rotation.rotate(degrees(0f), degrees(180f), degrees(0f))
+    val stallModel = Objects.requireNonNull<ObjModel>(loadStall()).apply {
+        transform.position.set(-50f, 0f, 0f)
+        transform.rotation.rotate(0f.degrees(), 180f.degrees(), 0f.degrees())
+    }
     return stallModel
 }
 

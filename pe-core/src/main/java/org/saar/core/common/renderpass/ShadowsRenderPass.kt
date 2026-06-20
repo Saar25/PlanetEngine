@@ -6,7 +6,15 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
+import org.saar.core.renderer.state.BlendTestRenderState
+import org.saar.core.renderer.state.CompositeRenderState
+import org.saar.core.renderer.state.CullFaceRenderState
+import org.saar.core.renderer.state.DepthTestRenderState
+import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.blend.BlendState
+import org.saar.lwjgl.opengl.cullface.CullFaceState
+import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -15,6 +23,7 @@ import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniformValue
+import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
@@ -31,6 +40,13 @@ class ShadowsRenderPass(
 
     private val shadersLink = ShadowsShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+
+    override val renderState = CompositeRenderState(
+        StencilTestRenderState(StencilState.REPLACE),
+        DepthTestRenderState(DepthState.DISABLED),
+        BlendTestRenderState(BlendState.DISABLED),
+        CullFaceRenderState(CullFaceState.DISABLED),
+    )
 
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()

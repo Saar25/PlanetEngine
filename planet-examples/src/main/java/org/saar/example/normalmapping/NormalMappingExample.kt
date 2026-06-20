@@ -9,6 +9,7 @@ import org.saar.core.camera.projection.SimpleOrthographicProjection
 import org.saar.core.common.components.KeyboardMovementComponent
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent
 import org.saar.core.common.components.MouseDragRotationComponent
+import org.saar.core.common.components.SpinningComponent
 import org.saar.core.common.normalmap.NormalMapped
 import org.saar.core.common.normalmap.NormalMappedModel
 import org.saar.core.common.normalmap.NormalMappedNode
@@ -26,6 +27,7 @@ import org.saar.core.common.renderpass.FxaaPostProcessor
 import org.saar.core.common.renderpass.ShadowsRenderPass
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
+import org.saar.core.node.plusAssign
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
@@ -49,10 +51,13 @@ import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColour.set
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.maths.degrees
 import org.saar.maths.transform.Position.Companion.of
+import org.saar.maths.utils.Quaternion
 import java.util.*
 
 private const val WIDTH = 1200
@@ -78,8 +83,7 @@ fun main() {
     camera.transform.position.set(0f, 0f, 200f)
     camera.transform.lookAt(of(0f, 0f, 0f))
 
-    val normalMappedNodeBatch =
-        buildNormalMappedNodeBatch()
+    val normalMappedNodeBatch = buildNormalMappedNodeBatch()
 
     val objNodeBatch = buildObjNodeBatch()
 
@@ -113,9 +117,11 @@ fun main() {
 
     val uiDisplay = buildUIDisplay(window, light)
 
-    val screenPrototype1 = DeferredScreenPrototype()
-    val screenPrototype2 = DeferredScreenPrototype()
+    val depthTexture = MutableTexture2D.create()
+    val screenPrototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screenPrototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
     val screenSwap = ScreenSwap(screenPrototype1, screenPrototype2)
+    screenSwap.assureSize(WIDTH, HEIGHT)
 
     val renderGraph = RenderGraph(
         renderNode.asDeferredRenderPass(camera).onto(screenSwap.current),
@@ -136,6 +142,8 @@ fun main() {
     var current = System.currentTimeMillis()
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         camera.update()
+        objNodeBatch.update()
+        normalMappedNodeBatch.update()
 
         shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         shadowsRenderGraph.render(RenderContext())
@@ -220,18 +228,26 @@ private fun buildNodeBatch3D(): NodeBatch3D {
 }
 
 private fun buildNormalMappedNodeBatch(): NormalMappedNodeBatch {
+    val rotation = Quaternion.create().rotationAxis(.5f.degrees().radians, 0f, 1f, 0f)
+
     val boulderModel = Objects.requireNonNull<NormalMappedModel>(loadBoulder())
     boulderModel.transform.position.set(0f, 20f, 0f)
-    val boulder = NormalMappedNode(boulderModel)
+    val boulder = NormalMappedNode(boulderModel).apply {
+        components += SpinningComponent(rotation)
+    }
 
     val barrelModel = Objects.requireNonNull<NormalMappedModel>(loadBarrel())
     barrelModel.transform.position.set(-20f, 20f, 0f)
-    val barrel = NormalMappedNode(barrelModel)
+    val barrel = NormalMappedNode(barrelModel).apply {
+        components += SpinningComponent(rotation)
+    }
 
     val crateModel = Objects.requireNonNull<NormalMappedModel>(loadCrate())
     crateModel.transform.position.set(+20f, 20f, 0f)
     crateModel.transform.scale.scale(.05f)
-    val crate = NormalMappedNode(crateModel)
+    val crate = NormalMappedNode(crateModel).apply {
+        components += SpinningComponent(rotation)
+    }
 
     return NormalMappedNodeBatch(boulder, barrel, crate)
 }

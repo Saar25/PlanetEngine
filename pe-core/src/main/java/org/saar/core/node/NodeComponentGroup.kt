@@ -13,8 +13,10 @@ class NodeComponentGroup(components: List<NodeComponent>) {
             this(group.components + group.uninitialized + components)
 
     fun <T : NodeComponent> getNullable(componentClass: Class<T>): T? {
-        return componentClass.cast(this.components.find(componentClass::isInstance)
-            ?: this.uninitialized.find(componentClass::isInstance))
+        return componentClass.cast(
+            this.components.find(componentClass::isInstance)
+                ?: this.uninitialized.find(componentClass::isInstance)
+        )
     }
 
     fun <T : NodeComponent> getNullable(componentClass: KClass<T>): T? = getNullable(componentClass.java)
@@ -28,7 +30,9 @@ class NodeComponentGroup(components: List<NodeComponent>) {
 
     inline fun <reified T : NodeComponent> get(): T = getNullable()!!
 
-    fun add(component: NodeComponent) = this.uninitialized.add(component)
+    fun add(component: NodeComponent) {
+        this.uninitialized.add(component)
+    }
 
     fun update(node: ComposableNode) {
         val copy = this.uninitialized.toList()
@@ -40,5 +44,6 @@ class NodeComponentGroup(components: List<NodeComponent>) {
     }
 
     fun delete(node: ComposableNode) = this.components.forEach { it.delete(node) }
-
 }
+
+infix operator fun NodeComponentGroup.plusAssign(component: NodeComponent) = add(component)
