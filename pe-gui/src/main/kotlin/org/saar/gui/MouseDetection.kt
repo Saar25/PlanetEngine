@@ -1,6 +1,6 @@
 package org.saar.gui
 
-import org.saar.maths.objects.Rectangle
+import org.joml.primitives.Rectanglef
 import org.saar.maths.utils.Maths
 
 object MouseDetection {
@@ -21,11 +21,11 @@ object MouseDetection {
             y < ny + nh / 2
         ).toFloat()
 
-        val bordersV = Rectangle(nx + radius, ny, nw - radius * 2, nh)
-        val bordersH = Rectangle(nx, ny + radius, nw, nh - radius * 2)
+        val bordersV = Rectanglef(nx + radius, ny, nx + nw - radius * 2, ny + nh)
+        val bordersH = Rectanglef(nx, ny + radius, nx + nw, ny + nh - radius * 2)
 
-        if (bordersV.contains(x.toFloat(), y.toFloat()) ||
-            bordersH.contains(x.toFloat(), y.toFloat())
+        if (bordersV.containsPoint(x.toFloat(), y.toFloat()) ||
+            bordersH.containsPoint(x.toFloat(), y.toFloat())
         ) return true
 
         val cx = if (x < nx + nw / 2) nx + radius else nx + nw - radius

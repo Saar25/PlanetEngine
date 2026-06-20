@@ -1,8 +1,8 @@
 package org.saar.maths.transform
 
 import org.joml.Matrix4fc
+import org.joml.primitives.Planef
 import org.jproperty.binding.ObjectBinding
-import org.saar.maths.objects.Planef
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector3
 

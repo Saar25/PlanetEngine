@@ -245,15 +245,15 @@ class Window private constructor(
     fun setMaximized() {
         val workArea = Monitor.primary.workArea
         GLFW.glfwSetWindowMonitor(
-            this.id, 0, workArea.x, workArea.y,
-            workArea.w, workArea.h, GLFW.GLFW_DONT_CARE
+            this.id, 0, workArea.minX, workArea.minY,
+            workArea.lengthX(), workArea.lengthY(), GLFW.GLFW_DONT_CARE
         )
 
         GLFW.glfwMaximizeWindow(this.id)
-        this.x = workArea.x
-        this.y = workArea.y
-        this.width = workArea.w
-        this.height = workArea.h
+        this.x = workArea.minX
+        this.y = workArea.minY
+        this.width = workArea.lengthX()
+        this.height = workArea.lengthY()
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.saar.example.reflected
 
+import org.joml.primitives.Planef
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
 import org.saar.core.camera.ReadonlyCamera
@@ -59,7 +60,6 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.Angle.Companion.degrees
-import org.saar.maths.objects.Planef
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.ReflectedTransform
 import org.saar.maths.utils.Vector3
@@ -137,7 +137,7 @@ fun main() {
 
     val light = buildDirectionalLight()
 
-    val reflectedTransform = ReflectedTransform(camera.transform, Planef(Vector3.upward(), .1f))
+    val reflectedTransform = ReflectedTransform(camera.transform, Planef(0f, 1f, 0f, 1f).normalize())
     val reflectionCamera = ReadonlyCamera(camera.projection, reflectedTransform)
 
     val reflectionDepthTexture = MutableTexture2D.create()
