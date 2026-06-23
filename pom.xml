@@ -11,7 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>2.1.21</kotlin.version>
+        <kotlin.version>2.4.0</kotlin.version>
         <java.source>17</java.source>
         <java.target>17</java.target>
         <maven.compiler.source>${java.source}</maven.compiler.source>
