@@ -1,29 +1,18 @@
-package org.saar.core.renderer.shadow;
+package org.saar.core.renderer.shadow
 
-public class ShadowsQuality {
+class ShadowsQuality private constructor(@JvmField val imageSize: Int) {
+    companion object {
+        val VERY_LOW: ShadowsQuality = ofLevel(9)
 
-    public static final ShadowsQuality VERY_LOW = new ShadowsQuality(512); // Level 9
+        val LOW: ShadowsQuality = ofLevel(10)
 
-    public static final ShadowsQuality LOW = new ShadowsQuality(1024); // Level 10
+        @JvmField
+        val MEDIUM: ShadowsQuality = ofLevel(11)
 
-    public static final ShadowsQuality MEDIUM = new ShadowsQuality(2048); // Level 11
+        val HIGH: ShadowsQuality = ofLevel(12)
 
-    public static final ShadowsQuality HIGH = new ShadowsQuality(4096); // Level 12
+        val VERY_HIGH: ShadowsQuality = ofLevel(13)
 
-    public static final ShadowsQuality VERY_HIGH = new ShadowsQuality(8192); // Level 13
-
-    private final int imageSize;
-
-    private ShadowsQuality(int imageSize) {
-        this.imageSize = imageSize;
-    }
-
-    public static ShadowsQuality ofLevel(int level) {
-        final int imageSize = (int) Math.pow(2, level);
-        return new ShadowsQuality(imageSize);
-    }
-
-    public int getImageSize() {
-        return this.imageSize;
+        fun ofLevel(level: Int) = ShadowsQuality(1 shl level)
     }
 }

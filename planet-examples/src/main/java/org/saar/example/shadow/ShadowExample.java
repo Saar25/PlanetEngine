@@ -82,7 +82,7 @@ public class ShadowExample {
         final ShadowsScreenPrototype shadowsPrototype = new ShadowsScreenPrototype();
         final OffScreen shadowsScreen = Screens.INSTANCE.toScreen(
                 shadowsPrototype,
-                Fbo.create(ShadowsQuality.MEDIUM.getImageSize(), ShadowsQuality.MEDIUM.getImageSize()),
+                Fbo.create(ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize),
                 SimpleAllocationStrategy.INSTANCE);
         final ShadowsCamera shadowsCamera = new ShadowsCamera(shadowProjection, light);
 
