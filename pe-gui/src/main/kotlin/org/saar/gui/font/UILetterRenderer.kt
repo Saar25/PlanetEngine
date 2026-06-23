@@ -18,6 +18,8 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
+import org.saar.maths.toVector4f
+import org.saar.maths.toVector4i
 
 object UILetterRenderer : Renderer<RenderContext, UILetter> {
 

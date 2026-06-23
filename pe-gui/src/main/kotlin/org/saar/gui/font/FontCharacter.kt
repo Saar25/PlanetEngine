@@ -1,10 +1,10 @@
 package org.saar.gui.font
 
-import org.saar.maths.Box2i
+import org.joml.primitives.Rectanglei
 
 data class FontCharacter(
     val char: Char,
-    val bitmapBox: Box2i,
-    val localBox: Box2i,
+    val bitmapBox: Rectanglei,
+    val localBox: Rectanglei,
     val xAdvance: Float
 )
