@@ -15,8 +15,5 @@ class SimpleOrthographicProjection(
 ) : OrthographicProjection, Projection {
 
     override val matrix: Matrix4f = Matrix4.create()
-        get() = ofProjection(
-            this.left, this.right, this.bottom,
-            this.top, this.zNear, this.zFar, field
-        )
+        get() = field.ofProjection(this.left, this.right, this.bottom, this.top, this.zNear, this.zFar)
 }

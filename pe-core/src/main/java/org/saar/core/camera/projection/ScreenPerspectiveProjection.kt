@@ -29,6 +29,6 @@ class ScreenPerspectiveProjection(
         else {
             this.lastWidth = this.width
             this.lastHeight = this.height
-            ofProjection(this.fov.radians, this.width, this.height, this.near, this.far, field)
+            field.ofProjection(this.fov.radians, this.width, this.height, this.near, this.far)
         }
 }

@@ -38,13 +38,11 @@ object Matrix4 {
      * @return the projection matrix
      */
     @JvmStatic
-    fun ofProjection(fov: Float, width: Float, height: Float, zNear: Float, zFar: Float, dest: Matrix4f): Matrix4f {
-        return dest.setPerspective(fov, width / height, zNear, zFar)
-    }
+    fun ofProjection(fov: Float, width: Float, height: Float, zNear: Float, zFar: Float, dest: Matrix4f): Matrix4f =
+        dest.perspective(fov, width / height, zNear, zFar)
 
-    fun createProjection(fov: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f {
-        return ofProjection(fov, width, height, zNear, zFar, create())
-    }
+    fun Matrix4f.ofProjection(fov: Float, width: Float, height: Float, zNear: Float, zFar: Float) =
+        ofProjection(fov, width, height, zNear, zFar, this)
 
     /**
      * Returns an orthographic projection matrix
@@ -59,31 +57,15 @@ object Matrix4 {
      * @return the projection matrix
      */
     @JvmStatic
-    fun ofProjection(left: Float, right: Float, bottom: Float, top: Float,
-                     zNear: Float, zFar: Float, dest: Matrix4f): Matrix4f {
+    fun ofProjection(
+        left: Float, right: Float, bottom: Float, top: Float,
+        zNear: Float, zFar: Float, dest: Matrix4f
+    ): Matrix4f {
         return dest.setOrtho(left, right, bottom, top, zNear, zFar)
     }
 
-    fun createProjection(left: Float, right: Float, bottom: Float, top: Float, zNear: Float, zFar: Float): Matrix4f {
-        return ofProjection(left, right, bottom, top, zNear, zFar, create())
-    }
-
-    /**
-     * Returns a view matrix based on the camera
-     * 
-     * @param position the position camera
-     * @param rotation the rotation camera
-     * @param dest     the value destination
-     * @return the view matrix
-     */
-    fun ofView(position: Vector3fc, rotation: Vector3fc, dest: Matrix4f): Matrix4f {
-        return dest.identity().rotateXYZ(rotation)
-            .translate(-position.x(), -position.y(), -position.z())
-    }
-
-    fun createView(position: Vector3fc, rotation: Vector3fc): Matrix4f {
-        return ofView(position, rotation, create())
-    }
+    fun Matrix4f.ofProjection(left: Float, right: Float, bottom: Float, top: Float, zNear: Float, zFar: Float) =
+        ofProjection(left, right, bottom, top, zNear, zFar, this)
 
     /**
      * Returns a view matrix based on the camera
@@ -94,13 +76,10 @@ object Matrix4 {
      * @return the view matrix
      */
     @JvmStatic
-    fun ofView(position: Vector3fc, rotation: Quaternionfc, dest: Matrix4f): Matrix4f {
-        return dest.identity().translationRotateScaleInvert(position, rotation, 1f)
-    }
+    fun ofView(position: Vector3fc, rotation: Quaternionfc, dest: Matrix4f): Matrix4f =
+        dest.translationRotateScaleInvert(position, rotation, 1f)
 
-    fun createView(position: Vector3fc, rotation: Quaternionfc): Matrix4f {
-        return ofView(position, rotation, create())
-    }
+    fun Matrix4f.ofView(position: Vector3fc, rotation: Quaternionfc) = ofView(position, rotation, this)
 
     /**
      * Returns a transformation matrix based on the given values
@@ -112,7 +91,9 @@ object Matrix4 {
      * @return the transformation matrix
      */
     @JvmStatic
-    fun ofTransformation(position: Vector3fc, rotation: Quaternionfc, scale: Vector3fc, dest: Matrix4f): Matrix4f {
-        return dest.identity().translationRotateScale(position, rotation, scale)
-    }
+    fun ofTransformation(position: Vector3fc, rotation: Quaternionfc, scale: Vector3fc, dest: Matrix4f): Matrix4f =
+        dest.translationRotateScale(position, rotation, scale)
+
+    fun Matrix4f.ofTransformation(position: Vector3fc, rotation: Quaternionfc, scale: Vector3fc) =
+        ofTransformation(position, rotation, scale, this)
 }

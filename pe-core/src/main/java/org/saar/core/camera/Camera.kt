@@ -5,6 +5,7 @@ import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponentGroup
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Matrix4.ofView
 
 class Camera @JvmOverloads constructor(
     override val projection: Projection,
@@ -16,10 +17,9 @@ class Camera @JvmOverloads constructor(
     override val components = NodeComponentGroup(components, TransformComponent(this.transform))
 
     override val viewMatrix = Matrix4.create()
-        get() = Matrix4.ofView(
+        get() = field.ofView(
             this.transform.position.value,
             this.transform.rotation.value,
-            field
         )
 
     override fun update() = this.components.update(this)

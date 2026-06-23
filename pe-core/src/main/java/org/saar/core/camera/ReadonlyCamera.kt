@@ -3,6 +3,7 @@ package org.saar.core.camera
 import org.saar.maths.transform.ReadonlyTransform
 import org.saar.maths.transform.SimpleTransform
 import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Matrix4.ofView
 
 @Deprecated("Use ICamera")
 class ReadonlyCamera @JvmOverloads constructor(
@@ -11,9 +12,8 @@ class ReadonlyCamera @JvmOverloads constructor(
 ) : ICamera {
 
     override val viewMatrix = Matrix4.create()
-        get() = Matrix4.ofView(
+        get() = field.ofView(
             this.transform.position.value,
             this.transform.rotation.value,
-            field
         )
 }
