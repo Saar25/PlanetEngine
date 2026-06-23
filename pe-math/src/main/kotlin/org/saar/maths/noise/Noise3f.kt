@@ -7,7 +7,7 @@ fun interface Noise3f {
     fun noise(x: Float, y: Float, z: Float): Float
 
     companion object {
-        val simplex = Noise2f(SimplexNoise::noise)
+        val simplex = Noise3f(SimplexNoise::noise)
     }
 }
 

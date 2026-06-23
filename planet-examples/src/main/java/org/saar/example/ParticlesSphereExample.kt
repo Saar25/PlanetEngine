@@ -124,7 +124,7 @@ private class IncreaseParticlesCountComponent(
     private fun initializeParticles(from: Int, to: Int) {
         this.modelComponent.model.mesh.buffers.offset(from)
         for (i in from until to) {
-            val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
+            val v = Vector3.randomize().sub(.5f, .5f, .5f)
                 .normalize((RADIUS * sqrt(Math.random())).toFloat())
             this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
         }
@@ -147,7 +147,7 @@ private class MyParticlesSphereComponent : NodeComponent {
             val instance = this.modelComponent.model.mesh.buffers.reader.readInstance()
 
             if (now - instance.birth >= LIFETIME) {
-                val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
+                val v = Vector3.randomize().sub(.5f, .5f, .5f)
                     .normalize((RADIUS * sqrt(Math.random())).toFloat())
                 this.modelComponent.model.mesh.buffers.offset(i)
                 this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))

@@ -1,9 +1,7 @@
 package org.saar.maths.utils
 
-import org.joml.Vector2fc
 import org.joml.Vector3f
 import org.joml.Vector3fc
-import org.joml.Vector4fc
 import kotlin.math.sqrt
 
 object Vector3 {
@@ -58,15 +56,7 @@ object Vector3 {
      * @return a new Vector3f
      */
     @JvmStatic
-    fun of(d: Float) = of(d, d, d)
-
-    /**
-     * Creates a new Vector3f with the xyz values of v
-     * 
-     * @param v the Vector4fc to copy the xyz values from
-     * @return a new Vector3f
-     */
-    fun of(v: Vector4fc) = of(v.x(), v.y(), v.z())
+    fun of(d: Float) = Vector3f(d)
 
     /**
      * Creates a new Vector3f with the same values as v
@@ -75,71 +65,62 @@ object Vector3 {
      * @return a new Vector3f
      */
     @JvmStatic
-    fun of(v: Vector3fc) = of(v.x(), v.y(), v.z())
-
-    /**
-     * Creates a new Vector3f with the same values as v and z
-     * 
-     * @param v the Vector2fc to copy the xy values from
-     * @param z the z value of the new Vector3f
-     * @return a new Vector3f
-     */
-    fun of(v: Vector2fc, z: Float) = of(v.x(), v.y(), z)
+    fun of(v: Vector3fc) = Vector3f(v)
 
     @JvmStatic
-    fun upward() = of(UP.x(), UP.y(), UP.z())
+    fun upward() = of(UP)
 
     @JvmStatic
-    fun right() = of(RIGHT.x(), RIGHT.y(), RIGHT.z())
+    fun right() = of(RIGHT)
 
     @JvmStatic
-    fun forward() = of(FORWARD.x(), FORWARD.y(), FORWARD.z())
+    fun forward() = of(FORWARD)
 
     @JvmStatic
-    fun downward() = of(DOWN.x(), DOWN.y(), DOWN.z())
+    fun downward() = of(DOWN)
 
     @JvmStatic
-    fun left() = of(LEFT.x(), LEFT.y(), LEFT.z())
+    fun left() = of(LEFT)
 
     @JvmStatic
-    fun backward() = of(BACKWARD.x(), BACKWARD.y(), BACKWARD.z())
+    fun backward() = of(BACKWARD)
 
     @JvmStatic
-    fun one() = of(ONE.x(), ONE.y(), ONE.z())
+    fun one() = of(ONE)
 
     @JvmStatic
-    fun zero() = of(ZERO.x(), ZERO.y(), ZERO.z())
+    fun zero() = of(ZERO)
 
     @JvmStatic
-    fun add(v1: Vector3fc, v2: Vector3fc): Vector3f = of(v1).add(v2)
+    fun add(v1: Vector3fc, v2: Vector3fc): Vector3f = v1.add(v2, create())
 
     @JvmStatic
-    fun sub(v1: Vector3fc, v2: Vector3fc): Vector3f = of(v1).sub(v2)
+    fun sub(v1: Vector3fc, v2: Vector3fc): Vector3f = v1.sub(v2, create())
 
     @JvmStatic
-    fun mul(v1: Vector3fc, v2: Vector3fc): Vector3f = of(v1).mul(v2)
+    fun mul(v1: Vector3fc, v2: Vector3fc): Vector3f = v1.mul(v2, create())
 
     @JvmStatic
-    fun div(v1: Vector3fc, v2: Vector3fc): Vector3f = of(v1).div(v2)
+    fun div(v1: Vector3fc, v2: Vector3fc): Vector3f = v1.div(v2, create())
 
     @JvmStatic
-    fun mul(v: Vector3fc, scalar: Float): Vector3f = of(v).mul(scalar)
+    fun mul(v: Vector3fc, scalar: Float): Vector3f = v.mul(scalar, create())
 
     @JvmStatic
-    fun div(v: Vector3fc, scalar: Float): Vector3f = of(v).div(scalar)
+    fun div(v: Vector3fc, scalar: Float): Vector3f = v.div(scalar, create())
 
     @JvmStatic
-    fun cross(v1: Vector3fc, v2: Vector3fc): Vector3f = of(v1).cross(v2)
+    fun cross(v1: Vector3fc, v2: Vector3fc): Vector3f = v1.cross(v2, create())
 
     @JvmStatic
     fun normalize(x: Float, y: Float, z: Float): Vector3f = of(x, y, z).normalize()
 
     @JvmStatic
-    fun normalize(vector: Vector3fc): Vector3f = of(vector).normalize()
+    fun normalize(vector: Vector3fc): Vector3f = vector.normalize(create())
 
     @JvmStatic
     fun length(x: Float, y: Float, z: Float) = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
 
     @JvmStatic
-    fun randomize(vector: Vector3f): Vector3f = vector.set(Math.random(), Math.random(), Math.random())
+    fun randomize(vector: Vector3f = create()): Vector3f = vector.set(Math.random(), Math.random(), Math.random())
 }

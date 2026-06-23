@@ -3,7 +3,7 @@ package org.saar.maths.objects
 import org.joml.Intersectionf
 import org.joml.Vector2fc
 import org.joml.Vector3fc
-import org.saar.maths.utils.Maths.barryCentric
+import org.saar.maths.utils.Maths.barycentric
 import org.saar.maths.utils.Vector3
 
 class Triangle(p1: Vector3fc, p2: Vector3fc, p3: Vector3fc) {
@@ -29,7 +29,7 @@ class Triangle(p1: Vector3fc, p2: Vector3fc, p3: Vector3fc) {
     }
 
     fun getHeight(position: Vector2fc): Float {
-        return barryCentric(this.p1, this.p2, this.p3, position)
+        return barycentric(this.p1, this.p2, this.p3, position)
     }
 
     fun toSpace(space: Vector3fc): Triangle {

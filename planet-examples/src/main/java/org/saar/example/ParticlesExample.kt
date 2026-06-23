@@ -148,7 +148,7 @@ private class MyParticlesControlComponent : ParticlesControlComponent() {
     }
 
     override fun mapInstance(index: Int, instance: ParticlesInstance): ParticlesInstance {
-        val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
+        val v = Vector3.randomize().sub(.5f, .5f, .5f).mul(2f).mul(10f)
         val passed = Math.random() < .01 && v.lengthSquared() < 100
         return if (passed) Particles.instance(v) else instance
     }
@@ -165,7 +165,7 @@ private class MyParticlesComponent : NodeComponent {
 
     override fun update(node: ComposableNode) {
         for (i in 0 until this.modelComponent.instancesCount) {
-            val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
+            val v = Vector3.randomize().sub(.5f, .5f, .5f).mul(2f).mul(10f)
             if (Math.random() < .01 && v.lengthSquared() < 100) {
                 this.modelComponent.model.mesh.buffers.offset(i)
                 this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
