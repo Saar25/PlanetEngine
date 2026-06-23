@@ -30,7 +30,7 @@ class ColourTexture private constructor(
         fun of(r: Int, g: Int, b: Int, a: Int): ColourTexture {
             LwjglByteBuffer.allocate(4).use { buffer ->
                 buffer.put(r.toByte()).put(g.toByte()).put(b.toByte()).put(a.toByte()).flip()
-                val texture = Texture2D.of(1, 1, InternalFormat.RGBA2, 1).apply {
+                val texture = Texture2D.of(1, 1, InternalFormat.RGBA8, 1).apply {
                     load(0, FormatType.RGBA, DataType.U_BYTE, buffer.asByteBuffer())
                 }
                 return ColourTexture(texture, r, g, b, a)

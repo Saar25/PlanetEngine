@@ -7,7 +7,7 @@ class ClipPlane private constructor(val value: Vector4fc) {
 
     companion object {
         @JvmStatic
-        val NONE = of(0f, 0f, 0f, 0f)
+        val NONE = of(0f, 0f, 0f, 1f)
 
         @JvmStatic
         fun of(value: Vector4fc) = ClipPlane(value.normalize(Vector4.create()))

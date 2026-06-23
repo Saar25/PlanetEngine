@@ -18,7 +18,7 @@ object ClipPlaneTest {
     fun disable(index: Int) {
         if (this.enabled[index]) {
             GL11.glDisable(GL11.GL_CLIP_PLANE0 + index)
-            this.enabled[index] = true
+            this.enabled[index] = false
         }
     }
 
