@@ -1,5 +1,6 @@
 package org.saar.example.reflected
 
+import org.joml.Anglef.Companion.degrees
 import org.joml.primitives.Planef
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
@@ -59,7 +60,6 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.Angle.Companion.degrees
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.ReflectedTransform
 import org.saar.maths.utils.Vector3

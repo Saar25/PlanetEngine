@@ -1,13 +1,13 @@
 package org.saar.core.camera.projection
 
+import org.joml.Anglef
 import org.joml.Matrix4f
 import org.saar.core.camera.Projection
-import org.saar.maths.Angle
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Matrix4.ofProjection
 
 class SimplePerspectiveProjection(
-    override var fov: Angle,
+    override var fov: Anglef,
     override var width: Float,
     override var height: Float,
     override var near: Float,

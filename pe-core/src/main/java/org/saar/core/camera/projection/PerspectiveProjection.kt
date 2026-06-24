@@ -1,11 +1,11 @@
 package org.saar.core.camera.projection
 
+import org.joml.Anglef
 import org.saar.core.camera.Projection
-import org.saar.maths.Angle
 
 interface PerspectiveProjection : Projection {
 
-    val fov: Angle
+    val fov: Anglef
 
     val width: Float
 

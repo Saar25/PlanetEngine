@@ -1,17 +1,17 @@
 package org.saar.core.camera.projection
 
+import org.joml.Anglef
+import org.joml.Anglef.Companion.degrees
 import org.joml.Matrix4f
 import org.saar.core.camera.Projection
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screen
-import org.saar.maths.Angle
-import org.saar.maths.Angle.Companion.degrees
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Matrix4.ofProjection
 
 class ScreenPerspectiveProjection(
     private val screen: Screen = MainScreen,
-    override val fov: Angle,
+    override val fov: Anglef,
     override val near: Float,
     override val far: Float
 ) : PerspectiveProjection, Projection {
