@@ -1,9 +1,7 @@
 package org.saar.maths.transform
 
-import org.joml.Anglef
-import org.joml.Quaternionfc
-import org.joml.Vector3f
-import org.joml.Vector3fc
+import org.joml.*
+import org.joml.Anglef.Companion.degrees
 import org.jproperty.value.ObservableValueBase
 import org.saar.maths.utils.Quaternion
 import org.saar.maths.utils.Vector3
@@ -34,24 +32,16 @@ class Rotation private constructor(value: Quaternionfc) : ObservableValueBase<Qu
         onChange(old)
     }
 
+    @JvmSynthetic
     fun rotate(x: Anglef, y: Anglef, z: Anglef) {
-        rotateRadians(x.radians, y.radians, z.radians)
-    }
-
-    fun rotateDegrees(x: Float, y: Float, z: Float) {
-        val xRadians = Math.toRadians(x.toDouble()).toFloat()
-        val yRadians = Math.toRadians(y.toDouble()).toFloat()
-        val zRadians = Math.toRadians(z.toDouble()).toFloat()
-        rotateRadians(xRadians, yRadians, zRadians)
-    }
-
-    fun rotateRadians(x: Float, y: Float, z: Float) {
         val old = copyValue()
         this.value.rotateX(x)
             .rotateLocalY(y)
             .rotateZ(z)
         onChange(old)
     }
+
+    fun rotateDegrees(x: Float, y: Float, z: Float) = rotate(x.degrees, y.degrees, z.degrees)
 
     fun rotate(rotation: Rotation) {
         rotate(rotation.value)

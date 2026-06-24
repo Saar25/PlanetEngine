@@ -1,6 +1,7 @@
 package org.saar.example.normalmapping
 
 import org.joml.Anglef.Companion.degrees
+import org.joml.rotationAxis
 import org.jproperty.ChangeEvent
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
@@ -228,7 +229,7 @@ private fun buildNodeBatch3D(): NodeBatch3D {
 }
 
 private fun buildNormalMappedNodeBatch(): NormalMappedNodeBatch {
-    val rotation = Quaternion.create().rotationAxis(.5f.degrees.radians, 0f, 1f, 0f)
+    val rotation = Quaternion.create().rotationAxis(.5f.degrees, 0f, 1f, 0f)
 
     val boulderModel = Objects.requireNonNull<NormalMappedModel>(loadBoulder())
     boulderModel.transform.position.set(0f, 20f, 0f)
@@ -261,7 +262,7 @@ private fun buildObjNodeBatch(): ObjNodeBatch {
     val dragon = ObjNode(dragonModel)
 
     val stallModel = Objects.requireNonNull<ObjModel>(loadStall())
-    stallModel.transform.rotation.rotateDegrees(0f, 180f, 0f)
+    stallModel.transform.rotation.rotate(0f.degrees, 180f.degrees, 0f.degrees)
     stallModel.transform.position.set(-50f, 0f, 0f)
     val stall = ObjNode(stallModel)
 

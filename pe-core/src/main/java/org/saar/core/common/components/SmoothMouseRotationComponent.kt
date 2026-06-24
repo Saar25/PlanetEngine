@@ -1,5 +1,6 @@
 package org.saar.core.common.components
 
+import org.joml.Anglef.Companion.degrees
 import org.joml.component1
 import org.joml.component2
 import org.joml.component3
@@ -30,7 +31,7 @@ class SmoothMouseRotationComponent(private val mouse: Mouse, private val velocit
 
         val (x, y, z) = this.toRotate
         this.transformComponent.transform
-            .rotation.rotateDegrees(x, y, z)
+            .rotation.rotate(x.degrees, y.degrees, z.degrees)
 
         this.toRotate.mul(.95f)
         this.xLast = this.mouse.xPos

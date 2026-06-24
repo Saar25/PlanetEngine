@@ -1,7 +1,8 @@
 package org.saar.core.common.components
 
-import org.saar.core.node.NodeComponent
+import org.joml.Anglef.Companion.degrees
 import org.saar.core.node.ComposableNode
+import org.saar.core.node.NodeComponent
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.input.mouse.MouseButton
 import org.saar.maths.utils.Vector3
@@ -24,8 +25,9 @@ class MouseDragRotationComponent(private val mouse: Mouse, private val velocity:
             toRotate.x += this.mouse.yPos - this.yLast
             toRotate.mul(this.velocity)
 
-            this.transformComponent.transform.rotation.rotateDegrees(
-                toRotate.x, toRotate.y, toRotate.z)
+            this.transformComponent.transform.rotation.rotate(
+                toRotate.x.degrees, toRotate.y.degrees, toRotate.z.degrees
+            )
         }
 
         this.xLast = this.mouse.xPos

@@ -1,7 +1,8 @@
 package org.saar.core.common.components
 
-import org.saar.core.node.NodeComponent
+import org.joml.Anglef.Companion.degrees
 import org.saar.core.node.ComposableNode
+import org.saar.core.node.NodeComponent
 import org.saar.core.util.Time
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 
@@ -27,7 +28,7 @@ class KeyboardRotationComponent(private val keyboard: Keyboard, private val velo
             rotation -= this.velocity * delta
         }
 
-        this.transformComponent.transform.rotation.rotateDegrees(0f, rotation, 0f)
+        this.transformComponent.transform.rotation.rotate(0f.degrees, rotation.degrees, 0f.degrees)
 
         this.time.update()
     }

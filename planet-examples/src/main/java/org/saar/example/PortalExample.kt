@@ -1,5 +1,6 @@
 package org.saar.example
 
+import org.joml.Anglef.Companion.degrees
 import org.joml.Vector2i
 import org.lwjgl.glfw.GLFW
 import org.saar.core.camera.Camera
@@ -26,8 +27,8 @@ import org.saar.core.mesh.Mesh
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredNodeRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
@@ -72,12 +73,12 @@ fun main() {
 
     val mesh = generatePortalMesh()
     val portal1 = PortalModel(mesh).also {
-        it.transform.rotation.rotateDegrees(90f, 90f, 0f)
+        it.transform.rotation.rotate(90f.degrees, 90f.degrees, 0f.degrees)
         it.transform.position.set(5f, 5f, 0f)
         it.transform.scale.set(5f)
     }.let(::PortalNode)
     val portal2 = PortalModel(mesh).apply {
-        transform.rotation.rotateDegrees(90f, 0f, 0f)
+        transform.rotation.rotate(90f.degrees, 0f.degrees, 0f.degrees)
         transform.position.set(-5f, 5f, 0f)
         transform.scale.set(5f)
     }.let(::PortalNode)
