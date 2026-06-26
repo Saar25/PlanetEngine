@@ -122,7 +122,7 @@ fun main() {
     )
     val shadowsPrototype = ShadowsScreenPrototype()
     val shadowsScreen = shadowsPrototype.toScreen(
-        Fbo.create(ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize),
+        Fbo.create(), ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize,
     )
     val shadowsCamera = ShadowsCamera(shadowProjection, light)
 
@@ -141,19 +141,19 @@ fun main() {
 
     val depthTexture = MutableTexture2D.create()
     val prototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen1 = prototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val prototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen2 = prototype2.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val prototype3 = ScreenPrototype2D()
-    val screen3 = prototype3.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+    val screen3 = prototype3.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
 
     val prototype4 = ScreenPrototype2D()
-    val screen4 = prototype4.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+    val screen4 = prototype4.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
 
     val prototype5 = ScreenPrototype2D()
-    val screen5 = prototype5.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen5 = prototype5.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val gaussianBlur = GaussianBlurRenderPass()
 

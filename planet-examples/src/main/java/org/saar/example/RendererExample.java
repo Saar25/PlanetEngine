@@ -65,7 +65,6 @@ public class RendererExample {
             int width = e.getWidth().getAfter();
             int height = e.getHeight().getAfter();
             fbo.bind();
-            fbo.resize(width, height);
             dimensions[0] = width;
             dimensions[1] = height;
             attachment.allocate(width, height);

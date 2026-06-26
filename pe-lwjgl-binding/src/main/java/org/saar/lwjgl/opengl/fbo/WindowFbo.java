@@ -1,10 +1,8 @@
 package org.saar.lwjgl.opengl.fbo;
 
 import org.lwjgl.opengl.GL11;
-import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class WindowFbo implements ReadOnlyFbo {
 
@@ -28,24 +26,9 @@ public class WindowFbo implements ReadOnlyFbo {
     }
 
     @Override
-    public int getWidth() {
-        return Window.current().getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return Window.current().getHeight();
-    }
-
-    private void setViewport() {
-        GlUtils.setViewport(0, 0, getWidth(), getHeight());
-    }
-
-    @Override
     public void bindAsRead() {
         getFbo().bind(FboTarget.READ_FRAMEBUFFER);
         GL11.glReadBuffer(GL11.GL_NONE);
-        setViewport();
     }
 
     @Override
@@ -57,7 +40,6 @@ public class WindowFbo implements ReadOnlyFbo {
     @Override
     public void bind() {
         getFbo().bind(FboTarget.FRAMEBUFFER);
-        setViewport();
     }
 
     @Override

@@ -6,20 +6,6 @@ import org.saar.lwjgl.opengl.utils.GlBuffer;
 public interface ReadOnlyFbo {
 
     /**
-     * Returns the width of the fbo
-     *
-     * @return the width
-     */
-    int getWidth();
-
-    /**
-     * Returns the height of the fbo
-     *
-     * @return the height
-     */
-    int getHeight();
-
-    /**
      * Bind the fbo
      */
     void bind();

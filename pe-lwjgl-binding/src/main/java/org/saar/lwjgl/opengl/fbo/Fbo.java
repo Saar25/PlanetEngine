@@ -11,22 +11,21 @@ import org.saar.lwjgl.opengl.utils.GlConfigs;
 
 public class Fbo implements IFbo {
 
-    public static final Fbo NULL = new Fbo(0, 0, 0);
+    public static final Fbo NULL = new Fbo(0);
 
     private final int id;
 
-    private int width;
-    private int height;
-
-    private Fbo(int id, int width, int height) {
+    private Fbo(int id) {
         this.id = id;
-        this.width = width;
-        this.height = height;
+    }
+
+    public static Fbo create() {
+        final int id = GL30.glGenFramebuffers();
+        return new Fbo(id);
     }
 
     public static Fbo create(int width, int height) {
-        final int id = GL30.glGenFramebuffers();
-        return new Fbo(id, width, height);
+        return create();
     }
 
     @Override
@@ -60,22 +59,6 @@ public class Fbo implements IFbo {
                                 int h2, FboBlitFilter filter, GlBuffer... buffers) {
         bindAsRead();
         GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public int getWidth() {
-        return this.width;
-    }
-
-    @Override
-    public int getHeight() {
-        return this.height;
     }
 
     @Override

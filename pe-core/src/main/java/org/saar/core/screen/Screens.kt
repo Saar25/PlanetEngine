@@ -12,8 +12,14 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.StencilAttachmentIndex
 object Screens {
 
     @JvmStatic
-    fun fromPrototype(prototype: ScreenPrototype, fbo: IFbo, allocation: AllocationStrategy): OffScreen {
-        val screen = MutableScreen(fbo)
+    fun fromPrototype(
+        prototype: ScreenPrototype,
+        fbo: IFbo,
+        allocation: AllocationStrategy,
+        width: Int,
+        height: Int
+    ): OffScreen {
+        val screen = MutableScreen(fbo, width, height)
 
         prototype.colorBuffers.withIndex().forEach { (i, buffer) ->
             val index = ColorAttachmentIndex.at(i)
@@ -37,7 +43,20 @@ object Screens {
         return screen
     }
 
-    fun ScreenPrototype.toScreen(fbo: IFbo, allocation: AllocationStrategy = SimpleAllocationStrategy): OffScreen {
-        return fromPrototype(this, fbo, allocation)
+    @JvmOverloads
+    fun ScreenPrototype.toScreen(
+        fbo: IFbo,
+        allocation: AllocationStrategy = SimpleAllocationStrategy,
+        width: Int = 0,
+        height: Int = 0
+    ): OffScreen {
+        return fromPrototype(this, fbo, allocation, width, height)
     }
+
+    @JvmStatic
+    fun ScreenPrototype.toScreen(
+        fbo: IFbo,
+        width: Int = 0,
+        height: Int = 0
+    ): OffScreen = this.toScreen(fbo, SimpleAllocationStrategy, width, height)
 }

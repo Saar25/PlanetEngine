@@ -7,13 +7,20 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTargetComposite
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
-class MutableScreen(override val fbo: IFbo) : FboScreen(), OffScreen {
+class MutableScreen(override val fbo: IFbo, width: Int = 1, height: Int = 1) : FboScreen(), OffScreen {
+
+    private var _width: Int = width
+    override val width get() = this._width
+
+    private var _height: Int = height
+    override val height get() = this._height
 
     private val attachments = mutableMapOf<AttachmentIndex, IAttachment>()
 
     override fun resize(width: Int, height: Int) {
         this.fbo.bind()
-        this.fbo.resize(width, height)
+        this._width = width
+        this._height = height
         this.attachments.values.forEach { it.allocate(width, height) }
     }
 

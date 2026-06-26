@@ -45,7 +45,7 @@ public class ScreenExample {
         final IFbo fbo = Fbo.create(WIDTH, HEIGHT);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
-        final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo, allocation);
+        final OffScreen screen = Screens.INSTANCE.toScreen(screenPrototype, fbo, allocation);
 
         window.addResizeListener(e -> {
             final int w = e.getWidth().getAfter();

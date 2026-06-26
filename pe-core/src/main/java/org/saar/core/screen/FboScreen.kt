@@ -7,10 +7,6 @@ import org.saar.lwjgl.opengl.utils.GlUtils
 
 abstract class FboScreen : Screen {
 
-    override val width get() = this.fbo.width
-
-    override val height get() = this.fbo.height
-
     override fun copyTo(other: Screen, filter: FboBlitFilter, vararg buffers: GlBuffer) {
         other.setAsDraw()
         this.fbo.blitFramebuffer(
