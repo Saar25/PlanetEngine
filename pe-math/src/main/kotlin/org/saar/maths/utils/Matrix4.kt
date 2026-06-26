@@ -39,7 +39,7 @@ object Matrix4 {
      */
     @JvmStatic
     fun ofProjection(fov: Float, width: Float, height: Float, zNear: Float, zFar: Float, dest: Matrix4f): Matrix4f =
-        dest.perspective(fov, width / height, zNear, zFar)
+        dest.setPerspective(fov, width / height, zNear, zFar)
 
     fun Matrix4f.ofProjection(fov: Float, width: Float, height: Float, zNear: Float, zFar: Float) =
         ofProjection(fov, width, height, zNear, zFar, this)
