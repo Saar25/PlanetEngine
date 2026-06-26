@@ -8,6 +8,8 @@ import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
+import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
@@ -70,14 +72,16 @@ public class MultisamplingExample {
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
 
+        GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
+
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-
             fbo.bind();
-            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
             GlUtils.clear(GlBuffer.COLOR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
-            fbo.blitToScreen();
+
+            WindowFbo.getInstance().bindAsDraw();
+            fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

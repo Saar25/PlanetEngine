@@ -12,6 +12,8 @@ import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
+import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
@@ -23,6 +25,7 @@ import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
 import org.saar.lwjgl.opengl.shader.Shader;
 import org.saar.lwjgl.opengl.shader.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
@@ -81,13 +84,15 @@ public class InstancedModelExample {
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
 
+        GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
+
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-
             fbo.bind();
-            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
             mesh.draw();
-            fbo.blitToScreen();
+
+            WindowFbo.getInstance().bindAsDraw();
+            fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

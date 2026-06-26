@@ -10,6 +10,8 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
+import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
@@ -57,24 +59,33 @@ public class RendererExample {
         fbo.setDrawTarget(target);
         fbo.ensureStatus();
 
+        int[] dimensions = {WIDTH, HEIGHT};
+
         window.addResizeListener(e -> {
             int width = e.getWidth().getAfter();
             int height = e.getHeight().getAfter();
             fbo.bind();
             fbo.resize(width, height);
+            dimensions[0] = width;
+            dimensions[1] = height;
             attachment.allocate(width, height);
         });
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
+            GlUtils.setViewport(0, 0, dimensions[0], dimensions[1]);
+
             fbo.bind();
-            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
 
             GlUtils.clear(GlBuffer.COLOR);
 
             renderer.render(new RenderContext(), model);
 
-            fbo.blitToScreen();
+            WindowFbo.getInstance().bindAsDraw();
+            GlUtils.clear(GlBuffer.COLOR);
+            fbo.blitFramebuffer(
+                    dimensions[0], dimensions[1],
+                    FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

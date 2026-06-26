@@ -15,6 +15,8 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
+import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
@@ -74,7 +76,8 @@ public class ObjRendererExample {
 
             renderer.render(new ForwardRenderContext(camera), cottageModel);
 
-            fbo.blitToScreen();
+            WindowFbo.getInstance().bindAsDraw();
+            fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

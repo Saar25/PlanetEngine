@@ -8,7 +8,6 @@ import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.ReadRenderTarget;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
-import org.saar.lwjgl.opengl.utils.GlUtils;
 
 public class Fbo implements IFbo {
 
@@ -48,15 +47,8 @@ public class Fbo implements IFbo {
         target.setAsDraw();
     }
 
-    public void blitToScreen() {
-        final WindowFbo other = WindowFbo.getInstance();
-        other.bindAsDraw();
-        GlUtils.setViewport(0, 0, other.getWidth(), other.getHeight());
-        blitFramebuffer(
-                getWidth(), getHeight(),
-                other.getWidth(), other.getHeight(),
-                FboBlitFilter.LINEAR, GlBuffer.COLOR
-        );
+    public void blitFramebuffer(int w, int h, FboBlitFilter filter, GlBuffer... buffers) {
+        blitFramebuffer(0, 0, w, h, 0, 0, w, h, filter, buffers);
     }
 
     public void blitFramebuffer(int w1, int h1, int w2, int h2, FboBlitFilter filter, GlBuffer... buffers) {
