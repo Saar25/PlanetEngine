@@ -11,10 +11,7 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D.instance
 import org.saar.core.common.r3d.R3D.mesh
-import org.saar.core.common.renderpass.FogRenderPass
-import org.saar.core.common.renderpass.FxaaPostProcessor
-import org.saar.core.common.renderpass.LightRenderPass
-import org.saar.core.common.renderpass.SkyboxPostProcessor
+import org.saar.core.common.renderpass.*
 import org.saar.core.common.terrain.World
 import org.saar.core.common.terrain.color.ColorGenerator
 import org.saar.core.common.terrain.color.NormalColor
@@ -35,6 +32,7 @@ import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
+import org.saar.core.renderer.renderGraph
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.OffScreen
 import org.saar.core.screen.buildScreen
@@ -181,54 +179,55 @@ private class TerrainApplication : Application {
         light: DirectionalLight,
         cubeMap: CubeMapTexture
     ): RenderGraph {
-        val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
+        return renderGraph(WIDTH, HEIGHT) {
+            val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
 
-        val screenAAlbedo = MutableTexture2D.create()
-        val screenANormalSpecular = MutableTexture2D.create()
-        val screenBAlbedo = MutableTexture2D.create()
-        val screenBNormalSpecular = MutableTexture2D.create()
-        val depthTexture = MutableTexture2D.create()
+            val screenAAlbedo = MutableTexture2D.create()
+            val screenANormalSpecular = MutableTexture2D.create()
+            val screenBAlbedo = MutableTexture2D.create()
+            val screenBNormalSpecular = MutableTexture2D.create()
+            val depthTexture = MutableTexture2D.create()
 
-        this.screenA = buildScreen(WIDTH, HEIGHT) {
-            colorAttachment(screenAAlbedo, InternalFormat.RGBA16F)
-            colorAttachment(screenANormalSpecular, InternalFormat.RGBA16F)
-            depthAttachment(depthTexture, InternalFormat.DEPTH24)
+            this@TerrainApplication.screenA = buildScreen(WIDTH, HEIGHT) {
+                colorAttachment(screenAAlbedo, InternalFormat.RGBA16F)
+                colorAttachment(screenANormalSpecular, InternalFormat.RGBA16F)
+                depthAttachment(depthTexture, InternalFormat.DEPTH24)
+            }
+
+            this@TerrainApplication.screenB = buildScreen(WIDTH, HEIGHT) {
+                colorAttachment(screenBAlbedo, InternalFormat.RGBA16F)
+                colorAttachment(screenBNormalSpecular, InternalFormat.RGBA16F)
+                depthAttachment(depthTexture, InternalFormat.DEPTH24)
+            }
+
+            addPass(
+                renderNode.asDeferredRenderPass(camera).onto(screenA)
+            )
+            addPass(
+                LightRenderPass(
+                    albedoBuffer = screenAAlbedo,
+                    normalSpecularBuffer = screenANormalSpecular,
+                    depthBuffer = depthTexture,
+                    camera = camera,
+                    directionalLights = arrayOf(light),
+                ).onto(screenB)
+            )
+            val fogPass = fogPass {
+                input = FogRenderPass.Input(
+                    albedoBuffer = screenBAlbedo,
+                    depthBuffer = depthTexture,
+                    camera = camera,
+                    fog = fog,
+                    fogDistance = FogDistance.XZ
+                )
+            }
+            addPass(
+                SkyboxPostProcessor(cubeMap, camera).onto(fogPass.screen)
+            )
+            addPass(
+                FxaaPostProcessor(fogPass.albedo).onto(MainScreen)
+            )
         }
-
-        this.screenB = buildScreen(WIDTH, HEIGHT) {
-            colorAttachment(screenBAlbedo, InternalFormat.RGBA16F)
-            colorAttachment(screenBNormalSpecular, InternalFormat.RGBA16F)
-            depthAttachment(depthTexture, InternalFormat.DEPTH24)
-        }
-
-        return RenderGraph(
-            renderNode
-                .asDeferredRenderPass(camera)
-                .onto(screenA),
-            LightRenderPass(
-                albedoBuffer = screenAAlbedo,
-                normalSpecularBuffer = screenANormalSpecular,
-                depthBuffer = depthTexture,
-                camera = camera,
-                directionalLights = arrayOf(light),
-            ).onto(screenB),
-            /*
-            // TODO: fix ssao
-            SsaoRenderPass()
-                .asRenderNode(screenBBuffers)
-                .onto(MainScreen),*/
-            FogRenderPass(
-                albedoBuffer = screenBAlbedo,
-                depthBuffer = depthTexture,
-                camera,
-                fog,
-                FogDistance.XZ
-            ).onto(screenA),
-            SkyboxPostProcessor(cubeMap, camera)
-                .onto(screenA),
-            FxaaPostProcessor(screenAAlbedo)
-                .onto(MainScreen),
-        )
     }
 
     private fun createCubeMap(): CubeMapTexture {

@@ -4,8 +4,8 @@ import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.DefaultRenderState
 import org.saar.core.renderer.state.RenderState
 
-fun renderGraph(block: RenderGraph.Builder.() -> Unit): RenderGraph {
-    return RenderGraph.Builder().apply(block).build()
+fun renderGraph(width: Int, height: Int, block: RenderGraph.Builder.() -> Unit): RenderGraph {
+    return RenderGraph.Builder(width, height).apply(block).build()
 }
 
 class RenderGraph(
@@ -24,7 +24,7 @@ class RenderGraph(
 
     fun delete() = this.nodes.forEach { it.delete() }
 
-    class Builder {
+    class Builder(val width: Int, val height: Int) {
 
         private val nodes = mutableListOf<RenderPass>()
         private var renderState: RenderState = DefaultRenderState

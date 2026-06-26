@@ -10,6 +10,10 @@ import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.DepthTestRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screen
+import org.saar.core.screen.buildScreen
+import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -20,8 +24,26 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
 import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
+
+fun RenderGraph.Builder.fogPass(block: FogRenderPass.Builder.() -> Unit): FogRenderPass.Output {
+    val builder = FogRenderPass.Builder().apply(block)
+    val renderPass = FogRenderPass(
+        builder.input.albedoBuffer,
+        builder.input.depthBuffer,
+        builder.input.camera,
+        builder.input.fog,
+        builder.input.fogDistance,
+    )
+    val outputAlbedo = builder.output?.albedo ?: MutableTexture2D.create()
+    val screen = builder.output?.screen ?: buildScreen(width, height) {
+        colorAttachment(outputAlbedo, InternalFormat.RGBA8)
+    }
+    addPass(renderPass.onto(screen))
+    return FogRenderPass.Output(screen, outputAlbedo)
+}
 
 class FogRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,
@@ -30,6 +52,25 @@ class FogRenderPass(
     private val fog: IFog,
     private val fogDistance: FogDistance
 ) : RenderPass {
+
+    class Input(
+        val albedoBuffer: ReadOnlyTexture2D,
+        val depthBuffer: ReadOnlyTexture2D,
+        val camera: ICamera,
+        val fog: IFog,
+        val fogDistance: FogDistance,
+    )
+
+    class Output(val screen: Screen, val albedo: MutableTexture2D)
+
+    class Builder {
+        lateinit var input: Input
+        var output: Output? = null
+
+        fun outputMainScreen() {
+            this.output = Output(MainScreen, MutableTexture2D.NULL)
+        }
+    }
 
     private val shadersLink = FogShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)

@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 
 public class MutableTexture2D implements WritableTexture2D {
 
+    public static MutableTexture2D NULL = new MutableTexture2D(TextureObject.NULL, TextureTarget.TEXTURE_2D);
+
     private final TextureObject texture;
     private final TextureTarget target;
     private int width;
@@ -36,7 +38,7 @@ public class MutableTexture2D implements WritableTexture2D {
     public void allocate(int level, InternalFormat internalFormat, int width,
                          int height, int border, FormatType format, DataType type, ByteBuffer data) {
         this.texture.allocateMutable(this.target, level, internalFormat,
-                width, height, border, format, type, data);
+            width, height, border, format, type, data);
         this.width = width;
         this.height = height;
     }
@@ -44,7 +46,7 @@ public class MutableTexture2D implements WritableTexture2D {
     public void allocateMultisample(int samples, InternalFormat internalFormat, int width,
                                     int height, boolean fixedSampleLocations) {
         this.texture.allocateMutableMultisample(this.target, samples,
-                internalFormat, width, height, fixedSampleLocations);
+            internalFormat, width, height, fixedSampleLocations);
         this.width = width;
         this.height = height;
     }

@@ -96,7 +96,7 @@ object ShadowExample {
             window.height,
         )
 
-        val renderGraph = renderGraph {
+        val renderGraph = renderGraph(WIDTH, HEIGHT) {
             deferredNodePass(camera, renderNode).onto(screen)
 
             shadowsPass(
