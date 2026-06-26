@@ -89,10 +89,10 @@ fun main() {
     val portalCamera1 = ReadonlyCamera(camera.projection, portal1CameraTransform)
 
     val prototype1a = DeferredScreenPrototype()
-    val screen1a = prototype1a.toScreen(Fbo.create(window.width, window.height))
+    val screen1a = prototype1a.toScreen(Fbo.create(), window.width, window.height)
 
     val prototype1b = DeferredScreenPrototype()
-    val screen1b = prototype1b.toScreen(Fbo.create(window.width, window.height))
+    val screen1b = prototype1b.toScreen(Fbo.create(), window.width, window.height)
 
     val portalRenderGraph1 = RenderGraph(
         DeferredNodeRenderPass(camera, world, cube).onto(screen1b),
@@ -110,10 +110,10 @@ fun main() {
     val portalCamera2 = ReadonlyCamera(camera.projection, portal2CameraTransform)
 
     val prototype2a = DeferredScreenPrototype()
-    val screen2a = prototype2a.toScreen(Fbo.create(window.width, window.height))
+    val screen2a = prototype2a.toScreen(Fbo.create(), window.width, window.height)
 
     val prototype2b = DeferredScreenPrototype()
-    val screen2b = prototype2b.toScreen(Fbo.create(window.width, window.height))
+    val screen2b = prototype2b.toScreen(Fbo.create(), window.width, window.height)
 
     // TODO: fix lights
     val portalRenderGraph2 = RenderGraph(
@@ -130,7 +130,7 @@ fun main() {
     portal2.model.viewTexture = prototype2b.albedoTexture
 
     val prototype = DeferredScreenPrototype()
-    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(), window.width, window.height)
 
     val renderGraph = RenderGraph(
         DeferredRenderNodeGroup(portal1, portal2, world, cube)

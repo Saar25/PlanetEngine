@@ -39,11 +39,11 @@ object PostProcessingExample {
         val node = Node2D(model)
 
         val prototype1 = ScreenPrototype2D()
-        val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+        val screen1 = prototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
         val dsPrototype1 = ScreenPrototype2D()
-        val dsScreen1 = dsPrototype1.toScreen(Fbo.create(WIDTH / 8, HEIGHT / 8))
+        val dsScreen1 = dsPrototype1.toScreen(Fbo.create(), WIDTH / 8, HEIGHT / 8)
         val dsPrototype2 = ScreenPrototype2D()
-        val dsScreen2 = dsPrototype2.toScreen(Fbo.create(WIDTH / 8, HEIGHT / 8))
+        val dsScreen2 = dsPrototype2.toScreen(Fbo.create(), WIDTH / 8, HEIGHT / 8)
 
         val gaussianBlurRenderPass = GaussianBlurRenderPass(21)
         val renderGraph = RenderGraph(

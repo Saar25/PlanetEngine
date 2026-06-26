@@ -18,6 +18,7 @@ import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
 import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
+import org.saar.lwjgl.opengl.fbo.attachment.IAttachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.RenderBufferAttachmentBuffer;
 import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
@@ -35,20 +36,16 @@ public class ObjRendererExample {
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
 
-    private static Attachment colorAttachment;
-    private static Attachment depthAttachment;
-    private static Fbo fbo;
-
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
 
-        colorAttachment = new Attachment(
-                new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
-                SimpleAllocationStrategy.INSTANCE);
+        final Attachment colorAttachment = new Attachment(
+            new RenderBufferAttachmentBuffer(InternalFormat.RGBA8),
+            SimpleAllocationStrategy.INSTANCE);
 
-        depthAttachment = new Attachment(
-                new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
-                SimpleAllocationStrategy.INSTANCE);
+        final Attachment depthAttachment = new Attachment(
+            new RenderBufferAttachmentBuffer(InternalFormat.DEPTH24),
+            SimpleAllocationStrategy.INSTANCE);
 
         final Keyboard keyboard = window.getKeyboard();
 
@@ -58,17 +55,20 @@ public class ObjRendererExample {
 
         final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
-        fbo = createFbo(WIDTH, HEIGHT);
+        final Fbo fbo = createFbo(colorAttachment, depthAttachment);
 
         window.addResizeListener(e -> {
-            fbo.delete();
-            fbo = createFbo(window.getWidth(), window.getHeight());
+            int width = e.getWidth().getAfter();
+            int height = e.getHeight().getAfter();
+            colorAttachment.allocate(width, height);
+            depthAttachment.allocate(width, height);
+            GlUtils.setViewport(0, 0, width, height);
         });
+        GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             fbo.bind();
-            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
 
             GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
@@ -83,7 +83,7 @@ public class ObjRendererExample {
             window.pollEvents();
 
             System.out.print("\rFps: " +
-                    1000f / (-current + (current = System.currentTimeMillis()))
+                1000f / (-current + (current = System.currentTimeMillis()))
             );
         }
 
@@ -91,6 +91,7 @@ public class ObjRendererExample {
         renderer.delete();
         fbo.delete();
         colorAttachment.delete();
+        depthAttachment.delete();
         window.destroy();
     }
 
@@ -98,8 +99,8 @@ public class ObjRendererExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final NodeComponentGroup components = new NodeComponentGroup(
-                new KeyboardMovementComponent(keyboard, 20f, 20f, 20f),
-                new KeyboardRotationComponent(keyboard, 50f));
+            new KeyboardMovementComponent(keyboard, 20f, 20f, 20f),
+            new KeyboardRotationComponent(keyboard, 50f));
 
         final Camera camera = new Camera(projection, components);
 
@@ -119,8 +120,8 @@ public class ObjRendererExample {
         return null;
     }
 
-    private static Fbo createFbo(int width, int height) {
-        final Fbo fbo = Fbo.create(width, height);
+    private static Fbo createFbo(IAttachment colorAttachment, IAttachment depthAttachment) {
+        final Fbo fbo = Fbo.create();
 
         final AttachmentIndex colorIndex = ColorAttachmentIndex.at(0);
         final AttachmentIndex depthIndex = DepthAttachmentIndex.INSTANCE;

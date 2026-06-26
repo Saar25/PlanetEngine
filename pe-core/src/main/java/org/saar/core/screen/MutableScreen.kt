@@ -7,7 +7,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTargetComposite
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
-class MutableScreen(override val fbo: IFbo, width: Int = 1, height: Int = 1) : FboScreen(), OffScreen {
+class MutableScreen(override val fbo: IFbo, width: Int, height: Int) : FboScreen(), OffScreen {
 
     private var _width: Int = width
     override val width get() = this._width

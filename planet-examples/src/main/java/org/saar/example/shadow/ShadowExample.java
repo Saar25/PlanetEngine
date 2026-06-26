@@ -59,10 +59,10 @@ public class ShadowExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final KeyboardMovementComponent cameraMovementComponent =
-                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
+            new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
         final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
-                new KeyboardMovementScrollVelocityComponent(mouse),
-                new MouseDragRotationComponent(mouse, -.3f));
+            new KeyboardMovementScrollVelocityComponent(mouse),
+            new MouseDragRotationComponent(mouse, -.3f));
 
         final Camera camera = new Camera(projection, components);
 
@@ -78,20 +78,22 @@ public class ShadowExample {
         light.getColor().set(1, 1, 1);
 
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-                -100, 100, -100, 100, -100, 100);
+            -100, 100, -100, 100, -100, 100);
         final ShadowsScreenPrototype shadowsPrototype = new ShadowsScreenPrototype();
-        final OffScreen shadowsScreen = Screens.INSTANCE.toScreen(
-                shadowsPrototype,
-                Fbo.create(ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize),
-                SimpleAllocationStrategy.INSTANCE);
+        final OffScreen shadowsScreen = Screens.toScreen(
+            shadowsPrototype,
+            Fbo.create(),
+            ShadowsQuality.MEDIUM.imageSize,
+            ShadowsQuality.MEDIUM.imageSize,
+            SimpleAllocationStrategy.INSTANCE);
         final ShadowsCamera shadowsCamera = new ShadowsCamera(shadowProjection, light);
 
         final ReadOnlyTexture2D shadowMap = shadowsPrototype.getDepthTexture();
 
         final RenderGraph shadowsRenderGraph = new RenderGraph(
-                RenderGraphNodeKt.onto(new ShadowsNodeRenderPass(
-                        camera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
-                ), shadowsScreen)
+            RenderGraphNodeKt.onto(new ShadowsNodeRenderPass(
+                camera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
+            ), shadowsScreen)
         );
         ScreenKt.clear(shadowsScreen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
         shadowsRenderGraph.render(new RenderContext());
@@ -99,23 +101,25 @@ public class ShadowExample {
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
 
         final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
-        final OffScreen screen = Screens.INSTANCE.toScreen(
-                prototype,
-                Fbo.create(window.getWidth(), window.getHeight()),
-                SimpleAllocationStrategy.INSTANCE);
+        final OffScreen screen = Screens.toScreen(
+            prototype,
+            Fbo.create(),
+            window.getWidth(),
+            window.getHeight(),
+            SimpleAllocationStrategy.INSTANCE);
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
-                new RenderGraphNode(
-                        new ShadowsRenderPass(
-                                prototype.getAlbedoTexture(),
-                                prototype.getNormalSpecularTexture(),
-                                prototype.getDepthTexture(),
-                                shadowsCamera,
-                                camera,
-                                shadowMap,
-                                light
-                        ), MainScreen.INSTANCE)
+            new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
+            new RenderGraphNode(
+                new ShadowsRenderPass(
+                    prototype.getAlbedoTexture(),
+                    prototype.getNormalSpecularTexture(),
+                    prototype.getDepthTexture(),
+                    shadowsCamera,
+                    camera,
+                    shadowMap,
+                    light
+                ), MainScreen.INSTANCE)
         );
 
         final Fps fps = new Fps();
@@ -132,9 +136,9 @@ public class ShadowExample {
             final double delta = fps.delta() * 1000;
 
             System.out.print("\r --> " +
-                    "Speed: " + String.format("%.2f", cameraMovementComponent.getVelocity().x()) +
-                    ", Fps: " + String.format("%.2f", fps.fps()) +
-                    ", Delta: " + delta);
+                "Speed: " + String.format("%.2f", cameraMovementComponent.getVelocity().x()) +
+                ", Fps: " + String.format("%.2f", fps.fps()) +
+                ", Delta: " + delta);
             fps.update();
         }
 
@@ -151,7 +155,7 @@ public class ShadowExample {
         cubeInstance.getTransform().getScale().set(10, 10, 10);
         cubeInstance.getTransform().getPosition().set(0, 0, 50);
         final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
-                ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
+            ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
         final Model3D cubeModel = new Model3D(cubeMesh);
         final Node3D cube = new Node3D(cubeModel);
 

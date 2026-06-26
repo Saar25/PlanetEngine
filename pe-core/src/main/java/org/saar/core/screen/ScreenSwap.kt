@@ -8,8 +8,8 @@ class ScreenSwap<T : ScreenPrototype>(
     private val screenPrototypeA: T,
     private val screenPrototypeB: T) {
 
-    private val screenA: OffScreen = this.screenPrototypeA.toScreen(Fbo.create(0, 0))
-    private val screenB: OffScreen = this.screenPrototypeB.toScreen(Fbo.create(0, 0))
+    private val screenA: OffScreen = this.screenPrototypeA.toScreen(Fbo.create(), 0, 0)
+    private val screenB: OffScreen = this.screenPrototypeB.toScreen(Fbo.create(), 0, 0)
 
     private val swapMap = mapOf(
         this.screenA to this.screenB,

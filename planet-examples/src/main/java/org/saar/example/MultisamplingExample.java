@@ -40,26 +40,26 @@ public class MultisamplingExample {
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
         vbo.allocateFloat(18);
         vbo.storeFloat(0, new float[]{
-                -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
-                +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
-                +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
+            -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+            +0.0f, +0.5f, 1.0f, 1.0f, 1.0f, 0.0f,
+            +0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f});
         vao.loadVbo(vbo, new AttributeComposite(
-                Attributes.of(0, 2, DataType.FLOAT, false),
-                Attributes.of(1, 3, DataType.FLOAT, false),
-                Attributes.of(2, 1, DataType.FLOAT, false)
+            Attributes.of(0, 2, DataType.FLOAT, false),
+            Attributes.of(1, 3, DataType.FLOAT, false),
+            Attributes.of(2, 1, DataType.FLOAT, false)
         ));
         vbo.delete();
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
-                Shader.createVertex("/vertex.glsl"),
-                Shader.createFragment("/fragment.glsl"));
+            Shader.createVertex("/vertex.glsl"),
+            Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttribute(0, "in_position");
 
         shadersProgram.bind();
 
         vao.bind();
 
-        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
+        final Fbo fbo = Fbo.create();
 
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(8);
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);

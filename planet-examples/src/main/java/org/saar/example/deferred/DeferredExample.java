@@ -18,8 +18,8 @@ import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNode;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredNodeRenderPass;
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
@@ -31,7 +31,6 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.clear.ClearColor;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.maths.transform.Position;
@@ -62,18 +61,19 @@ public class DeferredExample {
         light.getColor().set(1.0f, 1.0f, 1.0f);
 
         final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
-        final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
+        final OffScreen screen = Screens.toScreen(
+            prototype, Fbo.create(), window.getWidth(), window.getHeight());
 
         final RenderGraph renderGraph = new RenderGraph(
-                new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
-                new RenderGraphNode(new LightRenderPass(
-                        prototype.getAlbedoTexture(),
-                        prototype.getNormalSpecularTexture(),
-                        prototype.getDepthTexture(),
-                        camera,
-                        new PointLight[0],
-                        new DirectionalLight[]{light}
-                ), MainScreen.INSTANCE));
+            new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
+            new RenderGraphNode(new LightRenderPass(
+                prototype.getAlbedoTexture(),
+                prototype.getNormalSpecularTexture(),
+                prototype.getDepthTexture(),
+                camera,
+                new PointLight[0],
+                new DirectionalLight[]{light}
+            ), MainScreen.INSTANCE));
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {

@@ -34,16 +34,16 @@ object BloomExample {
         val node = Node2D(model)
 
         val prototype1 = ScreenPrototype2D()
-        val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+        val screen1 = prototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
         val prototypeBright = ScreenPrototype2D()
-        val screenBright = prototypeBright.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+        val screenBright = prototypeBright.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
 
         val prototypeBlurV = ScreenPrototype2D()
-        val screenBlurV = prototypeBlurV.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+        val screenBlurV = prototypeBlurV.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
 
         val prototypeBlurH = ScreenPrototype2D()
-        val screenBlurH = prototypeBlurH.toScreen(Fbo.create(WIDTH / 4, HEIGHT / 4))
+        val screenBlurH = prototypeBlurH.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
 
         val gaussianBlur = GaussianBlurRenderPass(15)
         val keyboard = window.keyboard

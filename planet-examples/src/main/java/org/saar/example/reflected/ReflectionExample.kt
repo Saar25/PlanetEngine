@@ -142,10 +142,10 @@ fun main() {
 
     val reflectionDepthTexture = MutableTexture2D.create()
     val reflectionPrototype1 = DeferredScreenPrototype(depthTexture = reflectionDepthTexture)
-    val reflectionScreen1 = reflectionPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val reflectionScreen1 = reflectionPrototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val reflectionPrototype2 = DeferredScreenPrototype(depthTexture = reflectionDepthTexture)
-    val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val reflectionScreen2 = reflectionPrototype2.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val reflectionRenderGraph = RenderGraph(
         reflectionRenderNode.asDeferredRenderPass(reflectionCamera).onto(reflectionScreen2),
@@ -167,7 +167,7 @@ fun main() {
     val shadowsCamera = ShadowsCamera(shadowsProjection, light)
     val shadowsPrototype = ShadowsScreenPrototype()
     val shadowsScreen =
-        shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize))
+        shadowsPrototype.toScreen(Fbo.create(), ShadowsQuality.HIGH.imageSize, ShadowsQuality.HIGH.imageSize)
     val shadowsRenderGraph = RenderGraph(
         shadowsRenderNode.asShadowsRenderPass(camera).onto(shadowsScreen)
     )
@@ -180,10 +180,10 @@ fun main() {
 //    val fog = Fog(Vector3.of(.2f), 1000f, 2000f)
 
     val prototype1 = DeferredScreenPrototype()
-    val screen1 = prototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen1 = prototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val prototype2 = DeferredScreenPrototype()
-    val screen2 = prototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen2 = prototype2.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val renderGraph = RenderGraph(
         renderNode.asDeferredRenderPass(camera).onto(screen1),

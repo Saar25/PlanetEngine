@@ -137,10 +137,10 @@ fun main() {
     val depthTexture = MutableTexture2D.create()
 
     val screenPrototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen1 = screenPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen1 = screenPrototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val screenPrototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screen2 = screenPrototype2.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val renderGraph = RenderGraph(
         DeferredNodeRenderPass(camera, world, cube).onto(screen1),

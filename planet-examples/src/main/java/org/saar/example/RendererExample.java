@@ -37,10 +37,10 @@ public class RendererExample {
         final float s = 0.7f;
         final int[] indices = {0, 1, 2, 0, 2, 3};
         final Vertex2D[] vertices = {
-                R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
+            R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
+            R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
+            R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
+            R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
         final Mesh mesh = R2D.mesh(vertices, indices);
         final Model2D model = new Model2D(mesh);
@@ -51,7 +51,7 @@ public class RendererExample {
         final Attachment attachment = new Attachment(buffer, allocation);
         final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
-        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
+        final Fbo fbo = Fbo.create();
 
         attachment.allocate(WIDTH, HEIGHT);
         fbo.addAttachment(attachmentIndex, attachment);
@@ -83,8 +83,8 @@ public class RendererExample {
             WindowFbo.getInstance().bindAsDraw();
             GlUtils.clear(GlBuffer.COLOR);
             fbo.blitFramebuffer(
-                    dimensions[0], dimensions[1],
-                    FboBlitFilter.LINEAR, GlBuffer.COLOR);
+                dimensions[0], dimensions[1],
+                FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

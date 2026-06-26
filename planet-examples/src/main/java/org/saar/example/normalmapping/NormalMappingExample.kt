@@ -103,8 +103,9 @@ fun main() {
     val shadowsCamera = ShadowsCamera(shadowProjection, light)
 
     val shadowsPrototype = ShadowsScreenPrototype()
-    val shadowsScreen =
-        shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
+    val shadowsScreen = shadowsPrototype.toScreen(
+        Fbo.create(), ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize
+    )
 
     val shadowsRenderGraph = RenderGraph(
         shadowsRenderNode.asShadowsRenderPass(camera).onto(shadowsScreen)

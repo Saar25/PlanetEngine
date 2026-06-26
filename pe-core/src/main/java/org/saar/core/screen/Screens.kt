@@ -43,20 +43,12 @@ object Screens {
         return screen
     }
 
+    @JvmStatic
     @JvmOverloads
     fun ScreenPrototype.toScreen(
         fbo: IFbo,
-        allocation: AllocationStrategy = SimpleAllocationStrategy,
         width: Int = 0,
-        height: Int = 0
-    ): OffScreen {
-        return fromPrototype(this, fbo, allocation, width, height)
-    }
-
-    @JvmStatic
-    fun ScreenPrototype.toScreen(
-        fbo: IFbo,
-        width: Int = 0,
-        height: Int = 0
-    ): OffScreen = this.toScreen(fbo, SimpleAllocationStrategy, width, height)
+        height: Int = 0,
+        allocation: AllocationStrategy = SimpleAllocationStrategy
+    ): OffScreen = fromPrototype(this, fbo, allocation, width, height)
 }

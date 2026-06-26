@@ -123,7 +123,7 @@ fun main() {
     }
 
     val prototype = DeferredScreenPrototype()
-    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(), window.width, window.height)
 
     val renderGraph = RenderGraph(
         nodeGroup.asDeferredRenderPass(camera).onto(screen),

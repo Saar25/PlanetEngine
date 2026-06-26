@@ -18,7 +18,6 @@ import org.saar.core.screen.Screens;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.IFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
@@ -42,10 +41,9 @@ public class ScreenExample {
 
         final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
-        final IFbo fbo = Fbo.create(WIDTH, HEIGHT);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
-        final OffScreen screen = Screens.INSTANCE.toScreen(screenPrototype, fbo, allocation);
+        final OffScreen screen = Screens.toScreen(screenPrototype, Fbo.create(), WIDTH, HEIGHT, allocation);
 
         window.addResizeListener(e -> {
             final int w = e.getWidth().getAfter();
@@ -78,8 +76,8 @@ public class ScreenExample {
         final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
 
         final NodeComponentGroup component = new NodeComponentGroup(
-                new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
-                new KeyboardRotationComponent(keyboard, 50f));
+            new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+            new KeyboardRotationComponent(keyboard, 50f));
 
         final Camera camera = new Camera(projection, component);
 

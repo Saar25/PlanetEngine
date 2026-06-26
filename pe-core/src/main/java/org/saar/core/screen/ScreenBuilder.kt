@@ -81,8 +81,8 @@ class ScreenBuilder(private val fbo: IFbo) {
         return this
     }
 
-    fun build(): OffScreen {
-        val screen = MutableScreen(this.fbo)
+    fun build(width: Int, height: Int): OffScreen {
+        val screen = MutableScreen(this.fbo, width, height)
 
         this.layers.forEach { layer ->
             val attachment = Attachment(layer.buffer, this.allocationStrategy)

@@ -43,14 +43,14 @@ public class InstancedModelExample {
 
         final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
         final float[] data = {
-                -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
-                +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
-                +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
+            -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
+            +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
+            +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
         dataBuffer.allocateFloat(data.length);
         dataBuffer.storeFloat(0, data);
         vao.loadVbo(dataBuffer, new AttributeComposite(
-                Attributes.of(0, 2, DataType.FLOAT, true),
-                Attributes.of(1, 3, DataType.FLOAT, true)
+            Attributes.of(0, 2, DataType.FLOAT, true),
+            Attributes.of(1, 3, DataType.FLOAT, true)
         ));
         dataBuffer.delete();
 
@@ -65,13 +65,13 @@ public class InstancedModelExample {
         final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
-                Shader.createVertex("/vertex.glsl"),
-                Shader.createFragment("/fragment.glsl"));
+            Shader.createVertex("/vertex.glsl"),
+            Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttributes("in_position", "in_color");
 
         shadersProgram.bind();
 
-        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
+        final Fbo fbo = Fbo.create();
 
         final AllocationStrategy allocation = SimpleAllocationStrategy.INSTANCE;
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
@@ -89,9 +89,11 @@ public class InstancedModelExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             fbo.bind();
+            GlUtils.clear(GlBuffer.COLOR);
             mesh.draw();
 
             WindowFbo.getInstance().bindAsDraw();
+            GlUtils.clear(GlBuffer.COLOR);
             fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();

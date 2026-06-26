@@ -60,11 +60,11 @@ fun main() {
 
     val depthTexture = MutableTexture2D.create()
     val prototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen1 = prototype1.toScreen(Fbo.create(window.width, window.height))
+    val screen1 = prototype1.toScreen(Fbo.create(), window.width, window.height)
     val prototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen2 = prototype2.toScreen(Fbo.create(window.width, window.height))
+    val screen2 = prototype2.toScreen(Fbo.create(), window.width, window.height)
     val prototype3 = DeferredScreenPrototype(depthTexture = depthTexture)
-    val screen3 = prototype3.toScreen(Fbo.create(window.width, window.height))
+    val screen3 = prototype3.toScreen(Fbo.create(), window.width, window.height)
 
     val ssaoRenderGraph = RenderGraph(
         geometryPass.onto(screen1),

@@ -59,7 +59,7 @@ fun main() {
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
 
     val prototype = DeferredScreenPrototype()
-    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(), window.width, window.height)
 
     val renderGraph = RenderGraph(
         particles.asForwardRenderPass(camera).onto(screen),

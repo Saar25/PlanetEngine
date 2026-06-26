@@ -191,17 +191,17 @@ private class TerrainApplication : Application {
         val screenBNormalSpecular = MutableTexture2D.create()
         val depthTexture = MutableTexture2D.create()
 
-        this.screenA = ScreenBuilder(Fbo.create(WIDTH, HEIGHT))
+        this.screenA = ScreenBuilder(Fbo.create())
             .addColorTexture(screenAAlbedo, InternalFormat.RGBA16F)
             .addColorTexture(screenANormalSpecular, InternalFormat.RGBA16F)
             .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
-            .build()
+            .build(WIDTH, HEIGHT)
 
-        this.screenB = ScreenBuilder(Fbo.create(WIDTH, HEIGHT))
+        this.screenB = ScreenBuilder(Fbo.create())
             .addColorTexture(screenBAlbedo, InternalFormat.RGBA16F)
             .addColorTexture(screenBNormalSpecular, InternalFormat.RGBA16F)
             .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
-            .build()
+            .build(WIDTH, HEIGHT)
 
         return RenderGraph(
             renderNode

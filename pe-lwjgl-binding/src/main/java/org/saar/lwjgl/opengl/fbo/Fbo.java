@@ -24,10 +24,6 @@ public class Fbo implements IFbo {
         return new Fbo(id);
     }
 
-    public static Fbo create(int width, int height) {
-        return create();
-    }
-
     @Override
     public void addAttachment(AttachmentIndex index, IAttachment attachment) {
         bind();

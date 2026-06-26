@@ -77,13 +77,13 @@ public class StencilExample {
     }
 
     private static Screen buildScreen(int width, int height) {
-        final IFbo fbo = Fbo.create(width, height);
+        final IFbo fbo = Fbo.create();
 
         return new ScreenBuilder(fbo)
             .addColorRenderBuffer(InternalFormat.RGBA8).setRead()
             .addStencilRenderBuffer(InternalFormat.STENCIL_INDEX8)
             .multisampled(4)
-            .build();
+            .build(width, height);
     }
 
     private static Vao buildVao(float offset) {

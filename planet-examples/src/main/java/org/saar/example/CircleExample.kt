@@ -17,7 +17,6 @@ import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -55,10 +54,8 @@ fun main() {
     BlendTest.enable()
     ClearColor.set(0f, 0f, 0f, 0f)
 
-    val fbo = Fbo.create(WIDTH, HEIGHT)
     val screenPrototype = MyScreenPrototype()
-    val allocation = SimpleAllocationStrategy
-    val screen = screenPrototype.toScreen(fbo, allocation)
+    val screen = screenPrototype.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
     val painter = MyPostProcessor(screenPrototype.albedoTexture)
     val swizzle = SwizzlePostProcessor(screenPrototype.albedoTexture, Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)

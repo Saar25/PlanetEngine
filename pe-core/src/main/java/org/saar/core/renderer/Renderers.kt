@@ -23,10 +23,10 @@ object Renderers {
         render: () -> Unit
     ): MutableTexture2D {
         return MutableTexture2D.create().also { texture ->
-            val fbo = Fbo.create(width, height)
+            val fbo = Fbo.create()
             val screen = ScreenBuilder(fbo)
                 .addColorTexture(texture, internalFormat)
-                .build()
+                .build(width, height)
 
             screen.setAsDraw()
             render()
