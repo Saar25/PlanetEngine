@@ -66,6 +66,7 @@ public class ObjRendererExample {
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             fbo.bind();
+            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
 
             GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 

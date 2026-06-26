@@ -50,16 +50,13 @@ public class Fbo implements IFbo {
 
     public void blitToScreen() {
         final WindowFbo other = WindowFbo.getInstance();
-        blitFramebuffer(other, FboBlitFilter.LINEAR, GlBuffer.COLOR);
-    }
-
-    public void blitFramebuffer(ReadOnlyFbo fbo, FboBlitFilter filter, GlBuffer... buffers) {
-        fbo.bindAsDraw();
-        blitFramebuffer(fbo.getWidth(), fbo.getHeight(), filter, buffers);
-    }
-
-    public void blitFramebuffer(int w, int h, FboBlitFilter filter, GlBuffer... buffers) {
-        blitFramebuffer(getWidth(), getHeight(), w, h, filter, buffers);
+        other.bindAsDraw();
+        GlUtils.setViewport(0, 0, other.getWidth(), other.getHeight());
+        blitFramebuffer(
+                getWidth(), getHeight(),
+                other.getWidth(), other.getHeight(),
+                FboBlitFilter.LINEAR, GlBuffer.COLOR
+        );
     }
 
     public void blitFramebuffer(int w1, int h1, int w2, int h2, FboBlitFilter filter, GlBuffer... buffers) {
@@ -71,10 +68,6 @@ public class Fbo implements IFbo {
                                 int h2, FboBlitFilter filter, GlBuffer... buffers) {
         bindAsRead();
         GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
-    }
-
-    private void setViewport() {
-        GlUtils.setViewport(0, 0, getWidth(), getHeight());
     }
 
     @Override
@@ -101,13 +94,11 @@ public class Fbo implements IFbo {
     @Override
     public void bindAsDraw() {
         bind(FboTarget.DRAW_FRAMEBUFFER);
-        setViewport();
     }
 
     @Override
     public void bind() {
         bind(FboTarget.FRAMEBUFFER);
-        setViewport();
     }
 
     @Override

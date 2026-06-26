@@ -68,6 +68,7 @@ public class RendererExample {
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             fbo.bind();
+            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
 
             GlUtils.clear(GlBuffer.COLOR);
 

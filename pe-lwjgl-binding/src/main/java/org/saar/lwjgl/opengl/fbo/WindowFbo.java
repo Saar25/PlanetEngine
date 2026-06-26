@@ -52,7 +52,6 @@ public class WindowFbo implements ReadOnlyFbo {
     public void bindAsDraw() {
         getFbo().bind(FboTarget.DRAW_FRAMEBUFFER);
         GL11.glDrawBuffer(GL11.GL_BACK);
-        setViewport();
     }
 
     @Override

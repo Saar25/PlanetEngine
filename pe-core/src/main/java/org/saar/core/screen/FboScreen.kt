@@ -3,6 +3,7 @@ package org.saar.core.screen
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter
 import org.saar.lwjgl.opengl.fbo.ReadOnlyFbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlUtils
 
 abstract class FboScreen : Screen {
 
@@ -15,10 +16,14 @@ abstract class FboScreen : Screen {
         this.fbo.blitFramebuffer(
             0, 0, this.width, this.height,
             0, 0, other.width, other.height,
-            filter, buffers)
+            filter, buffers
+        )
     }
 
-    override fun setAsDraw() = this.fbo.bindAsDraw()
+    override fun setAsDraw() {
+        this.fbo.bindAsDraw()
+        GlUtils.setViewport(0, 0, this.width, this.height)
+    }
 
     protected abstract val fbo: ReadOnlyFbo
 }

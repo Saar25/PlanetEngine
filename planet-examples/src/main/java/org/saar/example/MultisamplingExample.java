@@ -74,6 +74,7 @@ public class MultisamplingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 
             fbo.bind();
+            GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
             GlUtils.clear(GlBuffer.COLOR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
             fbo.blitToScreen();
