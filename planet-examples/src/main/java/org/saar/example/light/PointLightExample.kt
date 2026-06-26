@@ -11,8 +11,8 @@ import org.saar.core.common.r3d.R3D
 import org.saar.core.common.renderpass.FxaaPostProcessor
 import org.saar.core.common.renderpass.LightRenderPass
 import org.saar.core.common.renderpass.SkyboxPostProcessor
-import org.saar.core.common.terrain.colour.NormalColour
-import org.saar.core.common.terrain.colour.NormalColourGenerator
+import org.saar.core.common.terrain.color.NormalColor
+import org.saar.core.common.terrain.color.NormalColorGenerator
 import org.saar.core.common.terrain.components.TerrainGravityComponent
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
@@ -36,12 +36,12 @@ import org.saar.example.ExamplesUtils
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
@@ -60,7 +60,7 @@ fun Number.format(digits: Int) = "%.${digits}f".format(this)
 
 fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
-    ClearColour.set(.0f, .7f, .8f)
+    ClearColor.set(.0f, .7f, .8f)
 
     val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
@@ -80,10 +80,10 @@ fun main() {
     )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
-        NormalColourGenerator(
+        NormalColorGenerator(
             Vector3.upward(),
-            NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))
+            NormalColor(0.5f, Vector3.of(.41f, .41f, .41f)),
+            NormalColor(1.0f, Vector3.of(.07f, .52f, .06f))
         ),
         Vector2.of(256f, 256f)
     )
@@ -100,7 +100,7 @@ fun main() {
         )
         PointLight(lightComponents).apply {
             attenuation = Attenuation.DISTANCE_32
-            Vector3.randomize(colour)
+            Vector3.randomize(color)
             update()
         }
     }
@@ -117,7 +117,7 @@ fun main() {
 
     val uiTextGroup = UIElement().apply {
         style.fontSize.set(32)
-        style.fontColour.set(Colours.WHITE)
+        style.fontColor.set(Colors.WHITE)
         style.width.value = percent(100f)
         style.height.value = percent(100f)
         style.alignment.value = AlignmentValues.horizontal
@@ -152,7 +152,7 @@ fun main() {
             pointLights = lights,
             directionalLights = arrayOf(
                 DirectionalLight().also {
-                    it.colour.set(Vector3.of(.2f))
+                    it.color.set(Vector3.of(.2f))
                     it.direction.set(Vector3.DOWN)
                 }
             )
@@ -169,11 +169,11 @@ fun main() {
         uiDisplay.update()
         lights.forEach { it.update() }
 
-        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen1.assureSize(MainScreen.width, MainScreen.height)
-        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.assureSize(MainScreen.width, MainScreen.height)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         renderGraph.render(RenderContext())
 
         window.swapBuffers()

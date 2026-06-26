@@ -10,7 +10,7 @@ import org.saar.maths.utils.Vector3
 class PointLight(override val components: NodeComponentGroup = NodeComponentGroup()) : IPointLight, ComposableNode, Node {
     override val position: Vector3f = Vector3.create()
     override var attenuation: Attenuation = Attenuation.DISTANCE_7
-    override val colour: Vector3f = Vector3.create()
+    override val color: Vector3f = Vector3.create()
 
     override fun update() {
         this.components.update(this)

@@ -9,7 +9,7 @@ class PointLightUniform(name: String) : UniformContainer {
 
     val attenuationUniform = Vec3UniformValue("$name.attenuation")
 
-    val colourUniform = Vec3UniformValue("$name.colour")
+    val colorUniform = Vec3UniformValue("$name.color")
 
-    override val subUniforms = listOf(this.positionUniform, this.attenuationUniform, this.colourUniform)
+    override val subUniforms = listOf(this.positionUniform, this.attenuationUniform, this.colorUniform)
 }

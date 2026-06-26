@@ -7,13 +7,13 @@ vec2(1, 1), vec2(1, 0)
 uniform ivec4 u_bounds;
 uniform vec4 u_borders;
 uniform ivec2 u_resolution;
-uniform ivec4 u_cornersColours;
+uniform ivec4 u_cornersColors;
 
 // Vertex outputs
 out vec2 v_position;
 out vec4 v_bounds;
 out vec4 v_borders;
-out vec4 v_backgroundColour;
+out vec4 v_backgroundColor;
 
 // Methods
 vec2 toNdc(vec2 v) {
@@ -38,12 +38,12 @@ vec2 mapInRectangle(vec4 rectangle, vec2 position) {
     return rectangle.xy + position * rectangle.zw;
 }
 
-vec4 getBackgroundColour(int id) {
-    uint colour = u_cornersColours[id];
-    float r = ((colour << 0) >> 24);
-    float g = ((colour << 8) >> 24);
-    float b = ((colour << 16) >> 24);
-    float a = ((colour << 24) >> 24);
+vec4 getBackgroundColor(int id) {
+    uint color = u_cornersColors[id];
+    float r = ((color << 0) >> 24);
+    float g = ((color << 8) >> 24);
+    float b = ((color << 16) >> 24);
+    float a = ((color << 24) >> 24);
     return vec4(r, g, b, a) / 255;
 }
 
@@ -66,5 +66,5 @@ void main(void) {
     v_bounds = toNdc(u_bounds);
     v_borders = toNdc(bordersRect);
 
-    v_backgroundColour = getBackgroundColour(gl_VertexID);
+    v_backgroundColor = getBackgroundColor(gl_VertexID);
 }

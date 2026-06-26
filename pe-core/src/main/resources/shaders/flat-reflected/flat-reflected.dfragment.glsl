@@ -14,7 +14,7 @@ uniform sampler2D u_reflectionMap;
 uniform float     u_specular;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 layout (location = 1) out vec4 f_normalSpecular;
 
 // Methods declaration
@@ -24,8 +24,8 @@ void main(void) {
     f_normalSpecular = vec4(v_normal, u_specular);
 
     vec2 uvCoords = findReflectionUvCoords();
-    vec3 colour = texture(u_reflectionMap, uvCoords).rgb;
-    f_colour = vec4(colour, 1);
+    vec3 color = texture(u_reflectionMap, uvCoords).rgb;
+    f_color = vec4(color, 1);
 }
 
 vec2 findReflectionUvCoords(void) {

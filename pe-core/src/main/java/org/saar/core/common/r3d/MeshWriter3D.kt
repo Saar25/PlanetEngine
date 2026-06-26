@@ -8,7 +8,7 @@ import org.saar.lwjgl.util.DataWriter
 class MeshWriter3D(
     private val positionWriter: DataWriter,
     private val normalWriter: DataWriter,
-    private val colourWriter: DataWriter,
+    private val colorWriter: DataWriter,
     private val transformWriter: DataWriter,
     private val indexWriter: DataWriter,
 ) : VertexMeshWriter<Vertex3D>, InstancedMeshWriter<Instance3D>, IndexedMeshWriter {
@@ -16,7 +16,7 @@ class MeshWriter3D(
     override fun writeVertex(vertex: Vertex3D) {
         this.positionWriter.write3f(vertex.position3f)
         this.normalWriter.write3f(vertex.normal3f)
-        this.colourWriter.write3f(vertex.colour3f)
+        this.colorWriter.write3f(vertex.color3f)
     }
 
     override fun writeInstance(instance: Instance3D) {

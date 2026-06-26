@@ -10,7 +10,7 @@ import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.event.EventListener
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues.vertical
 import org.saar.gui.style.arrangement.ArrangementValues.spaceBetween
 import org.saar.gui.style.arrangement.ArrangementValues.spaceEvenly
@@ -38,17 +38,17 @@ object LoginPageExample {
             +UIElement().apply {
                 style.padding.set(15.px)
                 style.borders.bottomValue = 4.px
-                style.borderColour.set(Colours.BLACK)
+                style.borderColor.set(Colors.BLACK)
 
                 +UIText("Login Page").apply {
                     style.fontSize.value = 96.px
-                    style.fontColour.set(Colours.WHITE)
+                    style.fontColor.set(Colors.WHITE)
                 }
             }
 
             val badCredentials = UIText("").apply {
                 style.fontSize.value = 32.px
-                style.fontColour.set(Colours.RED)
+                style.fontColor.set(Colors.RED)
             }
 
             val username = UITextField("username")
@@ -60,12 +60,12 @@ object LoginPageExample {
                 style.axisAlignment.value = AxisAlignmentValues.center
 
                 +UIText("Username: ").apply {
-                    style.fontColour.set(Colours.WHITE)
+                    style.fontColor.set(Colors.WHITE)
                 }
 
                 +username.apply {
                     style.width.value = 350.px
-                    style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    style.backgroundColor.set(Colors.parse("#e0e0e0"))
                     style.padding.set(10.px)
 
                     textProperty.addListener(InvalidationListener { badCredentials.text = "" })
@@ -81,12 +81,12 @@ object LoginPageExample {
                 style.axisAlignment.value = AxisAlignmentValues.center
 
                 +UIText("Password: ").apply {
-                    style.fontColour.set(Colours.WHITE)
+                    style.fontColor.set(Colors.WHITE)
                 }
 
                 +password.apply {
                     style.width.value = 350.px
-                    style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    style.backgroundColor.set(Colors.parse("#e0e0e0"))
                     style.padding.set(10.px)
 
                     textProperty.addListener(InvalidationListener { badCredentials.text = "" })
@@ -97,19 +97,19 @@ object LoginPageExample {
 
             +UIButton("Login").apply {
                 style.fontSize.value = 48.px
-                style.fontColour.set(Colours.WHITE)
-                style.borderColour.set(Colours.WHITE)
+                style.fontColor.set(Colors.WHITE)
+                style.borderColor.set(Colors.WHITE)
                 style.borders.set(1.px)
-                style.backgroundColour.set(Colours.parse("#212121"))
+                style.backgroundColor.set(Colors.parse("#212121"))
                 style.opacity.set(.6f)
 
                 onAction = EventListener {
                     if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {
                         badCredentials.text = "Noice"
-                        badCredentials.style.fontColour.set(Colours.GREEN)
+                        badCredentials.style.fontColor.set(Colors.GREEN)
                     } else {
                         badCredentials.text = "Bad username or password!"
-                        badCredentials.style.fontColour.set(Colours.RED)
+                        badCredentials.style.fontColor.set(Colors.RED)
                     }
                 }
             }
@@ -122,7 +122,7 @@ object LoginPageExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH)
             background.render(RenderContext())
             display.render(RenderContext())
 

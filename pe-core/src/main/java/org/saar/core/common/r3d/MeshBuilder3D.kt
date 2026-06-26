@@ -18,7 +18,7 @@ class MeshBuilder3D(
     private val instances: Int,
     private val positionBufferBuilder: DataMeshBufferBuilder,
     private val normalBufferBuilder: DataMeshBufferBuilder,
-    private val colourBufferBuilder: DataMeshBufferBuilder,
+    private val colorBufferBuilder: DataMeshBufferBuilder,
     private val transformBufferBuilder: DataMeshBufferBuilder,
     private val indexBufferBuilder: IndexMeshBufferBuilder,
 ) : MeshBuilder {
@@ -26,7 +26,7 @@ class MeshBuilder3D(
     val writer = MeshWriter3D(
         this.positionBufferBuilder.writer,
         this.normalBufferBuilder.writer,
-        this.colourBufferBuilder.writer,
+        this.colorBufferBuilder.writer,
         this.transformBufferBuilder.writer,
         this.indexBufferBuilder.writer,
     )
@@ -34,7 +34,7 @@ class MeshBuilder3D(
     private val bufferBuilders = listOf(
         this.positionBufferBuilder,
         this.normalBufferBuilder,
-        this.colourBufferBuilder,
+        this.colorBufferBuilder,
         this.transformBufferBuilder,
         this.indexBufferBuilder,
     ).distinct()
@@ -42,7 +42,7 @@ class MeshBuilder3D(
     private val vertexBufferBuilders = listOf(
         this.positionBufferBuilder,
         this.normalBufferBuilder,
-        this.colourBufferBuilder,
+        this.colorBufferBuilder,
     ).distinct()
 
     init {
@@ -50,7 +50,7 @@ class MeshBuilder3D(
             Attributes.of(0, 3, DataType.FLOAT, true))
         this.normalBufferBuilder.addAttribute(
             Attributes.of(1, 3, DataType.FLOAT, true))
-        this.colourBufferBuilder.addAttribute(
+        this.colorBufferBuilder.addAttribute(
             Attributes.of(2, 3, DataType.FLOAT, true))
         this.transformBufferBuilder.addAttribute(AttributeComposite(
             Attributes.ofInstanced(3, 4, DataType.FLOAT, false),

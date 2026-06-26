@@ -5,5 +5,5 @@ import org.saar.maths.utils.Vector3
 
 class DirectionalLight : IDirectionalLight {
     override val direction: Vector3f = Vector3.create()
-    override val colour: Vector3f = Vector3.create()
+    override val color: Vector3f = Vector3.create()
 }

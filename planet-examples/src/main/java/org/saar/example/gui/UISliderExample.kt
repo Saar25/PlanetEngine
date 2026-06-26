@@ -7,7 +7,7 @@ import org.saar.gui.UIBlock
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIText
 import org.saar.gui.component.UISlider
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.pixels
@@ -30,19 +30,19 @@ object UISliderExample {
 
         val uiText = UIText("Hello World!").apply {
             style.fontSize.set(48)
-            style.fontColour.set(Colours.WHITE)
+            style.fontColor.set(Colors.WHITE)
         }
         display.add(uiText)
 
         val blockGap = UIBlock().apply {
-            style.borderColour.set(Colours.PURPLE)
+            style.borderColor.set(Colors.PURPLE)
             style.height.value = percent(50f)
         }
         display.add(blockGap)
 
         val borderSize = UIText("Border size: 0").apply {
             style.fontSize.set(48)
-            style.fontColour.set(Colours.WHITE)
+            style.fontColor.set(Colors.WHITE)
         }
         display.add(borderSize)
 
@@ -61,7 +61,7 @@ object UISliderExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH)
             display.render(RenderContext())
 
             window.swapBuffers()

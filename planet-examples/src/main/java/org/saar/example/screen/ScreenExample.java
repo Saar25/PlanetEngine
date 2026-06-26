@@ -56,7 +56,7 @@ public class ScreenExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             screen.setAsDraw();
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
             camera.update();
 

@@ -9,7 +9,7 @@ import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.event.EventListener
 import org.saar.gui.font.FontLoader
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
@@ -44,7 +44,7 @@ object UIButtonExample {
         container.add(uiButton)
 
         val uiFps = UIText("").apply {
-            style.fontColour.set(Colours.WHITE)
+            style.fontColor.set(Colors.WHITE)
             style.fontSize.set(22)
         }
         container.add(uiFps)
@@ -56,7 +56,7 @@ object UIButtonExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()
 
-            GlUtils.clear(GlBuffer.COLOUR)
+            GlUtils.clear(GlBuffer.COLOR)
             display.render(RenderContext())
 
             window.swapBuffers()

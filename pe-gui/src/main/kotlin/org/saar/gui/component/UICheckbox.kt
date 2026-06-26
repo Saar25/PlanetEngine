@@ -43,13 +43,13 @@ class UICheckbox : UIComponent() {
         style.radius.set(2)
         style.borders.set(2)
         style.height.value = LengthValues.ratio(1f)
-        style.borderColour.set(Defaults.secondColour)
-        style.backgroundColour.set(Defaults.mainColour)
+        style.borderColor.set(Defaults.secondColor)
+        style.backgroundColor.set(Defaults.mainColor)
     }
 
     override fun onMousePress(event: MouseEvent) {
         if (event.button.isPrimary) {
-            this.style.colourModifier.set(1.3f)
+            this.style.colorModifier.set(1.3f)
         }
     }
 
@@ -58,15 +58,15 @@ class UICheckbox : UIComponent() {
             val current = this.checkedProperty.get()
             this.checkedProperty.set(!current)
 
-            this.style.colourModifier.set(1f)
+            this.style.colorModifier.set(1f)
         }
     }
 
     override fun onMouseEnter(event: MouseEvent) {
-        this.style.colourModifier.set(1.2f)
+        this.style.colorModifier.set(1.2f)
     }
 
     override fun onMouseExit(event: MouseEvent) {
-        this.style.colourModifier.set(1f)
+        this.style.colorModifier.set(1f)
     }
 }

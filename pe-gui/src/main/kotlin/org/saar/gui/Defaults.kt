@@ -1,16 +1,16 @@
 package org.saar.gui
 
-import org.saar.gui.style.Colour
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Color
+import org.saar.gui.style.Colors
 
 object Defaults {
 
-    val mainColour: Colour = Colours.parse("#00ADB5")
+    val mainColor: Color = Colors.parse("#00ADB5")
 
-    val secondColour: Colour = Colours.parse("#222831")
+    val secondColor: Color = Colors.parse("#222831")
 
-    val backgroundColour: Colour = Colours.parse("#393E46")
+    val backgroundColor: Color = Colors.parse("#393E46")
 
-    val textColour: Colour = Colours.parse("#EEEEEE")
+    val textColor: Color = Colors.parse("#EEEEEE")
 
 }

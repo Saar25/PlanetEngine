@@ -11,11 +11,11 @@ class DirectionalLightUniformValue(name: String, var value: IDirectionalLight) :
         override val value get() = this@DirectionalLightUniformValue.value.direction
     }
 
-    private val colourUniform = object : Vec3Uniform() {
-        override val name = "$name.colour"
+    private val colorUniform = object : Vec3Uniform() {
+        override val name = "$name.color"
 
-        override val value get() = this@DirectionalLightUniformValue.value.colour
+        override val value get() = this@DirectionalLightUniformValue.value.color
     }
 
-    override val subUniforms = listOf(this.directionUniform, this.colourUniform)
+    override val subUniforms = listOf(this.directionUniform, this.colorUniform)
 }

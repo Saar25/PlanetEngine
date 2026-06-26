@@ -32,7 +32,7 @@ import org.saar.core.screen.clear
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour.set
+import org.saar.lwjgl.opengl.clear.ClearColor.set
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -56,7 +56,7 @@ fun main() {
 
     val light = DirectionalLight()
     light.direction.set(-50f, -50f, -50f)
-    light.colour.set(1.0f, 1.0f, 1.0f)
+    light.color.set(1.0f, 1.0f, 1.0f)
 
     val depthTexture = MutableTexture2D.create()
     val prototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
@@ -95,9 +95,9 @@ fun main() {
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         camera.update()
 
-        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         ref.value.render(RenderContext())
 
         window.swapBuffers()

@@ -4,9 +4,9 @@ import org.joml.Vector2i
 import org.saar.core.mesh.Model
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.gui.style.Colour
-import org.saar.gui.style.Colours
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.gui.style.Color
+import org.saar.gui.style.Colors
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -19,7 +19,7 @@ class RenderGraphics : Graphics {
 
     private val renderList = ArrayList<Model>()
 
-    override var colour: Colour = Colours.BLACK
+    override var color: Color = Colors.BLACK
 
     @UniformProperty
     private val windowSizeUniform = object : Vec2iUniform() {
@@ -30,10 +30,10 @@ class RenderGraphics : Graphics {
     }
 
     @UniformProperty
-    private val colourUniform = object : UIntUniform() {
-        override val name = "colour"
+    private val colorUniform = object : UIntUniform() {
+        override val name = "color"
 
-        override val value get() = colour.asInt()
+        override val value get() = color.asInt()
     }
 
     companion object {
@@ -70,11 +70,11 @@ class RenderGraphics : Graphics {
 
     }
 
-    override fun clear(clearColour: Colour) {
-        ClearColour.set(
-            clearColour.red / 256f,
-            clearColour.green / 256f,
-            clearColour.blue / 256f,
+    override fun clear(clearColor: Color) {
+        ClearColor.set(
+            clearColor.red / 256f,
+            clearColor.green / 256f,
+            clearColor.blue / 256f,
             1f)
     }
 

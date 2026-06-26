@@ -44,7 +44,7 @@ class FogRenderPass(
         this.shadersLink.textureUniform.value = this.albedoBuffer
         this.shadersLink.depthUniform.value = this.depthBuffer
         this.shadersLink.fogDistanceUniform.value = this.fogDistance.ordinal
-        this.shadersLink.fogUniform.colourUniform.value.set(this.fog.colour)
+        this.shadersLink.fogUniform.colorUniform.value.set(this.fog.color)
         this.shadersLink.fogUniform.startUniform.value = this.fog.start
         this.shadersLink.fogUniform.endUniform.value = this.fog.end
 

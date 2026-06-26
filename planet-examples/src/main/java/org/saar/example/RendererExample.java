@@ -67,7 +67,7 @@ public class RendererExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             fbo.bind();
 
-            GlUtils.clear(GlBuffer.COLOUR);
+            GlUtils.clear(GlBuffer.COLOR);
 
             renderer.render(new RenderContext(), model);
 

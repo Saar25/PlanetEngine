@@ -145,7 +145,7 @@ class SSAOMapGenerator @JvmOverloads constructor(
 private class SsaoLightRenderPassPrototype() : RenderPassPrototype {
 
     @UniformProperty
-    val colourTextureUniform = TextureUniformValue("u_colourTexture", 1)
+    val colorTextureUniform = TextureUniformValue("u_colorTexture", 1)
 
     @UniformProperty
     val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 2)

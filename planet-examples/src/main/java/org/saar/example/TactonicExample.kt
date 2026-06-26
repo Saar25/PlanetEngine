@@ -34,7 +34,7 @@ import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.constants.RenderMode
@@ -81,7 +81,7 @@ private class ChunkData(
 
 fun main() {
     val window = Window.create("Lwjgl", 1200, 700, true)
-    ClearColour.set(0.53f, 0.81f, 0.92f)
+    ClearColor.set(0.53f, 0.81f, 0.92f)
 
     val camera = buildCamera(window.mouse, window.keyboard)
 
@@ -119,7 +119,7 @@ fun main() {
 
     val light = DirectionalLight().also {
         it.direction.set(-1f, -1f, -1f)
-        it.colour.set(1f, 1f, 1f)
+        it.color.set(1f, 1f, 1f)
     }
 
     val prototype = DeferredScreenPrototype()
@@ -157,8 +157,8 @@ fun main() {
         camera.update()
         nodeGroup.update()
 
-        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         renderGraph.render(RenderContext())
 
         window.swapBuffers()

@@ -15,9 +15,9 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D.instance
 import org.saar.core.common.r3d.R3D.mesh
-import org.saar.core.common.terrain.colour.ColourGenerator
-import org.saar.core.common.terrain.colour.NormalColour
-import org.saar.core.common.terrain.colour.NormalColourGenerator
+import org.saar.core.common.terrain.color.ColorGenerator
+import org.saar.core.common.terrain.color.NormalColor
+import org.saar.core.common.terrain.color.NormalColorGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
@@ -38,7 +38,7 @@ import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.Noise2f
@@ -52,7 +52,7 @@ import org.saar.maths.utils.Vector3
 
 fun main() {
     val window = Window.create("Lwjgl", 1200, 700, true)
-    ClearColour.set(0.53f, 0.81f, 0.92f)
+    ClearColor.set(0.53f, 0.81f, 0.92f)
 
     val camera = buildCamera(window.mouse, window.keyboard)
 
@@ -68,7 +68,7 @@ fun main() {
 
     val light = DirectionalLight().also {
         it.direction.set(-1f, -1f, -1f)
-        it.colour.set(1f, 1f, 1f)
+        it.color.set(1f, 1f, 1f)
     }
 
     val mesh = generatePortalMesh()
@@ -148,12 +148,12 @@ fun main() {
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
 
-        screen1a.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen1b.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen2a.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen2b.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1a.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1b.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2a.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2b.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
         portalRenderGraph1.render(RenderContext())
         portalRenderGraph2.render(RenderContext())
@@ -199,14 +199,14 @@ private fun buildWorld(): LowPolyWorld {
     val heightGenerator = NoiseHeightGenerator(
         Noise2f.simplex.layered(5).spread(8f).multiplied(18f)
     )
-    val colourGenerator: ColourGenerator = NormalColourGenerator(
+    val colorGenerator: ColorGenerator = NormalColorGenerator(
         Vector3.upward(),
-        NormalColour(0.90f, Vector3.of(.41f, .41f, .41f)),
-        NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))
+        NormalColor(0.90f, Vector3.of(.41f, .41f, .41f)),
+        NormalColor(1.0f, Vector3.of(.07f, .52f, .06f))
     )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
-        colourGenerator, Vector2.of(64f, 64f)
+        colorGenerator, Vector2.of(64f, 64f)
     )
     return LowPolyWorld(terrainFactory)
 }

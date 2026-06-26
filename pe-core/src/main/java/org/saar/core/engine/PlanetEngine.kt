@@ -18,7 +18,7 @@ class PlanetEngine : Engine {
             while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
                 application.update(window)
 
-                GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH)
+                GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH)
                 application.render(window)
 
                 window.swapBuffers()

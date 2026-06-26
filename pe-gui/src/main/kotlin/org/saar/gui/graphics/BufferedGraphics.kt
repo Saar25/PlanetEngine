@@ -1,7 +1,7 @@
 package org.saar.gui.graphics
 
-import org.saar.gui.style.Colour
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Color
+import org.saar.gui.style.Colors
 import org.saar.lwjgl.opengl.constants.DataType
 import org.saar.lwjgl.opengl.constants.FormatType
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -12,21 +12,21 @@ class BufferedGraphics(private val texture: Texture2D) : Graphics {
 
     private val buffer = LwjglByteBuffer.allocate(4 * texture.width * texture.height)
 
-    override var colour: Colour = Colours.BLACK
+    override var color: Color = Colors.BLACK
 
     private fun getPixel(x: Int, y: Int): Int {
         val position = x + y * this.texture.width
-        var colour = this.buffer[position].toInt()
-        colour = (colour shl 4) + this.buffer[position + 1]
-        colour = (colour shl 4) + this.buffer[position + 2]
-        colour = (colour shl 4) + this.buffer[position + 3]
-        return colour
+        var color = this.buffer[position].toInt()
+        color = (color shl 4) + this.buffer[position + 1]
+        color = (color shl 4) + this.buffer[position + 2]
+        color = (color shl 4) + this.buffer[position + 3]
+        return color
     }
 
-    private fun setPixel(x: Int, y: Int, colour: Colour) {
+    private fun setPixel(x: Int, y: Int, color: Color) {
         if (x >= 0 && x < this.texture.width && y >= 0 && y < this.texture.height) {
             this.buffer.position(x + y * this.texture.width)
-            this.buffer.putInt(colour.asInt())
+            this.buffer.putInt(color.asInt())
         }
     }
 
@@ -41,12 +41,12 @@ class BufferedGraphics(private val texture: Texture2D) : Graphics {
         if (xLength > yLength) {
             val m: Float = if (yLength == 0) 0f else xLength.toFloat() / yLength
             for (x in xMin..xMax) {
-                this.setPixel(x, (yMin + (x - xMin) * m).toInt(), this.colour)
+                this.setPixel(x, (yMin + (x - xMin) * m).toInt(), this.color)
             }
         } else {
             val m: Float = if (xLength == 0) 0f else yLength.toFloat() / xLength
             for (y in yMin..yMax) {
-                this.setPixel((xMin + (y - yMin) * m).toInt(), y, this.colour)
+                this.setPixel((xMin + (y - yMin) * m).toInt(), y, this.color)
             }
         }
     }
@@ -61,7 +61,7 @@ class BufferedGraphics(private val texture: Texture2D) : Graphics {
     override fun fillRectangle(x: Int, y: Int, w: Int, h: Int) {
         for (i in 0 until w) {
             for (j in 0 until h) {
-                setPixel(x + i, y + j, this.colour)
+                setPixel(x + i, y + j, this.color)
             }
         }
     }
@@ -74,7 +74,7 @@ class BufferedGraphics(private val texture: Texture2D) : Graphics {
                 val dx = (x - cx).toFloat()
                 val dy = (y - cy).toFloat()
                 if (dx * dx * invCx2 + dy * dy * invCy2 == 1f) {
-                    setPixel(x, y, this.colour)
+                    setPixel(x, y, this.color)
                 }
             }
         }
@@ -88,18 +88,18 @@ class BufferedGraphics(private val texture: Texture2D) : Graphics {
                 val dx = (x - cx).toFloat()
                 val dy = (y - cy).toFloat()
                 if (dx * dx * invCx2 + dy * dy * invCy2 <= 1) {
-                    setPixel(x, y, this.colour)
+                    setPixel(x, y, this.color)
                 }
             }
         }
     }
 
     override fun fillPolygon(polygon: Polygon) {}
-    override fun clear(clearColour: Colour) {
+    override fun clear(clearColor: Color) {
         this.buffer.clear()
-        val colour = clearColour.asInt()
+        val color = clearColor.asInt()
         for (i in 0 until this.buffer.limit()) {
-            this.buffer.putInt(colour)
+            this.buffer.putInt(color)
         }
     }
 

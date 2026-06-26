@@ -7,7 +7,7 @@ class DirectionalLightUniform(name: String) : UniformContainer {
 
     val directionUniform = Vec3UniformValue("$name.direction")
 
-    val colourUniform = Vec3UniformValue("$name.colour")
+    val colorUniform = Vec3UniformValue("$name.color")
 
-    override val subUniforms = listOf(this.directionUniform, this.colourUniform)
+    override val subUniforms = listOf(this.directionUniform, this.colorUniform)
 }

@@ -7,7 +7,7 @@ import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.component.UIButton
 import org.saar.gui.event.EventListener
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
@@ -35,7 +35,7 @@ object UIAlignmentExample {
         }
 
         val container = UIElement().apply {
-            style.backgroundColour.set(Colours.BLUE)
+            style.backgroundColor.set(Colors.BLUE)
             style.alignment.value = AlignmentValues.horizontal
             style.arrangement.value = ArrangementValues.spaceAround
             style.width.value = percent(100f)
@@ -64,13 +64,13 @@ object UIAlignmentExample {
         display.add(container)
 
         val container2 = UIElement().apply {
-            style.backgroundColour.set(Colours.BLUE)
+            style.backgroundColor.set(Colors.BLUE)
             style.alignment.value = AlignmentValues.horizontal
             style.arrangement.value = ArrangementValues.spaceEvenly
             style.width.value = percent(100f)
 
             add(UIBlock().apply {
-                style.backgroundColour.set(Colours.BLUE)
+                style.backgroundColor.set(Colors.BLUE)
                 style.position.value = PositionValues.absolute
             })
 
@@ -100,7 +100,7 @@ object UIAlignmentExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()
 
-            GlUtils.clear(GlBuffer.COLOUR)
+            GlUtils.clear(GlBuffer.COLOR)
             display.render(RenderContext())
 
             window.swapBuffers()

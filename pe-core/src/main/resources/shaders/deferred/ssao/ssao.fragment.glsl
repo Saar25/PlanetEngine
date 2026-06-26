@@ -29,7 +29,7 @@ uniform vec2 u_noiseScale;
 uniform float u_radius;
 
 // Fragment outputs
-out vec4 f_colour;
+out vec4 f_color;
 
 // Global variables
 vec3 g_normal;
@@ -41,9 +41,9 @@ vec3 g_viewPosition;
 void initBufferValues(void);
 void initGlobals(void);
 
-vec3 finalAmbientColour(void);
-vec3 finalDiffuseColour(void);
-vec3 finalSpecularColour(void);
+vec3 finalAmbientColor(void);
+vec3 finalDiffuseColor(void);
+vec3 finalSpecularColor(void);
 
 // Main
 void main(void) {
@@ -77,7 +77,7 @@ void main(void) {
     }
 
     occlusion = 1 - (occlusion / KERNEL_SAMPLES);
-    f_colour = vec4(vec3(occlusion), 1);
+    f_color = vec4(vec3(occlusion), 1);
 }
 
 void initBufferValues(void) {

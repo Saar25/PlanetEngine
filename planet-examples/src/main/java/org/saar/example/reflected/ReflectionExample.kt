@@ -45,16 +45,16 @@ import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.font.FontLoader
 import org.saar.gui.font.FontLoader.loadFont
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.coordinate.CoordinateValues.pixelsEnd
 import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.ColorTexture.Companion.of
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
@@ -71,7 +71,7 @@ private const val HEIGHT = 700
 fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    ClearColour.set(0.392f, 0.584f, 0.929f)
+    ClearColor.set(0.392f, 0.584f, 0.929f)
 
     val uiDisplay = UIDisplay(window).apply {
         style.alignment.value = AlignmentValues.horizontal
@@ -87,7 +87,7 @@ fun main() {
             ratio(HEIGHT.toFloat() / WIDTH)
         )
         style.borders.set(1)
-        style.borderColour.set(Colours.PURPLE)
+        style.borderColor.set(Colors.PURPLE)
     }
 
     uiDisplay.add(reflectionUiBlock)
@@ -99,7 +99,7 @@ fun main() {
     val uiTextGroup = UIElement().apply {
         style.font.set(font)
         style.fontSize.set(22)
-        style.fontColour.set(Colours.WHITE)
+        style.fontColor.set(Colors.WHITE)
         style.alignment.value = AlignmentValues.vertical
     }
 
@@ -207,12 +207,12 @@ fun main() {
         camera.update()
         uiDisplay.update()
 
-        reflectionScreen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        reflectionScreen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        reflectionScreen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        reflectionScreen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
 
         reflectionRenderGraph.render(RenderContext())
         shadowsRenderGraph.render(RenderContext())
@@ -310,7 +310,7 @@ private fun buildCubeModel(): Model3D {
 private fun buildDirectionalLight(): DirectionalLight {
     val light = DirectionalLight()
     light.direction.set(-1f, -1f, -1f)
-    light.colour.set(1f, 1f, 1f)
+    light.color.set(1f, 1f, 1f)
     return light
 }
 

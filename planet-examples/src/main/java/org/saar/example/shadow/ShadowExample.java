@@ -36,7 +36,7 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
-import org.saar.lwjgl.opengl.texture.ColourTexture;
+import org.saar.lwjgl.opengl.texture.ColorTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
 import org.saar.lwjgl.opengl.texture.Texture2D;
@@ -75,7 +75,7 @@ public class ShadowExample {
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-1, -1, -1);
-        light.getColour().set(1, 1, 1);
+        light.getColor().set(1, 1, 1);
 
         final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
                 -100, 100, -100, 100, -100, 100);
@@ -93,7 +93,7 @@ public class ShadowExample {
                         camera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
                 ), shadowsScreen)
         );
-        ScreenKt.clear(shadowsScreen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+        ScreenKt.clear(shadowsScreen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
         shadowsRenderGraph.render(new RenderContext());
 
         final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
@@ -122,8 +122,8 @@ public class ShadowExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(screen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             renderGraph.render(new RenderContext());
 
             window.swapBuffers();
@@ -199,7 +199,7 @@ public class ShadowExample {
     private static ObjModel loadDragon() {
         try {
             final Mesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
-            final ReadOnlyTexture texture = ColourTexture.of(255, 215, 0, 255);
+            final ReadOnlyTexture texture = ColorTexture.of(255, 215, 0, 255);
             return new ObjModel(mesh, texture);
         } catch (Exception e) {
             e.printStackTrace();

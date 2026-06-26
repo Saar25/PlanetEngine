@@ -27,9 +27,9 @@ object Renderer2D : Renderer<RenderContext, Model2D> {
 
     private object RendererPrototype2D : ShadersLink {
 
-        override val vertexAttributes = arrayOf("in_position", "in_colour")
+        override val vertexAttributes = arrayOf("in_position", "in_color")
 
-        override val fragmentOutputs = arrayOf("f_colour")
+        override val fragmentOutputs = arrayOf("f_color")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r2d/r2d.vertex.glsl")),

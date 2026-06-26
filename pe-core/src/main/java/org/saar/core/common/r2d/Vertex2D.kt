@@ -6,5 +6,5 @@ import org.saar.core.mesh.Vertex
 
 interface Vertex2D : Vertex {
     val position2f: Vector2fc
-    val colour3f: Vector3fc
+    val color3f: Vector3fc
 }

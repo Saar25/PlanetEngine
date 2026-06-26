@@ -14,7 +14,7 @@ import org.saar.core.util.Time
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
@@ -53,7 +53,7 @@ fun main() {
         .build()
 
     BlendTest.enable()
-    ClearColour.set(0f, 0f, 0f, 0f)
+    ClearColor.set(0f, 0f, 0f, 0f)
 
     val fbo = Fbo.create(WIDTH, HEIGHT)
     val screenPrototype = MyScreenPrototype()
@@ -73,7 +73,7 @@ fun main() {
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         screen.setAsDraw()
         screen.resizeToMainScreen()
-        GlUtils.clear(GlBuffer.COLOUR)
+        GlUtils.clear(GlBuffer.COLOR)
 
         painter.render(RenderContext())
         MainScreen.setAsDraw()
@@ -106,7 +106,7 @@ private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : Ren
 
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()
-        this.shadersLink.colourTextureUniform.value = this.albedoBuffer
+        this.shadersLink.colorTextureUniform.value = this.albedoBuffer
         this.uniformsLoader.load()
         QuadMesh.draw()
     }
@@ -116,7 +116,7 @@ private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : Ren
     private object MyShadersLink : ShadersLink {
 
         @UniformProperty
-        val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
+        val colorTextureUniform = TextureUniformValue("u_colorTexture", 0)
 
         @UniformProperty
         val timeUniform = object : IntUniform() {

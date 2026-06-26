@@ -5,7 +5,7 @@
 **/
 
 struct Fog {
-    vec3 colour;
+    vec3 color;
     float start;
     float end;
 };

@@ -5,7 +5,7 @@ import org.saar.core.renderer.RenderContext
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.coordinate.CoordinateValues.center
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.position.PositionValues.absolute
@@ -30,7 +30,7 @@ object TextExample {
             style.y.value = center
             style.width.value = percent(90f)
             style.height.value = percent(90f)
-            style.fontColour.set(Colours.WHITE)
+            style.fontColor.set(Colors.WHITE)
         }
 
         display.add(container)
@@ -83,7 +83,7 @@ object TextExample {
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             display.update()
 
-            GlUtils.clear(GlBuffer.COLOUR)
+            GlUtils.clear(GlBuffer.COLOR)
             display.render(RenderContext())
 
             window.swapBuffers()

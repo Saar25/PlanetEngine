@@ -64,14 +64,14 @@ class ShadowsRenderPass(
         this.shadersLink.shadowMapUniform.value = this.shadowMap
         this.shadersLink.shadowMapSizeUniform.value = Vector2i(shadowMap.width, shadowMap.height)
 
-        this.shadersLink.colourTextureUniform.value = this.albedoBuffer
+        this.shadersLink.colorTextureUniform.value = this.albedoBuffer
         this.shadersLink.normalSpecularTexture.value = this.normalSpecularBuffer
         this.shadersLink.depthTextureUniform.value = this.depthBuffer
 
         val viewInvT = viewInv.transpose()
         val vs = Vector4.of(this.light.direction, 0f).mul(viewInvT).also { it.w = 0f }.normalize()
         this.shadersLink.lightUniform.directionUniform.value.set(vs.x(), vs.y(), vs.z())
-        this.shadersLink.lightUniform.colourUniform.value = light.colour
+        this.shadersLink.lightUniform.colorUniform.value = light.color
 
         this.uniformsLoader.load()
         QuadMesh.draw()
@@ -103,7 +103,7 @@ class ShadowsRenderPass(
         val shadowMapSizeUniform = Vec2iUniformValue("u_shadowMapSize")
 
         @UniformProperty
-        val colourTextureUniform = TextureUniformValue("u_colourTexture", 1)
+        val colorTextureUniform = TextureUniformValue("u_colorTexture", 1)
 
         @UniformProperty
         val normalSpecularTexture = TextureUniformValue("u_normalSpecularTexture", 2)

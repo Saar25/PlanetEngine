@@ -23,10 +23,10 @@ object R3D {
     fun instance() = instance(SimpleTransform())
 
     @JvmStatic
-    fun vertex(position: Vector3fc, normal: Vector3fc, colour: Vector3fc) = object : Vertex3D {
+    fun vertex(position: Vector3fc, normal: Vector3fc, color: Vector3fc) = object : Vertex3D {
         override val position3f = position
         override val normal3f = normal
-        override val colour3f = colour
+        override val color3f = color
     }
 
     @JvmStatic

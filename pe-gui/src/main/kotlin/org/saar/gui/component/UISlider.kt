@@ -27,7 +27,7 @@ class UISlider : UIComponent() {
     }
 
     private val uiThumb = UIBlock().apply {
-        style.backgroundColour.set(Defaults.mainColour)
+        style.backgroundColor.set(Defaults.mainColor)
         style.position.value = PositionValues.absolute
         style.width.set(10)
     }
@@ -38,8 +38,8 @@ class UISlider : UIComponent() {
 
     init {
         style.axisAlignment.value = AxisAlignmentValues.center
-        style.backgroundColour.set(Defaults.backgroundColour)
-        style.borderColour.set(Defaults.secondColour)
+        style.backgroundColor.set(Defaults.backgroundColor)
+        style.borderColor.set(Defaults.secondColor)
     }
 
     override fun onMousePress(event: MouseEvent) {

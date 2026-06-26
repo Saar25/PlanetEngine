@@ -74,7 +74,7 @@ object DeferredRenderer3D : Renderer<DeferredRenderContext, Model3D> {
         @UniformProperty
         val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
 
-        override val vertexAttributes = arrayOf("in_position", "in_colour", "in_transformation")
+        override val vertexAttributes = arrayOf("in_position", "in_color", "in_transformation")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl")),

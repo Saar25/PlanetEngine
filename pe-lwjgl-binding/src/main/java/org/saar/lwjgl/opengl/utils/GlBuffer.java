@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public enum GlBuffer {
 
-    COLOUR(GL11.GL_COLOR_BUFFER_BIT),
+    COLOR(GL11.GL_COLOR_BUFFER_BIT),
     DEPTH(GL11.GL_DEPTH_BUFFER_BIT),
     STENCIL(GL11.GL_STENCIL_BUFFER_BIT),
     ;

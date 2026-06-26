@@ -15,31 +15,31 @@ import org.saar.lwjgl.opengl.vbo.VboTarget
 class MeshBuilder2D(
     private val indices: Int,
     private val positionBufferBuilder: DataMeshBufferBuilder,
-    private val colourBufferBuilder: DataMeshBufferBuilder,
+    private val colorBufferBuilder: DataMeshBufferBuilder,
     private val indexBufferBuilder: IndexMeshBufferBuilder,
 ) : MeshBuilder {
 
     val writer = MeshWriter2D(
         this.positionBufferBuilder.writer,
-        this.colourBufferBuilder.writer,
+        this.colorBufferBuilder.writer,
         this.indexBufferBuilder.writer,
     )
 
     private val bufferBuilders = listOf(
         this.positionBufferBuilder,
-        this.colourBufferBuilder,
+        this.colorBufferBuilder,
         this.indexBufferBuilder,
     ).distinct()
 
     private val vertexBufferBuilders = listOf(
         this.positionBufferBuilder,
-        this.colourBufferBuilder,
+        this.colorBufferBuilder,
     ).distinct()
 
     init {
         this.positionBufferBuilder.addAttribute(
             Attributes.of(0, 2, DataType.FLOAT, false))
-        this.colourBufferBuilder.addAttribute(
+        this.colorBufferBuilder.addAttribute(
             Attributes.of(1, 3, DataType.FLOAT, false))
     }
 

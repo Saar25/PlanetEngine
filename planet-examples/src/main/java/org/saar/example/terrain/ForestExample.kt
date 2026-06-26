@@ -16,9 +16,9 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.common.renderpass.*
-import org.saar.core.common.terrain.colour.ColourGenerator
-import org.saar.core.common.terrain.colour.NormalColour
-import org.saar.core.common.terrain.colour.NormalColourGenerator
+import org.saar.core.common.terrain.color.ColorGenerator
+import org.saar.core.common.terrain.color.NormalColor
+import org.saar.core.common.terrain.color.NormalColorGenerator
 import org.saar.core.common.terrain.components.TerrainGravityComponent
 import org.saar.core.common.terrain.components.TerrainJumpingComponent
 import org.saar.core.common.terrain.components.TerrainWalkingComponent
@@ -42,7 +42,7 @@ import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
@@ -64,7 +64,7 @@ fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
     GL20.glDisable(GL43C.GL_DEBUG_OUTPUT)
 
-    ClearColour.set(.0f, .7f, .8f)
+    ClearColor.set(.0f, .7f, .8f)
 
     val projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
@@ -114,7 +114,7 @@ fun main() {
 
     val light = DirectionalLight().apply {
         direction.set(-1.0, -.6, -1.0)
-        colour.set(1f, 1f, 1f)
+        color.set(1f, 1f, 1f)
     }
 
     val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
@@ -199,12 +199,12 @@ fun main() {
         player.update()
         camera.update()
 
-        shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         shadowsRenderGraph.render(RenderContext())
 
-        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         renderGraph.render(RenderContext())
 
         window.swapBuffers()
@@ -222,15 +222,15 @@ private fun buildWorld(): LowPolyWorld {
     val heightGenerator = NoiseHeightGenerator(
         Noise2f.simplex.layered(5).spread(5f).multiplied(50f)
     )
-    val colourGenerator: ColourGenerator = NormalColourGenerator(
+    val colorGenerator: ColorGenerator = NormalColorGenerator(
         Vector3.upward(),
-        NormalColour(0.2f, Vector3.of(.41f, .41f, .41f)),
-        NormalColour(0.3f, Vector3.of(.07f, .52f, .06f))
+        NormalColor(0.2f, Vector3.of(.41f, .41f, .41f)),
+        NormalColor(0.3f, Vector3.of(.07f, .52f, .06f))
     )
 
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
-        colourGenerator, Vector2.of(32f, 32f)
+        colorGenerator, Vector2.of(32f, 32f)
     )
 
     return LowPolyWorld(terrainFactory)

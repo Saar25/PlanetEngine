@@ -50,9 +50,9 @@ import org.saar.gui.component.UISlider
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour.set
+import org.saar.lwjgl.opengl.clear.ClearColor.set
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.ColorTexture.Companion.of
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.Texture2D
@@ -92,7 +92,7 @@ fun main() {
 
     val light = DirectionalLight()
     light.direction.set(-1f, -1f, -1f)
-    light.colour.set(1f, 1f, 1f)
+    light.color.set(1f, 1f, 1f)
 
     val shadowsRenderNode = ShadowsRenderNodeGroup(
         nodeBatch3D, objNodeBatch, nodeBatch3D, normalMappedNodeBatch
@@ -146,11 +146,11 @@ fun main() {
         objNodeBatch.update()
         normalMappedNodeBatch.update()
 
-        shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         shadowsRenderGraph.render(RenderContext())
-        screenSwap.clearAll(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screenSwap.clearAll(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screenSwap.assureSize(MainScreen.width, MainScreen.height)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         renderGraph.render(RenderContext())
 
         window.swapBuffers()

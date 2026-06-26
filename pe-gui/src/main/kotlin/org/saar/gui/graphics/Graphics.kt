@@ -1,11 +1,11 @@
 package org.saar.gui.graphics
 
-import org.saar.gui.style.Colour
+import org.saar.gui.style.Color
 import org.saar.maths.objects.Polygon
 
 interface Graphics {
 
-    var colour: Colour
+    var color: Color
 
     fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int)
 
@@ -19,7 +19,7 @@ interface Graphics {
 
     fun fillPolygon(polygon: Polygon)
 
-    fun clear(clearColour: Colour)
+    fun clear(clearColor: Color)
 
     fun process()
 

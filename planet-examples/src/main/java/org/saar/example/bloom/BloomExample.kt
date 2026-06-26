@@ -15,7 +15,7 @@ import org.saar.core.renderer.p2d.ScreenPrototype2D
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
@@ -28,7 +28,7 @@ object BloomExample {
     fun main(args: Array<String>) {
         val window = Window.create("Bloom", WIDTH, HEIGHT, true)
 
-        ClearColour.set(.1f, .1f, .1f)
+        ClearColor.set(.1f, .1f, .1f)
 
         val model = buildModel2D()
         val node = Node2D(model)

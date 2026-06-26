@@ -26,7 +26,7 @@ public class WeakExample {
         final ShadersProgram shadersProgram = ShadersProgram.create(
                 Shader.createVertex("/vertex.glsl"),
                 Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttributes("in_position", "in_colour", "in_offset");
+        shadersProgram.bindAttributes("in_position", "in_color", "in_offset");
 
         shadersProgram.bind();
 

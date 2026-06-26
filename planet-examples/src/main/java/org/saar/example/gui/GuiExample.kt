@@ -83,7 +83,7 @@ object GuiExample {
         val keyboard = window.keyboard
 
         while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            GlUtils.clear(GlBuffer.COLOUR)
+            GlUtils.clear(GlBuffer.COLOR)
 
             display.update()
 

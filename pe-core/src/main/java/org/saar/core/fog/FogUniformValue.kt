@@ -6,11 +6,11 @@ import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
 
 class FogUniformValue(name: String) : UniformContainer {
 
-    val colourUniform = Vec3UniformValue("$name.colour")
+    val colorUniform = Vec3UniformValue("$name.color")
 
     val startUniform = FloatUniformValue("$name.start")
 
     val endUniform = FloatUniformValue("$name.end")
 
-    override val subUniforms = listOf(this.colourUniform, this.startUniform, this.endUniform)
+    override val subUniforms = listOf(this.colorUniform, this.startUniform, this.endUniform)
 }

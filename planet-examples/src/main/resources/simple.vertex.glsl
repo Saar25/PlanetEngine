@@ -1,14 +1,14 @@
 // Per Vertex attibutes
 layout (location = 0) in vec2 in_position;
-layout (location = 1) in vec3 in_colour;
+layout (location = 1) in vec3 in_color;
 
 // Vertex outputs
 out vec2 v_position;
-out vec3 v_colour;
+out vec3 v_color;
 
 void main(void) {
     v_position = in_position;
-    v_colour = in_colour;
+    v_color = in_color;
 
     gl_Position = vec4(in_position, 0.0, 1.0);
 }

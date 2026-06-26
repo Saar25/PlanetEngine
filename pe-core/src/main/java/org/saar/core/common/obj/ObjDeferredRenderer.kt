@@ -81,7 +81,7 @@ object ObjDeferredRenderer : Renderer<DeferredRenderContext, ObjModel> {
 
         override val vertexAttributes = arrayOf("in_position", "in_uvCoord", "in_normal")
 
-        override val fragmentOutputs = arrayOf("f_colour", "f_normal")
+        override val fragmentOutputs = arrayOf("f_color", "f_normal")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/obj/obj.vertex.glsl")),

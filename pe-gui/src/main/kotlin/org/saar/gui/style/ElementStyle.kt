@@ -4,18 +4,18 @@ import org.saar.gui.UIElement
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.arrangement.Arrangement
 import org.saar.gui.style.axisalignment.AxisAlignment
-import org.saar.gui.style.backgroundcolour.BackgroundColour
+import org.saar.gui.style.backgroundcolor.BackgroundColor
 import org.saar.gui.style.backgroundimage.BackgroundImage
 import org.saar.gui.style.border.Borders
-import org.saar.gui.style.bordercolour.BorderColour
+import org.saar.gui.style.bordercolor.BorderColor
 import org.saar.gui.style.boxsizing.BoxSizing
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
-import org.saar.gui.style.colourmodifier.ColourModifier
+import org.saar.gui.style.colormodifier.ColorModifier
 import org.saar.gui.style.coordinate.Coordinate
 import org.saar.gui.style.coordinate.Coordinates
 import org.saar.gui.style.discardmap.DiscardMap
 import org.saar.gui.style.font.FontFamily
-import org.saar.gui.style.fontcolour.FontColour
+import org.saar.gui.style.fontcolor.FontColor
 import org.saar.gui.style.fontsize.FontSize
 import org.saar.gui.style.length.Length
 import org.saar.gui.style.length.Lengths
@@ -45,21 +45,21 @@ class ElementStyle(container: UIElement) : ParentStyle {
 
     override val fontSize: FontSize = FontSize(container)
 
-    override val fontColour: FontColour = FontColour(container)
+    override val fontColor: FontColor = FontColor(container)
 
     override val font: FontFamily = FontFamily(container)
 
-    override val colourModifier: ColourModifier = ColourModifier(container)
+    override val colorModifier: ColorModifier = ColorModifier(container)
 
     override val borders: Borders = Borders(container)
 
-    override val borderColour: BorderColour = BorderColour(container)
+    override val borderColor: BorderColor = BorderColor(container)
 
     override val radius: Radius = Radius(container)
 
     override val opacity: Opacity = Opacity(container)
 
-    override val backgroundColour: BackgroundColour = BackgroundColour(container)
+    override val backgroundColor: BackgroundColor = BackgroundColor(container)
 
     override val backgroundImage: BackgroundImage = BackgroundImage(container)
 

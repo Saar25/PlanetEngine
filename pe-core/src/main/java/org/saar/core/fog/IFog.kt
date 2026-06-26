@@ -4,7 +4,7 @@ import org.joml.Vector3fc
 
 interface IFog {
 
-    val colour: Vector3fc
+    val color: Vector3fc
 
     val start: Float
 

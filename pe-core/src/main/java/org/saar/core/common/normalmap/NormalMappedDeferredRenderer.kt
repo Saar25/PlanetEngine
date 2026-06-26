@@ -75,7 +75,7 @@ object NormalMappedDeferredRenderer : Renderer<DeferredRenderContext, NormalMapp
 
         override val vertexAttributes = arrayOf("in_position", "in_uvCoord", "in_normal", "in_tangent", "in_biTangent")
 
-        override val fragmentOutputs = arrayOf("f_colour", "f_normal")
+        override val fragmentOutputs = arrayOf("f_color", "f_normal")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/normal-map/normal-map.vertex.glsl")),

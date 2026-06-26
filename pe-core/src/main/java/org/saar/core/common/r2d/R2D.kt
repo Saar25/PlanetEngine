@@ -13,9 +13,9 @@ import org.saar.lwjgl.util.buffer.FixedBufferBuilder
 object R2D {
 
     @JvmStatic
-    fun vertex(position: Vector2fc, colour: Vector3fc) = object : Vertex2D {
+    fun vertex(position: Vector2fc, color: Vector3fc) = object : Vertex2D {
         override val position2f = position
-        override val colour3f = colour
+        override val color3f = color
     }
 
     @JvmStatic

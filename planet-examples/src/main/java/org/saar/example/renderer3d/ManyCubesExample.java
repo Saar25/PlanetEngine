@@ -47,7 +47,7 @@ public class ManyCubesExample {
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
             camera.update();
 

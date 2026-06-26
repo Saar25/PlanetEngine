@@ -15,7 +15,7 @@ import org.saar.core.renderer.p2d.ScreenPrototype2D
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour.set
+import org.saar.lwjgl.opengl.clear.ClearColor.set
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector2.of

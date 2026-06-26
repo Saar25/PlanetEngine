@@ -62,7 +62,7 @@ object Texture3DRenderer : Renderer<ForwardRenderContext, Texture3DModel> {
         @UniformProperty
         val textureUniform = TextureUniformValue("u_texture", 0)
 
-        override val vertexAttributes = arrayOf("in_position", "in_colour", "in_transformation")
+        override val vertexAttributes = arrayOf("in_position", "in_color", "in_transformation")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/texture3d/texture3d.vertex.glsl")),

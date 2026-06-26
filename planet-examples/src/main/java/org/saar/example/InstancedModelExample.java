@@ -63,7 +63,7 @@ public class InstancedModelExample {
         final ShadersProgram shadersProgram = ShadersProgram.create(
             Shader.createVertex("/vertex.glsl"),
             Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttributes("in_position", "in_colour");
+        shadersProgram.bindAttributes("in_position", "in_color");
 
         shadersProgram.bind();
 

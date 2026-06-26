@@ -12,7 +12,7 @@ import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.event.EventListener
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
@@ -42,17 +42,17 @@ class LoginPageApplication : Application {
             +UIElement().apply {
                 this.style.padding.set(15.px)
                 this.style.borders.bottomValue = 4.px
-                this.style.borderColour.set(Colours.BLACK)
+                this.style.borderColor.set(Colors.BLACK)
 
                 +UIText("Login Page").apply {
                     this.style.fontSize.value = 96.px
-                    this.style.fontColour.set(Colours.WHITE)
+                    this.style.fontColor.set(Colors.WHITE)
                 }
             }
 
             val badCredentials = UIText("").apply {
                 this.style.fontSize.value = 32.px
-                this.style.fontColour.set(Colours.RED)
+                this.style.fontColor.set(Colors.RED)
             }
 
             val username = UITextField("username")
@@ -64,12 +64,12 @@ class LoginPageApplication : Application {
                 this.style.axisAlignment.value = AxisAlignmentValues.center
 
                 +UIText("Username: ").apply {
-                    this.style.fontColour.set(Colours.WHITE)
+                    this.style.fontColor.set(Colors.WHITE)
                 }
 
                 +username.apply {
                     this.style.width.value = 350.px
-                    this.style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    this.style.backgroundColor.set(Colors.parse("#e0e0e0"))
                     this.style.padding.set(10.px)
 
                     this.textProperty.addListener(InvalidationListener { badCredentials.text = "" })
@@ -85,12 +85,12 @@ class LoginPageApplication : Application {
                 this.style.axisAlignment.value = AxisAlignmentValues.center
 
                 +UIText("Password: ").apply {
-                    this.style.fontColour.set(Colours.WHITE)
+                    this.style.fontColor.set(Colors.WHITE)
                 }
 
                 +password.apply {
                     this.style.width.value = 350.px
-                    this.style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    this.style.backgroundColor.set(Colors.parse("#e0e0e0"))
                     this.style.padding.set(10.px)
 
                     this.textProperty.addListener(InvalidationListener { badCredentials.text = "" })
@@ -101,18 +101,18 @@ class LoginPageApplication : Application {
 
             +UIButton("Login").apply {
                 this.style.fontSize.value = 48.px
-                this.style.fontColour.set(Colours.WHITE)
-                this.style.borderColour.set(Colours.WHITE)
+                this.style.fontColor.set(Colors.WHITE)
+                this.style.borderColor.set(Colors.WHITE)
                 this.style.borders.set(1.px)
-                this.style.backgroundColour.set(Colours.parse("#212121"))
+                this.style.backgroundColor.set(Colors.parse("#212121"))
 
                 this.onAction = EventListener {
                     if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {
                         badCredentials.text = "Noice"
-                        badCredentials.style.fontColour.set(Colours.GREEN)
+                        badCredentials.style.fontColor.set(Colors.GREEN)
                     } else {
                         badCredentials.text = "Bad username or password!"
-                        badCredentials.style.fontColour.set(Colours.RED)
+                        badCredentials.style.fontColor.set(Colors.RED)
                     }
                 }
             }

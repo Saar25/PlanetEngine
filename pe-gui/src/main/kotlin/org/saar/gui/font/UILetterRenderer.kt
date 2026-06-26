@@ -58,7 +58,7 @@ object UILetterRenderer : Renderer<RenderContext, UILetter> {
                 bounds.w().toInt()
             )
 
-            this.shadersLink.fontColourUniform.value = model.style.fontColour.asInt()
+            this.shadersLink.fontColorUniform.value = model.style.fontColor.asInt()
 
             this.uniformsLoader.load()
             QuadMesh.draw()
@@ -83,7 +83,7 @@ object UILetterRenderer : Renderer<RenderContext, UILetter> {
         val boundsUniform = Vec4iUniformValue("u_bounds")
 
         @UniformProperty
-        val fontColourUniform = UIntUniformValue("u_fontColour")
+        val fontColorUniform = UIntUniformValue("u_fontColor")
 
         @UniformProperty
         val bitmapUniform = TextureUniformValue("u_bitmap", 0)
@@ -94,7 +94,7 @@ object UILetterRenderer : Renderer<RenderContext, UILetter> {
         @UniformProperty
         val bitmapBoundsUniform = Vec4iUniformValue("u_bitmapBounds")
 
-        override val fragmentOutputs = arrayOf("fragColour")
+        override val fragmentOutputs = arrayOf("fragColor")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(

@@ -52,11 +52,11 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
             val vector4i = Vector4i()
             this.shadersLink.bordersUniform.value.set(model.style.borders.asVector4i(vector4i))
             this.shadersLink.radiusesUniform.value.set(model.style.radius.asVector4i(vector4i))
-            this.shadersLink.cornersColoursUniform.value = model.style.backgroundColour.asVector4i(vector4i)
+            this.shadersLink.cornersColorsUniform.value = model.style.backgroundColor.asVector4i(vector4i)
             this.shadersLink.opacityUniform.value = model.style.opacity.opacity
 
-            this.shadersLink.borderColourUniform.value = model.style.borderColour.asInt()
-            this.shadersLink.colourModifierUniform.value.set(model.style.colourModifier.multiply)
+            this.shadersLink.borderColorUniform.value = model.style.borderColor.asInt()
+            this.shadersLink.colorModifierUniform.value.set(model.style.colorModifier.multiply)
 
             this.uniformsLoader.load()
             QuadMesh.draw()
@@ -89,13 +89,13 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
         val opacityUniform = FloatUniformValue("u_opacity")
 
         @UniformProperty
-        val borderColourUniform = UIntUniformValue("u_borderColour")
+        val borderColorUniform = UIntUniformValue("u_borderColor")
 
         @UniformProperty
-        val colourModifierUniform = Vec4UniformValue("u_colourModifier")
+        val colorModifierUniform = Vec4UniformValue("u_colorModifier")
 
         @UniformProperty
-        val cornersColoursUniform = Vec4iUniformValue("u_cornersColours")
+        val cornersColorsUniform = Vec4iUniformValue("u_cornersColors")
 
         @UniformProperty
         val hasTextureUniform = BooleanUniformValue("u_hasTexture")
@@ -109,7 +109,7 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
         @UniformProperty
         val discardMapUniform = TextureUniformValue("u_discardMap", 1)
 
-        override val fragmentOutputs = arrayOf("fragColour")
+        override val fragmentOutputs = arrayOf("fragColor")
 
         override val shadersProgram: ShadersProgram = ShadersProgram.create(
             Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")),

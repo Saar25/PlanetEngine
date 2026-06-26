@@ -50,7 +50,7 @@ public class Fbo implements IFbo {
 
     public void blitToScreen() {
         final WindowFbo other = WindowFbo.getInstance();
-        blitFramebuffer(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR);
+        blitFramebuffer(other, FboBlitFilter.LINEAR, GlBuffer.COLOR);
     }
 
     public void blitFramebuffer(ReadOnlyFbo fbo, FboBlitFilter filter, GlBuffer... buffers) {

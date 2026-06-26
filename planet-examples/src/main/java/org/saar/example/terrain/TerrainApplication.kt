@@ -16,9 +16,9 @@ import org.saar.core.common.renderpass.FxaaPostProcessor
 import org.saar.core.common.renderpass.LightRenderPass
 import org.saar.core.common.renderpass.SkyboxPostProcessor
 import org.saar.core.common.terrain.World
-import org.saar.core.common.terrain.colour.ColourGenerator
-import org.saar.core.common.terrain.colour.NormalColour
-import org.saar.core.common.terrain.colour.NormalColourGenerator
+import org.saar.core.common.terrain.color.ColorGenerator
+import org.saar.core.common.terrain.color.NormalColor
+import org.saar.core.common.terrain.color.NormalColorGenerator
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
@@ -42,7 +42,7 @@ import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
@@ -81,7 +81,7 @@ private class TerrainApplication : Application {
         window.width = WIDTH
         window.height = HEIGHT
 
-        ClearColour.set(.0f, .7f, .8f)
+        ClearColor.set(.0f, .7f, .8f)
 
         val keyboard = window.keyboard
         val mouse = window.mouse
@@ -133,9 +133,9 @@ private class TerrainApplication : Application {
     }
 
     override fun render(window: Window) {
-        this.screenA.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        this.screenB.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        this.screenA.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        this.screenB.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         this.renderGraph.render(RenderContext())
     }
 
@@ -148,14 +148,14 @@ private class TerrainApplication : Application {
         val heightGenerator = NoiseHeightGenerator(
             Noise2f.simplex.layered(5).spread(50f).multiplied(200f)
         )
-        val colourGenerator: ColourGenerator = NormalColourGenerator(
+        val colorGenerator: ColorGenerator = NormalColorGenerator(
             Vector3.upward(),
-            NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))
+            NormalColor(0.5f, Vector3.of(.41f, .41f, .41f)),
+            NormalColor(1.0f, Vector3.of(.07f, .52f, .06f))
         )
         val terrainFactory = LowPolyTerrainFactory(
             DiamondMeshGenerator(64), heightGenerator,
-            colourGenerator, Vector2.of(256f, 256f)
+            colorGenerator, Vector2.of(256f, 256f)
         )
         return LowPolyWorld(terrainFactory)
     }
@@ -174,7 +174,7 @@ private class TerrainApplication : Application {
     private fun buildDirectionalLight(): DirectionalLight {
         val light = DirectionalLight()
         light.direction.set(-1f, -1f, -1f)
-        light.colour.set(1f, 1f, 1f)
+        light.color.set(1f, 1f, 1f)
         return light
     }
 

@@ -30,10 +30,10 @@ import org.saar.core.util.Fps
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
@@ -50,7 +50,7 @@ fun Number.format(digits: Int) = "%.${digits}f".format(this)
 fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    ClearColour.set(.2f, .2f, .2f)
+    ClearColor.set(.2f, .2f, .2f)
 
     val cameraComponents = NodeComponentGroup(
         KeyboardMovementComponent(window.keyboard, 10f, 10f, 10f),
@@ -69,16 +69,16 @@ fun main() {
         +UIElement().apply {
             style.alignment.value = AlignmentValues.vertical
             style.fontSize.set(30)
-            style.fontColour.set(Colours.WHITE)
+            style.fontColor.set(Colors.WHITE)
 
             +UIText().apply {
-                style.backgroundColour.set(Colours.BLACK)
+                style.backgroundColor.set(Colors.BLACK)
 
                 fpsProperty.addListener(ChangeListener { text = "Fps: ${it.newValue.format(2)}" })
             }
 
             +UIText().apply {
-                style.backgroundColour.set(Colours.BLACK)
+                style.backgroundColor.set(Colors.BLACK)
 
                 timeProperty.addListener(ChangeListener { text = "Time: ${it.newValue}" })
             }
@@ -103,8 +103,8 @@ fun main() {
 
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         val time = measureTimeMillis {
-            screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-            MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
             renderGraph.render(RenderContext())
 
             particles.update()

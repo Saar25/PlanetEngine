@@ -67,7 +67,7 @@ public class ObjRendererExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             fbo.bind();
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
             camera.update();
 
@@ -118,11 +118,11 @@ public class ObjRendererExample {
     private static Fbo createFbo(int width, int height) {
         final Fbo fbo = Fbo.create(width, height);
 
-        final AttachmentIndex colourIndex = ColorAttachmentIndex.at(0);
+        final AttachmentIndex colorIndex = ColorAttachmentIndex.at(0);
         final AttachmentIndex depthIndex = DepthAttachmentIndex.INSTANCE;
-        final RenderTarget target = new IndexRenderTarget(colourIndex);
+        final RenderTarget target = new IndexRenderTarget(colorIndex);
 
-        fbo.addAttachment(colourIndex, colorAttachment);
+        fbo.addAttachment(colorIndex, colorAttachment);
         fbo.setDrawTarget(target);
         fbo.setReadTarget(target);
         fbo.addAttachment(depthIndex, depthAttachment);

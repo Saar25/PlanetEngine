@@ -29,7 +29,7 @@ import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.clear.ClearColour;
+import org.saar.lwjgl.opengl.clear.ClearColor;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
@@ -48,7 +48,7 @@ public class DeferredExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        ClearColour.set(.1f, .1f, .1f);
+        ClearColor.set(.1f, .1f, .1f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -59,7 +59,7 @@ public class DeferredExample {
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-50f, -50f, -50f);
-        light.getColour().set(1.0f, 1.0f, 1.0f);
+        light.getColor().set(1.0f, 1.0f, 1.0f);
 
         final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
         final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
@@ -79,8 +79,8 @@ public class DeferredExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(screen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
             renderGraph.render(new RenderContext());
 
             window.swapBuffers();

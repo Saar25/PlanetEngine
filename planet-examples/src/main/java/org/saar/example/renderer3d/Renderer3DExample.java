@@ -48,7 +48,7 @@ public class Renderer3DExample {
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
             camera.update();
 
@@ -144,7 +144,7 @@ public class Renderer3DExample {
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final DataMeshBufferBuilder colourBufferBuilder = new DataMeshBufferBuilder(
+        final DataMeshBufferBuilder colorBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
@@ -157,7 +157,7 @@ public class Renderer3DExample {
                 VboUsage.STATIC_DRAW);
 
         final MeshBuilder3D meshBuilder3D = new MeshBuilder3D(ExamplesUtils.cubeIndices.length, instances.length,
-                positionBufferBuilder, normalBufferBuilder, colourBufferBuilder,
+                positionBufferBuilder, normalBufferBuilder, colorBufferBuilder,
                 instanceBufferBuilder, indexBufferBuilder);
 
         for (Vertex3D vertex : ExamplesUtils.cubeVertices) {

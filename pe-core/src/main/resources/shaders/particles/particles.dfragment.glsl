@@ -7,12 +7,12 @@ in float v_blend;
 uniform sampler2D u_texture;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 layout (location = 1) out vec4 f_normalSpecular;
 
 void main(void) {
-    vec4 colour1 = texture(u_texture, v_uvCoords1);
-    vec4 colour2 = texture(u_texture, v_uvCoords2);
-    f_colour = mix(colour1, colour2, v_blend);
+    vec4 color1 = texture(u_texture, v_uvCoords1);
+    vec4 color2 = texture(u_texture, v_uvCoords2);
+    f_color = mix(color1, color2, v_blend);
     f_normalSpecular = vec4(0, 0, 1, .1);
 }

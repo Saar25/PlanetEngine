@@ -47,7 +47,7 @@ class LightRenderPass(
 
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()
-        this.shadersLink.colourTextureUniform.value = this.albedoBuffer
+        this.shadersLink.colorTextureUniform.value = this.albedoBuffer
         this.shadersLink.normalSpecularTextureUniform.value = this.normalSpecularBuffer
         this.shadersLink.depthTextureUniform.value = this.depthBuffer
 
@@ -60,7 +60,7 @@ class LightRenderPass(
         this.directionalLights.forEachIndexed { index, light ->
             val vs = Vector4.of(light.direction, 0f).mul(viewInvT).also { it.w = 0f }.normalize()
             this.shadersLink.directionalLightsUniform.value[index].directionUniform.value.set(vs.x(), vs.y(), vs.z())
-            this.shadersLink.directionalLightsUniform.value[index].colourUniform.value = light.colour
+            this.shadersLink.directionalLightsUniform.value[index].colorUniform.value = light.color
         }
 
         this.shadersLink.pointLightsCountUniform.value = this.pointLights.size
@@ -68,7 +68,7 @@ class LightRenderPass(
             val vs = Vector4.of(light.position, 1f).mul(this.camera.viewMatrix).let { it.div(it.w()) }
             this.shadersLink.pointLightsUniform.value[index].positionUniform.value.set(vs.x(), vs.y(), vs.z())
             this.shadersLink.pointLightsUniform.value[index].attenuationUniform.value.set(light.attenuation.vector3f)
-            this.shadersLink.pointLightsUniform.value[index].colourUniform.value.set(light.colour)
+            this.shadersLink.pointLightsUniform.value[index].colorUniform.value.set(light.color)
         }
 
         this.uniformsLoader.load()
@@ -81,7 +81,7 @@ class LightRenderPass(
     private class LightShadersLink(pointLights: Int, directionalLights: Int) : ShadersLink {
 
         @UniformProperty
-        val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
+        val colorTextureUniform = TextureUniformValue("u_colorTexture", 0)
 
         @UniformProperty
         val normalSpecularTextureUniform = TextureUniformValue("u_normalSpecularTexture", 1)

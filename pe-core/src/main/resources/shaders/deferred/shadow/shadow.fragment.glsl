@@ -18,7 +18,7 @@ in vec2 v_position;
 
 // Uniforms
 uniform sampler2D u_shadowMap;
-uniform sampler2D u_colourTexture;
+uniform sampler2D u_colorTexture;
 uniform sampler2D u_normalSpecularTexture;
 uniform sampler2D u_depthTexture;
 
@@ -32,10 +32,10 @@ uniform int   u_pcfRadius;
 uniform DirectionalLight u_light;
 
 // Fragment outputs
-out vec4 f_colour;
+out vec4 f_color;
 
 // Global variables
-vec3 g_colour;
+vec3 g_color;
 vec3 g_normal;
 float g_specular;
 float g_depth;
@@ -59,25 +59,25 @@ void main(void) {
     initGlobals();
     initShadowGlobals();
 
-    vec3 ambientColour = u_light.colour * ambientFactor();
+    vec3 ambientColor = u_light.color * ambientFactor();
 
     float shadowFactor = calcShadowFactor();
 
     if (shadowFactor > 0) {
         vec3 reflectedViewDirection = reflect(g_viewDirection, g_normal);
-        vec3 lightColour = lightColour(u_light, g_normal, reflectedViewDirection, 16, g_specular, shadowFactor);
-        vec3 finalColour = g_colour * lightColour;
+        vec3 lightColor = lightColor(u_light, g_normal, reflectedViewDirection, 16, g_specular, shadowFactor);
+        vec3 finalColor = g_color * lightColor;
 
-        f_colour = vec4(finalColour, 1);
+        f_color = vec4(finalColor, 1);
     } else {
-        vec3 finalColour = g_colour * ambientColour;
+        vec3 finalColor = g_color * ambientColor;
 
-        f_colour = vec4(finalColour, 1);
+        f_color = vec4(finalColor, 1);
     }
 }
 
 void initBufferValues(void) {
-    g_colour = texture(u_colourTexture, v_position).rgb;
+    g_color = texture(u_colorTexture, v_position).rgb;
     
     vec4 normalSpecular = texture(u_normalSpecularTexture, v_position);
     g_normal = normalSpecular.rgb;

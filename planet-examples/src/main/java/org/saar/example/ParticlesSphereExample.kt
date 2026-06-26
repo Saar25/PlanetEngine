@@ -23,7 +23,7 @@ import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
@@ -43,7 +43,7 @@ fun main() {
         .hint(WindowHints.decorated(false))
         .build()
 
-    ClearColour.set(.2f, .2f, .2f)
+    ClearColor.set(.2f, .2f, .2f)
 
     val cameraComponents = NodeComponentGroup(
         KeyboardMovementComponent(window.keyboard, 10f, 10f, 10f),
@@ -69,8 +69,8 @@ fun main() {
     val keyboard = window.keyboard
 
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         renderGraph.render(RenderContext())
 
         particles.update()

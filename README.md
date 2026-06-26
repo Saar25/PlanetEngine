@@ -113,7 +113,7 @@ Defines a vertex of the mesh
 interface Vertex3D : Vertex {
     val position3f: Vector3fc
     val normal3f: Vector3fc
-    val colour3f: Vector3fc
+    val color3f: Vector3fc
 }
 ```
 
@@ -182,7 +182,7 @@ override val shaders = arrayOf(
 
 // Bind per vertex attributes
 override fun vertexAttributes() = arrayOf(
-    "in_position", "in_colour", "in_transformation")
+    "in_position", "in_color", "in_transformation")
 
 // Being called before rendering
 override fun onRenderCycle(context: RenderContext) {

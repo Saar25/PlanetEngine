@@ -55,7 +55,7 @@ public class StencilExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             screen.setAsDraw();
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
 
             StencilTest.apply(writeStencil);
 

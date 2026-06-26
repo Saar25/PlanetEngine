@@ -12,12 +12,12 @@ interface Screen {
 
     fun copyTo(other: Screen,
                filter: FboBlitFilter = FboBlitFilter.LINEAR,
-               vararg buffers: GlBuffer = arrayOf(GlBuffer.COLOUR))
+               vararg buffers: GlBuffer = arrayOf(GlBuffer.COLOR))
 
     fun setAsDraw()
 }
 
-fun Screen.copyTo(other: Screen) = copyTo(other, FboBlitFilter.LINEAR, GlBuffer.COLOUR)
+fun Screen.copyTo(other: Screen) = copyTo(other, FboBlitFilter.LINEAR, GlBuffer.COLOR)
 
 fun Screen.clear(vararg buffers: GlBuffer) = this.clear(buffers.asIterable())
 

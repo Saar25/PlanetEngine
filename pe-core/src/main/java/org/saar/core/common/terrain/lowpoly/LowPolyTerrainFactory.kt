@@ -4,7 +4,7 @@ import org.joml.*
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.common.terrain.TerrainFactory
-import org.saar.core.common.terrain.colour.ColourGenerator
+import org.saar.core.common.terrain.color.ColorGenerator
 import org.saar.core.common.terrain.height.HeightGenerator
 import org.saar.core.common.terrain.mesh.MeshGenerator
 import org.saar.maths.utils.Maths
@@ -13,7 +13,7 @@ import org.saar.maths.utils.Vector3
 class LowPolyTerrainFactory(
     private val meshGenerator: MeshGenerator,
     private val heightGenerator: HeightGenerator,
-    private val colourGenerator: ColourGenerator,
+    private val colorGenerator: ColorGenerator,
     private val dimensions: Vector2fc,
 ) : TerrainFactory {
 
@@ -54,9 +54,9 @@ class LowPolyTerrainFactory(
 
             val normal = vertexNormal(wPosition)
 
-            val colour = this.colourGenerator.generateColour(wPosition, normal)
+            val color = this.colorGenerator.generateColor(wPosition, normal)
 
-            R3D.vertex(lPosition, normal, colour)
+            R3D.vertex(lPosition, normal, color)
         }
 
         val mesh = R3D.mesh(arrayOf(R3D.instance()),

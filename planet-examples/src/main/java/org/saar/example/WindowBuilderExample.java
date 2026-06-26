@@ -56,7 +56,7 @@ public class WindowBuilderExample {
         keyboard.onKeyPress('J').perform(e -> window.setMaximized());
 
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            GlUtils.clear(GlBuffer.COLOUR);
+            GlUtils.clear(GlBuffer.COLOR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
             window.swapBuffers();

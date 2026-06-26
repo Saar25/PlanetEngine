@@ -6,6 +6,6 @@
 
 float calcFogAmount(float distance, Fog fog);
 
-vec3 calcFogColour(float distance, Fog fog);
+vec3 calcFogColor(float distance, Fog fog);
 
-vec3 applyFogColour(float distance, Fog fog, vec3 colour);
+vec3 applyFogColor(float distance, Fog fog, vec3 color);

@@ -17,11 +17,11 @@ class PointLightUniformValue(name: String, var value: IPointLight) : UniformCont
         override val value get() = this@PointLightUniformValue.value.attenuation.vector3f
     }
 
-    private val colourUniform = object : Vec3Uniform() {
-        override val name = "$name.colour"
+    private val colorUniform = object : Vec3Uniform() {
+        override val name = "$name.color"
 
-        override val value get() = this@PointLightUniformValue.value.colour
+        override val value get() = this@PointLightUniformValue.value.color
     }
 
-    override val subUniforms = listOf(this.positionUniform, this.attenuationUniform, this.colourUniform)
+    override val subUniforms = listOf(this.positionUniform, this.attenuationUniform, this.colorUniform)
 }

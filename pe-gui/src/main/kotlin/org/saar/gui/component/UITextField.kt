@@ -43,12 +43,12 @@ class UITextField(text: String = "") : UIComponent() {
 
     init {
         this.style.borders.set(2)
-        this.style.backgroundColour.set(Defaults.backgroundColour)
-        this.style.borderColour.set(Defaults.secondColour)
+        this.style.backgroundColor.set(Defaults.backgroundColor)
+        this.style.borderColor.set(Defaults.secondColor)
     }
 
     override fun update() {
-        this.uiCaret.style.backgroundColour.set(Defaults.textColour)
+        this.uiCaret.style.backgroundColor.set(Defaults.textColor)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)
