@@ -39,6 +39,7 @@ import org.saar.core.renderer.p2d.ScreenPrototype2D
 import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.assureSize
 import org.saar.core.screen.clear
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
@@ -194,7 +195,13 @@ fun main() {
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         val delta = System.currentTimeMillis() - last
         last = System.currentTimeMillis()
-        print("\r --->$delta")
+        print("\r ---> $delta ---> ${screen1.width} ---> ${screen1.height}")
+
+        screen1.assureSize(window.width, window.height)
+        screen2.assureSize(window.width, window.height)
+        screen3.assureSize(window.width / 4, window.height / 4)
+        screen4.assureSize(window.width / 4, window.height / 4)
+        screen5.assureSize(window.width, window.height)
 
         player.update()
         camera.update()

@@ -18,7 +18,6 @@ class MutableScreen(override val fbo: IFbo, width: Int, height: Int) : FboScreen
     private val attachments = mutableMapOf<AttachmentIndex, IAttachment>()
 
     override fun resize(width: Int, height: Int) {
-        this.fbo.bind()
         this._width = width
         this._height = height
         this.attachments.values.forEach { it.allocate(width, height) }
