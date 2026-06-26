@@ -1,214 +1,192 @@
-package org.saar.example.shadow;
+package org.saar.example.shadow
 
-import org.saar.core.camera.Camera;
-import org.saar.core.camera.Projection;
-import org.saar.core.camera.projection.OrthographicProjection;
-import org.saar.core.camera.projection.ScreenPerspectiveProjection;
-import org.saar.core.camera.projection.SimpleOrthographicProjection;
-import org.saar.core.common.components.KeyboardMovementComponent;
-import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent;
-import org.saar.core.common.components.MouseDragRotationComponent;
-import org.saar.core.common.obj.Obj;
-import org.saar.core.common.obj.ObjModel;
-import org.saar.core.common.obj.ObjNode;
-import org.saar.core.common.obj.ObjNodeBatch;
-import org.saar.core.common.r3d.*;
-import org.saar.core.common.renderpass.ShadowsRenderPass;
-import org.saar.core.light.DirectionalLight;
-import org.saar.core.mesh.Mesh;
-import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderGraph;
-import org.saar.core.renderer.RenderGraphNode;
-import org.saar.core.renderer.RenderGraphNodeKt;
-import org.saar.core.renderer.deferred.DeferredNodeRenderPass;
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredScreenPrototype;
-import org.saar.core.renderer.shadow.*;
-import org.saar.core.screen.MainScreen;
-import org.saar.core.screen.OffScreen;
-import org.saar.core.screen.ScreenKt;
-import org.saar.core.screen.Screens;
-import org.saar.core.util.Fps;
-import org.saar.example.ExamplesUtils;
-import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
-import org.saar.lwjgl.glfw.input.mouse.Mouse;
-import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
-import org.saar.lwjgl.opengl.texture.ColorTexture;
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture;
-import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D;
-import org.saar.lwjgl.opengl.texture.Texture2D;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.maths.transform.Position;
+import org.saar.core.camera.Camera
+import org.saar.core.camera.projection.OrthographicProjection
+import org.saar.core.camera.projection.ScreenPerspectiveProjection
+import org.saar.core.camera.projection.SimpleOrthographicProjection
+import org.saar.core.common.components.KeyboardMovementComponent
+import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent
+import org.saar.core.common.components.MouseDragRotationComponent
+import org.saar.core.common.obj.Obj.mesh
+import org.saar.core.common.obj.ObjModel
+import org.saar.core.common.obj.ObjNode
+import org.saar.core.common.obj.ObjNodeBatch
+import org.saar.core.common.r3d.Model3D
+import org.saar.core.common.r3d.Node3D
+import org.saar.core.common.r3d.NodeBatch3D
+import org.saar.core.common.r3d.R3D
+import org.saar.core.common.renderpass.ShadowsRenderPass
+import org.saar.core.light.DirectionalLight
+import org.saar.core.node.plusAssign
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
+import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.shadow.*
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.clear
+import org.saar.core.util.Fps
+import org.saar.example.ExamplesUtils
+import org.saar.lwjgl.glfw.window.Window.Companion.create
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.texture.ColorTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.Texture2D
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.maths.transform.Position.Companion.of
 
-import java.util.Objects;
+object ShadowExample {
+    private const val WIDTH = 1200
+    private const val HEIGHT = 700
 
-public class ShadowExample {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val window = create("Lwjgl", WIDTH, HEIGHT, false)
 
-    private static final int WIDTH = 1200;
-    private static final int HEIGHT = 700;
+        val projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
-    public static void main(String[] args) {
-        final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, false);
+        val cameraMovementComponent = KeyboardMovementComponent(window.keyboard, 50f, 50f, 50f)
 
-        final Keyboard keyboard = window.getKeyboard();
-        final Mouse mouse = window.getMouse();
+        val camera = Camera(projection).apply {
+            components += cameraMovementComponent
+            components += KeyboardMovementScrollVelocityComponent(window.mouse)
+            components += MouseDragRotationComponent(window.mouse, -.3f)
 
-        final Projection projection = new ScreenPerspectiveProjection(70f, 1, 1000);
+            transform.position.set(0f, 0f, 200f)
+            transform.lookAt(of(0f, 0f, 0f))
+        }
 
-        final KeyboardMovementComponent cameraMovementComponent =
-            new KeyboardMovementComponent(keyboard, 50f, 50f, 50f);
-        final NodeComponentGroup components = new NodeComponentGroup(cameraMovementComponent,
-            new KeyboardMovementScrollVelocityComponent(mouse),
-            new MouseDragRotationComponent(mouse, -.3f));
+        val nodeBatch3D = buildNodeBatch3D()
 
-        final Camera camera = new Camera(projection, components);
+        val objNodeBatch = buildObjNodeBatch()
 
-        camera.getTransform().getPosition().set(0, 0, 200);
-        camera.getTransform().lookAt(Position.of(0, 0, 0));
+        val light = DirectionalLight().apply {
+            direction.set(-1f, -1f, -1f)
+            color.set(1f, 1f, 1f)
+        }
 
-        final NodeBatch3D nodeBatch3D = buildNodeBatch3D();
+        val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
+            -100f, 100f, -100f, 100f, -100f, 100f
+        )
+        val shadowsPrototype = ShadowsScreenPrototype()
+        val shadowsScreen = shadowsPrototype.toScreen(
+            Fbo.create(), ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize,
+        )
+        val shadowsCamera = ShadowsCamera(shadowProjection, light)
 
-        final ObjNodeBatch objNodeBatch = buildObjNodeBatch();
+        val shadowMap = shadowsPrototype.depthTexture
 
-        final DirectionalLight light = new DirectionalLight();
-        light.getDirection().set(-1, -1, -1);
-        light.getColor().set(1, 1, 1);
+        val shadowsRenderGraph = RenderGraph(
+            ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
+                .asShadowsRenderPass(shadowsCamera).onto(shadowsScreen)
+        )
+        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsRenderGraph.render(RenderContext())
 
-        final OrthographicProjection shadowProjection = new SimpleOrthographicProjection(
-            -100, 100, -100, 100, -100, 100);
-        final ShadowsScreenPrototype shadowsPrototype = new ShadowsScreenPrototype();
-        final OffScreen shadowsScreen = Screens.toScreen(
-            shadowsPrototype,
+        val renderNode = DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch)
+
+        val prototype = DeferredScreenPrototype()
+        val screen = prototype.toScreen(
             Fbo.create(),
-            ShadowsQuality.MEDIUM.imageSize,
-            ShadowsQuality.MEDIUM.imageSize,
-            SimpleAllocationStrategy.INSTANCE);
-        final ShadowsCamera shadowsCamera = new ShadowsCamera(shadowProjection, light);
+            window.width,
+            window.height,
+        )
 
-        final ReadOnlyTexture2D shadowMap = shadowsPrototype.getDepthTexture();
+        val renderGraph = RenderGraph(
+            DeferredNodeRenderPass(camera, renderNode).onto(screen),
+            ShadowsRenderPass(
+                prototype.albedoTexture,
+                prototype.normalSpecularTexture,
+                prototype.depthTexture,
+                shadowsCamera,
+                camera,
+                shadowMap,
+                light
+            ).onto(MainScreen)
+        )
 
-        final RenderGraph shadowsRenderGraph = new RenderGraph(
-            RenderGraphNodeKt.onto(new ShadowsNodeRenderPass(
-                shadowsCamera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
-            ), shadowsScreen)
-        );
-        ScreenKt.clear(shadowsScreen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-        shadowsRenderGraph.render(new RenderContext());
+        val fps = Fps()
+        while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
+            camera.update()
 
-        final DeferredRenderNodeGroup renderNode = new DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch);
+            screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            renderGraph.render(RenderContext())
 
-        final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
-        final OffScreen screen = Screens.toScreen(
-            prototype,
-            Fbo.create(),
-            window.getWidth(),
-            window.getHeight(),
-            SimpleAllocationStrategy.INSTANCE);
+            window.swapBuffers()
+            window.pollEvents()
 
-        final RenderGraph renderGraph = new RenderGraph(
-            new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
-            new RenderGraphNode(
-                new ShadowsRenderPass(
-                    prototype.getAlbedoTexture(),
-                    prototype.getNormalSpecularTexture(),
-                    prototype.getDepthTexture(),
-                    shadowsCamera,
-                    camera,
-                    shadowMap,
-                    light
-                ), MainScreen.INSTANCE)
-        );
+            val delta = fps.delta() * 1000
 
-        final Fps fps = new Fps();
-        while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            camera.update();
-
-            ScreenKt.clear(screen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            renderGraph.render(new RenderContext());
-
-            window.swapBuffers();
-            window.pollEvents();
-
-            final double delta = fps.delta() * 1000;
-
-            System.out.print("\r --> " +
-                "Speed: " + String.format("%.2f", cameraMovementComponent.getVelocity().x()) +
-                ", Fps: " + String.format("%.2f", fps.fps()) +
-                ", Delta: " + delta);
-            fps.update();
+            print(
+                "\r --> " +
+                        "Speed: " + String.format("%.2f", cameraMovementComponent.velocity.x()) +
+                        ", Fps: " + String.format("%.2f", fps.fps()) +
+                        ", Delta: " + delta
+            )
+            fps.update()
         }
 
-        camera.delete();
-        shadowsScreen.delete();
-        shadowsRenderGraph.delete();
-        screen.delete();
-        renderGraph.delete();
-        window.destroy();
+        camera.delete()
+        shadowsScreen.delete()
+        shadowsRenderGraph.delete()
+        screen.delete()
+        renderGraph.delete()
+        window.destroy()
     }
 
-    private static NodeBatch3D buildNodeBatch3D() {
-        final Instance3D cubeInstance = R3D.instance();
-        cubeInstance.getTransform().getScale().set(10, 10, 10);
-        cubeInstance.getTransform().getPosition().set(0, 0, 50);
-        final Mesh cubeMesh = R3D.mesh(new Instance3D[]{cubeInstance},
-            ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices);
-        final Model3D cubeModel = new Model3D(cubeMesh);
-        final Node3D cube = new Node3D(cubeModel);
-
-        return new NodeBatch3D(cube);
-    }
-
-    private static ObjNodeBatch buildObjNodeBatch() {
-        final ObjModel cottageModel = Objects.requireNonNull(loadCottage());
-        final ObjNode cottage = new ObjNode(cottageModel);
-
-        final ObjModel dragonModel = Objects.requireNonNull(loadDragon());
-        dragonModel.getTransform().getPosition().set(50, 0, 0);
-        final ObjNode dragon = new ObjNode(dragonModel);
-
-        final ObjModel stallModel = Objects.requireNonNull(loadStall());
-        stallModel.getTransform().getPosition().set(-50, 0, 0);
-        stallModel.getTransform().getRotation().rotateDegrees(0f, 180f, 0f);
-        final ObjNode stall = new ObjNode(stallModel);
-
-        return new ObjNodeBatch(cottage, dragon, stall);
-    }
-
-    private static ObjModel loadCottage() {
-        try {
-            final Mesh mesh = Obj.mesh("/assets/cottage/cottage.obj");
-            final Texture2D texture = Texture2D.of("/assets/cottage/cottage_diffuse.png");
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private fun buildNodeBatch3D(): NodeBatch3D {
+        val cubeInstance = R3D.instance().apply {
+            transform.scale.set(10f, 10f, 10f)
+            transform.position.set(0f, 0f, 50f)
         }
-        return null;
+        val cubeMesh = R3D.mesh(
+            arrayOf(cubeInstance),
+            ExamplesUtils.cubeVertices,
+            ExamplesUtils.cubeIndices
+        )
+        val cubeModel = Model3D(cubeMesh)
+        val cube = Node3D(cubeModel)
+
+        return NodeBatch3D(cube)
     }
 
-    private static ObjModel loadStall() {
-        try {
-            final Mesh mesh = Obj.mesh("/assets/stall/stall.model.obj");
-            final Texture2D texture = Texture2D.of("/assets/stall/stall.diffuse.png");
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private fun buildObjNodeBatch(): ObjNodeBatch {
+        val cottageModel = loadCottage()
+        val cottage = ObjNode(cottageModel)
+
+        val dragonModel = loadDragon().apply {
+            transform.position.set(50f, 0f, 0f)
         }
-        return null;
-    }
+        val dragon = ObjNode(dragonModel)
 
-    private static ObjModel loadDragon() {
-        try {
-            final Mesh mesh = Obj.mesh("/assets/dragon/dragon.model.obj");
-            final ReadOnlyTexture texture = ColorTexture.of(255, 215, 0, 255);
-            return new ObjModel(mesh, texture);
-        } catch (Exception e) {
-            e.printStackTrace();
+        val stallModel = loadStall().apply {
+            transform.position.set(-50f, 0f, 0f)
+            transform.rotation.rotateDegrees(0f, 180f, 0f)
         }
-        return null;
+        val stall = ObjNode(stallModel)
+
+        return ObjNodeBatch(cottage, dragon, stall)
     }
 
+    private fun loadCottage(): ObjModel {
+        val mesh = mesh("/assets/cottage/cottage.obj")
+        val texture = Texture2D.of("/assets/cottage/cottage_diffuse.png")
+        return ObjModel(mesh, texture)
+    }
+
+    private fun loadStall(): ObjModel {
+        val mesh = mesh("/assets/stall/stall.model.obj")
+        val texture = Texture2D.of("/assets/stall/stall.diffuse.png")
+        return ObjModel(mesh, texture)
+    }
+
+    private fun loadDragon(): ObjModel {
+        val mesh = mesh("/assets/dragon/dragon.model.obj")
+        val texture: ReadOnlyTexture = of(255, 215, 0, 255)
+        return ObjModel(mesh, texture)
+    }
 }
