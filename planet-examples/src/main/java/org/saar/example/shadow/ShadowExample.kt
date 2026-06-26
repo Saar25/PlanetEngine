@@ -15,15 +15,16 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.NodeBatch3D
 import org.saar.core.common.r3d.R3D
-import org.saar.core.common.renderpass.ShadowsRenderPass
+import org.saar.core.common.renderpass.shadowsPass
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.plusAssign
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
-import org.saar.core.renderer.deferred.DeferredNodeRenderPass
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.deferred.deferredNodePass
 import org.saar.core.renderer.onto
+import org.saar.core.renderer.renderGraph
 import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
@@ -95,18 +96,19 @@ object ShadowExample {
             window.height,
         )
 
-        val renderGraph = RenderGraph(
-            DeferredNodeRenderPass(camera, renderNode).onto(screen),
-            ShadowsRenderPass(
-                prototype.albedoTexture,
-                prototype.normalSpecularTexture,
-                prototype.depthTexture,
-                shadowsCamera,
-                camera,
-                shadowMap,
-                light
+        val renderGraph = renderGraph {
+            deferredNodePass(camera, renderNode).onto(screen)
+
+            shadowsPass(
+                albedoBuffer = prototype.albedoTexture,
+                normalSpecularBuffer = prototype.normalSpecularTexture,
+                depthBuffer = prototype.depthTexture,
+                shadowsCamera = shadowsCamera,
+                camera = camera,
+                shadowMap = shadowMap,
+                light = light
             ).onto(MainScreen)
-        )
+        }
 
         val fps = Fps()
         while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {

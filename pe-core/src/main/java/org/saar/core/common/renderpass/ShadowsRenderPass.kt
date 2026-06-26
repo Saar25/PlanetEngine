@@ -6,11 +6,7 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
-import org.saar.core.renderer.state.BlendTestRenderState
-import org.saar.core.renderer.state.CompositeRenderState
-import org.saar.core.renderer.state.CullFaceRenderState
-import org.saar.core.renderer.state.DepthTestRenderState
-import org.saar.core.renderer.state.StencilTestRenderState
+import org.saar.core.renderer.state.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendState
 import org.saar.lwjgl.opengl.cullface.CullFaceState
@@ -27,6 +23,28 @@ import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
+
+fun RenderGraph.Builder.shadowsPass(
+    albedoBuffer: ReadOnlyTexture2D,
+    normalSpecularBuffer: ReadOnlyTexture2D,
+    depthBuffer: ReadOnlyTexture2D,
+    shadowsCamera: ICamera,
+    camera: ICamera,
+    shadowMap: ReadOnlyTexture2D,
+    light: DirectionalLight
+): ShadowsRenderPass {
+    val renderPass = ShadowsRenderPass(
+        albedoBuffer,
+        normalSpecularBuffer,
+        depthBuffer,
+        shadowsCamera,
+        camera,
+        shadowMap,
+        light,
+    )
+    addPass(renderPass)
+    return renderPass
+}
 
 class ShadowsRenderPass(
     private val albedoBuffer: ReadOnlyTexture2D,

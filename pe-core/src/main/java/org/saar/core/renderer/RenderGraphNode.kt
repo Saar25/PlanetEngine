@@ -2,15 +2,15 @@ package org.saar.core.renderer
 
 import org.saar.core.screen.Screen
 
-class RenderGraphNode(private val renderPass: RenderPass, private val to: Screen) {
+class RenderGraphNode(private val renderPass: RenderPass, private val to: Screen) : RenderPass {
 
-    fun render(context: RenderContext) {
+    override fun render(context: RenderContext) {
         this.to.setAsDraw()
         this.renderPass.renderState.apply()
         this.renderPass.render(context)
     }
 
-    fun delete() {
+    override fun delete() {
         this.renderPass.delete()
     }
 }
