@@ -123,9 +123,11 @@ public class ObjRendererExample {
         final RenderTarget target = new IndexRenderTarget(colorIndex);
 
         fbo.addAttachment(colorIndex, colorAttachment);
+        colorAttachment.allocate(WIDTH, HEIGHT);
         fbo.setDrawTarget(target);
         fbo.setReadTarget(target);
         fbo.addAttachment(depthIndex, depthAttachment);
+        depthAttachment.allocate(WIDTH, HEIGHT);
 
         fbo.ensureStatus();
 

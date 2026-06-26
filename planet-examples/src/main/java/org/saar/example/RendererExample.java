@@ -52,6 +52,7 @@ public class RendererExample {
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
         fbo.addAttachment(attachmentIndex, attachment);
+        attachment.allocate(WIDTH, HEIGHT);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
         fbo.ensureStatus();
@@ -60,7 +61,8 @@ public class RendererExample {
             fbo.bind();
             fbo.resize(e.getWidth().getAfter(),
                     e.getHeight().getAfter());
-            attachment.init(fbo, attachmentIndex);
+            attachment.init(attachmentIndex);
+            attachment.allocate(e.getWidth().getAfter(), e.getHeight().getAfter());
         });
 
         final Keyboard keyboard = window.getKeyboard();

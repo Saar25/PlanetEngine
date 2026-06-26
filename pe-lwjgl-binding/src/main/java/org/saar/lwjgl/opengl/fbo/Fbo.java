@@ -33,7 +33,8 @@ public class Fbo implements IFbo {
     @Override
     public void addAttachment(AttachmentIndex index, IAttachment attachment) {
         bind();
-        attachment.init(this, index);
+        attachment.allocate(getWidth(), getHeight());
+        attachment.init(index);
     }
 
     @Override

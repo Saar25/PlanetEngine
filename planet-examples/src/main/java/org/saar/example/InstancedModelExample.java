@@ -39,14 +39,14 @@ public class InstancedModelExample {
 
         final DataBuffer dataBuffer = new DataBuffer(VboUsage.STATIC_DRAW);
         final float[] data = {
-            -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
-            +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
-            +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
+                -0.5f, -0.5f, +0.0f, +0.0f, +0.5f,
+                +0.0f, +0.5f, +0.5f, +1.0f, +0.5f,
+                +0.5f, -0.5f, +1.0f, +0.0f, +0.5f};
         dataBuffer.allocateFloat(data.length);
         dataBuffer.storeFloat(0, data);
         vao.loadVbo(dataBuffer, new AttributeComposite(
-            Attributes.of(0, 2, DataType.FLOAT, true),
-            Attributes.of(1, 3, DataType.FLOAT, true)
+                Attributes.of(0, 2, DataType.FLOAT, true),
+                Attributes.of(1, 3, DataType.FLOAT, true)
         ));
         dataBuffer.delete();
 
@@ -61,8 +61,8 @@ public class InstancedModelExample {
         final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(
-            Shader.createVertex("/vertex.glsl"),
-            Shader.createFragment("/fragment.glsl"));
+                Shader.createVertex("/vertex.glsl"),
+                Shader.createFragment("/fragment.glsl"));
         shadersProgram.bindAttributes("in_position", "in_color");
 
         shadersProgram.bind();
@@ -76,6 +76,7 @@ public class InstancedModelExample {
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 
         fbo.addAttachment(attachmentIndex, attachment);
+        attachment.allocate(WIDTH, HEIGHT);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
 
