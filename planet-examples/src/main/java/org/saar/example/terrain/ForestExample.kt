@@ -76,15 +76,14 @@ fun main() {
         }
     }
 
-    val playerComponents = NodeComponentGroup(
-        VelocityComponent(),
-        AccelerationComponent(),
-        TerrainGravityComponent(world),
-        TerrainJumpingComponent(world, window.keyboard, 5f),
-        TerrainWalkingComponent(world, window.keyboard, 5f, 5f)
-    )
     val playerModel = buildCubeModel()
-    val player = Node3D(playerModel, playerComponents)
+    val player = Node3D(playerModel).apply {
+        components.add(VelocityComponent())
+        components.add(AccelerationComponent())
+        components.add(TerrainGravityComponent(world))
+        components.add(TerrainJumpingComponent(world, window.keyboard, 5f))
+        components.add(TerrainWalkingComponent(world, window.keyboard, 5f, 5f))
+    }
 
     val components = NodeComponentGroup(
         MouseDragRotationComponent(window.mouse, -.3f),

@@ -39,7 +39,7 @@ class TerrainWalkingComponent(private val world: World,
             this.temp.x -= this.xVelocity
         }
 
-        this.temp.rotate(this.transformComponent.transform.rotation.value).mul(-1f)
+        this.temp.rotate(this.transformComponent.transform.rotation.value)
         this.velocityComponent.direction.x = this.temp.x
         this.velocityComponent.direction.z = this.temp.z
 
