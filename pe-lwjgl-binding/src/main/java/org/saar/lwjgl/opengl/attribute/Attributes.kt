@@ -17,7 +17,7 @@ object Attributes {
     @JvmStatic
     fun of(index: Int, componentCount: Int, dataType: DataType, normalized: Boolean): IAttribute {
         val linker = FloatAttributePointer(componentCount, dataType, normalized)
-        return Attribute(index, linker, NoAttributeDivisor())
+        return Attribute(index, linker, NoAttributeDivisor)
     }
 
     @JvmStatic
@@ -34,7 +34,7 @@ object Attributes {
     @JvmStatic
     fun ofInteger(index: Int, componentCount: Int, dataType: DataType): IAttribute {
         val linker = IntegerAttributePointer(componentCount, dataType)
-        return Attribute(index, linker, NoAttributeDivisor())
+        return Attribute(index, linker, NoAttributeDivisor)
     }
 
     @JvmStatic

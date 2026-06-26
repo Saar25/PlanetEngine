@@ -1,6 +1,6 @@
 package org.saar.core.mesh.writer
 
-import org.saar.lwjgl.opengl.attribute.*
+import org.saar.lwjgl.opengl.attribute.Attribute
 import org.saar.lwjgl.opengl.attribute.divisor.AttributeDivisor
 import org.saar.lwjgl.opengl.attribute.divisor.InstancedAttributeDivisor
 import org.saar.lwjgl.opengl.attribute.divisor.NoAttributeDivisor
@@ -10,7 +10,7 @@ interface VertexDataWriter {
 
     val attributePointers: List<AttributePointer>
 
-    fun toAttributes(index: Int) = toAttributes(index, NoAttributeDivisor())
+    fun toAttributes(index: Int) = toAttributes(index, NoAttributeDivisor)
 
     fun toInstanceAttributes(index: Int, instances: Int) = toAttributes(index, InstancedAttributeDivisor(instances))
 
