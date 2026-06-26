@@ -14,8 +14,6 @@ class TerrainGravityComponent(private val world: World) : NodeComponent {
     private lateinit var velocityComponent: VelocityComponent
     private lateinit var transformComponent: TransformComponent
 
-    private val timer = Time()
-
     override fun start(node: ComposableNode) {
         this.accelerationComponent = node.components.get()
         this.velocityComponent = node.components.get()
@@ -35,8 +33,6 @@ class TerrainGravityComponent(private val world: World) : NodeComponent {
         }
 
         position.y = position.y.coerceAtLeast(height)
-
-        this.timer.update()
     }
 
 }
