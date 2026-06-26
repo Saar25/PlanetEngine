@@ -92,7 +92,7 @@ public class ShadowExample {
 
         final RenderGraph shadowsRenderGraph = new RenderGraph(
             RenderGraphNodeKt.onto(new ShadowsNodeRenderPass(
-                camera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
+                shadowsCamera, new ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
             ), shadowsScreen)
         );
         ScreenKt.clear(shadowsScreen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);

@@ -42,8 +42,8 @@ class ShadowsRenderPass(
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.REPLACE),
-        DepthTestRenderState(DepthState.DISABLED),
+        StencilTestRenderState(StencilState.DISABLED),
+        DepthTestRenderState(DepthState.WRITE),
         BlendTestRenderState(BlendState.DISABLED),
         CullFaceRenderState(CullFaceState.DISABLED),
     )
