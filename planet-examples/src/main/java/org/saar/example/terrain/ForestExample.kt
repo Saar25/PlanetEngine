@@ -95,21 +95,22 @@ fun main() {
 
     val mesh = mesh("/assets/tree/tree.model.obj")
     val texture = Texture2D.of("/assets/tree/tree.diffuse.png")
-    val treesNodeBatch = ObjNodeBatch(*(1..1000).map {
-        val treeModel = ObjModel(mesh, texture)
-        val tree = ObjNode(treeModel)
-        val x = (Math.random() * 200 - 100).toFloat()
-        val z = (Math.random() * 200 - 100).toFloat()
-        treeModel.transform.position.set(x, world.getHeight(x, 0f, z) + 2, z)
-        tree
-    }.toTypedArray())
+    val treesNodeBatch = ObjNodeBatch((1..1000).map {
+        val treeModel = ObjModel(mesh, texture).apply {
+            val x = (Math.random() * 200 - 100).toFloat()
+            val z = (Math.random() * 200 - 100).toFloat()
+            transform.position.set(x, world.getHeight(x, 0f, z) + 2, z)
+        }
+        ObjNode(treeModel)
+    })
 
     val cubeModel = buildCubeModel()
     val cube = Node3D(cubeModel)
 
-    val cubeModel2 = buildCubeModel()
-    cubeModel2.transform.position.addX(-5f)
-    cubeModel2.transform.position.addY(5f)
+    val cubeModel2 = buildCubeModel().apply {
+        transform.position.addX(-5f)
+        transform.position.addY(5f)
+    }
     val cube2 = Node3D(cubeModel2)
 
     val light = DirectionalLight().apply {
@@ -246,7 +247,8 @@ private fun buildCubeModel(): Model3D {
     val cubeInstance = R3D.instance()
     val cubeMesh = R3D.mesh(
         arrayOf(cubeInstance),
-        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices
+        ExamplesUtils.cubeVertices,
+        ExamplesUtils.cubeIndices
     )
     return Model3D(cubeMesh)
 }

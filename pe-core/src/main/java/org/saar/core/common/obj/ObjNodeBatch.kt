@@ -8,14 +8,10 @@ import org.saar.core.renderer.forward.ForwardRenderNode
 import org.saar.core.renderer.shadow.ShadowsRenderContext
 import org.saar.core.renderer.shadow.ShadowsRenderNode
 
-class ObjNodeBatch(vararg nodes: ObjNode) : ParentNode,
+class ObjNodeBatch(override val children: Iterable<ObjNode>) : ParentNode,
     ForwardRenderNode, DeferredRenderNode, ShadowsRenderNode {
 
-    override val children: MutableList<ObjNode> = nodes.toMutableList()
-
-    fun add(node: ObjNode) {
-        this.children.add(node)
-    }
+    constructor(vararg nodes: ObjNode) : this(nodes.asIterable())
 
     override fun renderForward(context: ForwardRenderContext) {
         val models = this.children.map { it.model }
@@ -33,7 +29,5 @@ class ObjNodeBatch(vararg nodes: ObjNode) : ParentNode,
         ObjDeferredRenderer.render(deferredRenderContext, models)
     }
 
-    override fun delete() {
-        this.children.forEach { it.delete() }
-    }
+    override fun delete() = this.children.forEach { it.delete() }
 }
