@@ -37,15 +37,13 @@ import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.OffScreen
-import org.saar.core.screen.ScreenBuilder
+import org.saar.core.screen.buildScreen
 import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
@@ -191,17 +189,17 @@ private class TerrainApplication : Application {
         val screenBNormalSpecular = MutableTexture2D.create()
         val depthTexture = MutableTexture2D.create()
 
-        this.screenA = ScreenBuilder(Fbo.create())
-            .addColorTexture(screenAAlbedo, InternalFormat.RGBA16F)
-            .addColorTexture(screenANormalSpecular, InternalFormat.RGBA16F)
-            .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
-            .build(WIDTH, HEIGHT)
+        this.screenA = buildScreen(WIDTH, HEIGHT) {
+            colorAttachment(screenAAlbedo, InternalFormat.RGBA16F)
+            colorAttachment(screenANormalSpecular, InternalFormat.RGBA16F)
+            depthAttachment(depthTexture, InternalFormat.DEPTH24)
+        }
 
-        this.screenB = ScreenBuilder(Fbo.create())
-            .addColorTexture(screenBAlbedo, InternalFormat.RGBA16F)
-            .addColorTexture(screenBNormalSpecular, InternalFormat.RGBA16F)
-            .addDepthAttachment(TextureAttachmentBuffer(depthTexture, InternalFormat.DEPTH24))
-            .build(WIDTH, HEIGHT)
+        this.screenB = buildScreen(WIDTH, HEIGHT) {
+            colorAttachment(screenBAlbedo, InternalFormat.RGBA16F)
+            colorAttachment(screenBNormalSpecular, InternalFormat.RGBA16F)
+            depthAttachment(depthTexture, InternalFormat.DEPTH24)
+        }
 
         return RenderGraph(
             renderNode

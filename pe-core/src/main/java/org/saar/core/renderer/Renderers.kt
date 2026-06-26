@@ -1,7 +1,7 @@
 package org.saar.core.renderer
 
 import org.saar.core.renderer.uniforms.UniformPropertiesLocator
-import org.saar.core.screen.ScreenBuilder
+import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -24,9 +24,9 @@ object Renderers {
     ): MutableTexture2D {
         return MutableTexture2D.create().also { texture ->
             val fbo = Fbo.create()
-            val screen = ScreenBuilder(fbo)
-                .addColorTexture(texture, internalFormat)
-                .build(width, height)
+            val screen = buildScreen(fbo, width, height) {
+                colorAttachment(texture, internalFormat)
+            }
 
             screen.setAsDraw()
             render()
