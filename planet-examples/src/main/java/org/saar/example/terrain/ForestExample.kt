@@ -131,7 +131,7 @@ fun main() {
 
     val shadowsRenderGraph = RenderGraph(
         ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player)
-            .asShadowsRenderPass(camera).onto(shadowsScreen)
+            .asShadowsRenderPass(shadowsCamera).onto(shadowsScreen)
     )
 
 
