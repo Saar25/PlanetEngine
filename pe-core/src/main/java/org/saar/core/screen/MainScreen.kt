@@ -9,5 +9,5 @@ object MainScreen : FboScreen() {
 
     override val height get() = Window.current()!!.height
 
-    override val fbo: WindowFbo = WindowFbo.getInstance()
+    override val fbo: WindowFbo = WindowFbo
 }

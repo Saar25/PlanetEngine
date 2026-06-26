@@ -80,7 +80,7 @@ public class RendererExample {
 
             renderer.render(new RenderContext(), model);
 
-            WindowFbo.getInstance().bindAsDraw();
+            WindowFbo.INSTANCE.bindAsDraw();
             GlUtils.clear(GlBuffer.COLOR);
             fbo.blitFramebuffer(
                 dimensions[0], dimensions[1],

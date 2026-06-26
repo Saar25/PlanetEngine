@@ -1,30 +1,22 @@
-package org.saar.lwjgl.opengl.fbo;
+package org.saar.lwjgl.opengl.fbo
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*
 
-public class BoundFbo {
+object BoundFbo {
 
-    private static final Map<FboTarget, Integer> bound = new EnumMap<>(FboTarget.class);
+    private val bound: MutableMap<FboTarget, Int> = EnumMap(FboTarget::class.java)
 
-    private BoundFbo() {
-        throw new AssertionError("Cannot create instance of class "
-                + getClass().getSimpleName());
-    }
+    @JvmStatic
+    fun isBound(target: FboTarget, id: Int) = this.get(target) == id
 
-    public static boolean isBound(FboTarget target, int id) {
-        return BoundFbo.get(target) == id;
-    }
-
-    public static void set(FboTarget target, int id) {
-        BoundFbo.bound.put(target, id);
+    @JvmStatic
+    fun set(target: FboTarget, id: Int) {
+        this.bound[target] = id
         if (target == FboTarget.FRAMEBUFFER) {
-            BoundFbo.bound.put(FboTarget.READ_FRAMEBUFFER, id);
-            BoundFbo.bound.put(FboTarget.DRAW_FRAMEBUFFER, id);
+            this.bound[FboTarget.READ_FRAMEBUFFER] = id
+            this.bound[FboTarget.DRAW_FRAMEBUFFER] = id
         }
     }
 
-    public static int get(FboTarget target) {
-        return BoundFbo.bound.getOrDefault(target, 0);
-    }
+    fun get(target: FboTarget) = this.bound.getOrDefault(target, 0)
 }

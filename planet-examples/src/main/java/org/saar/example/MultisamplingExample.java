@@ -80,7 +80,7 @@ public class MultisamplingExample {
             GlUtils.clear(GlBuffer.COLOR);
             GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
 
-            WindowFbo.getInstance().bindAsDraw();
+            WindowFbo.INSTANCE.bindAsDraw();
             fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();

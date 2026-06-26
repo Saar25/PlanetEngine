@@ -1,20 +1,12 @@
-package org.saar.lwjgl.opengl.fbo;
+package org.saar.lwjgl.opengl.fbo
 
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL30
 
-public enum FboTarget {
-
+enum class FboTarget(private val value: Int) {
     FRAMEBUFFER(GL30.GL_FRAMEBUFFER),
     DRAW_FRAMEBUFFER(GL30.GL_DRAW_FRAMEBUFFER),
-    READ_FRAMEBUFFER(GL30.GL_READ_FRAMEBUFFER);
+    READ_FRAMEBUFFER(GL30.GL_READ_FRAMEBUFFER),
+    ;
 
-    private final int value;
-
-    FboTarget(int value) {
-        this.value = value;
-    }
-
-    public int get() {
-        return value;
-    }
+    fun get() = this.value
 }

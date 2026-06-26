@@ -1,106 +1,87 @@
-package org.saar.lwjgl.opengl.fbo;
+package org.saar.lwjgl.opengl.fbo
 
-import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.fbo.attachment.IAttachment;
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
-import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
-import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget;
-import org.saar.lwjgl.opengl.fbo.rendertarget.ReadRenderTarget;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.lwjgl.opengl.GL30
+import org.saar.lwjgl.opengl.fbo.BoundFbo.isBound
+import org.saar.lwjgl.opengl.fbo.BoundFbo.set
+import org.saar.lwjgl.opengl.fbo.FboStatus.ensureStatus
+import org.saar.lwjgl.opengl.fbo.attachment.IAttachment
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
+import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException
+import org.saar.lwjgl.opengl.fbo.rendertarget.DrawRenderTarget
+import org.saar.lwjgl.opengl.fbo.rendertarget.ReadRenderTarget
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlConfigs
 
-public class Fbo implements IFbo {
+class Fbo private constructor(private val id: Int) : IFbo {
 
-    public static final Fbo NULL = new Fbo(0);
+    companion object {
+        val NULL: Fbo = Fbo(0)
 
-    private final int id;
-
-    private Fbo(int id) {
-        this.id = id;
-    }
-
-    public static Fbo create() {
-        final int id = GL30.glGenFramebuffers();
-        return new Fbo(id);
-    }
-
-    @Override
-    public void addAttachment(AttachmentIndex index, IAttachment attachment) {
-        bind();
-        attachment.attach(this.id, index);
-    }
-
-    @Override
-    public void setReadTarget(ReadRenderTarget target) {
-        bind();
-        target.setAsRead();
-    }
-
-    @Override
-    public void setDrawTarget(DrawRenderTarget target) {
-        bind();
-        target.setAsDraw();
-    }
-
-    public void blitFramebuffer(int w, int h, FboBlitFilter filter, GlBuffer... buffers) {
-        blitFramebuffer(0, 0, w, h, 0, 0, w, h, filter, buffers);
-    }
-
-    public void blitFramebuffer(int w1, int h1, int w2, int h2, FboBlitFilter filter, GlBuffer... buffers) {
-        blitFramebuffer(0, 0, w1, h1, 0, 0, w2, h2, filter, buffers);
-    }
-
-    @Override
-    public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
-                                int h2, FboBlitFilter filter, GlBuffer... buffers) {
-        bindAsRead();
-        GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(buffers), filter.get());
-    }
-
-    @Override
-    public void bindAsRead() {
-        bind(FboTarget.READ_FRAMEBUFFER);
-    }
-
-    @Override
-    public void bindAsDraw() {
-        bind(FboTarget.DRAW_FRAMEBUFFER);
-    }
-
-    @Override
-    public void bind() {
-        bind(FboTarget.FRAMEBUFFER);
-    }
-
-    @Override
-    public void unbind() {
-        unbind(FboTarget.FRAMEBUFFER);
-    }
-
-    @Override
-    public void delete() {
-        GL30.glDeleteFramebuffers(id);
-    }
-
-    @Override
-    public void ensureStatus() throws FrameBufferException {
-        bind();
-        final int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
-        FboStatus.ensureStatus(status);
-    }
-
-    public void bind(FboTarget target) {
-        if (!GlConfigs.CACHE_STATE || BoundFbo.isBound(target, this.id)) {
-            bind0(target);
+        @JvmStatic
+        fun create(): Fbo {
+            val id = GL30.glGenFramebuffers()
+            return Fbo(id)
         }
     }
 
-    public void unbind(FboTarget target) {
-        Fbo.NULL.bind(target);
+    override fun addAttachment(index: AttachmentIndex, attachment: IAttachment) {
+        bind()
+        attachment.attach(this.id, index)
     }
 
-    private void bind0(FboTarget target) {
-        GL30.glBindFramebuffer(target.get(), this.id);
-        BoundFbo.set(target, this.id);
+    override fun setReadTarget(target: ReadRenderTarget) {
+        bind()
+        target.setAsRead()
+    }
+
+    override fun setDrawTarget(target: DrawRenderTarget) {
+        bind()
+        target.setAsDraw()
+    }
+
+    fun blitFramebuffer(w: Int, h: Int, filter: FboBlitFilter, vararg buffers: GlBuffer) {
+        blitFramebuffer(0, 0, w, h, 0, 0, w, h, filter, *buffers)
+    }
+
+    fun blitFramebuffer(w1: Int, h1: Int, w2: Int, h2: Int, filter: FboBlitFilter, vararg buffers: GlBuffer) {
+        blitFramebuffer(0, 0, w1, h1, 0, 0, w2, h2, filter, *buffers)
+    }
+
+    override fun blitFramebuffer(
+        x1: Int, y1: Int, w1: Int, h1: Int, x2: Int, y2: Int, w2: Int,
+        h2: Int, filter: FboBlitFilter, vararg buffers: GlBuffer
+    ) {
+        bindAsRead()
+        GL30.glBlitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, GlBuffer.getValue(*buffers), filter.get())
+    }
+
+    override fun bindAsRead() = bind(FboTarget.READ_FRAMEBUFFER)
+
+    override fun bindAsDraw() = bind(FboTarget.DRAW_FRAMEBUFFER)
+
+    override fun bind() = bind(FboTarget.FRAMEBUFFER)
+
+    override fun unbind() = unbind(FboTarget.FRAMEBUFFER)
+
+    override fun delete() = GL30.glDeleteFramebuffers(id)
+
+    @Throws(FrameBufferException::class)
+    override fun ensureStatus() {
+        bind()
+        val status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER)
+        ensureStatus(status)
+    }
+
+    fun bind(target: FboTarget) {
+        if (!GlConfigs.CACHE_STATE || isBound(target, this.id)) {
+            bind0(target)
+        }
+    }
+
+    fun unbind(target: FboTarget) = NULL.bind(target)
+
+    private fun bind0(target: FboTarget) {
+        GL30.glBindFramebuffer(target.get(), this.id)
+        set(target, this.id)
     }
 }

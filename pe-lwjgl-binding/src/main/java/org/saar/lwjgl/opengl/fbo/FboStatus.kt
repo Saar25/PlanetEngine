@@ -1,39 +1,41 @@
-package org.saar.lwjgl.opengl.fbo;
+package org.saar.lwjgl.opengl.fbo
 
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
-import org.saar.lwjgl.opengl.fbo.exceptions.*;
+import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL32
+import org.saar.lwjgl.opengl.fbo.exceptions.*
 
-public final class FboStatus {
+object FboStatus {
 
-    private static final String MESSAGE = "Framebuffer creation failed";
+    private const val MESSAGE = "Framebuffer creation failed"
 
-    private FboStatus() {
-        throw new AssertionError("Cannot create instance of class "
-                + getClass().getSimpleName());
-    }
+    @JvmStatic
+    @Throws(FrameBufferException::class)
+    fun ensureStatus(status: Int) {
+        when (status) {
+            GL30.GL_FRAMEBUFFER_COMPLETE -> {}
+            GL30.GL_FRAMEBUFFER_UNDEFINED ->
+                throw FboUndefinedException(MESSAGE)
 
-    public static void ensureStatus(int status) throws FrameBufferException {
-        switch (status) {
-            case GL30.GL_FRAMEBUFFER_COMPLETE:
-                break;
-            case GL30.GL_FRAMEBUFFER_UNDEFINED:
-                throw new FboUndefinedException(MESSAGE);
-            case GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                throw new FboIncompleteAttachmentException(MESSAGE);
-            case GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                throw new FboIncompleteMissingAttachmentException(MESSAGE);
-            case GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-                throw new FboIncompleteDrawBufferException(MESSAGE);
-            case GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-                throw new FboIncompleteReadBufferException(MESSAGE);
-            case GL30.GL_FRAMEBUFFER_UNSUPPORTED:
-                throw new FboUnsupportedException(MESSAGE);
-            case GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-                throw new FboIncompleteMultisampleException(MESSAGE);
-            case GL32.GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-                throw new FboIncompleteLayerTargetsException(MESSAGE);
+            GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT ->
+                throw FboIncompleteAttachmentException(MESSAGE)
+
+            GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT ->
+                throw FboIncompleteMissingAttachmentException(MESSAGE)
+
+            GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER ->
+                throw FboIncompleteDrawBufferException(MESSAGE)
+
+            GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER ->
+                throw FboIncompleteReadBufferException(MESSAGE)
+
+            GL30.GL_FRAMEBUFFER_UNSUPPORTED ->
+                throw FboUnsupportedException(MESSAGE)
+
+            GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE ->
+                throw FboIncompleteMultisampleException(MESSAGE)
+
+            GL32.GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS ->
+                throw FboIncompleteLayerTargetsException(MESSAGE)
         }
     }
-
 }

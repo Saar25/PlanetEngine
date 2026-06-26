@@ -76,7 +76,7 @@ public class ObjRendererExample {
 
             renderer.render(new ForwardRenderContext(camera), cottageModel);
 
-            WindowFbo.getInstance().bindAsDraw();
+            WindowFbo.INSTANCE.bindAsDraw();
             fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();

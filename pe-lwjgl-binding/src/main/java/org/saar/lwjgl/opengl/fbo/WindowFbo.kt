@@ -1,54 +1,33 @@
-package org.saar.lwjgl.opengl.fbo;
+package org.saar.lwjgl.opengl.fbo
 
-import org.lwjgl.opengl.GL11;
-import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException;
-import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.lwjgl.opengl.GL11
+import org.saar.lwjgl.opengl.fbo.exceptions.FrameBufferException
+import org.saar.lwjgl.opengl.utils.GlBuffer
 
-public class WindowFbo implements ReadOnlyFbo {
+object WindowFbo : ReadOnlyFbo {
 
-    private static final WindowFbo instance = new WindowFbo();
+    private val fbo: Fbo get() = Fbo.NULL
 
-    private WindowFbo() {
+    override fun blitFramebuffer(
+        x1: Int, y1: Int, w1: Int, h1: Int,
+        x2: Int, y2: Int, w2: Int, h2: Int,
+        filter: FboBlitFilter, vararg buffers: GlBuffer
+    ) = this.fbo.blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, *buffers)
+
+    override fun bindAsRead() {
+        this.fbo.bind(FboTarget.READ_FRAMEBUFFER)
+        GL11.glReadBuffer(GL11.GL_NONE)
     }
 
-    public static WindowFbo getInstance() {
-        return WindowFbo.instance;
+    override fun bindAsDraw() {
+        this.fbo.bind(FboTarget.DRAW_FRAMEBUFFER)
+        GL11.glDrawBuffer(GL11.GL_BACK)
     }
 
-    private Fbo getFbo() {
-        return Fbo.NULL;
-    }
+    override fun bind() = this.fbo.bind(FboTarget.FRAMEBUFFER)
 
-    @Override
-    public void blitFramebuffer(int x1, int y1, int w1, int h1, int x2, int y2, int w2,
-                                int h2, FboBlitFilter filter, GlBuffer[] buffers) {
-        getFbo().blitFramebuffer(x1, y1, w1, h1, x2, y2, w2, h2, filter, buffers);
-    }
+    override fun unbind() = this.fbo.unbind()
 
-    @Override
-    public void bindAsRead() {
-        getFbo().bind(FboTarget.READ_FRAMEBUFFER);
-        GL11.glReadBuffer(GL11.GL_NONE);
-    }
-
-    @Override
-    public void bindAsDraw() {
-        getFbo().bind(FboTarget.DRAW_FRAMEBUFFER);
-        GL11.glDrawBuffer(GL11.GL_BACK);
-    }
-
-    @Override
-    public void bind() {
-        getFbo().bind(FboTarget.FRAMEBUFFER);
-    }
-
-    @Override
-    public void unbind() {
-        getFbo().unbind();
-    }
-
-    @Override
-    public void ensureStatus() throws FrameBufferException {
-        getFbo().ensureStatus();
-    }
+    @Throws(FrameBufferException::class)
+    override fun ensureStatus() = this.fbo.ensureStatus()
 }

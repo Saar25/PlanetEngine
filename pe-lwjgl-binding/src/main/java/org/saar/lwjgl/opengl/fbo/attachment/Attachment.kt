@@ -1,31 +1,17 @@
-package org.saar.lwjgl.opengl.fbo.attachment;
+package org.saar.lwjgl.opengl.fbo.attachment
 
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
-import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer;
-import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
+import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy
+import org.saar.lwjgl.opengl.fbo.attachment.buffer.AttachmentBuffer
+import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex
 
-public class Attachment implements IAttachment {
+class Attachment(
+    private val buffer: AttachmentBuffer,
+    private val allocation: AllocationStrategy
+) : IAttachment {
 
-    private final AttachmentBuffer buffer;
-    private final AllocationStrategy allocation;
+    override fun attach(fbo: Int, index: AttachmentIndex) = this.buffer.attachToFbo(fbo, index)
 
-    public Attachment(AttachmentBuffer buffer, AllocationStrategy allocation) {
-        this.buffer = buffer;
-        this.allocation = allocation;
-    }
+    override fun allocate(width: Int, height: Int) = this.allocation.allocate(this.buffer, width, height)
 
-    @Override
-    public void attach(int fbo, AttachmentIndex index) {
-        this.buffer.attachToFbo(fbo, index);
-    }
-
-    @Override
-    public void allocate(int width, int height) {
-        this.allocation.allocate(this.buffer, width, height);
-    }
-
-    @Override
-    public void delete() {
-        this.buffer.delete();
-    }
+    override fun delete() = this.buffer.delete()
 }

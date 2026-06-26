@@ -92,7 +92,7 @@ public class InstancedModelExample {
             GlUtils.clear(GlBuffer.COLOR);
             mesh.draw();
 
-            WindowFbo.getInstance().bindAsDraw();
+            WindowFbo.INSTANCE.bindAsDraw();
             GlUtils.clear(GlBuffer.COLOR);
             fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
