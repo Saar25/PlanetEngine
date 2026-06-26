@@ -94,7 +94,7 @@ public class MutableTexture2D implements WritableTexture2D {
         this.texture.delete();
     }
 
-    public void attachToFbo(int attachment, int level) {
-        this.texture.attachToFbo(attachment, level);
+    public void attachToFbo(int fbo, int attachment, int level) {
+        this.texture.attachToFbo(fbo, attachment, level);
     }
 }

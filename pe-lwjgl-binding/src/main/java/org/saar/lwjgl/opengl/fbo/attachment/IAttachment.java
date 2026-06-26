@@ -4,7 +4,7 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 
 public interface IAttachment {
 
-    void init(AttachmentIndex index);
+    void attach(int fbo, AttachmentIndex index);
 
     void allocate(int width, int height);
 

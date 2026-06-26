@@ -17,7 +17,7 @@ class RenderBufferAttachmentBuffer(
     override fun allocateMultisampled(width: Int, height: Int, samples: Int) =
         this.renderBuffer.loadStorageMultisample(width, height, this.internalFormat, samples)
 
-    override fun attachToFbo(index: AttachmentIndex) = this.renderBuffer.attachToFbo(index.value)
+    override fun attachToFbo(fbo: Int, index: AttachmentIndex) = this.renderBuffer.attachToFbo(fbo, index.value)
 
     override fun delete() = this.renderBuffer.delete()
 }

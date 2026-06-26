@@ -58,11 +58,11 @@ public class RendererExample {
         fbo.ensureStatus();
 
         window.addResizeListener(e -> {
+            int width = e.getWidth().getAfter();
+            int height = e.getHeight().getAfter();
             fbo.bind();
-            fbo.resize(e.getWidth().getAfter(),
-                    e.getHeight().getAfter());
-            attachment.init(attachmentIndex);
-            attachment.allocate(e.getWidth().getAfter(), e.getHeight().getAfter());
+            fbo.resize(width, height);
+            attachment.allocate(width, height);
         });
 
         final Keyboard keyboard = window.getKeyboard();

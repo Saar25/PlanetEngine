@@ -15,8 +15,8 @@ public class Attachment implements IAttachment {
     }
 
     @Override
-    public void init(AttachmentIndex index) {
-        this.buffer.attachToFbo(index);
+    public void attach(int fbo, AttachmentIndex index) {
+        this.buffer.attachToFbo(fbo, index);
     }
 
     @Override
