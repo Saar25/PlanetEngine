@@ -75,8 +75,8 @@ public class InstancedModelExample {
         final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 
-        fbo.addAttachment(attachmentIndex, attachment);
         attachment.allocate(WIDTH, HEIGHT);
+        fbo.addAttachment(attachmentIndex, attachment);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
 

@@ -51,8 +51,8 @@ public class RendererExample {
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
         final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
 
-        fbo.addAttachment(attachmentIndex, attachment);
         attachment.allocate(WIDTH, HEIGHT);
+        fbo.addAttachment(attachmentIndex, attachment);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
         fbo.ensureStatus();

@@ -65,8 +65,8 @@ public class MultisamplingExample {
         final Attachment attachment = new Attachment(buffer, allocation);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 
-        fbo.addAttachment(attachmentIndex, attachment);
         attachment.allocate(WIDTH, HEIGHT);
+        fbo.addAttachment(attachmentIndex, attachment);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
 

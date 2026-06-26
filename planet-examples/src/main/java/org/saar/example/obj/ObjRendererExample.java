@@ -122,12 +122,12 @@ public class ObjRendererExample {
         final AttachmentIndex depthIndex = DepthAttachmentIndex.INSTANCE;
         final RenderTarget target = new IndexRenderTarget(colorIndex);
 
-        fbo.addAttachment(colorIndex, colorAttachment);
         colorAttachment.allocate(WIDTH, HEIGHT);
+        fbo.addAttachment(colorIndex, colorAttachment);
         fbo.setDrawTarget(target);
         fbo.setReadTarget(target);
-        fbo.addAttachment(depthIndex, depthAttachment);
         depthAttachment.allocate(WIDTH, HEIGHT);
+        fbo.addAttachment(depthIndex, depthAttachment);
 
         fbo.ensureStatus();
 

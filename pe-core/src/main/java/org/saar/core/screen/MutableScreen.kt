@@ -14,7 +14,7 @@ class MutableScreen(override val fbo: IFbo) : FboScreen(), OffScreen {
     override fun resize(width: Int, height: Int) {
         this.fbo.bind()
         this.fbo.resize(width, height)
-        this.attachments.forEach { (index, attachment) -> attachment.init(index) }
+        this.attachments.values.forEach { it.allocate(width, height) }
     }
 
     override fun delete() {
@@ -24,6 +24,7 @@ class MutableScreen(override val fbo: IFbo) : FboScreen(), OffScreen {
 
     fun addAttachment(index: AttachmentIndex, attachment: IAttachment) {
         this.attachments[index]?.delete()
+        attachment.allocate(this.width, this.height)
         this.fbo.addAttachment(index, attachment)
         this.attachments[index] = attachment
     }
