@@ -3,8 +3,19 @@ package org.saar.core.renderer
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.DefaultRenderState
 import org.saar.core.renderer.state.RenderState
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
+@OptIn(ExperimentalContracts::class)
+fun renderGraph(block: RenderGraph.Builder.() -> Unit): RenderGraph {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return renderGraph(0, 0, block)
+}
+
+@OptIn(ExperimentalContracts::class)
 fun renderGraph(width: Int, height: Int, block: RenderGraph.Builder.() -> Unit): RenderGraph {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     return RenderGraph.Builder(width, height).apply(block).build()
 }
 

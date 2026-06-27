@@ -19,24 +19,21 @@ import org.saar.core.common.renderpass.shadowsPass
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.plusAssign
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.DeferredScreenPrototype
 import org.saar.core.renderer.deferred.deferredNodePass
-import org.saar.core.renderer.onto
 import org.saar.core.renderer.renderGraph
-import org.saar.core.renderer.shadow.*
+import org.saar.core.renderer.shadow.ShadowsCamera
+import org.saar.core.renderer.shadow.ShadowsQuality
+import org.saar.core.renderer.shadow.ShadowsRenderNodeGroup
+import org.saar.core.renderer.shadow.shadowsNodePass
 import org.saar.core.screen.MainScreen
-import org.saar.core.screen.Screens.toScreen
-import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window.Companion.create
-import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.ColorTexture.Companion.of
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.Texture2D
-import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position.Companion.of
 
 object ShadowExample {
@@ -56,7 +53,7 @@ object ShadowExample {
             components += KeyboardMovementScrollVelocityComponent(window.mouse)
             components += MouseDragRotationComponent(window.mouse, -.3f)
 
-            transform.position.set(0f, 0f, 200f)
+            transform.position.set(0f, 10f, 20f)
             transform.lookAt(of(0f, 0f, 0f))
         }
 
@@ -72,50 +69,41 @@ object ShadowExample {
         val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
             -100f, 100f, -100f, 100f, -100f, 100f
         )
-        val shadowsPrototype = ShadowsScreenPrototype()
-        val shadowsScreen = shadowsPrototype.toScreen(
-            Fbo.create(), ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize,
-        )
         val shadowsCamera = ShadowsCamera(shadowProjection, light)
 
-        val shadowMap = shadowsPrototype.depthTexture
+        val shadowsMap: ReadOnlyTexture2D
+        val shadowsRenderGraph = renderGraph {
+            val shadowsRenderPassOutput = shadowsNodePass(ShadowsQuality.MEDIUM) {
+                this.camera = shadowsCamera
+                this.renderNode = ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
+            }
 
-        val shadowsRenderGraph = RenderGraph(
-            ShadowsRenderNodeGroup(nodeBatch3D, objNodeBatch)
-                .asShadowsRenderPass(shadowsCamera).onto(shadowsScreen)
-        )
-        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            shadowsMap = shadowsRenderPassOutput.depth
+        }
         shadowsRenderGraph.render(RenderContext())
 
         val renderNode = DeferredRenderNodeGroup(nodeBatch3D, objNodeBatch)
 
-        val prototype = DeferredScreenPrototype()
-        val screen = prototype.toScreen(
-            Fbo.create(),
-            window.width,
-            window.height,
-        )
-
         val renderGraph = renderGraph(WIDTH, HEIGHT) {
-            deferredNodePass(camera, renderNode).onto(screen)
-
-            shadowsPass(
-                albedoBuffer = prototype.albedoTexture,
-                normalSpecularBuffer = prototype.normalSpecularTexture,
-                depthBuffer = prototype.depthTexture,
-                shadowsCamera = shadowsCamera,
-                camera = camera,
-                shadowMap = shadowMap,
-                light = light
-            ).onto(MainScreen)
+            val deferredNodePassOutput = deferredNodePass {
+                this.camera = camera
+                this.renderNode = renderNode
+            }
+            shadowsPass(MainScreen) {
+                this.albedoBuffer = deferredNodePassOutput.albedo
+                this.normalSpecularBuffer = deferredNodePassOutput.normalSpecular
+                this.depthBuffer = deferredNodePassOutput.depth
+                this.shadowsCamera = shadowsCamera
+                this.camera = camera
+                this.shadowMap = shadowsMap
+                this.light = light
+            }
         }
 
         val fps = Fps()
         while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
             camera.update()
 
-            screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-            MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
             renderGraph.render(RenderContext())
 
             window.swapBuffers()
@@ -133,9 +121,7 @@ object ShadowExample {
         }
 
         camera.delete()
-        shadowsScreen.delete()
         shadowsRenderGraph.delete()
-        screen.delete()
         renderGraph.delete()
         window.destroy()
     }

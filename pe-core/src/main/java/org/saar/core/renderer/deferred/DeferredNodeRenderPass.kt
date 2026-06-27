@@ -19,14 +19,6 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-fun RenderGraph.Builder.deferredNodePass(
-    camera: ICamera, renderNode: DeferredRenderNode
-): DeferredNodeRenderPass {
-    val renderPass = DeferredNodeRenderPass(camera, renderNode)
-    addPass(renderPass)
-    return renderPass
-}
-
 fun RenderGraph.Builder.deferredNodePass(input: DeferredNodeRenderPass.Input.() -> Unit): DeferredNodeRenderPass.Output {
     val outputAlbedo = MutableTexture2D.create()
     val outputNormalSpecular = MutableTexture2D.create()
