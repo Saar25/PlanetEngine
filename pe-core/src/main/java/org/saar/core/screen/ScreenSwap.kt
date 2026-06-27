@@ -4,9 +4,11 @@ import org.saar.core.screen.Screens.toScreen
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 
+@Deprecated("This class makes code not readable")
 class ScreenSwap<T : ScreenPrototype>(
     private val screenPrototypeA: T,
-    private val screenPrototypeB: T) {
+    private val screenPrototypeB: T
+) {
 
     private val screenA: OffScreen = this.screenPrototypeA.toScreen(Fbo.create(), 0, 0)
     private val screenB: OffScreen = this.screenPrototypeB.toScreen(Fbo.create(), 0, 0)
@@ -21,14 +23,14 @@ class ScreenSwap<T : ScreenPrototype>(
         this.screenB to this.screenPrototypeB,
     )
 
-    private var _current = this.screenA
+    var current = this.screenA
+        private set
 
-    val current get() = this._current
-    val prototype get() = this.prototypeMap[this._current]!!
+    val prototype get() = this.prototypeMap[this.current]!!
 
     fun swap(): OffScreen {
-        this._current = this.swapMap[this._current]!!
-        return this._current
+        this.current = this.swapMap[this.current]!!
+        return this.current
     }
 
     fun clearAll(buffers: Iterable<GlBuffer>) {

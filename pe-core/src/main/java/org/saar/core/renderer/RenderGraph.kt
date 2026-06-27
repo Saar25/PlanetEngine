@@ -22,6 +22,8 @@ class RenderGraph(
         }
     }
 
+    fun resize(width: Int, height: Int) = this.nodes.forEach { it.resize(width, height) }
+
     fun delete() = this.nodes.forEach { it.delete() }
 
     class Builder(val width: Int, val height: Int) {

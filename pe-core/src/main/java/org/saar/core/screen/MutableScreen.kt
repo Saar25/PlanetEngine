@@ -9,17 +9,17 @@ import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget
 
 class MutableScreen(override val fbo: IFbo, width: Int, height: Int) : FboScreen(), OffScreen {
 
-    private var _width: Int = width
-    override val width get() = this._width
+    override var width = width
+        private set
 
-    private var _height: Int = height
-    override val height get() = this._height
+    override var height = height
+        private set
 
     private val attachments = mutableMapOf<AttachmentIndex, IAttachment>()
 
     override fun resize(width: Int, height: Int) {
-        this._width = width
-        this._height = height
+        this.width = width
+        this.height = height
         this.attachments.values.forEach { it.allocate(width, height) }
     }
 

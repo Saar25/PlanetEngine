@@ -9,6 +9,8 @@ interface RenderPass {
 
     fun render(context: RenderContext)
 
+    fun resize(width: Int, height: Int) = Unit
+
     fun delete()
 
 }
