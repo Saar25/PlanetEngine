@@ -5,7 +5,8 @@ import org.saar.core.common.renderpass.FBMRenderPass
 import org.saar.core.engine.Application
 import org.saar.core.engine.PlanetEngine
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPass
+import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.renderGraph
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
@@ -19,6 +20,7 @@ import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.percent
 import org.saar.gui.style.px
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.utils.GlUtils
 
 fun main() {
     val application = LoginPageApplication()
@@ -28,42 +30,41 @@ fun main() {
 
 class LoginPageApplication : Application {
 
-    private lateinit var background: RenderPass
-    private lateinit var display: UIDisplay
+    private lateinit var renderGraph: RenderGraph
 
     override fun initialize(window: Window) {
-        this.background = FBMRenderPass()
+        val background = FBMRenderPass()
 
-        this.display = UIDisplay(window).apply {
+        val display = UIDisplay(window) {
             this.style.alignment.value = AlignmentValues.vertical
             this.style.arrangement.value = ArrangementValues.spaceEvenly
             this.style.axisAlignment.value = AxisAlignmentValues.center
 
-            +UIElement().apply {
+            +UIElement {
                 this.style.padding.set(15.px)
                 this.style.borders.bottomValue = 4.px
                 this.style.borderColor.set(Colors.BLACK)
 
-                +UIText("Login Page").apply {
+                +UIText("Login Page") {
                     this.style.fontSize.value = 96.px
                     this.style.fontColor.set(Colors.WHITE)
                 }
             }
 
-            val badCredentials = UIText("").apply {
+            val badCredentials = UIText("") {
                 this.style.fontSize.value = 32.px
                 this.style.fontColor.set(Colors.RED)
             }
 
             val username = UITextField("username")
 
-            +UIElement().apply {
+            +UIElement {
                 this.style.fontSize.value = 48.px
                 this.style.width.value = 75.percent
                 this.style.arrangement.value = ArrangementValues.spaceBetween
                 this.style.axisAlignment.value = AxisAlignmentValues.center
 
-                +UIText("Username: ").apply {
+                +UIText("Username: ") {
                     this.style.fontColor.set(Colors.WHITE)
                 }
 
@@ -78,13 +79,13 @@ class LoginPageApplication : Application {
 
             val password = UITextField("password")
 
-            +UIElement().apply {
+            +UIElement {
                 this.style.fontSize.value = 48.px
                 this.style.width.value = 75.percent
                 this.style.arrangement.value = ArrangementValues.spaceBetween
                 this.style.axisAlignment.value = AxisAlignmentValues.center
 
-                +UIText("Password: ").apply {
+                +UIText("Password: ") {
                     this.style.fontColor.set(Colors.WHITE)
                 }
 
@@ -99,7 +100,7 @@ class LoginPageApplication : Application {
 
             +badCredentials
 
-            +UIButton("Login").apply {
+            +UIButton("Login") {
                 this.style.fontSize.value = 48.px
                 this.style.fontColor.set(Colors.WHITE)
                 this.style.borderColor.set(Colors.WHITE)
@@ -117,19 +118,22 @@ class LoginPageApplication : Application {
                 }
             }
         }
+
+        this.renderGraph = renderGraph(window.width, window.height) {
+            addPass(background)
+            addPass(display)
+        }
     }
 
     override fun update(window: Window) {
-        this.display.update()
     }
 
     override fun render(window: Window) {
-        this.background.render(RenderContext())
-        this.display.render(RenderContext())
+        GlUtils.setViewport(0, 0, window.width, window.height)
+        this.renderGraph.render(RenderContext())
     }
 
     override fun close(window: Window) {
-        this.background.delete()
-        this.display.delete()
+        this.renderGraph.delete()
     }
 }

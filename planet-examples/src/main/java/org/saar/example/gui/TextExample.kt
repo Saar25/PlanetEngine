@@ -13,29 +13,22 @@ import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 
-object TextExample {
+private const val WIDTH = 1200
+private const val HEIGHT = 700
 
-    private const val WIDTH = 1200
-    private const val HEIGHT = 700
+fun main() {
+    val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
-
-        val display = UIDisplay(window)
-
-        val container = UIElement().apply {
+    val display = UIDisplay(window) {
+        +UIElement {
             style.position.value = absolute
             style.x.value = center
             style.y.value = center
             style.width.value = percent(90f)
             style.height.value = percent(90f)
             style.fontColor.set(Colors.WHITE)
-        }
 
-        display.add(container)
-
-        val text = """
+            val text = """
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer iaculis ultricies pellentesque. Vestibulum
             vel neque porta, convallis lacus non, consequat libero. Nullam mollis augue nibh, viverra volutpat purus
             vulputate vel. In hac habitasse platea dictumst. Orci varius natoque penatibus et magnis dis parturient
@@ -69,28 +62,26 @@ object TextExample {
             mattis augue vulputate, dapibus velit. Quisque id risus eget turpis laoreet eleifend. Nullam justo eros,
             commodo pharetra egestas in, mattis ac nisl. Cras vulputate, leo pellentesque porta varius, eros nibh
             mattis sapien, nec ultricies mi nibh at ante. Quisque maximus porttitor dolor, non sagittis metus porttitor a.
-        """.trimIndent().replace('\n', ' ')
+            """.trimIndent().replace('\n', ' ')
 
-        val textElement = UIText(text).apply {
-            style.x.value = center
-            style.y.value = center
-            style.fontSize.set(24)
+            +UIText(text) {
+                style.x.value = center
+                style.y.value = center
+                style.fontSize.set(24)
+            }
         }
-        container.add(textElement)
-
-        val keyboard = window.keyboard
-
-        while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            display.update()
-
-            GlUtils.clear(GlBuffer.COLOR)
-            display.render(RenderContext())
-
-            window.swapBuffers()
-            window.pollEvents()
-        }
-
-        display.delete()
-        window.destroy()
     }
+
+    while (window.isOpen && !window.keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+        GlUtils.setViewport(0, 0, window.width, window.height)
+        GlUtils.clear(GlBuffer.COLOR)
+
+        display.render(RenderContext())
+
+        window.swapBuffers()
+        window.pollEvents()
+    }
+
+    display.delete()
+    window.destroy()
 }

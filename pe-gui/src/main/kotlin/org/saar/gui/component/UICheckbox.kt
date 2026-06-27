@@ -14,12 +14,21 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 private val discardMap = Texture2D.of("/assets/gui/checkbox.png").apply {
     applyParameters(
         TextureMinFilterParameter(MinFilterValue.LINEAR),
         TextureMagFilterParameter(MagFilterValue.LINEAR),
     )
+}
+
+@OptIn(ExperimentalContracts::class)
+fun UICheckbox(block: UICheckbox.() -> Unit): UICheckbox {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UICheckbox().apply(block)
 }
 
 class UICheckbox : UIComponent() {

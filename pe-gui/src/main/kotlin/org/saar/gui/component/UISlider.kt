@@ -11,6 +11,15 @@ import org.saar.gui.style.coordinate.CoordinateValues.percent
 import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.position.PositionValues
 import org.saar.maths.utils.Maths
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UISlider(block: UISlider.() -> Unit): UISlider {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UISlider().apply(block)
+}
 
 class UISlider : UIComponent() {
 

@@ -9,6 +9,15 @@ import org.saar.gui.font.UILetter
 import org.saar.gui.font.UILetterRenderer
 import org.saar.gui.style.TextStyle
 import org.saar.maths.utils.Vector2
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UIText(text: String = "", block: UIText.() -> Unit): UIText {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UIText(text).apply(block)
+}
 
 class UIText(text: String = "") : UIChildNode {
 

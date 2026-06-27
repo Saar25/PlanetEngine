@@ -65,19 +65,19 @@ fun main() {
     val timeProperty = SimpleIntegerProperty()
     val fpsProperty = SimpleFloatProperty()
 
-    val uiDisplay = UIDisplay(window).apply {
-        +UIElement().apply {
+    val uiDisplay = UIDisplay(window) {
+        +UIElement {
             style.alignment.value = AlignmentValues.vertical
             style.fontSize.set(30)
             style.fontColor.set(Colors.WHITE)
 
-            +UIText().apply {
+            +UIText {
                 style.backgroundColor.set(Colors.BLACK)
 
                 fpsProperty.addListener(ChangeListener { text = "Fps: ${it.newValue.format(2)}" })
             }
 
-            +UIText().apply {
+            +UIText {
                 style.backgroundColor.set(Colors.BLACK)
 
                 timeProperty.addListener(ChangeListener { text = "Time: ${it.newValue}" })

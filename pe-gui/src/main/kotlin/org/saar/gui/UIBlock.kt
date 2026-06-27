@@ -3,6 +3,15 @@ package org.saar.gui
 import org.saar.core.renderer.RenderContext
 import org.saar.gui.block.UIBlockRenderer
 import org.saar.gui.style.BlockStyle
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UIBlock(block: UIBlock.() -> Unit): UIBlock {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UIBlock().apply(block)
+}
 
 class UIBlock : UIChildNode {
 

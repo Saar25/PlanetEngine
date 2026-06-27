@@ -6,6 +6,15 @@ import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.EventListener
 import org.saar.gui.event.MouseEvent
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UIButton(text: String = "", block: UIButton.() -> Unit): UIButton {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UIButton(text).apply(block)
+}
 
 class UIButton(text: String = "") : UIComponent() {
 

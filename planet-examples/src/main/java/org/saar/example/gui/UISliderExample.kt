@@ -24,44 +24,38 @@ object UISliderExample {
     fun main(args: Array<String>) {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-        val display = UIDisplay(window).apply {
+        val display = UIDisplay(window) {
             style.alignment.value = AlignmentValues.vertical
-        }
 
-        val uiText = UIText("Hello World!").apply {
-            style.fontSize.set(48)
-            style.fontColor.set(Colors.WHITE)
-        }
-        display.add(uiText)
+            +UIText("Hello World!") {
+                style.fontSize.set(48)
+                style.fontColor.set(Colors.WHITE)
+            }
 
-        val blockGap = UIBlock().apply {
-            style.borderColor.set(Colors.PURPLE)
-            style.height.value = percent(50f)
-        }
-        display.add(blockGap)
+            val blockGap = +UIBlock {
+                style.borderColor.set(Colors.PURPLE)
+                style.height.value = percent(50f)
+            }
 
-        val borderSize = UIText("Border size: 0").apply {
-            style.fontSize.set(48)
-            style.fontColor.set(Colors.WHITE)
-        }
-        display.add(borderSize)
+            val borderSize = +UIText("Border size: 0") {
+                style.fontSize.set(48)
+                style.fontColor.set(Colors.WHITE)
+            }
 
-        val scrollbar = UISlider().apply {
-            style.width.value = pixels(500)
-            style.height.value = pixels(50)
-            dynamicValueProperty.addListener { _: Observable ->
-                blockGap.style.borders.set(dynamicValueProperty.intValue)
-                borderSize.text = "Border size: " + dynamicValueProperty.intValue
+            +UISlider {
+                style.width.value = pixels(500)
+                style.height.value = pixels(50)
+                dynamicValueProperty.addListener { _: Observable ->
+                    blockGap.style.borders.set(dynamicValueProperty.intValue)
+                    borderSize.text = "Border size: " + dynamicValueProperty.intValue
+                }
             }
         }
-        display.add(scrollbar)
 
-        val keyboard = window.keyboard
+        while (window.isOpen && !window.keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            GlUtils.setViewport(0, 0, display.width, display.height)
+            GlUtils.clear(GlBuffer.COLOR)
 
-        while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            display.update()
-
-            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH)
             display.render(RenderContext())
 
             window.swapBuffers()

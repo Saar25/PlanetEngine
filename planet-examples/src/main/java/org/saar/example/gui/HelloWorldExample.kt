@@ -20,23 +20,20 @@ object HelloWorldExample {
     fun main(args: Array<String>) {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-        val display = UIDisplay(window)
-
-        val text = UIText("Hello World!").apply {
-            style.x.value = center
-            style.y.value = center
-            style.position.value = absolute
-            style.fontSize.set(48)
-            style.fontColor.set(Colors.WHITE)
+        val display = UIDisplay(window) {
+            +UIText("Hello World!") {
+                style.x.value = center
+                style.y.value = center
+                style.position.value = absolute
+                style.fontSize.set(48)
+                style.fontColor.set(Colors.WHITE)
+            }
         }
-        display.add(text)
 
-        val keyboard = window.keyboard
-
-        while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            display.update()
-
+        while (window.isOpen && !window.keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            GlUtils.setViewport(0, 0, window.width, window.height)
             GlUtils.clear(GlBuffer.COLOR)
+
             display.render(RenderContext())
 
             window.swapBuffers()
