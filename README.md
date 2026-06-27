@@ -1,6 +1,18 @@
 # 🌍 PlanetEngine
 
-An OpenGL-based game engine built on top of LWJGL
+An OpenGL-based game engine built on top of LWJGL  
+Written in Java and Kotlin and gradually transforming to only Kotlin
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Modules](#modules)
+- [LWJGL Binding](#lwjgl-binding)
+- [Core Engine](#core-engine)
+- [Graphical User Interface](#graphical-user-interface)
+- [Entity Component System](#entity-component-system)
+- [Example Classes](#example-classes)
+- [License](#license)
 
 ## 🚀 Getting Started
 
@@ -9,10 +21,16 @@ An OpenGL-based game engine built on top of LWJGL
 - Java 17+
 - Maven 3.6+
 
+### Build
+
+```bash
+mvn clean install compile
+```
+
 ### Run an Example
 
 ```bash
-mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplication
+mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplicationKt
 ```
 
 Replace the class with any of the available examples.
@@ -39,7 +57,7 @@ final Window window = Window.create("Lwjgl", 700, 500, true);
 final Vao vao = Vao.create();
 final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
 
-// Allocating and storing data in out object
+// Allocating and storing data in vbo object
 vbo.allocateFloat(18);
 vbo.storeFloat(0, new float[]{
         -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f,
@@ -79,7 +97,7 @@ while (window.isOpen() && !keyboard.isKeyPressed('E')) {
 window.destroy();
 ```
 
-## Core engine
+## Core Engine
 While direct management of VAOs and VBOs is supported, it's often more convenient and safer to use the high-level abstractions provided by the engine.  
 
 ```java
@@ -103,7 +121,7 @@ final Renderer2D renderer = new Renderer2D();
 renderer.render(new ForwardRenderContext(camera), model);
 ```
 
-The rendering pipeline consists of some primary interfaces
+The rendering pipeline consists of some primary interfaces:
 
 ### Vertex
 
@@ -131,10 +149,10 @@ interface Instance3D : Instance {
 
 Defines the draw method used to draw a mesh
 
-```java
-public interface Mesh {
-    void draw();
-    void delete();
+```kotlin
+interface Mesh {
+    fun draw()
+    fun delete()
 }
 ```
 
@@ -151,28 +169,24 @@ class Model3D(override val mesh: Mesh3D, val transform: SimpleTransform) : Model
 ### Node
 
 Base class for complex objects in the scene
-usually holds the model and a renderer, and has at least one render method
+Usually holds the model and a renderer, and has at least one render method
 
-```java
-final Model3D cubeModel = buildCubeModel();
-final Node3D cube = new Node3D(cubeModel);
+```kotlin
+val cubeModel = buildCubeModel()
+val cube = Node3D(cubeModel)
 
-cube.renderForward(new RenderContext());
+cube.renderForward(RenderContext())
 
 ```
 
 ### Renderer
 
-Prototype objects are used in order to write a unique rendering pipeline
+Renderers compose custom ShaderLink objects, and use them to connect the model data to the shader
 
 ```kotlin
 // org.saar.core.common.r3d.DeferredRenderer3D.kt
-
-// Connect uniforms in the shaders to our code
-@UniformProperty(UniformTrigger.PER_INSTANCE)
 private val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
 
-// Use vertex and fragment shaders in the shaders program
 override val shaders = arrayOf(
     Shader.createVertex(GlslVersion.V400, 
         ShaderCode.loadSource("/shaders/r3d/vertex.glsl")),
@@ -180,124 +194,121 @@ override val shaders = arrayOf(
         ShaderCode.loadSource("/shaders/r3d/fragmentDeferred.glsl"))
 )
 
-// Bind per vertex attributes
-override fun vertexAttributes() = arrayOf(
-    "in_position", "in_color", "in_transformation")
+override val vertexAttributes = arrayOf("in_position", "in_color", "in_transformation")
+```
 
-// Being called before rendering
-override fun onRenderCycle(context: RenderContext) {
-    ProvokingVertex.setFirst()
-    BlendTest.disable()
-    DepthTest.enable()
-}
+And then inside the renderer:
 
-// Being called before each instance draw
-override fun onInstanceDraw(context: RenderContext, model: Model3D) {
-    val v = context.camera.viewMatrix
-    val p = context.camera.projection.matrix
-    val m = model.transform.transformationMatrix
+```kotlin
+override fun render(context: DeferredRenderContext, models: Iterable<Model3D>) {
+    models.forEach { model ->
+        val p = context.camera.projection.matrix
+        val v = context.camera.viewMatrix
+        val m = model.transform.transformationMatrix
+        val mvp = p.mul(v, Matrix4.create()).mul(m)
 
-    this.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
+        this.shadersLink.mvpMatrixUniform.value = mvp
+
+        this.uniformsLoader.load()
+
+        model.mesh.draw()
+    }
 }
 ```
 
-## Features
+### RenderGraph
 
-The engine features some pre-made concepts, for example
-
-### Common rendering pipelines
-
-Renderer2D, Renderer3D, ObjRenderer, NormalMappedRenderer and more are already implemented
-
-### Deferred rendering
-
-The engine makes a great usage in deferred rendering  
-Render passes like LightRenderPass and ShadowsRenderPass are implemented  
-as well as unique renderers like ObjDeferredRenderer and NormalMappedDeferredRenderer  
-and RenderPipeline to wrap it all
-
-### Post-processing
-
-Post-processing is extremely simple using this engine  
-all that it takes is to create your own PostProcessor and create your PostProcessingPipeline
+Render graphs are used to combine multiple render passes in an elegant way
 
 ```kotlin
-// org.saar.example.normalmapping.NormalMappingExample.kt
-
-// Create the render graph
-val graph = RenderGraph(
+val renderGraph = RenderGraph(
     renderNode
-        .asDeferredRenderNode()
+        .asDeferredRenderPass(camera)
         .onto(screen1),
-    ContrastPostProcessor(1.3f)
-        .asRenderNode(prototype1.buffers)
-        .onto(screen1),
-    FxaaPostProcessor()
-        .asRenderNode(prototype2.buffers)
+    ContrastPostProcessor(prototype1.albedoTexture, 1.3f)
+        .onto(screen2),
+    FxaaPostProcessor(prototype2.albedoTexture)
         .onto(MainScreen),
+    uiDisplay.onto(MainScreen)
 )
 
-graph.render(RenderContext())
+renderGraph.render(RenderContext())
 ```
 
-### Gui
+Or using the DSL
+```kotlin
+renderGraph(WIDTH, HEIGHT) {
+    val deferredNodePassOutput = deferredNodePass {
+        this.camera = camera
+        this.renderNode = renderNode
+    }
+    val lightPassOutput = lightPass {
+        this.albedoBuffer = deferredNodePassOutput.albedo
+        this.normalSpecularBuffer = deferredNodePassOutput.normalSpecular
+        this.depthBuffer = deferredNodePassOutput.depth
+        this.camera = camera
+        this.directionalLights = arrayOf(light)
+    }
+    val fogPassOutput = fogPass {
+        this.albedoBuffer = lightPassOutput.albedo
+        this.depthBuffer = deferredNodePassOutput.depth
+        this.camera = camera
+        this.fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
+        this.fogDistance = FogDistance.XZ
+    }
+    skyboxPass(fogPassOutput.screen) {
+        this.cubeMap = cubeMap
+        this.camera = camera
+    }
+    fxaaPass(MainScreen) {
+        this.albedoBuffer = fogPassOutput.albedo
+    }
+}
+```
 
-The Gui architecture is already implemented  
-with some useful ui components like UISlider and UIButton
+### Graphical User Interface
+
+The project uses a custom Gui inspired heavily by CSS and HTML  
+It can be written in a DSL in Kotlin as well as manually in Java
 
 ```kotlin
-// org.saar.example.gui.UIButtonExample.kt
+val display = UIDisplay(window) {
+    +UIButton {
+        style.x.value = center()
+        style.y.value = center()
+        style.width.value = percent(50f)
+        style.height.value = ratio(.5f)
+        setOnAction { println("Clicked!") }
+    }
 
-val display = UIDisplay(window)
-
-val uiButton = UIButton().apply {
-    style.x.value = center()
-    style.y.value = center()
-    style.width.value = percent(50f)
-    style.height.value = ratio(.5f)
-    setOnAction { println("Clicked!") }
+    +UIText("The quick brown fox jumps over the lazy dog") {
+        style.x.value = center()
+        style.y.value = center()
+    }
 }
-display.add(uiButton)
 
 display.render(RenderContext())
 ```
 
-### Text rendering
+### Entity Component System
 
-Together with the gui, text components are also included  
-allowing you to load ttf fonts and render text using simple operations
-
-```kotlin
-val font = FontLoader.loadFont("C:/Windows/Fonts/arial.ttf", 48f, 512, 512,
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
-
-val uiText = UIText(font, "The quick brown fox jumps over the lazy dog").apply {
-    style.width.value = fitContent()
-    style.x.value = center()
-    style.y.value = center()
-}
-display.add(uiText)
-```
-
-### Components
-
-Components are the implementation of the ECS (Entity Component System) design pattern  
-any Component is attachable to every ComponentNode  
+Components are the implementation of the ECS design pattern  
+every Component is attachable to every ComponentNode  
 allowing better composition and reusable code
 
-```java
-final ComponentGroup components = new ComponentGroup(
+```kotlin
+val components = ComponentGroup(
     // Move with WASD at 50 units per second
-    new KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
+    KeyboardMovementComponent(keyboard, 50f, 50f, 50f),
     
     // Change movement velocity by the mouse scroll
-    new KeyboardMovementScrollVelocityComponent(mouse),
+    KeyboardMovementScrollVelocityComponent(mouse),
     
     // Rotate by the mouse movement
-    new MouseRotationComponent(mouse, -.3f)
-);
+    MouseRotationComponent(mouse, -.3f)
+)
 
-final Camera camera = new Camera(projection, components);
+val camera = Camera(projection, components)
 ```
 
 Components are very easy to create and handle  
@@ -324,13 +335,17 @@ class ThirdPersonViewComponent(private val toFollow: Transform, private val dist
 }
 ```
 
-### Example classes
+### Example Classes
 
 You can try some examples that are under planet-examples module
 
-for example:  
+For example:  
 MultisamplingExample.java  
 NormalMappingExample.kt  
 ReflectionExample.kt  
 ManyCubesExample.java
 GuiExample.kt
+
+## License
+
+GNU
