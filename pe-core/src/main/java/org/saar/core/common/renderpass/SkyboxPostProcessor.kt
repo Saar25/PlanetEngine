@@ -2,17 +2,18 @@ package org.saar.core.common.renderpass
 
 import org.saar.core.camera.ICamera
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPass
-import org.saar.core.renderer.ShadersLink
-import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.*
 import org.saar.core.renderer.state.BlendTestRenderState
 import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.OffScreen
+import org.saar.core.screen.Screen
+import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.blend.BlendFunction
 import org.saar.lwjgl.opengl.blend.BlendState
 import org.saar.lwjgl.opengl.blend.BlendValue
+import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -21,26 +22,58 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.maths.utils.Matrix4
 
-class SkyboxPostProcessor(
-    private val cubeMap: CubeMapTexture,
-    private val camera: ICamera
-) : RenderPass {
+fun RenderGraph.Builder.skyboxPass(input: SkyboxPostProcessor.Input.() -> Unit): SkyboxPostProcessor.Output {
+    val outputAlbedo = MutableTexture2D.create()
+    val screen = buildScreen(width, height) {
+        colorAttachment(outputAlbedo, InternalFormat.RGBA8)
+    }
+
+    skyboxPass(screen, input)
+
+    return SkyboxPostProcessor.Output(screen, outputAlbedo)
+}
+
+fun RenderGraph.Builder.skyboxPass(screen: Screen, input: SkyboxPostProcessor.Input.() -> Unit) {
+    val input = SkyboxPostProcessor.Input().apply(input)
+    addPass(SkyboxPostProcessor(screen, input))
+}
+
+fun SkyboxPostProcessor(cubeMap: CubeMapTexture, camera: ICamera): SkyboxPostProcessor {
+    val input = SkyboxPostProcessor.Input().apply {
+        this.cubeMap = cubeMap
+        this.camera = camera
+    }
+    return SkyboxPostProcessor(null, input)
+}
+
+class SkyboxPostProcessor(val screen: Screen?, val input: Input) : RenderPass {
+
+    class Input {
+        lateinit var cubeMap: CubeMapTexture
+        lateinit var camera: ICamera
+    }
+
+    class Output(val screen: OffScreen, val albedo: MutableTexture2D)
 
     private val shadersLink = SkyboxShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.UNWRITTEN_ONLY),
+        StencilTestRenderState(StencilState.ALWAYS_WRITE),
         BlendTestRenderState(BlendState(BlendFunction(BlendValue.ONE_MINUS_DST_ALPHA, BlendValue.DST_ALPHA))),
     )
 
     override fun render(context: RenderContext) {
+        this.screen?.setAsDraw()
+        this.renderState.apply()
+
         this.shadersLink.shadersProgram.bind()
-        this.shadersLink.projectionMatrixInvUniform.value = this.camera.projection.matrix.invert(Matrix4.temp)
-        this.shadersLink.viewMatrixInvUniform.value = this.camera.viewMatrix.invert(Matrix4.temp)
-        this.shadersLink.cubeMapUniform.value = this.cubeMap
+        this.shadersLink.projectionMatrixInvUniform.value = this.input.camera.projection.matrix.invert(Matrix4.temp)
+        this.shadersLink.viewMatrixInvUniform.value = this.input.camera.viewMatrix.invert(Matrix4.temp)
+        this.shadersLink.cubeMapUniform.value = this.input.cubeMap
 
         this.uniformsLoader.load()
         QuadMesh.draw()
@@ -48,7 +81,7 @@ class SkyboxPostProcessor(
 
     override fun delete() {
         this.shadersLink.shadersProgram.delete()
-        this.cubeMap.delete()
+        this.input.cubeMap.delete()
     }
 
     private object SkyboxShadersLink : ShadersLink {

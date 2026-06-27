@@ -11,7 +11,10 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D.instance
 import org.saar.core.common.r3d.R3D.mesh
-import org.saar.core.common.renderpass.*
+import org.saar.core.common.renderpass.fogPass
+import org.saar.core.common.renderpass.fxaaPass
+import org.saar.core.common.renderpass.lightPass
+import org.saar.core.common.renderpass.skyboxPass
 import org.saar.core.common.terrain.World
 import org.saar.core.common.terrain.color.ColorGenerator
 import org.saar.core.common.terrain.color.NormalColor
@@ -30,21 +33,16 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNode
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
-import org.saar.core.renderer.deferred.asDeferredRenderPass
-import org.saar.core.renderer.onto
+import org.saar.core.renderer.deferred.deferredNodePass
 import org.saar.core.renderer.renderGraph
 import org.saar.core.screen.MainScreen
-import org.saar.core.screen.OffScreen
-import org.saar.core.screen.buildScreen
 import org.saar.core.screen.clear
 import org.saar.core.util.Fps
 import org.saar.example.ExamplesUtils
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColor
-import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
-import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.noise.Noise2f
 import org.saar.maths.noise.layered
@@ -70,8 +68,6 @@ private class TerrainApplication : Application {
     private lateinit var camera: Camera
     private lateinit var renderGraph: RenderGraph
     private lateinit var cameraMovementComponent: KeyboardMovementComponent
-    private lateinit var screenA: OffScreen
-    private lateinit var screenB: OffScreen
 
     override fun initialize(window: Window) {
         window.width = WIDTH
@@ -129,8 +125,6 @@ private class TerrainApplication : Application {
     }
 
     override fun render(window: Window) {
-        this.screenA.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        this.screenB.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         this.renderGraph.render(RenderContext())
     }
@@ -180,53 +174,31 @@ private class TerrainApplication : Application {
         cubeMap: CubeMapTexture
     ): RenderGraph {
         return renderGraph(WIDTH, HEIGHT) {
-            val fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
-
-            val screenAAlbedo = MutableTexture2D.create()
-            val screenANormalSpecular = MutableTexture2D.create()
-            val screenBAlbedo = MutableTexture2D.create()
-            val screenBNormalSpecular = MutableTexture2D.create()
-            val depthTexture = MutableTexture2D.create()
-
-            this@TerrainApplication.screenA = buildScreen(WIDTH, HEIGHT) {
-                colorAttachment(screenAAlbedo, InternalFormat.RGBA16F)
-                colorAttachment(screenANormalSpecular, InternalFormat.RGBA16F)
-                depthAttachment(depthTexture, InternalFormat.DEPTH24)
+            val deferredNodePassOutput = deferredNodePass {
+                this.camera = this@TerrainApplication.camera
+                this.renderNode = renderNode
             }
-
-            this@TerrainApplication.screenB = buildScreen(WIDTH, HEIGHT) {
-                colorAttachment(screenBAlbedo, InternalFormat.RGBA16F)
-                colorAttachment(screenBNormalSpecular, InternalFormat.RGBA16F)
-                depthAttachment(depthTexture, InternalFormat.DEPTH24)
+            val lightPassOutput = lightPass {
+                this.albedoBuffer = deferredNodePassOutput.albedo
+                this.normalSpecularBuffer = deferredNodePassOutput.normalSpecular
+                this.depthBuffer = deferredNodePassOutput.depth
+                this.camera = this@TerrainApplication.camera
+                this.directionalLights = arrayOf(light)
             }
-
-            addPass(
-                renderNode.asDeferredRenderPass(camera).onto(screenA)
-            )
-            addPass(
-                LightRenderPass(
-                    albedoBuffer = screenAAlbedo,
-                    normalSpecularBuffer = screenANormalSpecular,
-                    depthBuffer = depthTexture,
-                    camera = camera,
-                    directionalLights = arrayOf(light),
-                ).onto(screenB)
-            )
-            val fogPass = fogPass {
-                input = FogRenderPass.Input(
-                    albedoBuffer = screenBAlbedo,
-                    depthBuffer = depthTexture,
-                    camera = camera,
-                    fog = fog,
-                    fogDistance = FogDistance.XZ
-                )
+            val fogPassOutput = fogPass {
+                this.albedoBuffer = lightPassOutput.albedo
+                this.depthBuffer = deferredNodePassOutput.depth
+                this.camera = this@TerrainApplication.camera
+                this.fog = Fog(Vector3.of(0f), MAX_DISTANCE_CLIP * .7f, MAX_DISTANCE_CLIP)
+                this.fogDistance = FogDistance.XZ
             }
-            addPass(
-                SkyboxPostProcessor(cubeMap, camera).onto(fogPass.screen)
-            )
-            addPass(
-                FxaaPostProcessor(fogPass.albedo).onto(MainScreen)
-            )
+            skyboxPass(fogPassOutput.screen) {
+                this.cubeMap = cubeMap
+                this.camera = this@TerrainApplication.camera
+            }
+            fxaaPass(MainScreen) {
+                this.albedoBuffer = fogPassOutput.albedo
+            }
         }
     }
 

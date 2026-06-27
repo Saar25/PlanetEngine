@@ -9,7 +9,10 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.state.*
 import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.screen.Screen
+import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.blend.BlendState
+import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -21,51 +24,95 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.UniformArray
 import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
 import kotlin.math.max
 
-class LightRenderPass(
-    private val albedoBuffer: ReadOnlyTexture2D,
-    private val normalSpecularBuffer: ReadOnlyTexture2D,
-    private val depthBuffer: ReadOnlyTexture2D,
-    private val camera: ICamera,
-    private val pointLights: Array<PointLight> = emptyArray(),
-    private val directionalLights: Array<DirectionalLight> = emptyArray(),
-) : RenderPass {
+fun RenderGraph.Builder.lightPass(input: LightRenderPass.Input.() -> Unit): LightRenderPass.Output {
+    val outputAlbedo = MutableTexture2D.create()
+    val screen = buildScreen(width, height) {
+        colorAttachment(outputAlbedo, InternalFormat.RGBA16F)
+    }
 
-    private val shadersLink = LightShadersLink(this.pointLights.size, this.directionalLights.size)
+    lightPass(screen, input)
+
+    return LightRenderPass.Output(screen, outputAlbedo)
+}
+
+fun RenderGraph.Builder.lightPass(screen: Screen, input: LightRenderPass.Input.() -> Unit) {
+    val input = LightRenderPass.Input().apply(input)
+    addPass(LightRenderPass(screen, input))
+}
+
+@JvmName("create")
+fun LightRenderPass(
+    albedoBuffer: ReadOnlyTexture2D,
+    normalSpecularBuffer: ReadOnlyTexture2D,
+    depthBuffer: ReadOnlyTexture2D,
+    camera: ICamera,
+    pointLights: Array<PointLight> = emptyArray(),
+    directionalLights: Array<DirectionalLight> = emptyArray(),
+): LightRenderPass {
+    val input = LightRenderPass.Input().apply {
+        this.albedoBuffer = albedoBuffer
+        this.normalSpecularBuffer = normalSpecularBuffer
+        this.depthBuffer = depthBuffer
+        this.camera = camera
+        this.pointLights = pointLights
+        this.directionalLights = directionalLights
+    }
+    return LightRenderPass(null, input)
+}
+
+class LightRenderPass(private val screen: Screen?, private val input: Input) : RenderPass {
+
+    class Input {
+        lateinit var albedoBuffer: ReadOnlyTexture2D
+        lateinit var normalSpecularBuffer: ReadOnlyTexture2D
+        lateinit var depthBuffer: ReadOnlyTexture2D
+        lateinit var camera: ICamera
+        var pointLights: Array<PointLight> = emptyArray()
+        var directionalLights: Array<DirectionalLight> = emptyArray()
+    }
+
+    class Output(val screen: Screen, val albedo: MutableTexture2D)
+
+    private val shadersLink = LightShadersLink(this.input.pointLights.size, this.input.directionalLights.size)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.REPLACE),
+        StencilTestRenderState(StencilState.DISABLED),
         DepthTestRenderState(DepthState.DISABLED),
         BlendTestRenderState(BlendState.DISABLED),
         CullFaceRenderState(CullFaceState.DISABLED),
     )
 
     override fun render(context: RenderContext) {
+        this.screen?.setAsDraw()
+        this.renderState.apply()
+
         this.shadersLink.shadersProgram.bind()
-        this.shadersLink.colorTextureUniform.value = this.albedoBuffer
-        this.shadersLink.normalSpecularTextureUniform.value = this.normalSpecularBuffer
-        this.shadersLink.depthTextureUniform.value = this.depthBuffer
+        this.shadersLink.colorTextureUniform.value = this.input.albedoBuffer
+        this.shadersLink.normalSpecularTextureUniform.value = this.input.normalSpecularBuffer
+        this.shadersLink.depthTextureUniform.value = this.input.depthBuffer
 
         this.shadersLink.projectionMatrixInvUniform.value =
-            this.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
+            this.input.camera.projection.matrix.invertPerspective(Matrix4.temp.identity())
 
-        val viewInvT = this.camera.viewMatrix.invert(Matrix4.create()).transpose()
+        val viewInvT = this.input.camera.viewMatrix.invert(Matrix4.create()).transpose()
 
-        this.shadersLink.directionalLightsCountUniform.value = this.directionalLights.size
-        this.directionalLights.forEachIndexed { index, light ->
+        this.shadersLink.directionalLightsCountUniform.value = this.input.directionalLights.size
+        this.input.directionalLights.forEachIndexed { index, light ->
             val vs = Vector4.of(light.direction, 0f).mul(viewInvT).also { it.w = 0f }.normalize()
             this.shadersLink.directionalLightsUniform.value[index].directionUniform.value.set(vs.x(), vs.y(), vs.z())
             this.shadersLink.directionalLightsUniform.value[index].colorUniform.value = light.color
         }
 
-        this.shadersLink.pointLightsCountUniform.value = this.pointLights.size
-        this.pointLights.forEachIndexed { index, light ->
-            val vs = Vector4.of(light.position, 1f).mul(this.camera.viewMatrix).let { it.div(it.w()) }
+        this.shadersLink.pointLightsCountUniform.value = this.input.pointLights.size
+        this.input.pointLights.forEachIndexed { index, light ->
+            val vs = Vector4.of(light.position, 1f).mul(this.input.camera.viewMatrix).let { it.div(it.w()) }
             this.shadersLink.pointLightsUniform.value[index].positionUniform.value.set(vs.x(), vs.y(), vs.z())
             this.shadersLink.pointLightsUniform.value[index].attenuationUniform.value.set(light.attenuation.vector3f)
             this.shadersLink.pointLightsUniform.value[index].colorUniform.value.set(light.color)

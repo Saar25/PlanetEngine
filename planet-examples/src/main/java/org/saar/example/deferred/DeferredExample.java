@@ -10,7 +10,7 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
-import org.saar.core.common.renderpass.LightRenderPass;
+import org.saar.core.common.renderpass.LightRenderPassKt;
 import org.saar.core.light.DirectionalLight;
 import org.saar.core.light.PointLight;
 import org.saar.core.mesh.Mesh;
@@ -18,7 +18,7 @@ import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
 import org.saar.core.renderer.RenderGraph;
 import org.saar.core.renderer.RenderGraphNode;
-import org.saar.core.renderer.deferred.DeferredNodeRenderPass;
+import org.saar.core.renderer.deferred.DeferredNodeRenderPassKt;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
 import org.saar.core.screen.MainScreen;
@@ -65,8 +65,8 @@ public class DeferredExample {
             prototype, Fbo.create(), window.getWidth(), window.getHeight());
 
         final RenderGraph renderGraph = new RenderGraph(
-            new RenderGraphNode(new DeferredNodeRenderPass(camera, renderNode), screen),
-            new RenderGraphNode(new LightRenderPass(
+            new RenderGraphNode(DeferredNodeRenderPassKt.create(camera, renderNode), screen),
+            new RenderGraphNode(LightRenderPassKt.create(
                 prototype.getAlbedoTexture(),
                 prototype.getNormalSpecularTexture(),
                 prototype.getDepthTexture(),
