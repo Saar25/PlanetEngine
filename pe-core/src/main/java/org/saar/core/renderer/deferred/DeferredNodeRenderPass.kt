@@ -16,6 +16,8 @@ import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.lwjgl.opengl.utils.GlUtils
 
 fun RenderGraph.Builder.deferredNodePass(
     camera: ICamera, renderNode: DeferredRenderNode
@@ -62,6 +64,7 @@ class DeferredNodeRenderPass(
     class Input {
         lateinit var camera: ICamera
         lateinit var renderNode: DeferredRenderNode
+        var clearBuffers: Iterable<GlBuffer> = listOf(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
     }
 
     class Output(
@@ -80,6 +83,7 @@ class DeferredNodeRenderPass(
     override fun render(context: RenderContext) {
         this.screen?.setAsDraw()
         this.renderState.apply()
+        GlUtils.clear(this.input.clearBuffers)
 
         val deferredContext = DeferredRenderContext(context, this.input.camera)
         this.input.renderNode.renderDeferred(deferredContext)

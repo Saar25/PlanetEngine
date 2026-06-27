@@ -83,7 +83,7 @@ class LightRenderPass(private val screen: Screen?, private val input: Input) : R
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.DISABLED),
+        StencilTestRenderState(StencilState.REPLACE),
         DepthTestRenderState(DepthState.DISABLED),
         BlendTestRenderState(BlendState.DISABLED),
         CullFaceRenderState(CullFaceState.DISABLED),
