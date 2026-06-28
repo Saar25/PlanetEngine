@@ -11,7 +11,9 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@OptIn(ExperimentalContracts::class)
 fun buildScreen(width: Int, height: Int, block: ScreenDSL.() -> Unit): OffScreen {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     return buildScreen(Fbo.create(), width, height, block)
 }
 
