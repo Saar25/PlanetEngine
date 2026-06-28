@@ -5,11 +5,11 @@ import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
 
 interface ShadersLink {
 
-    val vertexAttributes: Array<String> get() = emptyArray()
+    val vertexAttributes: Array<out String> get() = emptyArray()
 
-    val fragmentOutputs: Array<String> get() = emptyArray()
+    val fragmentOutputs: Array<out String> get() = emptyArray()
 
-    val uniforms: List<UniformContainer> get() = emptyList()
+    val uniforms: Iterable<UniformContainer> get() = emptyList()
 
     val shadersProgram: ShadersProgram
 

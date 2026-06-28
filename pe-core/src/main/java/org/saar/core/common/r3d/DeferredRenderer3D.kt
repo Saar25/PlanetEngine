@@ -1,84 +1,58 @@
 package org.saar.core.common.r3d
 
-import org.saar.core.renderer.Renderer
-import org.saar.core.renderer.ShadersLink
-import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.deferred.DeferredRenderContext
-import org.saar.core.renderer.init
-import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.shaders.*
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
-import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
-import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
-import org.saar.lwjgl.opengl.shader.uniforms.Vec4UniformValue
 import org.saar.maths.utils.Matrix4
 
-object DeferredRenderer3D : Renderer<DeferredRenderContext, Model3D> {
+val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
+    shadersLink {
+        vertexAttributes = arrayOf("in_position", "in_color", "in_transformation")
 
-    private val shadersLink = DeferredShadersLink3D
-    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+        val clipPlaneUniform = uniformVec4("u_clipPlane")
+        val specularUniform = uniformFloat("u_specular")
+        val modelMatrixUniform = uniformMat4("u_modelMatrix")
+        val mvpMatrixUniform = uniformMat4("u_mvpMatrix")
+        val normalMatrixUniform = uniformMat4("u_normalMatrix")
 
-    init {
-        this.shadersLink.init()
-    }
+        onRender { context, models ->
+            ProvokingVertex.setFirst()
+            BlendTest.disable()
+            DepthTest.enable()
+            CullFace.enable()
 
-    override fun render(context: DeferredRenderContext, models: Iterable<Model3D>) {
-        this.shadersLink.shadersProgram.bind()
+            normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
-        ProvokingVertex.setFirst()
-        BlendTest.disable()
-        DepthTest.enable()
-        CullFace.enable()
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            val vp = p.mul(v, Matrix4.create())
 
-        this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
+            models.forEach { model ->
+                val m = model.transform.transformationMatrix
 
-        val v = context.camera.viewMatrix
-        val p = context.camera.projection.matrix
-        val vp = p.mul(v, Matrix4.create())
+                specularUniform.value = model.specular
+                modelMatrixUniform.value.set(m)
+                mvpMatrixUniform.value = vp.mul(m, Matrix4.temp)
 
-        models.forEach { model ->
-            val m = model.transform.transformationMatrix
+                uniformsLoader.load()
 
-            this.shadersLink.specularUniform.value = model.specular
-            this.shadersLink.modelMatrixUniform.value.set(m)
-            this.shadersLink.mvpMatrixUniform.value = vp.mul(m, Matrix4.temp)
-
-            this.uniformsLoader.load()
-
-            model.mesh.draw()
+                model.mesh.draw()
+            }
         }
-    }
 
-    override fun delete() = this.shadersLink.shadersProgram.delete()
-
-    object DeferredShadersLink3D : ShadersLink {
-
-        @UniformProperty
-        val clipPlaneUniform = Vec4UniformValue("u_clipPlane")
-
-        @UniformProperty
-        val specularUniform = FloatUniformValue("u_specular")
-
-        @UniformProperty
-        val modelMatrixUniform = Mat4UniformValue("u_modelMatrix")
-
-        @UniformProperty
-        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
-
-        @UniformProperty
-        val normalMatrixUniform = Mat4UniformValue("u_normalMatrix")
-
-        override val vertexAttributes = arrayOf("in_position", "in_color", "in_transformation")
-
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.vertex.glsl")),
-            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/r3d/r3d.dfragment.glsl"))
-        )
+        shadersProgram {
+            vertex {
+                version = GlslVersion.V400
+                source { "/shaders/r3d/r3d.vertex.glsl" }
+            }
+            fragment {
+                version = GlslVersion.V400
+                source { "/shaders/r3d/r3d.dfragment.glsl" }
+            }
+        }
     }
 }
