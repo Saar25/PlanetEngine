@@ -37,7 +37,7 @@
     </profiles>
 
     <properties>
-        <lwjgl.version>3.3.1</lwjgl.version>
+        <lwjgl.version>3.4.1</lwjgl.version>
     </properties>
 
     <dependencies>

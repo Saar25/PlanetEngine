@@ -10,11 +10,6 @@ import org.saar.lwjgl.glfw.event.EventListenersHelper
 import org.saar.lwjgl.glfw.event.IntValueChange
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
-import org.saar.lwjgl.glfw.window.WindowHints.contextVersion
-import org.saar.lwjgl.glfw.window.WindowHints.openglForwardCompatibility
-import org.saar.lwjgl.glfw.window.WindowHints.openglProfile
-import org.saar.lwjgl.glfw.window.WindowHints.resizable
-import org.saar.lwjgl.glfw.window.WindowHints.visible
 import org.saar.lwjgl.opengl.fbo.Fbo
 
 class Window private constructor(
@@ -216,7 +211,14 @@ class Window private constructor(
      * @param x the x position of the window
      * @param y the y position of the window
      */
-    fun setPosition(x: Int, y: Int) = GLFW.glfwSetWindowPos(this.id, x, y)
+    fun setPosition(x: Int, y: Int) {
+        if (GLFW.glfwGetPlatform() != GLFW.GLFW_PLATFORM_WAYLAND) {
+            val vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())
+            if (vidMode != null) {
+                GLFW.glfwSetWindowPos(this.id, x, y)
+            }
+        }
+    }
 
     /**
      * Center the window in the middle of the screen
@@ -283,17 +285,17 @@ class Window private constructor(
         @JvmStatic
         fun create(title: String, width: Int, height: Int, vSync: Boolean): Window {
             val builder: WindowBuilder = builder(title, width, height, vSync)
-            builder.hint(visible(false))
-                .hint(resizable())
+            builder.hint(WindowHints.visible(false))
+                .hint(WindowHints.resizable())
             return builder.build()
         }
 
         @JvmStatic
         fun builder(title: String, width: Int, height: Int, vSync: Boolean): WindowBuilder {
             val builder = WindowBuilder(title, width, height, vSync)
-            builder.hint(contextVersion(3, 2))
-                .hint(openglProfile(OpenGlProfileType.CORE))
-                .hint(openglForwardCompatibility())
+            builder.hint(WindowHints.contextVersion(3, 2))
+                .hint(WindowHints.openglProfile(OpenGlProfileType.CORE))
+                .hint(WindowHints.openglForwardCompatibility())
             return builder
         }
 
