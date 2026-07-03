@@ -1,35 +1,30 @@
-package org.saar.core.mesh.async;
+package org.saar.core.mesh.async
 
-import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.UnloadedMesh;
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.UnloadedMesh
+import java.util.concurrent.CompletableFuture
 
-import java.util.concurrent.CompletableFuture;
+class FutureMesh private constructor(private var helper: FutureMeshHelper) : Mesh {
 
-public class FutureMesh implements Mesh {
-
-    private FutureMeshHelper helper;
-
-    private FutureMesh(FutureMeshHelper helper) {
-        this.helper = helper;
+    override fun draw() {
+        this.helper = this.helper.next()
+        this.helper.draw()
     }
 
-    public static FutureMesh create(CompletableFuture<? extends Mesh> task) {
-        return new FutureMesh(FutureMeshHelper.create(task));
+    override fun delete() {
+        this.helper = this.helper.next()
+        this.helper.delete()
     }
 
-    public static FutureMesh unloaded(CompletableFuture<? extends UnloadedMesh> task) {
-        return new FutureMesh(FutureMeshHelper.unloaded(task));
-    }
+    companion object {
+        fun create(task: CompletableFuture<out Mesh>): FutureMesh {
+            val helper = FutureMeshHelper.create(task)
+            return FutureMesh(helper)
+        }
 
-    @Override
-    public void draw() {
-        this.helper = this.helper.next();
-        this.helper.draw();
-    }
-
-    @Override
-    public void delete() {
-        this.helper = this.helper.next();
-        this.helper.delete();
+        fun unloaded(task: CompletableFuture<out UnloadedMesh>): FutureMesh {
+            val helper = FutureMeshHelper.unloaded(task)
+            return FutureMesh(helper)
+        }
     }
 }

@@ -1,9 +1,7 @@
-package org.saar.core.mesh;
+package org.saar.core.mesh
 
-public interface UnloadedMesh {
+interface UnloadedMesh {
+    fun delete()
 
-    void delete();
-
-    Mesh load();
-
+    fun load(): Mesh
 }

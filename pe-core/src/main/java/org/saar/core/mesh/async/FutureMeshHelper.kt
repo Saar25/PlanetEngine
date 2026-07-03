@@ -1,106 +1,62 @@
-package org.saar.core.mesh.async;
+package org.saar.core.mesh.async
 
-import org.saar.core.mesh.Mesh;
-import org.saar.core.mesh.UnloadedMesh;
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.UnloadedMesh
+import java.util.concurrent.CompletableFuture
 
-import java.util.concurrent.CompletableFuture;
+internal interface FutureMeshHelper : Mesh {
 
-abstract class FutureMeshHelper implements Mesh {
+    fun next(): FutureMeshHelper
 
-    public abstract FutureMeshHelper next();
+    override fun draw()
 
-    @Override
-    public abstract void draw();
+    override fun delete()
 
-    @Override
-    public abstract void delete();
-
-    public static FutureMeshHelper create(CompletableFuture<? extends Mesh> task) {
-        return new Running(task);
-    }
-
-    public static FutureMeshHelper unloaded(CompletableFuture<? extends UnloadedMesh> task) {
-        return new Unloaded(task);
-    }
-
-    private static class Running extends FutureMeshHelper {
-
-        private final CompletableFuture<? extends Mesh> task;
-
-        public Running(CompletableFuture<? extends Mesh> task) {
-            this.task = task;
-        }
-
-        @Override
-        public FutureMeshHelper next() {
-            if (this.task.isDone()) {
-                final Mesh mesh = this.task.getNow(null);
-                return new Finished(mesh);
+    private class Running(private val task: CompletableFuture<out Mesh>) : FutureMeshHelper {
+        override fun next(): FutureMeshHelper {
+            if (this.task.isDone) {
+                val mesh = this.task.getNow(null)
+                return Finished(mesh)
             }
-            return this;
+            return this
         }
 
-        @Override
-        public void draw() {
-        }
+        override fun draw() = Unit
 
-        @Override
-        public void delete() {
-            this.task.cancel(true);
+        override fun delete() {
+            this.task.cancel(true)
         }
     }
 
-    private static class Unloaded extends FutureMeshHelper {
-
-        private final CompletableFuture<? extends UnloadedMesh> task;
-
-        public Unloaded(CompletableFuture<? extends UnloadedMesh> task) {
-            this.task = task;
-        }
-
-        @Override
-        public FutureMeshHelper next() {
-            if (this.task.isDone()) {
-                final UnloadedMesh unloaded = this.task.getNow(null);
-                final Mesh mesh = unloaded.load();
-                return new Finished(mesh);
+    private class Unloaded(private val task: CompletableFuture<out UnloadedMesh>) : FutureMeshHelper {
+        override fun next(): FutureMeshHelper {
+            if (this.task.isDone) {
+                val unloaded = this.task.getNow(null)
+                val mesh = unloaded.load()
+                return Finished(mesh)
             }
-            return this;
+            return this
         }
 
-        @Override
-        public void draw() {
-        }
+        override fun draw() = Unit
 
-        @Override
-        public void delete() {
-            this.task.cancel(true);
+        override fun delete() {
+            this.task.cancel(true)
         }
     }
 
-    private static class Finished extends FutureMeshHelper {
+    private class Finished(private val mesh: Mesh) : FutureMeshHelper {
+        override fun next() = this
 
-        private final Mesh mesh;
+        override fun draw() = this.mesh.draw()
 
-        public Finished(Mesh mesh) {
-            this.mesh = mesh;
-        }
-
-        @Override
-        public FutureMeshHelper next() {
-            return this;
-        }
-
-        @Override
-        public void draw() {
-            this.mesh.draw();
-        }
-
-        @Override
-        public void delete() {
-            this.mesh.draw();
-        }
+        override fun delete() = this.mesh.delete()
     }
 
 
+    companion object {
+        fun create(task: CompletableFuture<out Mesh>): FutureMeshHelper = Running(task)
+
+        fun unloaded(task: CompletableFuture<out UnloadedMesh>): FutureMeshHelper = Unloaded(task)
+    }
 }
