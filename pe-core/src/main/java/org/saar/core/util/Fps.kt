@@ -1,28 +1,19 @@
-package org.saar.core.util;
+package org.saar.core.util
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW
 
-public class Fps {
+private fun current(): Double {
+    return GLFW.glfwGetTime()
+}
 
-    private double last;
+class Fps {
+    private var last: Double = current()
 
-    public Fps() {
-        this.last = current();
+    fun update() {
+        this.last = current()
     }
 
-    private static double current() {
-        return GLFW.glfwGetTime();
-    }
+    fun delta() = current() - this.last
 
-    public void update() {
-        this.last = current();
-    }
-
-    public double delta() {
-        return current() - this.last;
-    }
-
-    public double fps() {
-        return 1 / delta();
-    }
+    fun fps() = 1 / delta()
 }
