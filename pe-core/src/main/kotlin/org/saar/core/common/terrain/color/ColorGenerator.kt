@@ -1,9 +1,7 @@
-package org.saar.core.common.terrain.color;
+package org.saar.core.common.terrain.color
 
-import org.joml.Vector3fc;
+import org.joml.Vector3fc
 
-public interface ColorGenerator {
-
-    Vector3fc generateColor(Vector3fc position, Vector3fc normal);
-
+fun interface ColorGenerator {
+    fun generateColor(position: Vector3fc, normal: Vector3fc): Vector3fc
 }
