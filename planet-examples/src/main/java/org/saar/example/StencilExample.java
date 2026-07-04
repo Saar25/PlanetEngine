@@ -10,7 +10,6 @@ import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.IFbo;
 import org.saar.lwjgl.opengl.shader.Shader;
@@ -25,6 +24,7 @@ import org.saar.rhi.depthstencil.CompareOp;
 import org.saar.rhi.depthstencil.DepthStencilStateKt;
 import org.saar.rhi.depthstencil.StencilOp;
 import org.saar.rhi.depthstencil.StencilOpState;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 import org.saar.rhi.opengl.depthstencil.OpenglDepthStencilState;
 
 public class StencilExample {
@@ -94,12 +94,12 @@ public class StencilExample {
             writeDepthStencilState.set();
 
             vao1.bind();
-            GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
+            GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 
             readDepthStencilState.set();
 
             vao2.bind();
-            GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
+            GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 
             ScreenKt.copyTo(screen, MainScreen.INSTANCE);
 

@@ -7,10 +7,10 @@ import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 class PortalMeshBuilder(
     private val indices: Int,
@@ -42,7 +42,7 @@ class PortalMeshBuilder(
 
     override fun load(): Mesh {
         val vao = loadVao()
-        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        val drawCall = ElementsDrawCall(PrimitiveTopology.TRIANGLE_LIST, this.indices, DataType.U_INT)
         return DrawCallMesh(vao, drawCall)
     }
 

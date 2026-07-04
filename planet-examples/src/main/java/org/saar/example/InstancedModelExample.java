@@ -8,7 +8,6 @@ import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbo.Fbo;
@@ -30,6 +29,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
 import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 
 public class InstancedModelExample {
 
@@ -61,7 +61,7 @@ public class InstancedModelExample {
         vao.loadVbo(instanceBuffer, Attributes.ofInstanced(2, 1, DataType.FLOAT, false));
         instanceBuffer.delete();
 
-        final DrawCall drawCall = new InstancedArraysDrawCall(RenderMode.TRIANGLES, 3, 3);
+        final DrawCall drawCall = new InstancedArraysDrawCall(PrimitiveTopology.TRIANGLE_LIST, 3, 3);
         final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
         final ShadersProgram shadersProgram = ShadersProgram.create(

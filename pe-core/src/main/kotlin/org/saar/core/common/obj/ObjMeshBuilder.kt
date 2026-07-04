@@ -7,10 +7,10 @@ import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 class ObjMeshBuilder(
     private val indices: Int,
@@ -42,18 +42,21 @@ class ObjMeshBuilder(
 
     init {
         this.positionBufferBuilder.addAttribute(
-            Attributes.of(0, 3, DataType.FLOAT, false))
+            Attributes.of(0, 3, DataType.FLOAT, false)
+        )
         this.uvCoordBufferBuilder.addAttribute(
-            Attributes.of(1, 2, DataType.FLOAT, false))
+            Attributes.of(1, 2, DataType.FLOAT, false)
+        )
         this.normalBufferBuilder.addAttribute(
-            Attributes.of(2, 3, DataType.FLOAT, false))
+            Attributes.of(2, 3, DataType.FLOAT, false)
+        )
     }
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
     override fun load(): Mesh {
         val vao = loadVao()
-        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        val drawCall = ElementsDrawCall(PrimitiveTopology.TRIANGLE_LIST, this.indices, DataType.U_INT)
         return DrawCallMesh(vao, drawCall)
     }
 

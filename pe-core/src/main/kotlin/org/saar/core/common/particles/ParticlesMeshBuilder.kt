@@ -4,10 +4,10 @@ import org.saar.core.mesh.MeshBuilder
 import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 class ParticlesMeshBuilder(
     private val instances: Int,
@@ -28,9 +28,11 @@ class ParticlesMeshBuilder(
     init {
 
         this.positionBufferBuilder.addAttribute(
-            Attributes.ofInstanced(0, 3, DataType.FLOAT, false))
+            Attributes.ofInstanced(0, 3, DataType.FLOAT, false)
+        )
         this.birthBufferBuilder.addAttribute(
-            Attributes.ofIntegerInstanced(1, 1, DataType.INT))
+            Attributes.ofIntegerInstanced(1, 1, DataType.INT)
+        )
     }
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
@@ -47,9 +49,10 @@ class ParticlesMeshBuilder(
 
         val meshBuffers = ParticlesMeshBuffers(
             buffers[this.positionBufferBuilder]!!,
-            buffers[this.birthBufferBuilder]!!)
+            buffers[this.birthBufferBuilder]!!
+        )
 
-        val drawCall = InstancedArraysDrawCall(RenderMode.TRIANGLE_STRIP, 0, 4, this.instances)
+        val drawCall = InstancedArraysDrawCall(PrimitiveTopology.TRIANGLE_STRIP, 0, 4, this.instances)
         return ParticlesMesh(vao, drawCall, meshBuffers)
     }
 

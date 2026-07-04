@@ -8,10 +8,10 @@ import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.AttributeComposite
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 class MeshBuilder3D(
     private val indices: Int,
@@ -47,25 +47,32 @@ class MeshBuilder3D(
 
     init {
         this.positionBufferBuilder.addAttribute(
-            Attributes.of(0, 3, DataType.FLOAT, true))
+            Attributes.of(0, 3, DataType.FLOAT, true)
+        )
         this.normalBufferBuilder.addAttribute(
-            Attributes.of(1, 3, DataType.FLOAT, true))
+            Attributes.of(1, 3, DataType.FLOAT, true)
+        )
         this.colorBufferBuilder.addAttribute(
-            Attributes.of(2, 3, DataType.FLOAT, true))
-        this.transformBufferBuilder.addAttribute(AttributeComposite(
-            Attributes.ofInstanced(3, 4, DataType.FLOAT, false),
-            Attributes.ofInstanced(4, 4, DataType.FLOAT, false),
-            Attributes.ofInstanced(5, 4, DataType.FLOAT, false),
-            Attributes.ofInstanced(6, 4, DataType.FLOAT, false)
-        ))
+            Attributes.of(2, 3, DataType.FLOAT, true)
+        )
+        this.transformBufferBuilder.addAttribute(
+            AttributeComposite(
+                Attributes.ofInstanced(3, 4, DataType.FLOAT, false),
+                Attributes.ofInstanced(4, 4, DataType.FLOAT, false),
+                Attributes.ofInstanced(5, 4, DataType.FLOAT, false),
+                Attributes.ofInstanced(6, 4, DataType.FLOAT, false)
+            )
+        )
     }
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
 
     override fun load(): Mesh {
         val vao = loadVao()
-        val drawCall = InstancedElementsDrawCall(RenderMode.TRIANGLES,
-            this.indices, DataType.U_INT, this.instances)
+        val drawCall = InstancedElementsDrawCall(
+            PrimitiveTopology.TRIANGLE_LIST,
+            this.indices, DataType.U_INT, this.instances
+        )
         return DrawCallMesh(vao, drawCall)
     }
 

@@ -26,7 +26,7 @@ class OpenglInputAssemblyState(inputAssemblyState: InputAssemblyState) {
     val glTopology = this.topology.glValue
 }
 
-private val PrimitiveTopology.glValue
+val PrimitiveTopology.glValue
     get() = when (this) {
         PrimitiveTopology.POINT_LIST -> GL11.GL_POINTS
         PrimitiveTopology.LINE_LIST -> GL11.GL_LINES

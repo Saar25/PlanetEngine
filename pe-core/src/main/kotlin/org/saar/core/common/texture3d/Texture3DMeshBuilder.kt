@@ -7,10 +7,10 @@ import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 class Texture3DMeshBuilder(
     private val indices: Int,
@@ -38,9 +38,11 @@ class Texture3DMeshBuilder(
 
     init {
         this.positionBufferBuilder.addAttribute(
-            Attributes.of(0, 3, DataType.FLOAT, true))
+            Attributes.of(0, 3, DataType.FLOAT, true)
+        )
         this.uvCoordBufferBuilder.addAttribute(
-            Attributes.of(1, 2, DataType.FLOAT, true))
+            Attributes.of(1, 2, DataType.FLOAT, true)
+        )
     }
 
     override fun delete() = this.bufferBuilders.forEach { it.delete() }
@@ -48,7 +50,7 @@ class Texture3DMeshBuilder(
     override fun load(): Mesh {
         val vao = loadVao()
 
-        val drawCall = ElementsDrawCall(RenderMode.TRIANGLES, this.indices, DataType.U_INT)
+        val drawCall = ElementsDrawCall(PrimitiveTopology.TRIANGLE_LIST, this.indices, DataType.U_INT)
         return DrawCallMesh(vao, drawCall)
     }
 

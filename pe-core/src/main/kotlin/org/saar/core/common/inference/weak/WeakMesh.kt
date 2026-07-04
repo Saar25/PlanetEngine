@@ -6,13 +6,13 @@ import org.saar.lwjgl.opengl.attribute.AttributeComposite
 import org.saar.lwjgl.opengl.attribute.Attributes.sumBytes
 import org.saar.lwjgl.opengl.attribute.IAttribute
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.*
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.Vbo
 import org.saar.lwjgl.opengl.vbo.VboTarget
 import org.saar.lwjgl.opengl.vbo.VboUsage
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 class WeakMesh private constructor(private val mesh: Mesh) : Mesh {
 
@@ -41,7 +41,7 @@ class WeakMesh private constructor(private val mesh: Mesh) : Mesh {
             loadIndices(vao, indices)
 
             val drawCall: DrawCall = InstancedElementsDrawCall(
-                RenderMode.TRIANGLES, indices.size, DataType.U_INT, instances.size
+                PrimitiveTopology.TRIANGLE_LIST, indices.size, DataType.U_INT, instances.size
             )
             val mesh: Mesh = DrawCallMesh(vao, drawCall)
             return WeakMesh(mesh)
@@ -65,7 +65,7 @@ class WeakMesh private constructor(private val mesh: Mesh) : Mesh {
             }
 
             val drawCall: DrawCall = InstancedArraysDrawCall(
-                RenderMode.TRIANGLES, vertices.size, instances.size
+                PrimitiveTopology.TRIANGLE_LIST, vertices.size, instances.size
             )
             val mesh: Mesh = DrawCallMesh(vao, drawCall)
             return WeakMesh(mesh)
@@ -83,7 +83,7 @@ class WeakMesh private constructor(private val mesh: Mesh) : Mesh {
             loadIndices(vao, indices)
 
             val drawCall = ElementsDrawCall(
-                RenderMode.TRIANGLES, indices.size, DataType.U_INT
+                PrimitiveTopology.TRIANGLE_LIST, indices.size, DataType.U_INT
             )
             val mesh: Mesh = DrawCallMesh(vao, drawCall)
             return WeakMesh(mesh)
@@ -99,7 +99,7 @@ class WeakMesh private constructor(private val mesh: Mesh) : Mesh {
             }
 
             val drawCall = ArraysDrawCall(
-                RenderMode.TRIANGLES, vertices.size
+                PrimitiveTopology.TRIANGLE_LIST, vertices.size
             )
             val mesh: Mesh = DrawCallMesh(vao, drawCall)
             return WeakMesh(mesh)

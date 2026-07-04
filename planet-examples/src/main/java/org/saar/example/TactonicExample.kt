@@ -36,12 +36,12 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
+import org.saar.rhi.inputassembly.PrimitiveTopology
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.PolygonMode
@@ -97,7 +97,7 @@ fun main() {
 
         val lodMeshes = (0..SUBDIVISIONS).map { lod ->
             val drawCall = InstancedElementsDrawCall(
-                RenderMode.TRIANGLES, chunkData.lods.lodCounts[lod],
+                PrimitiveTopology.TRIANGLE_LIST, chunkData.lods.lodCounts[lod],
                 DataType.U_INT, chunkData.lods.lodByteOffsets[lod], 1
             )
             DrawCallMesh(icoVao, drawCall)

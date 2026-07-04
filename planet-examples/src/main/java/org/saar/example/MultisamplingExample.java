@@ -6,7 +6,6 @@ import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
 import org.saar.lwjgl.opengl.fbo.WindowFbo;
@@ -27,6 +26,7 @@ import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
 import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 
 public class MultisamplingExample {
 
@@ -78,7 +78,7 @@ public class MultisamplingExample {
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             fbo.bind();
             GlUtils.clear(GlBuffer.COLOR);
-            GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
+            GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 
             WindowFbo.INSTANCE.bindAsDraw();
             fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
