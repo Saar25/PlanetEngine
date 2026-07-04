@@ -19,9 +19,13 @@ import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.FrontFace
 import org.saar.rhi.rasterization.PolygonMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.viewport.Scissor
+import org.saar.rhi.viewport.Viewport
+import org.saar.rhi.viewport.ViewportState
 import org.saar.rhi.vulkan.blending.toVulkan
 import org.saar.rhi.vulkan.inputassembly.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
+import org.saar.rhi.vulkan.viewport.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
@@ -680,10 +684,10 @@ object VulkanExample {
         ).toVulkan()
 
         // Viewport state
-        val viewportState = VkPipelineViewportStateCreateInfo.calloc()
-            .`sType$Default`()
-            .viewportCount(1) // <- one viewport
-            .scissorCount(1) // <- one scissor rectangle
+        val viewportState = ViewportState(
+            viewports = listOf(Viewport()),
+            scissors = listOf(Scissor()),
+        ).toVulkan()
 
         // Enable dynamic states
         // Describes the dynamic states to be used with this pipeline
