@@ -13,11 +13,14 @@ import org.lwjgl.util.shaderc.*
 import org.lwjgl.vulkan.*
 import org.saar.rhi.blending.BlendAttachmentState
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.inputassembly.InputAssemblyState
+import org.saar.rhi.inputassembly.PrimitiveTopology
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.FrontFace
 import org.saar.rhi.rasterization.PolygonMode
 import org.saar.rhi.rasterization.RasterizationState
 import org.saar.rhi.vulkan.blending.toVulkan
+import org.saar.rhi.vulkan.inputassembly.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
@@ -661,13 +664,10 @@ object VulkanExample {
 
     private fun createPipeline(device: VkDevice, renderPass: Long, vi: VkPipelineVertexInputStateCreateInfo): Long {
         var err: Int
-        // Vertex input state
-        // Describes the topoloy used with this pipeline
-        val inputAssemblyState = VkPipelineInputAssemblyStateCreateInfo.calloc()
-            .`sType$Default`()
-            .topology(VK10.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
+        val inputAssemblyState = InputAssemblyState(
+            topology = PrimitiveTopology.TRIANGLE_LIST
+        ).toVulkan()
 
-        // Rasterization state
         val rasterizationState = RasterizationState(
             polygonMode = PolygonMode.FILL,
             cullMode = CullMode.NONE,
@@ -675,8 +675,6 @@ object VulkanExample {
             lineWidth = 1f
         ).toVulkan()
 
-        // Color blend state
-        // Describes blend modes and color masks
         val colorBlendState = BlendState(
             attachments = listOf(BlendAttachmentState(colorWriteMask = 0xF))
         ).toVulkan()
