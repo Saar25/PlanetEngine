@@ -11,6 +11,11 @@ import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.shaderc.*
 import org.lwjgl.vulkan.*
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.FrontFace
+import org.saar.rhi.resterization.PolygonMode
+import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.vulkan.resterization.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
@@ -660,12 +665,12 @@ object VulkanExample {
             .topology(VK10.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
 
         // Rasterization state
-        val rasterizationState = VkPipelineRasterizationStateCreateInfo.calloc()
-            .`sType$Default`()
-            .polygonMode(VK10.VK_POLYGON_MODE_FILL)
-            .cullMode(VK10.VK_CULL_MODE_NONE)
-            .frontFace(VK10.VK_FRONT_FACE_COUNTER_CLOCKWISE)
-            .lineWidth(1.0f)
+        val rasterizationState = RasterizationState(
+            polygonMode = PolygonMode.FILL,
+            cullMode = CullMode.NONE,
+            frontFace = FrontFace.COUNTER_CLOCKWISE,
+            lineWidth = 1f
+        ).toVulkan()
 
         // Color blend state
         // Describes blend modes and color masks

@@ -17,5 +17,44 @@
     </build>
 
     <dependencies>
+        <!-- Project Dependencies -->
+        <dependency>
+            <groupId>org.saar</groupId>
+            <artifactId>pe-rhi</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 3rd Party Dependencies -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-vulkan</artifactId>
+            <version>${lwjgl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-shaderc</artifactId>
+            <version>${lwjgl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-vma</artifactId>
+            <version>${lwjgl.version}</version>
+        </dependency>
+
+        <!-- Runtime -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-vma</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-shaderc</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${lwjgl.natives}</classifier>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 </project>
