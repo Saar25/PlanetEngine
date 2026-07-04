@@ -42,10 +42,10 @@ import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
-import org.saar.rhi.opengl.resterization.toOpengl
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.PolygonMode
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.PolygonMode
+import org.saar.rhi.rasterization.RasterizationState
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt

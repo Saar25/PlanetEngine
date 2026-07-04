@@ -1,11 +1,11 @@
-package org.saar.rhi.vulkan.resterization
+package org.saar.rhi.vulkan.rasterization
 
 import org.lwjgl.vulkan.VK10
 import org.lwjgl.vulkan.VkPipelineRasterizationStateCreateInfo
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.FrontFace
-import org.saar.rhi.resterization.PolygonMode
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.FrontFace
+import org.saar.rhi.rasterization.PolygonMode
+import org.saar.rhi.rasterization.RasterizationState
 
 fun RasterizationState.toVulkan() =
     VkPipelineRasterizationStateCreateInfo.calloc().apply {

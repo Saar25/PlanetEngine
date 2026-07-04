@@ -6,9 +6,9 @@ import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.maths.utils.Matrix4
-import org.saar.rhi.opengl.resterization.toOpengl
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.RasterizationState
 
 val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
     val rasterizationState = RasterizationState(

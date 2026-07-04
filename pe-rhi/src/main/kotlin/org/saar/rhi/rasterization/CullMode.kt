@@ -1,4 +1,4 @@
-package org.saar.rhi.resterization
+package org.saar.rhi.rasterization
 
 enum class CullMode {
     NONE,

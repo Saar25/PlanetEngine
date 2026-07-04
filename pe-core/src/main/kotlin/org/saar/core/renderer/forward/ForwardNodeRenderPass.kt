@@ -7,9 +7,9 @@ import org.saar.core.renderer.state.CompositeRenderState
 import org.saar.core.renderer.state.RasterizationRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.lwjgl.opengl.stencil.StencilState
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.FrontFace
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.FrontFace
+import org.saar.rhi.rasterization.RasterizationState
 
 class ForwardNodeRenderPass(
     private val camera: ICamera,

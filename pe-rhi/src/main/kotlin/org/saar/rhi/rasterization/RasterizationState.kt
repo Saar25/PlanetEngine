@@ -1,4 +1,4 @@
-package org.saar.rhi.resterization
+package org.saar.rhi.rasterization
 
 data class RasterizationState(
     val cullMode: CullMode? = null,

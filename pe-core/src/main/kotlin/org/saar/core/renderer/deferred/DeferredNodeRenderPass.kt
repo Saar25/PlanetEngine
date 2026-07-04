@@ -17,9 +17,9 @@ import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.FrontFace
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.FrontFace
+import org.saar.rhi.rasterization.RasterizationState
 
 fun RenderGraph.Builder.deferredNodePass(input: DeferredNodeRenderPass.Input.() -> Unit): DeferredNodeRenderPass.Output {
     val outputAlbedo = MutableTexture2D.create()

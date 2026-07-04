@@ -11,11 +11,11 @@ import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.shaderc.*
 import org.lwjgl.vulkan.*
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.FrontFace
-import org.saar.rhi.resterization.PolygonMode
-import org.saar.rhi.resterization.RasterizationState
-import org.saar.rhi.vulkan.resterization.toVulkan
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.FrontFace
+import org.saar.rhi.rasterization.PolygonMode
+import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.vulkan.rasterization.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.IntBuffer

@@ -27,8 +27,8 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.RasterizationState
 import kotlin.math.max
 
 fun RenderGraph.Builder.lightPass(input: LightRenderPass.Input.() -> Unit): LightRenderPass.Output {

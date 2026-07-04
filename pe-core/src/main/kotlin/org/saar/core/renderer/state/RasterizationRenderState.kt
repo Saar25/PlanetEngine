@@ -1,7 +1,7 @@
 package org.saar.core.renderer.state
 
-import org.saar.rhi.opengl.resterization.toOpengl
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.rasterization.RasterizationState
 
 class RasterizationRenderState(rasterizationState: RasterizationState) : RenderState {
 

@@ -22,9 +22,9 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
-import org.saar.rhi.opengl.resterization.toOpengl
-import org.saar.rhi.resterization.CullMode
-import org.saar.rhi.resterization.RasterizationState
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.RasterizationState
 
 object ObjDeferredRenderer : Renderer<DeferredRenderContext, ObjModel> {
 
