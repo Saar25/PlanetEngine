@@ -11,6 +11,7 @@
 
     <artifactId>pe-lwjgl-binding</artifactId>
 
+    <!-- TODO: remove all opengl and move it into pe-rhl-opengl module -->
     <dependencies>
         <dependency>
             <groupId>org.lwjgl</groupId>

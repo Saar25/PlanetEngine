@@ -27,8 +27,8 @@ private val PolygonMode.vkValue
 private val CullMode.vkValue
     get() = when (this) {
         CullMode.NONE -> VK10.VK_CULL_MODE_NONE
-        CullMode.FRONT_BIT -> VK10.VK_CULL_MODE_FRONT_BIT
-        CullMode.BACK_BIT -> VK10.VK_CULL_MODE_BACK_BIT
+        CullMode.FRONT -> VK10.VK_CULL_MODE_FRONT_BIT
+        CullMode.BACK -> VK10.VK_CULL_MODE_BACK_BIT
         CullMode.FRONT_AND_BACK -> VK10.VK_CULL_MODE_FRONT_AND_BACK
     }
 
