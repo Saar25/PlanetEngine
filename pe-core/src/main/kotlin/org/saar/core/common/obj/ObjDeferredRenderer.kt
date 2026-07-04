@@ -8,7 +8,6 @@ import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.constants.Comparator
-import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthFunction
 import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthState
@@ -23,6 +22,9 @@ import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.opengl.resterization.toOpengl
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.RasterizationState
 
 object ObjDeferredRenderer : Renderer<DeferredRenderContext, ObjModel> {
 
@@ -33,13 +35,17 @@ object ObjDeferredRenderer : Renderer<DeferredRenderContext, ObjModel> {
         this.shadersLink.init()
     }
 
+    private val rasterizationState = RasterizationState(
+        cullMode = CullMode.BACK,
+    ).toOpengl()
+
     override fun render(context: DeferredRenderContext, models: Iterable<ObjModel>) {
         this.shadersLink.shadersProgram.bind()
 
         StencilTest.apply(StencilState.ALWAYS_WRITE)
         DepthTest.apply(DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE))
         BlendTest.disable()
-        CullFace.enable()
+        this.rasterizationState.set()
 
         this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 

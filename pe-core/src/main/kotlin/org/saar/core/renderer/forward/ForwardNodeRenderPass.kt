@@ -4,10 +4,12 @@ import org.saar.core.camera.ICamera
 import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderPass
 import org.saar.core.renderer.state.CompositeRenderState
-import org.saar.core.renderer.state.CullFaceRenderState
+import org.saar.core.renderer.state.RasterizationRenderState
 import org.saar.core.renderer.state.StencilTestRenderState
-import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.stencil.StencilState
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.FrontFace
+import org.saar.rhi.resterization.RasterizationState
 
 class ForwardNodeRenderPass(
     private val camera: ICamera,
@@ -16,7 +18,7 @@ class ForwardNodeRenderPass(
 
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.ALWAYS_WRITE),
-        CullFaceRenderState(CullFaceState.BACK_CCW),
+        RasterizationRenderState(RasterizationState(cullMode = CullMode.BACK, frontFace = FrontFace.COUNTER_CLOCKWISE))
     )
 
     override fun render(context: RenderContext) {

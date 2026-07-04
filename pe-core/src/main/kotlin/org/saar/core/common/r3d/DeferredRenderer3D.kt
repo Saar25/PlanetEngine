@@ -3,13 +3,19 @@ package org.saar.core.common.r3d
 import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.shaders.*
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.opengl.resterization.toOpengl
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.RasterizationState
 
 val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
+    val rasterizationState = RasterizationState(
+        cullMode = CullMode.BACK,
+    ).toOpengl()
+
     shadersLink {
         vertexAttributes = arrayOf("in_position", "in_color", "in_transformation")
 
@@ -23,7 +29,7 @@ val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
             ProvokingVertex.setFirst()
             BlendTest.disable()
             DepthTest.enable()
-            CullFace.enable()
+            rasterizationState.set()
 
             normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 

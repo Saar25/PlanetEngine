@@ -7,7 +7,6 @@ import org.saar.core.renderer.forward.ForwardRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -20,6 +19,9 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.opengl.resterization.toOpengl
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.RasterizationState
 
 object ParticlesRenderer : Renderer<ForwardRenderContext, ParticlesModel> {
 
@@ -30,11 +32,15 @@ object ParticlesRenderer : Renderer<ForwardRenderContext, ParticlesModel> {
         this.shadersLink.init()
     }
 
+    private val rasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+    ).toOpengl()
+
     override fun render(context: ForwardRenderContext, models: Iterable<ParticlesModel>) {
         this.shadersLink.shadersProgram.bind()
 
         ProvokingVertex.setFirst();
-        CullFace.disable()
+        this.rasterizationState.set()
         BlendTest.applyAlpha()
         DepthTest.enable()
         StencilTest.enable()

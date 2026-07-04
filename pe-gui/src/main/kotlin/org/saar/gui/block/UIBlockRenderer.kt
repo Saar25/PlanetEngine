@@ -11,7 +11,6 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UINode
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -21,11 +20,18 @@ import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
+import org.saar.rhi.opengl.resterization.toOpengl
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.RasterizationState
 
 object UIBlockRenderer : Renderer<RenderContext, UINode> {
 
     private val shadersLink = UIShadersLink
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+
+    private val rasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+    ).toOpengl()
 
     override fun render(context: RenderContext, models: Iterable<UINode>) {
         this.shadersLink.shadersProgram.bind()
@@ -33,7 +39,7 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
         StencilTest.disable()
         DepthTest.disable()
         ProvokingVertex.setFirst()
-        CullFace.disable()
+        this.rasterizationState.set()
 
         models.forEach { model ->
             this.shadersLink.hasTextureUniform.value = model.style.backgroundImage.texture != Texture2D.NULL

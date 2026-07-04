@@ -12,7 +12,6 @@ import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.blend.BlendState
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.cullface.CullFaceState
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -27,6 +26,8 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.RasterizationState
 
 fun RenderGraph.Builder.shadowsPass(input: ShadowsRenderPass.Input.() -> Unit): ShadowsRenderPass.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -87,7 +88,7 @@ class ShadowsRenderPass(private val screen: Screen?, private val input: Input) :
         StencilTestRenderState(StencilState.DISABLED),
         DepthTestRenderState(DepthState.DISABLED),
         BlendTestRenderState(BlendState.DISABLED),
-        CullFaceRenderState(CullFaceState.DISABLED),
+        RasterizationRenderState(RasterizationState(cullMode = CullMode.NONE))
     )
 
     override fun render(context: RenderContext) {

@@ -7,7 +7,6 @@ import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.cullface.CullFace
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -18,6 +17,9 @@ import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.opengl.resterization.toOpengl
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.RasterizationState
 
 object Texture3DDeferredRenderer : Renderer<DeferredRenderContext, Texture3DModel> {
 
@@ -28,13 +30,17 @@ object Texture3DDeferredRenderer : Renderer<DeferredRenderContext, Texture3DMode
         this.shadersLink.init()
     }
 
+    private val rasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+    ).toOpengl()
+
     override fun render(context: DeferredRenderContext, models: Iterable<Texture3DModel>) {
         this.shadersLink.shadersProgram.bind()
 
         ProvokingVertex.setFirst()
         BlendTest.disable()
         DepthTest.enable()
-        CullFace.disable()
+        this.rasterizationState.set()
 
         this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 
