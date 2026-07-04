@@ -8,12 +8,12 @@ import org.saar.rhi.resterization.PolygonMode
 import org.saar.rhi.resterization.RasterizationState
 
 fun RasterizationState.toVulkan() =
-    VkPipelineRasterizationStateCreateInfo.calloc().also {
-        it.`sType$Default`()
-        it.polygonMode(this.polygonMode.vkValue)
-        it.cullMode(this.cullMode.vkValue)
-        it.frontFace(this.frontFace.vkValue)
-        it.lineWidth(this.lineWidth)
+    VkPipelineRasterizationStateCreateInfo.calloc().apply {
+        `sType$Default`()
+        polygonMode?.let { polygonMode(it.vkValue) }
+        cullMode?.let { cullMode(it.vkValue) }
+        frontFace?.let { frontFace(it.vkValue) }
+        lineWidth?.let { lineWidth(it) }
     }
 
 
