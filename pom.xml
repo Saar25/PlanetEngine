@@ -50,6 +50,7 @@
         <module>pe-core</module>
         <module>pe-gui</module>
         <module>pe-rhi</module>
+        <module>pe-rhi-vulkan</module>
     </modules>
 
     <build>
