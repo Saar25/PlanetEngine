@@ -7,21 +7,14 @@ import org.saar.rhi.resterization.FrontFace
 import org.saar.rhi.resterization.PolygonMode
 import org.saar.rhi.resterization.RasterizationState
 
-private val defaults = RasterizationState(
-    cullMode = CullMode.BACK,
-    polygonMode = PolygonMode.FILL,
-    frontFace = FrontFace.COUNTER_CLOCKWISE,
-    lineWidth = 1.0f,
-)
-
 fun RasterizationState.toOpengl() = OpenglRasterizationState(this)
 
-class OpenglRasterizationState(private val rasterizationState: RasterizationState) {
+class OpenglRasterizationState(rasterizationState: RasterizationState) {
 
-    private val cullMode = this.rasterizationState.cullMode ?: defaults.cullMode!!
-    private val polygonMode = this.rasterizationState.polygonMode ?: defaults.polygonMode!!
-    private val frontFace = this.rasterizationState.frontFace ?: defaults.frontFace!!
-    private val lineWidth = this.rasterizationState.lineWidth ?: defaults.lineWidth!!
+    private val cullMode = rasterizationState.cullMode ?: CullMode.BACK
+    private val polygonMode = rasterizationState.polygonMode ?: PolygonMode.FILL
+    private val frontFace = rasterizationState.frontFace ?: FrontFace.COUNTER_CLOCKWISE
+    private val lineWidth = rasterizationState.lineWidth ?: 1.0f
 
     fun set() {
         GL32.glProvokingVertex(GL32.GL_FIRST_VERTEX_CONVENTION) // Opengl default is last, while Vulkan is first
