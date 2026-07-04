@@ -49,6 +49,7 @@
         <module>planet-examples</module>
         <module>pe-core</module>
         <module>pe-gui</module>
+        <module>pe-rhi</module>
     </modules>
 
     <build>
@@ -108,5 +109,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
