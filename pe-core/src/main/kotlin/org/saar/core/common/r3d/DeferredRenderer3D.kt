@@ -4,7 +4,6 @@ import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.shaders.*
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.maths.utils.Matrix4
 import org.saar.rhi.opengl.resterization.toOpengl
@@ -26,7 +25,6 @@ val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
         val normalMatrixUniform = uniformMat4("u_normalMatrix")
 
         onRender { context, models ->
-            ProvokingVertex.setFirst()
             BlendTest.disable()
             DepthTest.enable()
             rasterizationState.set()

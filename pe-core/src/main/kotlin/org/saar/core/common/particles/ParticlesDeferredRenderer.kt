@@ -12,7 +12,6 @@ import org.saar.lwjgl.opengl.depth.DepthFunction
 import org.saar.lwjgl.opengl.depth.DepthMask
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -45,7 +44,6 @@ object ParticlesDeferredRenderer : Renderer<DeferredRenderContext, ParticlesMode
     override fun render(context: DeferredRenderContext, models: Iterable<ParticlesModel>) {
         this.shadersLink.shadersProgram.bind()
 
-        ProvokingVertex.setFirst();
         this.rasterizationState.set()
         BlendTest.applyAlpha()
         DepthTest.apply(this.depthState)

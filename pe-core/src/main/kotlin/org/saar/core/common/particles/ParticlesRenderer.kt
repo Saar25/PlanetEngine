@@ -8,7 +8,6 @@ import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -39,7 +38,6 @@ object ParticlesRenderer : Renderer<ForwardRenderContext, ParticlesModel> {
     override fun render(context: ForwardRenderContext, models: Iterable<ParticlesModel>) {
         this.shadersLink.shadersProgram.bind()
 
-        ProvokingVertex.setFirst();
         this.rasterizationState.set()
         BlendTest.applyAlpha()
         DepthTest.enable()

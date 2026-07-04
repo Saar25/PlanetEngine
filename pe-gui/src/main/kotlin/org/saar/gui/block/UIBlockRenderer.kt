@@ -12,7 +12,6 @@ import org.saar.core.screen.MainScreen
 import org.saar.gui.UINode
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -38,7 +37,6 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()
-        ProvokingVertex.setFirst()
         this.rasterizationState.set()
 
         models.forEach { model ->

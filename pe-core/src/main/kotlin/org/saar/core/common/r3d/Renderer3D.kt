@@ -8,7 +8,6 @@ import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -36,7 +35,6 @@ object Renderer3D : Renderer<ForwardRenderContext, Model3D> {
     override fun render(context: ForwardRenderContext, models: Iterable<Model3D>) {
         this.shadersLink.shadersProgram.bind()
 
-        ProvokingVertex.setFirst();
         BlendTest.disable()
         DepthTest.enable()
         this.rasterizationState.set()

@@ -1,6 +1,7 @@
 package org.saar.rhi.opengl.resterization
 
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL32
 import org.saar.rhi.resterization.CullMode
 import org.saar.rhi.resterization.FrontFace
 import org.saar.rhi.resterization.PolygonMode
@@ -23,6 +24,8 @@ class OpenglRasterizationState(private val rasterizationState: RasterizationStat
     private val lineWidth = this.rasterizationState.lineWidth ?: defaults.lineWidth!!
 
     fun set() {
+        GL32.glProvokingVertex(GL32.GL_FIRST_VERTEX_CONVENTION) // Opengl default is last, while Vulkan is first
+
         GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, this.polygonMode.glValue)
 
         if (this.cullMode == CullMode.NONE) {

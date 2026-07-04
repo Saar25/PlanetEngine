@@ -10,7 +10,6 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -38,7 +37,6 @@ object UILetterRenderer : Renderer<RenderContext, UILetter> {
         BlendTest.applyAlpha()
         StencilTest.disable()
         DepthTest.disable()
-        ProvokingVertex.setFirst()
         this.rasterizationState.set()
 
         this.uniformsLoader.load()
