@@ -23,9 +23,14 @@ class OpenglRasterizationState(private val rasterizationState: RasterizationStat
     private val lineWidth = this.rasterizationState.lineWidth ?: defaults.lineWidth!!
 
     fun set() {
-        GL11.glEnable(GL11.GL_CULL_FACE)
-        GL11.glPolygonMode(this.cullMode.opposite.glValue, this.polygonMode.glValue)
-        GL11.glCullFace(this.cullMode.glValue)
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, this.polygonMode.glValue)
+
+        if (this.cullMode == CullMode.NONE) {
+            GL11.glDisable(GL11.GL_CULL_FACE)
+        } else {
+            GL11.glEnable(GL11.GL_CULL_FACE)
+            GL11.glCullFace(this.cullMode.glValue)
+        }
         GL11.glFrontFace(this.frontFace.glValue)
         GL11.glLineWidth(this.lineWidth)
     }
@@ -41,7 +46,7 @@ private val PolygonMode.glValue
 private val CullMode.glValue
     get() = when (this) {
         CullMode.NONE -> GL11.GL_NONE
-        CullMode.FRONT -> GL11.GL_FRONT_FACE
+        CullMode.FRONT -> GL11.GL_FRONT
         CullMode.BACK -> GL11.GL_BACK
         CullMode.FRONT_AND_BACK -> GL11.GL_FRONT_AND_BACK
     }

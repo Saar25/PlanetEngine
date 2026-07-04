@@ -5,13 +5,4 @@ enum class CullMode {
     FRONT,
     BACK,
     FRONT_AND_BACK,
-    ;
-
-    val opposite
-        get() = when (this) {
-            NONE -> FRONT_AND_BACK
-            FRONT -> BACK
-            BACK -> FRONT
-            FRONT_AND_BACK -> NONE
-        }
 }

@@ -36,16 +36,16 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.Face
 import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.polygonmode.PolygonMode
-import org.saar.lwjgl.opengl.polygonmode.PolygonModeState
-import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
+import org.saar.rhi.opengl.resterization.toOpengl
+import org.saar.rhi.resterization.CullMode
+import org.saar.rhi.resterization.PolygonMode
+import org.saar.rhi.resterization.RasterizationState
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -137,22 +137,23 @@ fun main() {
     )
 
     val keyboard = window.keyboard
+
+    val wireframeRasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+        polygonMode = PolygonMode.LINE
+    ).toOpengl()
+    val solidRasterizationState = RasterizationState(
+        cullMode = CullMode.BACK,
+        polygonMode = PolygonMode.FILL
+    ).toOpengl()
+
     keyboard.onKeyPress('J').perform {
-        PolygonMode.set(
-            PolygonModeState(
-                face = Face.FRONT_AND_BACK,
-                mode = PolygonModeValue.LINE,
-            )
-        )
+        wireframeRasterizationState.set()
     }
     keyboard.onKeyPress('K').perform {
-        PolygonMode.set(
-            PolygonModeState(
-                face = Face.FRONT_AND_BACK,
-                mode = PolygonModeValue.FILL,
-            )
-        )
+        solidRasterizationState.set()
     }
+
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
         nodeGroup.update()
