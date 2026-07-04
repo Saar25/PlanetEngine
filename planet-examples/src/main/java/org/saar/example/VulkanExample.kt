@@ -13,6 +13,10 @@ import org.lwjgl.util.shaderc.*
 import org.lwjgl.vulkan.*
 import org.saar.rhi.blending.BlendAttachmentState
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.CompareOp
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.depthstencil.StencilOp
+import org.saar.rhi.depthstencil.StencilOpState
 import org.saar.rhi.inputassembly.InputAssemblyState
 import org.saar.rhi.inputassembly.PrimitiveTopology
 import org.saar.rhi.rasterization.CullMode
@@ -23,6 +27,7 @@ import org.saar.rhi.viewport.Scissor
 import org.saar.rhi.viewport.Viewport
 import org.saar.rhi.viewport.ViewportState
 import org.saar.rhi.vulkan.blending.toVulkan
+import org.saar.rhi.vulkan.depthstencil.toVulkan
 import org.saar.rhi.vulkan.inputassembly.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
 import org.saar.rhi.vulkan.viewport.toVulkan
@@ -701,17 +706,16 @@ object VulkanExample {
                 .`sType$Default`()
                 .pDynamicStates(pDynamicStates)
 
-        // Depth and stencil state
-        // Describes depth and stenctil test and compare ops
-        val depthStencilState =
-            VkPipelineDepthStencilStateCreateInfo.calloc() // No depth test/write and no stencil used
-                .`sType$Default`()
-                .depthCompareOp(VK10.VK_COMPARE_OP_ALWAYS)
-        depthStencilState.back()
-            .failOp(VK10.VK_STENCIL_OP_KEEP)
-            .passOp(VK10.VK_STENCIL_OP_KEEP)
-            .compareOp(VK10.VK_COMPARE_OP_ALWAYS)
-        depthStencilState.front(depthStencilState.back())
+        val stencilOpState = StencilOpState(
+            failOp = StencilOp.KEEP,
+            passOp = StencilOp.KEEP,
+            compareOp = CompareOp.ALWAYS,
+        )
+        val depthStencilState = DepthStencilState(
+            depthCompareOp = CompareOp.ALWAYS,
+            front = stencilOpState,
+            back = stencilOpState,
+        ).toVulkan()
 
         // Multi sampling state
         // No multi sampling used in this example
