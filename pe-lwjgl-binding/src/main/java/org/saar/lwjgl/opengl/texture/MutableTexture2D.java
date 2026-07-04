@@ -87,11 +87,6 @@ public class MutableTexture2D implements WritableTexture2D {
     }
 
     @Override
-    public void unbind() {
-        this.texture.unbind(this.target);
-    }
-
-    @Override
     public void delete() {
         this.texture.delete();
     }

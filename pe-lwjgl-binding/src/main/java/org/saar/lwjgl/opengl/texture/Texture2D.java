@@ -62,11 +62,6 @@ public class Texture2D implements WritableTexture2D {
         return texture2D;
     }
 
-    public void load(String textureFile) throws Exception {
-        final TextureInfo info = TextureLoader.load(textureFile);
-        load(0, info.getFormatType(), info.getDataType(), info.getData());
-    }
-
     @Override
     public void load(int level, int xOffset, int yOffset, int width, int height, FormatType format, DataType type, ByteBuffer data) {
         this.texture.load(Texture2D.target, level, xOffset, yOffset, width, height, format, type, data);
@@ -100,11 +95,6 @@ public class Texture2D implements WritableTexture2D {
     @Override
     public void bind() {
         this.texture.bind(Texture2D.target);
-    }
-
-    @Override
-    public void unbind() {
-        this.texture.unbind(Texture2D.target);
     }
 
     @Override

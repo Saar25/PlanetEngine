@@ -59,11 +59,6 @@ public class CubeMapTexture implements MutableTexture {
     }
 
     @Override
-    public void unbind() {
-        this.texture.unbind(CubeMapTexture.target);
-    }
-
-    @Override
     public void delete() {
         this.texture.delete();
     }

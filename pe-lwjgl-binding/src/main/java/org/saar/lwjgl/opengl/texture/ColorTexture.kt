@@ -6,18 +6,16 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.util.buffer.LwjglByteBuffer
 
 class ColorTexture private constructor(
-    private val texture: ReadOnlyTexture,
+    private val texture: TextureObject,
     val red: Int,
     val green: Int,
     val blue: Int,
     val alpha: Int
 ) : ReadOnlyTexture2D {
 
-    override fun bind(unit: Int) = this.texture.bind(unit)
+    override fun bind(unit: Int) = this.texture.bind(TextureTarget.TEXTURE_2D, unit)
 
-    override fun bind() = this.texture.bind()
-
-    override fun unbind() = this.texture.unbind()
+    override fun bind() = this.texture.bind(TextureTarget.TEXTURE_2D)
 
     override fun delete() = this.texture.delete()
 
@@ -30,8 +28,13 @@ class ColorTexture private constructor(
         fun of(r: Int, g: Int, b: Int, a: Int): ColorTexture {
             LwjglByteBuffer.allocate(4).use { buffer ->
                 buffer.put(r.toByte()).put(g.toByte()).put(b.toByte()).put(a.toByte()).flip()
-                val texture = Texture2D.of(1, 1, InternalFormat.RGBA8, 1).apply {
-                    load(0, FormatType.RGBA, DataType.U_BYTE, buffer.asByteBuffer())
+                val texture = TextureObject.create().apply {
+                    allocate(TextureTarget.TEXTURE_2D, 1, InternalFormat.RGBA8, 1, 1)
+                    load(
+                        TextureTarget.TEXTURE_2D, 0,
+                        0, 0, 1, 1,
+                        FormatType.RGBA, DataType.U_BYTE, buffer.asByteBuffer()
+                    )
                 }
                 return ColorTexture(texture, r, g, b, a)
             }
