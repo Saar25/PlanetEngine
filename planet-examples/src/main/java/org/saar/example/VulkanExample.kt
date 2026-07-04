@@ -5,22 +5,20 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.PointerBuffer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback
-import org.lwjgl.glfw.GLFWKeyCallback
+import org.lwjgl.glfw.GLFWKeyCallbackI
 import org.lwjgl.glfw.GLFWVulkan
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.shaderc.*
-import org.lwjgl.util.shaderc.Shaderc.*
 import org.lwjgl.vulkan.*
 import java.io.*
-import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
+import java.nio.channels.Channels
 import java.nio.channels.FileChannel
-import kotlin.math.max
 
 
-object TriangleDemo {
+object VulkanExample {
     private const val DEBUG = true
 
     private val layers = arrayOf(
@@ -77,7 +75,7 @@ object TriangleDemo {
         return ret
     }
 
-    private fun setupDebugging(instance: VkInstance, flags: Int, callback: VkDebugReportCallbackEXT): Long {
+    private fun setupDebugging(instance: VkInstance, flags: Int, callback: VkDebugReportCallbackEXTI): Long {
         val dbgCreateInfo = VkDebugReportCallbackCreateInfoEXT.calloc()
             .`sType$Default`()
             .pfnCallback(callback)
@@ -513,7 +511,6 @@ object TriangleDemo {
         }
     }
 
-    @Throws(IOException::class)
     private fun loadShader(classPath: String, device: VkDevice, stage: Int): Long {
         val shaderCode: ByteBuffer = glslToSpirv(classPath, stage)
         val err: Int
@@ -530,7 +527,6 @@ object TriangleDemo {
         return shaderModule
     }
 
-    @Throws(IOException::class)
     private fun loadShader(device: VkDevice, classPath: String, stage: Int): VkPipelineShaderStageCreateInfo {
         val shaderStage = VkPipelineShaderStageCreateInfo.calloc()
             .`sType$Default`()
@@ -655,7 +651,6 @@ object TriangleDemo {
         return ret
     }
 
-    @Throws(IOException::class)
     private fun createPipeline(device: VkDevice, renderPass: Long, vi: VkPipelineVertexInputStateCreateInfo): Long {
         var err: Int
         // Vertex input state
@@ -807,13 +802,15 @@ object TriangleDemo {
             .float32(3, 1.0f)
 
         // Specify everything to begin a render pass
-        val renderPassBeginInfo = VkRenderPassBeginInfo.calloc()
-            .`sType$Default`()
-            .renderPass(renderPass)
-            .pClearValues(clearValues)
-        val renderArea = renderPassBeginInfo.renderArea()
-        renderArea.offset().set(0, 0)
-        renderArea.extent().set(width, height)
+        val renderPassBeginInfo = VkRenderPassBeginInfo.calloc().apply {
+            `sType$Default`()
+            renderPass(renderPass)
+            pClearValues(clearValues)
+            renderArea().apply {
+                offset().set(0, 0)
+                extent().set(width, height)
+            }
+        }
 
         for (i in renderCommandBuffers.indices) {
             // Set target frame buffer
@@ -846,10 +843,8 @@ object TriangleDemo {
             VK10.vkCmdBindPipeline(renderCommandBuffers[i]!!, VK10.VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline)
 
             // Bind triangle vertices
-            val offsets = MemoryUtil.memAllocLong(1)
-            offsets.put(0, 0L)
-            val pBuffers = MemoryUtil.memAllocLong(1)
-            pBuffers.put(0, verticesBuf)
+            val offsets = MemoryUtil.memAllocLong(1).apply { put(0, 0L) }
+            val pBuffers = MemoryUtil.memAllocLong(1).apply { put(0, verticesBuf) }
             VK10.vkCmdBindVertexBuffers(renderCommandBuffers[i]!!, 0, pBuffers, offsets)
             MemoryUtil.memFree(pBuffers)
             MemoryUtil.memFree(offsets)
@@ -879,7 +874,6 @@ object TriangleDemo {
     private var height = 0
     private var renderCommandBuffers: Array<VkCommandBuffer?>? = null
 
-    @Throws(IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
         if (!GLFW.glfwInit()) {
@@ -897,20 +891,16 @@ object TriangleDemo {
 
         // Create the Vulkan instance
         val instance = createInstance(requiredExtensions)
-        val debugCallback: VkDebugReportCallbackEXT = object : VkDebugReportCallbackEXT() {
-            override fun invoke(
-                flags: Int,
-                objectType: Int,
-                `object`: Long,
-                location: Long,
-                messageCode: Int,
-                pLayerPrefix: Long,
-                pMessage: Long,
-                pUserData: Long
-            ): Int {
-                System.err.println("ERROR OCCURED: " + getString(pMessage))
-                return 0
-            }
+        val debugCallback = VkDebugReportCallbackEXTI { flags: Int,
+                                                        objectType: Int,
+                                                        obj: Long,
+                                                        location: Long,
+                                                        messageCode: Int,
+                                                        pLayerPrefix: Long,
+                                                        pMessage: Long,
+                                                        pUserData: Long ->
+            System.err.println("ERROR OCCURED: " + MemoryUtil.memUTF8(pMessage))
+            0
         }
         val debugCallbackHandle = setupDebugging(
             instance,
@@ -928,13 +918,12 @@ object TriangleDemo {
         GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_NO_API)
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE)
         val window = GLFW.glfwCreateWindow(800, 600, "GLFW Vulkan Demo", MemoryUtil.NULL, MemoryUtil.NULL)
-        val keyCallback: GLFWKeyCallback
-        GLFW.glfwSetKeyCallback(window, object : GLFWKeyCallback() {
-            override fun invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int) {
-                if (action != GLFW.GLFW_RELEASE) return
-                if (key == GLFW.GLFW_KEY_ESCAPE) GLFW.glfwSetWindowShouldClose(window, true)
+        val keyCallback = GLFWKeyCallbackI { window, key, scancode, action, mods ->
+            if (action == GLFW.GLFW_RELEASE && key == GLFW.GLFW_KEY_ESCAPE) {
+                GLFW.glfwSetWindowShouldClose(window, true)
             }
-        }.also { keyCallback = it })
+        }
+        GLFW.glfwSetKeyCallback(window, keyCallback)
         val pSurface = MemoryUtil.memAllocLong(1)
         var err = GLFWVulkan.glfwCreateWindowSurface(instance, window, null, pSurface)
         val surface = pSurface.get(0)
@@ -999,8 +988,8 @@ object TriangleDemo {
         val framebufferSizeCallback: GLFWFramebufferSizeCallback = object : GLFWFramebufferSizeCallback() {
             override fun invoke(window: Long, width: Int, height: Int) {
                 if (width <= 0 || height <= 0) return
-                TriangleDemo.width = width
-                TriangleDemo.height = height
+                VulkanExample.width = width
+                VulkanExample.height = height
                 swapchainRecreator.mustRecreate = true
             }
         }
@@ -1107,7 +1096,6 @@ object TriangleDemo {
         EXTDebugReport.vkDestroyDebugReportCallbackEXT(instance, debugCallbackHandle, null)
 
         framebufferSizeCallback.free()
-        keyCallback.free()
         GLFW.glfwDestroyWindow(window)
         GLFW.glfwTerminate()
 
@@ -1146,78 +1134,67 @@ object TriangleDemo {
 const val VK_FLAGS_NONE: Int = 0
 
 private fun vulkanStageToShadercKind(stage: Int): Int {
-    when (stage) {
-        VK10.VK_SHADER_STAGE_VERTEX_BIT -> return shaderc_vertex_shader
-        VK10.VK_SHADER_STAGE_FRAGMENT_BIT -> return shaderc_fragment_shader
-        NVRayTracing.VK_SHADER_STAGE_RAYGEN_BIT_NV -> return shaderc_raygen_shader
-        NVRayTracing.VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV -> return shaderc_closesthit_shader
-        NVRayTracing.VK_SHADER_STAGE_MISS_BIT_NV -> return shaderc_miss_shader
-        NVRayTracing.VK_SHADER_STAGE_ANY_HIT_BIT_NV -> return shaderc_anyhit_shader
-        NVRayTracing.VK_SHADER_STAGE_INTERSECTION_BIT_NV -> return shaderc_intersection_shader
-        VK10.VK_SHADER_STAGE_COMPUTE_BIT -> return shaderc_compute_shader
-        else -> throw IllegalArgumentException("Stage: " + stage)
+    return when (stage) {
+        VK10.VK_SHADER_STAGE_VERTEX_BIT -> Shaderc.shaderc_vertex_shader
+        VK10.VK_SHADER_STAGE_FRAGMENT_BIT -> Shaderc.shaderc_fragment_shader
+        NVRayTracing.VK_SHADER_STAGE_RAYGEN_BIT_NV -> Shaderc.shaderc_raygen_shader
+        NVRayTracing.VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV -> Shaderc.shaderc_closesthit_shader
+        NVRayTracing.VK_SHADER_STAGE_MISS_BIT_NV -> Shaderc.shaderc_miss_shader
+        NVRayTracing.VK_SHADER_STAGE_ANY_HIT_BIT_NV -> Shaderc.shaderc_anyhit_shader
+        NVRayTracing.VK_SHADER_STAGE_INTERSECTION_BIT_NV -> Shaderc.shaderc_intersection_shader
+        VK10.VK_SHADER_STAGE_COMPUTE_BIT -> Shaderc.shaderc_compute_shader
+        else -> throw IllegalArgumentException("Stage: $stage")
     }
 }
 
-@Throws(IOException::class)
 fun glslToSpirv(classPath: String, vulkanStage: Int): ByteBuffer {
     val src: ByteBuffer = ioResourceToByteBuffer(classPath, 1024)
-    val compiler: Long = shaderc_compiler_initialize()
-    val options: Long = shaderc_compile_options_initialize()
-    val resolver: ShadercIncludeResolve
-    val releaser: ShadercIncludeResultRelease
-    shaderc_compile_options_set_target_env(options, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2)
-    shaderc_compile_options_set_target_spirv(options, shaderc_spirv_version_1_4)
-    shaderc_compile_options_set_optimization_level(options, shaderc_optimization_level_performance)
-    shaderc_compile_options_set_include_callbacks(options, object : ShadercIncludeResolve() {
-        override fun invoke(
-            user_data: Long,
-            requested_source: Long,
-            type: Int,
-            requesting_source: Long,
-            include_depth: Long
-        ): Long {
-            val res: ShadercIncludeResult = ShadercIncludeResult.calloc()
-            try {
-                val src =
-                    classPath.substring(0, classPath.lastIndexOf('/')) + "/" + MemoryUtil.memUTF8(requested_source)
-                res.content(ioResourceToByteBuffer(src, 1024))
-                res.source_name(MemoryUtil.memUTF8(src))
-                return res.address()
-            } catch (e: IOException) {
-                throw java.lang.AssertionError("Failed to resolve include: $src")
-            }
-        }
-    }.also { resolver = it }, object : ShadercIncludeResultRelease() {
-        override fun invoke(user_data: Long, include_result: Long) {
-            val result: ShadercIncludeResult = ShadercIncludeResult.create(include_result)
-            MemoryUtil.memFree(result.source_name())
-            result.free()
-        }
-    }.also { releaser = it }, 0L)
-    val res: Long
-    MemoryStack.stackPush().use { stack ->
-        res = shaderc_compile_into_spv(
+    val compiler: Long = Shaderc.shaderc_compiler_initialize()
+    val options: Long = Shaderc.shaderc_compile_options_initialize()
+
+    val resolver = ShadercIncludeResolveI { user_data: Long,
+                                            requested_source: Long,
+                                            type: Int,
+                                            requesting_source: Long,
+                                            include_depth: Long ->
+        val res = ShadercIncludeResult.calloc()
+        val src = classPath.substring(0, classPath.lastIndexOf('/')) + "/" + MemoryUtil.memUTF8(requested_source)
+        res.content(ioResourceToByteBuffer(src, 1024))
+        res.source_name(MemoryUtil.memUTF8(src))
+        res.address()
+    }
+    val releaser = ShadercIncludeResultReleaseI { user_data: Long, include_result: Long ->
+        val result = ShadercIncludeResult.create(include_result)
+        MemoryUtil.memFree(result.source_name())
+        result.free()
+    }
+    Shaderc.shaderc_compile_options_set_target_env(
+        options,
+        Shaderc.shaderc_target_env_vulkan,
+        Shaderc.shaderc_env_version_vulkan_1_2
+    )
+    Shaderc.shaderc_compile_options_set_target_spirv(options, Shaderc.shaderc_spirv_version_1_4)
+    Shaderc.shaderc_compile_options_set_optimization_level(options, Shaderc.shaderc_optimization_level_performance)
+    Shaderc.shaderc_compile_options_set_include_callbacks(options, resolver, releaser, 0L)
+    val res = MemoryStack.stackPush().use { stack ->
+        Shaderc.shaderc_compile_into_spv(
             compiler,
             src,
             vulkanStageToShadercKind(vulkanStage),
             stack.UTF8(classPath),
             stack.UTF8("main"),
             options
-        )
-        if (res == 0L) throw java.lang.AssertionError("Internal error during compilation!")
+        ).also { if (it == 0L) throw java.lang.AssertionError("Internal error during compilation!") }
     }
-    if (shaderc_result_get_compilation_status(res) != shaderc_compilation_status_success) {
-        throw java.lang.AssertionError("Shader compilation failed: " + shaderc_result_get_error_message(res))
+    if (Shaderc.shaderc_result_get_compilation_status(res) != Shaderc.shaderc_compilation_status_success) {
+        throw java.lang.AssertionError("Shader compilation failed: " + Shaderc.shaderc_result_get_error_message(res))
     }
-    val size = shaderc_result_get_length(res).toInt()
+    val size = Shaderc.shaderc_result_get_length(res).toInt()
     val resultBytes = BufferUtils.createByteBuffer(size)
-    resultBytes.put(shaderc_result_get_bytes(res))
+    resultBytes.put(Shaderc.shaderc_result_get_bytes(res))
     resultBytes.flip()
-    shaderc_result_release(res)
-    shaderc_compiler_release(compiler)
-    releaser.free()
-    resolver.free()
+    Shaderc.shaderc_result_release(res)
+    Shaderc.shaderc_compiler_release(compiler)
     return resultBytes
 }
 
@@ -1237,7 +1214,6 @@ fun translateVulkanResult(result: Int): String {
         VK10.VK_EVENT_RESET -> return "An event is unsignaled."
         VK10.VK_INCOMPLETE -> return "A return array was too small for the result."
         KHRSwapchain.VK_SUBOPTIMAL_KHR -> return "A swapchain no longer matches the surface properties exactly, but can still be used to present to the surface successfully."
-
         VK10.VK_ERROR_OUT_OF_HOST_MEMORY -> return "A host memory allocation has failed."
         VK10.VK_ERROR_OUT_OF_DEVICE_MEMORY -> return "A device memory allocation has failed."
         VK10.VK_ERROR_INITIALIZATION_FAILED -> return "Initialization of an object could not be completed for implementation-specific reasons."
@@ -1264,77 +1240,73 @@ fun translateVulkanResult(result: Int): String {
 }
 
 fun allocateLayerBuffer(layers: Array<String>): PointerBuffer {
-    val availableLayers = availableLayers
+    return MemoryUtil.memAllocPointer(layers.size).apply {
+        println("Using layers:")
 
-    val ppEnabledLayerNames = MemoryUtil.memAllocPointer(layers.size)
-    println("Using layers:")
-    for (i in layers.indices) {
-        val layer = layers[i]
-        if (availableLayers.contains(layer)) {
+        for (layer in layers intersect availableLayers) {
             println("\t" + layer)
-            ppEnabledLayerNames.put(MemoryUtil.memUTF8(layer))
+            put(MemoryUtil.memUTF8(layer))
         }
+        flip()
     }
-    ppEnabledLayerNames.flip()
-    return ppEnabledLayerNames
 }
 
-private val availableLayers: MutableSet<String>
-    get() {
-        val res: MutableSet<String> = HashSet()
-        val ip = IntArray(1)
+private val availableLayers: Set<String> by lazy {
+    MemoryStack.stackPush().use { stack ->
+        val ip = stack.mallocInt(1)
         VK10.vkEnumerateInstanceLayerProperties(ip, null)
         val count = ip[0]
 
-        MemoryStack.stackPush().use { stack ->
-            if (count > 0) {
-                val instanceLayers = VkLayerProperties.malloc(count, stack)
-                VK10.vkEnumerateInstanceLayerProperties(ip, instanceLayers)
-                for (i in 0..<count) {
-                    val layerName = instanceLayers.get(i).layerNameString()
-                    res.add(layerName)
-                }
-            }
-        }
-        return res
+        if (count > 0) {
+            val instanceLayers = VkLayerProperties.malloc(count, stack)
+            VK10.vkEnumerateInstanceLayerProperties(ip, instanceLayers)
+            (0..<count).map { instanceLayers.get(it).layerNameString() }.toSet()
+        } else emptySet()
     }
+}
 
-@Throws(IOException::class)
-fun ioResourceToByteBuffer(resource: String?, bufferSize: Int): ByteBuffer {
-    var buffer: ByteBuffer
-    val url: URL? = Thread.currentThread().contextClassLoader.getResource(resource)
-    if (url == null) throw IOException("Classpath resource not found: " + resource)
+fun ioResourceToByteBuffer(resource: String, bufferSize: Int): ByteBuffer {
+    val url = Thread.currentThread().contextClassLoader.getResource(resource)
+        ?: throw IOException("Classpath resource not found: $resource")
+
     val file = File(url.file)
-    if (file.isFile) {
-        val fis = FileInputStream(file)
-        val fc = fis.channel
-        buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())
-        fc.close()
-        fis.close()
-    } else {
-        buffer = BufferUtils.createByteBuffer(bufferSize)
-        val source: InputStream = url.openStream() ?: throw FileNotFoundException(resource)
-        try {
-            val buf = ByteArray(8192)
-            while (true) {
-                val bytes = source.read(buf, 0, buf.size)
-                if (bytes == -1) break
-                if (buffer.remaining() < bytes) buffer =
-                    resizeBuffer(buffer, max(buffer.capacity() * 2, buffer.capacity() - buffer.remaining() + bytes))
-                buffer.put(buf, 0, bytes)
+
+    return if (file.isFile) {
+        FileInputStream(file).use { fis ->
+            fis.channel.use { fc ->
+                fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())
             }
-            buffer.flip()
-        } finally {
-            source.close()
+        }
+    } else {
+        val inputStream: InputStream = Thread.currentThread().contextClassLoader.getResourceAsStream(resource)
+            ?: throw IOException("Resource not found on classpath or filesystem: $resource")
+
+        inputStream.use { stream ->
+            Channels.newChannel(stream).use { channel ->
+                var buffer: ByteBuffer = BufferUtils.createByteBuffer(bufferSize)
+
+                while (true) {
+                    val bytesRead = channel.read(buffer)
+                    if (bytesRead == -1) {
+                        break // End of stream reached
+                    }
+
+                    // If our initial buffer guess was too small, resize dynamically
+                    if (buffer.remaining() == 0) {
+                        buffer = resizeBuffer(buffer, buffer.capacity() * 2)
+                    }
+                }
+
+                buffer.flip()
+                return buffer
+            }
         }
     }
-    return buffer
 }
 
 
 private fun resizeBuffer(buffer: ByteBuffer, newCapacity: Int): ByteBuffer {
-    val newBuffer = BufferUtils.createByteBuffer(newCapacity)
-    buffer.flip()
-    newBuffer.put(buffer)
-    return newBuffer
+    return BufferUtils.createByteBuffer(newCapacity).apply {
+        put(buffer.flip())
+    }
 }
