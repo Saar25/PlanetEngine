@@ -13,7 +13,6 @@ import org.saar.core.screen.resizeToMainScreen
 import org.saar.core.util.Time
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
-import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
@@ -29,13 +28,12 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
-import java.awt.Dimension
+import org.saar.rhi.blending.BlendAttachmentState
+import org.saar.rhi.blending.BlendState
+import org.saar.rhi.opengl.blending.toOpengl
 import java.awt.Toolkit
 import kotlin.math.max
 import kotlin.properties.Delegates
-
-private operator fun Dimension.component1() = this.width
-private operator fun Dimension.component2() = this.height
 
 private val WIDTH = Toolkit.getDefaultToolkit().screenSize.width
 private val HEIGHT = Toolkit.getDefaultToolkit().screenSize.height
@@ -51,7 +49,8 @@ fun main() {
         .hint(WindowHints.focused())
         .build()
 
-    BlendTest.enable()
+//    BlendTest.enable()
+//    BlendState(attachment = BlendAttachmentState(blendEnable = true)).toOpengl().set()
     ClearColor.set(0f, 0f, 0f, 0f)
 
     val screenPrototype = MyScreenPrototype()

@@ -11,7 +11,6 @@ import org.saar.core.renderer.state.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
-import org.saar.lwjgl.opengl.blend.BlendState
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
@@ -27,6 +26,7 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
+import org.saar.rhi.blending.BlendState
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
 import kotlin.math.max
@@ -86,8 +86,8 @@ class LightRenderPass(private val screen: Screen?, private val input: Input) : R
     override val renderState = CompositeRenderState(
         StencilTestRenderState(StencilState.REPLACE),
         DepthTestRenderState(DepthState.DISABLED),
-        BlendTestRenderState(BlendState.DISABLED),
-        RasterizationRenderState(RasterizationState(cullMode = CullMode.NONE))
+        RasterizationRenderState(RasterizationState(cullMode = CullMode.NONE)),
+        BlendRenderState(BlendState())
     )
 
     override fun render(context: RenderContext) {

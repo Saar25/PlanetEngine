@@ -6,7 +6,6 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.forward.ForwardRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -18,6 +17,8 @@ import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.blending.BlendState
+import org.saar.rhi.opengl.blending.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
@@ -35,11 +36,13 @@ object ParticlesRenderer : Renderer<ForwardRenderContext, ParticlesModel> {
         cullMode = CullMode.NONE,
     ).toOpengl()
 
+    private val blendState = BlendState.ALPHA.toOpengl()
+
     override fun render(context: ForwardRenderContext, models: Iterable<ParticlesModel>) {
         this.shadersLink.shadersProgram.bind()
 
         this.rasterizationState.set()
-        BlendTest.applyAlpha()
+        this.blendState.set()
         DepthTest.enable()
         StencilTest.enable()
 

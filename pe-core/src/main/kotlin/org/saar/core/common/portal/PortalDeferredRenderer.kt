@@ -6,7 +6,6 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.blend.BlendTest
 import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -15,6 +14,8 @@ import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.blending.BlendState
+import org.saar.rhi.opengl.blending.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
@@ -32,12 +33,14 @@ object PortalDeferredRenderer : Renderer<DeferredRenderContext, PortalModel> {
         cullMode = CullMode.NONE,
     ).toOpengl()
 
+    private val blendState = BlendState().toOpengl()
+
     override fun render(context: DeferredRenderContext, models: Iterable<PortalModel>) {
         this.shadersLink.shadersProgram.bind()
 
-        BlendTest.disable()
         DepthTest.enable()
         this.rasterizationState.set()
+        this.blendState.set()
 
         this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()
 

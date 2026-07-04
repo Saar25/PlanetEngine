@@ -11,10 +11,13 @@ import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.shaderc.*
 import org.lwjgl.vulkan.*
+import org.saar.rhi.blending.BlendAttachmentState
+import org.saar.rhi.blending.BlendState
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.FrontFace
 import org.saar.rhi.rasterization.PolygonMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.vulkan.blending.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
@@ -674,11 +677,9 @@ object VulkanExample {
 
         // Color blend state
         // Describes blend modes and color masks
-        val colorWriteMask = VkPipelineColorBlendAttachmentState.calloc(1)
-            .colorWriteMask(0xF) // <- RGBA
-        val colorBlendState = VkPipelineColorBlendStateCreateInfo.calloc()
-            .`sType$Default`()
-            .pAttachments(colorWriteMask)
+        val colorBlendState = BlendState(
+            attachments = listOf(BlendAttachmentState(colorWriteMask = 0xF))
+        ).toVulkan()
 
         // Viewport state
         val viewportState = VkPipelineViewportStateCreateInfo.calloc()
@@ -763,7 +764,7 @@ object VulkanExample {
         MemoryUtil.memFree(pDynamicStates)
         viewportState.free()
         colorBlendState.free()
-        colorWriteMask.free()
+//        colorWriteMask.free()
         rasterizationState.free()
         inputAssemblyState.free()
         if (err != VK10.VK_SUCCESS) {
