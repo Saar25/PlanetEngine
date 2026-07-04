@@ -4,7 +4,7 @@ import org.joml.Math
 import org.saar.core.camera.ICamera
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
-import org.saar.core.renderer.state.StencilTestRenderState
+import org.saar.core.renderer.state.DepthStencilRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
@@ -13,7 +13,6 @@ import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
-import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
@@ -26,6 +25,8 @@ import org.saar.lwjgl.opengl.texture.values.WrapValue
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.depthstencil.StencilOpState
 import kotlin.random.Random
 
 
@@ -45,7 +46,9 @@ class SSAOMapGenerator @JvmOverloads constructor(
     private val shadersLink = SsaoShadersLink(this.kernel.size)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    override val renderState = StencilTestRenderState(StencilState.REPLACE)
+    override val renderState = DepthStencilRenderState(
+        DepthStencilState(stencil = StencilOpState.REPLACE),
+    )
 
     init {
         this.shadersLink.init()

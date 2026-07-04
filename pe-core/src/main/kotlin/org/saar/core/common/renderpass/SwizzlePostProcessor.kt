@@ -2,15 +2,15 @@ package org.saar.core.common.renderpass
 
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
-import org.saar.core.renderer.state.StencilTestRenderState
+import org.saar.core.renderer.state.DepthStencilRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
+import org.saar.rhi.depthstencil.DepthStencilState
 
 class SwizzlePostProcessor(
     private val albedoBuffer: ReadOnlyTexture2D,
@@ -20,7 +20,7 @@ class SwizzlePostProcessor(
     private val shadersLink = SwizzleShadersLink(r, g, b, a)
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    override val renderState = StencilTestRenderState(StencilState.DISABLED)
+    override val renderState = DepthStencilRenderState(DepthStencilState())
 
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()

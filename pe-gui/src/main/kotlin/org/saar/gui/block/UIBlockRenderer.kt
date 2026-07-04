@@ -10,16 +10,16 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UINode
-import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
-import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.opengl.blending.toOpengl
+import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
@@ -33,13 +33,18 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
         cullMode = CullMode.NONE,
     ).toOpengl()
 
+    private val depthStencilState = DepthStencilState(
+        depthTestEnable = false,
+        depthWriteEnable = false
+    ).toOpengl()
+
     private val blendState = BlendState.ALPHA.toOpengl()
 
     override fun render(context: RenderContext, models: Iterable<UINode>) {
         this.shadersLink.shadersProgram.bind()
-        StencilTest.disable()
-        DepthTest.disable()
+
         this.rasterizationState.set()
+        this.depthStencilState.set()
         this.blendState.set()
 
         models.forEach { model ->

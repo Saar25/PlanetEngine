@@ -6,11 +6,6 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.constants.Comparator
-import org.saar.lwjgl.opengl.depth.DepthFunction
-import org.saar.lwjgl.opengl.depth.DepthMask
-import org.saar.lwjgl.opengl.depth.DepthState
-import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -18,11 +13,13 @@ import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.stencil.StencilState
-import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.CompareOp
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.depthstencil.StencilOpState
 import org.saar.rhi.opengl.blending.toOpengl
+import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
@@ -40,14 +37,21 @@ object ObjDeferredRenderer : Renderer<DeferredRenderContext, ObjModel> {
         cullMode = CullMode.BACK,
     ).toOpengl()
 
+    private val depthStencilState = DepthStencilState(
+        depthTestEnable = true,
+        depthWriteEnable = true,
+        depthCompareOp = CompareOp.LESS,
+        stencilTestEnable = true,
+        stencil = StencilOpState.ALWAYS_WRITE
+    ).toOpengl()
+
     private val blendState = BlendState().toOpengl()
 
     override fun render(context: DeferredRenderContext, models: Iterable<ObjModel>) {
         this.shadersLink.shadersProgram.bind()
 
-        StencilTest.apply(StencilState.ALWAYS_WRITE)
-        DepthTest.apply(DepthState(DepthFunction(Comparator.LESS), DepthMask.WRITE))
         this.rasterizationState.set()
+        this.depthStencilState.set()
         this.blendState.set()
 
         this.shadersLink.normalMatrixUniform.value = context.camera.viewMatrix.invert(Matrix4.temp).transpose()

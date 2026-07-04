@@ -7,14 +7,12 @@ import org.saar.core.fog.IFog
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.state.CompositeRenderState
-import org.saar.core.renderer.state.DepthTestRenderState
-import org.saar.core.renderer.state.StencilTestRenderState
+import org.saar.core.renderer.state.DepthStencilRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.renderbuffer.RenderBuffer
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
@@ -24,10 +22,11 @@ import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec3UniformValue
-import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.depthstencil.StencilOpState
 
 fun RenderGraph.Builder.fogPass(input: FogRenderPass.Input.() -> Unit): FogRenderPass.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -79,8 +78,9 @@ class FogRenderPass(private val screen: Screen?, private val input: Input) : Ren
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.ALWAYS_WRITE),
-        DepthTestRenderState(DepthState.DISABLED),
+        DepthStencilRenderState(
+            DepthStencilState(stencil = StencilOpState.ALWAYS_WRITE)
+        ),
     )
 
     override fun render(context: RenderContext) {

@@ -6,11 +6,6 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.constants.Comparator
-import org.saar.lwjgl.opengl.depth.DepthFunction
-import org.saar.lwjgl.opengl.depth.DepthMask
-import org.saar.lwjgl.opengl.depth.DepthState
-import org.saar.lwjgl.opengl.depth.DepthTest
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -19,10 +14,12 @@ import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.stencil.StencilTest
 import org.saar.maths.utils.Matrix4
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.CompareOp
+import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.opengl.blending.toOpengl
+import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
@@ -32,8 +29,6 @@ object ParticlesDeferredRenderer : Renderer<DeferredRenderContext, ParticlesMode
     private val shadersLink = ParticlesDeferredRendererPrototype
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
-    val depthState = DepthState(DepthFunction(Comparator.LESS), DepthMask.READ)
-
     init {
         this.shadersLink.init()
     }
@@ -42,15 +37,20 @@ object ParticlesDeferredRenderer : Renderer<DeferredRenderContext, ParticlesMode
         cullMode = CullMode.NONE,
     ).toOpengl()
 
+    private val depthStencilState = DepthStencilState(
+        depthTestEnable = true,
+        depthWriteEnable = false,
+        depthCompareOp = CompareOp.LESS,
+    ).toOpengl()
+
     private val blendState = BlendState.ALPHA.toOpengl()
 
     override fun render(context: DeferredRenderContext, models: Iterable<ParticlesModel>) {
         this.shadersLink.shadersProgram.bind()
 
         this.rasterizationState.set()
+        this.depthStencilState.set()
         this.blendState.set()
-        DepthTest.apply(this.depthState)
-        StencilTest.disable()
 
         val v = context.camera.viewMatrix
         val p = context.camera.projection.matrix

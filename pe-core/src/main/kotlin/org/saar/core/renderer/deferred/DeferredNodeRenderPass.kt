@@ -5,18 +5,18 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.RenderPass
 import org.saar.core.renderer.state.CompositeRenderState
-import org.saar.core.renderer.state.DepthTestRenderState
+import org.saar.core.renderer.state.DepthStencilRenderState
 import org.saar.core.renderer.state.RasterizationRenderState
-import org.saar.core.renderer.state.StencilTestRenderState
 import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.depth.DepthState
-import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
+import org.saar.rhi.depthstencil.CompareOp
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.depthstencil.StencilOpState
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.FrontFace
 import org.saar.rhi.rasterization.RasterizationState
@@ -69,9 +69,20 @@ class DeferredNodeRenderPass(
     )
 
     override val renderState = CompositeRenderState(
-        DepthTestRenderState(DepthState.WRITE),
-        StencilTestRenderState(StencilState.ALWAYS_WRITE),
-        RasterizationRenderState(RasterizationState(cullMode = CullMode.BACK, frontFace = FrontFace.COUNTER_CLOCKWISE))
+        DepthStencilRenderState(
+            DepthStencilState(
+                depthTestEnable = true,
+                depthWriteEnable = true,
+                depthCompareOp = CompareOp.LESS,
+                stencil = StencilOpState.ALWAYS_WRITE,
+            ),
+        ),
+        RasterizationRenderState(
+            RasterizationState(
+                cullMode = CullMode.BACK,
+                frontFace = FrontFace.COUNTER_CLOCKWISE
+            )
+        ),
     )
 
     override fun render(context: RenderContext) {

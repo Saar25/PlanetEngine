@@ -6,12 +6,14 @@ import org.saar.core.light.DirectionalLight
 import org.saar.core.light.DirectionalLightUniform
 import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
-import org.saar.core.renderer.state.*
+import org.saar.core.renderer.state.BlendRenderState
+import org.saar.core.renderer.state.CompositeRenderState
+import org.saar.core.renderer.state.DepthStencilRenderState
+import org.saar.core.renderer.state.RasterizationRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.depth.DepthState
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
@@ -20,12 +22,12 @@ import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniformValue
-import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
 
@@ -85,8 +87,7 @@ class ShadowsRenderPass(private val screen: Screen?, private val input: Input) :
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.DISABLED),
-        DepthTestRenderState(DepthState.DISABLED),
+        DepthStencilRenderState(DepthStencilState()),
         RasterizationRenderState(RasterizationState(cullMode = CullMode.NONE)),
         BlendRenderState(BlendState())
     )

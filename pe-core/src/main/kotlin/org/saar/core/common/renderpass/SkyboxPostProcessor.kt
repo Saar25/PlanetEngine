@@ -5,7 +5,7 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.state.BlendRenderState
 import org.saar.core.renderer.state.CompositeRenderState
-import org.saar.core.renderer.state.StencilTestRenderState
+import org.saar.core.renderer.state.DepthStencilRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screen
@@ -17,13 +17,14 @@ import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
-import org.saar.lwjgl.opengl.stencil.StencilState
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.rhi.blending.BlendAttachmentState
 import org.saar.rhi.blending.BlendFactor
 import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.depthstencil.StencilOpState
 
 fun RenderGraph.Builder.skyboxPass(input: SkyboxPostProcessor.Input.() -> Unit): SkyboxPostProcessor.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -62,7 +63,9 @@ class SkyboxPostProcessor(val screen: Screen?, val input: Input) : RenderPass {
     private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
 
     override val renderState = CompositeRenderState(
-        StencilTestRenderState(StencilState.ALWAYS_WRITE),
+        DepthStencilRenderState(
+            DepthStencilState(stencil = StencilOpState.ALWAYS_WRITE)
+        ),
         BlendRenderState(
             BlendState(
                 attachment = BlendAttachmentState(
