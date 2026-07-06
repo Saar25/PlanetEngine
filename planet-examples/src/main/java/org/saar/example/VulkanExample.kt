@@ -19,6 +19,7 @@ import org.saar.rhi.depthstencil.StencilOp
 import org.saar.rhi.depthstencil.StencilOpState
 import org.saar.rhi.inputassembly.InputAssemblyState
 import org.saar.rhi.inputassembly.PrimitiveTopology
+import org.saar.rhi.multisample.MultisampleState
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.FrontFace
 import org.saar.rhi.rasterization.PolygonMode
@@ -29,6 +30,7 @@ import org.saar.rhi.viewport.ViewportState
 import org.saar.rhi.vulkan.blending.toVulkan
 import org.saar.rhi.vulkan.depthstencil.toVulkan
 import org.saar.rhi.vulkan.inputassembly.toVulkan
+import org.saar.rhi.vulkan.multisample.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
 import org.saar.rhi.vulkan.viewport.toVulkan
 import java.io.*
@@ -719,9 +721,9 @@ object VulkanExample {
 
         // Multi sampling state
         // No multi sampling used in this example
-        val multisampleState = VkPipelineMultisampleStateCreateInfo.calloc()
-            .`sType$Default`()
-            .rasterizationSamples(VK10.VK_SAMPLE_COUNT_1_BIT)
+        val multisampleState = MultisampleState(
+            rasterizationSamplesBits = 1,
+        ).toVulkan()
 
         // Load shaders
         val shaderStages = VkPipelineShaderStageCreateInfo.calloc(2)
