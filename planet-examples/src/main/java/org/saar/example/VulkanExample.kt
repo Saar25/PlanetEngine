@@ -24,6 +24,10 @@ import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.FrontFace
 import org.saar.rhi.rasterization.PolygonMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.ShaderModule
+import org.saar.rhi.shader.ShaderProgram
+import org.saar.rhi.shader.ShaderStage
+import org.saar.rhi.shader.ShaderStageType
 import org.saar.rhi.viewport.Scissor
 import org.saar.rhi.viewport.Viewport
 import org.saar.rhi.viewport.ViewportState
@@ -33,6 +37,9 @@ import org.saar.rhi.vulkan.inputassembly.toVulkan
 import org.saar.rhi.vulkan.multisample.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
 import org.saar.rhi.vulkan.result.translateVulkanResult
+import org.saar.rhi.vulkan.shader.toVulkan
+import org.saar.rhi.vulkan.shader.vkValue
+import org.saar.rhi.vulkan.viewport.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
@@ -533,29 +540,11 @@ object VulkanExample {
         }
     }
 
-    private fun loadShader(classPath: String, device: VkDevice, stage: Int): Long {
-        val shaderCode: ByteBuffer = glslToSpirv(classPath, stage)
-        val err: Int
-        val moduleCreateInfo = VkShaderModuleCreateInfo.calloc()
-            .`sType$Default`()
-            .pCode(shaderCode)
-        val pShaderModule = MemoryUtil.memAllocLong(1)
-        err = VK10.vkCreateShaderModule(device, moduleCreateInfo, null, pShaderModule)
-        val shaderModule = pShaderModule.get(0)
-        MemoryUtil.memFree(pShaderModule)
-        if (err != VK10.VK_SUCCESS) {
-            throw AssertionError("Failed to create shader module: " + translateVulkanResult(err))
-        }
-        return shaderModule
-    }
+    private fun loadShader(classPath: String, type: ShaderStageType): ShaderStage {
+        val shaderCode = glslToSpirv(classPath, type.vkValue)
+        val module = ShaderModule(shaderCode)
 
-    private fun loadShader(device: VkDevice, classPath: String, stage: Int): VkPipelineShaderStageCreateInfo {
-        val shaderStage = VkPipelineShaderStageCreateInfo.calloc()
-            .`sType$Default`()
-            .stage(stage)
-            .module(loadShader(classPath, device, stage))
-            .pName(MemoryUtil.memUTF8("main"))
-        return shaderStage
+        return ShaderStage(module, type, "main")
     }
 
     private fun getMemoryType(
@@ -726,11 +715,12 @@ object VulkanExample {
         ).toVulkan()
 
         // Load shaders
-        val shaderStages = VkPipelineShaderStageCreateInfo.calloc(2)
-        shaderStages.get(0)
-            .set(loadShader(device, "triangle.vertex.glsl", VK10.VK_SHADER_STAGE_VERTEX_BIT))
-        shaderStages.get(1)
-            .set(loadShader(device, "triangle.fragment.glsl", VK10.VK_SHADER_STAGE_FRAGMENT_BIT))
+        val shaderStages = ShaderProgram(
+            stages = listOf(
+                loadShader("triangle.vertex.glsl", ShaderStageType.VERTEX),
+                loadShader("triangle.fragment.glsl", ShaderStageType.FRAGMENT)
+            )
+        ).toVulkan(device)
 
         // Create the pipeline layout that is used to generate the rendering pipelines that
         // are based on this descriptor set layout
