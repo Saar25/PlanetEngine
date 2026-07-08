@@ -1,148 +1,53 @@
-package org.saar.lwjgl.opengl.shader;
+package org.saar.lwjgl.opengl.shader
 
-import org.lwjgl.opengl.GL20;
-import org.saar.rhi.opengl.shader.OpenglShaderStageTypeKt;
-import org.saar.rhi.shader.ShaderStageType;
+import org.saar.rhi.opengl.shader.OpenglShaderStage
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.ShaderModule
+import org.saar.rhi.shader.ShaderStage
+import org.saar.rhi.shader.ShaderStageType
 
-public class Shader {
+@Deprecated("Use ShaderStage or OpenglShaderStage instead")
+class Shader(private val openglShaderStage: OpenglShaderStage) {
 
-    public final int id;
-    private final ShaderStageType type;
-    private final String[] code;
+    fun attach(programId: Int) = this.openglShaderStage.attach(programId)
 
-    public Shader(int id, ShaderStageType type, String... code) {
-        this.id = id;
-        this.type = type;
-        this.code = code;
-    }
+    fun detach(programId: Int) = this.openglShaderStage.detach(programId)
 
-    /**
-     * Creates a shader of the given type, with the given file that contains the code
-     *
-     * @param sources the sources code file
-     * @param type    the shader type
-     * @return a vertex shader
-     */
-    public static Shader of(ShaderStageType type, GlslVersion version, ShaderCode... sources) {
-        final int id = GL20.glCreateShader(OpenglShaderStageTypeKt.getGlValue(type));
-        return new Shader(id, type, getSources(version, sources));
-    }
+    fun delete() = this.openglShaderStage.delete()
 
-    private static String[] getSources(GlslVersion version, ShaderCode... sources) {
-        final String[] codes = new String[sources.length + 1];
-        codes[0] = version.toString() + '\n';
-        for (int i = 0; i < sources.length; i++) {
-            codes[i + 1] = sources[i].getCode() + '\n';
+    companion object {
+        fun of(type: ShaderStageType, version: GlslVersion, vararg sources: ShaderCode): Shader {
+            val moduleCode = getSources(version, *sources)
+            val shaderStage = ShaderStage(
+                module = ShaderModule.fromString(moduleCode),
+                type = type,
+                entryPoint = "main",
+            )
+            return Shader(shaderStage.toOpengl())
         }
-        return codes;
-    }
 
-    /**
-     * Creates a vertex shader with the given file that contains the code
-     *
-     * @param version the shader version
-     * @param sources the sources code file
-     * @return a vertex shader
-     */
-    public static Shader createVertex(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderStageType.VERTEX, version, sources);
-    }
-
-    public static Shader createVertex(String source) throws Exception {
-        return Shader.of(ShaderStageType.VERTEX, GlslVersion.NONE, ShaderCode.loadSource(source));
-    }
-
-    /**
-     * Creates a fragment shader with the given file that contains the code
-     *
-     * @param version the shader version
-     * @param sources the sources code file
-     * @return a fragment shader
-     */
-    public static Shader createFragment(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderStageType.FRAGMENT, version, sources);
-    }
-
-    public static Shader createFragment(String source) throws Exception {
-        return Shader.of(ShaderStageType.FRAGMENT, GlslVersion.NONE, ShaderCode.loadSource(source));
-    }
-
-    /**
-     * Creates a geometry shader with the given file that contains the code
-     *
-     * @param sources the sources code file
-     * @return a geometry shader
-     */
-    public static Shader createGeometry(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderStageType.GEOMETRY, version, sources);
-    }
-
-    /**
-     * Creates a tessellation control shader with the given file that contains the code
-     *
-     * @param sources the sources code file
-     * @return a tessellation control shader
-     */
-    public static Shader createTessControl(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderStageType.TESSELLATION_CONTROL, version, sources);
-    }
-
-    /**
-     * Creates a tessellation evaluation shader with the given file that contains the code
-     *
-     * @param sources the sources code file
-     * @return a tessellation evaluation shader
-     */
-    public static Shader createTessEvaluation(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderStageType.TESSELLATION_EVALUATION, version, sources);
-    }
-
-    /**
-     * Initializes the shader, compiles, and checking for error in the shader code
-     *
-     * @throws ShaderCompileException In case could not compile the shader code
-     */
-    public void init() throws ShaderCompileException {
-        GL20.glShaderSource(id, code);
-        GL20.glCompileShader(id);
-        if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == 0) {
-            final String infoLog = GL20.glGetShaderInfoLog(id, 1024);
-            throw new ShaderCompileException("Shader type: " + type +
-                ", Error compiling Shader code:\n" + infoLog);
+        private fun getSources(version: GlslVersion, vararg sources: ShaderCode): String {
+            return version.toString() + "\n" + sources.joinToString("\n") { it.code }
         }
-    }
 
-    /**
-     * Attaches the shader to the given program
-     *
-     * @param programId the shader program
-     */
-    public void attach(int programId) {
-        GL20.glAttachShader(programId, id);
-    }
+        fun createVertex(version: GlslVersion, vararg sources: ShaderCode): Shader {
+            return of(ShaderStageType.VERTEX, version, *sources)
+        }
 
-    /**
-     * Detaches the shader from the given program
-     *
-     * @param programId the shader program
-     */
-    public void detach(int programId) {
-        GL20.glDetachShader(programId, id);
-    }
+        @JvmStatic
+        @Throws(Exception::class)
+        fun createVertex(source: String): Shader {
+            return of(ShaderStageType.VERTEX, GlslVersion.NONE, ShaderCode.loadSource(source))
+        }
 
-    /**
-     * Deletes the shader
-     */
-    public void delete() {
-        GL20.glDeleteShader(id);
-    }
+        fun createFragment(version: GlslVersion, vararg sources: ShaderCode): Shader {
+            return of(ShaderStageType.FRAGMENT, version, *sources)
+        }
 
-    /**
-     * Returns the shader type
-     *
-     * @return the shader type
-     */
-    public ShaderStageType getType() {
-        return this.type;
+        @JvmStatic
+        @Throws(Exception::class)
+        fun createFragment(source: String): Shader {
+            return of(ShaderStageType.FRAGMENT, GlslVersion.NONE, ShaderCode.loadSource(source))
+        }
     }
 }

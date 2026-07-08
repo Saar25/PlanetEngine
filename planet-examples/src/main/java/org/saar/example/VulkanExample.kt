@@ -716,10 +716,8 @@ object VulkanExample {
 
         // Load shaders
         val shaderStages = ShaderProgram(
-            stages = listOf(
-                loadShader("triangle.vertex.glsl", ShaderStageType.VERTEX),
-                loadShader("triangle.fragment.glsl", ShaderStageType.FRAGMENT)
-            )
+            loadShader("triangle.vertex.glsl", ShaderStageType.VERTEX),
+            loadShader("triangle.fragment.glsl", ShaderStageType.FRAGMENT)
         ).toVulkan(device)
 
         // Create the pipeline layout that is used to generate the rendering pipelines that

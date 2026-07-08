@@ -16,7 +16,6 @@ public class ShadersProgram {
 
 //        bind();
         for (Shader shader : shaders) {
-            shader.init();
             shader.attach(id);
         }
         GL20.glLinkProgram(id);
