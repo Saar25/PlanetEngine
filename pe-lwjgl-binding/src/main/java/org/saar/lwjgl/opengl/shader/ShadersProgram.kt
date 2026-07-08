@@ -1,89 +1,55 @@
-package org.saar.lwjgl.opengl.shader;
+package org.saar.lwjgl.opengl.shader
 
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-import org.saar.lwjgl.opengl.utils.GlConfigs;
+import org.saar.rhi.opengl.shader.OpenglShaderProgram
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.ShaderProgram
+import org.saar.rhi.shader.ShaderStage
 
-public class ShadersProgram {
+@Deprecated("Use ShaderProgram or OpenglShaderProgram instead")
+class ShadersProgram private constructor(val openglShadersProgram: OpenglShaderProgram) {
 
-    private final int id;
+    fun bindAttribute(location: Int, name: String) = this.openglShadersProgram.bindAttribute(location, name)
 
-    private int attributeCount = 0;
-    private boolean deleted = false;
+    fun bindAttributes(vararg names: String) = this.openglShadersProgram.bindAttributes(*names)
 
-    private ShadersProgram(int id, Shader... shaders) throws ShaderCompileException {
-        this.id = id;
+    fun bindFragmentOutput(location: Int, name: String) = this.openglShadersProgram.bindFragmentOutput(location, name)
 
-//        bind();
-        for (Shader shader : shaders) {
-            shader.attach(id);
+    fun bindFragmentOutputs(vararg names: String) = this.openglShadersProgram.bindFragmentOutputs(*names)
+
+    fun getUniformLocation(name: String): Int = this.openglShadersProgram.getUniformLocation(name)
+
+    fun bind() = this.openglShadersProgram.bind()
+
+    fun unbind() = this.openglShadersProgram.unbind()
+
+    fun delete() = this.openglShadersProgram.delete()
+
+    companion object {
+        @JvmStatic
+        fun create(vararg stages: ShaderStage): ShadersProgram {
+            val shaderProgram = ShaderProgram(*stages)
+            val openglShadersProgram = shaderProgram.toOpengl()
+            return ShadersProgram(openglShadersProgram)
         }
-        GL20.glLinkProgram(id);
-        GL20.glValidateProgram(id);
-        for (Shader shader : shaders) {
-            shader.detach(id);
-            shader.delete();
+
+        @JvmStatic
+        @Throws(ShaderCompileException::class)
+        fun create(vertexShader: Shader, fragmentShader: Shader): ShadersProgram {
+            val openglShadersProgram = OpenglShaderProgram.create(
+                listOf(
+                    vertexShader.openglShaderStage,
+                    fragmentShader.openglShaderStage,
+                )
+            )
+            return ShadersProgram(openglShadersProgram)
         }
-        unbind();
-    }
 
-    public static ShadersProgram create(Shader vertexShader, Shader fragmentShader) throws ShaderCompileException {
-        final int id = GL20.glCreateProgram();
-        return new ShadersProgram(id, vertexShader, fragmentShader);
-    }
-
-    public static ShadersProgram create(Shader... shaders) throws ShaderCompileException {
-        final int id = GL20.glCreateProgram();
-        return new ShadersProgram(id, shaders);
-    }
-
-    public void bindAttribute(int location, String name) {
-        GL20.glBindAttribLocation(id, location, name);
-    }
-
-    public void bindAttribute(String name) {
-        GL20.glBindAttribLocation(id, attributeCount++, name);
-    }
-
-    public void bindAttributes(String... names) {
-        for (String name : names) {
-            bindAttribute(name);
-        }
-    }
-
-    public void bindFragmentOutput(int location, String name) {
-        GL30.glBindFragDataLocation(this.id, location, name);
-    }
-
-    public void bindFragmentOutputs(String... names) {
-        for (int i = 0; i < names.length; i++) {
-            bindFragmentOutput(i, names[i]);
+        @Throws(ShaderCompileException::class)
+        fun create(vararg shaders: Shader): ShadersProgram {
+            val openglShadersProgram = OpenglShaderProgram.create(
+                shaders.map(Shader::openglShaderStage)
+            )
+            return ShadersProgram(openglShadersProgram)
         }
     }
-
-    public int getUniformLocation(String name) {
-        return GL20.glGetUniformLocation(this.id, name);
-    }
-
-    public void bind() {
-        if (!GlConfigs.CACHE_STATE || !BoundProgram.isBound(this.id)) {
-            GL20.glUseProgram(this.id);
-            BoundProgram.set(this.id);
-        }
-    }
-
-    public void unbind() {
-        if (!GlConfigs.CACHE_STATE || !BoundProgram.isBound(0)) {
-            GL20.glUseProgram(0);
-            BoundProgram.set(0);
-        }
-    }
-
-    public void delete() {
-        if (!this.deleted) {
-            GL20.glDeleteProgram(id);
-            this.deleted = true;
-        }
-    }
-
 }

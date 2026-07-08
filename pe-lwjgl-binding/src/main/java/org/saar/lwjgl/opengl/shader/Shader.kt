@@ -7,7 +7,7 @@ import org.saar.rhi.shader.ShaderStage
 import org.saar.rhi.shader.ShaderStageType
 
 @Deprecated("Use ShaderStage or OpenglShaderStage instead")
-class Shader(private val openglShaderStage: OpenglShaderStage) {
+class Shader(val openglShaderStage: OpenglShaderStage) {
 
     fun attach(programId: Int) = this.openglShaderStage.attach(programId)
 
