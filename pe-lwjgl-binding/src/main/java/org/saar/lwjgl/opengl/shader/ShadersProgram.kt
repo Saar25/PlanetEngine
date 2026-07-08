@@ -33,7 +33,6 @@ class ShadersProgram private constructor(val openglShadersProgram: OpenglShaderP
         }
 
         @JvmStatic
-        @Throws(ShaderCompileException::class)
         fun create(vertexShader: Shader, fragmentShader: Shader): ShadersProgram {
             val openglShadersProgram = OpenglShaderProgram.create(
                 listOf(
@@ -44,7 +43,6 @@ class ShadersProgram private constructor(val openglShadersProgram: OpenglShaderP
             return ShadersProgram(openglShadersProgram)
         }
 
-        @Throws(ShaderCompileException::class)
         fun create(vararg shaders: Shader): ShadersProgram {
             val openglShadersProgram = OpenglShaderProgram.create(
                 shaders.map(Shader::openglShaderStage)

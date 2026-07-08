@@ -1,23 +1,19 @@
-package org.saar.lwjgl.opengl.shader;
+package org.saar.lwjgl.opengl.shader
 
-public class ShaderCode {
+import org.saar.rhi.shader.ShaderModuleLoader
 
-    private final String code;
+class ShaderCode private constructor(val code: String) {
 
-    private ShaderCode(String code) {
-        this.code = code;
-    }
+    companion object {
+        fun define(name: String, value: String): ShaderCode {
+            return ShaderCode("#define $name $value")
+        }
 
-    public static ShaderCode define(String name, String value) {
-        return new ShaderCode("#define " + name + " " + value);
-    }
+        @Throws(Exception::class)
+        fun loadSource(file: String): ShaderCode {
+            val code = ShaderModuleLoader.loadSource(file)
 
-    public static ShaderCode loadSource(String file) throws Exception {
-        final String code = ShaderCodeLoader.loadSource(file);
-        return new ShaderCode(code);
-    }
-
-    public String getCode() {
-        return this.code;
+            return ShaderCode(code)
+        }
     }
 }
