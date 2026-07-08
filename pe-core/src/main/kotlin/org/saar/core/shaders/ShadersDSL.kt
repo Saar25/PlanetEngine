@@ -5,12 +5,12 @@ import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.ShadersLink
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShaderType
 import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.FloatUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
 import org.saar.lwjgl.opengl.shader.uniforms.Vec4UniformValue
+import org.saar.rhi.shader.ShaderStageType
 
 fun <C : RenderContext, T> renderer(block: RendererBuilder<C, T>.() -> Unit): Renderer<C, T> {
     return RendererBuilder<C, T>().apply(block).build()
@@ -36,16 +36,16 @@ inline fun ShadersLinkBuilder.shadersProgram(block: ShadersProgramBuilder.() -> 
     return ShadersProgramBuilder().apply(block).build().also { shadersProgram = it }
 }
 
-inline fun ShadersProgramBuilder.shader(type: ShaderType, block: ShaderBuilder.() -> Unit): Shader {
+inline fun ShadersProgramBuilder.shader(type: ShaderStageType, block: ShaderBuilder.() -> Unit): Shader {
     return ShaderBuilder(type).apply(block).build().also { shaders += it }
 }
 
 inline fun ShadersProgramBuilder.vertex(block: ShaderBuilder.() -> Unit): Shader {
-    return shader(ShaderType.VERTEX, block)
+    return shader(ShaderStageType.VERTEX, block)
 }
 
 inline fun ShadersProgramBuilder.fragment(block: ShaderBuilder.() -> Unit): Shader {
-    return shader(ShaderType.FRAGMENT, block)
+    return shader(ShaderStageType.FRAGMENT, block)
 }
 
 inline fun ShaderBuilder.code(block: () -> ShaderCode): ShaderCode {

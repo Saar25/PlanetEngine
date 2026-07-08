@@ -1,14 +1,16 @@
 package org.saar.lwjgl.opengl.shader;
 
 import org.lwjgl.opengl.GL20;
+import org.saar.rhi.opengl.shader.OpenglShaderStageTypeKt;
+import org.saar.rhi.shader.ShaderStageType;
 
 public class Shader {
 
     public final int id;
-    private final ShaderType type;
+    private final ShaderStageType type;
     private final String[] code;
 
-    public Shader(int id, ShaderType type, String... code) {
+    public Shader(int id, ShaderStageType type, String... code) {
         this.id = id;
         this.type = type;
         this.code = code;
@@ -21,8 +23,8 @@ public class Shader {
      * @param type    the shader type
      * @return a vertex shader
      */
-    public static Shader of(ShaderType type, GlslVersion version, ShaderCode... sources) {
-        final int id = GL20.glCreateShader(type.get());
+    public static Shader of(ShaderStageType type, GlslVersion version, ShaderCode... sources) {
+        final int id = GL20.glCreateShader(OpenglShaderStageTypeKt.getGlValue(type));
         return new Shader(id, type, getSources(version, sources));
     }
 
@@ -43,11 +45,11 @@ public class Shader {
      * @return a vertex shader
      */
     public static Shader createVertex(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderType.VERTEX, version, sources);
+        return Shader.of(ShaderStageType.VERTEX, version, sources);
     }
 
     public static Shader createVertex(String source) throws Exception {
-        return Shader.of(ShaderType.VERTEX, GlslVersion.NONE, ShaderCode.loadSource(source));
+        return Shader.of(ShaderStageType.VERTEX, GlslVersion.NONE, ShaderCode.loadSource(source));
     }
 
     /**
@@ -58,11 +60,11 @@ public class Shader {
      * @return a fragment shader
      */
     public static Shader createFragment(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderType.FRAGMENT, version, sources);
+        return Shader.of(ShaderStageType.FRAGMENT, version, sources);
     }
 
     public static Shader createFragment(String source) throws Exception {
-        return Shader.of(ShaderType.FRAGMENT, GlslVersion.NONE, ShaderCode.loadSource(source));
+        return Shader.of(ShaderStageType.FRAGMENT, GlslVersion.NONE, ShaderCode.loadSource(source));
     }
 
     /**
@@ -72,7 +74,7 @@ public class Shader {
      * @return a geometry shader
      */
     public static Shader createGeometry(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderType.GEOMETRY, version, sources);
+        return Shader.of(ShaderStageType.GEOMETRY, version, sources);
     }
 
     /**
@@ -82,7 +84,7 @@ public class Shader {
      * @return a tessellation control shader
      */
     public static Shader createTessControl(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderType.TESS_CONTROL, version, sources);
+        return Shader.of(ShaderStageType.TESSELLATION_CONTROL, version, sources);
     }
 
     /**
@@ -92,7 +94,7 @@ public class Shader {
      * @return a tessellation evaluation shader
      */
     public static Shader createTessEvaluation(GlslVersion version, ShaderCode... sources) {
-        return Shader.of(ShaderType.TESS_EVALUATION, version, sources);
+        return Shader.of(ShaderStageType.TESSELLATION_EVALUATION, version, sources);
     }
 
     /**
@@ -106,7 +108,7 @@ public class Shader {
         if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == 0) {
             final String infoLog = GL20.glGetShaderInfoLog(id, 1024);
             throw new ShaderCompileException("Shader type: " + type +
-                    ", Error compiling Shader code:\n" + infoLog);
+                ", Error compiling Shader code:\n" + infoLog);
         }
     }
 
@@ -140,7 +142,7 @@ public class Shader {
      *
      * @return the shader type
      */
-    public ShaderType getType() {
+    public ShaderStageType getType() {
         return this.type;
     }
 }

@@ -3,9 +3,9 @@ package org.saar.core.shaders
 import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.Shader
 import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShaderType
+import org.saar.rhi.shader.ShaderStageType
 
-class ShaderBuilder(private val type: ShaderType) {
+class ShaderBuilder(private val type: ShaderStageType) {
 
     var version: GlslVersion = GlslVersion.V400
 
