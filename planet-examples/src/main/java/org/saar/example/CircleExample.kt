@@ -4,8 +4,8 @@ import org.lwjgl.glfw.GLFW
 import org.saar.core.common.renderpass.Swizzle
 import org.saar.core.common.renderpass.SwizzlePostProcessor
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.*
-import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderPass
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens.toScreen
@@ -18,19 +18,15 @@ import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
-import org.saar.rhi.blending.BlendAttachmentState
-import org.saar.rhi.blending.BlendState
-import org.saar.rhi.opengl.blending.toOpengl
+import org.saar.rhi.opengl.shader.GlslVersion
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 import java.awt.Toolkit
 import kotlin.math.max
 import kotlin.properties.Delegates
@@ -98,23 +94,23 @@ private class MyScreenPrototype : ScreenPrototype {
 private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
 
     private val shadersLink = MyShadersLink
-    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+    private val uniforms = this.shadersLink.uniforms.associateWith {
+        this.shadersLink.shadersProgram.getUniformLocation(it.name)
+    }
 
     override fun render(context: RenderContext) {
         this.shadersLink.shadersProgram.bind()
         this.shadersLink.colorTextureUniform.value = this.albedoBuffer
-        this.uniformsLoader.load()
+        this.uniforms.entries.forEach { (uniform, location) -> uniform.load(location) }
         QuadMesh.draw()
     }
 
     override fun delete() = this.shadersLink.shadersProgram.delete()
 
-    private object MyShadersLink : ShadersLink {
+    private object MyShadersLink {
 
-        @UniformProperty
         val colorTextureUniform = TextureUniformValue("u_colorTexture", 0)
 
-        @UniformProperty
         val timeUniform = object : IntUniform() {
             private val start = Time()
 
@@ -123,16 +119,31 @@ private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : Ren
             override val name = "u_time"
         }
 
-        @UniformProperty
         val radiusUniform = object : IntUniform() {
             override val value get() = radius
 
             override val name = "u_radius"
         }
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/circle.fragment.glsl")),
+        val uniforms = listOf(
+            this.colorTextureUniform,
+            this.timeUniform,
+            this.radiusUniform,
         )
+
+        val shadersProgram = ShaderProgram(
+            ShaderStage(
+                module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + ShaderModuleLoader.loadSource("/shaders/common/quad/quad.vertex.glsl")
+                ),
+                type = ShaderStageType.VERTEX,
+            ),
+            ShaderStage(
+                module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + ShaderModuleLoader.loadSource("/circle.fragment.glsl")
+                ),
+                type = ShaderStageType.FRAGMENT,
+            )
+        ).toOpengl()
     }
 }
