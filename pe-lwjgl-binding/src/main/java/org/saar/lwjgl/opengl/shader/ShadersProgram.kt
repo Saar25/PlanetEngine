@@ -1,7 +1,6 @@
 package org.saar.lwjgl.opengl.shader
 
-import org.saar.rhi.opengl.shader.OpenglShaderProgram
-import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.opengl.shader.*
 import org.saar.rhi.shader.ShaderProgram
 import org.saar.rhi.shader.ShaderStage
 

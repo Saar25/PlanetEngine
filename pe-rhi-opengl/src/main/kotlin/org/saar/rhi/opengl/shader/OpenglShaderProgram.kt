@@ -15,42 +15,34 @@ class OpenglShaderProgram private constructor(private val id: Int) {
 
     fun bindAttribute(location: Int, name: String) = GL20.glBindAttribLocation(this.id, location, name)
 
-    fun bindAttributes(vararg names: String) = names.forEachIndexed { index, string -> bindAttribute(index, string) }
-
     fun bindFragmentOutput(location: Int, name: String) = GL30.glBindFragDataLocation(this.id, location, name)
-
-    fun bindFragmentOutputs(vararg names: String) {
-        for (i in names.indices) {
-            bindFragmentOutput(i, names[i])
-        }
-    }
 
     fun getUniformLocation(name: String) = GL20.glGetUniformLocation(this.id, name)
 
     fun bind() = GL20.glUseProgram(this.id)
 
-    fun unbind() = GL20.glUseProgram(0)
-
     fun delete() = GL20.glDeleteProgram(this.id)
 
     companion object {
+        val NULL = OpenglShaderProgram(0)
+
         fun create(shaders: Iterable<OpenglShaderStage>): OpenglShaderProgram {
-            val id = GL20.glCreateProgram()
+            val id = GL20.glCreateProgram().also { id ->
+                shaders.forEach { it.attach(id) }
+                GL20.glLinkProgram(id)
+                GL20.glValidateProgram(id)
 
-            shaders.forEach { it.attach(id) }
-            GL20.glLinkProgram(id)
-            GL20.glValidateProgram(id)
+                if (GL20.glGetProgrami(id, GL20.GL_LINK_STATUS) == GL20.GL_FALSE) {
+                    val log = GL20.glGetProgramInfoLog(id)
+                    GL20.glDeleteProgram(id)
+                    shaders.forEach(OpenglShaderStage::delete)
+                    throw RuntimeException("Shader program link failed: $log")
+                }
 
-            if (GL20.glGetProgrami(id, GL20.GL_LINK_STATUS) == GL20.GL_FALSE) {
-                val log = GL20.glGetProgramInfoLog(id)
-                GL20.glDeleteProgram(id)
-                shaders.forEach(OpenglShaderStage::delete)
-                throw RuntimeException("Shader program link failed: $log")
-            }
-
-            shaders.forEach {
-                it.detach(id)
-                it.delete()
+                shaders.forEach {
+                    it.detach(id)
+                    it.delete()
+                }
             }
 
             return OpenglShaderProgram(id)
@@ -58,3 +50,8 @@ class OpenglShaderProgram private constructor(private val id: Int) {
     }
 }
 
+fun OpenglShaderProgram.bindAttributes(vararg names: String) = names.forEachIndexed(::bindAttribute)
+
+fun OpenglShaderProgram.bindFragmentOutputs(vararg names: String) = names.forEachIndexed(::bindFragmentOutput)
+
+fun OpenglShaderProgram.unbind() = OpenglShaderProgram.NULL.bind()
