@@ -1,8 +1,9 @@
 package org.saar.core.shaders
 
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
+import org.saar.rhi.shader.GlslVersion
 import org.saar.lwjgl.opengl.shader.ShaderCode
+import org.saar.rhi.shader.ShaderModule
+import org.saar.rhi.shader.ShaderStage
 import org.saar.rhi.shader.ShaderStageType
 
 class ShaderBuilder(private val type: ShaderStageType) {
@@ -11,5 +12,8 @@ class ShaderBuilder(private val type: ShaderStageType) {
 
     val shaderCodes = mutableListOf<ShaderCode>()
 
-    fun build(): Shader = Shader.of(this.type, this.version, *this.shaderCodes.toTypedArray())
+    fun build(): ShaderStage = ShaderStage(
+        type = this.type,
+        module = ShaderModule.fromString(this.version.toString() + this.shaderCodes.joinToString("\n") { it.code }),
+    )
 }

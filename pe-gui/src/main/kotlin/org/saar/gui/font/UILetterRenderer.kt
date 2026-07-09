@@ -8,10 +8,6 @@ import org.saar.core.renderer.ShadersLink
 import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.maths.toVector4f
 import org.saar.maths.toVector4i
@@ -20,8 +16,10 @@ import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.opengl.blending.toOpengl
 import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.opengl.shader.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.*
 
 object UILetterRenderer : Renderer<RenderContext, UILetter> {
 
@@ -107,15 +105,15 @@ object UILetterRenderer : Renderer<RenderContext, UILetter> {
 
         override val fragmentOutputs = arrayOf("fragColor")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(
-                GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/gui/render/letter.vertex.glsl")
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/render/letter.vertex.glsl"))
             ),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/gui/render/letter.fragment.glsl")
-            )
-        )
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/render/letter.fragment.glsl"))
+            ),
+        ).toOpengl()
     }
 }

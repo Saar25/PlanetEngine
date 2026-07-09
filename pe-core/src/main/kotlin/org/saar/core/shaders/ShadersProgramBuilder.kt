@@ -1,13 +1,11 @@
 package org.saar.core.shaders
 
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.rhi.shader.ShaderProgram
+import org.saar.rhi.shader.ShaderStage
 
 class ShadersProgramBuilder {
 
-    val shaders = mutableListOf<Shader>()
+    val shaders = mutableListOf<ShaderStage>()
 
-    fun build(): ShadersProgram {
-        return ShadersProgram.create(*this.shaders.toTypedArray())
-    }
+    fun build() = ShaderProgram(this.shaders)
 }

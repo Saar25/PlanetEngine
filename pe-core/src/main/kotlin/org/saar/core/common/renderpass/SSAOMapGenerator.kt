@@ -8,10 +8,6 @@ import org.saar.core.renderer.state.DepthStencilRenderState
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
@@ -27,6 +23,8 @@ import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.depthstencil.StencilOpState
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 import kotlin.random.Random
 
 
@@ -134,14 +132,19 @@ class SSAOMapGenerator @JvmOverloads constructor(
         @UniformProperty
         val radiusUniform = FloatUniformValue("u_radius")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.define("KERNEL_SAMPLES", kernelSize.toString()),
-                ShaderCode.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + Renderers.quadVertexSource)
             ),
-        )
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT, module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + "\n" +
+                            "#define KERNEL_SAMPLES " + kernelSize.toString() + "\n" +
+                            ShaderModuleLoader.loadSource("/shaders/deferred/ssao/ssao.fragment.glsl")
+                )
+            ),
+        ).toOpengl()
     }
 }
 /*

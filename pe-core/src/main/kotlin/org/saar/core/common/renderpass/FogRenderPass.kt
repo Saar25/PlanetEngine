@@ -14,10 +14,6 @@ import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.renderbuffer.RenderBuffer
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
@@ -27,6 +23,8 @@ import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Matrix4
 import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.depthstencil.StencilOpState
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 
 fun RenderGraph.Builder.fogPass(input: FogRenderPass.Input.() -> Unit): FogRenderPass.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -125,16 +123,21 @@ class FogRenderPass(private val screen: Screen?, private val input: Input) : Ren
         @UniformProperty
         val fogDistanceUniform = IntUniformValue("u_fogDistance")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.define("FD_DEPTH", FogDistance.DEPTH.ordinal.toString()),
-                ShaderCode.define("FD_Y", FogDistance.Y.ordinal.toString()),
-                ShaderCode.define("FD_XZ", FogDistance.XZ.ordinal.toString()),
-                ShaderCode.define("FD_XYZ", FogDistance.XYZ.ordinal.toString()),
-                ShaderCode.loadSource("/shaders/postprocessing/fog.pass.glsl")
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + Renderers.quadVertexSource)
             ),
-        )
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT, module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + "\n" +
+                            "#define FD_DEPTH " + FogDistance.DEPTH.ordinal.toString() + "\n" +
+                            "#define FD_Y " + FogDistance.Y.ordinal.toString() + "\n" +
+                            "#define FD_XZ " + FogDistance.XZ.ordinal.toString() + "\n" +
+                            "#define FD_XYZ " + FogDistance.XYZ.ordinal.toString() + "\n" +
+                            ShaderModuleLoader.loadSource("/shaders/postprocessing/fog.pass.glsl")
+                )
+            ),
+        ).toOpengl()
     }
 }

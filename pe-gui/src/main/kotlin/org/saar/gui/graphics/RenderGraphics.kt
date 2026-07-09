@@ -7,13 +7,11 @@ import org.saar.core.screen.MainScreen
 import org.saar.gui.style.Color
 import org.saar.gui.style.Colors
 import org.saar.lwjgl.opengl.clear.ClearColor
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.UIntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniform
 import org.saar.maths.objects.Polygon
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 
 class RenderGraphics : Graphics {
 
@@ -37,11 +35,16 @@ class RenderGraphics : Graphics {
     }
 
     companion object {
-        private val vertex = Shader.createVertex(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/graphics/render/graphics.vertex.glsl"))
-        private val fragment = Shader.createFragment(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/graphics/render/graphics.fragment.glsl"))
-        private val shadersProgram = ShadersProgram.create(vertex, fragment)
+        private val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/graphics/render/graphics.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/graphics/render/graphics.fragment.glsl"))
+            ),
+        ).toOpengl()
     }
 
     override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
@@ -75,7 +78,8 @@ class RenderGraphics : Graphics {
             clearColor.red / 256f,
             clearColor.green / 256f,
             clearColor.blue / 256f,
-            1f)
+            1f
+        )
     }
 
     override fun process() {

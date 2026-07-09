@@ -5,13 +5,11 @@ import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.*
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.maths.utils.Maths.sqrt
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 import kotlin.math.PI
 import kotlin.math.exp
 
@@ -95,13 +93,18 @@ class GaussianBlurRenderPass(samples: Int = 11, sigma: Float = samples / 3f) {
         @UniformProperty
         val verticalBlurUniform = BooleanUniformValue("u_verticalBlur")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.define("LEVELS", this.samples.size.toString()),
-                ShaderCode.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + Renderers.quadVertexSource)
             ),
-        )
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT, module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + "\n" +
+                            "#define LEVELS " + this.samples.size.toString() + "\n" +
+                            ShaderModuleLoader.loadSource("/shaders/postprocessing/gaussian-blur.pass.glsl")
+                )
+            ),
+        ).toOpengl()
     }
 }

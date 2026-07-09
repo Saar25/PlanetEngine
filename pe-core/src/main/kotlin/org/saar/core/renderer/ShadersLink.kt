@@ -1,7 +1,9 @@
 package org.saar.core.renderer
 
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
+import org.saar.rhi.opengl.shader.OpenglShaderProgram
+import org.saar.rhi.opengl.shader.bindAttributes
+import org.saar.rhi.opengl.shader.bindFragmentOutputs
 
 interface ShadersLink {
 
@@ -11,7 +13,7 @@ interface ShadersLink {
 
     val uniforms: Iterable<UniformContainer> get() = emptyList()
 
-    val shadersProgram: ShadersProgram
+    val shadersProgram: OpenglShaderProgram
 
 }
 

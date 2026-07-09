@@ -1,4 +1,4 @@
-package org.saar.lwjgl.opengl.shader
+package org.saar.rhi.shader
 
 class GlslVersion(private val major: Int, private val minor: Int, private val type: Type) {
 
@@ -9,7 +9,6 @@ class GlslVersion(private val major: Int, private val minor: Int, private val ty
     }
 
     override fun toString(): String {
-        if (this === NONE) return ""
         val type = this.type.value
         val version = "${this.major}${this.minor}0"
         return "#version $version $type"

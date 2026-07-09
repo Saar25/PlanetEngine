@@ -14,10 +14,6 @@ import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
@@ -28,8 +24,10 @@ import org.saar.maths.utils.Matrix4
 import org.saar.maths.utils.Vector4
 import org.saar.rhi.blending.BlendState
 import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.opengl.shader.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.*
 
 fun RenderGraph.Builder.shadowsPass(input: ShadowsRenderPass.Input.() -> Unit): ShadowsRenderPass.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -158,14 +156,19 @@ class ShadowsRenderPass(private val screen: Screen?, private val input: Input) :
         @UniformProperty
         val depthTextureUniform = TextureUniformValue("u_depthTexture", 3)
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.define("MAX_DIRECTIONAL_LIGHTS", "1"),
-                ShaderCode.define("SHADOW_BIAS", String.format("%.8f", 0.01f)),
-                ShaderCode.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + Renderers.quadVertexSource)
             ),
-        )
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT, module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + "\n" +
+                            "#define MAX_DIRECTIONAL_LIGHTS 1\n" +
+                            "#define SHADOW_BIAS " + String.format("%.8f", 0.01f) + "\n" +
+                            ShaderModuleLoader.loadSource("/shaders/deferred/shadow/shadow.fragment.glsl")
+                )
+            ),
+        ).toOpengl()
     }
 }

@@ -4,13 +4,13 @@ import org.saar.core.renderer.uniforms.UniformPropertiesLocator
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.rhi.shader.ShaderModuleLoader
 
 object Renderers {
 
-    val quadVertexShaderCode: ShaderCode = ShaderCode.loadSource("/shaders/common/quad/quad.vertex.glsl")
+    val quadVertexSource: String by lazy { ShaderModuleLoader.loadSource("/shaders/common/quad/quad.vertex.glsl") }
 
     fun findUniforms(renderer: Any): Collection<UniformContainer> {
         return UniformPropertiesLocator(renderer).findUniform()

@@ -11,10 +11,6 @@ import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.CubeMapTexture
@@ -25,6 +21,8 @@ import org.saar.rhi.blending.BlendFactor
 import org.saar.rhi.blending.BlendState
 import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.depthstencil.StencilOpState
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 
 fun RenderGraph.Builder.skyboxPass(input: SkyboxPostProcessor.Input.() -> Unit): SkyboxPostProcessor.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -106,9 +104,15 @@ class SkyboxPostProcessor(val screen: Screen?, val input: Input) : RenderPass {
         @UniformProperty
         val viewMatrixInvUniform = Mat4UniformValue("u_viewMatrixInv")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/skybox.vertex.glsl")),
-            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/postprocessing/skybox.pass.glsl")),
-        )
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/postprocessing/skybox.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/postprocessing/skybox.pass.glsl"))
+            ),
+        ).toOpengl()
     }
 }

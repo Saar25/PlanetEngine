@@ -10,15 +10,13 @@ import org.saar.core.screen.OffScreen
 import org.saar.core.screen.Screen
 import org.saar.core.screen.buildScreen
 import org.saar.lwjgl.opengl.constants.InternalFormat
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Vec2iUniform
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 
 fun RenderGraph.Builder.fxaaPass(input: FxaaPostProcessor.Input.() -> Unit): FxaaPostProcessor.Output {
     val outputAlbedo = MutableTexture2D.create()
@@ -83,15 +81,20 @@ class FxaaPostProcessor(private val screen: Screen?, private val input: Input) :
                 get() = field.set(MainScreen.width, MainScreen.height)
         }
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.define("FXAA_REDUCE_MIN", (1.0 / 128.0).toString()),
-                ShaderCode.define("FXAA_REDUCE_MUL", (1.0 / 8.0).toString()),
-                ShaderCode.define("FXAA_SPAN_MAX", 8.0.toString()),
-                ShaderCode.loadSource("/shaders/postprocessing/fxaa.pass.glsl")
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + Renderers.quadVertexSource)
             ),
-        )
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT, module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + "\n" +
+                            "#define FXAA_REDUCE_MIN " + (1.0 / 128.0).toString() + "\n" +
+                            "#define FXAA_REDUCE_MUL " + (1.0 / 8.0).toString() + "\n" +
+                            "#define FXAA_SPAN_MAX " + 8.0.toString() + "\n" +
+                            ShaderModuleLoader.loadSource("/shaders/postprocessing/fxaa.pass.glsl")
+                )
+            ),
+        ).toOpengl()
     }
 }

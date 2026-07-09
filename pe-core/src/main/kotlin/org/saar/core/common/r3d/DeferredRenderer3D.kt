@@ -2,7 +2,6 @@ package org.saar.core.common.r3d
 
 import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.shaders.*
-import org.saar.lwjgl.opengl.shader.GlslVersion
 import org.saar.maths.utils.Matrix4
 import org.saar.rhi.blending.BlendState
 import org.saar.rhi.depthstencil.CompareOp
@@ -12,6 +11,7 @@ import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.GlslVersion
 
 val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
     val rasterizationState = RasterizationState(
@@ -59,12 +59,12 @@ val DeferredRenderer3D = renderer<DeferredRenderContext, Model3D> {
 
         shadersProgram {
             vertex {
-                version = GlslVersion.V400
-                source { "/shaders/r3d/r3d.vertex.glsl" }
+                version { GlslVersion.V400 }
+                glslFile { "/shaders/r3d/r3d.vertex.glsl" }
             }
             fragment {
-                version = GlslVersion.V400
-                source { "/shaders/r3d/r3d.dfragment.glsl" }
+                version { GlslVersion.V400 }
+                glslFile { "/shaders/r3d/r3d.dfragment.glsl" }
             }
         }
     }

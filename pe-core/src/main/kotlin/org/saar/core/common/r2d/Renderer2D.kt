@@ -4,10 +4,8 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.Renderer
 import org.saar.core.renderer.ShadersLink
 import org.saar.core.renderer.init
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 
 object Renderer2D : Renderer<RenderContext, Model2D> {
 
@@ -31,9 +29,15 @@ object Renderer2D : Renderer<RenderContext, Model2D> {
 
         override val fragmentOutputs = arrayOf("f_color")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/r2d/r2d.vertex.glsl")),
-            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/r2d/r2d.fragment.glsl"))
-        )
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/r2d/r2d.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/r2d/r2d.fragment.glsl"))
+            ),
+        ).toOpengl()
     }
 }

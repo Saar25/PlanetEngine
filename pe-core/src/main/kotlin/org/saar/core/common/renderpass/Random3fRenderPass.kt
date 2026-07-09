@@ -5,10 +5,8 @@ import org.saar.core.renderer.RenderContext
 import org.saar.core.renderer.RenderPass
 import org.saar.core.renderer.Renderers
 import org.saar.core.renderer.ShadersLink
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 
 class Random3fRenderPass : RenderPass {
 
@@ -24,9 +22,15 @@ class Random3fRenderPass : RenderPass {
 
     private object Random3fPainterPrototype : ShadersLink {
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, Renderers.quadVertexShaderCode),
-            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/painting/random3f.fragment.glsl")),
-        )
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + Renderers.quadVertexSource)
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/painting/random3f.fragment.glsl"))
+            ),
+        ).toOpengl()
     }
 }

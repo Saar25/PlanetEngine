@@ -22,8 +22,13 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
-import org.saar.lwjgl.opengl.shader.Shader;
-import org.saar.lwjgl.opengl.shader.ShadersProgram;
+import org.saar.rhi.opengl.shader.OpenglShaderProgram;
+import org.saar.rhi.opengl.shader.OpenglShaderProgramKt;
+import org.saar.rhi.shader.ShaderModule;
+import org.saar.rhi.shader.ShaderProgram;
+import org.saar.rhi.shader.ShaderStage;
+import org.saar.rhi.shader.ShaderStageType;
+import java.util.Arrays;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
@@ -64,10 +69,14 @@ public class InstancedModelExample {
         final DrawCall drawCall = new InstancedArraysDrawCall(PrimitiveTopology.TRIANGLE_LIST, 3, 3);
         final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
-        final ShadersProgram shadersProgram = ShadersProgram.create(
-            Shader.createVertex("/vertex.glsl"),
-            Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttributes("in_position", "in_color");
+        final ShaderModule vertexModule = ShaderModule.load("/vertex.glsl");
+        final ShaderModule fragmentModule = ShaderModule.load("/fragment.glsl");
+        final ShaderProgram shaderProgram = new ShaderProgram(Arrays.asList(
+            new ShaderStage(vertexModule, ShaderStageType.VERTEX, "main"),
+            new ShaderStage(fragmentModule, ShaderStageType.FRAGMENT, "main")
+        ));
+        final OpenglShaderProgram shadersProgram = OpenglShaderProgramKt.toOpengl(shaderProgram);
+        OpenglShaderProgramKt.bindAttributes(shadersProgram, "in_position", "in_color");
 
         shadersProgram.bind();
 

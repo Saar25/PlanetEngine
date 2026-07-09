@@ -10,10 +10,6 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UINode
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.*
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.rhi.blending.BlendState
@@ -21,8 +17,10 @@ import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.opengl.blending.toOpengl
 import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.opengl.shader.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.*
 
 object UIBlockRenderer : Renderer<RenderContext, UINode> {
 
@@ -123,9 +121,15 @@ object UIBlockRenderer : Renderer<RenderContext, UINode> {
 
         override val fragmentOutputs = arrayOf("fragColor")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.vertex.glsl")),
-            Shader.createFragment(GlslVersion.V400, ShaderCode.loadSource("/shaders/gui/render/gui.fragment.glsl"))
-        )
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/render/gui.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/render/gui.fragment.glsl"))
+            ),
+        ).toOpengl()
     }
 }

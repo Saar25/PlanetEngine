@@ -6,10 +6,6 @@ import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.deferred.DeferredRenderContext
 import org.saar.core.renderer.init
 import org.saar.core.renderer.uniforms.UniformProperty
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
 import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
@@ -21,8 +17,10 @@ import org.saar.rhi.depthstencil.DepthStencilState
 import org.saar.rhi.opengl.blending.toOpengl
 import org.saar.rhi.opengl.depthstencil.toOpengl
 import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.opengl.shader.toOpengl
 import org.saar.rhi.rasterization.CullMode
 import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.*
 
 object ParticlesDeferredRenderer : Renderer<DeferredRenderContext, ParticlesModel> {
 
@@ -101,12 +99,17 @@ object ParticlesDeferredRenderer : Renderer<DeferredRenderContext, ParticlesMode
 
         override val vertexAttributes = arrayOf("in_position", "in_age")
 
-        override val shadersProgram: ShadersProgram = ShadersProgram.create(
-            Shader.createVertex(GlslVersion.V400, ShaderCode.loadSource("/shaders/particles/particles.vertex.glsl")),
-            Shader.createFragment(
-                GlslVersion.V400,
-                ShaderCode.loadSource("/shaders/particles/particles.dfragment.glsl")
-            )
-        )
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/particles/particles.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT, module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + "\n" +
+                            ShaderModuleLoader.loadSource("/shaders/particles/particles.dfragment.glsl")
+                )
+            ),
+        ).toOpengl()
     }
 }

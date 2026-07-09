@@ -1,8 +1,9 @@
 package org.saar.core.shaders
 
 import org.saar.core.renderer.ShadersLink
-import org.saar.lwjgl.opengl.shader.ShadersProgram
 import org.saar.lwjgl.opengl.shader.uniforms.UniformContainer
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.ShaderProgram
 
 class ShadersLinkBuilder {
 
@@ -12,10 +13,10 @@ class ShadersLinkBuilder {
 
     var uniforms = mutableListOf<UniformContainer>()
 
-    lateinit var shadersProgram: ShadersProgram
+    lateinit var shadersProgram: ShaderProgram
 
     fun build(): ShadersLink = object : ShadersLink {
-        override val shadersProgram = this@ShadersLinkBuilder.shadersProgram
+        override val shadersProgram = this@ShadersLinkBuilder.shadersProgram.toOpengl()
 
         override val vertexAttributes = this@ShadersLinkBuilder.vertexAttributes
 

@@ -24,7 +24,6 @@ import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
-import org.saar.rhi.opengl.shader.GlslVersion
 import org.saar.rhi.opengl.shader.toOpengl
 import org.saar.rhi.shader.*
 import java.awt.Toolkit
