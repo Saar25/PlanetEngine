@@ -7,7 +7,7 @@ object ShaderModuleLoader {
 
     fun loadSource(file: String): String {
         val code = loadTextFile(file)
-        return preProcessCode(code)
+        return preProcessCode(code, true, emptyList())
     }
 
     private fun loadTextFile(fileName: String): String {
@@ -17,10 +17,10 @@ object ShaderModuleLoader {
         return resource.use { Scanner(resource, "UTF-8").useDelimiter("\\A").next() }
     }
 
-    private fun loadSource(file: String, required: Boolean, vararg included: String?): String {
+    private fun loadSource(file: String, required: Boolean, included: List<String>): String {
         try {
             val code: String = loadTextFile(file)
-            return preProcessCode(code, *included)
+            return preProcessCode(code, false, included)
         } catch (e: Exception) {
             if (required) {
                 throw ShaderLoaderException("Shader not found, path: $file", e)
@@ -30,36 +30,40 @@ object ShaderModuleLoader {
         }
     }
 
-    private fun preProcessCode(code: String, vararg included: String?): String {
-        val codeBuilder = java.lang.StringBuilder()
-        val toAppend = java.lang.StringBuilder()
+    private fun preProcessCode(code: String, root: Boolean, included: List<String>): String {
+        val versionBuilder = StringBuilder()
+        val headers = StringBuilder()
+        val lines = StringBuilder()
+        val sources = StringBuilder()
 
-        for (line in code.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-            if (line.startsWith("#include ")) {
-                val include: String = findMacroStringValue(line)
-                checkCircularDependency(include, *included)
+        for (line in code.split('\n').filter { it.isNotBlank() }) {
+            val trimmed = line.trimStart()
+            if (trimmed.startsWith("#version")) {
+                if (root) {
+                    versionBuilder.clear().append(trimmed).append('\n')
+                }
+            } else if (line.startsWith("#include")) {
+                val include = findIncluded(line)
+                checkCircularDependency(include, included)
 
-                val newIncluded = arrayOfNulls<String>(included.size + 1)
-                newIncluded[included.size] = include
-
-                codeBuilder.append(loadSource("$include.struct.glsl", false, *newIncluded)).append('\n')
-                codeBuilder.append(loadSource("$include.header.glsl", false, *newIncluded)).append('\n')
-                toAppend.append(loadSource("$include.source.glsl", true, *newIncluded)).append('\n')
+                val newIncluded = included + include
+                headers.append(loadSource("$include.header.glsl", false, newIncluded)).append('\n')
+                sources.append(loadSource("$include.source.glsl", true, newIncluded)).append('\n')
             } else {
-                codeBuilder.append(line).append('\n')
+                lines.append(line).append('\n')
             }
         }
 
-        return codeBuilder.append(toAppend).append('\n').toString()
+        return versionBuilder.append(headers).append(lines).append(sources).toString()
     }
 
-    private fun findMacroStringValue(line: String): String {
+    private fun findIncluded(line: String): String {
         val beginIndex = line.indexOf('"') + 1
         val endIndex = line.lastIndexOf('"')
         return line.substring(beginIndex, endIndex)
     }
 
-    private fun checkCircularDependency(file: String, vararg files: String?) {
+    private fun checkCircularDependency(file: String, files: List<String>) {
         if (files.contains(file)) {
             throw ShaderLoaderException(
                 "Circular dependency: ${files.joinToString(" -> ")} -> $file"
