@@ -9,8 +9,8 @@ import org.lwjgl.glfw.GLFWKeyCallbackI
 import org.lwjgl.glfw.GLFWVulkan
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
-import org.lwjgl.util.shaderc.*
 import org.lwjgl.vulkan.*
+import org.saar.lwjgl.shaderc.*
 import org.saar.rhi.blending.BlendAttachmentState
 import org.saar.rhi.blending.BlendState
 import org.saar.rhi.depthstencil.CompareOp
@@ -38,7 +38,6 @@ import org.saar.rhi.vulkan.multisample.toVulkan
 import org.saar.rhi.vulkan.rasterization.toVulkan
 import org.saar.rhi.vulkan.result.translateVulkanResult
 import org.saar.rhi.vulkan.shader.toVulkan
-import org.saar.rhi.vulkan.shader.vkValue
 import org.saar.rhi.vulkan.viewport.toVulkan
 import java.io.*
 import java.nio.ByteBuffer
@@ -541,7 +540,7 @@ object VulkanExample {
     }
 
     private fun loadShader(classPath: String, type: ShaderStageType): ShaderStage {
-        val shaderCode = glslToSpirv(classPath, type.vkValue)
+        val shaderCode = glslToSpirv(classPath, type)
         val module = ShaderModule(shaderCode)
 
         return ShaderStage(module, type, "main")
@@ -1128,76 +1127,41 @@ object VulkanExample {
     }
 }
 
-/**
- * Utility functions for Vulkan.
- *
- * @author Kai Burjack
- */
 const val VK_FLAGS_NONE: Int = 0
 
-private fun vulkanStageToShadercKind(stage: Int): Int {
-    return when (stage) {
-        VK10.VK_SHADER_STAGE_VERTEX_BIT -> Shaderc.shaderc_vertex_shader
-        VK10.VK_SHADER_STAGE_FRAGMENT_BIT -> Shaderc.shaderc_fragment_shader
-        NVRayTracing.VK_SHADER_STAGE_RAYGEN_BIT_NV -> Shaderc.shaderc_raygen_shader
-        NVRayTracing.VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV -> Shaderc.shaderc_closesthit_shader
-        NVRayTracing.VK_SHADER_STAGE_MISS_BIT_NV -> Shaderc.shaderc_miss_shader
-        NVRayTracing.VK_SHADER_STAGE_ANY_HIT_BIT_NV -> Shaderc.shaderc_anyhit_shader
-        NVRayTracing.VK_SHADER_STAGE_INTERSECTION_BIT_NV -> Shaderc.shaderc_intersection_shader
-        VK10.VK_SHADER_STAGE_COMPUTE_BIT -> Shaderc.shaderc_compute_shader
-        else -> throw IllegalArgumentException("Stage: $stage")
-    }
-}
+fun glslToSpirv(classPath: String, vulkanStage: ShaderStageType): ByteBuffer {
+    val src = ioResourceToByteBuffer(classPath, 1024)
 
-fun glslToSpirv(classPath: String, vulkanStage: Int): ByteBuffer {
-    val src: ByteBuffer = ioResourceToByteBuffer(classPath, 1024)
-    val compiler: Long = Shaderc.shaderc_compiler_initialize()
-    val options: Long = Shaderc.shaderc_compile_options_initialize()
+    val resolver = ShadercIncludeResolveCallback { _, requestedSource, _, _, _ ->
+        val src = if (requestedSource.startsWith('.', true)) {
+            val parentDirectory = classPath.substring(0, classPath.lastIndexOf('/'))
+            "$parentDirectory/$requestedSource"
+        } else requestedSource
 
-    val resolver = ShadercIncludeResolveI { user_data: Long,
-                                            requested_source: Long,
-                                            type: Int,
-                                            requesting_source: Long,
-                                            include_depth: Long ->
-        val res = ShadercIncludeResult.calloc()
-        val src = classPath.substring(0, classPath.lastIndexOf('/')) + "/" + MemoryUtil.memUTF8(requested_source)
-        res.content(ioResourceToByteBuffer(src, 1024))
-        res.source_name(MemoryUtil.memUTF8(src))
-        res.address()
+        ShadercIncludeResult.of(
+            sourceName = MemoryUtil.memUTF8(src),
+            content = ioResourceToByteBuffer(src, 1024),
+        )
     }
-    val releaser = ShadercIncludeResultReleaseI { user_data: Long, include_result: Long ->
-        val result = ShadercIncludeResult.create(include_result)
-        MemoryUtil.memFree(result.source_name())
-        result.free()
+
+    return ShadercCompileOptions.create().use { options ->
+        options
+            .setTargetEnv(ShadercTargetEnv.VULKAN, ShadercEnvVersion.VULKAN_1_2)
+            .setTargetSpirv(ShadercSpirvVersion.V1_4)
+            .setOptimizationLevel(ShadercOptimizationLevel.PERFORMANCE)
+            .setIncludeCallbacks(resolver)
+
+        val result = ShadercCompiler.create().use { compiler ->
+            MemoryStack.stackPush().use { stack ->
+                compiler.compileOrThrow(src, vulkanStage, stack.UTF8(classPath), stack.UTF8("main"), options)
+            }
+        }
+
+        result.use {
+            BufferUtils.createByteBuffer(result.length.toInt())
+                .put(result.bytes).flip()
+        }
     }
-    Shaderc.shaderc_compile_options_set_target_env(
-        options,
-        Shaderc.shaderc_target_env_vulkan,
-        Shaderc.shaderc_env_version_vulkan_1_2
-    )
-    Shaderc.shaderc_compile_options_set_target_spirv(options, Shaderc.shaderc_spirv_version_1_4)
-    Shaderc.shaderc_compile_options_set_optimization_level(options, Shaderc.shaderc_optimization_level_performance)
-    Shaderc.shaderc_compile_options_set_include_callbacks(options, resolver, releaser, 0L)
-    val res = MemoryStack.stackPush().use { stack ->
-        Shaderc.shaderc_compile_into_spv(
-            compiler,
-            src,
-            vulkanStageToShadercKind(vulkanStage),
-            stack.UTF8(classPath),
-            stack.UTF8("main"),
-            options
-        ).also { if (it == 0L) throw java.lang.AssertionError("Internal error during compilation!") }
-    }
-    if (Shaderc.shaderc_result_get_compilation_status(res) != Shaderc.shaderc_compilation_status_success) {
-        throw java.lang.AssertionError("Shader compilation failed: " + Shaderc.shaderc_result_get_error_message(res))
-    }
-    val size = Shaderc.shaderc_result_get_length(res).toInt()
-    val resultBytes = BufferUtils.createByteBuffer(size)
-    resultBytes.put(Shaderc.shaderc_result_get_bytes(res))
-    resultBytes.flip()
-    Shaderc.shaderc_result_release(res)
-    Shaderc.shaderc_compiler_release(compiler)
-    return resultBytes
 }
 
 fun allocateLayerBuffer(layers: Array<String>): PointerBuffer {
