@@ -662,7 +662,6 @@ object VulkanExample {
     }
 
     private fun createPipeline(device: VkDevice, renderPass: Long, vi: VkPipelineVertexInputStateCreateInfo): Long {
-        var err: Int
         val inputAssemblyState = InputAssemblyState(
             topology = PrimitiveTopology.TRIANGLE_LIST
         ).toVulkan()
@@ -721,37 +720,43 @@ object VulkanExample {
 
         // Create the pipeline layout that is used to generate the rendering pipelines that
         // are based on this descriptor set layout
-        val pPipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc()
-            .`sType$Default`()
 
-        val pPipelineLayout = MemoryUtil.memAllocLong(1)
-        err = VK10.vkCreatePipelineLayout(device, pPipelineLayoutCreateInfo, null, pPipelineLayout)
-        val layout = pPipelineLayout.get(0)
-        MemoryUtil.memFree(pPipelineLayout)
-        pPipelineLayoutCreateInfo.free()
-        if (err != VK10.VK_SUCCESS) {
-            throw AssertionError("Failed to create pipeline layout: " + translateVulkanResult(err))
+        val layout = MemoryStack.stackPush().use { stack ->
+            val pPipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc(stack)
+                .`sType$Default`()
+            val pPipelineLayout = stack.mallocLong(1)
+            val err = VK10.vkCreatePipelineLayout(device, pPipelineLayoutCreateInfo, null, pPipelineLayout)
+            if (err != VK10.VK_SUCCESS) {
+                val vulkanError = translateVulkanResult(err)
+                throw AssertionError("Failed to create pipeline layout: $vulkanError")
+            }
+            pPipelineLayout.get(0)
         }
 
-        // Assign states
-        val pipelineCreateInfo = VkGraphicsPipelineCreateInfo.calloc(1)
-            .`sType$Default`()
-            .layout(layout) // <- the layout used for this pipeline (NEEDS TO BE SET! even though it is basically empty)
-            .renderPass(renderPass) // <- renderpass this pipeline is attached to
-            .pVertexInputState(vi)
-            .pInputAssemblyState(inputAssemblyState)
-            .pRasterizationState(rasterizationState)
-            .pColorBlendState(colorBlendState)
-            .pMultisampleState(multisampleState)
-            .pViewportState(viewportState)
-            .pDepthStencilState(depthStencilState)
-            .pStages(shaderStages)
-            .pDynamicState(dynamicState)
+        val pipeline = MemoryStack.stackPush().use { stack ->
+            val pipelineCreateInfo = VkGraphicsPipelineCreateInfo.calloc(1, stack)
+                .`sType$Default`()
+                .layout(layout)
+                .renderPass(renderPass)
+                .pVertexInputState(vi)
+                .pInputAssemblyState(inputAssemblyState)
+                .pRasterizationState(rasterizationState)
+                .pColorBlendState(colorBlendState)
+                .pMultisampleState(multisampleState)
+                .pViewportState(viewportState)
+                .pDepthStencilState(depthStencilState)
+                .pStages(shaderStages)
+                .pDynamicState(dynamicState)
 
-        // Create rendering pipeline
-        val pPipelines = MemoryUtil.memAllocLong(1)
-        err = VK10.vkCreateGraphicsPipelines(device, VK10.VK_NULL_HANDLE, pipelineCreateInfo, null, pPipelines)
-        val pipeline = pPipelines.get(0)
+            val pPipelines = stack.mallocLong(1)
+            val err = VK10.vkCreateGraphicsPipelines(device, VK10.VK_NULL_HANDLE, pipelineCreateInfo, null, pPipelines)
+            if (err != VK10.VK_SUCCESS) {
+                val vulkanError = translateVulkanResult(err)
+                throw AssertionError("Failed to create pipeline: $vulkanError")
+            }
+            pPipelines.get(0)
+        }
+
         shaderStages.free()
         multisampleState.free()
         depthStencilState.free()
@@ -762,9 +767,6 @@ object VulkanExample {
 //        colorWriteMask.free()
         rasterizationState.free()
         inputAssemblyState.free()
-        if (err != VK10.VK_SUCCESS) {
-            throw AssertionError("Failed to create pipeline: " + translateVulkanResult(err))
-        }
         return pipeline
     }
 
