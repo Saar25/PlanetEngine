@@ -5,7 +5,9 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
 import org.saar.lwjgl.opengl.vbo.VboUsage;
@@ -45,6 +47,7 @@ public class Example {
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
+            GlUtils.clear(GlBuffer.COLOR);
 
             GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 

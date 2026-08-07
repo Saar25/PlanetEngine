@@ -3,7 +3,7 @@ package org.saar.rhi.opengl.texture
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL14
 import org.lwjgl.opengl.GL30
-import org.saar.rhi.renderpass.TextureFormat
+import org.saar.rhi.texture.TextureFormat
 
 val TextureFormat.glValue: Int
     get() = when (this) {

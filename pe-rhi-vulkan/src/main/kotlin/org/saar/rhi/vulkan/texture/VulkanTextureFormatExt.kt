@@ -1,7 +1,7 @@
 package org.saar.rhi.vulkan.texture
 
 import org.lwjgl.vulkan.VK10
-import org.saar.rhi.renderpass.TextureFormat
+import org.saar.rhi.texture.TextureFormat
 
 val TextureFormat.vkValue: Int
     get() = when (this) {
