@@ -8,5 +8,5 @@ interface UIMutableParent : UIParentNode {
 
     fun remove(uiNode: UIChildNode)
 
-    operator fun UIChildNode.unaryPlus() = this@UIMutableParent.add(this@unaryPlus)
+    operator fun <T : UIChildNode> T.unaryPlus() = this@unaryPlus.also(::add)
 }

@@ -1,33 +1,29 @@
 package org.saar.lwjgl.opengl.drawcall;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 
 public class ElementsDrawCall implements DrawCall {
 
-    private final RenderMode renderMode;
+    private final PrimitiveTopology topology;
     private final int count;
     private final DataType type;
     private final long indices;
 
-    public ElementsDrawCall(RenderMode renderMode, int count, DataType type, long indices) {
-        this.renderMode = renderMode;
+    public ElementsDrawCall(PrimitiveTopology topology, int count, DataType type, long indices) {
+        this.topology = topology;
         this.count = count;
         this.type = type;
         this.indices = indices;
     }
 
-    public ElementsDrawCall(RenderMode renderMode, int count, DataType type) {
-        this(renderMode, count, type, 0);
+    public ElementsDrawCall(PrimitiveTopology topology, int count, DataType type) {
+        this(topology, count, type, 0);
     }
 
-    public static void drawCall(RenderMode mode, int count, DataType indexType, long indices) {
-        GlRendering.drawElements(mode, count, indexType, indices);
-    }
-
-    public RenderMode getRenderMode() {
-        return this.renderMode;
+    public PrimitiveTopology getTopology() {
+        return this.topology;
     }
 
     public int getCount() {
@@ -44,6 +40,6 @@ public class ElementsDrawCall implements DrawCall {
 
     @Override
     public void doDrawCall() {
-        drawCall(this.renderMode, this.count, this.type, this.indices);
+        GlRendering.drawElements(this.topology, this.count, this.type, this.indices);
     }
 }

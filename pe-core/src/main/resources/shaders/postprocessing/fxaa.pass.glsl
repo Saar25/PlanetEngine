@@ -24,7 +24,7 @@ uniform sampler2D u_texture;
 uniform ivec2     u_resolution;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 // Methods decleration
 void texcoords(vec2 screen_space, vec2 resolution,
@@ -40,7 +40,7 @@ void main(void) {
 
     texcoords(v_position, u_resolution, uv_NW, uv_NE, uv_SW, uv_SE);
 
-    f_colour = fxaa(u_texture, v_position, u_resolution, uv_NW, uv_NE, uv_SW, uv_SE);
+    f_color = fxaa(u_texture, v_position, u_resolution, uv_NW, uv_NE, uv_SW, uv_SE);
 }
 
 // Methods

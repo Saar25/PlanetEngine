@@ -31,7 +31,7 @@ uniform vec3      u_cameraPosition;
 uniform int       u_fogDistance;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 // Methods declaration
 float calcDistance(float depth, int fogDistance);
@@ -47,15 +47,15 @@ float calcDistanceXYZ(vec3 viewPosition);
 void main(void) {
     float depth = texture(u_depth, v_position).r;
 
-    vec4 colour = texture(u_texture, v_position);
+    vec4 color = texture(u_texture, v_position);
 
     float distance = calcDistance(depth, u_fogDistance);
 
     float amount = calcFogAmount(distance, u_fog);
-    vec3 rgbColour = mix(u_fog.colour, colour.rgb, amount);
+    vec3 rgbColor = mix(u_fog.color, color.rgb, amount);
 
     float alpha = calcAlpha(amount, u_fogDistance);
-    f_colour = vec4(rgbColour, alpha * colour.a);
+    f_color = vec4(rgbColor, alpha * color.a);
 }
 
 float calcDistance(float depth, int fogDistance) {
@@ -85,15 +85,11 @@ float calcDistanceDepth(vec3 viewPosition) {
 }
 
 float calcDistanceY(vec3 viewPosition) {
-    vec3 worldSpace = viewSpaceToWorldSpace(viewPosition, u_viewMatrixInv);
-
-    return worldSpace.y;
+    return viewPosition.y + u_cameraPosition.y;
 }
 
 float calcDistanceXZ(vec3 viewPosition) {
-    vec3 worldSpace = viewSpaceToWorldSpace(viewPosition, u_viewMatrixInv);
-
-    return length(worldSpace.xz - u_cameraPosition.xz);
+    return length(viewPosition.xz);
 }
 
 float calcDistanceXYZ(vec3 viewPosition) {

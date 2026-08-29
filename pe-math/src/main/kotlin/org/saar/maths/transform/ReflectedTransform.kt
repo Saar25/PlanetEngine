@@ -1,9 +1,10 @@
 package org.saar.maths.transform
 
 import org.joml.Matrix4fc
+import org.joml.primitives.Planef
 import org.jproperty.binding.ObjectBinding
-import org.saar.maths.objects.Planef
 import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Matrix4.ofTransformation
 import org.saar.maths.utils.Vector3
 
 class ReflectedTransform(private val transform: ReadonlyTransform, private val plane: Planef) : ReadonlyTransform {
@@ -12,19 +13,23 @@ class ReflectedTransform(private val transform: ReadonlyTransform, private val p
         private val position: Position = Position.create()
 
         init {
-            bind(transform.position)
+            this.bind(this@ReflectedTransform.transform.position)
         }
 
         override fun compute(): ReadonlyPosition = this.position.apply {
-            val normal = Vector3.normalize(plane.a, plane.b, plane.c)
+            val normal = Vector3.normalize(
+                this@ReflectedTransform.plane.a,
+                this@ReflectedTransform.plane.b,
+                this@ReflectedTransform.plane.c
+            )
 
-            val p = transform.position.value
-            val distance = plane.distance(p.x(), p.y(), p.z())
+            val p = this@ReflectedTransform.transform.position.value
+            val distance = this@ReflectedTransform.plane.distance(p.x(), p.y(), p.z())
             val ptc = Vector3.mul(normal, distance * 2)
-            set(p.sub(ptc, ptc))
+            this.set(p.sub(ptc, ptc))
         }
 
-        override fun dispose() = unbind(transform.position)
+        override fun dispose() = this.unbind(this@ReflectedTransform.transform.position)
     }
 
     override val position: ReadonlyPosition get() = this.positionProperty.value
@@ -33,16 +38,20 @@ class ReflectedTransform(private val transform: ReadonlyTransform, private val p
         private val rotation: Rotation = Rotation.create()
 
         init {
-            bind(transform.rotation)
+            this.bind(this@ReflectedTransform.transform.rotation)
         }
 
         override fun compute(): ReadonlyRotation = this.rotation.apply {
-            val normal = Vector3.normalize(plane.a, plane.b, plane.c)
-            val reflect = transform.rotation.direction.reflect(normal).negate()
-            lookAlong(reflect)
+            val normal = Vector3.normalize(
+                this@ReflectedTransform.plane.a,
+                this@ReflectedTransform.plane.b,
+                this@ReflectedTransform.plane.c
+            )
+            val reflect = this@ReflectedTransform.transform.rotation.direction.reflect(normal).negate()
+            this.lookAlong(reflect)
         }
 
-        override fun dispose() = unbind(transform.rotation)
+        override fun dispose() = this.unbind(this@ReflectedTransform.transform.rotation)
     }
     override val rotation: ReadonlyRotation get() = this.rotationProperty.value
 
@@ -52,15 +61,27 @@ class ReflectedTransform(private val transform: ReadonlyTransform, private val p
         private val matrix = Matrix4.create()
 
         init {
-            bind(positionProperty, rotationProperty, scale)
+            this.bind(
+                this@ReflectedTransform.positionProperty,
+                this@ReflectedTransform.rotationProperty,
+                this@ReflectedTransform.scale
+            )
         }
 
-        override fun compute() = Matrix4.ofTransformation(
-            position.value, rotation.value, scale.value, this.matrix)
+        override fun compute() = this.matrix.ofTransformation(
+            this@ReflectedTransform.position.value,
+            this@ReflectedTransform.rotation.value,
+            this@ReflectedTransform.scale.value
+        )
 
-        override fun dispose() = unbind(positionProperty, rotationProperty, scale)
+        override fun dispose() =
+            this.unbind(
+                this@ReflectedTransform.positionProperty,
+                this@ReflectedTransform.rotationProperty,
+                this@ReflectedTransform.scale
+            )
     }
     override val transformationMatrix: Matrix4fc get() = this.transformationMatrixProperty.value
 
-    override fun toString() = "Transform{$position, $rotation, $scale}"
+    override fun toString() = "Transform{${this.position}, ${this.rotation}, ${this.scale}}"
 }

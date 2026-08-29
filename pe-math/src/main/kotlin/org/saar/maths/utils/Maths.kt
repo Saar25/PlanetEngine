@@ -21,7 +21,7 @@ object Maths {
      * @return the y value of the position
      */
     @JvmStatic
-    fun barryCentric(p1: Vector3fc, p2: Vector3fc, p3: Vector3fc, ps: Vector2fc): Float {
+    fun barycentric(p1: Vector3fc, p2: Vector3fc, p3: Vector3fc, ps: Vector2fc): Float {
         val det = (p2.z() - p3.z()) * (p1.x() - p3.x()) + (p3.x() - p2.x()) * (p1.z() - p3.z())
         val l1 = ((p2.z() - p3.z()) * (ps.x() - p3.x()) + (p3.x() - p2.x()) * (ps.y() - p3.z())) / det
         val l2 = ((p3.z() - p1.z()) * (ps.x() - p3.x()) + (p1.x() - p3.x()) * (ps.y() - p3.z())) / det
@@ -125,7 +125,7 @@ object Maths {
      * @return The mixed float
      */
     fun mix(a: Float, b: Float, scalar: Float): Float {
-        return a * scalar + b * (1 - scalar)
+        return a * (1 - scalar) + b * scalar
     }
 
     /**

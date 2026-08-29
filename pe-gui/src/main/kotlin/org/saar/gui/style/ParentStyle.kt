@@ -3,16 +3,16 @@ package org.saar.gui.style
 import org.saar.gui.style.alignment.ReadonlyAlignment
 import org.saar.gui.style.arrangement.ReadonlyArrangement
 import org.saar.gui.style.axisalignment.ReadonlyAxisAlignment
-import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundcolor.ReadonlyBackgroundColor
 import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.ReadonlyBorders
-import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.bordercolor.ReadonlyBorderColor
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
-import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
+import org.saar.gui.style.colormodifier.ReadonlyColorModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.ReadonlyFontFamily
-import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontcolor.ReadonlyFontColor
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.ReadonlyMargin
@@ -41,21 +41,21 @@ interface ParentStyle : Style {
 
     override val fontSize: ReadonlyFontSize
 
-    override val fontColour: ReadonlyFontColour
+    override val fontColor: ReadonlyFontColor
 
     override val font: ReadonlyFontFamily
 
-    override val colourModifier: ReadonlyColourModifier
+    override val colorModifier: ReadonlyColorModifier
 
     override val borders: ReadonlyBorders
 
-    override val borderColour: ReadonlyBorderColour
+    override val borderColor: ReadonlyBorderColor
 
     override val radius: ReadonlyRadius
 
     override val opacity: ReadonlyOpacity
 
-    override val backgroundColour: ReadonlyBackgroundColour
+    override val backgroundColor: ReadonlyBackgroundColor
 
     override val backgroundImage: ReadonlyBackgroundImage
 

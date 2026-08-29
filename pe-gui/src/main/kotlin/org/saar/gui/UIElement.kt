@@ -1,6 +1,15 @@
 package org.saar.gui
 
 import org.saar.gui.style.ElementStyle
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UIElement(block: UIElement.() -> Unit): UIElement {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UIElement().apply(block)
+}
 
 open class UIElement : UIChildNode, UIMutableParent {
 

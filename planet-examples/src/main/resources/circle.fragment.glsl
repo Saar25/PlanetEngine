@@ -10,7 +10,7 @@ uniform int       u_time;
 uniform int       u_radius;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 float atan2(in float y, in float x) {
     return abs(x) > abs(y) ? PI / 2.0 - atan(x, y) : atan(y, x);
@@ -28,7 +28,7 @@ void main(void) {
     vec2 c_position = dimensions / 2 - gl_FragCoord.xy;
 
     if (dot(c_position, c_position) <= u_radius * u_radius) {
-        f_colour.r = angle / PI / 2 + .5;
+        f_color.r = angle / PI / 2 + .5;
     } else {
         discard;
     }

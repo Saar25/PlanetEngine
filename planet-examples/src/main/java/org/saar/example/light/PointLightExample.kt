@@ -1,6 +1,5 @@
 package org.saar.example.light
 
-import org.joml.SimplexNoise
 import org.joml.Vector2i
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
@@ -9,26 +8,25 @@ import org.saar.core.common.components.*
 import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
-import org.saar.core.common.terrain.colour.NormalColour
-import org.saar.core.common.terrain.colour.NormalColourGenerator
+import org.saar.core.common.renderpass.FxaaPostProcessor
+import org.saar.core.common.renderpass.LightRenderPass
+import org.saar.core.common.renderpass.SkyboxPostProcessor
+import org.saar.core.common.terrain.color.NormalColor
+import org.saar.core.common.terrain.color.NormalColorGenerator
 import org.saar.core.common.terrain.components.TerrainGravityComponent
 import org.saar.core.common.terrain.height.NoiseHeightGenerator
 import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
 import org.saar.core.common.terrain.lowpoly.LowPolyWorld
 import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
 import org.saar.core.light.Attenuation
+import org.saar.core.light.DirectionalLight
 import org.saar.core.light.PointLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
-import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
+import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
-import org.saar.core.renderer.deferred.passes.LightRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.p2d.asRenderNode2D
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.assureSize
@@ -38,18 +36,20 @@ import org.saar.example.ExamplesUtils
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
-import org.saar.maths.noise.LayeredNoise2f
-import org.saar.maths.noise.MultipliedNoise2f
-import org.saar.maths.noise.SpreadNoise2f
+import org.saar.maths.noise.Noise2f
+import org.saar.maths.noise.layered
+import org.saar.maths.noise.multiplied
+import org.saar.maths.noise.spread
 import org.saar.maths.utils.Vector2
 import org.saar.maths.utils.Vector3
 
@@ -60,7 +60,7 @@ fun Number.format(digits: Int) = "%.${digits}f".format(this)
 
 fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
-    ClearColour.set(.0f, .7f, .8f)
+    ClearColor.set(.0f, .7f, .8f)
 
     val projection: Projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
 
@@ -76,13 +76,15 @@ fun main() {
     }
 
     val heightGenerator = NoiseHeightGenerator(
-        MultipliedNoise2f(200, SpreadNoise2f(50, LayeredNoise2f(SimplexNoise::noise, 5)))
+        Noise2f.simplex.layered(5).spread(50f).multiplied(200f)
     )
     val terrainFactory = LowPolyTerrainFactory(
         DiamondMeshGenerator(64), heightGenerator,
-        NormalColourGenerator(Vector3.upward(),
-            NormalColour(0.5f, Vector3.of(.41f, .41f, .41f)),
-            NormalColour(1.0f, Vector3.of(.07f, .52f, .06f))),
+        NormalColorGenerator(
+            Vector3.upward(),
+            NormalColor(0.5f, Vector3.of(.41f, .41f, .41f)),
+            NormalColor(1.0f, Vector3.of(.07f, .52f, .06f))
+        ),
         Vector2.of(256f, 256f)
     )
     val world = LowPolyWorld(terrainFactory)
@@ -98,7 +100,7 @@ fun main() {
         )
         PointLight(lightComponents).apply {
             attenuation = Attenuation.DISTANCE_32
-            Vector3.randomize(colour)
+            Vector3.randomize(color)
             update()
         }
     }
@@ -115,7 +117,7 @@ fun main() {
 
     val uiTextGroup = UIElement().apply {
         style.fontSize.set(32)
-        style.fontColour.set(Colours.WHITE)
+        style.fontColor.set(Colors.WHITE)
         style.width.value = percent(100f)
         style.height.value = percent(100f)
         style.alignment.value = AlignmentValues.horizontal
@@ -132,31 +134,32 @@ fun main() {
 
     uiDisplay.add(uiTextGroup)
 
-    val screenPrototype1 = DeferredScreenPrototype()
-    val screen1 = screenPrototype1.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val depthTexture = MutableTexture2D.create()
 
-    val screenPrototype2 = DeferredScreenPrototype()
-    val screen2 = screenPrototype2.toScreen(Fbo.create(WIDTH, HEIGHT))
+    val screenPrototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen1 = screenPrototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
-    val pipeline = RenderPipeline(
-        // TODO: fix cube map
-        /*SkyboxPostProcessor(cubeMap)
-            .asRenderNode(object : PostProcessingBuffers {
-                override val albedo = Texture2D.NULL
-            })
-            .onto(screen1),*/
-        DeferredRenderNodeGroup(world, cube)
-            .asDeferredRenderNode()
-            .onto(screen1),
-        LightRenderPass(pointLights = lights)
-            .asRenderNode(screenPrototype1.buffers)
-            .onto(screen2),
-        FxaaPostProcessor()
-            .asRenderNode(screenPrototype2.buffers)
-            .onto(MainScreen),
-        uiDisplay
-            .asRenderNode2D()
-            .onto(MainScreen)
+    val screenPrototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen2 = screenPrototype2.toScreen(Fbo.create(), WIDTH, HEIGHT)
+
+    val renderGraph = RenderGraph(
+        DeferredNodeRenderPass(camera, world, cube).onto(screen1),
+        LightRenderPass(
+            albedoBuffer = screenPrototype1.albedoTexture,
+            normalSpecularBuffer = screenPrototype1.normalSpecularTexture,
+            depthBuffer = depthTexture,
+            camera = camera,
+            pointLights = lights,
+            directionalLights = arrayOf(
+                DirectionalLight().also {
+                    it.color.set(Vector3.of(.2f))
+                    it.direction.set(Vector3.DOWN)
+                }
+            )
+        ).onto(screen2),
+        SkyboxPostProcessor(cubeMap, camera).onto(screen2),
+        uiDisplay.onto(screen2),
+        FxaaPostProcessor(screenPrototype2.albedoTexture).onto(MainScreen)
     )
 
     val fps = Fps()
@@ -166,12 +169,12 @@ fun main() {
         uiDisplay.update()
         lights.forEach { it.update() }
 
-        screen1.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen1.assureSize(MainScreen.width, MainScreen.height)
-        screen2.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screen2.assureSize(MainScreen.width, MainScreen.height)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        pipeline.render(RenderContext(camera))
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()
@@ -184,7 +187,7 @@ fun main() {
     camera.delete()
     screen1.delete()
     screen2.delete()
-    pipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -200,7 +203,9 @@ private fun createCubeMap() = CubeMapTextureBuilder()
 private fun buildCubeModel(): Model3D {
     val cubeInstance = R3D.instance()
     cubeInstance.transform.scale.set(10f, 10f, 10f)
-    val cubeMesh = R3D.mesh(arrayOf(cubeInstance),
-        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices)
+    val cubeMesh = R3D.mesh(
+        arrayOf(cubeInstance),
+        ExamplesUtils.cubeVertices, ExamplesUtils.cubeIndices
+    )
     return Model3D(cubeMesh)
 }

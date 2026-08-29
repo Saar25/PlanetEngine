@@ -1,43 +1,34 @@
 package org.saar.example
 
 import org.lwjgl.glfw.GLFW
-import org.saar.core.postprocessing.PostProcessingBuffers
-import org.saar.core.postprocessing.PostProcessor
-import org.saar.core.postprocessing.processors.Swizzle
-import org.saar.core.postprocessing.processors.SwizzlePostProcessor
+import org.saar.core.common.renderpass.Swizzle
+import org.saar.core.common.renderpass.SwizzlePostProcessor
+import org.saar.core.mesh.common.QuadMesh
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.p2d.RenderingBuffers2D
-import org.saar.core.renderer.renderpass.RenderPassPrototype
-import org.saar.core.renderer.renderpass.RenderPassPrototypeWrapper
-import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.core.renderer.RenderPass
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenPrototype
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.resizeToMainScreen
+import org.saar.core.util.Time
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
-import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.InternalFormat
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy
 import org.saar.lwjgl.opengl.fbo.attachment.buffer.TextureAttachmentBuffer
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
 import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
 import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.ReadOnlyTexture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
-import java.awt.Dimension
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.shader.*
 import java.awt.Toolkit
 import kotlin.math.max
 import kotlin.properties.Delegates
-
-private operator fun Dimension.component1() = this.width
-private operator fun Dimension.component2() = this.height
 
 private val WIDTH = Toolkit.getDefaultToolkit().screenSize.width
 private val HEIGHT = Toolkit.getDefaultToolkit().screenSize.height
@@ -53,16 +44,15 @@ fun main() {
         .hint(WindowHints.focused())
         .build()
 
-    BlendTest.enable()
-    ClearColour.set(0f, 0f, 0f, 0f)
+//    BlendTest.enable()
+//    BlendState(attachment = BlendAttachmentState(blendEnable = true)).toOpengl().set()
+    ClearColor.set(0f, 0f, 0f, 0f)
 
-    val fbo = Fbo.create(WIDTH, HEIGHT)
     val screenPrototype = MyScreenPrototype()
-    val allocation = SimpleAllocationStrategy
-    val screen = screenPrototype.toScreen(fbo, allocation)
+    val screen = screenPrototype.toScreen(Fbo.create(), WIDTH, HEIGHT)
 
-    val painter = MyPostProcessor()
-    val swizzle = SwizzlePostProcessor(Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)
+    val painter = MyPostProcessor(screenPrototype.albedoTexture)
+    val swizzle = SwizzlePostProcessor(screenPrototype.albedoTexture, Swizzle.R, Swizzle.R, Swizzle.R, Swizzle.R)
 
     val keyboard = window.keyboard
 
@@ -74,11 +64,11 @@ fun main() {
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         screen.setAsDraw()
         screen.resizeToMainScreen()
-        GlUtils.clear(GlBuffer.COLOUR)
+        GlUtils.clear(GlBuffer.COLOR)
 
-        painter.render(RenderContext(null), screenPrototype.buffers)
+        painter.render(RenderContext())
         MainScreen.setAsDraw()
-        swizzle.render(RenderContext(null), screenPrototype.buffers)
+        swizzle.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()
@@ -91,53 +81,68 @@ fun main() {
 }
 
 private class MyScreenPrototype : ScreenPrototype {
-    val image: MutableTexture2D = MutableTexture2D.create()
+    val albedoTexture: MutableTexture2D = MutableTexture2D.create()
 
     override val colorBuffers = listOf(
-        TextureAttachmentBuffer(this.image, InternalFormat.R8)
+        TextureAttachmentBuffer(this.albedoTexture, InternalFormat.R8)
     )
 
     override val readIndex = ColorAttachmentIndex.at(0)
-
-    val buffers = object : RenderingBuffers2D {
-        override val albedo = image
-    }
 }
 
-private class MyPostProcessor : PostProcessor {
+private class MyPostProcessor(private val albedoBuffer: ReadOnlyTexture2D) : RenderPass {
 
-    private val prototype = MyRenderPassPrototype()
-    val wrapper = RenderPassPrototypeWrapper(this.prototype)
-
-    override fun render(context: RenderContext, buffers: PostProcessingBuffers) = this.wrapper.render {
-        this.prototype.colourTextureUniform.value = buffers.albedo
+    private val shadersLink = MyShadersLink
+    private val uniforms = this.shadersLink.uniforms.associateWith {
+        this.shadersLink.shadersProgram.getUniformLocation(it.name)
     }
 
-    override fun delete() = this.wrapper.delete()
-}
-
-private class MyRenderPassPrototype : RenderPassPrototype {
-
-    @UniformProperty
-    val colourTextureUniform = TextureUniformValue("u_colourTexture", 0)
-
-    @UniformProperty
-    val timeUniform = object : IntUniform() {
-        private val start = System.currentTimeMillis()
-        override val value get() = (System.currentTimeMillis() - this.start).toInt()
-
-        override val name = "u_time"
+    override fun render(context: RenderContext) {
+        this.shadersLink.shadersProgram.bind()
+        this.shadersLink.colorTextureUniform.value = this.albedoBuffer
+        this.uniforms.entries.forEach { (uniform, location) -> uniform.load(location) }
+        QuadMesh.draw()
     }
 
-    @UniformProperty
-    val radiusUniform = object : IntUniform() {
-        override val value get() = radius
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-        override val name = "u_radius"
+    private object MyShadersLink {
+
+        val colorTextureUniform = TextureUniformValue("u_colorTexture", 0)
+
+        val timeUniform = object : IntUniform() {
+            private val start = Time()
+
+            override val value get() = this.start.delta().toMillis().toInt()
+
+            override val name = "u_time"
+        }
+
+        val radiusUniform = object : IntUniform() {
+            override val value get() = radius
+
+            override val name = "u_radius"
+        }
+
+        val uniforms = listOf(
+            this.colorTextureUniform,
+            this.timeUniform,
+            this.radiusUniform,
+        )
+
+        val shadersProgram = ShaderProgram(
+            ShaderStage(
+                module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + ShaderModuleLoader.loadSource("/shaders/common/quad/quad.vertex.glsl")
+                ),
+                type = ShaderStageType.VERTEX,
+            ),
+            ShaderStage(
+                module = ShaderModule.fromString(
+                    GlslVersion.V400.toString() + ShaderModuleLoader.loadSource("/circle.fragment.glsl")
+                ),
+                type = ShaderStageType.FRAGMENT,
+            )
+        ).toOpengl()
     }
-
-    override val fragmentShader: Shader = Shader.createFragment(
-        GlslVersion.V400,
-        ShaderCode.loadSource("/circle.fragment.glsl"),
-    )
 }

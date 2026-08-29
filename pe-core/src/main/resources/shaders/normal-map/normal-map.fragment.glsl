@@ -8,10 +8,10 @@ uniform sampler2D u_normalMap;
 uniform mat4 u_normalMatrix;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 void main(void) {
-    f_colour = texture(u_texture, v_uvCoord);
+    f_color = texture(u_texture, v_uvCoord);
 
     vec3 normal = texture(u_normalMap, v_uvCoord).rgb;
     normal = normalize(v_TBN * (normal * 2.0 - 1.0));

@@ -5,6 +5,7 @@ import org.joml.Matrix4fc
 import org.jproperty.ObservableValue
 import org.jproperty.binding.ObjectBinding
 import org.saar.maths.utils.Matrix4
+import org.saar.maths.utils.Matrix4.ofTransformation
 import org.saar.maths.utils.Vector3
 
 class SimpleTransform : Transform {
@@ -19,11 +20,11 @@ class SimpleTransform : Transform {
         }
 
         override fun compute(): Matrix4f {
-            return Matrix4.ofTransformation(
+            return Matrix4.create().ofTransformation(
                 this@SimpleTransform.position.value,
                 this@SimpleTransform.rotation.value,
-                this@SimpleTransform.scale.value,
-                Matrix4.create())
+                this@SimpleTransform.scale.value
+            )
         }
 
         override fun dispose() {
@@ -40,7 +41,8 @@ class SimpleTransform : Transform {
 
     override fun lookAt(position: ReadonlyPosition) {
         val direction = Vector3.sub(
-            position.value, this.position.value)
+            position.value, this.position.value
+        )
         this.rotation.lookAlong(direction)
     }
 

@@ -8,4 +8,4 @@ class ClickEvent(
     val button: MouseButton,
     val isDown: Boolean,
     val modifiers: Modifiers,
-) : Event()
+) : Event

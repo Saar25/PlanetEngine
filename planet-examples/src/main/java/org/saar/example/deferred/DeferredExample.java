@@ -10,17 +10,17 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjNode;
 import org.saar.core.common.obj.ObjNodeBatch;
 import org.saar.core.common.r3d.*;
+import org.saar.core.common.renderpass.LightRenderPassKt;
 import org.saar.core.light.DirectionalLight;
+import org.saar.core.light.PointLight;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
 import org.saar.core.renderer.RenderContext;
-import org.saar.core.renderer.RenderPass;
-import org.saar.core.renderer.RenderPipeline;
+import org.saar.core.renderer.RenderGraph;
+import org.saar.core.renderer.RenderGraphNode;
+import org.saar.core.renderer.deferred.DeferredNodeRenderPassKt;
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup;
-import org.saar.core.renderer.deferred.DeferredRenderNodeKt;
 import org.saar.core.renderer.deferred.DeferredScreenPrototype;
-import org.saar.core.renderer.deferred.passes.LightRenderPass;
-import org.saar.core.renderer.renderpass.RenderPassKt;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.ScreenKt;
@@ -29,9 +29,8 @@ import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.input.mouse.Mouse;
 import org.saar.lwjgl.glfw.window.Window;
-import org.saar.lwjgl.opengl.clear.ClearColour;
+import org.saar.lwjgl.opengl.clear.ClearColor;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.maths.transform.Position;
@@ -48,7 +47,7 @@ public class DeferredExample {
     public static void main(String[] args) {
         final Window window = Window.create("Lwjgl", WIDTH, HEIGHT, true);
 
-        ClearColour.set(.1f, .1f, .1f);
+        ClearColor.set(.1f, .1f, .1f);
 
         final Keyboard keyboard = window.getKeyboard();
         final Mouse mouse = window.getMouse();
@@ -59,20 +58,30 @@ public class DeferredExample {
 
         final DirectionalLight light = new DirectionalLight();
         light.getDirection().set(-50f, -50f, -50f);
-        light.getColour().set(1.0f, 1.0f, 1.0f);
+        light.getColor().set(1.0f, 1.0f, 1.0f);
 
         final DeferredScreenPrototype prototype = new DeferredScreenPrototype();
-        final OffScreen screen = Screens.INSTANCE.toScreen(prototype, Fbo.create(window.getWidth(), window.getHeight()), SimpleAllocationStrategy.INSTANCE);
+        final OffScreen screen = Screens.toScreen(
+            prototype, Fbo.create(), window.getWidth(), window.getHeight());
 
-        final RenderPipeline pipeline = new RenderPipeline(new RenderPass(DeferredRenderNodeKt.asDeferredRenderNode(renderNode), screen), new RenderPass(RenderPassKt.asRenderNode(new LightRenderPass(light), prototype.getBuffers()), MainScreen.INSTANCE));
+        final RenderGraph renderGraph = new RenderGraph(
+            new RenderGraphNode(DeferredNodeRenderPassKt.create(camera, renderNode), screen),
+            new RenderGraphNode(LightRenderPassKt.create(
+                prototype.getAlbedoTexture(),
+                prototype.getNormalSpecularTexture(),
+                prototype.getDepthTexture(),
+                camera,
+                new PointLight[0],
+                new DirectionalLight[]{light}
+            ), MainScreen.INSTANCE));
 
         long current = System.currentTimeMillis();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             camera.update();
 
-            ScreenKt.clear(screen, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
-            pipeline.render(new RenderContext(camera));
+            ScreenKt.clear(screen, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            ScreenKt.clear(MainScreen.INSTANCE, GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            renderGraph.render(new RenderContext());
 
             window.swapBuffers();
             window.pollEvents();
@@ -82,7 +91,7 @@ public class DeferredExample {
 
         camera.delete();
         screen.delete();
-        pipeline.delete();
+        renderGraph.delete();
         window.destroy();
     }
 

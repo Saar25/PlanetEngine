@@ -8,7 +8,7 @@ interface AttachmentBuffer {
 
     fun allocateMultisampled(width: Int, height: Int, samples: Int)
 
-    fun attachToFbo(index: AttachmentIndex)
+    fun attachToFbo(fbo: Int, index: AttachmentIndex)
 
     fun delete()
 

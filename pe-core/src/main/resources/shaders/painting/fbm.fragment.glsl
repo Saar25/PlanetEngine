@@ -4,7 +4,7 @@
 in vec2 v_position;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 #define NUM_OCTAVES 6
 
@@ -51,5 +51,5 @@ void main(void) {
     
     color *= f * f * f + .6 * f * f + .5 * f;
     
-    f_colour = vec4(color, 1);
+    f_color = vec4(color, 1);
 }

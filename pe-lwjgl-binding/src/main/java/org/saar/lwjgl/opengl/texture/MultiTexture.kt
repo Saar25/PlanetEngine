@@ -12,8 +12,6 @@ class MultiTexture(
 
     override fun bind() = bind(0)
 
-    override fun unbind() = forEach { obj, _ -> obj.unbind() }
-
     override fun delete() = forEach { obj, _ -> obj.delete() }
 
     private inline fun forEach(consumer: (ReadOnlyTexture, Int) -> Unit) {

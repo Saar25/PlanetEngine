@@ -80,6 +80,10 @@ public class TextureObject {
         GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, attachment, this.id, level);
     }
 
+    public void attachToFbo(int fbo, int attachment, int level) {
+        GL45.glNamedFramebufferTexture(fbo, attachment, this.id, level);
+    }
+
     public int getWidth(TextureTarget target, int level) {
         bind(target);
         return GL11.glGetTexLevelParameteri(target.get(), level, GL11.GL_TEXTURE_WIDTH);

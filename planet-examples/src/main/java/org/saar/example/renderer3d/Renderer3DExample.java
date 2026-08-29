@@ -10,7 +10,7 @@ import org.saar.core.mesh.Mesh;
 import org.saar.core.mesh.buffer.DataMeshBufferBuilder;
 import org.saar.core.mesh.buffer.IndexMeshBufferBuilder;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.core.util.Fps;
 import org.saar.example.ExamplesUtils;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
@@ -48,11 +48,11 @@ public class Renderer3DExample {
 
         final Fps fps = new Fps();
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
             camera.update();
 
-            renderer.render(new RenderContext(camera), models);
+            renderer.render(new ForwardRenderContext(camera), models);
 
             window.swapBuffers();
             window.pollEvents();
@@ -144,7 +144,7 @@ public class Renderer3DExample {
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
-        final DataMeshBufferBuilder colourBufferBuilder = new DataMeshBufferBuilder(
+        final DataMeshBufferBuilder colorBufferBuilder = new DataMeshBufferBuilder(
                 new FixedBufferBuilder(ExamplesUtils.cubeVertices.length * 3 * 4),
                 VboUsage.STATIC_DRAW);
 
@@ -157,7 +157,7 @@ public class Renderer3DExample {
                 VboUsage.STATIC_DRAW);
 
         final MeshBuilder3D meshBuilder3D = new MeshBuilder3D(ExamplesUtils.cubeIndices.length, instances.length,
-                positionBufferBuilder, normalBufferBuilder, colourBufferBuilder,
+                positionBufferBuilder, normalBufferBuilder, colorBufferBuilder,
                 instanceBufferBuilder, indexBufferBuilder);
 
         for (Vertex3D vertex : ExamplesUtils.cubeVertices) {

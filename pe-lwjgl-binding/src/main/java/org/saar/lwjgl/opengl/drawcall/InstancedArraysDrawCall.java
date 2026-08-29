@@ -1,32 +1,28 @@
 package org.saar.lwjgl.opengl.drawcall;
 
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 
 public class InstancedArraysDrawCall implements DrawCall {
 
-    private final RenderMode renderMode;
+    private final PrimitiveTopology topology;
     private final int first;
     private final int count;
     private int instances;
 
-    public InstancedArraysDrawCall(RenderMode renderMode, int first, int count, int instances) {
-        this.renderMode = renderMode;
+    public InstancedArraysDrawCall(PrimitiveTopology topology, int first, int count, int instances) {
+        this.topology = topology;
         this.first = first;
         this.count = count;
         this.instances = instances;
     }
 
-    public InstancedArraysDrawCall(RenderMode renderMode, int count, int instances) {
-        this(renderMode, 0, count, instances);
+    public InstancedArraysDrawCall(PrimitiveTopology topology, int count, int instances) {
+        this(topology, 0, count, instances);
     }
 
-    public static void drawCall(RenderMode mode, int first, int count, int instances) {
-        GlRendering.drawArraysInstanced(mode, first, count, instances);
-    }
-
-    public RenderMode getRenderMode() {
-        return this.renderMode;
+    public PrimitiveTopology getTopology() {
+        return this.topology;
     }
 
     public int getFirst() {
@@ -47,6 +43,6 @@ public class InstancedArraysDrawCall implements DrawCall {
 
     @Override
     public void doDrawCall() {
-        drawCall(this.renderMode, this.first, this.count, this.instances);
+        GlRendering.drawArraysInstanced(this.topology, this.first, this.count, this.instances);
     }
 }

@@ -5,7 +5,7 @@ vec2(1, 1), vec2(1, 0)
 );
 
 // Uniforms
-uniform vec4  u_bounds;
+uniform ivec4 u_bounds;
 uniform ivec2 u_bitmapDimensions;
 uniform ivec4 u_bitmapBounds;
 uniform ivec2 u_resolution;

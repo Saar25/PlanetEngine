@@ -1,5 +1,7 @@
 package org.saar.example.normalmapping
 
+import org.joml.Anglef.Companion.degrees
+import org.joml.rotationAxis
 import org.jproperty.ChangeEvent
 import org.saar.core.camera.Camera
 import org.saar.core.camera.Projection
@@ -9,6 +11,7 @@ import org.saar.core.camera.projection.SimpleOrthographicProjection
 import org.saar.core.common.components.KeyboardMovementComponent
 import org.saar.core.common.components.KeyboardMovementScrollVelocityComponent
 import org.saar.core.common.components.MouseDragRotationComponent
+import org.saar.core.common.components.SpinningComponent
 import org.saar.core.common.normalmap.NormalMapped
 import org.saar.core.common.normalmap.NormalMappedModel
 import org.saar.core.common.normalmap.NormalMappedNode
@@ -21,19 +24,18 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.NodeBatch3D
 import org.saar.core.common.r3d.R3D
+import org.saar.core.common.renderpass.ContrastPostProcessor
+import org.saar.core.common.renderpass.FxaaPostProcessor
+import org.saar.core.common.renderpass.ShadowsRenderPass
 import org.saar.core.light.DirectionalLight
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.ContrastPostProcessor
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
+import org.saar.core.node.plusAssign
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
-import org.saar.core.renderer.deferred.passes.ShadowsRenderPass
-import org.saar.core.renderer.deferred.passes.asRenderNode
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.renderer.shadow.*
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.ScreenSwap
@@ -48,13 +50,15 @@ import org.saar.gui.component.UISlider
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour.set
+import org.saar.lwjgl.opengl.clear.ClearColor.set
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.texture.ColourTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.ColorTexture.Companion.of
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
 import org.saar.lwjgl.opengl.texture.ReadOnlyTexture
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position.Companion.of
+import org.saar.maths.utils.Quaternion
 import java.util.*
 
 private const val WIDTH = 1200
@@ -80,8 +84,7 @@ fun main() {
     camera.transform.position.set(0f, 0f, 200f)
     camera.transform.lookAt(of(0f, 0f, 0f))
 
-    val normalMappedNodeBatch =
-        buildNormalMappedNodeBatch()
+    val normalMappedNodeBatch = buildNormalMappedNodeBatch()
 
     val objNodeBatch = buildObjNodeBatch()
 
@@ -89,9 +92,9 @@ fun main() {
 
     val light = DirectionalLight()
     light.direction.set(-1f, -1f, -1f)
-    light.colour.set(1f, 1f, 1f)
+    light.color.set(1f, 1f, 1f)
 
-    val shadowsRenderNode: ShadowsRenderNode = ShadowsRenderNodeGroup(
+    val shadowsRenderNode = ShadowsRenderNodeGroup(
         nodeBatch3D, objNodeBatch, nodeBatch3D, normalMappedNodeBatch
     )
     val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
@@ -100,14 +103,15 @@ fun main() {
     val shadowsCamera = ShadowsCamera(shadowProjection, light)
 
     val shadowsPrototype = ShadowsScreenPrototype()
-    val shadowsScreen =
-        shadowsPrototype.toScreen(Fbo.create(ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize))
-
-    val shadowsRenderPipeline = RenderPipeline(
-        shadowsRenderNode.asShadowsRenderNode().onto(shadowsScreen)
+    val shadowsScreen = shadowsPrototype.toScreen(
+        Fbo.create(), ShadowsQuality.LOW.imageSize, ShadowsQuality.LOW.imageSize
     )
 
-    val shadowMap = shadowsPrototype.buffers.depth
+    val shadowsRenderGraph = RenderGraph(
+        shadowsRenderNode.asShadowsRenderPass(camera).onto(shadowsScreen)
+    )
+
+    val shadowMap = shadowsPrototype.depthTexture
 
     val renderNode = DeferredRenderNodeGroup(
         nodeBatch3D, normalMappedNodeBatch, objNodeBatch
@@ -115,38 +119,40 @@ fun main() {
 
     val uiDisplay = buildUIDisplay(window, light)
 
-    val screenPrototype1 = DeferredScreenPrototype()
-    val screenPrototype2 = DeferredScreenPrototype()
+    val depthTexture = MutableTexture2D.create()
+    val screenPrototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screenPrototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
     val screenSwap = ScreenSwap(screenPrototype1, screenPrototype2)
+    screenSwap.assureSize(WIDTH, HEIGHT)
 
-    val renderPassesPipeline = RenderPipeline(
-        renderNode
-            .asDeferredRenderNode()
-            .onto(screenSwap.current),
-        ShadowsRenderPass(shadowsCamera, shadowMap, light)
-            .asRenderNode(screenSwap.prototype.buffers)
-            .onto(screenSwap.swap()),
-        ContrastPostProcessor(1.3f)
-            .asRenderNode(screenSwap.prototype.buffers)
-            .onto(screenSwap.swap()),
-        FxaaPostProcessor()
-            .asRenderNode(screenSwap.prototype.buffers)
-            .onto(MainScreen),
-        uiDisplay
-            .asDeferredRenderNode()
-            .onto(MainScreen)
+    val renderGraph = RenderGraph(
+        renderNode.asDeferredRenderPass(camera).onto(screenSwap.current),
+        ShadowsRenderPass(
+            albedoBuffer = screenSwap.prototype.albedoTexture,
+            normalSpecularBuffer = screenSwap.prototype.normalSpecularTexture,
+            depthBuffer = screenSwap.prototype.depthTexture,
+            shadowsCamera = shadowsCamera,
+            camera = camera,
+            shadowMap,
+            light
+        ).onto(screenSwap.swap()),
+        ContrastPostProcessor(screenSwap.prototype.albedoTexture, 1.3f).onto(screenSwap.swap()),
+        FxaaPostProcessor(screenSwap.prototype.albedoTexture).onto(MainScreen),
+        uiDisplay.onto(MainScreen)
     )
 
     var current = System.currentTimeMillis()
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
         camera.update()
+        objNodeBatch.update()
+        normalMappedNodeBatch.update()
 
-        shadowsScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        shadowsRenderPipeline.render(RenderContext(shadowsCamera))
-        screenSwap.clearAll(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsRenderGraph.render(RenderContext())
+        screenSwap.clearAll(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
         screenSwap.assureSize(MainScreen.width, MainScreen.height)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        renderPassesPipeline.render(RenderContext(camera))
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()
@@ -165,9 +171,9 @@ fun main() {
 
     camera.delete()
     shadowsScreen.delete()
-    shadowsRenderPipeline.delete()
+    shadowsRenderGraph.delete()
     screenSwap.delete()
-    renderPassesPipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -224,18 +230,26 @@ private fun buildNodeBatch3D(): NodeBatch3D {
 }
 
 private fun buildNormalMappedNodeBatch(): NormalMappedNodeBatch {
+    val rotation = Quaternion.create().rotationAxis(.5f.degrees, 0f, 1f, 0f)
+
     val boulderModel = Objects.requireNonNull<NormalMappedModel>(loadBoulder())
     boulderModel.transform.position.set(0f, 20f, 0f)
-    val boulder = NormalMappedNode(boulderModel)
+    val boulder = NormalMappedNode(boulderModel).apply {
+        components += SpinningComponent(rotation)
+    }
 
     val barrelModel = Objects.requireNonNull<NormalMappedModel>(loadBarrel())
     barrelModel.transform.position.set(-20f, 20f, 0f)
-    val barrel = NormalMappedNode(barrelModel)
+    val barrel = NormalMappedNode(barrelModel).apply {
+        components += SpinningComponent(rotation)
+    }
 
     val crateModel = Objects.requireNonNull<NormalMappedModel>(loadCrate())
     crateModel.transform.position.set(+20f, 20f, 0f)
     crateModel.transform.scale.scale(.05f)
-    val crate = NormalMappedNode(crateModel)
+    val crate = NormalMappedNode(crateModel).apply {
+        components += SpinningComponent(rotation)
+    }
 
     return NormalMappedNodeBatch(boulder, barrel, crate)
 }
@@ -249,7 +263,7 @@ private fun buildObjNodeBatch(): ObjNodeBatch {
     val dragon = ObjNode(dragonModel)
 
     val stallModel = Objects.requireNonNull<ObjModel>(loadStall())
-    stallModel.transform.rotation.rotateDegrees(0f, 180f, 0f)
+    stallModel.transform.rotation.rotate(0f.degrees, 180f.degrees, 0f.degrees)
     stallModel.transform.position.set(-50f, 0f, 0f)
     val stall = ObjNode(stallModel)
 

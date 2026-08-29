@@ -2,7 +2,7 @@
 in vec2 v_position;
 in vec4 v_bounds;
 in vec4 v_borders;
-in vec4 v_backgroundColour;
+in vec4 v_backgroundColor;
 
 // Uniforms
 uniform bool u_hasTexture;
@@ -12,11 +12,11 @@ uniform sampler2D u_discardMap;
 uniform ivec2 u_resolution;
 uniform vec4 u_radiuses;
 uniform float u_opacity;
-uniform uint u_borderColour;
-uniform vec4 u_colourModifier;
+uniform uint u_borderColor;
+uniform vec4 u_colorModifier;
 
 // Output
-out vec4 fragColour;
+out vec4 fragColor;
 
 // Global variables
 float g_radius;
@@ -168,16 +168,16 @@ bool isInside(vec4 bounds) {
 }
 
 /**
-* Returns the colour of the fragment
+* Returns the color of the fragment
 *
-* @return the colour of the fragment
+* @return the color of the fragment
 */
-vec4 getColour(void) {
+vec4 getColor(void) {
     if (u_hasTexture) {
-        vec4 colour = texture(u_texture, v_position);
-        return mix(v_backgroundColour, colour, colour.a);
+        vec4 color = texture(u_texture, v_position);
+        return mix(v_backgroundColor, color, color.a);
     }
-    return v_backgroundColour * u_colourModifier;
+    return v_backgroundColor * u_colorModifier;
 }
 
 /**
@@ -193,15 +193,15 @@ float getDiscardMapValue(void) {
 }
 
 /**
-* Returns the border colour of the fragment
+* Returns the border color of the fragment
 *
-* @return the border colour of the fragment
+* @return the border color of the fragment
 */
-vec4 getBorderColour(void) {
-    float r = ((u_borderColour << 0) >> 24);
-    float g = ((u_borderColour << 8) >> 24);
-    float b = ((u_borderColour << 16) >> 24);
-    float a = ((u_borderColour << 24) >> 24);
+vec4 getBorderColor(void) {
+    float r = ((u_borderColor << 0) >> 24);
+    float g = ((u_borderColor << 8) >> 24);
+    float b = ((u_borderColor << 16) >> 24);
+    float a = ((u_borderColor << 24) >> 24);
     return vec4(r, g, b, a) / 255;
 }
 
@@ -218,21 +218,21 @@ void main(void) {
     float discardMapValue = getDiscardMapValue();
 
     if (isInside(v_bounds)){
-        vec4 colour = getColour();
-        vec4 borderColour = getBorderColour();
+        vec4 color = getColor();
+        vec4 borderColor = getBorderColor();
         float blendFactor = g_radiusAlpha * g_radiusAlpha;
 
-        fragColour = mix(borderColour, colour, blendFactor);
+        fragColor = mix(borderColor, color, blendFactor);
     }
     else if (isInside(v_borders)){
-        vec4 borderColour = getBorderColour();
+        vec4 borderColor = getBorderColor();
         float blendFactor = g_radiusAlpha * g_radiusAlpha;
 
-        fragColour = borderColour * vec4(1, 1, 1, blendFactor);
+        fragColor = borderColor * vec4(1, 1, 1, blendFactor);
     }
     else {
         discard;
     }
 
-    fragColour.a *= u_opacity * discardMapValue;
+    fragColor.a *= u_opacity * discardMapValue;
 }

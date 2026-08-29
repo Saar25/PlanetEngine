@@ -1,35 +1,31 @@
 package org.saar.lwjgl.opengl.drawcall;
 
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 
 public class InstancedElementsDrawCall implements DrawCall {
 
-    private final RenderMode renderMode;
+    private final PrimitiveTopology topology;
     private final int count;
     private final DataType type;
     private final long indices;
     private int instances;
 
-    public InstancedElementsDrawCall(RenderMode renderMode, int count, DataType type, long indices, int instances) {
-        this.renderMode = renderMode;
+    public InstancedElementsDrawCall(PrimitiveTopology topology, int count, DataType type, long indices, int instances) {
+        this.topology = topology;
         this.count = count;
         this.type = type;
         this.indices = indices;
         this.instances = instances;
     }
 
-    public InstancedElementsDrawCall(RenderMode renderMode, int count, DataType type, int instances) {
-        this(renderMode, count, type, 0, instances);
+    public InstancedElementsDrawCall(PrimitiveTopology topology, int count, DataType type, int instances) {
+        this(topology, count, type, 0, instances);
     }
 
-    public static void drawCall(RenderMode mode, int count, DataType indexType, long indices, int instances) {
-        GlRendering.drawElementsInstanced(mode, count, indexType, indices, instances);
-    }
-
-    public RenderMode getRenderMode() {
-        return this.renderMode;
+    public PrimitiveTopology getTopology() {
+        return this.topology;
     }
 
     public int getCount() {
@@ -54,6 +50,6 @@ public class InstancedElementsDrawCall implements DrawCall {
 
     @Override
     public void doDrawCall() {
-        drawCall(this.renderMode, this.count, this.type, this.indices, this.instances);
+        GlRendering.drawElementsInstanced(this.topology, this.count, this.type, this.indices, this.instances);
     }
 }
