@@ -168,13 +168,13 @@ public class Chunk implements IChunk, Model {
             final Mesh mesh = this.mesh;
             GlThreadQueue.getInstance().supply(mesh::delete);
         }
-        this.mesh = FutureMesh.unloaded(writeMesh(this.blocks.getOpaque()));
+        this.mesh = FutureMesh.Companion.unloaded(writeMesh(this.blocks.getOpaque()));
 
         if (this.waterMesh != null) {
             final Mesh mesh = this.waterMesh;
             GlThreadQueue.getInstance().supply(mesh::delete);
         }
-        this.waterMesh = FutureMesh.unloaded(writeMesh(this.blocks.getWater()));
+        this.waterMesh = FutureMesh.Companion.unloaded(writeMesh(this.blocks.getWater()));
     }
 
     @NotNull

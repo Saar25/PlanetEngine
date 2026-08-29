@@ -1,10 +1,10 @@
 package org.saar.minecraft
 
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 
 interface MinecraftRendering {
 
-    fun buildRenderPipeline(): RenderPipeline
+    fun buildRenderGraph(): RenderGraph
 
     fun update()
 

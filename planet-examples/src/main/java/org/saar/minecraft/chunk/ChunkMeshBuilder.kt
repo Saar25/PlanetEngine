@@ -7,10 +7,10 @@ import org.saar.core.mesh.UnloadedMesh
 import org.saar.core.mesh.buffer.DataMeshBufferBuilder
 import org.saar.lwjgl.opengl.attribute.Attributes
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.ArraysDrawCall
 import org.saar.lwjgl.opengl.vao.Vao
 import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
 
 
 class ChunkMeshBuilder(
@@ -44,7 +44,7 @@ class ChunkMeshBuilder(
 
     override fun load(): Mesh {
         val vao = loadVao()
-        val drawCall = ArraysDrawCall(RenderMode.TRIANGLES, 0, this.vertices)
+        val drawCall = ArraysDrawCall(PrimitiveTopology.TRIANGLE_LIST, 0, this.vertices)
         return DrawCallMesh(vao, drawCall)
     }
 

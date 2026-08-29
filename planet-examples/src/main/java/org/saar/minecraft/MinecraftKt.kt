@@ -13,11 +13,10 @@ import org.saar.core.common.components.MouseRotationComponent
 import org.saar.core.common.components.VelocityComponent
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
-import org.saar.core.screen.MainScreen
 import org.saar.core.util.Fps
 import org.saar.gui.*
-import org.saar.gui.style.Colour
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Color
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.coordinate.CoordinateValues
 import org.saar.gui.style.length.LengthValues.percent
@@ -25,10 +24,7 @@ import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.gui.style.position.PositionValues
 import org.saar.lwjgl.glfw.input.mouse.MouseCursor
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
-import org.saar.lwjgl.opengl.constants.Face
-import org.saar.lwjgl.opengl.polygonmode.PolygonMode
-import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.texture.parameter.TextureAnisotropicFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
@@ -43,6 +39,9 @@ import org.saar.minecraft.components.*
 import org.saar.minecraft.entity.HitBoxes.player
 import org.saar.minecraft.generator.*
 import org.saar.minecraft.threading.GlThreadQueue
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.rasterization.PolygonMode
+import org.saar.rhi.rasterization.RasterizationState
 import kotlin.concurrent.fixedRateTimer
 
 private const val WIDTH = 1200
@@ -71,7 +70,7 @@ private lateinit var world: World
 
 fun main() {
     window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
-    ClearColour.set(.0f, .5f, .7f)
+    ClearColor.set(.0f, .5f, .7f)
 
     world = buildWorld()
     generateWorld()
@@ -86,8 +85,8 @@ fun main() {
 
     val rendering =
         if (HIGH_QUALITY) MinecraftDeferredRendering(uiDisplay, world, camera, WORLD_RADIUS)
-        else MinecraftForwardRendering(uiDisplay, world, WORLD_RADIUS)
-    val renderPipeline = rendering.buildRenderPipeline()
+        else MinecraftForwardRendering(uiDisplay, world, camera, WORLD_RADIUS)
+    val renderGraph = rendering.buildRenderGraph()
 
     val atlas = createAtlas().also {
         ChunkRenderer.atlas = it
@@ -96,12 +95,10 @@ fun main() {
 
     window.mouse.hide()
 
-    window.keyboard.onKeyPress('R').perform {
-        PolygonMode.set(Face.FRONT_AND_BACK, PolygonModeValue.LINE)
-    }
-    window.keyboard.onKeyRelease('R'.code).perform {
-        PolygonMode.set(Face.FRONT_AND_BACK, PolygonModeValue.FILL)
-    }
+    val lineModeState = RasterizationState(polygonMode = PolygonMode.LINE).toOpengl()
+    val fillModeState = RasterizationState(polygonMode = PolygonMode.FILL).toOpengl()
+    window.keyboard.onKeyPress('R').perform { lineModeState.set() }
+    window.keyboard.onKeyRelease('R'.code).perform { fillModeState.set() }
     window.keyboard.onKeyPress('E').perform {
         uiMode = !uiMode
         if (uiMode) {
@@ -125,7 +122,7 @@ fun main() {
         uiDisplay.update()
         rendering.update()
 
-        renderPipeline.render(RenderContext(camera))
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()
@@ -135,7 +132,7 @@ fun main() {
 
     atlas.delete()
     world.delete()
-    renderPipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -144,8 +141,8 @@ private fun buildDisplay(): UIDisplay {
         +UIElement().apply {
             style.alignment.value = AlignmentValues.vertical
             style.fontSize.set(24)
-            style.backgroundColour.set(Colour(255, 255, 255, .5f))
-            style.borderColour.set(Colours.BLACK)
+            style.backgroundColor.set(Color(255, 255, 255, .5f))
+            style.borderColor.set(Colors.BLACK)
             style.borders.set(2)
             style.radius.set(5)
             style.margin.set(10)
@@ -174,11 +171,11 @@ private fun buildDisplay(): UIDisplay {
         }
 
         +UIBlock().apply {
-            style.borderColour.set(Colours.DARK_GRAY)
+            style.borderColor.set(Colors.DARK_GRAY)
             style.borders.set(2)
             style.width.set(6)
             style.height.set(6)
-            style.backgroundColour.set(Colour(255, 255, 255, .2f))
+            style.backgroundColor.set(Color(255, 255, 255, .2f))
             style.x.set(CoordinateValues.center)
             style.y.set(CoordinateValues.center)
             style.position.value = PositionValues.absolute
@@ -196,8 +193,8 @@ private fun buildInventory(): UIChildNode {
         style.alignment.value = AlignmentValues.vertical
         style.radius.set(10)
         style.padding.set(10)
-        style.borderColour.set(Colours.TRANSPARENT)
-        style.backgroundColour.set(Colours.GRAY)
+        style.borderColor.set(Colors.TRANSPARENT)
+        style.backgroundColor.set(Colors.GRAY)
 
         +UIElement().apply {
             style.height.set(percent(40f))
@@ -215,7 +212,7 @@ private fun buildInventory(): UIChildNode {
                         +UIBlock().apply {
                             style.width.value = percent(10f)
                             style.height.value = ratio(1f)
-                            style.borderColour.set(Colours.DARK_GRAY)
+                            style.borderColor.set(Colors.DARK_GRAY)
                             style.borders.set(3)
                         }
                     }
@@ -247,7 +244,7 @@ private fun generateWorld() {
 }
 
 private fun buildCamera(window: Window, world: World): Camera {
-    val projection: Projection = ScreenPerspectiveProjection(MainScreen, 70f, .20f, 500f)
+    val projection: Projection = ScreenPerspectiveProjection(70f, .20f, 500f)
     val cameraComponents = if (FLY_MODE) NodeComponentGroup(
         GenerateAroundComponent(world, WORLD_RADIUS),
         MouseRotationComponent(window.mouse, -MOUSE_SENSITIVITY),
