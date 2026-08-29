@@ -16,10 +16,6 @@ mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.TactonicExam
 mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplicationKt
 ```
 
-## No tests
-
-Zero test directories (`src/test`) in any module.
-
 ## Modules
 
 | Module             | Role                                                                                                                                                                              |
@@ -42,12 +38,13 @@ Zero test directories (`src/test`) in any module.
 - Prefer immutability: Use `val` over `var`, `List` over `MutableList`, and `data class` for data models.
 - Enforce strict null safety: Avoid using the `!!` operator entirely. Use `?.let`, `?:`, or smart casts.
 - Use idiomatic syntax: Leverage scope functions (`apply`, `also`, `run`), destructuring, and expression bodies.
-- Explicit visibility: Define clear access modifiers (`internal`, `private`, `public`).
 
 ## Code Style & Formatting
 
 - Code style: Strictly adhere to standard `ktlint` rules and `.editorconfig`.
-- Imports: Never use wildcard (`*`) imports. Keep imports tightly organized.
-- Naming: Use PascalCase for classes/interfaces, camelCase for functions/variables, and UPPER_CASE for constants.
 - Extension functions: Place extension functions in dedicated files named after the type they extend (e.g.,
   `StringExt.kt`).
+
+## Testing
+
+Full testing conventions live in [docs/TESTING.md](docs/TESTING.md).
