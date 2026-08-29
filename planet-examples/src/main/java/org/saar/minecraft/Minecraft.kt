@@ -116,7 +116,7 @@ fun main() {
     }
 
     while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
-        GlThreadQueue.getInstance().run()
+        GlThreadQueue.run()
 
         camera.update()
         uiDisplay.update()

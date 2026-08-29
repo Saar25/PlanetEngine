@@ -11,19 +11,6 @@ import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.lwjgl.opengl.utils.GlUtils
 import org.saar.minecraft.chunk.ChunkRenderer
 import org.saar.minecraft.chunk.WaterRenderer
-import org.saar.rhi.opengl.rasterization.toOpengl
-import org.saar.rhi.rasterization.PolygonMode
-import org.saar.rhi.rasterization.RasterizationState
-
-object PolygonModeHelper {
-
-    private val line = RasterizationState(polygonMode = PolygonMode.LINE).toOpengl()
-    private val fill = RasterizationState(polygonMode = PolygonMode.FILL).toOpengl()
-
-    fun line() = this.line.set()
-
-    fun fill() = this.fill.set()
-}
 
 class ForwardNodeScreenPass(
     private val screen: Screen,
