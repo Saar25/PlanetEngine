@@ -1,15 +1,15 @@
 package org.saar.gui.style
 
-import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundcolor.ReadonlyBackgroundColor
 import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.ReadonlyBorders
-import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.bordercolor.ReadonlyBorderColor
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
-import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
+import org.saar.gui.style.colormodifier.ReadonlyColorModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.ReadonlyFontFamily
-import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontcolor.ReadonlyFontColor
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
 import org.saar.gui.style.margin.ReadonlyMargin
@@ -38,21 +38,21 @@ interface Style {
 
     val fontSize: ReadonlyFontSize
 
-    val fontColour: ReadonlyFontColour
+    val fontColor: ReadonlyFontColor
 
     val font: ReadonlyFontFamily
 
-    val colourModifier: ReadonlyColourModifier
+    val colorModifier: ReadonlyColorModifier
 
     val borders: ReadonlyBorders
 
-    val borderColour: ReadonlyBorderColour
+    val borderColor: ReadonlyBorderColor
 
     val radius: ReadonlyRadius
 
     val opacity: ReadonlyOpacity
 
-    val backgroundColour: ReadonlyBackgroundColour
+    val backgroundColor: ReadonlyBackgroundColor
 
     val backgroundImage: ReadonlyBackgroundImage
 

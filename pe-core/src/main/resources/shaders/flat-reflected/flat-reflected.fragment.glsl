@@ -12,7 +12,7 @@ flat in vec3 v_normal;
 uniform sampler2D u_reflectionMap;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 // Methods declaration
 vec2 findReflectionUvCoords(void);
@@ -20,8 +20,8 @@ vec2 findReflectionUvCoords(void);
 // Main
 void main(void) {
     vec2 uvCoords = findReflectionUvCoords();
-    vec3 colour = texture(u_reflectionMap, uvCoords).rgb;
-    f_colour = vec4(colour, 1);
+    vec3 color = texture(u_reflectionMap, uvCoords).rgb;
+    f_color = vec4(color, 1);
 }
 
 // Methods

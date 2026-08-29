@@ -44,23 +44,23 @@ float lightFactor(const DirectionalLight light, const vec3 normal, const vec3 re
     }
 }
 
-vec3 lightColour(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection,
+vec3 lightColor(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection,
                  const float power, const float scalar, const float shadow) {
-    return light.colour * lightFactor(light, normal, reflectedViewDirection, power, scalar, shadow);
+    return light.color * lightFactor(light, normal, reflectedViewDirection, power, scalar, shadow);
 }
 
-vec3 lightColour(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection, const float power, const float scalar) {
-    return lightColour(light, normal, reflectedViewDirection, power, scalar, 1);
+vec3 lightColor(const DirectionalLight light, const vec3 normal, const vec3 reflectedViewDirection, const float power, const float scalar) {
+    return lightColor(light, normal, reflectedViewDirection, power, scalar, 1);
 }
 
-vec3 totalLightsColour(const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights, const int count,
+vec3 totalLightsColor(const DirectionalLight[MAX_DIRECTIONAL_LIGHTS] lights, const int count,
                        const vec3 normal, const vec3 viewDirection, const float power, const float scalar) {
     vec3 reflectedViewDirection = reflect(viewDirection, normal);
-    vec3 colour = vec3(0, 0, 0);
+    vec3 color = vec3(0, 0, 0);
     for (int i = 0; i < count; i++) {
-        colour += lightColour(lights[i], normal, reflectedViewDirection, power, scalar);
+        color += lightColor(lights[i], normal, reflectedViewDirection, power, scalar);
     }
-    return colour;
+    return color;
 }
 
 // Point light
@@ -82,17 +82,17 @@ float lightFactor(const PointLight light, const vec3 normal, const vec3 reflecte
     }
 }
 
-vec3 lightColour(const PointLight light, const vec3 normal, const vec3 reflectedViewDirection,
+vec3 lightColor(const PointLight light, const vec3 normal, const vec3 reflectedViewDirection,
                  const vec3 viewPosition, const float power, const float scalar) {
-    return light.colour * lightFactor(light, normal, reflectedViewDirection, viewPosition, power, scalar);
+    return light.color * lightFactor(light, normal, reflectedViewDirection, viewPosition, power, scalar);
 }
 
-vec3 totalLightsColour(const PointLight[MAX_POINT_LIGHTS] lights, const int count, const vec3 normal,
+vec3 totalLightsColor(const PointLight[MAX_POINT_LIGHTS] lights, const int count, const vec3 normal,
                        const vec3 viewDirection, const vec3 viewPosition, const float power, const float scalar) {
     vec3 reflectedViewDirection = reflect(viewDirection, normal);
-    vec3 colour = vec3(0, 0, 0);
+    vec3 color = vec3(0, 0, 0);
     for (int i = 0; i < count; i++) {
-        colour += lightColour(lights[i], normal, viewDirection, viewPosition, power, scalar);
+        color += lightColor(lights[i], normal, viewDirection, viewPosition, power, scalar);
     }
-    return colour;
+    return color;
 }

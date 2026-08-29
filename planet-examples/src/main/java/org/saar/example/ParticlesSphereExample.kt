@@ -9,28 +9,26 @@ import org.saar.core.common.particles.Particles
 import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
 import org.saar.core.common.particles.components.ParticlesModelComponent
+import org.saar.core.common.renderpass.FxaaPostProcessor
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.forward.asForwardRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.window.Window
 import org.saar.lwjgl.glfw.window.WindowHints
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
-import java.lang.Math.random
 import kotlin.math.sqrt
 
 private const val WIDTH = 1200
@@ -45,7 +43,7 @@ fun main() {
         .hint(WindowHints.decorated(false))
         .build()
 
-    ClearColour.set(.2f, .2f, .2f)
+    ClearColor.set(.2f, .2f, .2f)
 
     val cameraComponents = NodeComponentGroup(
         KeyboardMovementComponent(window.keyboard, 10f, 10f, 10f),
@@ -61,19 +59,19 @@ fun main() {
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
 
     val prototype = DeferredScreenPrototype()
-    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(), window.width, window.height)
 
-    val pipeline = RenderPipeline(
-        DeferredGeometryPass(particles).asRenderNode(prototype.buffers).onto(screen),
-        FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
+    val renderGraph = RenderGraph(
+        particles.asForwardRenderPass(camera).onto(screen),
+        FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
 
     val keyboard = window.keyboard
 
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        pipeline.render(RenderContext(camera))
+        screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        renderGraph.render(RenderContext())
 
         particles.update()
         camera.update()
@@ -83,7 +81,7 @@ fun main() {
     }
 
     screen.delete()
-    pipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -91,13 +89,13 @@ private fun buildParticlesModel(): ParticlesModel {
     val now = System.currentTimeMillis().toInt()
     val mesh = Particles.mesh(
         generateSequence {
-        val x = (Math.random() * 2 - 1).toFloat()
-        val y = (Math.random() * 2 - 1).toFloat()
-        val z = (Math.random() * 2 - 1).toFloat()
-        Vector3.of(x, y, z).normalize(RADIUS)
-    }.take(PARTICLES)
-        .mapIndexed { i, it -> Particles.instance(it, now - i * LIFETIME / PARTICLES) }
-        .toList().toTypedArray())
+            val x = (Math.random() * 2 - 1).toFloat()
+            val y = (Math.random() * 2 - 1).toFloat()
+            val z = (Math.random() * 2 - 1).toFloat()
+            Vector3.of(x, y, z).normalize(RADIUS)
+        }.take(PARTICLES)
+            .mapIndexed { i, it -> Particles.instance(it, now - i * LIFETIME / PARTICLES) }
+            .toList().toTypedArray())
 
     val texture = Texture2D.of("/assets/particles.png")
 
@@ -126,8 +124,8 @@ private class IncreaseParticlesCountComponent(
     private fun initializeParticles(from: Int, to: Int) {
         this.modelComponent.model.mesh.buffers.offset(from)
         for (i in from until to) {
-            val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
-                .normalize((RADIUS * sqrt(random())).toFloat())
+            val v = Vector3.randomize().sub(.5f, .5f, .5f)
+                .normalize((RADIUS * sqrt(Math.random())).toFloat())
             this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
         }
     }
@@ -149,8 +147,8 @@ private class MyParticlesSphereComponent : NodeComponent {
             val instance = this.modelComponent.model.mesh.buffers.reader.readInstance()
 
             if (now - instance.birth >= LIFETIME) {
-                val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f)
-                    .normalize((RADIUS * sqrt(random())).toFloat())
+                val v = Vector3.randomize().sub(.5f, .5f, .5f)
+                    .normalize((RADIUS * sqrt(Math.random())).toFloat())
                 this.modelComponent.model.mesh.buffers.offset(i)
                 this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))
             } else {

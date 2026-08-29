@@ -4,6 +4,15 @@ import org.saar.gui.event.asKeyboardEvent
 import org.saar.gui.event.asMouseEvent
 import org.saar.gui.style.WindowStyle
 import org.saar.lwjgl.glfw.window.Window
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UIDisplay(window: Window, block: UIDisplay.() -> Unit): UIDisplay {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UIDisplay(window).apply(block)
+}
 
 class UIDisplay(private val window: Window) : UIMutableParent {
 

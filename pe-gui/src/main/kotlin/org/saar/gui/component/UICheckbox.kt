@@ -14,12 +14,21 @@ import org.saar.lwjgl.opengl.texture.parameter.TextureMagFilterParameter
 import org.saar.lwjgl.opengl.texture.parameter.TextureMinFilterParameter
 import org.saar.lwjgl.opengl.texture.values.MagFilterValue
 import org.saar.lwjgl.opengl.texture.values.MinFilterValue
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 private val discardMap = Texture2D.of("/assets/gui/checkbox.png").apply {
     applyParameters(
         TextureMinFilterParameter(MinFilterValue.LINEAR),
         TextureMagFilterParameter(MagFilterValue.LINEAR),
     )
+}
+
+@OptIn(ExperimentalContracts::class)
+fun UICheckbox(block: UICheckbox.() -> Unit): UICheckbox {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UICheckbox().apply(block)
 }
 
 class UICheckbox : UIComponent() {
@@ -43,13 +52,13 @@ class UICheckbox : UIComponent() {
         style.radius.set(2)
         style.borders.set(2)
         style.height.value = LengthValues.ratio(1f)
-        style.borderColour.set(Defaults.secondColour)
-        style.backgroundColour.set(Defaults.mainColour)
+        style.borderColor.set(Defaults.secondColor)
+        style.backgroundColor.set(Defaults.mainColor)
     }
 
     override fun onMousePress(event: MouseEvent) {
         if (event.button.isPrimary) {
-            this.style.colourModifier.set(1.3f)
+            this.style.colorModifier.set(1.3f)
         }
     }
 
@@ -58,15 +67,15 @@ class UICheckbox : UIComponent() {
             val current = this.checkedProperty.get()
             this.checkedProperty.set(!current)
 
-            this.style.colourModifier.set(1f)
+            this.style.colorModifier.set(1f)
         }
     }
 
     override fun onMouseEnter(event: MouseEvent) {
-        this.style.colourModifier.set(1.2f)
+        this.style.colorModifier.set(1.2f)
     }
 
     override fun onMouseExit(event: MouseEvent) {
-        this.style.colourModifier.set(1f)
+        this.style.colorModifier.set(1f)
     }
 }

@@ -21,7 +21,8 @@ class TextureAttachmentBuffer(
         private val defaultParameters = arrayOf(
             TextureAnisotropicFilterParameter(4f),
             TextureMagFilterParameter(MagFilterValue.LINEAR),
-            TextureMinFilterParameter(MinFilterValue.NEAREST))
+            TextureMinFilterParameter(MinFilterValue.NEAREST)
+        )
     }
 
     private fun configureTexture() {
@@ -29,7 +30,8 @@ class TextureAttachmentBuffer(
         if (this.internalFormat.formatType != FormatType.DEPTH_COMPONENT &&
             this.internalFormat.formatType != FormatType.STENCIL_INDEX &&
             this.internalFormat.formatType != FormatType.DEPTH_STENCIL &&
-            this.texture.width > 0 && this.texture.height > 0) {
+            this.texture.width > 0 && this.texture.height > 0
+        ) {
             this.texture.generateMipmap()
         }
     }
@@ -40,7 +42,7 @@ class TextureAttachmentBuffer(
     override fun allocateMultisampled(width: Int, height: Int, samples: Int) =
         this.texture.allocateMultisample(samples, this.internalFormat, width, height, true).also { configureTexture() }
 
-    override fun attachToFbo(index: AttachmentIndex) = this.texture.attachToFbo(index.value, 0)
+    override fun attachToFbo(fbo: Int, index: AttachmentIndex) = this.texture.attachToFbo(fbo, index.value, 0)
 
     override fun delete() = this.texture.delete()
 }

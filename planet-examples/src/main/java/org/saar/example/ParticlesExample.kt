@@ -14,16 +14,15 @@ import org.saar.core.common.particles.ParticlesModel
 import org.saar.core.common.particles.ParticlesNode
 import org.saar.core.common.particles.components.ParticlesControlComponent
 import org.saar.core.common.particles.components.ParticlesModelComponent
+import org.saar.core.common.renderpass.FxaaPostProcessor
 import org.saar.core.node.ComposableNode
 import org.saar.core.node.NodeComponent
 import org.saar.core.node.NodeComponentGroup
-import org.saar.core.postprocessing.processors.FxaaPostProcessor
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.passes.DeferredGeometryPass
+import org.saar.core.renderer.forward.asForwardRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
@@ -31,10 +30,10 @@ import org.saar.core.util.Fps
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.fbo.Fbo
 import org.saar.lwjgl.opengl.texture.Texture2D
 import org.saar.lwjgl.opengl.utils.GlBuffer
@@ -51,7 +50,7 @@ fun Number.format(digits: Int) = "%.${digits}f".format(this)
 fun main() {
     val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-    ClearColour.set(.2f, .2f, .2f)
+    ClearColor.set(.2f, .2f, .2f)
 
     val cameraComponents = NodeComponentGroup(
         KeyboardMovementComponent(window.keyboard, 10f, 10f, 10f),
@@ -66,20 +65,20 @@ fun main() {
     val timeProperty = SimpleIntegerProperty()
     val fpsProperty = SimpleFloatProperty()
 
-    val uiDisplay = UIDisplay(window).apply {
-        +UIElement().apply {
+    val uiDisplay = UIDisplay(window) {
+        +UIElement {
             style.alignment.value = AlignmentValues.vertical
             style.fontSize.set(30)
-            style.fontColour.set(Colours.WHITE)
+            style.fontColor.set(Colors.WHITE)
 
-            +UIText().apply {
-                style.backgroundColour.set(Colours.BLACK)
+            +UIText {
+                style.backgroundColor.set(Colors.BLACK)
 
                 fpsProperty.addListener(ChangeListener { text = "Fps: ${it.newValue.format(2)}" })
             }
 
-            +UIText().apply {
-                style.backgroundColour.set(Colours.BLACK)
+            +UIText {
+                style.backgroundColor.set(Colors.BLACK)
 
                 timeProperty.addListener(ChangeListener { text = "Time: ${it.newValue}" })
             }
@@ -90,11 +89,12 @@ fun main() {
     val particles = ParticlesNode(buildParticlesModel(), particlesComponents)
 
     val prototype = DeferredScreenPrototype()
-    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(), window.width, window.height)
 
-    val pipeline = RenderPipeline(
-        DeferredGeometryPass(particles, uiDisplay).asRenderNode(prototype.buffers).onto(screen),
-        FxaaPostProcessor().asRenderNode(prototype.buffers).onto(MainScreen),
+    val renderGraph = RenderGraph(
+        particles.asForwardRenderPass(camera).onto(screen),
+        uiDisplay.onto(screen),
+        FxaaPostProcessor(prototype.albedoTexture).onto(MainScreen),
     )
 
     val fps = Fps()
@@ -103,9 +103,9 @@ fun main() {
 
     while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
         val time = measureTimeMillis {
-            screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-            MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-            pipeline.render(RenderContext(camera))
+            screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+            renderGraph.render(RenderContext())
 
             particles.update()
             uiDisplay.update()
@@ -121,7 +121,7 @@ fun main() {
     }
 
     screen.delete()
-    pipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -148,7 +148,7 @@ private class MyParticlesControlComponent : ParticlesControlComponent() {
     }
 
     override fun mapInstance(index: Int, instance: ParticlesInstance): ParticlesInstance {
-        val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
+        val v = Vector3.randomize().sub(.5f, .5f, .5f).mul(2f).mul(10f)
         val passed = Math.random() < .01 && v.lengthSquared() < 100
         return if (passed) Particles.instance(v) else instance
     }
@@ -165,7 +165,7 @@ private class MyParticlesComponent : NodeComponent {
 
     override fun update(node: ComposableNode) {
         for (i in 0 until this.modelComponent.instancesCount) {
-            val v = Vector3.randomize(Vector3.create()).sub(.5f, .5f, .5f).mul(2f).mul(10f)
+            val v = Vector3.randomize().sub(.5f, .5f, .5f).mul(2f).mul(10f)
             if (Math.random() < .01 && v.lengthSquared() < 100) {
                 this.modelComponent.model.mesh.buffers.offset(i)
                 this.modelComponent.model.mesh.buffers.writer.writeInstance(Particles.instance(v))

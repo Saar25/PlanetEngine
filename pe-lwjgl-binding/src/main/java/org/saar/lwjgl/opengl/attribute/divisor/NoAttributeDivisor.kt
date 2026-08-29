@@ -1,6 +1,6 @@
 package org.saar.lwjgl.opengl.attribute.divisor
 
-class NoAttributeDivisor : AttributeDivisor {
+object NoAttributeDivisor : AttributeDivisor {
 
     override fun divide(index: Int) = Unit
 

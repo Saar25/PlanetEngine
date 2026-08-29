@@ -1,0 +1,111 @@
+package org.saar.core.common.particles
+
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
+import org.saar.core.renderer.forward.ForwardRenderContext
+import org.saar.core.renderer.init
+import org.saar.core.renderer.uniforms.UniformProperty
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniform
+import org.saar.lwjgl.opengl.shader.uniforms.IntUniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.Mat4UniformValue
+import org.saar.lwjgl.opengl.shader.uniforms.TextureUniformValue
+import org.saar.maths.utils.Matrix4
+import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.CompareOp
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.opengl.blending.toOpengl
+import org.saar.rhi.opengl.depthstencil.toOpengl
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.*
+
+object ParticlesRenderer : Renderer<ForwardRenderContext, ParticlesModel> {
+
+    private val shadersLink = ParticlesRendererPrototype
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+
+    init {
+        this.shadersLink.init()
+    }
+
+    private val rasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+    ).toOpengl()
+
+    private val depthStencilState = DepthStencilState(
+        depthTestEnable = true,
+        depthWriteEnable = true,
+        depthCompareOp = CompareOp.LESS,
+    ).toOpengl()
+
+    private val blendState = BlendState.ALPHA.toOpengl()
+
+    override fun render(context: ForwardRenderContext, models: Iterable<ParticlesModel>) {
+        this.shadersLink.shadersProgram.bind()
+
+        this.rasterizationState.set()
+        this.depthStencilState.set()
+        this.blendState.set()
+
+        models.forEach { model ->
+            val v = context.camera.viewMatrix
+            val p = context.camera.projection.matrix
+            val m = model.transform.transformationMatrix
+
+            this.shadersLink.mvpMatrixUniform.value = p.mul(v, Matrix4.temp).mul(m)
+            this.shadersLink.viewMatrixTUniform.value = v.transpose(Matrix4.temp).m03(0f).m13(0f).m23(0f)
+
+            this.shadersLink.textureUniform.value = model.texture
+            this.shadersLink.textureAtlasSizeUniform.value = model.textureAtlasSize
+
+            this.shadersLink.maxAgeUniform.value = model.maxAge
+
+            this.uniformsLoader.load()
+
+            model.draw()
+        }
+    }
+
+    override fun delete() = this.shadersLink.shadersProgram.delete()
+
+    private object ParticlesRendererPrototype : ShadersLink {
+
+        @UniformProperty
+        val viewMatrixTUniform = Mat4UniformValue("u_viewMatrixT")
+
+        @UniformProperty
+        val mvpMatrixUniform = Mat4UniformValue("u_mvpMatrix")
+
+        @UniformProperty
+        val textureUniform = TextureUniformValue("u_texture", 0)
+
+        @UniformProperty
+        val textureAtlasSizeUniform = IntUniformValue("u_textureAtlasSize")
+
+        @UniformProperty
+        val maxAgeUniform = IntUniformValue("u_maxAge")
+
+        @UniformProperty
+        val currentTimeUniform = object : IntUniform() {
+            override val name = "u_currentTime"
+
+            override val value: Int get() = System.currentTimeMillis().toInt()
+        }
+
+        override val vertexAttributes = arrayOf("in_position", "in_age")
+
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/particles/particles.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/particles/particles.fragment.glsl"))
+            ),
+        ).toOpengl()
+    }
+}

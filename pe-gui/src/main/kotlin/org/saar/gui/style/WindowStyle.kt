@@ -4,25 +4,25 @@ import org.saar.gui.UIDisplay
 import org.saar.gui.style.alignment.Alignment
 import org.saar.gui.style.arrangement.Arrangement
 import org.saar.gui.style.axisalignment.AxisAlignment
-import org.saar.gui.style.backgroundcolour.NoBackgroundColour
-import org.saar.gui.style.backgroundcolour.ReadonlyBackgroundColour
+import org.saar.gui.style.backgroundcolor.NoBackgroundColor
+import org.saar.gui.style.backgroundcolor.ReadonlyBackgroundColor
 import org.saar.gui.style.backgroundimage.NoBackgroundImage
 import org.saar.gui.style.backgroundimage.ReadonlyBackgroundImage
 import org.saar.gui.style.border.NoBorders
 import org.saar.gui.style.border.ReadonlyBorders
-import org.saar.gui.style.bordercolour.NoBorderColour
-import org.saar.gui.style.bordercolour.ReadonlyBorderColour
+import org.saar.gui.style.bordercolor.NoBorderColor
+import org.saar.gui.style.bordercolor.ReadonlyBorderColor
 import org.saar.gui.style.boxsizing.BoxSizing
 import org.saar.gui.style.boxsizing.ReadonlyBoxSizing
-import org.saar.gui.style.colourmodifier.NoColourModifier
-import org.saar.gui.style.colourmodifier.ReadonlyColourModifier
+import org.saar.gui.style.colormodifier.NoColorModifier
+import org.saar.gui.style.colormodifier.ReadonlyColorModifier
 import org.saar.gui.style.coordinate.ReadonlyCoordinate
 import org.saar.gui.style.discardmap.NoDiscardMap
 import org.saar.gui.style.discardmap.ReadonlyDiscardMap
 import org.saar.gui.style.font.NoFontFamily
 import org.saar.gui.style.font.ReadonlyFontFamily
-import org.saar.gui.style.fontcolour.NoFontColour
-import org.saar.gui.style.fontcolour.ReadonlyFontColour
+import org.saar.gui.style.fontcolor.NoFontColor
+import org.saar.gui.style.fontcolor.ReadonlyFontColor
 import org.saar.gui.style.fontsize.NoFontSize
 import org.saar.gui.style.fontsize.ReadonlyFontSize
 import org.saar.gui.style.length.ReadonlyLength
@@ -75,21 +75,21 @@ class WindowStyle(uiDisplay: UIDisplay) : ParentStyle {
 
     override val fontSize: ReadonlyFontSize = NoFontSize
 
-    override val fontColour: ReadonlyFontColour = NoFontColour
+    override val fontColor: ReadonlyFontColor = NoFontColor
 
     override val font: ReadonlyFontFamily = NoFontFamily
 
-    override val colourModifier: ReadonlyColourModifier = NoColourModifier
+    override val colorModifier: ReadonlyColorModifier = NoColorModifier
 
     override val borders: ReadonlyBorders = NoBorders
 
-    override val borderColour: ReadonlyBorderColour = NoBorderColour
+    override val borderColor: ReadonlyBorderColor = NoBorderColor
 
     override val radius: ReadonlyRadius = NoRadius
 
     override val opacity: ReadonlyOpacity = NoOpacity
 
-    override val backgroundColour: ReadonlyBackgroundColour = NoBackgroundColour
+    override val backgroundColor: ReadonlyBackgroundColor = NoBackgroundColor
 
     override val backgroundImage: ReadonlyBackgroundImage = NoBackgroundImage
 

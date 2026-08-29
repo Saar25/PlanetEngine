@@ -17,36 +17,35 @@ import org.saar.core.common.r3d.Model3D
 import org.saar.core.common.r3d.Node3D
 import org.saar.core.common.r3d.R3D
 import org.saar.core.common.r3d.Vertex3D
+import org.saar.core.common.renderpass.LightRenderPass
 import org.saar.core.light.DirectionalLight
 import org.saar.core.mesh.DrawCallMesh
 import org.saar.core.mesh.lod.LodMesh
 import org.saar.core.node.NodeComponentGroup
 import org.saar.core.renderer.RenderContext
-import org.saar.core.renderer.RenderPipeline
+import org.saar.core.renderer.RenderGraph
 import org.saar.core.renderer.deferred.DeferredRenderNodeGroup
 import org.saar.core.renderer.deferred.DeferredScreenPrototype
-import org.saar.core.renderer.deferred.asDeferredRenderNode
-import org.saar.core.renderer.deferred.passes.LightRenderPass
+import org.saar.core.renderer.deferred.asDeferredRenderPass
 import org.saar.core.renderer.onto
-import org.saar.core.renderer.renderpass.asRenderNode
 import org.saar.core.screen.MainScreen
 import org.saar.core.screen.Screens.toScreen
 import org.saar.core.screen.clear
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard
 import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.window.Window
-import org.saar.lwjgl.opengl.clear.ClearColour
+import org.saar.lwjgl.opengl.clear.ClearColor
 import org.saar.lwjgl.opengl.constants.DataType
-import org.saar.lwjgl.opengl.constants.Face
-import org.saar.lwjgl.opengl.constants.RenderMode
 import org.saar.lwjgl.opengl.drawcall.InstancedElementsDrawCall
 import org.saar.lwjgl.opengl.fbo.Fbo
-import org.saar.lwjgl.opengl.polygonmode.PolygonMode
-import org.saar.lwjgl.opengl.polygonmode.PolygonModeState
-import org.saar.lwjgl.opengl.polygonmode.PolygonModeValue
 import org.saar.lwjgl.opengl.utils.GlBuffer
 import org.saar.maths.transform.Position
 import org.saar.maths.utils.Vector3
+import org.saar.rhi.inputassembly.PrimitiveTopology
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.PolygonMode
+import org.saar.rhi.rasterization.RasterizationState
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -82,7 +81,7 @@ private class ChunkData(
 
 fun main() {
     val window = Window.create("Lwjgl", 1200, 700, true)
-    ClearColour.set(0.53f, 0.81f, 0.92f)
+    ClearColor.set(0.53f, 0.81f, 0.92f)
 
     val camera = buildCamera(window.mouse, window.keyboard)
 
@@ -98,7 +97,7 @@ fun main() {
 
         val lodMeshes = (0..SUBDIVISIONS).map { lod ->
             val drawCall = InstancedElementsDrawCall(
-                RenderMode.TRIANGLES, chunkData.lods.lodCounts[lod],
+                PrimitiveTopology.TRIANGLE_LIST, chunkData.lods.lodCounts[lod],
                 DataType.U_INT, chunkData.lods.lodByteOffsets[lod], 1
             )
             DrawCallMesh(icoVao, drawCall)
@@ -120,48 +119,55 @@ fun main() {
 
     val light = DirectionalLight().also {
         it.direction.set(-1f, -1f, -1f)
-        it.colour.set(1f, 1f, 1f)
+        it.color.set(1f, 1f, 1f)
     }
 
     val prototype = DeferredScreenPrototype()
-    val screen = prototype.toScreen(Fbo.create(window.width, window.height))
+    val screen = prototype.toScreen(Fbo.create(), window.width, window.height)
 
-    val pipeline = RenderPipeline(
-        nodeGroup.asDeferredRenderNode().onto(screen),
-        LightRenderPass(light).asRenderNode(prototype.buffers).onto(MainScreen)
+    val renderGraph = RenderGraph(
+        nodeGroup.asDeferredRenderPass(camera).onto(screen),
+        LightRenderPass(
+            albedoBuffer = prototype.albedoTexture,
+            normalSpecularBuffer = prototype.normalSpecularTexture,
+            depthBuffer = prototype.depthTexture,
+            camera = camera,
+            directionalLights = arrayOf(light)
+        ).onto(MainScreen)
     )
 
     val keyboard = window.keyboard
+
+    val wireframeRasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+        polygonMode = PolygonMode.LINE
+    ).toOpengl()
+    val solidRasterizationState = RasterizationState(
+        cullMode = CullMode.BACK,
+        polygonMode = PolygonMode.FILL
+    ).toOpengl()
+
     keyboard.onKeyPress('J').perform {
-        PolygonMode.set(
-            PolygonModeState(
-                face = Face.FRONT_AND_BACK,
-                mode = PolygonModeValue.LINE,
-            )
-        )
+        wireframeRasterizationState.set()
     }
     keyboard.onKeyPress('K').perform {
-        PolygonMode.set(
-            PolygonModeState(
-                face = Face.FRONT_AND_BACK,
-                mode = PolygonModeValue.FILL,
-            )
-        )
+        solidRasterizationState.set()
     }
+
     while (window.isOpen && !keyboard.allKeysPressed('Q'.code, GLFW.GLFW_KEY_LEFT_ALT)) {
         camera.update()
         nodeGroup.update()
 
-        screen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        MainScreen.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL)
-        pipeline.render(RenderContext(camera))
+        screen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        renderGraph.render(RenderContext())
 
         window.swapBuffers()
         window.pollEvents()
     }
 
     screen.delete()
-    pipeline.delete()
+    renderGraph.delete()
     window.destroy()
 }
 
@@ -318,11 +324,11 @@ private fun buildIcosahedron(): List<ChunkData> {
             levelFaces.indices.map { fi ->
                 async(Dispatchers.Default) {
                     val (i0, i1, i2) = levelFaces[fi]
-                    val c0 = continent[i0];
-                    val c1 = continent[i1];
+                    val c0 = continent[i0]
+                    val c1 = continent[i1]
                     val c2 = continent[i2]
-                    val w0 = isWater[c0];
-                    val w1 = isWater[c1];
+                    val w0 = isWater[c0]
+                    val w1 = isWater[c1]
                     val w2 = isWater[c2]
                     val diff = c0 != c1 || c1 != c2
                     levelLandWaterFace[fi] = diff && (w0 != w1 || w1 != w2)

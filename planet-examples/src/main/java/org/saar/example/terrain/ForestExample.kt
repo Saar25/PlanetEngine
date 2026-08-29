@@ -1,0 +1,266 @@
+package org.saar.example.terrain
+
+import org.joml.Vector2i
+import org.lwjgl.opengl.GL20
+import org.lwjgl.opengl.GL43C
+import org.saar.core.camera.Camera
+import org.saar.core.camera.projection.OrthographicProjection
+import org.saar.core.camera.projection.ScreenPerspectiveProjection
+import org.saar.core.camera.projection.SimpleOrthographicProjection
+import org.saar.core.common.components.*
+import org.saar.core.common.obj.Obj.mesh
+import org.saar.core.common.obj.ObjModel
+import org.saar.core.common.obj.ObjNode
+import org.saar.core.common.obj.ObjNodeBatch
+import org.saar.core.common.r3d.Model3D
+import org.saar.core.common.r3d.Node3D
+import org.saar.core.common.r3d.R3D
+import org.saar.core.common.renderpass.*
+import org.saar.core.common.terrain.color.ColorGenerator
+import org.saar.core.common.terrain.color.NormalColor
+import org.saar.core.common.terrain.color.NormalColorGenerator
+import org.saar.core.common.terrain.components.TerrainGravityComponent
+import org.saar.core.common.terrain.components.TerrainJumpingComponent
+import org.saar.core.common.terrain.components.TerrainWalkingComponent
+import org.saar.core.common.terrain.height.NoiseHeightGenerator
+import org.saar.core.common.terrain.lowpoly.LowPolyTerrainFactory
+import org.saar.core.common.terrain.lowpoly.LowPolyWorld
+import org.saar.core.common.terrain.mesh.DiamondMeshGenerator
+import org.saar.core.fog.Fog
+import org.saar.core.fog.FogDistance
+import org.saar.core.light.DirectionalLight
+import org.saar.core.node.NodeComponentGroup
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.deferred.DeferredNodeRenderPass
+import org.saar.core.renderer.deferred.DeferredScreenPrototype
+import org.saar.core.renderer.onto
+import org.saar.core.renderer.p2d.ScreenPrototype2D
+import org.saar.core.renderer.shadow.*
+import org.saar.core.screen.MainScreen
+import org.saar.core.screen.Screens.toScreen
+import org.saar.core.screen.assureSize
+import org.saar.core.screen.clear
+import org.saar.example.ExamplesUtils
+import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.clear.ClearColor
+import org.saar.lwjgl.opengl.fbo.Fbo
+import org.saar.lwjgl.opengl.texture.CubeMapTexture
+import org.saar.lwjgl.opengl.texture.CubeMapTextureBuilder
+import org.saar.lwjgl.opengl.texture.MutableTexture2D
+import org.saar.lwjgl.opengl.texture.Texture2D
+import org.saar.lwjgl.opengl.utils.GlBuffer
+import org.saar.maths.noise.Noise2f
+import org.saar.maths.noise.layered
+import org.saar.maths.noise.multiplied
+import org.saar.maths.noise.spread
+import org.saar.maths.utils.Vector2
+import org.saar.maths.utils.Vector3
+import java.io.IOException
+
+private const val WIDTH = 1200
+private const val HEIGHT = 700
+
+fun main() {
+    val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
+    GL20.glDisable(GL43C.GL_DEBUG_OUTPUT)
+
+    ClearColor.set(.0f, .7f, .8f)
+
+    val projection = ScreenPerspectiveProjection(70f, 1f, 1000f)
+
+    val world = buildWorld()
+    for (x in -5..5) {
+        for (z in -5..5) {
+            world.createTerrain(Vector2i(x, z))
+        }
+    }
+
+    val playerModel = buildCubeModel()
+    val player = Node3D(playerModel).apply {
+        components.add(VelocityComponent())
+        components.add(AccelerationComponent())
+        components.add(TerrainGravityComponent(world))
+        components.add(TerrainJumpingComponent(world, window.keyboard, 5f))
+        components.add(TerrainWalkingComponent(world, window.keyboard, 5f, 5f))
+    }
+
+    val components = NodeComponentGroup(
+        MouseDragRotationComponent(window.mouse, -.3f),
+        ThirdPersonViewComponent(player.model.transform, 5f)
+    )
+    val camera = Camera(projection, components)
+
+    player.components.add(BackFaceComponent(camera.transform, .1f))
+
+    val mesh = mesh("/assets/tree/tree.model.obj")
+    val texture = Texture2D.of("/assets/tree/tree.diffuse.png")
+    val treesNodeBatch = ObjNodeBatch((1..1000).map {
+        val treeModel = ObjModel(mesh, texture).apply {
+            val x = (Math.random() * 200 - 100).toFloat()
+            val z = (Math.random() * 200 - 100).toFloat()
+            transform.position.set(x, world.getHeight(x, 0f, z) + 2, z)
+        }
+        ObjNode(treeModel)
+    })
+
+    val cubeModel = buildCubeModel()
+    val cube = Node3D(cubeModel)
+
+    val cubeModel2 = buildCubeModel().apply {
+        transform.position.addX(-5f)
+        transform.position.addY(5f)
+    }
+    val cube2 = Node3D(cubeModel2)
+
+    val light = DirectionalLight().apply {
+        direction.set(-1.0, -.6, -1.0)
+        color.set(1f, 1f, 1f)
+    }
+
+    val shadowProjection: OrthographicProjection = SimpleOrthographicProjection(
+        -100f, 100f, -100f, 100f, -100f, 100f
+    )
+    val shadowsPrototype = ShadowsScreenPrototype()
+    val shadowsScreen = shadowsPrototype.toScreen(
+        Fbo.create(), ShadowsQuality.MEDIUM.imageSize, ShadowsQuality.MEDIUM.imageSize,
+    )
+    val shadowsCamera = ShadowsCamera(shadowProjection, light)
+
+    val shadowMap = shadowsPrototype.depthTexture
+
+    val shadowsRenderGraph = RenderGraph(
+        ShadowsRenderNodeGroup(cube, cube2, treesNodeBatch, world, player)
+            .asShadowsRenderPass(shadowsCamera).onto(shadowsScreen)
+    )
+
+
+    val renderNode = DeferredNodeRenderPass(camera, cube, cube2, player, treesNodeBatch, world)
+
+    val cubeMap = createCubeMap()
+    val fog = Fog(Vector3.of(0f), 700f, 1000f)
+
+    val depthTexture = MutableTexture2D.create()
+    val prototype1 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen1 = prototype1.toScreen(Fbo.create(), WIDTH, HEIGHT)
+
+    val prototype2 = DeferredScreenPrototype(depthTexture = depthTexture)
+    val screen2 = prototype2.toScreen(Fbo.create(), WIDTH, HEIGHT)
+
+    val prototype3 = ScreenPrototype2D()
+    val screen3 = prototype3.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
+
+    val prototype4 = ScreenPrototype2D()
+    val screen4 = prototype4.toScreen(Fbo.create(), WIDTH / 4, HEIGHT / 4)
+
+    val prototype5 = ScreenPrototype2D()
+    val screen5 = prototype5.toScreen(Fbo.create(), WIDTH, HEIGHT)
+
+    val gaussianBlur = GaussianBlurRenderPass()
+
+    val renderGraph = RenderGraph(
+        renderNode.onto(screen1),
+        ShadowsRenderPass(
+            albedoBuffer = prototype1.albedoTexture,
+            normalSpecularBuffer = prototype1.normalSpecularTexture,
+            depthBuffer = depthTexture,
+            shadowsCamera = shadowsCamera,
+            camera = camera,
+            shadowMap,
+            light
+        ).onto(screen2),
+        SSAOMapGenerator(
+            prototype1.normalSpecularTexture,
+            depthTexture,
+            camera,
+            radius = 1f,
+            kernelSamplesSize = 128
+        ).onto(screen4),
+        gaussianBlur.Vertical(prototype4.albedoTexture).onto(screen3),
+        gaussianBlur.Horizontal(prototype3.albedoTexture).onto(screen4),
+        MultiplyPostProcessor(prototype4.albedoTexture, prototype2.albedoTexture).onto(screen5),
+        FogRenderPass(
+            prototype5.albedoTexture,
+            depthTexture,
+            camera,
+            fog,
+            FogDistance.XZ
+        ).onto(screen1),
+        SkyboxPostProcessor(cubeMap, camera).onto(screen1),
+        FxaaPostProcessor(prototype1.albedoTexture).onto(MainScreen)
+    )
+
+    var last = System.currentTimeMillis()
+
+    while (window.isOpen && !window.keyboard.isKeyPressed('T'.code)) {
+        val delta = System.currentTimeMillis() - last
+        last = System.currentTimeMillis()
+        print("\r ---> $delta ---> ${screen1.width} ---> ${screen1.height}")
+
+        screen1.assureSize(window.width, window.height)
+        screen2.assureSize(window.width, window.height)
+        screen3.assureSize(window.width / 4, window.height / 4)
+        screen4.assureSize(window.width / 4, window.height / 4)
+        screen5.assureSize(window.width, window.height)
+
+        player.update()
+        camera.update()
+
+        shadowsScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        shadowsRenderGraph.render(RenderContext())
+
+        screen1.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        screen2.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        MainScreen.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL)
+        renderGraph.render(RenderContext())
+
+        window.swapBuffers()
+        window.pollEvents()
+    }
+
+    camera.delete()
+    screen1.delete()
+    screen2.delete()
+    renderGraph.delete()
+    window.destroy()
+}
+
+private fun buildWorld(): LowPolyWorld {
+    val heightGenerator = NoiseHeightGenerator(
+        Noise2f.simplex.layered(5).spread(5f).multiplied(50f)
+    )
+    val colorGenerator: ColorGenerator = NormalColorGenerator(
+        Vector3.upward(),
+        NormalColor(0.2f, Vector3.of(.41f, .41f, .41f)),
+        NormalColor(0.3f, Vector3.of(.07f, .52f, .06f))
+    )
+
+    val terrainFactory = LowPolyTerrainFactory(
+        DiamondMeshGenerator(64), heightGenerator,
+        colorGenerator, Vector2.of(32f, 32f)
+    )
+
+    return LowPolyWorld(terrainFactory)
+}
+
+private fun buildCubeModel(): Model3D {
+    val cubeInstance = R3D.instance()
+    val cubeMesh = R3D.mesh(
+        arrayOf(cubeInstance),
+        ExamplesUtils.cubeVertices,
+        ExamplesUtils.cubeIndices
+    )
+    return Model3D(cubeMesh)
+}
+
+@Throws(IOException::class)
+private fun createCubeMap(): CubeMapTexture {
+    return CubeMapTextureBuilder()
+        .positiveX("/assets/skybox/right.jpg")
+        .negativeX("/assets/skybox/left.jpg")
+        .positiveY("/assets/skybox/top.jpg")
+        .negativeY("/assets/skybox/bottom.jpg")
+        .positiveZ("/assets/skybox/front.jpg")
+        .negativeZ("/assets/skybox/back.jpg")
+        .create()
+}

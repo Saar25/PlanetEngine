@@ -11,6 +11,15 @@ import org.saar.gui.style.coordinate.CoordinateValues.percent
 import org.saar.gui.style.length.LengthValues
 import org.saar.gui.style.position.PositionValues
 import org.saar.maths.utils.Maths
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UISlider(block: UISlider.() -> Unit): UISlider {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UISlider().apply(block)
+}
 
 class UISlider : UIComponent() {
 
@@ -27,7 +36,7 @@ class UISlider : UIComponent() {
     }
 
     private val uiThumb = UIBlock().apply {
-        style.backgroundColour.set(Defaults.mainColour)
+        style.backgroundColor.set(Defaults.mainColor)
         style.position.value = PositionValues.absolute
         style.width.set(10)
     }
@@ -38,8 +47,8 @@ class UISlider : UIComponent() {
 
     init {
         style.axisAlignment.value = AxisAlignmentValues.center
-        style.backgroundColour.set(Defaults.backgroundColour)
-        style.borderColour.set(Defaults.secondColour)
+        style.backgroundColor.set(Defaults.backgroundColor)
+        style.borderColor.set(Defaults.secondColor)
     }
 
     override fun onMousePress(event: MouseEvent) {

@@ -1,0 +1,58 @@
+package org.saar.core.common.flatreflected
+
+import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.MeshBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
+import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
+
+class FlatReflectedMeshBuilder(
+    private val indices: Int,
+    private val positionBufferBuilder: DataMeshBufferBuilder,
+    private val indexBufferBuilder: IndexMeshBufferBuilder,
+) : MeshBuilder {
+
+    val writer = FlatReflectedMeshWriter(
+        this.positionBufferBuilder.writer,
+        this.indexBufferBuilder.writer,
+    )
+
+    private val bufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.indexBufferBuilder,
+    ).distinct()
+
+    init {
+        this.positionBufferBuilder.addAttribute(
+            Attributes.of(0, 3, DataType.FLOAT, false)
+        )
+    }
+
+    override fun delete() = this.bufferBuilders.forEach { it.delete() }
+
+    override fun load(): Mesh {
+        val vao = loadVao()
+        val drawCall = ElementsDrawCall(PrimitiveTopology.TRIANGLE_LIST, this.indices, DataType.U_INT)
+        return DrawCallMesh(vao, drawCall)
+    }
+
+    override fun loadVao(): Vao {
+        return Vao.create().also { vao ->
+            val buffers = listOf(
+                this.positionBufferBuilder.build(VboTarget.ARRAY_BUFFER),
+                this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+            )
+
+            buffers.forEach {
+                it.store(0)
+                it.loadInVao(vao)
+            }
+        }
+    }
+}

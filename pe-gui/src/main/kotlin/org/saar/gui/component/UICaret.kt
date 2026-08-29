@@ -5,7 +5,7 @@ import org.jproperty.property.SimpleIntegerProperty
 import org.saar.gui.UIChildNode
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.coordinate.CoordinateValues
 import org.saar.gui.style.length.LengthValue
 import org.saar.gui.style.length.LengthValues
@@ -61,7 +61,7 @@ class UICaret(private val uiText: UIText) : UIElement() {
     init {
         this.style.width.value = Flickering()
         this.style.height.value = LengthValues.em(1)
-        this.style.backgroundColour.set(Colours.BLACK)
+        this.style.backgroundColor.set(Colors.BLACK)
         this.style.position.value = PositionValues.independent
         this.style.x.value = CoordinateValues.from(this.xProperty)
         this.style.y.value = CoordinateValues.from(this.yProperty)

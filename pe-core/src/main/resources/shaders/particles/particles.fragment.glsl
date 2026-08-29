@@ -1,12 +1,12 @@
 // Vertex outputs
-in vec3 v_uvCoords;
+in vec2 v_uvCoords;
 
 // Uniforms
 uniform sampler2D u_texture;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 void main(void) {
-    f_colour = texture(u_texture, v_uvCoords);
+    f_color = texture(u_texture, v_uvCoords);
 }

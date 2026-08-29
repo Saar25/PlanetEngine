@@ -8,10 +8,11 @@ import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.drawcall.DrawCall;
 import org.saar.lwjgl.opengl.drawcall.InstancedArraysDrawCall;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
+import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.SimpleAllocationStrategy;
@@ -21,11 +22,19 @@ import org.saar.lwjgl.opengl.fbo.attachment.index.AttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.attachment.index.ColorAttachmentIndex;
 import org.saar.lwjgl.opengl.fbo.rendertarget.IndexRenderTarget;
 import org.saar.lwjgl.opengl.fbo.rendertarget.RenderTarget;
-import org.saar.lwjgl.opengl.shader.Shader;
-import org.saar.lwjgl.opengl.shader.ShadersProgram;
+import org.saar.rhi.opengl.shader.OpenglShaderProgram;
+import org.saar.rhi.opengl.shader.OpenglShaderProgramKt;
+import org.saar.rhi.shader.ShaderModule;
+import org.saar.rhi.shader.ShaderProgram;
+import org.saar.rhi.shader.ShaderStage;
+import org.saar.rhi.shader.ShaderStageType;
+import java.util.Arrays;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
 import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
 
 public class InstancedModelExample {
 
@@ -57,17 +66,21 @@ public class InstancedModelExample {
         vao.loadVbo(instanceBuffer, Attributes.ofInstanced(2, 1, DataType.FLOAT, false));
         instanceBuffer.delete();
 
-        final DrawCall drawCall = new InstancedArraysDrawCall(RenderMode.TRIANGLES, 3, 3);
+        final DrawCall drawCall = new InstancedArraysDrawCall(PrimitiveTopology.TRIANGLE_LIST, 3, 3);
         final Mesh mesh = new DrawCallMesh(vao, drawCall);
 
-        final ShadersProgram shadersProgram = ShadersProgram.create(
-            Shader.createVertex("/vertex.glsl"),
-            Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttributes("in_position", "in_colour");
+        final ShaderModule vertexModule = ShaderModule.load("/vertex.glsl");
+        final ShaderModule fragmentModule = ShaderModule.load("/fragment.glsl");
+        final ShaderProgram shaderProgram = new ShaderProgram(Arrays.asList(
+            new ShaderStage(vertexModule, ShaderStageType.VERTEX, "main"),
+            new ShaderStage(fragmentModule, ShaderStageType.FRAGMENT, "main")
+        ));
+        final OpenglShaderProgram shadersProgram = OpenglShaderProgramKt.toOpengl(shaderProgram);
+        OpenglShaderProgramKt.bindAttributes(shadersProgram, "in_position", "in_color");
 
         shadersProgram.bind();
 
-        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
+        final Fbo fbo = Fbo.create();
 
         final AllocationStrategy allocation = SimpleAllocationStrategy.INSTANCE;
         final AttachmentBuffer buffer = new RenderBufferAttachmentBuffer(InternalFormat.RGBA8);
@@ -75,16 +88,22 @@ public class InstancedModelExample {
         final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
 
+        attachment.allocate(WIDTH, HEIGHT);
         fbo.addAttachment(attachmentIndex, attachment);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
 
+        GlUtils.setViewport(0, 0, WIDTH, HEIGHT);
+
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
-
             fbo.bind();
+            GlUtils.clear(GlBuffer.COLOR);
             mesh.draw();
-            fbo.blitToScreen();
+
+            WindowFbo.INSTANCE.bindAsDraw();
+            GlUtils.clear(GlBuffer.COLOR);
+            fbo.blitFramebuffer(WIDTH, HEIGHT, FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

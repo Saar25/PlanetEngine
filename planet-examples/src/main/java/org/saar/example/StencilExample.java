@@ -8,21 +8,29 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
-import org.saar.lwjgl.opengl.constants.Comparator;
 import org.saar.lwjgl.opengl.constants.DataType;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
-import org.saar.lwjgl.opengl.constants.RenderMode;
 import org.saar.lwjgl.opengl.fbo.Fbo;
 import org.saar.lwjgl.opengl.fbo.IFbo;
-import org.saar.lwjgl.opengl.shader.Shader;
-import org.saar.lwjgl.opengl.shader.ShadersProgram;
-import org.saar.lwjgl.opengl.stencil.*;
+import org.saar.rhi.opengl.shader.OpenglShaderProgram;
+import org.saar.rhi.opengl.shader.OpenglShaderProgramKt;
+import org.saar.rhi.shader.ShaderModule;
+import org.saar.rhi.shader.ShaderProgram;
+import org.saar.rhi.shader.ShaderStage;
+import org.saar.rhi.shader.ShaderStageType;
+import java.util.Arrays;
 import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
 import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
 import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.rhi.depthstencil.CompareOp;
+import org.saar.rhi.depthstencil.DepthStencilStateKt;
+import org.saar.rhi.depthstencil.StencilOp;
+import org.saar.rhi.depthstencil.StencilOpState;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
+import org.saar.rhi.opengl.depthstencil.OpenglDepthStencilState;
 
 public class StencilExample {
 
@@ -32,40 +40,75 @@ public class StencilExample {
         final Vao vao1 = buildVao(0);
         final Vao vao2 = buildVao(0.3f);
 
-        final ShadersProgram shadersProgram = ShadersProgram.create(
-            Shader.createVertex("/vertex.glsl"),
-            Shader.createFragment("/fragment.glsl"));
+        final ShaderModule vertexModule = ShaderModule.load("/vertex.glsl");
+        final ShaderModule fragmentModule = ShaderModule.load("/fragment.glsl");
+        final ShaderProgram shaderProgram = new ShaderProgram(Arrays.asList(
+            new ShaderStage(vertexModule, ShaderStageType.VERTEX, "main"),
+            new ShaderStage(fragmentModule, ShaderStageType.FRAGMENT, "main")
+        ));
+        final OpenglShaderProgram shadersProgram = OpenglShaderProgramKt.toOpengl(shaderProgram);
         shadersProgram.bindAttribute(0, "in_position");
 
         shadersProgram.bind();
 
         final Screen screen = buildScreen(window.getWidth(), window.getHeight());
 
-        StencilTest.enable();
-
-        final StencilState writeStencil = new StencilState(
-            new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
-            new StencilFunction(Comparator.ALWAYS, 1, 0xFF), StencilMask.UNCHANGED);
-
-        final StencilState readStencil = new StencilState(
-            new StencilOperation(StencilValue.KEEP, StencilValue.KEEP, StencilValue.REPLACE),
-            new StencilFunction(Comparator.EQUAL, 1, 0xFF), StencilMask.UNCHANGED);
+        final OpenglDepthStencilState writeDepthStencilState = new OpenglDepthStencilState(
+            DepthStencilStateKt.DepthStencilState(
+                null,
+                null,
+                null,
+                null,
+                true,
+                new StencilOpState(
+                    StencilOp.KEEP,
+                    StencilOp.REPLACE,
+                    StencilOp.KEEP,
+                    CompareOp.ALWAYS,
+                    0xFF,
+                    -1,
+                    1
+                ),
+                null,
+                null
+            )
+        );
+        final OpenglDepthStencilState readDepthStencilState = new OpenglDepthStencilState(
+            DepthStencilStateKt.DepthStencilState(
+                null,
+                null,
+                null,
+                null,
+                true,
+                new StencilOpState(
+                    StencilOp.KEEP,
+                    StencilOp.REPLACE,
+                    StencilOp.KEEP,
+                    CompareOp.EQUAL,
+                    0xFF,
+                    -1,
+                    1
+                ),
+                null,
+                null
+            )
+        );
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
             screen.setAsDraw();
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH, GlBuffer.STENCIL);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH, GlBuffer.STENCIL);
 
-            StencilTest.apply(writeStencil);
+            writeDepthStencilState.set();
 
             vao1.bind();
-            GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
+            GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 
-            StencilTest.apply(readStencil);
+            readDepthStencilState.set();
 
             vao2.bind();
-            GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
+            GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 
             ScreenKt.copyTo(screen, MainScreen.INSTANCE);
 
@@ -77,13 +120,13 @@ public class StencilExample {
     }
 
     private static Screen buildScreen(int width, int height) {
-        final IFbo fbo = Fbo.create(width, height);
+        final IFbo fbo = Fbo.create();
 
         return new ScreenBuilder(fbo)
             .addColorRenderBuffer(InternalFormat.RGBA8).setRead()
             .addStencilRenderBuffer(InternalFormat.STENCIL_INDEX8)
             .multisampled(4)
-            .build();
+            .build(width, height);
     }
 
     private static Vao buildVao(float offset) {

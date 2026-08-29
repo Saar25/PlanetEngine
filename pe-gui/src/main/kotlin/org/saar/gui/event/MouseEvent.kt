@@ -16,8 +16,8 @@ class MouseEvent(
 ) {
     val deltaX: Int get() = this.x - this.xBefore
     val deltaY: Int get() = this.y - this.yBefore
-    val xOnScreen: Int get() = Window.current().x + this.x
-    val yOnScreen: Int get() = Window.current().y + this.y
+    val xOnScreen: Int get() = Window.current()!!.x + this.x
+    val yOnScreen: Int get() = Window.current()!!.y + this.y
 }
 
 fun ClickEvent.asMouseEvent() = MouseEvent(

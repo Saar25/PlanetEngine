@@ -6,9 +6,9 @@ uniform sampler2D u_texture;
 uniform float u_contrast;
 
 // Fragment outputs
-layout (location = 0) out vec4 f_colour;
+layout (location = 0) out vec4 f_color;
 
 void main(void) {
-    vec4 colour = texture(u_texture, v_position);
-    f_colour = (colour - .5) * u_contrast + .5;
+    vec4 color = texture(u_texture, v_position);
+    f_color = (color - .5) * u_contrast + .5;
 }

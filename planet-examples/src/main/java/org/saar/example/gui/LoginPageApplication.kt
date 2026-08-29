@@ -1,24 +1,26 @@
 package org.saar.example.gui
 
 import org.jproperty.InvalidationListener
+import org.saar.core.common.renderpass.FBMRenderPass
 import org.saar.core.engine.Application
 import org.saar.core.engine.PlanetEngine
-import org.saar.core.painting.Painter
-import org.saar.core.painting.painters.FBMPainter
 import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.RenderGraph
+import org.saar.core.renderer.renderGraph
 import org.saar.gui.UIDisplay
 import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.component.UITextField
 import org.saar.gui.event.EventListener
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.alignment.AlignmentValues
 import org.saar.gui.style.arrangement.ArrangementValues
 import org.saar.gui.style.axisalignment.AxisAlignmentValues
 import org.saar.gui.style.percent
 import org.saar.gui.style.px
 import org.saar.lwjgl.glfw.window.Window
+import org.saar.lwjgl.opengl.utils.GlUtils
 
 fun main() {
     val application = LoginPageApplication()
@@ -28,48 +30,47 @@ fun main() {
 
 class LoginPageApplication : Application {
 
-    private lateinit var background: Painter
-    private lateinit var display: UIDisplay
+    private lateinit var renderGraph: RenderGraph
 
     override fun initialize(window: Window) {
-        this.background = FBMPainter()
+        val background = FBMRenderPass()
 
-        this.display = UIDisplay(window).apply {
+        val display = UIDisplay(window) {
             this.style.alignment.value = AlignmentValues.vertical
             this.style.arrangement.value = ArrangementValues.spaceEvenly
             this.style.axisAlignment.value = AxisAlignmentValues.center
 
-            +UIElement().apply {
+            +UIElement {
                 this.style.padding.set(15.px)
                 this.style.borders.bottomValue = 4.px
-                this.style.borderColour.set(Colours.BLACK)
+                this.style.borderColor.set(Colors.BLACK)
 
-                +UIText("Login Page").apply {
+                +UIText("Login Page") {
                     this.style.fontSize.value = 96.px
-                    this.style.fontColour.set(Colours.WHITE)
+                    this.style.fontColor.set(Colors.WHITE)
                 }
             }
 
-            val badCredentials = UIText("").apply {
+            val badCredentials = UIText("") {
                 this.style.fontSize.value = 32.px
-                this.style.fontColour.set(Colours.RED)
+                this.style.fontColor.set(Colors.RED)
             }
 
             val username = UITextField("username")
 
-            +UIElement().apply {
+            +UIElement {
                 this.style.fontSize.value = 48.px
                 this.style.width.value = 75.percent
                 this.style.arrangement.value = ArrangementValues.spaceBetween
                 this.style.axisAlignment.value = AxisAlignmentValues.center
 
-                +UIText("Username: ").apply {
-                    this.style.fontColour.set(Colours.WHITE)
+                +UIText("Username: ") {
+                    this.style.fontColor.set(Colors.WHITE)
                 }
 
                 +username.apply {
                     this.style.width.value = 350.px
-                    this.style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    this.style.backgroundColor.set(Colors.parse("#e0e0e0"))
                     this.style.padding.set(10.px)
 
                     this.textProperty.addListener(InvalidationListener { badCredentials.text = "" })
@@ -78,19 +79,19 @@ class LoginPageApplication : Application {
 
             val password = UITextField("password")
 
-            +UIElement().apply {
+            +UIElement {
                 this.style.fontSize.value = 48.px
                 this.style.width.value = 75.percent
                 this.style.arrangement.value = ArrangementValues.spaceBetween
                 this.style.axisAlignment.value = AxisAlignmentValues.center
 
-                +UIText("Password: ").apply {
-                    this.style.fontColour.set(Colours.WHITE)
+                +UIText("Password: ") {
+                    this.style.fontColor.set(Colors.WHITE)
                 }
 
                 +password.apply {
                     this.style.width.value = 350.px
-                    this.style.backgroundColour.set(Colours.parse("#e0e0e0"))
+                    this.style.backgroundColor.set(Colors.parse("#e0e0e0"))
                     this.style.padding.set(10.px)
 
                     this.textProperty.addListener(InvalidationListener { badCredentials.text = "" })
@@ -99,37 +100,40 @@ class LoginPageApplication : Application {
 
             +badCredentials
 
-            +UIButton("Login").apply {
+            +UIButton("Login") {
                 this.style.fontSize.value = 48.px
-                this.style.fontColour.set(Colours.WHITE)
-                this.style.borderColour.set(Colours.WHITE)
+                this.style.fontColor.set(Colors.WHITE)
+                this.style.borderColor.set(Colors.WHITE)
                 this.style.borders.set(1.px)
-                this.style.backgroundColour.set(Colours.parse("#212121"))
+                this.style.backgroundColor.set(Colors.parse("#212121"))
 
                 this.onAction = EventListener {
                     if (username.text == "Ragnar Lothbrok" && password.text == "Odin <3!!") {
                         badCredentials.text = "Noice"
-                        badCredentials.style.fontColour.set(Colours.GREEN)
+                        badCredentials.style.fontColor.set(Colors.GREEN)
                     } else {
                         badCredentials.text = "Bad username or password!"
-                        badCredentials.style.fontColour.set(Colours.RED)
+                        badCredentials.style.fontColor.set(Colors.RED)
                     }
                 }
             }
         }
+
+        this.renderGraph = renderGraph(window.width, window.height) {
+            addPass(background)
+            addPass(display)
+        }
     }
 
     override fun update(window: Window) {
-        this.display.update()
     }
 
     override fun render(window: Window) {
-        this.background.render()
-        this.display.render(RenderContext(null))
+        GlUtils.setViewport(0, 0, window.width, window.height)
+        this.renderGraph.render(RenderContext())
     }
 
     override fun close(window: Window) {
-        this.background.delete()
-        this.display.delete()
+        this.renderGraph.delete()
     }
 }

@@ -10,7 +10,7 @@ import org.saar.core.common.obj.ObjModel;
 import org.saar.core.common.obj.ObjRenderer;
 import org.saar.core.mesh.Mesh;
 import org.saar.core.node.NodeComponentGroup;
-import org.saar.core.renderer.RenderContext;
+import org.saar.core.renderer.forward.ForwardRenderContext;
 import org.saar.core.screen.MainScreen;
 import org.saar.core.screen.OffScreen;
 import org.saar.core.screen.ScreenKt;
@@ -18,7 +18,6 @@ import org.saar.core.screen.Screens;
 import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.fbo.Fbo;
-import org.saar.lwjgl.opengl.fbo.IFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
 import org.saar.lwjgl.opengl.texture.Texture2D;
@@ -42,10 +41,9 @@ public class ScreenExample {
 
         final ObjRenderer renderer = ObjRenderer.INSTANCE;
 
-        final IFbo fbo = Fbo.create(WIDTH, HEIGHT);
         final MyScreenPrototype screenPrototype = new MyScreenPrototype();
         final AllocationStrategy allocation = new MultisampledAllocationStrategy(4);
-        final OffScreen screen = Screens.fromPrototype(screenPrototype, fbo, allocation);
+        final OffScreen screen = Screens.toScreen(screenPrototype, Fbo.create(), WIDTH, HEIGHT, allocation);
 
         window.addResizeListener(e -> {
             final int w = e.getWidth().getAfter();
@@ -56,11 +54,11 @@ public class ScreenExample {
         while (window.isOpen() && !keyboard.isKeyPressed('T')) {
             screen.setAsDraw();
 
-            GlUtils.clear(GlBuffer.COLOUR, GlBuffer.DEPTH);
+            GlUtils.clear(GlBuffer.COLOR, GlBuffer.DEPTH);
 
             camera.update();
 
-            renderer.render(new RenderContext(camera), cottageModel);
+            renderer.render(new ForwardRenderContext(camera), cottageModel);
 
             ScreenKt.copyTo(screen, MainScreen.INSTANCE);
 

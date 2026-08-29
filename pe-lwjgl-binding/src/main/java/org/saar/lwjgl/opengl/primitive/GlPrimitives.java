@@ -30,7 +30,7 @@ public final class GlPrimitives {
     public static int calculateSize(GlPrimitive primitive) {
         final int components = primitive.getComponentCount();
         final int bytes = primitive.getDataType().getBytes();
-        return components - bytes;
+        return components * bytes;
     }
 
     public static int sumBytes(GlPrimitive... primitives) {

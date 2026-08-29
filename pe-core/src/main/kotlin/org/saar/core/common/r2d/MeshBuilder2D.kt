@@ -1,0 +1,67 @@
+package org.saar.core.common.r2d
+
+import org.saar.core.mesh.DrawCallMesh
+import org.saar.core.mesh.Mesh
+import org.saar.core.mesh.MeshBuilder
+import org.saar.core.mesh.buffer.DataMeshBufferBuilder
+import org.saar.core.mesh.buffer.IndexMeshBufferBuilder
+import org.saar.lwjgl.opengl.attribute.Attributes
+import org.saar.lwjgl.opengl.constants.DataType
+import org.saar.lwjgl.opengl.drawcall.ElementsDrawCall
+import org.saar.lwjgl.opengl.vao.Vao
+import org.saar.lwjgl.opengl.vbo.VboTarget
+import org.saar.rhi.inputassembly.PrimitiveTopology
+
+class MeshBuilder2D(
+    private val indices: Int,
+    private val positionBufferBuilder: DataMeshBufferBuilder,
+    private val colorBufferBuilder: DataMeshBufferBuilder,
+    private val indexBufferBuilder: IndexMeshBufferBuilder,
+) : MeshBuilder {
+
+    val writer = MeshWriter2D(
+        this.positionBufferBuilder.writer,
+        this.colorBufferBuilder.writer,
+        this.indexBufferBuilder.writer,
+    )
+
+    private val bufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.colorBufferBuilder,
+        this.indexBufferBuilder,
+    ).distinct()
+
+    private val vertexBufferBuilders = listOf(
+        this.positionBufferBuilder,
+        this.colorBufferBuilder,
+    ).distinct()
+
+    init {
+        this.positionBufferBuilder.addAttribute(
+            Attributes.of(0, 2, DataType.FLOAT, false)
+        )
+        this.colorBufferBuilder.addAttribute(
+            Attributes.of(1, 3, DataType.FLOAT, false)
+        )
+    }
+
+    override fun delete() = this.bufferBuilders.forEach { it.delete() }
+
+    override fun load(): Mesh {
+        val vao = loadVao()
+        val drawCall = ElementsDrawCall(PrimitiveTopology.TRIANGLE_LIST, this.indices, DataType.U_INT)
+        return DrawCallMesh(vao, drawCall)
+    }
+
+    override fun loadVao(): Vao {
+        return Vao.create().also { vao ->
+            val buffers = this.vertexBufferBuilders.map { it.build(VboTarget.ARRAY_BUFFER) } +
+                    this.indexBufferBuilder.build(VboTarget.ELEMENT_ARRAY_BUFFER)
+
+            buffers.forEach {
+                it.store(0)
+                it.loadInVao(vao)
+            }
+        }
+    }
+}

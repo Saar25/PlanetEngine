@@ -5,13 +5,16 @@ import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.attribute.AttributeComposite;
 import org.saar.lwjgl.opengl.attribute.Attributes;
 import org.saar.lwjgl.opengl.constants.DataType;
-import org.saar.lwjgl.opengl.constants.RenderMode;
-import org.saar.lwjgl.opengl.shader.Shader;
-import org.saar.lwjgl.opengl.shader.ShadersProgram;
+import org.saar.lwjgl.opengl.utils.GlBuffer;
 import org.saar.lwjgl.opengl.utils.GlRendering;
+import org.saar.lwjgl.opengl.utils.GlUtils;
 import org.saar.lwjgl.opengl.vao.Vao;
 import org.saar.lwjgl.opengl.vbo.DataBuffer;
 import org.saar.lwjgl.opengl.vbo.VboUsage;
+import org.saar.rhi.inputassembly.PrimitiveTopology;
+import org.saar.rhi.opengl.shader.OpenglShaderProgram;
+import org.saar.rhi.opengl.shader.OpenglShaderProgramKt;
+import org.saar.rhi.shader.*;
 
 public class Example {
 
@@ -22,28 +25,31 @@ public class Example {
         final DataBuffer vbo = new DataBuffer(VboUsage.STATIC_DRAW);
         vbo.allocateFloat(18);
         vbo.storeFloat(0, new float[]{
-                -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f,
-                +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-                +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f});
+            -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f,
+            +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+            +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f});
         vao.loadVbo(vbo, new AttributeComposite(
-                Attributes.of(0, 2, DataType.FLOAT, false),
-                Attributes.of(1, 3, DataType.FLOAT, false),
-                Attributes.of(2, 1, DataType.FLOAT, false)
+            Attributes.of(0, 2, DataType.FLOAT, false),
+            Attributes.of(1, 3, DataType.FLOAT, false),
+            Attributes.of(2, 1, DataType.FLOAT, false)
         ));
 
-        final ShadersProgram shadersProgram = ShadersProgram.create(
-                Shader.createVertex("/vertex.glsl"),
-                Shader.createFragment("/fragment.glsl"));
-        shadersProgram.bindAttribute(0, "in_position");
+        final ShaderProgram shaderProgram = ShaderProgramKt.ShaderProgram(
+            new ShaderStage(ShaderModule.load("/vertex.glsl"), ShaderStageType.VERTEX, "main"),
+            new ShaderStage(ShaderModule.load("/fragment.glsl"), ShaderStageType.FRAGMENT, "main")
+        );
 
-        shadersProgram.bind();
+        final OpenglShaderProgram openglShaderProgram = OpenglShaderProgramKt.toOpengl(shaderProgram);
+        openglShaderProgram.bindAttribute(0, "in_position");
+        openglShaderProgram.bind();
 
         vao.bind();
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
+            GlUtils.clear(GlBuffer.COLOR);
 
-            GlRendering.drawArrays(RenderMode.TRIANGLES, 0, 3);
+            GlRendering.drawArrays(PrimitiveTopology.TRIANGLE_LIST, 0, 3);
 
             window.swapBuffers();
             window.pollEvents();

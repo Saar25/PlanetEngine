@@ -9,20 +9,20 @@ import org.saar.gui.style.length.LengthValues.pixels
 
 class MyUIComponent : UIComponent() {
 
-    private val object1 = UIBlock().apply {
+    private val object1 = UIBlock {
         style.radius.set(20)
         style.borders.set(2)
-        style.backgroundColour.set(Defaults.backgroundColour)
-        style.borderColour.set(Defaults.secondColour)
+        style.backgroundColor.set(Defaults.backgroundColor)
+        style.borderColor.set(Defaults.secondColor)
         style.width.value = percent(50f)
         style.height.value = pixels(100)
     }
 
-    private val object2 = UIBlock().apply {
+    private val object2 = UIBlock {
         style.radius.set(20)
         style.borders.set(2)
-        style.backgroundColour.set(Defaults.backgroundColour)
-        style.borderColour.set(Defaults.secondColour)
+        style.backgroundColor.set(Defaults.backgroundColor)
+        style.borderColor.set(Defaults.secondColor)
         style.width.value = percent(50f)
         style.height.value = pixels(100)
     }

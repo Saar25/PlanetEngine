@@ -1,16 +1,16 @@
-out vec4 fragColour;
+out vec4 fragColor;
 
-uniform uint colour;
+uniform uint color;
 
-vec4 getColour() {
-    float r = ((colour << 0 ) >> 24);
-    float g = ((colour << 8 ) >> 24);
-    float b = ((colour << 16) >> 24);
-    float a = ((colour << 24) >> 24);
+vec4 getColor() {
+    float r = ((color << 0 ) >> 24);
+    float g = ((color << 8 ) >> 24);
+    float b = ((color << 16) >> 24);
+    float a = ((color << 24) >> 24);
     return vec4(r, g, b, a) / 255;
 }
 
 void main(void) {
-    fragColour = getColour();
+    fragColor = getColor();
 
 }

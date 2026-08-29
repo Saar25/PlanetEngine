@@ -6,6 +6,15 @@ import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.EventListener
 import org.saar.gui.event.MouseEvent
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+@OptIn(ExperimentalContracts::class)
+fun UIButton(text: String = "", block: UIButton.() -> Unit): UIButton {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UIButton(text).apply(block)
+}
 
 class UIButton(text: String = "") : UIComponent() {
 
@@ -20,14 +29,14 @@ class UIButton(text: String = "") : UIComponent() {
     init {
         this.style.padding.set(30, 100)
         this.style.borders.set(2)
-        this.style.borderColour.set(Defaults.secondColour)
-        this.style.backgroundColour.set(Defaults.backgroundColour)
+        this.style.borderColor.set(Defaults.secondColor)
+        this.style.backgroundColor.set(Defaults.backgroundColor)
     }
 
     override fun onMousePress(event: MouseEvent) {
         if (event.button.isPrimary) {
             this.pressedProperty.set(true)
-            this.style.colourModifier.set(1.5f)
+            this.style.colorModifier.set(1.5f)
         }
     }
 
@@ -37,7 +46,7 @@ class UIButton(text: String = "") : UIComponent() {
                 this.pressedProperty.set(false)
                 this.onAction?.handle(event)
             }
-            this.style.colourModifier.set(1f)
+            this.style.colorModifier.set(1f)
         }
     }
 
@@ -45,6 +54,6 @@ class UIButton(text: String = "") : UIComponent() {
 
     override fun onMouseExit(event: MouseEvent) {
         this.pressedProperty.set(false)
-        this.style.colourModifier.set(1f)
+        this.style.colorModifier.set(1f)
     }
 }

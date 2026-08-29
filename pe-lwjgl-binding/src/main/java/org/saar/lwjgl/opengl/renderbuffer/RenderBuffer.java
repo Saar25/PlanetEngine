@@ -1,6 +1,7 @@
 package org.saar.lwjgl.opengl.renderbuffer;
 
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL45;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.utils.GlConfigs;
 
@@ -37,6 +38,10 @@ public class RenderBuffer {
         bind();
         GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER,
                 attachment, GL30.GL_RENDERBUFFER, this.id);
+    }
+
+    public void attachToFbo(int fbo, int attachment) {
+        GL45.glNamedFramebufferRenderbuffer(fbo, attachment, GL30.GL_RENDERBUFFER, this.id);
     }
 
     public void bind() {

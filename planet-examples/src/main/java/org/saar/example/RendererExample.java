@@ -10,6 +10,8 @@ import org.saar.lwjgl.glfw.input.keyboard.Keyboard;
 import org.saar.lwjgl.glfw.window.Window;
 import org.saar.lwjgl.opengl.constants.InternalFormat;
 import org.saar.lwjgl.opengl.fbo.Fbo;
+import org.saar.lwjgl.opengl.fbo.FboBlitFilter;
+import org.saar.lwjgl.opengl.fbo.WindowFbo;
 import org.saar.lwjgl.opengl.fbo.attachment.Attachment;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.AllocationStrategy;
 import org.saar.lwjgl.opengl.fbo.attachment.allocation.MultisampledAllocationStrategy;
@@ -35,10 +37,10 @@ public class RendererExample {
         final float s = 0.7f;
         final int[] indices = {0, 1, 2, 0, 2, 3};
         final Vertex2D[] vertices = {
-                R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
-                R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
-                R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
+            R2D.vertex(Vector2.of(-s, -s), Vector3.of(+0.0f, +0.0f, +0.5f)),
+            R2D.vertex(Vector2.of(-s, +s), Vector3.of(+0.0f, +1.0f, +0.5f)),
+            R2D.vertex(Vector2.of(+s, +s), Vector3.of(+1.0f, +1.0f, +0.5f)),
+            R2D.vertex(Vector2.of(+s, -s), Vector3.of(+1.0f, +0.0f, +0.5f))};
 
         final Mesh mesh = R2D.mesh(vertices, indices);
         final Model2D model = new Model2D(mesh);
@@ -49,29 +51,40 @@ public class RendererExample {
         final Attachment attachment = new Attachment(buffer, allocation);
         final AttachmentIndex attachmentIndex = ColorAttachmentIndex.at(0);
         final RenderTarget target = new IndexRenderTarget(attachmentIndex);
-        final Fbo fbo = Fbo.create(WIDTH, HEIGHT);
+        final Fbo fbo = Fbo.create();
 
+        attachment.allocate(WIDTH, HEIGHT);
         fbo.addAttachment(attachmentIndex, attachment);
         fbo.setReadTarget(target);
         fbo.setDrawTarget(target);
         fbo.ensureStatus();
 
+        int[] dimensions = {WIDTH, HEIGHT};
+
         window.addResizeListener(e -> {
+            int width = e.getWidth().getAfter();
+            int height = e.getHeight().getAfter();
             fbo.bind();
-            fbo.resize(e.getWidth().getAfter(),
-                    e.getHeight().getAfter());
-            attachment.init(fbo, attachmentIndex);
+            dimensions[0] = width;
+            dimensions[1] = height;
+            attachment.allocate(width, height);
         });
 
         final Keyboard keyboard = window.getKeyboard();
         while (window.isOpen() && !keyboard.isKeyPressed('E')) {
+            GlUtils.setViewport(0, 0, dimensions[0], dimensions[1]);
+
             fbo.bind();
 
-            GlUtils.clear(GlBuffer.COLOUR);
+            GlUtils.clear(GlBuffer.COLOR);
 
-            renderer.render(new RenderContext(null), model);
+            renderer.render(new RenderContext(), model);
 
-            fbo.blitToScreen();
+            WindowFbo.INSTANCE.bindAsDraw();
+            GlUtils.clear(GlBuffer.COLOR);
+            fbo.blitFramebuffer(
+                dimensions[0], dimensions[1],
+                FboBlitFilter.LINEAR, GlBuffer.COLOR);
 
             window.swapBuffers();
             window.pollEvents();

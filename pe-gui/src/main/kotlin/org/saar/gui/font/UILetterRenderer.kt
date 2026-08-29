@@ -2,94 +2,118 @@ package org.saar.gui.font
 
 import org.joml.Vector2i
 import org.saar.core.mesh.common.QuadMesh
-import org.saar.core.renderer.*
+import org.saar.core.renderer.RenderContext
+import org.saar.core.renderer.Renderer
+import org.saar.core.renderer.ShadersLink
+import org.saar.core.renderer.ShadersUniformsLoader
 import org.saar.core.renderer.uniforms.UniformProperty
 import org.saar.core.screen.MainScreen
-import org.saar.lwjgl.opengl.blend.BlendTest
-import org.saar.lwjgl.opengl.cullface.CullFace
-import org.saar.lwjgl.opengl.depth.DepthTest
-import org.saar.lwjgl.opengl.provokingvertex.ProvokingVertex
-import org.saar.lwjgl.opengl.shader.GlslVersion
-import org.saar.lwjgl.opengl.shader.Shader
-import org.saar.lwjgl.opengl.shader.ShaderCode
 import org.saar.lwjgl.opengl.shader.uniforms.*
-import org.saar.lwjgl.opengl.stencil.StencilTest
+import org.saar.maths.toVector4f
+import org.saar.maths.toVector4i
+import org.saar.rhi.blending.BlendState
+import org.saar.rhi.depthstencil.DepthStencilState
+import org.saar.rhi.opengl.blending.toOpengl
+import org.saar.rhi.opengl.depthstencil.toOpengl
+import org.saar.rhi.opengl.rasterization.toOpengl
+import org.saar.rhi.opengl.shader.toOpengl
+import org.saar.rhi.rasterization.CullMode
+import org.saar.rhi.rasterization.RasterizationState
+import org.saar.rhi.shader.*
 
-object UILetterRenderer : Renderer, RendererMethodsBase<RenderContext, UILetter> {
+object UILetterRenderer : Renderer<RenderContext, UILetter> {
 
-    private val prototype = LetterRendererPrototype()
-    private val helper = RendererPrototypeHelper(this.prototype)
+    private val shadersLink = LetterShadersLink
+    private val uniformsLoader = ShadersUniformsLoader.from(this.shadersLink)
+
+    private val rasterizationState = RasterizationState(
+        cullMode = CullMode.NONE,
+    ).toOpengl()
+
+    private val depthStencilState = DepthStencilState(
+        depthTestEnable = false,
+        depthWriteEnable = false
+    ).toOpengl()
+
+    private val blendState = BlendState.ALPHA.toOpengl()
 
     override fun render(context: RenderContext, models: Iterable<UILetter>) {
-        this.helper.render(context, models)
+        this.shadersLink.shadersProgram.bind()
+
+        this.rasterizationState.set()
+        this.depthStencilState.set()
+        this.blendState.set()
+
+        this.uniformsLoader.load()
+
+        models.forEach { model ->
+            this.shadersLink.bitmapUniform.value = model.font.bitmap
+
+            this.shadersLink.bitmapDimensionsUniform.value = Vector2i(
+                model.font.bitmap.width,
+                model.font.bitmap.height
+            )
+
+            this.shadersLink.bitmapBoundsUniform.value = model.character.bitmapBox.toVector4i()
+
+            val bounds = model.character.localBox.toVector4f()
+                .mul(model.style.fontSize.size / model.font.size)
+                .add(model.offset.x(), model.offset.y(), 0f, 0f)
+
+            this.shadersLink.boundsUniform.value.set(
+                (bounds.x() + model.style.position.getX()).toInt(),
+                (bounds.y() + model.style.position.getY()).toInt(),
+                bounds.z().toInt(),
+                bounds.w().toInt()
+            )
+
+            this.shadersLink.fontColorUniform.value = model.style.fontColor.asInt()
+
+            this.uniformsLoader.load()
+            QuadMesh.draw()
+        }
     }
 
-    override fun delete() = this.helper.delete()
-}
+    override fun delete() = this.shadersLink.shadersProgram.delete()
 
-private class LetterRendererPrototype : RendererPrototype<UILetter> {
 
-    @UniformProperty
-    private val resolutionUniform = object : Vec2iUniform() {
-        override val name: String = "u_resolution"
+    private object LetterShadersLink : ShadersLink {
 
-        override val value = Vector2i()
-            get() = field.set(MainScreen.width, MainScreen.height)
+        @UniformProperty
+        private val resolutionUniform = object : Vec2iUniform() {
+            override val name: String = "u_resolution"
+
+            // TODO: use bound screen instead of main screen
+            override val value = Vector2i()
+                get() = field.set(MainScreen.width, MainScreen.height)
+        }
+
+        @UniformProperty
+        val boundsUniform = Vec4iUniformValue("u_bounds")
+
+        @UniformProperty
+        val fontColorUniform = UIntUniformValue("u_fontColor")
+
+        @UniformProperty
+        val bitmapUniform = TextureUniformValue("u_bitmap", 0)
+
+        @UniformProperty
+        val bitmapDimensionsUniform = Vec2iUniformValue("u_bitmapDimensions")
+
+        @UniformProperty
+        val bitmapBoundsUniform = Vec4iUniformValue("u_bitmapBounds")
+
+        override val fragmentOutputs = arrayOf("fragColor")
+
+        override val shadersProgram = ShaderProgram(
+            ShaderStage(
+                type = ShaderStageType.VERTEX,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/render/letter.vertex.glsl"))
+            ),
+            ShaderStage(
+                type = ShaderStageType.FRAGMENT,
+                module = ShaderModule.fromString(GlslVersion.V400.toString() + "\n" + ShaderModuleLoader.loadSource("/shaders/gui/render/letter.fragment.glsl"))
+            ),
+        ).toOpengl()
     }
-
-    @UniformProperty
-    private val boundsUniform = Vec4UniformValue("u_bounds")
-
-    @UniformProperty
-    private val fontColourUniform = UIntUniformValue("u_fontColour")
-
-    @UniformProperty
-    private val bitmapUniform = TextureUniformValue("u_bitmap", 0)
-
-    @UniformProperty
-    private val bitmapDimensionsUniform = Vec2iUniformValue("u_bitmapDimensions")
-
-    @UniformProperty
-    private val bitmapBoundsUniform = Vec4iUniformValue("u_bitmapBounds")
-
-    override val shaders = arrayOf(
-        Shader.createVertex(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/letter.vertex.glsl")),
-        Shader.createFragment(GlslVersion.V400,
-            ShaderCode.loadSource("/shaders/gui/render/letter.fragment.glsl"))
-    )
-
-    override fun fragmentOutputs() = arrayOf("fragColour")
-
-    override fun onRenderCycle(context: RenderContext) {
-        BlendTest.applyAlpha()
-        StencilTest.disable()
-        DepthTest.disable()
-        ProvokingVertex.setFirst()
-        CullFace.disable()
-    }
-
-    override fun onInstanceDraw(context: RenderContext, uiLetter: UILetter) {
-        this.bitmapUniform.value = uiLetter.font.bitmap
-
-        this.bitmapDimensionsUniform.value = Vector2i(
-            uiLetter.font.bitmap.width,
-            uiLetter.font.bitmap.height)
-
-        this.bitmapBoundsUniform.value = uiLetter.character.bitmapBox.toVector4i()
-
-        val bounds = uiLetter.character.localBox.toVector4f()
-            .mul(uiLetter.style.fontSize.size / uiLetter.font.size)
-            .add(uiLetter.offset.x(), uiLetter.offset.y(), 0f, 0f)
-
-        this.boundsUniform.value.set(
-            bounds.x() + uiLetter.style.position.getX(),
-            bounds.y() + uiLetter.style.position.getY(),
-            bounds.z(),
-            bounds.w())
-
-        this.fontColourUniform.value = uiLetter.style.fontColour.asInt()
-    }
-
-    override fun doInstanceDraw(context: RenderContext, uiLetter: UILetter) = QuadMesh.draw()
 }

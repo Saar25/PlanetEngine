@@ -6,8 +6,6 @@ public interface ReadOnlyTexture {
 
     void bind();
 
-    void unbind();
-
     void delete();
 
 }

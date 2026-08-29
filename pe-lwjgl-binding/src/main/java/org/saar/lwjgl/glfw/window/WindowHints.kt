@@ -12,6 +12,10 @@ object WindowHints {
 
     @JvmStatic
     @JvmOverloads
+    fun defaults() = WindowHint { GLFW.glfwDefaultWindowHints() }
+
+    @JvmStatic
+    @JvmOverloads
     fun focused(value: Boolean = true) = hintOf(WindowHintType.FOCUSED, value)
 
     @JvmStatic
@@ -73,4 +77,7 @@ object WindowHints {
 
     @JvmStatic
     fun openglProfile(value: OpenGlProfileType) = hintOf(WindowHintType.OPENGL_PROFILE, value.get())
+
+    @JvmStatic
+    fun clientApi(value: ClientApiType) = hintOf(WindowHintType.CLIENT_API, value.get())
 }

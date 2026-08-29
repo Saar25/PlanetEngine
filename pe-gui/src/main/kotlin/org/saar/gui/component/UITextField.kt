@@ -5,6 +5,9 @@ import org.saar.gui.Defaults
 import org.saar.gui.UIComponent
 import org.saar.gui.UIText
 import org.saar.gui.event.KeyboardEvent
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 private val characterShiftMap = mapOf(
     96 to '~', 49 to '!', 50 to '@',
@@ -29,6 +32,13 @@ private val characterNumLockMap = mapOf(
     GLFW.GLFW_KEY_KP_9 to GLFW.GLFW_KEY_PAGE_UP,
 )
 
+
+@OptIn(ExperimentalContracts::class)
+fun UITextField(text: String = "", block: UITextField.() -> Unit): UITextField {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return UITextField(text).apply(block)
+}
+
 class UITextField(text: String = "") : UIComponent() {
 
     private val uiText = UIText(text)
@@ -43,12 +53,12 @@ class UITextField(text: String = "") : UIComponent() {
 
     init {
         this.style.borders.set(2)
-        this.style.backgroundColour.set(Defaults.backgroundColour)
-        this.style.borderColour.set(Defaults.secondColour)
+        this.style.backgroundColor.set(Defaults.backgroundColor)
+        this.style.borderColor.set(Defaults.secondColor)
     }
 
     override fun update() {
-        this.uiCaret.style.backgroundColour.set(Defaults.textColour)
+        this.uiCaret.style.backgroundColor.set(Defaults.textColor)
     }
 
     override fun onKeyPress(event: KeyboardEvent) = changeTextByKeyboard(event)

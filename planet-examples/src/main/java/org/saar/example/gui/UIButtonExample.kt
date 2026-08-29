@@ -8,8 +8,7 @@ import org.saar.gui.UIElement
 import org.saar.gui.UIText
 import org.saar.gui.component.UIButton
 import org.saar.gui.event.EventListener
-import org.saar.gui.font.FontLoader
-import org.saar.gui.style.Colours
+import org.saar.gui.style.Colors
 import org.saar.gui.style.length.LengthValues.percent
 import org.saar.gui.style.length.LengthValues.ratio
 import org.saar.lwjgl.glfw.window.Window
@@ -25,39 +24,32 @@ object UIButtonExample {
     fun main(args: Array<String>) {
         val window = Window.create("Lwjgl", WIDTH, HEIGHT, true)
 
-        val display = UIDisplay(window)
+        val uiFps: UIText
 
-        val font = FontLoader.loadFont(FontLoader.DEFAULT_FONT_FAMILY, 48f, 512, 512,
-            (0x20.toChar()..0x7e.toChar()).joinToString("") + ('א'..'ת').joinToString("")
-        )
+        val display = UIDisplay(window) {
+            +UIElement {
+                style.fontSize.set(48)
 
-        val container = UIElement().apply {
-            style.fontSize.set(48)
+                +UIButton {
+                    style.width.value = percent(50f)
+                    style.height.value = ratio(.5f)
+                    onAction = EventListener { println("Clicked!") }
+                }
+
+                uiFps = +UIText {
+                    style.fontColor.set(Colors.WHITE)
+                    style.fontSize.set(22)
+                }
+            }
         }
-        display.add(container)
-
-        val uiButton = UIButton().apply {
-            style.width.value = percent(50f)
-            style.height.value = ratio(.5f)
-            onAction = EventListener { println("Clicked!") }
-        }
-        container.add(uiButton)
-
-        val uiFps = UIText("").apply {
-            style.fontColour.set(Colours.WHITE)
-            style.fontSize.set(22)
-        }
-        container.add(uiFps)
 
         val fps = Fps()
 
-        val keyboard = window.keyboard
+        while (window.isOpen && !window.keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            GlUtils.setViewport(0, 0, window.width, window.height)
+            GlUtils.clear(GlBuffer.COLOR)
 
-        while (window.isOpen && !keyboard.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
-            display.update()
-
-            GlUtils.clear(GlBuffer.COLOUR)
-            display.render(RenderContext(null))
+            display.render(RenderContext())
 
             window.swapBuffers()
             window.pollEvents()
@@ -66,7 +58,6 @@ object UIButtonExample {
             fps.update()
         }
 
-        font.delete()
         display.delete()
         window.destroy()
     }
