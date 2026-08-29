@@ -6,14 +6,14 @@ Gradle project, Java 17, mixed Java + Kotlin in `src/main/java/` (no separate ko
 
 ```sh
 # build all
-mvn compile
+./gradlew build
 
 # build one module + deps
-mvn compile -pl planet-examples -am
+./gradlew :planet-examples:build
 
-# run an example (use -am if it fails on missing modules)
-mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.TactonicExampleKt
-mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplicationKt
+# run an example (use -PmainClass=... to pick a different class)
+./gradlew :planet-examples:run -PmainClass=org.saar.example.TactonicExampleKt
+./gradlew :planet-examples:run -PmainClass=org.saar.example.terrain.TerrainApplicationKt
 ```
 
 ## Modules

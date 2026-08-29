@@ -23,13 +23,13 @@ Written in Java and Kotlin and gradually transforming to only Kotlin
 ### Build
 
 ```bash
-mvn clean install compile
+./gradlew build
 ```
 
 ### Run an Example
 
 ```bash
-mvn -pl planet-examples exec:java -Dexec.mainClass=org.saar.example.terrain.TerrainApplicationKt
+./gradlew :planet-examples:run -PmainClass=org.saar.example.terrain.TerrainApplicationKt
 ```
 
 Replace the class with any of the available examples.
