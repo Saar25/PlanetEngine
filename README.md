@@ -19,7 +19,6 @@ Written in Java and Kotlin and gradually transforming to only Kotlin
 ### Prerequisites
 
 - Java 17+
-- Maven 3.6+
 
 ### Build
 

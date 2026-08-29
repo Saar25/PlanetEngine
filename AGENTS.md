@@ -1,6 +1,6 @@
 # PlanetEngine
 
-Maven project, Java 17, mixed Java + Kotlin in `src/main/java/` (no separate kotlin dir).
+Gradle project, Java 17, mixed Java + Kotlin in `src/main/java/` (no separate kotlin dir).
 
 ## Build & run
 
