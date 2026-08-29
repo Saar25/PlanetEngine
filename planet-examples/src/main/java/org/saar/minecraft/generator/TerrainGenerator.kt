@@ -3,6 +3,7 @@ package org.saar.minecraft.generator
 import org.saar.maths.noise.Noise3f
 import org.saar.minecraft.Blocks
 import org.saar.minecraft.Chunk
+import org.saar.minecraft.chunk.ChunkConstants
 import kotlin.math.min
 
 class TerrainGenerator(private val minHeight: Int, private val maxHeight: Int, private val noise: Noise3f) :
@@ -16,10 +17,10 @@ class TerrainGenerator(private val minHeight: Int, private val maxHeight: Int, p
     }
 
     override fun generateChunk(chunk: Chunk) {
-        for (x in 0..15) {
-            for (z in 0..15) {
-                val wx = x + chunk.position.x() * 16
-                val wz = z + chunk.position.y() * 16
+        for (x in 0..<ChunkConstants.SIZE) {
+            for (z in 0..<ChunkConstants.SIZE) {
+                val wx = x + chunk.position.x() * ChunkConstants.SIZE
+                val wz = z + chunk.position.y() * ChunkConstants.SIZE
                 val height = height(wx, wz)
 
                 for (y in 0..<height - 8) {

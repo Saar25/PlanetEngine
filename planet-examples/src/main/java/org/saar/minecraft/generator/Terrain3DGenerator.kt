@@ -4,6 +4,7 @@ import org.saar.maths.noise.Noise3f
 import org.saar.maths.utils.Maths.clamp
 import org.saar.minecraft.Blocks
 import org.saar.minecraft.Chunk
+import org.saar.minecraft.chunk.ChunkConstants
 
 class Terrain3DGenerator(private val minHeight: Int, private val maxHeight: Int, private val noise: Noise3f) :
     WorldGenerator {
@@ -17,10 +18,10 @@ class Terrain3DGenerator(private val minHeight: Int, private val maxHeight: Int,
     }
 
     override fun generateChunk(chunk: Chunk) {
-        for (x in 0..15) {
-            for (z in 0..15) {
-                val wx = x + chunk.position.x() * 16
-                val wz = z + chunk.position.y() * 16
+        for (x in 0..<ChunkConstants.SIZE) {
+            for (z in 0..<ChunkConstants.SIZE) {
+                val wx = x + chunk.position.x() * ChunkConstants.SIZE
+                val wz = z + chunk.position.y() * ChunkConstants.SIZE
                 for (y in 0..<this.minHeight) {
                     val noise = noise(wx, y, wz)
                     if (noise > .2f) {

@@ -7,7 +7,7 @@ import kotlin.math.max
 
 class ChunkLights(private val chunk: Chunk) {
 
-    private val lights = ByteArray(16 * 16 * 256) { 0xFF.toByte() }
+    private val lights = ByteArray(ChunkConstants.SIZE * ChunkConstants.SIZE * ChunkConstants.HEIGHT) { 0xFF.toByte() }
 
     private fun calculateLight(x: Int, y: Int, z: Int): Int {
         val block = this.chunk.getBlock(x, y, z)
@@ -29,10 +29,10 @@ class ChunkLights(private val chunk: Chunk) {
         this.lights.fill(0.toByte())
 
         val spreadBfs = LinkedList<LightNode>()
-        for (x in 0..15) {
-            for (z in 0..15) {
-                if (this.chunk.getBlock(x, 0xFF, z).isTransparent) {
-                    spreadBfs.add(LightNode(x, 0xFF, z, 0xFF))
+        for (x in 0..<ChunkConstants.SIZE) {
+            for (z in 0..<ChunkConstants.SIZE) {
+                if (this.chunk.getBlock(x, ChunkConstants.HEIGHT_MASK, z).isTransparent) {
+                    spreadBfs.add(LightNode(x, ChunkConstants.HEIGHT_MASK, z, 0xFF))
                 }
             }
         }

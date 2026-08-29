@@ -4,13 +4,14 @@ import org.joml.SimplexNoise
 import org.saar.maths.noise.Noise2f
 import org.saar.minecraft.Blocks
 import org.saar.minecraft.Chunk
+import org.saar.minecraft.chunk.ChunkConstants
 
 class TreesGenerator(private val noise2f: Noise2f) : WorldGenerator {
     override fun generateChunk(chunk: Chunk) {
-        for (x in 0..15) {
-            for (z in 0..15) {
-                val wx = x + chunk.position.x() * 16
-                val wz = z + chunk.position.y() * 16
+        for (x in 0..<ChunkConstants.SIZE) {
+            for (z in 0..<ChunkConstants.SIZE) {
+                val wx = x + chunk.position.x() * ChunkConstants.SIZE
+                val wz = z + chunk.position.y() * ChunkConstants.SIZE
                 if (noise(wx, wz) > .70f) {
                     val y = chunk.getHeight(x, z) + 1
                     val block = chunk.getBlock(x, y - 1, z)

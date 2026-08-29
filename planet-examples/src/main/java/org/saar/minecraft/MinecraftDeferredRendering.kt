@@ -14,6 +14,7 @@ import org.saar.core.renderer.renderGraph
 import org.saar.core.screen.MainScreen
 import org.saar.gui.UIDisplay
 import org.saar.maths.utils.Vector3
+import org.saar.minecraft.chunk.ChunkConstants
 import org.saar.minecraft.chunk.ChunkRenderNode
 import org.saar.minecraft.chunk.WaterRenderNode
 
@@ -35,8 +36,8 @@ class MinecraftDeferredRendering(
 
         val fog = Fog(
             Vector3.of(.0f, .5f, .7f),
-            (this@MinecraftDeferredRendering.radius * 15).toFloat(),
-            (this@MinecraftDeferredRendering.radius * 16).toFloat()
+            (this@MinecraftDeferredRendering.radius * (ChunkConstants.SIZE - 1)).toFloat(),
+            (this@MinecraftDeferredRendering.radius * ChunkConstants.SIZE).toFloat()
         )
 
         val camera = this@MinecraftDeferredRendering.camera

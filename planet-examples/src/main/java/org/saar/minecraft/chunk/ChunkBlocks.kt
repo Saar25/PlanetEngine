@@ -6,7 +6,7 @@ import org.saar.minecraft.Blocks
 
 class ChunkBlocks private constructor(private val blocks: Array<Block>) {
 
-    constructor() : this(Array(16 * 16 * 256) { Blocks.AIR })
+    constructor() : this(Array(ChunkConstants.SIZE * ChunkConstants.SIZE * ChunkConstants.HEIGHT) { Blocks.AIR })
 
     val opaque = mutableListOf<BlockContainer>()
 

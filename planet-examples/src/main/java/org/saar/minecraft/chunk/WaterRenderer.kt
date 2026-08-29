@@ -79,7 +79,7 @@ object WaterRenderer {
         ClipPlaneTest.disable()
 
         prototype.atlasUniform.value = this.atlas
-        prototype.dimensionsUniform.value = Vector2i(16, 16)
+        prototype.dimensionsUniform.value = Vector2i(ChunkConstants.SIZE, ChunkConstants.SIZE)
         prototype.texturesCountUniform.value = 4
         prototype.projectionViewUniform.value = projection.mul(view, Matrix4.create())
         prototype.normalMatrixUniform.value = view.invert(Matrix4.temp).transpose()

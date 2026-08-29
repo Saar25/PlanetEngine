@@ -2,6 +2,7 @@ package org.saar.minecraft
 
 import org.saar.maths.transform.Position
 import org.saar.maths.transform.ReadonlyPosition
+import org.saar.minecraft.chunk.ChunkConstants
 import org.saar.minecraft.generator.WorldGenerator
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutorService
@@ -58,8 +59,8 @@ class World(private val generator: WorldGenerator, threads: Int) {
         val cz: Int = worldToChunkCoordinate(z)
         val chunk = getChunk(cx, cz)
         if (chunk is Chunk) {
-            val lx = x - cx * 16
-            val lz = z - cz * 16
+            val lx = x - cx * ChunkConstants.SIZE
+            val lz = z - cz * ChunkConstants.SIZE
             chunk.setLight(lx, y, lz, value)
         }
     }
@@ -69,8 +70,8 @@ class World(private val generator: WorldGenerator, threads: Int) {
         val cz: Int = worldToChunkCoordinate(z)
         val chunk = getChunk(cx, cz)
 
-        val lx = x - cx * 16
-        val lz = z - cz * 16
+        val lx = x - cx * ChunkConstants.SIZE
+        val lz = z - cz * ChunkConstants.SIZE
         return chunk.getLight(lx, y, lz)
     }
 
@@ -86,8 +87,8 @@ class World(private val generator: WorldGenerator, threads: Int) {
         val cz: Int = worldToChunkCoordinate(z)
         val chunk = getChunk(cx, cz)
 
-        val lx = x - cx * 16
-        val lz = z - cz * 16
+        val lx = x - cx * ChunkConstants.SIZE
+        val lz = z - cz * ChunkConstants.SIZE
         return chunk.getBlock(lx, y, lz)
     }
 
@@ -96,8 +97,8 @@ class World(private val generator: WorldGenerator, threads: Int) {
         val cz: Int = worldToChunkCoordinate(z)
         val chunk = getChunk(cx, cz)
 
-        val lx = x - cx * 16
-        val lz = z - cz * 16
+        val lx = x - cx * ChunkConstants.SIZE
+        val lz = z - cz * ChunkConstants.SIZE
         return chunk.getHeight(lx, lz)
     }
 
@@ -106,8 +107,8 @@ class World(private val generator: WorldGenerator, threads: Int) {
         val cz: Int = worldToChunkCoordinate(z)
         val chunk = getChunk(cx, cz)
 
-        val lx = x - cx * 16
-        val lz = z - cz * 16
+        val lx = x - cx * ChunkConstants.SIZE
+        val lz = z - cz * ChunkConstants.SIZE
         chunk.setBlock(lx, y, lz, block)
 
         this.executorService.submit(Runnable {
@@ -185,7 +186,7 @@ class World(private val generator: WorldGenerator, threads: Int) {
 
     companion object {
         fun worldToChunkCoordinate(w: Int): Int {
-            return if (w >= 0) w / 16 else (w + 1) / 16 - 1
+            return if (w >= 0) w / ChunkConstants.SIZE else (w + 1) / ChunkConstants.SIZE - 1
         }
     }
 }

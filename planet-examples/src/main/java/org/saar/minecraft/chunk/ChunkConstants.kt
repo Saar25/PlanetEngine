@@ -5,6 +5,12 @@ import org.joml.Vector3ic
 
 object ChunkConstants {
 
+    const val SIZE = 16
+    const val SIZE_MASK = SIZE - 1
+
+    const val HEIGHT = 256
+    const val HEIGHT_MASK = HEIGHT - 1
+
     @JvmField
     val blockDirections = arrayOf<Vector3ic>(
         Vector3i(+1, 0, 0),

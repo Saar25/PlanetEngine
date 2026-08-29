@@ -9,6 +9,7 @@ import org.saar.lwjgl.glfw.input.mouse.Mouse
 import org.saar.lwjgl.glfw.input.mouse.MouseButton
 import org.saar.minecraft.Blocks
 import org.saar.minecraft.World
+import org.saar.minecraft.chunk.ChunkConstants
 import org.saar.minecraft.chunk.ChunkRenderer
 import org.saar.minecraft.entity.RayCasting
 
@@ -39,7 +40,7 @@ class PlayerBuildingComponent(
 
     override fun update(node: ComposableNode) {
         val transform = this.transformComponent.transform
-        val rayCast = RayCasting.lookingAtFace(transform, this.world, 16)
+        val rayCast = RayCasting.lookingAtFace(transform, this.world, ChunkConstants.SIZE)
 
         if (rayCast == null || !rayCast.block.isCollideable) {
             ChunkRenderer.rayCastedFace.value.set(0, 0, 0, -1)

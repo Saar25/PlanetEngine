@@ -5,7 +5,7 @@ import org.saar.minecraft.Chunk
 
 class ChunkHeights(private val chunk: Chunk) {
 
-    private val heights = ByteArray(16 * 16)
+    private val heights = ByteArray(ChunkConstants.SIZE * ChunkConstants.SIZE)
 
     private fun findHeight(x: Int, z: Int): Byte {
         for (i in 255 downTo 0) {

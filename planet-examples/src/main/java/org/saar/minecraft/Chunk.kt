@@ -31,15 +31,15 @@ class Chunk(private val world: World, x: Int, z: Int) : IChunk, Model {
     }
 
     fun getRelativeChunk(x: Int, z: Int): IChunk {
-        val wx = x + getPosition().x() * 16
-        val wz = z + getPosition().y() * 16
+        val wx = x + getPosition().x() * ChunkConstants.SIZE
+        val wz = z + getPosition().y() * ChunkConstants.SIZE
         return this.world.getChunk(of(wx.toFloat(), 0f, wz.toFloat()))
     }
 
     override fun getHeight(x: Int, z: Int): Int {
-        if (x !in 0..0xF || z < 0 || z > 0xF) {
-            val wx = x + getPosition().x() * 16
-            val wz = z + getPosition().y() * 16
+        if (x !in 0..ChunkConstants.SIZE_MASK || z < 0 || z > ChunkConstants.SIZE_MASK) {
+            val wx = x + getPosition().x() * ChunkConstants.SIZE
+            val wz = z + getPosition().y() * ChunkConstants.SIZE
             return this.world.getHeight(wx, wz)
         }
         return this.heights.getHeight(x, z)
@@ -47,20 +47,20 @@ class Chunk(private val world: World, x: Int, z: Int) : IChunk, Model {
 
     override fun getLight(x: Int, y: Int, z: Int): Int {
         if (y < 0) return 0
-        if (y > 0xFF) return 0xF
-        if (x !in 0..0xF || z < 0 || z > 0xF) {
-            val wx = x + getPosition().x() * 16
-            val wz = z + getPosition().y() * 16
+        if (y > ChunkConstants.HEIGHT_MASK) return 0xF
+        if (x !in 0..ChunkConstants.SIZE_MASK || z < 0 || z > ChunkConstants.SIZE_MASK) {
+            val wx = x + getPosition().x() * ChunkConstants.SIZE
+            val wz = z + getPosition().y() * ChunkConstants.SIZE
             return this.world.getLight(wx, y, wz)
         }
         return this.lights.getLight(x, y, z)
     }
 
     fun setLight(x: Int, y: Int, z: Int, value: Byte) {
-        if (y < 0 || y > 0xFF) return
-        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
-            val wx = x + getPosition().x() * 16
-            val wz = z + getPosition().y() * 16
+        if (y < 0 || y > ChunkConstants.HEIGHT_MASK) return
+        if (x < 0 || x > ChunkConstants.SIZE_MASK || z < 0 || z > ChunkConstants.SIZE_MASK) {
+            val wx = x + getPosition().x() * ChunkConstants.SIZE
+            val wz = z + getPosition().y() * ChunkConstants.SIZE
             this.world.setLight(wx, y, wz, value)
         } else {
             this.meshUpdateNeeded = true
@@ -69,10 +69,10 @@ class Chunk(private val world: World, x: Int, z: Int) : IChunk, Model {
     }
 
     override fun getBlock(x: Int, y: Int, z: Int): Block {
-        if (y < 0 || y > 0xFF) return Blocks.AIR
-        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
-            val wx = x + getPosition().x() * 16
-            val wz = z + getPosition().y() * 16
+        if (y < 0 || y > ChunkConstants.HEIGHT_MASK) return Blocks.AIR
+        if (x < 0 || x > ChunkConstants.SIZE_MASK || z < 0 || z > ChunkConstants.SIZE_MASK) {
+            val wx = x + getPosition().x() * ChunkConstants.SIZE
+            val wz = z + getPosition().y() * ChunkConstants.SIZE
             return this.world.getBlock(wx, y, wz)
         }
         return this.blocks.getBlock(x, y, z)
@@ -92,16 +92,16 @@ class Chunk(private val world: World, x: Int, z: Int) : IChunk, Model {
     }
 
     override fun setBlock(x: Int, y: Int, z: Int, block: Block) {
-        if (y < 0 || y > 0xFF) return
-        if (x < 0 || x > 0xF || z < 0 || z > 0xF) {
-            val wx = x + getPosition().x() * 16
-            val wz = z + getPosition().y() * 16
+        if (y < 0 || y > ChunkConstants.HEIGHT_MASK) return
+        if (x < 0 || x > ChunkConstants.SIZE_MASK || z < 0 || z > ChunkConstants.SIZE_MASK) {
+            val wx = x + getPosition().x() * ChunkConstants.SIZE
+            val wz = z + getPosition().y() * ChunkConstants.SIZE
             this.world.setBlock(wx, y, wz, block)
         } else {
             this.blocks.setBlock(x, y, z, block)
 
-            val wx = x + getPosition().x() * 16
-            val wz = z + getPosition().y() * 16
+            val wx = x + getPosition().x() * ChunkConstants.SIZE
+            val wz = z + getPosition().y() * ChunkConstants.SIZE
             this.bounds.addBlock(wx, y, wz)
 
             if (block !== Blocks.AIR) {
@@ -118,14 +118,14 @@ class Chunk(private val world: World, x: Int, z: Int) : IChunk, Model {
             if (x == 0) {
                 val chunk = world.getChunk(getPosition().x() - 1, getPosition().y())
                 if (chunk is Chunk) chunk.meshUpdateNeeded = true
-            } else if (x == 0xF) {
+            } else if (x == ChunkConstants.SIZE_MASK) {
                 val chunk = world.getChunk(getPosition().x() + 1, getPosition().y())
                 if (chunk is Chunk) chunk.meshUpdateNeeded = true
             }
             if (z == 0) {
                 val chunk = world.getChunk(getPosition().x(), getPosition().y() - 1)
                 if (chunk is Chunk) chunk.meshUpdateNeeded = true
-            } else if (z == 0xF) {
+            } else if (z == ChunkConstants.SIZE_MASK) {
                 val chunk = world.getChunk(getPosition().x(), getPosition().y() + 1)
                 if (chunk is Chunk) chunk.meshUpdateNeeded = true
             }
@@ -208,9 +208,9 @@ class Chunk(private val world: World, x: Int, z: Int) : IChunk, Model {
         val d2 = ChunkConstants.blockDirections[(dir / 2 * 2 + 3) % 6]
         val d3 = ChunkConstants.blockDirections[(dir / 2 * 2 + 4) % 6]
         val d4 = ChunkConstants.blockDirections[(dir / 2 * 2 + 5) % 6]
-        val x = getPosition().x() * 16 + b.x + direction.x()
+        val x = getPosition().x() * ChunkConstants.SIZE + b.x + direction.x()
         val y = b.y + direction.y()
-        val z = getPosition().y() * 16 + b.z + direction.z()
+        val z = getPosition().y() * ChunkConstants.SIZE + b.z + direction.z()
         val blocks = arrayOf<Block>(
             this.world.getBlock(x + d1.x(), y + d1.y(), z + d1.z()),
             this.world.getBlock(x + d2.x(), y + d2.y(), z + d2.z()),
